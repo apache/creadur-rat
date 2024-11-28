@@ -65,8 +65,8 @@ public final class ReporterTestUtils {
         return String.format("\\s+\\Q%s\\E\\s+\\Q%s\\E\\s+\\Q%s\\E$", family, id, name);
     }
 
-    public static String counterText(ClaimStatistic.Counter counter, int count) {
-        return String.format("^%s:\\s*%s ", counter.displayName(), count);
+    public static String counterText(ClaimStatistic.Counter counter, int count, boolean error) {
+        return String.format("^%s %s:\\s*%s ", error ? "!" : " ", counter.displayName(), count);
     }
 
     public static String apacheLicenseVersion2(int count) {

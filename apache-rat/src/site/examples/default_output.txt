@@ -1,5 +1,3 @@
-
-
 *****************************************************
 Summary
 *****************************************************
@@ -89,7 +87,7 @@ Detail
  N /LICENSE
  N /NOTICE
 !S /Source.java
-    ?????    ?????         Unknown license(Unapproved)
+    ?????    ?????         Unknown license (Unapproved)
  S /Text.txt
     AL       AL            Apache License Version 2.0
  S /TextHttps.txt
@@ -103,7 +101,7 @@ Detail
     GEN      GEN           Generated Files
  B /plain.json
 !S /sub/Empty.txt
-    ?????    ?????         Unknown license(Unapproved)
+    ?????    ?????         Unknown license (Unapproved)
  S /tri.txt
     AL       AL            Apache License Version 2.0
     BSD-3    BSD-3         BSD 3 clause

@@ -80,7 +80,7 @@
         </xsl:for-each>
 
         <xsl:if test="descendant::resource[license/@approval='false']">
-
+            <xsl:value-of select="concat($newline, $newline)" />
             <xsl:call-template name="section">
                 <xsl:with-param name="title">Files with unapproved licenses</xsl:with-param>
             </xsl:call-template>
@@ -92,7 +92,7 @@
         </xsl:if>
 
         <xsl:if test="descendant::resource[@type='ARCHIVE']">
-
+            <xsl:value-of select="concat($newline, $newline)" />
             <xsl:call-template name="section">
                 <xsl:with-param name="title">Archives</xsl:with-param>
             </xsl:call-template>
@@ -101,7 +101,7 @@
                 <xsl:value-of select='concat($newline, " ", @name)'/>
             </xsl:for-each>
         </xsl:if>
-
+        <xsl:value-of select="concat($newline, $newline)" />
         <xsl:call-template name="section">
             <xsl:with-param name="title">Detail</xsl:with-param>
         </xsl:call-template>
@@ -131,7 +131,7 @@
             <xsl:for-each select='descendant::license'>
                 <xsl:value-of select='concat($newline, "    ", substring(concat(@family, "     "), 1, 5),
         "    ", substring(concat(@id, "          "), 1,10), "    ", @name)'/>
-                <xsl:if test="@approval='false'">(Unapproved)</xsl:if>
+                <xsl:if test="@approval='false'"> (Unapproved)</xsl:if>
             </xsl:for-each>
         </xsl:for-each>
         <xsl:value-of select='$newline'/>
@@ -140,7 +140,7 @@
     <xsl:template name="section">
         <xsl:param name="title"/>
         <xsl:value-of
-                select='concat($newline, $newline, $sectionPartition, $newline, $title, $newline, $sectionPartition, $newline)'/>
+                select='concat($sectionPartition, $newline, $title, $newline, $sectionPartition, $newline)'/>
     </xsl:template>
 
     <xsl:template name="subsection">
