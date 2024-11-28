@@ -118,7 +118,7 @@ public class OptionCollectionTest {
         ReportConfiguration config;
         try {
             DefaultLog.setInstance(log);
-            String[] args = {"--dir", "foo"};
+            String[] args = {"--dir", baseDir.getAbsolutePath()};
             config = OptionCollection.parseCommands(args, (o) -> {
             }, true);
         } finally {
@@ -141,7 +141,7 @@ public class OptionCollectionTest {
     public void testDefaultConfiguration() throws ParseException {
         String[] empty = {};
         CommandLine cl = new DefaultParser().parse(OptionCollection.buildOptions(), empty);
-        ReportConfiguration config = OptionCollection.createConfiguration("", cl);
+        ReportConfiguration config = OptionCollection.createConfiguration(cl);
         ReportConfigurationTest.validateDefault(config);
     }
 

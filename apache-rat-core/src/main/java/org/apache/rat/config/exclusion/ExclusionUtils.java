@@ -51,7 +51,7 @@ public final class ExclusionUtils {
     /** A predicate that filters out lines that do NOT start with "!" */
     public static final Predicate<String> NOT_MATCH_FILTER = s -> s.startsWith("!");
 
-    /** A predicate that filters out lines that  start with "!" */
+    /** A predicate that filters out lines that start with "!" */
     public static final Predicate<String> MATCH_FILTER = s -> !s.startsWith("!");
 
     private ExclusionUtils() {
@@ -112,7 +112,7 @@ public final class ExclusionUtils {
      * @return a FileFilter.
      */
     public static FileFilter asFileFilter(final DocumentName parent, final DocumentNameMatcher nameMatcher) {
-        return file -> nameMatcher.matches(new DocumentName(file, parent));
+        return file -> nameMatcher.matches(DocumentName.builder(file).setBaseName(parent.getBaseName()).build());
     }
 
     /**

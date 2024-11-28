@@ -76,7 +76,7 @@ public abstract class AbstractRatMojo extends BaseRatMojo {
 
     /**
      * Specifies the licenses to accept. By default, these are added to the default
-     * licenses, unless you set &lt;addDefaultLicenseMatchers&gt; to false.  Arguments should be
+     * licenses, unless you set &lt;addDefaultLicenseMatchers&gt; to false. Arguments should be
      * file name of &lt;Configs&gt; file structure.
      * @deprecated Use &lt;config&gt;.
      * @since 0.8
@@ -537,8 +537,8 @@ public abstract class AbstractRatMojo extends BaseRatMojo {
                             .map(x -> x.setLicenseFamilies(families).build()).forEach(process);
                     getLicenses().map(x -> x.build(families)).forEach(process);
                 }
-                DocumentName dirName = new DocumentName(basedir);
-                config.setReportable(new DirectoryWalker(new FileDocument(dirName, basedir, config.getNameMatcher(dirName))));
+                DocumentName dirName = DocumentName.builder(basedir).build();
+                config.addSource(new DirectoryWalker(new FileDocument(dirName, basedir, config.getNameMatcher(dirName))));
 
                 if (helpLicenses) {
                     new org.apache.rat.help.Licenses(config, new PrintWriter(log.asWriter())).printHelp();

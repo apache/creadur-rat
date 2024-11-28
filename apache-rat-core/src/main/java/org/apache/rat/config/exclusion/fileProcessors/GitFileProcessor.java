@@ -18,13 +18,21 @@
  */
 package org.apache.rat.config.exclusion.fileProcessors;
 
+import java.io.File;
+
+import org.apache.rat.config.exclusion.plexus.MatchPatterns;
 import org.apache.rat.document.DocumentName;
+import org.apache.rat.document.DocumentNameMatcher;
 
 /**
+ * Processes the .gitignore file.
  * @see <a href='https://git-scm.com/docs/gitignore'>.gitignore documentation</a>
  */
 public class GitFileProcessor extends DescendingFileProcessor {
 
+    /**
+     * Constructs a file processor that processes a .gitignore file and ignores any lines starting with "#".
+     */
     public GitFileProcessor() {
         super(".gitignore", "#");
     }
@@ -33,21 +41,30 @@ public class GitFileProcessor extends DescendingFileProcessor {
     public String modifyEntry(final DocumentName documentName, final String entry) {
         // An optional prefix "!" which negates the pattern;
         boolean prefix = entry.startsWith("!");
-        String pattern = prefix ? entry.substring(1) : entry;
+        String pattern = prefix || entry.startsWith("\\#") || entry.startsWith("\\!") ? entry.substring(1) : entry;
 
         // If there is a separator at the beginning or middle (or both) of the pattern, then
         // the pattern is relative to the directory level of the particular .gitignore file itself.
         // Otherwise, the pattern may also match at any level below the .gitignore level.
         int slashPos = pattern.indexOf("/");
+        // no slash or at end already
         if (slashPos == -1 || slashPos == pattern.length() - 1) {
             pattern = "**/" + pattern;
+        }
+        if (slashPos == 0) {
+            pattern = pattern.substring(1);
         }
         // If there is a separator at the end of the pattern then the pattern will only match directories,
         // otherwise the pattern can match both files and directories.
         if (pattern.endsWith("/")) {
-            pattern = pattern + "**";
+            pattern = pattern.substring(0, pattern.length() - 1);
+            String name = prefix ? "!" + pattern : pattern;
+            DocumentName matcherPattern = DocumentName.builder(documentName).setName(name.replace("/", documentName.getDirectorySeparator()))
+                            .build();
+            customMatchers.add(DocumentNameMatcher.and(new DocumentNameMatcher("isDirectory", File::isDirectory),
+                    new DocumentNameMatcher(name, MatchPatterns.from(matcherPattern.localized("/")))));
+            return null;
         }
         return prefix ? "!" + pattern : pattern;
     }
-
 }

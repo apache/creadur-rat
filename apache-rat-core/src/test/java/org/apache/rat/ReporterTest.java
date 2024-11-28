@@ -82,8 +82,8 @@ public class ReporterTest {
     public void testExecute() throws RatException, ParseException {
         File output = new File(tempDirectory, "testExecute");
 
-        CommandLine cl = new DefaultParser().parse(OptionCollection.buildOptions(), new String[]{"--output-style", "xml", "--output-file", output.getPath()});
-        ReportConfiguration config = OptionCollection.createConfiguration(basedir, cl);
+        CommandLine cl = new DefaultParser().parse(OptionCollection.buildOptions(), new String[]{"--output-style", "xml", "--output-file", output.getPath(), basedir});
+        ReportConfiguration config = OptionCollection.createConfiguration(cl);
         ClaimStatistic statistic = new Reporter(config).execute();
 
         assertThat(statistic.getCounter(Type.ARCHIVE)).isEqualTo(1);
@@ -137,8 +137,8 @@ public class ReporterTest {
     @Test
     public void testOutputOption() throws Exception {
         File output = new File(tempDirectory, "test");
-        CommandLine cl = new DefaultParser().parse(OptionCollection.buildOptions(), new String[]{"-o", output.getCanonicalPath()});
-        ReportConfiguration config = OptionCollection.createConfiguration(basedir, cl);
+        CommandLine commandLine = new DefaultParser().parse(OptionCollection.buildOptions(), new String[]{"-o", output.getCanonicalPath(), basedir});
+        ReportConfiguration config = OptionCollection.createConfiguration(commandLine);
         new Reporter(config).output();
         assertThat(output.exists()).isTrue();
         String content = FileUtils.readFileToString(output, StandardCharsets.UTF_8);
@@ -154,8 +154,8 @@ public class ReporterTest {
         PrintStream origin = System.out;
         try (PrintStream out = new PrintStream(output)) {
             System.setOut(out);
-            CommandLine cl = new DefaultParser().parse(OptionCollection.buildOptions(), new String[]{});
-            ReportConfiguration config = OptionCollection.createConfiguration(basedir, cl);
+            CommandLine commandLine = new DefaultParser().parse(OptionCollection.buildOptions(), new String[]{basedir});
+            ReportConfiguration config = OptionCollection.createConfiguration(commandLine);
             new Reporter(config).output();
         } finally {
             System.setOut(origin);
@@ -169,8 +169,8 @@ public class ReporterTest {
     public void testXMLOutput() throws Exception {
         File output = new File(tempDirectory, "testXMLOutput");
 
-        CommandLine cl = new DefaultParser().parse(OptionCollection.buildOptions(), new String[]{"--output-style", "xml", "--output-file", output.getPath()});
-        ReportConfiguration config = OptionCollection.createConfiguration(basedir, cl);
+        CommandLine commandLine = new DefaultParser().parse(OptionCollection.buildOptions(), new String[]{"--output-style", "xml", "--output-file", output.getPath(), basedir});
+        ReportConfiguration config = OptionCollection.createConfiguration(commandLine);
         new Reporter(config).output();
 
         assertThat(output).exists();
@@ -264,8 +264,8 @@ public class ReporterTest {
         final File elementsFile = new File(Resources.getResourceDirectory("elements/Source.java"));
         final ReportConfiguration configuration = new ReportConfiguration();
         configuration.setFrom(defaults);
-        DocumentName documentName = new DocumentName(elementsFile);
-        configuration.setReportable(new DirectoryWalker(new FileDocument(documentName, elementsFile,
+        DocumentName documentName = DocumentName.builder(elementsFile).build();
+        configuration.addSource(new DirectoryWalker(new FileDocument(documentName, elementsFile,
                 configuration.getNameMatcher(documentName))));
         return configuration;
     }

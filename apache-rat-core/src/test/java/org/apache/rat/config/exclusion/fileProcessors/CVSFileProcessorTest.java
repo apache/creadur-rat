@@ -19,6 +19,7 @@
 package org.apache.rat.config.exclusion.fileProcessors;
 
 import java.util.ArrayList;
+import org.apache.rat.utils.DefaultLog;
 import org.apache.rat.utils.ExtendedIterator;
 import org.junit.jupiter.api.Test;
 

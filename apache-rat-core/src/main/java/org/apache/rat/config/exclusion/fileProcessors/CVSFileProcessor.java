@@ -25,7 +25,6 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.rat.config.exclusion.ExclusionUtils;
-import org.apache.rat.config.exclusion.FileProcessor;
 import org.apache.rat.document.DocumentName;
 
 /**
@@ -49,7 +48,7 @@ public class CVSFileProcessor extends DescendingFileProcessor {
             String[] parts = line.split("\\s+");
             for (String part : parts) {
                 if (!part.isEmpty()) {
-                    result.add(FileProcessor.localizePattern(documentName, part).getName());
+                    result.add(this.localizePattern(documentName, part));
                 }
             }
         }

@@ -60,7 +60,7 @@ public class ReportTest extends AbstractRatAntTaskTest {
         for (int i = 0; i < 4; i++) {
             baseFile = baseFile.getParentFile();
         }
-        documentName = new DocumentName(antFile, new DocumentName(baseFile));
+        documentName = DocumentName.builder(antFile).setBaseName(baseFile).build();
         System.setProperty(MagicNames.PROJECT_BASEDIR, documentName.getBaseName());
         super.setUp();
     }
