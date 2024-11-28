@@ -37,21 +37,20 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 /**
- * Tests the Default policy imlementatin.
+ * Tests the Default policy implementation.
  */
 public class DefaultPolicyTest {
     /**
      * This is the number of accepted licenses in the default license file :
      * /org/apache/rat/default.xml
      */
-    private static final int NUMBER_OF_DEFAULT_ACCEPTED_LICENSES = 11;
+    private static final int NUMBER_OF_DEFAULT_ACCEPTED_LICENSES = 8;
 
-    private static final ILicenseFamily[] APPROVED_FAMILIES = { makeFamily("AL", "Apache License Version 2.0"),
+    private static final ILicenseFamily[] APPROVED_FAMILIES = { //
+            makeFamily("AL", "Apache License Version 2.0"),
             makeFamily("BSD-3", "BSD 3 clause"),
             makeFamily("CDDL1", "COMMON DEVELOPMENT AND DISTRIBUTION LICENSE Version 1.0"),
-            makeFamily("GEN", "Generated Files"), makeFamily("GPL1", "GNU General Public License, version 1"),
-            makeFamily("GPL2", "GNU General Public License, version 2"),
-            makeFamily("GPL3", "GNU General Public License, version 3"), makeFamily("MIT", "The MIT License"),
+            makeFamily("GEN", "Generated Files"),  makeFamily("MIT", "The MIT License"),
             makeFamily("OASIS", "OASIS Open License"), makeFamily("W3CD", "W3C Document Copyright"),
             makeFamily("W3C", "W3C Software Copyright"), };
 

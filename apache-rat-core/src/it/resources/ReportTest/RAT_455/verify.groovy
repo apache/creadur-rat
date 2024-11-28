@@ -1,3 +1,7 @@
+package ReportTest.RAT_455
+
+import org.apache.rat.testhelpers.TextUtils
+
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
@@ -14,22 +18,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.rat.configuration;
+output = new File(args[0])
+content = output.text
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-
-import java.io.File;
-
-import org.junit.jupiter.api.Test;
-
-public class FormatTest {
-    @Test
-    public void fromNameTest() {
-        assertEquals(Format.XML, Format.from("foo/x.xml"));
-        assertEquals(Format.XML, Format.from("x.xml"));
-        assertThrows(IllegalArgumentException.class, () ->Format.from("junk"));
-        assertEquals(Format.XML, Format.from( new File("foo/y.xml")));
-    }
-
-}
+assert content.contains('!S /GPL.md')
+assert TextUtils.isMatching('^\\s+GPL\\s+GPL1\\s+GNU General Public License V1.0 \\(Unapproved\\)', content)
