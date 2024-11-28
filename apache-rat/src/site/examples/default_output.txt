@@ -1,64 +1,79 @@
+
+
 *****************************************************
 Summary
 *****************************************************
-Generated at: 2024-11-09T13:16:50Z
+Generated at: 2024-11-28T08:03:52Z
+    by Apache Creadur RAT 0.17 (Apache Software Foundation)
 
-Counters:
+-----------------------------------------------------
+Counters
+-----------------------------------------------------
+    (Entries starting with '!' exceed the minimum or maximum values)
+  Approved:           9    A count of approved licenses.
+  Archives:           1    A count of archive files.
+  Binaries:           2    A count of binary files.
+  Document types:     5    A count of distinct document types.
+  Generated:          1    A count of generated files.
+  License categories: 5    A count of distinct license categories.
+  License names:      6    A count of distinct license names.
+  Notices:            2    A count of notice files.
+  Standards:          8    A count of standard files.
+! Unapproved:         2    A count of unapproved licenses.
+  Unknown:            2    A count of unknown file types.
 
-Approved:           9    A count of approved licenses.
-Archives:           1    A count of archive files.
-Binaries:           2    A count of binary files.
-Document types:     5    A count of distinct document types.
-Generated:          1    A count of generated files.
-License categories: 5    A count of distinct license categories.
-License names:      6    A count of distinct license names.
-Notices:            2    A count of notice files.
-Standards:          8    A count of standard files.
-Unapproved:         2 (Exceeded limits)    A count of unapproved licenses.
-Unknown:            2    A count of unknown file types.
 
+-----------------------------------------------------
+Licenses detected
+-----------------------------------------------------
 
-Licenses detected:
+Apache License Version 2.0: 5 
+BSD 3 clause: 1 
+Generated Files: 1 
+The MIT License: 1 
+The Telemanagement Forum License: 1 
+Unknown license: 2 
 
-Apache License Version 2.0: 5
-BSD 3 clause: 1
-Generated Files: 1
-The MIT License: 1
-The Telemanagement Forum License: 1
-Unknown license: 2
+-----------------------------------------------------
+License Categories detected
+-----------------------------------------------------
 
-License Categories detected:
+?????: 2 
+AL   : 5 
+BSD-3: 2 
+GEN  : 1 
+MIT  : 1 
 
-?????: 2
-AL   : 5
-BSD-3: 2
-GEN  : 1
-MIT  : 1
+-----------------------------------------------------
+Document Types detected
+-----------------------------------------------------
 
-Document Types detected:
-
-ARCHIVE: 1
-BINARY: 2
-GENERATED: 1
-NOTICE: 2
-STANDARD: 8
+ARCHIVE: 1 
+BINARY: 2 
+GENERATED: 1 
+NOTICE: 2 
+STANDARD: 8 
 
 *****************************************************
-
-Files with unapproved licenses:
+Files with unapproved licenses
+*****************************************************
 
   /Source.java
   /sub/Empty.txt
 
 *****************************************************
+Archives
+*****************************************************
 
-Archives:
  /dummy.jar
 
 *****************************************************
+Detail
+*****************************************************
+
   Documents with unapproved licenses will start with a '!'
   The next character identifies the document type.
-
+   
    char         type
     A       Archive file
     B       Binary file
@@ -66,7 +81,7 @@ Archives:
     N       Notice file
     S       Standard file
     U       Unknown file.
-
+  
 
  S /ILoggerFactory.java
     MIT      MIT           The MIT License
@@ -74,7 +89,7 @@ Archives:
  N /LICENSE
  N /NOTICE
 !S /Source.java
-    ?????    ?????         Unknown license (Unapproved)
+    ?????    ?????         Unknown license(Unapproved)
  S /Text.txt
     AL       AL            Apache License Version 2.0
  S /TextHttps.txt
@@ -88,9 +103,8 @@ Archives:
     GEN      GEN           Generated Files
  B /plain.json
 !S /sub/Empty.txt
-    ?????    ?????         Unknown license (Unapproved)
+    ?????    ?????         Unknown license(Unapproved)
  S /tri.txt
     AL       AL            Apache License Version 2.0
     BSD-3    BSD-3         BSD 3 clause
     BSD-3    TMF           The Telemanagement Forum License
-*****************************************************
