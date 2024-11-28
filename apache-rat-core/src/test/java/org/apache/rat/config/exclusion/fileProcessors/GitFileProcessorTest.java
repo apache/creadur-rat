@@ -70,7 +70,7 @@ public class GitFileProcessorTest extends AbstractIgnoreProcessorTest {
     // see https://git-scm.com/docs/gitignore
     @ParameterizedTest
     @MethodSource("modifyEntryData")
-    public void modifyEntryTest(String source, String expected) throws IOException {
+    public void modifyEntryTest(String source, String expected) {
         GitFileProcessor underTest = new GitFileProcessor();
         DocumentName testName = DocumentName.builder().setName("GitFileProcessorTest").setBaseName("testDir").build();
         if (source.endsWith("/")) {

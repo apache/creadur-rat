@@ -176,7 +176,7 @@ public class Reporter {
      * @throws IOException on error.
      */
     public void writeSummary(final Appendable appendable) throws IOException {
-        appendable.append("Rat summary:").append(System.lineSeparator());
+        appendable.append("RAT summary:").append(System.lineSeparator());
         for (ClaimStatistic.Counter counter : ClaimStatistic.Counter.values()) {
             appendable.append("  ").append(counter.displayName()).append(":  ")
                     .append(Integer.toString(getClaimsStatistic().getCounter(counter)))

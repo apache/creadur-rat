@@ -32,9 +32,9 @@ import org.apache.rat.utils.DefaultLog;
  * A Reportable that walks a list of IReportables and executes the run on each.
  */
 public final class IReportableListWalker implements IReportable {
-    /** The document name for this walker */
+    /** The document name for this walker. */
     private final DocumentName documentName;
-    /** The list of reportables for this walker */
+    /** The list of reportables for this walker. */
     private final List<IReportable> reportables;
 
     /**
@@ -75,9 +75,9 @@ public final class IReportableListWalker implements IReportable {
      * A Builder for the ListWalker.
      */
     public static final class Builder {
-        /** The document name for the walker */
+        /** The document name for the walker. */
         private final DocumentName documentName;
-        /** The list of IReportable objecs to exectue */
+        /** The list of IReportable objects to execute. */
         private List<IReportable> reportables = new ArrayList<>();
 
         /**

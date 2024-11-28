@@ -230,7 +230,7 @@ public enum Arg {
      */
     SOURCE(new OptionGroup()
             .addOption(Option.builder().longOpt("input-source").hasArgs().argName("File")
-                    .desc("A file containing file names to process.  Path to the files must be " +
+                    .desc("A file containing file names to process. Path to the files must be " +
                             "relative to the directory where RAT is running.")
                     .type(File.class)
                     .build())),
@@ -544,7 +544,7 @@ public enum Arg {
 
     /**
      * Gets the full set of options.
-     * @return  the full set of options for this Arg.
+     * @return the full set of options for this argument.
      */
     public static Options getOptions() {
         Options options = new Options();

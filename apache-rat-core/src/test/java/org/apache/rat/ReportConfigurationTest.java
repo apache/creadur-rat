@@ -532,7 +532,6 @@ public class ReportConfigurationTest {
         assertThat(sb.toString()).isEqualTo(msg);
 
         sb.setLength(0);
-        msg = "You must specify at least one license";
         underTest.addLicense(testingLicense("valid", "Validation testing license"));
         underTest.validate(sb::append);
         assertThat(sb.length()).isEqualTo(0);

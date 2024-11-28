@@ -24,7 +24,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Stream;
-import javax.print.Doc;
 import org.apache.commons.lang3.tuple.Pair;
 import org.assertj.core.util.Files;
 import org.junit.jupiter.api.Test;
@@ -34,8 +33,6 @@ import org.junit.jupiter.params.provider.MethodSource;
 
 import static java.lang.String.format;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 public class DocumentNameTest {
 
@@ -61,7 +58,7 @@ public class DocumentNameTest {
         List<Arguments> lst = new ArrayList<>();
         File f = Files.newTemporaryFile();
 
-        Set<String> roots = new HashSet<String>();
+        Set<String> roots = new HashSet<>();
         File[] rootary = File.listRoots();
         if (rootary != null) {
             for (File root : rootary) {
@@ -93,7 +90,7 @@ public class DocumentNameTest {
         lst.add(Arguments.of("setName(dir)", DocumentName.builder().setName(p), root, baseName, baseName, File.separator));
         lst.add(Arguments.of("Builder(dir)", DocumentName.builder(p), root, baseName, baseName, File.separator));
 
-        File r = new File(root.equals("") ? File.separator : root );
+        File r = new File(root.isEmpty() ? File.separator : root);
         lst.add(Arguments.of("setName(root)", DocumentName.builder().setName(r), root, "", "", File.separator));
         lst.add(Arguments.of("Builder(root)", DocumentName.builder(r), root, "", "", File.separator));
 

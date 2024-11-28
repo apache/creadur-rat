@@ -20,14 +20,13 @@
 package org.apache.rat.analysis;
 
 import java.io.StringReader;
-import java.util.Arrays;
 
 import org.apache.rat.api.Document;
 import org.apache.rat.testhelpers.TestingDocument;
 import org.apache.rat.license.ILicense;
 import org.apache.rat.testhelpers.TestingLicense;
+import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.Test;
-
 
 public class HeaderCheckWorkerTest {
 
@@ -35,7 +34,7 @@ public class HeaderCheckWorkerTest {
     public void isFinished() throws Exception {
         final Document subject = new TestingDocument("subject");
         ILicense matcher = new TestingLicense("test", "test");
-        HeaderCheckWorker worker = new HeaderCheckWorker(new StringReader(""), Arrays.asList(matcher), subject);
+        HeaderCheckWorker worker = new HeaderCheckWorker(new StringReader(""), Lists.list(matcher), subject);
         worker.read();
     }
 }

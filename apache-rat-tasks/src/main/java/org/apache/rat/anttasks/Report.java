@@ -233,7 +233,7 @@ public class Report extends BaseAntTask {
     /**
      * Removes a family category to the list of approved licenses.
      * @param familyCategory the category to add.
-     * @deprecated use removeApprovedLicense child element}
+     * @deprecated use removeApprovedLicense child element
      */
     @Deprecated
     public void setRemoveApprovedLicense(final String familyCategory) {
