@@ -214,14 +214,7 @@ public class ReporterTest {
         nodeList = XmlUtils.getNodeList(doc, xPath, "/rat-report/resource[@type='NOTICE']");
         assertEquals(2, nodeList.getLength());
 
-        nodeList = XmlUtils.getNodeList(doc, xPath, "/rat-report/resource/sample");
-        assertEquals(1, nodeList.getLength());
-
         nodeList = XmlUtils.getNodeList(doc, xPath, "/rat-report/resource[@type='GENERATED']/license/notes");
-        assertEquals(1, nodeList.getLength());
-
-        nodeList = XmlUtils.getNodeList(doc, xPath,
-                "/rat-report/resource[@name='/Source.java']/sample");
         assertEquals(1, nodeList.getLength());
     }
 
@@ -234,11 +227,10 @@ public class ReporterTest {
      * @param resource the xpath statement to locate the node.
      * @param licenseInfo the license info for the node. (may = null)
      * @param type the type of resource located.
-     * @param hasSample true if a sample from the document should be present.
      * @throws Exception on XPath error.
      */
     private static void checkNode(final Document doc, final XPath xpath, final String resource, final LicenseInfo licenseInfo,
-                                  final String type, final boolean hasSample) throws Exception {
+                                  final String type) throws Exception {
         XmlUtils.getNode(doc, xpath, String.format("/rat-report/resource[@name='%s'][@type='%s']", resource, type));
         if (licenseInfo != null) {
             XmlUtils.getNode(doc, xpath,
@@ -252,10 +244,6 @@ public class ReporterTest {
                         String.format("/rat-report/resource[@name='%s'][@type='%s']/license[@id='%s']/notes", resource,
                                 type, licenseInfo.id));
             }
-        }
-        if (hasSample) {
-            XmlUtils.getNode(doc, xpath,
-                    String.format("/rat-report/resource[@name='%s'][@type='%s']/sample", resource, type));
         }
     }
 
@@ -348,26 +336,25 @@ public class ReporterTest {
 
         LicenseInfo apacheLic = new LicenseInfo("AL", true, false);
         checkNode(doc, xPath, "/ILoggerFactory.java", new LicenseInfo("MIT", true, false),
-                "STANDARD", false);
-        checkNode(doc, xPath, "/Image.png", null, "BINARY", false);
-        checkNode(doc, xPath, "/LICENSE", null, "NOTICE", false);
-        checkNode(doc, xPath, "/NOTICE", null, "NOTICE", false);
+                "STANDARD");
+        checkNode(doc, xPath, "/Image.png", null, "BINARY");
+        checkNode(doc, xPath, "/LICENSE", null, "NOTICE");
+        checkNode(doc, xPath, "/NOTICE", null, "NOTICE");
         checkNode(doc, xPath, "/Source.java", new LicenseInfo("?????", false, false),
-                "STANDARD", true);
-        checkNode(doc, xPath, "/Text.txt", apacheLic, "STANDARD", false);
-        checkNode(doc, xPath, "/TextHttps.txt", apacheLic, "STANDARD", false);
-        checkNode(doc, xPath, "/Xml.xml", apacheLic, "STANDARD", false);
-        checkNode(doc, xPath, "/buildr.rb", apacheLic, "STANDARD", false);
-        checkNode(doc, xPath, "/dummy.jar", null, "ARCHIVE", false);
+                "STANDARD");
+        checkNode(doc, xPath, "/Text.txt", apacheLic, "STANDARD");
+        checkNode(doc, xPath, "/TextHttps.txt", apacheLic, "STANDARD");
+        checkNode(doc, xPath, "/Xml.xml", apacheLic, "STANDARD");
+        checkNode(doc, xPath, "/buildr.rb", apacheLic, "STANDARD");
+        checkNode(doc, xPath, "/dummy.jar", null, "ARCHIVE");
         checkNode(doc, xPath, "/sub/Empty.txt", new LicenseInfo("?????", false, false),
-                "STANDARD", false);
-        checkNode(doc, xPath, "/tri.txt", apacheLic, "STANDARD", false);
-        checkNode(doc, xPath, "/tri.txt", new LicenseInfo("BSD-3", true, false), "STANDARD",
-                false);
+                "STANDARD");
+        checkNode(doc, xPath, "/tri.txt", apacheLic, "STANDARD");
+        checkNode(doc, xPath, "/tri.txt", new LicenseInfo("BSD-3", true, false), "STANDARD");
         checkNode(doc, xPath, "/tri.txt", new LicenseInfo("TMF", "BSD-3", true, false),
-                "STANDARD", false);
+                "STANDARD");
         checkNode(doc, xPath, "/generated.txt", new LicenseInfo("GEN", true, true),
-                "GENERATED", false);
+                "GENERATED");
         NodeList nodeList = (NodeList) xPath.compile("/rat-report/resource").evaluate(doc, XPathConstants.NODESET);
         assertEquals(14, nodeList.getLength());
         Validator validator = initValidator();
