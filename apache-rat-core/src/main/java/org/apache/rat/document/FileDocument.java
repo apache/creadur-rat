@@ -45,7 +45,17 @@ public class FileDocument extends Document {
      * @param nameMatcher the path matcher to filter files/directories with.
      */
     public FileDocument(final DocumentName basedir, final File file, final DocumentNameMatcher nameMatcher) {
-        super(new DocumentName(file, basedir), nameMatcher);
+        super(DocumentName.builder(file).setBaseName(basedir.getBaseName()).build(), nameMatcher);
+        this.file = file;
+    }
+
+    /**
+     * Creates a File document where the baseDir is the root directory.
+     * @param file the file to wrap.
+     * @param nameMatcher the path matcher to filter files/directories with.
+     */
+    public FileDocument(final File file, final DocumentNameMatcher nameMatcher) {
+        super(DocumentName.builder(file).setBaseName(File.separator).build(), nameMatcher);
         this.file = file;
     }
 
@@ -67,7 +77,16 @@ public class FileDocument extends Document {
         return Collections.emptySortedSet();
     }
 
+    @Override
     public InputStream inputStream() throws IOException {
         return Files.newInputStream(file.toPath());
+    }
+
+    /**
+     * Gets the file underlying this document.
+     * @return the file underlying this document.
+     */
+    public File getFile() {
+        return file;
     }
 }

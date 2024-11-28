@@ -16,13 +16,12 @@
  * specific language governing permissions and limitations      *
  * under the License.                                           *
  */ 
-package org.apache.rat.document.impl.guesser;
+package org.apache.rat.document.guesser;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 import org.apache.rat.document.DocumentName;
-import org.apache.rat.document.guesser.NoteGuesser;
 import org.apache.rat.testhelpers.TestingDocument;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -36,14 +35,16 @@ public class NoteGuesserTest {
     @MethodSource("nameData")
     public void testMatches(DocumentName testingName, boolean expected) {
         boolean actual = NoteGuesser.isNote(new TestingDocument(testingName));
-        assertEquals( expected, NoteGuesser.isNote(new TestingDocument(testingName)), testingName::getName);
+        assertEquals(expected, actual, testingName::getName);
     }
 
     private static Stream<Arguments> nameData() {
         List<Arguments> lst = new ArrayList<>();
 
-        final DocumentName linuxBaseName = new DocumentName("/", "/", "/", true);
-        final DocumentName windowsBaseName = new DocumentName("\\", "\\", "\\", false);
+        final DocumentName linuxBaseName = DocumentName.builder().setName("/").setBaseName("/").setDirSeparator("/")
+                .setCaseSensitive(true).build();
+        final DocumentName windowsBaseName = DocumentName.builder().setName("\\").setBaseName("\\")
+                .setDirSeparator("\\").setCaseSensitive(false).build();
 
         lst.add(Arguments.of(linuxBaseName.resolve("DEPENDENCIES"), true));
         lst.add(Arguments.of(linuxBaseName.resolve("LICENSE"), true));

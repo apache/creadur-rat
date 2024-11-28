@@ -24,7 +24,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
-
 import java.util.ArrayList;
 
 import java.util.Collection;
@@ -38,7 +37,7 @@ public class StandardCollectionTest {
     @MethodSource("collectionData")
     public void testState(StandardCollection scm, boolean hasFileProcessor, boolean hasPathMatchSupplier, boolean hasPatterns) {
         assertEquals(hasFileProcessor, scm.fileProcessor().hasNext(), () -> scm.name() + " FileProcessor state wrong.");
-        assertEquals(hasPathMatchSupplier, scm.hasDocumentNameMatchSupplier(), () -> scm.name() + " PathMatcherSupplier state wrong.");
+        assertEquals(hasPathMatchSupplier, scm.hasStaticDocumentNameMatcher(), () -> scm.name() + " PathMatcherSupplier state wrong.");
         assertEquals(hasPatterns, !scm.patterns().isEmpty(), () -> scm.name() + " patterns state wrong.");
     }
 

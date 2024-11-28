@@ -37,7 +37,7 @@ import org.apache.rat.document.DocumentName;
  * A FileProcessor that assumes the files contain the already formatted strings and just need to be
  * localized for the fileName.
  */
-public class DescendingFileProcessor implements FileProcessor {
+public class DescendingFileProcessor extends FileProcessor {
     /** The name of the file being processed */
     private final String fileName;
     /** The predicate that will return {@code false} for any comment line in the file. */
@@ -58,7 +58,9 @@ public class DescendingFileProcessor implements FileProcessor {
      * @param commentPrefixes a collection of comment prefixes.
      */
     public DescendingFileProcessor(final String fileName, final Iterable<String> commentPrefixes) {
+        super();
         this.fileName = fileName;
+        // null prefixes = check prefix may not be blank.
         this.commentFilter = commentPrefixes == null ? StringUtils::isNotBlank : ExclusionUtils.commentFilter(commentPrefixes);
     }
 
@@ -76,10 +78,9 @@ public class DescendingFileProcessor implements FileProcessor {
      */
     protected List<String> process(final DocumentName documentName) {
         return ExclusionUtils.asIterator(new File(documentName.getName()), commentFilter)
-                .map(entry -> modifyEntry(documentName, entry))
+                .map(entry -> this.modifyEntry(documentName, entry))
                 .filter(Objects::nonNull)
-                .map(entry -> FileProcessor.localizePattern(documentName, entry))
-                .map(DocumentName::getName)
+                .map(entry -> this.localizePattern(documentName, entry))
                 .addTo(new ArrayList<>());
     }
 
@@ -101,14 +102,14 @@ public class DescendingFileProcessor implements FileProcessor {
      * @param fileFilter the filter to detect processable files with.
      * @return the list of fully qualified file patterns.
      */
-    private List<String> checkDirectory(final DocumentName directory, final FileFilter fileFilter) {
+    protected List<String> checkDirectory(final DocumentName directory, final FileFilter fileFilter) {
         List<String> fileNames = new ArrayList<>();
         File dirFile = new File(directory.getName());
         for (File f : listFiles(dirFile, fileFilter)) {
-            fileNames.addAll(process(new DocumentName(f, directory)));
+            fileNames.addAll(process(DocumentName.builder(f).setBaseName(directory.getBaseName()).build()));
         }
         for (File dir : listFiles(dirFile, DirectoryFileFilter.DIRECTORY)) {
-            fileNames.addAll(checkDirectory(new DocumentName(dir), fileFilter));
+            fileNames.addAll(checkDirectory(DocumentName.builder(dir).build(), fileFilter));
         }
         return fileNames;
     }

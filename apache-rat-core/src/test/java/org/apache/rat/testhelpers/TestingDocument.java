@@ -40,17 +40,17 @@ public class TestingDocument extends Document {
     }
 
     public TestingDocument(DocumentName documentName) {
-        super(documentName, p -> true);
+        super(documentName, DocumentNameMatcher.MATCHES_ALL);
         this.reader = null;
     }
 
     public TestingDocument(String name, DocumentNameMatcher matcher) {
-        super(new DocumentName(name, "", "/", true), matcher);
+        super(DocumentName.builder().setName(name).setBaseName("").setDirSeparator("/").setCaseSensitive(true).build(), matcher);
         this.reader = null;
     }
 
     public TestingDocument(Reader reader, String name) {
-        super(new DocumentName(name, ".", "/", true), p -> true);
+        super(DocumentName.builder().setName(name).setBaseName("").setDirSeparator("/").setCaseSensitive(true).build(), DocumentNameMatcher.MATCHES_ALL);
         this.reader = reader;
     }
 

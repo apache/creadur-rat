@@ -73,7 +73,7 @@ public class XmlReportFactoryTest {
         final ReportConfiguration configuration = new ReportConfiguration();
         final TestingLicense testingLicense = new TestingLicense("TEST", new TestingMatcher(true), family);
         configuration.setFrom(Defaults.builder().build());
-        DocumentName documentName = new DocumentName(elementsDir);
+        DocumentName documentName = DocumentName.builder(elementsDir).build();
         DirectoryWalker directory = new DirectoryWalker(new FileDocument(documentName, elementsDir,
                 configuration.getNameMatcher(documentName)));
         final ClaimStatistic statistic = new ClaimStatistic();

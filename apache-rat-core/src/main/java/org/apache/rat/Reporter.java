@@ -85,14 +85,14 @@ public class Reporter {
     public ClaimStatistic execute() throws RatException  {
         if (document == null || statistic == null) {
             try {
-                if (configuration.getReportable() != null) {
+                if (configuration.hasSource()) {
                     ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
                     Writer outputWriter = new OutputStreamWriter(outputStream, StandardCharsets.UTF_8);
                     try (IXmlWriter writer = new XmlWriter(outputWriter)) {
                         statistic = new ClaimStatistic();
                         RatReport report = XmlReportFactory.createStandardReport(writer, statistic, configuration);
                         report.startReport();
-                        configuration.getReportable().run(report);
+                        configuration.getSources().build().run(report);
                         report.endReport();
 
                         InputStream inputStream = new ByteArrayInputStream(outputStream.toByteArray());
@@ -157,6 +157,7 @@ public class Reporter {
     /**
      * Lists the licenses on the configured output stream.
      * @param configuration The configuration for the system
+     * @param filter the license filter that specifies which licenses to output.
      * @throws IOException if PrintWriter can not be retrieved from configuration.
      */
     public static void listLicenses(final ReportConfiguration configuration, final LicenseFilter filter) throws IOException {
@@ -175,7 +176,7 @@ public class Reporter {
      * @throws IOException on error.
      */
     public void writeSummary(final Appendable appendable) throws IOException {
-        appendable.append("Rat summary:").append(System.lineSeparator());
+        appendable.append("RAT summary:").append(System.lineSeparator());
         for (ClaimStatistic.Counter counter : ClaimStatistic.Counter.values()) {
             appendable.append("  ").append(counter.displayName()).append(":  ")
                     .append(Integer.toString(getClaimsStatistic().getCounter(counter)))

@@ -233,7 +233,7 @@ public class Report extends BaseAntTask {
     /**
      * Removes a family category to the list of approved licenses.
      * @param familyCategory the category to add.
-     * @deprecated use removeApprovedLicense child element}
+     * @deprecated use removeApprovedLicense child element
      */
     @Deprecated
     public void setRemoveApprovedLicense(final String familyCategory) {
@@ -358,8 +358,8 @@ public class Report extends BaseAntTask {
             if (getValues(Arg.OUTPUT_FILE).isEmpty()) {
                 configuration.setOut(() -> new LogOutputStream(this, Project.MSG_INFO));
             }
-            DocumentName name = new DocumentName(getProject().getBaseDir());
-            configuration.setReportable(new ResourceCollectionContainer(name, configuration, nestedResources));
+            DocumentName name = DocumentName.builder(getProject().getBaseDir()).build();
+            configuration.addSource(new ResourceCollectionContainer(name, configuration, nestedResources));
             configuration.addApprovedLicenseCategories(deprecatedConfig.approvedLicenseCategories);
             configuration.removeApprovedLicenseCategories(deprecatedConfig.removedLicenseCategories);
             if (deprecatedConfig.inputFileFilter != null) {

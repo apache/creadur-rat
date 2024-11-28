@@ -19,7 +19,6 @@
 package org.apache.rat;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.fail;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -92,11 +91,11 @@ public class ReportConfigurationTest {
     @Test
     public void testAddIncludedFilter() {
         underTest.addExcludedFilter(DirectoryFileFilter.INSTANCE);
-        DocumentNameMatcher matcher = underTest.getNameMatcher(new DocumentName(new File(File.separator)));
+        DocumentNameMatcher matcher = underTest.getNameMatcher(DocumentName.builder(new File(File.separator)).build());
         assertEquals("not(DirectoryFileFilter)", matcher.toString());
-        assertFalse(matcher.matches(new DocumentName(tempDir)));
+        assertFalse(matcher.matches(DocumentName.builder(tempDir).build()));
         File f = new File(tempDir, "foo.txt");
-        assertTrue(matcher.matches(new DocumentName(f)));
+        assertTrue(matcher.matches(DocumentName.builder(f).build()));
     }
 
     @Test
@@ -363,11 +362,11 @@ public class ReportConfigurationTest {
     }
 
     DocumentName mkDocumentName(File f) {
-        return new DocumentName(f, new DocumentName(tempDir));
+        return DocumentName.builder(f).setBaseName(tempDir).build();
     }
     @Test
     public void exclusionTest() {
-        DocumentName baseDir = new DocumentName(tempDir);
+        DocumentName baseDir = DocumentName.builder(tempDir).build();
         assertTrue(underTest.getNameMatcher(baseDir).matches(mkDocumentName(new File(tempDir,"foo"))));
         assertTrue(underTest.getNameMatcher(baseDir).matches(mkDocumentName(new File("foo"))));
 
@@ -469,12 +468,12 @@ public class ReportConfigurationTest {
 
     @Test
     public void reportableTest() {
-        assertThat(underTest.getReportable()).isNull();
+        assertThat(underTest.hasSource()).isFalse();
         IReportable reportable = mock(IReportable.class);
-        underTest.setReportable(reportable);
-        assertThat(underTest.getReportable()).isEqualTo(reportable);
-        underTest.setReportable(null);
-        assertThat(underTest.getReportable()).isNull();
+        underTest.addSource(reportable);
+        assertThat(underTest.hasSource()).isTrue();
+        Exception thrown = assertThrows(ConfigurationException.class, () -> underTest.addSource((IReportable)null));
+        assertThat(thrown.getMessage()).contains("Reportable may not be null.");
     }
 
     @Test
@@ -518,27 +517,25 @@ public class ReportConfigurationTest {
     @Test
     public void testValidate() {
         final StringBuilder sb = new StringBuilder();
-        try {
-            underTest.validate(sb::append);
-            fail("should have thrown ConfigurationException");
-        } catch (ConfigurationException e) {
-            assertThat(e.getMessage()).isEqualTo("Reportable may not be null");
-            assertThat(sb.length()).isEqualTo(0);
-        }
+        String msg = "At least one source must be specified";
+        Exception thrown = assertThrows(ConfigurationException.class,
+                () -> underTest.validate(sb::append));
+        assertThat(thrown.getMessage()).isEqualTo(msg);
+        assertThat(sb.toString()).isEqualTo(msg);
 
-        underTest.setReportable(mock(IReportable.class));
-        try {
-            underTest.validate(sb::append);
-            fail("should have thrown ConfigurationException");
-        } catch (ConfigurationException e) {
-            assertThat(e.getMessage()).isEqualTo("You must specify at least one license");
-            assertThat(sb.length()).isEqualTo(0);
-        }
 
+        sb.setLength(0);
+        msg = "You must specify at least one license";
+        underTest.addSource(mock(IReportable.class));
+        thrown = assertThrows(ConfigurationException.class,
+                () -> underTest.validate(sb::append));
+        assertThat(thrown.getMessage()).isEqualTo(msg);
+        assertThat(sb.toString()).isEqualTo(msg);
+
+        sb.setLength(0);
         underTest.addLicense(testingLicense("valid", "Validation testing license"));
-        final StringBuilder sb2 = new StringBuilder();
-        underTest.validate(sb2::append);
-        assertThat(sb2.length()).isEqualTo(0);
+        underTest.validate(sb::append);
+        assertThat(sb.length()).isEqualTo(0);
     }
     
     @Test

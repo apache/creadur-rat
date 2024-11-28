@@ -16,7 +16,6 @@
  * specific language governing permissions and limitations      *
  * under the License.                                           *
  */
-
 package org.apache.rat.commandline;
 
 import java.io.File;
@@ -29,6 +28,7 @@ import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Predicate;
 
 import org.apache.commons.cli.AlreadySelectedException;
 import org.apache.commons.cli.CommandLine;
@@ -46,6 +46,7 @@ import org.apache.rat.ReportConfiguration;
 import org.apache.rat.config.AddLicenseHeaders;
 import org.apache.rat.config.exclusion.ExclusionUtils;
 import org.apache.rat.config.exclusion.StandardCollection;
+import org.apache.rat.document.DocumentName;
 import org.apache.rat.document.DocumentNameMatcher;
 import org.apache.rat.license.LicenseSetFactory;
 import org.apache.rat.report.claim.ClaimStatistic.Counter;
@@ -225,6 +226,18 @@ public enum Arg {
 
 ////////////////// INPUT OPTIONS
     /**
+     * Reads files to test from file.
+     */
+    SOURCE(new OptionGroup()
+            .addOption(Option.builder().longOpt("input-source").hasArgs().argName("File")
+                    .desc("A file containing file names to process. " +
+                            "File names must use linux directory separator ('/') or none at all. " +
+                            "File names that do not start with '/' are relative to the directory where the " +
+                            "argument is located.")
+                    .type(File.class)
+                    .build())),
+
+    /**
      * Excludes files by expression
      */
     EXCLUDE(new OptionGroup()
@@ -335,6 +348,7 @@ public enum Arg {
      * Stop processing an input stream and declare an input file.
      */
     DIR(new OptionGroup().addOption(Option.builder().option("d").longOpt("dir").hasArg()
+                    .type(File.class)
             .desc("Used to indicate end of list when using options that take multiple arguments.").argName("DirOrArchive")
             .deprecated(DeprecatedAttributes.builder().setForRemoval(true).setSince("0.17")
                     .setDescription("Use the standard '--' to signal the end of arguments.").get()).build())),
@@ -500,6 +514,7 @@ public enum Arg {
     }
 
     /**
+     * Gets the default value for this arg.
      * @return default value of this arg.
      */
     public String defaultValue() {
@@ -531,6 +546,7 @@ public enum Arg {
 
     /**
      * Gets the full set of options.
+     * @return  the full set of options for this Arg.
      */
     public static Options getOptions() {
         Options options = new Options();
@@ -667,6 +683,12 @@ public enum Arg {
      */
     private static void processInputArgs(final ArgumentContext context) throws ConfigurationException {
         try {
+            if (SOURCE.isSelected()) {
+                File[] files = SOURCE.getParsedOptionValues(context.getCommandLine());
+                for (File f : files) {
+                    context.getConfiguration().addSource(f);
+                }
+            }
             // TODO when include/exclude processing is updated check calling methods to ensure that all specified
             // directories are handled in the list of directories.
             if (EXCLUDE.isSelected()) {
@@ -701,12 +723,12 @@ public enum Arg {
             }
             if (EXCLUDE_SIZE.isSelected()) {
                 final int maxSize = EXCLUDE_SIZE.getParsedOptionValue(context.getCommandLine());
-                DocumentNameMatcher matcher =
-                    documentName -> {
+                DocumentNameMatcher matcher = new DocumentNameMatcher(String.format("File size < %s bytes", maxSize),
+                        (Predicate<DocumentName>) documentName -> {
                         File f = new File(documentName.getName());
                         return f.isFile() && f.length() < maxSize;
-                };
-                context.getConfiguration().addExcludedMatcher(String.format("File size < %s bytes", maxSize), matcher);
+                });
+                context.getConfiguration().addExcludedMatcher(matcher);
             }
             if (INCLUDE.isSelected()) {
                 String[] includes = context.getCommandLine().getOptionValues(INCLUDE.getSelected());

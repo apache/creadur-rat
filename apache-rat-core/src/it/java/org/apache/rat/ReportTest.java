@@ -110,7 +110,10 @@ public class ReportTest {
         try {
             oldLog = DefaultLog.setInstance(fileLog);
 
-            argsList.add(new File(baseDir, "src").getAbsolutePath());
+            File src = new File(baseDir, "src");
+            if (src.isDirectory()) {
+                argsList.add(src.getAbsolutePath());
+            }
 
             File expectedMsg = new File(baseDir, "expected-message.txt");
             if (expectedMsg.exists()) {
@@ -150,10 +153,10 @@ public class ReportTest {
         }
 
         File baseDir = new File(url.getFile());
-        DocumentName docName = new DocumentName(baseDir);
+        DocumentName docName = DocumentName.builder(baseDir).build();
         AbstractFileFilter fileFilter = new NameFileFilter("commandLine.txt", docName.isCaseSensitive() ? IOCase.SENSITIVE : IOCase.INSENSITIVE);
         fileFilter = new OrFileFilter(fileFilter, DirectoryFileFilter.INSTANCE);
-        Document document = new FileDocument(docName, baseDir, DocumentNameMatcher.from(fileFilter));
+        Document document = new FileDocument(docName, baseDir, new DocumentNameMatcher(fileFilter));
         DirectoryWalker walker = new DirectoryWalker(document);
         RatReport report = new RatReport() {
             @Override

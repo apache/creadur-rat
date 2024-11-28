@@ -26,14 +26,14 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.function.Supplier;
+import java.util.function.Predicate;
 
 import org.apache.rat.config.exclusion.fileProcessors.BazaarIgnoreProcessor;
 import org.apache.rat.config.exclusion.fileProcessors.CVSFileProcessor;
 import org.apache.rat.config.exclusion.fileProcessors.GitFileProcessor;
 import org.apache.rat.config.exclusion.fileProcessors.HgIgnoreProcessor;
-import org.apache.rat.document.DocumentNameMatcherSupplier;
-import org.apache.rat.document.TraceableDocumentNameMatcher;
+import org.apache.rat.document.DocumentName;
+import org.apache.rat.document.DocumentNameMatcher;
 import org.apache.rat.utils.ExtendedIterator;
 
 /**
@@ -99,20 +99,20 @@ public enum StandardCollection {
      */
     HIDDEN_DIR("The hidden directories. Directories with names that start with '.'",
             null,
-            str -> TraceableDocumentNameMatcher.make(() -> "HIDDEN_DIR", documentName -> {
-                File f = new File(documentName.getName());
-                return f.isDirectory() && ExclusionUtils.isHidden(f);
-            }), null
+            new DocumentNameMatcher("HIDDEN_DIR", (Predicate<DocumentName>) documentName -> {
+                        File f = new File(documentName.getName());
+                        return f.isDirectory() && ExclusionUtils.isHidden(f);
+                }), null
     ),
     /**
      * The hidden files. Directories with names that start with '.'
      */
     HIDDEN_FILE("The hidden files. Directories with names that start with '.'",
             null,
-            str -> TraceableDocumentNameMatcher.make(() -> "HIDDEN_FILE", documentName -> {
-                File f = new File(documentName.getName());
-                return f.isFile() && ExclusionUtils.isHidden(f);
-            }), null
+            new DocumentNameMatcher("HIDDEN_FILE", (Predicate<DocumentName>) documentName -> {
+                    File f = new File(documentName.getName());
+                    return f.isFile() && ExclusionUtils.isHidden(f);
+                }), null
     ),
     /**
      * The files and directories created by an IDEA IDE based tool.
@@ -197,17 +197,17 @@ public enum StandardCollection {
     /** The collections of patterns to be excluded. May be empty.*/
     private final Collection<String> patterns;
     /** A document name matcher supplier to create a document name matcher. May be null */
-    private final DocumentNameMatcherSupplier documentNameMatcherSupplier;
+    private final DocumentNameMatcher staticDocumentNameMatcher;
     /** The FileProcessor to process the exclude file associated with this exclusion. May be null. */
     private final FileProcessor fileProcessor;
     /** The description of this collection */
     private final String desc;
 
-    StandardCollection(final String desc, final Collection<String> patterns, final DocumentNameMatcherSupplier matcherSupplier,
+    StandardCollection(final String desc, final Collection<String> patterns, final DocumentNameMatcher documentNameMatcher,
                        final FileProcessor fileProcessor) {
         this.desc = desc;
         this.patterns = patterns == null ? Collections.emptyList() : new HashSet<>(patterns);
-        this.documentNameMatcherSupplier = matcherSupplier;
+        this.staticDocumentNameMatcher = documentNameMatcher;
         this.fileProcessor = fileProcessor;
     }
 
@@ -218,6 +218,11 @@ public enum StandardCollection {
         return desc;
     }
 
+    /**
+     * Handles aggregate StandardCollections (e.g. ALL) by generating the set of StandardCollection objects that
+     * comprise this StandardCollection.
+     * @return the set of StandardCollection objects that comprise this StandardCollection.
+     */
     private Set<StandardCollection> getCollections() {
         Set<StandardCollection> result = new HashSet<>();
         switch (this) {
@@ -243,6 +248,7 @@ public enum StandardCollection {
     }
 
     /**
+     * Returns combined and deduped collection of patterns.
      * @return the combined and deduped collection of patterns in the given collection.
      */
     public Set<String> patterns() {
@@ -271,12 +277,12 @@ public enum StandardCollection {
      *
      * @return the documentNameMatchSupplier if it exists, {@code null} otherwise.
      */
-    public DocumentNameMatcherSupplier documentNameMatcherSupplier() {
+    public DocumentNameMatcher staticDocumentNameMatcher() {
         // account for cases where this has more than one supplier.
-        List<DocumentNameMatcherSupplier> lst = new ArrayList<>();
+        List<DocumentNameMatcher> lst = new ArrayList<>();
         for (StandardCollection sc : getCollections()) {
-            if (sc.documentNameMatcherSupplier != null) {
-                lst.add(sc.documentNameMatcherSupplier);
+            if (sc.staticDocumentNameMatcher != null) {
+                lst.add(sc.staticDocumentNameMatcher);
             }
         }
         if (lst.isEmpty()) {
@@ -285,17 +291,8 @@ public enum StandardCollection {
         if (lst.size() == 1) {
             return lst.get(0);
         }
-        Supplier<String> nameSupplier = () -> String.join(", ", ExtendedIterator.create(getCollections().iterator())
-                .map(StandardCollection::name).addTo(new ArrayList<>()));
 
-        return dirName -> TraceableDocumentNameMatcher.make(nameSupplier, documentName -> {
-            for (DocumentNameMatcherSupplier supplier : lst) {
-                if (supplier.get(dirName).matches(documentName)) {
-                    return true;
-                }
-            }
-            return false;
-        });
+        return new DocumentNameMatcher(name() + " static DocumentNameMatchers",  DocumentNameMatcher.or(lst));
     }
 
     /**
@@ -303,10 +300,10 @@ public enum StandardCollection {
      *
      * @return {@code true} if the collections has a document name match supplier.
      */
-    public boolean hasDocumentNameMatchSupplier() {
+    public boolean hasStaticDocumentNameMatcher() {
         // account for cases where this has more than one supplier.
         for (StandardCollection sc : getCollections()) {
-            if (sc.documentNameMatcherSupplier != null) {
+            if (sc.staticDocumentNameMatcher != null) {
                 return true;
             }
         }
