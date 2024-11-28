@@ -34,6 +34,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -478,17 +479,17 @@ public class ReportConfigurationTest {
     @Test
     public void stylesheetTest() throws IOException, URISyntaxException {
         URL url = this.getClass().getResource("ReportConfigurationTestFile");
+        assertThat(url).isNotNull();
 
         assertThat(underTest.getStyleSheet()).isNull();
         InputStream stream = mock(InputStream.class);
         underTest.setStyleSheet(() -> stream);
         assertThat(underTest.getStyleSheet().get()).isEqualTo(stream);
-        IOSupplier<InputStream> sup = null;
-        underTest.setStyleSheet(sup);
-        assertThat(underTest.getStyleSheet()).isNull();
-        
+
         File file = mock(File.class);
-        when(file.toURI()).thenReturn(url.toURI());
+        URI asUri = url.toURI();
+        assertThat(asUri).isNotNull();
+        when(file.toURI()).thenReturn(asUri);
         underTest.setStyleSheet(file);
         BufferedReader d = new BufferedReader(new InputStreamReader(underTest.getStyleSheet().get()));
         assertThat(d.readLine()).isEqualTo("/*");
@@ -670,8 +671,8 @@ public class ReportConfigurationTest {
      * @param config The configuration to test.
      */
     public static void validateDefaultApprovedLicenses(ReportConfiguration config, int additionalIdCount) {
-        assertThat(config.getLicenseCategories(LicenseFilter.APPROVED)).hasSize(XMLConfigurationReaderTest.EXPECTED_IDS.length + additionalIdCount);
-        for (String s : XMLConfigurationReaderTest.EXPECTED_IDS) {
+        assertThat(config.getLicenseCategories(LicenseFilter.APPROVED)).hasSize(XMLConfigurationReaderTest.APPROVED_IDS.length + additionalIdCount);
+        for (String s : XMLConfigurationReaderTest.APPROVED_IDS) {
             assertThat(config.getLicenseCategories(LicenseFilter.APPROVED)).contains(ILicenseFamily.makeCategory(s));
         }
     }

@@ -1,0 +1,705 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rat-config>
+	<!--
+	can not find
+		"FSF autoconf license"
+		"OOXML XSD ECMA License"
+		"CERN COLT"
+	-->
+	<families>
+		<family id="ASF" name="Apache Software Foundation License" />
+		<family id="PHP" name="PHP License family" />
+		<family id="MX4J" name="MX4J License family" />
+		<family id='BSD' name="BSD License family" />
+		<family id="DOM4J" name="DOM4J License family" />
+		<family id="PGSQL" name="PostgreSQL License family" />
+		<family id="MIT" name="MIT License family" />
+		<family id="ISC" name="ISC License family" />
+		<family id="SMLNJ" name="Standard ML of New Jersey License family" />
+		<family id="CUPPG" name="CUP Parser Generator License family" />
+		<family id="ICU" name="ICU License family" />
+		<family id="NCSA" name="NCSA License family" />
+		<family id="W3C" name="W3C License family" />
+		<family id="XNET" name="X.Net License family" />
+		<family id="ZLIB" name="ZLib License family" />
+		<family id="djvue" name="Dejavu-fonts License family" />
+		<family id="AFL" name="Academic Free License family" />
+		<family id="OSOA" name="OSOA License family" />
+		<family id="MSPL" name="Microsoft Public License family" />
+		<family id="CC" name="Creative Commons License family" />
+		<family id="PSF" name="Python License family" />
+		<family id="Adobe" name="Adobe License family" />
+		<family id="BSL" name="Boost Software License family" />
+		<family id="UKOGL" name="UK Open Government License family" />
+		<family id="WTF" name="WTF Public License family" />
+
+
+
+
+		<family id="CDDL1"
+			name="COMMON DEVELOPMENT AND DISTRIBUTION LICENSE Version 1.0" />
+		<family id="GEN" name="Generated Files" />
+		<family id="GPL1" name="GNU General Public License, version 1" />
+		<family id="GPL2" name="GNU General Public License, version 2" />
+		<family id="GPL3" name="GNU General Public License, version 3" />
+		<family id="MIT" name="The MIT License" />
+		<family id="OASIS" name="OASIS Open License" />
+		<family id="W3C" name="W3C Software Copyright" />
+		<family id="W3CD" name="W3C Document Copyright" />
+		<family id='BSD-3' name="BSD 3 clause" />
+	</families>
+	<licenses>
+		<license family="ASF" name="Apache License 1.0">
+			<any>
+				<text>Apache Group for use in the Apache HTTP server project (http://www.apache.org/)</text>
+				<spdx name='Apache-1.0' />
+				<copyright owner="The Apache Group" start="1995" end="1999" />
+			</any>
+		</license>
+		<license family="ASF" name="Apache License 1.1">
+			<any>
+				<text>http://apache.org/licenses/LICENSE-1.1</text>
+				<text>The Apache Software License, Version 1.1</text>
+				<spdx name='Apache-1.1' />
+				<copyright owner="The Apache Foundation" start="2000" />
+			</any>
+		</license>
+		<license family="ASF" name="Apache License 2.0">
+			<any>
+				<text>Licensed under the Apache License, Version 2.0 (the
+					"License")</text>
+				<text>Licensed to the Apache Software Foundation (ASF) under
+					one or more contributor license agreements; and to You under
+					the Apache License, Version 2.0.</text>
+				<text>http://www.apache.org/licenses/LICENSE-2.0</text>
+				<text>https://www.apache.org/licenses/LICENSE-2.0</text>
+				<text>http://www.apache.org/licenses/LICENSE-2.0.html</text>
+				<text>https://www.apache.org/licenses/LICENSE-2.0.html</text>
+				<text>http://www.apache.org/licenses/LICENSE-2.0.txt</text>
+				<text>https://www.apache.org/licenses/LICENSE-2.0.txt</text>
+				<spdx name='Apache-2.0' />
+				<text>Licensed under the Apache License, Version 2.0 (the "License");
+					you may not use this file except in compliance with the License.
+					You may obtain a copy of the License at
+
+					http://www.apache.org/licenses/LICENSE-2.0
+
+					Unless required by applicable law or agreed to in writing, software
+					distributed under the License is distributed on an "AS IS" BASIS,
+					WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+					See the License for the specific language governing permissions and
+					limitations under the License. </text>
+			</any>
+		</license>
+
+		<license family="PHP" name="PHP License 3.01">
+			<any>
+				<spdx name="PHP-3.01"/>
+				<text>http://www.php.net/license/3_01.txt</text>
+				<text>This product includes PHP software, freely available from http://www.php.net/software/</text>
+				<copyright owner="The PHP Group" start="1999" end="2012"/>
+			</any>
+		</license>
+
+		<license family="MX4J" name="MX4J License 1.0">
+			<any>
+				<text>The MX4J License, Version 1.0</text>
+				<text>http://mx4j.sourceforge.net</text>
+				<text>This product includes software developed by the MX4J project</text>
+				<copyright owner="by the MX4J contributors" start="2001" end="2004"/>
+			</any>
+		</license>
+
+		<license family="BSD" name="2-Clause BSD License">
+			<any>
+				<spdx name="BSD-2-Clause"/>
+				<text>Simplified BSD License</text>
+				<text>FreeBSD License</text>
+				<text>https://opensource.org/licenses/BSD-2-Clause</text>
+			</any>
+		</license>
+
+		<license family="BSD" name="3-Clause BSD License">
+			<any>
+				<spdx name="BSD-3-Clause"/>
+				<text>https://opensource.org/licenses/BSD-3-Clause</text>
+				<text>New BSD License</text>
+				<text>Modified BSD License</text>
+			</any>
+		</license>
+
+		<license family="DOM4J" name="DOM4J License">
+			<any>
+				<copyright owner="MetaStuf, Ltd" start="2001" />
+				<text>https://dom4j.github.io/</text>
+			</any>
+		</license>
+
+		<license family="PGSQL" name="PostgreSQL License">
+			<any>
+				<spdx name="PostgreSQL"/>
+				<copyright owner="MetaStuf, Ltd" start="2001" />
+				<text>http://www.postgresql.org/about/licence</text>
+				<text>https://opensource.org/licenses/PostgreSQL</text>
+				<text>PostgreSQL Database Management System</text>
+				<copyright owner="The PostgreSQL Global Development Group" start="1996" />
+				<copyright owner="The Regents of the University of California" start="1994" />
+			</any>
+		</license>
+
+		<license family="BSD" name="Eclipse Distribution License 1.0">
+			<any>
+				<text>https://www.eclipse.org/org/documents/edl-v10.php</text>
+				<copyright owner="Eclipse Foundation, Inc." start="2007" />
+			</any>
+		</license>
+
+		<license family="BSD" name="Lawrence Berkeley National Labs BSD variant license">
+			<any>
+				<spdx name="BSD-3-Clause-LBNL" />
+				<text>https://fedoraproject.org/wiki/Licensing/LBNLBSD</text>
+				<copyright owner="The Regents of the University of California, through Lawrence Berkeley National Laboratory" start="2003" />
+			</any>
+		</license>
+
+		<license family="MIT" name="MIT License">
+			<any>
+				<spdx name="MIT" />
+				<text>https://opensource.org/license/mit/</text>
+				<text>MIT License</text>
+			</any>
+		</license>
+
+		<license family="ISC" name="ISC License">
+			<any>
+				<spdx name="ISC" />
+				<text>https://en.wikipedia.org/wiki/ISC_license</text>
+				<text>https://www.isc.org/downloads/software-support-policy/isc-license/</text>
+				<text>https://opensource.org/licenses/ISC</text>
+				<text>ISC License</text>
+			</any>
+		</license>
+
+		<license family="SMLNJ" name="Standard ML of New Jersey License">
+			<any>
+				<spdx name="SMLNJ" />
+				<text>https://www.smlnj.org/license.html</text>
+				<text>STANDARD ML OF NEW JERSEY COPYRIGHT NOTICE, LICENSE AND DISCLAIMER.</text>
+				<copyright owner="The Fellowship of SML/NJ" start="2001" />
+				<copyright owner="Lucent Technologies" start="1989" end="2001" />
+				<text>Standard ML of New Jersey License</text>
+			</any>
+		</license>
+
+		<license family="CUPPG" name="CUP Parser Generator License">
+			<any>
+				<text>http://www2.cs.tum.edu/projects/cup/licence.php</text>
+				<text>CUP Parser Generator Copyright Notice, License, and Disclaimer</text>
+				<text>CUP Parser Generator License</text>
+				<text>LALR Parser Generator License</text>
+				<copyright owner="Scott Hudson, Frank Flannery, C. Scott Ananian, Michael Petter" start="1996" />
+			</any>
+		</license>
+
+		<license family="MIT" name="MIT Not Attribution">
+			<any>
+				<spdx name="MIT-0" />
+				<text>https://opensource.org/license/mit-0</text>
+				<text>https://github.com/aws/mit-0</text>
+				<text>https://romanrm.net/mit-zero</text>
+				<text>https://github.com/awsdocs/aws-cloud9-user-guide/blob/master/LICENSE-SAMPLECODE</text>
+				<text>MIT No Attribution</text>
+			</any>
+		</license>
+
+		<license family="ICU" name="ICU License">
+			<any>
+				<spdx name="ICU" />
+				<text>ICU License</text>
+			</any>
+		</license>
+
+		<license family="NCSA" name="The University of Illinois/NCSA Open Source License">
+			<any>
+				<spdx name="NCSA" />
+				<text>http://otm.illinois.edu/uiuc_openSource</text>
+				<text>https://opensource.org/licenses/NCSA</text>
+				<text>The University of Illinois/NCSA Open Source License</text>
+				<text>The University of IllinoisOpen Source License</text>
+				<text>The NCSA Open Source License</text>
+			</any>
+		</license>
+
+		<license family="W3C" name="W3C Software Notice and Document License (2015-05-13)">
+			<any>
+				<spdx name="W3C-20150513" />
+				<text>https://www.w3.org/Consortium/Legal/2015/copyright-software-and-document</text>
+				<text>https://www.w3.org/copyright/software-license-2015/</text>
+				<text>https://www.w3.org/copyright/software-license-2023/</text>
+				<or>
+					<copyright owner="W3C" />
+					<copyright owner="W3C®" />
+				</or>
+				<text>World Wide Web Consortium, (Massachusetts Institute of Technology, European Research Consortium
+					for Informatics and Mathematics, Keio University, Beihang). All Rights Reserved. This work is
+					distributed under the W3C® Software License [1] in the hope that it will be useful,
+					but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+					PARTICULAR PURPOSE. [1] http://www.w3.org/Consortium/Legal/copyright-software</text>
+			</any>
+		</license>
+
+		<license family="W3C" name="W3C Community Contributor License Agreement (CLA)">
+			<text>W3C Community Contributor License Agreement</text>
+		</license>
+
+		<license family="XNET" name="The X.Net License">
+			<any>
+				<spdx name="Xnet" />
+				<text>https://opensource.org/license/xnet</text>
+				<text>https://spdx.org/licenses/Xnet.html</text>
+				<copyright owner="X.Net, Inc" start="2000" />
+				<text>The X.Net, Inc. License</text>
+			</any>
+		</license>
+
+		<license family="ZLIB" name="The zlib License">
+			<any>
+				<spdx name="Zlib" />
+				<text>http://www.zlib.net/zlib_license.html</text>
+				<text>https://opensource.org/licenses/Zlib</text>
+				<text>zlib License</text>
+			</any>
+		</license>
+
+
+		<license family="djvue" name="Bitstream Vera Font License">
+			<any>
+				<spdx name="Bitstream-Vera" />
+				<text>http://www.gnome.org/fonts/</text>
+				<text>https://docubrain.com/sites/default/files/licenses/bitstream-vera.html</text>
+				<text>Bitstream Vera</text>
+				<copyright owner="Bitstream, Inc. All Rights Reserved. Bitstream Vera is a trademark of Bitstream, Inc." start="2003"/>
+			</any>
+		</license>
+
+		<license family="djvue" name="Arev Fonts">
+			<any>
+				<spdx name="Bitstream-Vera" />
+				<text>http://www.gnome.org/fonts/</text>
+				<text>https://docubrain.com/sites/default/files/licenses/bitstream-vera.html</text>
+				<text>Modifications to the Bitstream Vera fonts</text>
+				<copyright owner="Tavmjong Bah" start="2006" />
+			</any>
+		</license>
+
+		<license family="AFL" name="Academic Free License v1.1">
+			<any>
+				<spdx name="AFL-1.1" />
+				<text>Licensed under the Academic Free License version 1.1</text>
+			</any>
+		</license>
+
+		<license family="AFL" name="Academic Free License v1.2">
+			<any>
+				<spdx name="AFL-1.2" />
+				<text>Licensed under the Academic Free License version 1.2</text>
+			</any>
+		</license>
+
+		<license family="AFL" name="Academic Free License v2.0">
+			<any>
+				<spdx name="AFL-2.0" />
+				<text>Licensed under the Academic Free License version 2.0</text>
+			</any>
+		</license>
+
+		<license family="AFL" name="Academic Free License v2.1">
+			<any>
+				<spdx name="AFL-2.1" />
+				<text>Licensed under the Academic Free License version 2.1</text>
+			</any>
+		</license>
+
+		<license family="AFL" name="Academic Free License v3.0">
+			<any>
+				<spdx name="AFL-3.0" />
+				<text>Licensed under the Academic Free License version 3.0</text>
+			</any>
+		</license>
+
+		<license family="OSOA" name="License for the Service Component Architecture JavaDoc, Interface
+Definition files and XSD files">
+			<any>
+				<text>License for the Service Component Architecture JavaDoc, Interface
+					Definition files and XSD files</text>
+				<text>http://www.osoa.org/display/Main/Service+Component+Architecture+Specifications</text>
+			</any>
+		</license>
+
+		<license family="MSPL" name="Microsoft Public License">
+			<any>
+				<spdx name="MS-PL" />
+				<text>Microsoft Public License</text>
+			</any>
+		</license>
+
+		<license family="CC" name="Creative Commons Zero v1.0 Universal">
+			<any>
+				<spdx name="CC0-1.0" />
+				<text>https://creativecommons.org/publicdomain/zero/1.0/</text>
+				<text>CC0 1.0 Universal</text>
+			</any>
+		</license>
+
+		<license family="CC" name="Creative Commons Copyright-Only Dedication">
+			<any>
+				<text>https://creativecommons.org/publicdomain/certification/1.0/us/</text>
+			</any>
+		</license>
+
+		<license family="CC" name="Creative Commons Public Domain Dedication and Certification">
+			<any>
+				<spdx name="CC-PDDC" />
+				<text>https://creativecommons.org/licenses/publicdomain/</text>
+				<text>Creative Commons Public Domain Dedication and Certification</text>
+			</any>
+		</license>
+
+
+		<license family="PSF" name="Python Software Foundation License 2.0">
+			<any>
+				<spdx name="PSF-2.0" />
+				<text>https://opensource.org/licenses/Python-2.0</text>
+				<text>Python Software Foundation License 2.0</text>
+				<copyright owner="Python Software Foundation" />
+			</any>
+		</license>
+
+		<license family="MIT" name="The Python Imaging Library">
+			<any>
+				<text>https://opensource.org/licenses/Python-2.0</text>
+				<text>The Python Imaging Library</text>
+				<copyright owner="Secret Labs AB" start="1997" stop="2011"/>
+				<copyright owner="Fredrik Lundh and contributors" start="1995" stop="2011"/>
+				<copyright owner="Jeffrey A. Clark and contributors" start="2010"/>
+			</any>
+		</license>
+
+		<license family="MIT" name="CMU License">
+			<any>
+				<spdx name="MIT-CMU" />
+				<text>https://fedoraproject.org/wiki/Licensing:MIT?rd=Licensing/MIT#CMU_Style</text>
+				<text>https://github.com/python-pillow/Pillow/blob/fffb426092c8db24a5f4b6df243a8a3c01fb63cd/LICENSE</text>
+				<text>CMU License</text>
+			</any>
+		</license>
+
+		<license family="Adobe" name="Adobe Postscript AFM License">
+			<any>
+				<spdx name="APAFML" />
+				<text>https://fedoraproject.org/wiki/Licensing/AdobePostscriptAFM</text>
+				<text>Adobe Postscript AFM License</text>
+				<copyright owner="Adobe Systems Incorporated." />
+				<text>This file and the 14 PostScript(R) AFM files it accompanies may be used, copied, and distributed
+					for any purpose and without charge, with or without modification, provided that all copyright notices
+					are retained; that the AFM files are not distributed without this file; that all modifications to this
+					file or any of the AFM files are prominently noted in the modified file(s); and that this paragraph is
+					not modified. Adobe Systems has no responsibility or obligation to support the use of the AFM files.</text>
+			</any>
+		</license>
+
+		<license family="Adobe" name="Adobe Postscript AFM License">
+			<any>
+				<spdx name="BSL-1.0" />
+				<text>https://fedoraproject.org/wiki/Licensing/AdobePostscriptAFM</text>
+				<text>Adobe Postscript AFM License</text>
+				<copyright owner="Adobe Systems Incorporated." />
+				<text>This file and the 14 PostScript(R) AFM files it accompanies may be used, copied, and distributed
+					for any purpose and without charge, with or without modification, provided that all copyright notices
+					are retained; that the AFM files are not distributed without this file; that all modifications to this
+					file or any of the AFM files are prominently noted in the modified file(s); and that this paragraph is
+					not modified. Adobe Systems has no responsibility or obligation to support the use of the AFM files.</text>
+			</any>
+		</license>
+
+		<license family="BSL" name="Boost Software License 1.0">
+			<any>
+				<spdx name="BSL-1.0" />
+				<text>http://www.boost.org/LICENSE_1_0.txt</text>
+				<text>https://opensource.org/licenses/BSL-1.0</text>
+				<text>Boost Software License - Version 1.0</text>
+				<text>Boost Software License</text>
+			</any>
+		</license>
+
+		<license family="UKOGL" name="Open Government Licence v1.0">
+			<any>
+				<spdx name="OGL-UK-1.0" />
+				<text>http://www.nationalarchives.gov.uk/doc/open-government-licence/version/1/</text>
+				<text>Open Government Licence v1.0</text>
+				<text>Contains public sector information licensed under the Open Government Licence v1.0</text>
+			</any>
+		</license>
+
+		<license family="UKOGL" name="Open Government Licence v2.0">
+			<any>
+				<spdx name="OGL-UK-2.0" />
+				<text>http://www.nationalarchives.gov.uk/doc/open-government-licence/version/2/</text>
+				<text>Open Government Licence v2.0</text>
+				<text>Contains public sector information licensed under the Open Government Licence v2.0</text>
+			</any>
+		</license>
+
+		<license family="UKOGL" name="Open Government Licence v3.0">
+			<any>
+				<spdx name="OGL-UK-3.0" />
+				<text>http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/</text>
+				<text>Open Government Licence v3.0</text>
+				<text>Contains public sector information licensed under the Open Government Licence v3.0</text>
+			</any>
+		</license>
+
+		<license family="WTF" name="Do What The F*ck You Want To Public License V2" >
+			<any>
+				<spdx name="WTFPL" />
+				<text>http://www.wtfpl.net/about/</text>
+				<text>http://sam.zoy.org/wtfpl/COPYING</text>
+				<copyright start="2004" owner="Sam Hocevar" />
+				<text>DO WHAT THE FUCK YOU WANT TO PUBLIC LICENSE</text>
+				<text>You just DO WHAT THE FUCK YOU WANT TO</text>
+			</any>
+		</license>
+
+		<license family="WTF" name="The Romantic WTF public license" >
+			<text>The Romantic WTF public license</text>
+		</license>
+
+
+
+
+
+
+
+
+
+
+
+
+
+		<license family="CDDL1">
+			<any>
+				<text>The contents of this file are subject to the terms of the
+					Common Development and Distribution License("CDDL") (the
+					"License"). You may not use this file except in compliance
+					with the License.</text>
+				<spdx name='CDDL-1.0' />
+			</any>
+		</license>
+
+		<license family="CDDL1" id="ILLUMOS" name="ILLUMOS CDDL1 Derived license">
+			<note>Modified CDDL1 license</note>
+			<text>The contents of this file are subject to the terms of
+					the Common Development and Distribution License (the
+					"License") You may not use this file except in compliance
+					with the License. </text>
+		</license>
+
+		<license family="BSD-3" id="DOJO" name="DOJO License">
+			<text>http://dojotoolkit.org/community/licensing.shtml</text>
+		</license>
+
+		<license family="GEN">
+			<note>
+				Files that are automatically generated.</note>
+			<any resource="/org/apache/rat/generation-keywords.txt" />
+		</license>
+
+		<license family="GPL1">
+			<any>
+				<text>This program is free software; you can redistribute it
+					and/or modify
+					it under the terms of the GNU
+					General Public License as published by the Free Software
+					Foundation; either version 1, or (at your option) any
+					later
+					version.</text>
+
+				<spdx name='GPL-1.0-only' />
+			</any>
+		</license>
+
+		<license family="GPL2">
+			<any>
+				<text>This program is free software; you can
+					redistribute it and/or modify it under the terms of the
+					GNU
+					General Public License as published by the Free Software
+					Foundation; either version 2 of the License, or (at your
+					option) any later version.</text>
+				<spdx
+					name='GPL-2.0-only' />
+			</any>
+		</license>
+
+		<license family="GPL3">
+			<any>
+				<text>This program is free software: you can
+					redistribute it and/or modify it under the terms of the
+					GNU
+					General Public License as published by the Free Software
+					Foundation, either version 3 of the License, or (at your
+					option) any later version.</text>
+				<spdx
+					name='GPL-3.0-only' />
+			</any>
+		</license>
+
+		<license family="MIT">
+			<any>
+				<text>Permission is hereby granted, free of charge, to
+					any person obtaining a copy of this software and associated
+					documentation files (the \"Software\"), to deal in the
+					Software
+					without restriction, including without limitation the rights
+					to
+					use, copy, modify, merge, publish, distribute, sublicense,
+					and/or sell copies of the Software, and to permit persons to
+					whom the Software is furnished to do so, subject to the
+					following conditions: The above copyright notice and this
+					permission notice shall be included in all copies or
+					substantial
+					portions of the Software. THE SOFTWARE IS PROVIDED "AS IS",
+					WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING
+					BUT
+					NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
+					FOR A
+					PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
+					THE
+					AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+					DAMAGES OR
+					OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+					OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+					SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.</text>
+				<spdx
+					name='MIT' />
+			</any>
+		</license>
+
+		<license family="OASIS">
+			<note>No modifications allowed</note>
+			<all>
+				<text>This document and translations of it may be
+					copied and furnished to others and derivative works that
+					comment
+					on or otherwise explain it or assist in its implementation
+					may
+					be prepared copied published and distributed</text>
+				<copyright
+					owner="OASIS Open"/>
+			</all>
+		</license>
+
+		<license family="BSD-3" id="TMF" name="The Telemanagement Forum License">
+			<all>
+				<text>TMF854 Version 1.0</text>
+				<copyright
+					owner="TeleManagement Forum" />
+				<any>	
+				<matcherRef refId="BSD-3-txt" />
+				<spdx name='BSD-3-Clause' />
+				</any>
+			</all>
+		</license>
+
+		<license family="W3C">
+			<note>Note that W3C requires a NOTICE.</note>
+			<note>All modifications require notes.</note>
+			<note>
+				See
+				http://www.w3.org/Consortium/Legal/2002/copyright-software-20021231.</note>
+			<any>
+				<text>
+					http://www.w3.org/Consortium/Legal/2002/copyright-software-20021231</text>
+				<spdx name='W3C' />
+			</any>
+		</license>
+
+		<license family="W3CD">
+			<note>
+				Note that W3CD does not allow modifications.</note>
+			<note>
+				See
+				http://www.w3.org/Consortium/Legal/2002/copyright-documents-20021231.</note>
+			<text>
+				http://www.w3.org/Consortium/Legal/2002/copyright-documents-20021231</text>
+		</license>
+
+		<license family='BSD-3'>
+			<any>
+				<all>
+					<copyright />
+					<text id="BSD-3-txt">
+
+						Redistribution and use in source and binary forms, with
+						or without modification, are permitted provided that the
+						following conditions are met:
+
+						1. Redistributions of source code must retain the above
+						copyright notice, this list of conditions and the
+						following disclaimer.
+
+						2. Redistributions in binary form must reproduce the
+						above copyright notice, this list of conditions and the
+						following disclaimer in the documentation and/or other
+						materials provided with the distribution.
+
+						3. Neither the name of the copyright holder nor the
+						names of its contributors may be used to endorse or
+						promote products derived from this software without
+						specific prior written permission.
+
+						THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
+						CONTRIBUTORS “AS IS” AND ANY EXPRESS OR IMPLIED
+						WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+						WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
+						PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+						COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY
+						DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+						CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+						PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF
+						USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+						CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+						CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+						NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
+						USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
+						OF SUCH DAMAGE.</text>
+
+				</all>
+				<spdx name='BSD-3-Clause' />
+			</any>
+		</license>
+	</licenses>
+	<approved>
+		<family license_ref='AL' />
+		<family license_ref="BSD-3" />
+		<family license_ref='CDDL1' />
+		<family license_ref='GEN' />
+		<family license_ref='GPL1' />
+		<family license_ref='GPL2' />
+		<family license_ref='GPL3' />
+		<family license_ref='MIT' />
+		<family license_ref='OASIS' />
+		<family license_ref='W3C' />
+		<family license_ref='W3CD' />
+	</approved>
+	<matchers>
+		<matcher class="org.apache.rat.configuration.builders.AllBuilder" />
+		<matcher class="org.apache.rat.configuration.builders.AnyBuilder" />
+		<matcher class="org.apache.rat.configuration.builders.CopyrightBuilder" />
+		<matcher class="org.apache.rat.configuration.builders.MatcherRefBuilder" />
+		<matcher class="org.apache.rat.configuration.builders.NotBuilder" />
+		<matcher class="org.apache.rat.configuration.builders.RegexBuilder" />
+		<matcher class="org.apache.rat.configuration.builders.SpdxBuilder" />
+		<matcher class="org.apache.rat.configuration.builders.TextBuilder" />
+	</matchers>
+</rat-config>
