@@ -75,6 +75,9 @@ The <action> type attribute can be one of:
       <action issue="RAT-457" type="fix" dev="claudenw">
         Added core integration test to verify JAR processing works correctly.
       </action>
+      <action issue="RAT-458" type="add" dev="claudenw">
+        Added core integration test to verify log level can be set from the command line.
+      </action>
       <action issue="RAT-107" type="fix" dev="claudenw">
         Exclusions of defaults should work recursively and in submodules now. Added unit and integration tests.
       </action>
