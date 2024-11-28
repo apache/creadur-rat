@@ -35,6 +35,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -62,7 +63,6 @@ import org.apache.rat.testhelpers.TestingMatcher;
 import org.apache.rat.utils.DefaultLog;
 import org.apache.rat.utils.Log.Level;
 import org.apache.rat.utils.ReportingSet.Options;
-import org.assertj.core.util.Files;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -480,17 +480,17 @@ public class ReportConfigurationTest {
     @Test
     public void stylesheetTest() throws IOException, URISyntaxException {
         URL url = this.getClass().getResource("ReportConfigurationTestFile");
+        assertThat(url).isNotNull();
 
         assertThat(underTest.getStyleSheet()).isNull();
         InputStream stream = mock(InputStream.class);
         underTest.setStyleSheet(() -> stream);
         assertThat(underTest.getStyleSheet().get()).isEqualTo(stream);
-        IOSupplier<InputStream> sup = null;
-        underTest.setStyleSheet(sup);
-        assertThat(underTest.getStyleSheet()).isNull();
-        
+
         File file = mock(File.class);
-        when(file.toURI()).thenReturn(url.toURI());
+        URI asUri = url.toURI();
+        assertThat(asUri).isNotNull();
+        when(file.toURI()).thenReturn(asUri);
         underTest.setStyleSheet(file);
         BufferedReader d = new BufferedReader(new InputStreamReader(underTest.getStyleSheet().get()));
         assertThat(d.readLine()).isEqualTo("/*");

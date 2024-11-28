@@ -16,6 +16,7 @@
  */
 package org.apache.rat.configuration;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -58,6 +59,7 @@ public class XMLConfigurationReaderTest {
     public void approvedLicenseIdTest() throws URISyntaxException {
         XMLConfigurationReader reader = new XMLConfigurationReader();
         URL url = XMLConfigurationReaderTest.class.getResource("/org/apache/rat/default.xml");
+        assertThat(url).isNotNull();
         reader.read(url.toURI());
 
         Collection<String> readCategories = reader.approvedLicenseId();

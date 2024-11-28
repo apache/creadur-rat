@@ -37,7 +37,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 /**
- * Tests the Default policy imlementatin.
+ * Tests the Default policy implementation.
  */
 public class DefaultPolicyTest {
     /**
@@ -46,7 +46,8 @@ public class DefaultPolicyTest {
      */
     private static final int NUMBER_OF_DEFAULT_ACCEPTED_LICENSES = 8;
 
-    private static final ILicenseFamily[] APPROVED_FAMILIES = { makeFamily("AL", "Apache License Version 2.0"),
+    private static final ILicenseFamily[] APPROVED_FAMILIES = { //
+            makeFamily("AL", "Apache License Version 2.0"),
             makeFamily("BSD-3", "BSD 3 clause"),
             makeFamily("CDDL1", "COMMON DEVELOPMENT AND DISTRIBUTION LICENSE Version 1.0"),
             makeFamily("GEN", "Generated Files"),  makeFamily("MIT", "The MIT License"),
