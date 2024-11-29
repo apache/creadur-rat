@@ -40,6 +40,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.SortedSet;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -84,6 +85,12 @@ public class TikaProcessorTest {
         FileDocument doc = mkDocument("/binaries/UTF8_with_signature.xml");
         TikaProcessor.process(doc);
         assertEquals(Document.Type.STANDARD, doc.getMetaData().getDocumentType());
+    }
+
+    @Test
+    public void RAT178Test() {
+        FileDocument doc = new FileDocument(new File("/not_a_real_file"), DocumentNameMatcher.MATCHES_ALL);
+        assertThrows(RatDocumentAnalysisException.class, () ->TikaProcessor.process(doc));
     }
 
     @Test
