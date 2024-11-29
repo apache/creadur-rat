@@ -20,7 +20,6 @@ package org.apache.rat.report.claim;
 
 import java.util.Iterator;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.rat.api.Document;
 import org.apache.rat.api.MetaData;
 import org.apache.rat.api.RatException;
@@ -53,10 +52,6 @@ public class SimpleXmlClaimReporter implements RatReport {
         for (Iterator<ILicense> iter = metaData.licenses().iterator(); iter.hasNext();) {
             final ILicense license = iter.next();
             xmlElements.license(license, metaData.isApproved(license));
-        }
-        final String sample = metaData.getSampleHeader();
-        if (StringUtils.isNotBlank(sample)) {
-            xmlElements.sample(sample);
         }
         xmlElements.closeElement();
     }

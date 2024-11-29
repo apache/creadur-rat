@@ -45,8 +45,7 @@ public class MetaData {
     private MediaType mediaType;
     /** The document type for this document */
     private Document.Type documentType;
-    /** The sample of the header for this document */
-    private String sampleHeader;
+
 
     /**
      * Create metadata without a content type.
@@ -136,22 +135,6 @@ public class MetaData {
      */
     public Stream<ILicense> unapprovedLicenses() {
         return licenses().filter(lic -> !isApproved(lic));
-    }
-
-    /**
-     * Sets the sample header. This is the header that was collected during processing.
-     * @param sampleHeader the sample header to use.
-     */
-    public void setSampleHeader(final String sampleHeader) {
-        this.sampleHeader = sampleHeader;
-    }
-
-    /**
-     * Gets the sample header.
-     * @return the sample header.
-     */
-    public String getSampleHeader() {
-        return sampleHeader;
     }
 
     /**

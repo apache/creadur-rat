@@ -96,14 +96,5 @@ Archives:
    </xsl:for-each>
  </xsl:for-each>
 *****************************************************
-<xsl:if test="descendant::resource[/license/@id='?????']">
- Printing headers for text files without a valid license header...
- <xsl:for-each select='descendant::resource[/license/@id="?????"]'>
-=====================================================
-== File: <xsl:value-of select='@name'/>
-=====================================================
-<xsl:value-of select='sample'/>
-</xsl:for-each>
-</xsl:if>
 </xsl:template>
 </xsl:stylesheet>
