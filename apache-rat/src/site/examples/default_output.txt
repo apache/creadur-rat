@@ -25,32 +25,32 @@ Counters
 Licenses detected
 -----------------------------------------------------
 
-Apache License Version 2.0: 5 
-BSD 3 clause: 1 
-Generated Files: 1 
-The MIT License: 1 
-The Telemanagement Forum License: 1 
-Unknown license: 2 
+Apache License Version 2.0: 5
+BSD 3 clause: 1
+Generated Files: 1
+The MIT License: 1
+The Telemanagement Forum License: 1
+Unknown license: 2
 
 -----------------------------------------------------
 License Categories detected
 -----------------------------------------------------
 
-?????: 2 
-AL   : 5 
-BSD-3: 2 
-GEN  : 1 
-MIT  : 1 
+?????: 2
+AL   : 5
+BSD-3: 2
+GEN  : 1
+MIT  : 1
 
 -----------------------------------------------------
 Document Types detected
 -----------------------------------------------------
 
-ARCHIVE: 1 
-BINARY: 2 
-GENERATED: 1 
-NOTICE: 2 
-STANDARD: 8 
+ARCHIVE: 1
+BINARY: 2
+GENERATED: 1
+NOTICE: 2
+STANDARD: 8
 
 *****************************************************
 Files with unapproved licenses
@@ -69,9 +69,9 @@ Archives
 Detail
 *****************************************************
 
-  Documents with unapproved licenses will start with a '!'
+  The line following documents with unapproved licenses will start with a '!'
   The next character identifies the document type.
-   
+
    char         type
     A       Archive file
     B       Binary file
@@ -79,30 +79,56 @@ Detail
     N       Notice file
     S       Standard file
     U       Unknown file.
-  
 
- S /ILoggerFactory.java
+/ILoggerFactory.java
+  S         text/x-java-source    ISO-8859-1
     MIT      MIT           The MIT License
- B /Image.png
- N /LICENSE
- N /NOTICE
-!S /Source.java
+
+/Image.png
+  B         image/png
+
+/LICENSE
+  N         text/plain
+
+/NOTICE
+  N         text/plain
+
+/Source.java
+ !S         text/x-java-source    ISO-8859-1
     ?????    ?????         Unknown license (Unapproved)
- S /Text.txt
+
+/Text.txt
+  S         text/plain    ISO-8859-1
     AL       AL            Apache License Version 2.0
- S /TextHttps.txt
+
+/TextHttps.txt
+  S         text/plain    ISO-8859-1
     AL       AL            Apache License Version 2.0
- S /Xml.xml
+
+/Xml.xml
+  S         application/xml    ISO-8859-1
     AL       AL            Apache License Version 2.0
- S /buildr.rb
+
+/buildr.rb
+  S         text/x-ruby    ISO-8859-1
     AL       AL            Apache License Version 2.0
- A /dummy.jar
- G /generated.txt
+
+/dummy.jar
+  A         application/java-archive
+
+/generated.txt
+  G         text/plain
     GEN      GEN           Generated Files
- B /plain.json
-!S /sub/Empty.txt
+
+/plain.json
+  B         application/json
+
+/sub/Empty.txt
+ !S         text/plain    UTF-8
     ?????    ?????         Unknown license (Unapproved)
- S /tri.txt
+
+/tri.txt
+  S         text/plain    ISO-8859-1
     AL       AL            Apache License Version 2.0
     BSD-3    BSD-3         BSD 3 clause
     BSD-3    TMF           The Telemanagement Forum License

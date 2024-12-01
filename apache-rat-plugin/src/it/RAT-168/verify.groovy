@@ -1,3 +1,5 @@
+import org.apache.rat.testhelpers.TextUtils
+
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
@@ -14,6 +16,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import org.apache.rat.testhelpers.TextUtils
+
 content = new File( basedir, 'build.log' ).text
 
 assert content.contains( 'BUILD SUCCESS' )
@@ -21,6 +25,5 @@ assert content.contains( 'BUILD SUCCESS' )
 assert ! content.contains( '[WARNING] No resources included' )
 
 report = new File( basedir, 'target/site/rat-report.html' ).text
-
-assert report.contains( ' S /pom.xml' )
+assert TextUtils.isMatching("^/pom.xml\\s+S ", report)
 assert report.contains( '   AL       AL            Apache License Version 2.0' )

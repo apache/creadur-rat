@@ -21,9 +21,9 @@ import org.apache.rat.testhelpers.TextUtils
 output = new File(args[0])
 content = output.text
 
-assert content.contains('!A /apache-rat-0.17-SNAPSHOT.jar')
+assert TextUtils.isMatching('^/apache-rat-0.17-SNAPSHOT.jar\\s+!A ', content)
 
 logOutput = new File(args[1])
 log = logOutput.text
 
-TextUtils.assertPatternInTarget("^INFO:\\s+Archives:\\s+1\$", log)
+assert TextUtils.isMatching("^INFO:\\s+Archives:\\s+1\$", log)

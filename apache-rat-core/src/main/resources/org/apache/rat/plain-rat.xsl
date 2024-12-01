@@ -106,7 +106,7 @@
             <xsl:with-param name="title">Detail</xsl:with-param>
         </xsl:call-template>
         <xsl:text>
-  Documents with unapproved licenses will start with a '!'
+  The line following documents with unapproved licenses will start with a '!'
   The next character identifies the document type.
    
    char         type
@@ -119,20 +119,29 @@
   
 </xsl:text>
         <xsl:for-each select='descendant::resource'>
-            <xsl:choose>
-                <xsl:when test='license/@approval="false"'>
-                    <xsl:value-of select='concat($newline, "!")'/>
-                </xsl:when>
-                <xsl:otherwise>
-                    <xsl:value-of select='concat($newline, " ")'/>
-                </xsl:otherwise>
-            </xsl:choose>
-            <xsl:value-of select='concat(substring(@type, 1, 1), " ", @name)'/>
+            <xsl:call-template name="document">
+                <xsl:with-param name="name"><xsl:value-of select='@name'/></xsl:with-param>
+                <xsl:with-param name="mediaType"><xsl:value-of select='@mediaType'/></xsl:with-param>
+                <xsl:with-param name="encoding"><xsl:value-of select='@encoding'/></xsl:with-param>
+                <xsl:with-param name="type"><xsl:value-of select="substring(@type, 1, 1)"/></xsl:with-param>
+                <xsl:with-param name="leadin"><xsl:choose>
+                    <xsl:when test='license/@approval="false"'>
+                        <xsl:text> !</xsl:text>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:text>  </xsl:text>
+                    </xsl:otherwise>
+                </xsl:choose></xsl:with-param>
+            </xsl:call-template>
             <xsl:for-each select='descendant::license'>
-                <xsl:value-of select='concat($newline, "    ", substring(concat(@family, "     "), 1, 5),
-        "    ", substring(concat(@id, "          "), 1,10), "    ", @name)'/>
-                <xsl:if test="@approval='false'"> (Unapproved)</xsl:if>
+                <xsl:call-template name="license">
+                    <xsl:with-param name="name"><xsl:value-of select='@name'/></xsl:with-param>
+                    <xsl:with-param name="id"><xsl:value-of select='@id'/></xsl:with-param>
+                    <xsl:with-param name="family"><xsl:value-of select='@family'/></xsl:with-param>
+                    <xsl:with-param name="approval"><xsl:value-of select='@approval'/></xsl:with-param>
+                </xsl:call-template>
             </xsl:for-each>
+            <xsl:value-of select='concat($newline, $newline)' />
         </xsl:for-each>
         <xsl:value-of select='$newline'/>
     </xsl:template>
@@ -157,5 +166,26 @@
 
         <xsl:value-of select='concat($leadin, substring(concat($name, ":                  "), 1, 20),
             $count, "    ", $description, $newline)'/>
+    </xsl:template>
+
+    <xsl:template name="document">
+        <xsl:param name="name"/>
+        <xsl:param name="type"/>
+        <xsl:param name="mediaType"/>
+        <xsl:param name="encoding" />
+        <xsl:param name="leadin"/>
+
+        <xsl:value-of select='concat($name, $newline, $leadin, $type, "         ", $mediaType, "    ",$encoding)'/>
+    </xsl:template>
+
+    <xsl:template name="license">
+        <xsl:param name="family"/>
+        <xsl:param name="id"/>
+        <xsl:param name="name"/>
+        <xsl:param name="approval"/>
+
+        <xsl:value-of select='concat($newline, "    ", substring(concat($family, "     "), 1, 5),
+        "    ", substring(concat($id, "          "), 1,10), "    ", $name)'/>
+        <xsl:if test="$approval='false'"> (Unapproved)</xsl:if>
     </xsl:template>
 </xsl:stylesheet>

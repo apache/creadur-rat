@@ -41,7 +41,7 @@ public final class ReporterTestUtils {
      * @return the regular expression string representing the document.
      */
     public static String documentOut(final boolean approved, final Document.Type type, final String name) {
-        return String.format("^\\Q%s%s %s\\E$", approved ? " " : "!", type.name().charAt(0), name);
+        return String.format("^\\Q%s\\E\\s+ %s%s [^$]+$", name, approved ? " " : "!", type.name().charAt(0) );
     }
 
     /**
