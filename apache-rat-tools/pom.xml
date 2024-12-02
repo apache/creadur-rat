@@ -36,13 +36,6 @@
         <filtering>true</filtering>
         <directory>src/main/filtered-resources</directory>
       </resource>
-      <resource>
-        <directory>..</directory>
-        <targetPath>META-INF</targetPath>
-        <includes>
-          <include>RELEASE_NOTES.txt</include>
-        </includes>
-      </resource>
     </resources>
     <pluginManagement>
       <plugins>
@@ -65,6 +58,21 @@
               <exclude>src/main/resources/org/apache/rat/tools/ExampleGeneratorResources/**</exclude>
             </excludes>
           </configuration>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-dependency-plugin</artifactId>
+          <executions>
+            <execution>
+              <phase>generate-resources</phase>
+              <goals><goal>unpack-dependencies</goal></goals>
+              <configuration>
+                <includeArtifactIds>apache-rat-core</includeArtifactIds>
+                <includes>META-INF/RELEASE_NOTES.txt</includes>
+                <outputDirectory>${project.build.outputDirectory}</outputDirectory>
+              </configuration>
+            </execution>
+          </executions>
         </plugin>
       </plugins>
     </pluginManagement>

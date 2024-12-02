@@ -46,13 +46,6 @@
         <filtering>true</filtering>
         <directory>src/main/filtered-resources</directory>
       </resource>
-      <resource>
-        <directory>..</directory>
-        <targetPath>META-INF</targetPath>
-        <includes>
-          <include>RELEASE_NOTES.txt</include>
-        </includes>
-      </resource>
     </resources>
     <testResources>
       <testResource>
@@ -292,6 +285,21 @@
               <goal>check</goal>
             </goals>
             <phase>compile</phase>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <executions>
+          <execution>
+            <phase>generate-resources</phase>
+            <goals><goal>unpack-dependencies</goal></goals>
+            <configuration>
+              <includeArtifactIds>apache-rat-core</includeArtifactIds>
+              <includes>META-INF/RELEASE_NOTES.txt</includes>
+              <outputDirectory>${project.build.outputDirectory}</outputDirectory>
+            </configuration>
           </execution>
         </executions>
       </plugin>
