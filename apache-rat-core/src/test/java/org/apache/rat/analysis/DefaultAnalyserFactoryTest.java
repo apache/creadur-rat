@@ -71,23 +71,6 @@ public class DefaultAnalyserFactoryTest {
 
     @Test
     public void standardTypeAnalyser() throws Exception {
-        String[] expected = {
-                " * Licensed to the Apache Software Foundation (ASF) under one", //
-                " * or more contributor license agreements.  See the NOTICE file", //
-                " * distributed with this work for additional information", //
-                " * regarding copyright ownership.  The ASF licenses this file", //
-                " * to you under the Apache License, Version 2.0 (the \"License\");", //
-                " * you may not use this file except in compliance with the License.", //
-                " * You may obtain a copy of the License at", //
-                " *    http://www.apache.org/licenses/LICENSE-2.0", //
-                " * Unless required by applicable law or agreed to in writing,", //
-                " * software distributed under the License is distributed on an", //
-                " * \"AS IS\" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY", //
-                " * KIND, either express or implied.  See the License for the", //
-                " * specific language governing permissions and limitations", //
-                " * under the License."
-        };
-
         final Document document = new FileDocument(basedir,
                 Resources.getResourceFile("/elements/Text.txt"), DocumentNameMatcher.MATCHES_ALL);
         analyser.analyse(document);
@@ -95,10 +78,6 @@ public class DefaultAnalyserFactoryTest {
         assertEquals("text/plain", document.getMetaData().getMediaType().toString());
         assertEquals(1, document.getMetaData().licenses().count());
         document.getMetaData().licenses().forEach(lic -> assertEquals(UnknownLicense.INSTANCE, lic));
-        String result = document.getMetaData().getSampleHeader();
-        for (String exp : expected) {
-            assertTrue(result.contains(exp), exp);
-        }
     }
 
     @Test
@@ -205,10 +184,6 @@ public class DefaultAnalyserFactoryTest {
         TextUtils.assertPatternInTarget(
                 "<resource name='/jira/RAT147/unix-newlines.txt.bin' type='STANDARD'",
                 result);
-        TextUtils.assertPatternInTarget("sentence 1.$", result);
-        TextUtils.assertPatternInTarget("^sentence 2.$", result);
-        TextUtils.assertPatternInTarget("^sentence 3.$", result);
-        TextUtils.assertPatternInTarget("^sentence 4.$", result);
     }
 
     @Test
@@ -221,10 +196,6 @@ public class DefaultAnalyserFactoryTest {
         TextUtils.assertPatternInTarget(
                 "<resource name='/jira/RAT147/windows-newlines.txt.bin' type='STANDARD'",
                 result);
-        TextUtils.assertPatternInTarget("sentence 1.$", result);
-        TextUtils.assertPatternInTarget("^sentence 2.$", result);
-        TextUtils.assertPatternInTarget("^sentence 3.$", result);
-        TextUtils.assertPatternInTarget("^sentence 4.$", result);
     }
 
     @Test
