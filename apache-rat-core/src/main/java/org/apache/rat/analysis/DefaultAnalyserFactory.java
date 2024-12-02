@@ -54,7 +54,7 @@ public final class DefaultAnalyserFactory {
             throw new ConfigurationException("At least one license must be defined");
         }
         if (DefaultLog.getInstance().isEnabled(Log.Level.DEBUG)) {
-            DefaultLog.getInstance().debug("Licenses in Test");
+            DefaultLog.getInstance().debug("Currently active Licenses are:");
             licenses.forEach(DefaultLog.getInstance()::debug);
         }
         return new DefaultAnalyser(configuration, licenses);
