@@ -91,6 +91,13 @@
         <filtering>true</filtering>
         <directory>src/main/filtered-resources</directory>
       </resource>
+      <resource>
+        <directory>..</directory>
+        <targetPath>META-INF</targetPath>
+        <includes>
+          <include>RELEASE_NOTES.txt</include>
+        </includes>
+      </resource>
     </resources>
     <plugins>
       <plugin>
@@ -98,7 +105,6 @@
         <artifactId>maven-dependency-plugin</artifactId>
         <executions>
           <execution>
-            <id>generate-test-resources</id>
             <phase>generate-test-resources</phase>
             <goals>
               <goal>copy-dependencies</goal>
@@ -107,16 +113,6 @@
               <stripVersion>true</stripVersion>
               <includeArtifactIds>ant-antunit</includeArtifactIds>
               <outputDirectory>${project.build.directory}/dependencies</outputDirectory>
-            </configuration>
-          </execution>
-          <execution>
-            <id>generate-resources</id>
-            <phase>generate-resources</phase>
-            <goals><goal>unpack-dependencies</goal></goals>
-            <configuration>
-              <includeArtifactIds>apache-rat-core</includeArtifactIds>
-              <includes>META-INF/RELEASE_NOTES.txt</includes>
-              <outputDirectory>${project.build.outputDirectory}</outputDirectory>
             </configuration>
           </execution>
           <!-- Copy resource files from the apache-rat-core project. -->
