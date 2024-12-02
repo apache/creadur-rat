@@ -73,7 +73,7 @@ The <action> type attribute can be one of:
     -->
     <release version="0.17-SNAPSHOT" date="xxxx-yy-zz" description="Current SNAPSHOT - release to be done">
       <action issue="RAT-178" type="add" dev="claudenw">
-        Added tests to TikaProcessorTests and DefaultAnalyserFactoryTest to properly handle non-existent and unreadable files during processing runs.
+        Added tests to TikaProcessorTests and DefaultAnalyserFactoryTest to properly handle non-existent and unreadable files during processing runs of our BinaryGuesser.
       </action>
       <action issue="RAT-405" type="add" dev="claudenw">
         Do not show sample output of scanned files in XML anymore. As files are report different tooling can be used to edit/check the files.
