@@ -336,9 +336,6 @@ The <action> type attribute can be one of:
       <action issue="RAT-345" type="update" dev="pottlinger" due-to="dependabot">
         TODO: collect all dependabot updates for release 0.17.
       </action>
-	  <action issue="RAT-379" type="fix" dev="jochen">
-	    The project sources are importable into Eclipse.
-	  </action>
     </release>
     <release version="0.16.1" date="2024-01-24" description=
 "As release 0.16 introduced breaking changes concerning the configurability of the Maven plugin, these configuration options are reintroduced albeit as deprecated elements.
