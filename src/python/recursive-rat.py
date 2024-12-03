@@ -158,10 +158,10 @@ def walkDirectories(base, ratCommand, gpgCommand, baseReportDir = None, f=lambda
     walk(base, lambda dummy, dir, files: f(ratCommand, gpgCommand, dir, files, baseReportDir), None)
     
 def enterRatCommand(rat = None):
-    '''If necessary, prompts user for an acceptable Rat command'''
+    '''If necessary, prompts user for an acceptable RAT command'''
     if rat == None:
         try:
-            rat = raw_input("Please enter Rat command (including path): ")
+            rat = raw_input("Please enter RAT command (including path): ")
         except EOFError:
             raise UserAbortError()
         

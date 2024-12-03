@@ -35,9 +35,9 @@ public final class ReporterTestUtils {
     }
     /**
      * Generates the regex string for a document output line. Suitable for regex query.
-     * @param approved True if this license is approved
+     * @param approved {@code True} if this license is approved
      * @param type The document type.
-     * @param name Then name of the document
+     * @param name The name of the document.
      * @return the regular expression string representing the document.
      */
     public static String documentOut(final boolean approved, final Document.Type type, final String name) {
@@ -65,16 +65,32 @@ public final class ReporterTestUtils {
         return String.format("\\s+\\Q%s\\E\\s+\\Q%s\\E\\s+\\Q%s\\E$", family, id, name);
     }
 
+    /**
+     * Renders report contents of a given counter value, including handling of negation.
+     * @param counter The expected type of counter in the report.
+     * @param count The expected number of occurrences of the given counter.
+     * @param error {@code True} if the counter does exceed a minimum or maximum value.
+     * @return the report contents of the given counter.
+     */
     public static String counterText(ClaimStatistic.Counter counter, int count, boolean error) {
         return String.format("^%s %s:\\s*%s ", error ? "!" : " ", counter.displayName(), count);
     }
 
+    /**
+     * Generates the report contents for Apache 2.0 licenses.
+     * @param count The expected number of occurrences of the license.
+     * @return Report contents for Apache 2.0 licenses in the report.
+     */
     public static String apacheLicenseVersion2(int count) {
         return String.format("^Apache License Version 2.0: %s ", count);
     }
 
+    /**
+     * Generates the report contents for unknown licenses.
+     * @param count The expected number of occurrences of the license.
+     * @return Report contents for unknown licenses in the report.
+     */
     public static String unknownLicense(int count) {
         return String.format("^Unknown license: %s ", count);
     }
-
 }

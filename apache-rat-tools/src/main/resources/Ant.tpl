@@ -38,7 +38,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
- * Generated class to provide Ant support for standard Rat command line options.
+ * Generated class to provide Ant support for standard RAT command line options.
  *
  * DO NOT EDIT - GENERATED FILE
  */

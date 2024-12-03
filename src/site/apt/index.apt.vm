@@ -126,7 +126,7 @@ java -jar apache-rat-${project.version}.jar [options] [Directory or Archive]
 
 ** Styling output
 
- Rat allows you to style the output as you see fit.  Three stylesheets are included in the rat package.
+ RAT allows you to style the output as you see fit.  Three stylesheets are included in the "rat" package.
 
   * {{{https://gitbox.apache.org/repos/asf/creadur-rat/blob/master/apache-rat-core/src/main/resources/org/apache/rat/plain-rat.xsl}plain-rat}} - The default stylesheet.
 

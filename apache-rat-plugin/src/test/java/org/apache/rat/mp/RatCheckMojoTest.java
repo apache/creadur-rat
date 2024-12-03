@@ -72,7 +72,7 @@ public class RatCheckMojoTest extends BetterAbstractMojoTestCase {
         AbstractRatMojo mojo = (AbstractRatMojo) lookupConfiguredMojo(testPom, pGoal);
         assertNotNull(mojo);
 
-        assertNotNull("The mojo is missing its MavenProject, which will result in an NPE during rat runs.",
+        assertNotNull("The mojo is missing its MavenProject, which will result in an NPE during RAT runs.",
                 mojo.getProject());
 
         if (mojo instanceof RatReportMojo) {
