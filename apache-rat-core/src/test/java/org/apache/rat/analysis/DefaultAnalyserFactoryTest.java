@@ -20,6 +20,7 @@ package org.apache.rat.analysis;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
@@ -35,6 +36,7 @@ import org.apache.rat.document.DocumentNameMatcher;
 import org.apache.rat.document.IDocumentAnalyser;
 import org.apache.rat.document.DocumentName;
 import org.apache.rat.document.FileDocument;
+import org.apache.rat.document.RatDocumentAnalysisException;
 import org.apache.rat.report.claim.SimpleXmlClaimReporter;
 import org.apache.rat.report.xml.writer.XmlWriter;
 import org.apache.rat.test.utils.Resources;
@@ -109,7 +111,7 @@ public class DefaultAnalyserFactoryTest {
         assertEquals("application/java-archive", document.getMetaData().getMediaType().toString());
     }
 
-    private static Stream<Arguments> archivesAbsenceTestData() {
+    private static Stream<Arguments> archiveProcessingTestData() {
         List<Arguments> lst = new ArrayList<>();
         lst.add(Arguments.of(ReportConfiguration.Processing.NOTIFICATION, 0));
         lst.add(Arguments.of(ReportConfiguration.Processing.PRESENCE, 2));
@@ -118,8 +120,8 @@ public class DefaultAnalyserFactoryTest {
     }
 
     @ParameterizedTest
-    @MethodSource("archivesAbsenceTestData")
-    public void archivesAbsenceTest(ReportConfiguration.Processing archiveProcessing, int expectedLicenseCount) throws Exception {
+    @MethodSource("archiveProcessingTestData")
+    public void archiveProcessingTest(ReportConfiguration.Processing archiveProcessing, int expectedLicenseCount) throws Exception {
         final Document document = new FileDocument(basedir,
                 Resources.getResourceFile("/elements/dummy.jar"), DocumentNameMatcher.MATCHES_ALL);
         Defaults defaults = Defaults.builder().build();
@@ -132,6 +134,18 @@ public class DefaultAnalyserFactoryTest {
         assertEquals("application/java-archive", document.getMetaData().getMediaType().toString());
         assertEquals(expectedLicenseCount, document.getMetaData().licenses().count());
     }
+
+    @Test
+    public void missingFileTest() {
+        final Document document = new FileDocument(
+                new File("/elements/not_a_real_file"), DocumentNameMatcher.MATCHES_ALL);
+        Defaults defaults = Defaults.builder().build();
+        ReportConfiguration config = new ReportConfiguration();
+        config.setFrom(defaults);
+        analyser = DefaultAnalyserFactory.createDefaultAnalyser(config);
+        assertThrows(RatDocumentAnalysisException.class, () -> analyser.analyse(document));
+    }
+
 
     @Test
     public void archiveTypeAnalyser() throws Exception {
