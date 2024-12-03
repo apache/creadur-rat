@@ -51,16 +51,18 @@ class DocumentHeaderAnalyser implements IDocumentAnalyser {
 
     @Override
     public void analyse(final Document document) {
-        try (Reader reader = document.reader()) {
-            DefaultLog.getInstance().debug(format("Processing: %s", document));
-            HeaderCheckWorker worker = new HeaderCheckWorker(generatedMatcher, reader, licenses, document);
-            worker.read();
-        } catch (IOException e) {
-            DefaultLog.getInstance().warn(String.format("Cannot read header of %s", document));
-            document.getMetaData().setDocumentType(Document.Type.UNKNOWN);
-        } catch (RatHeaderAnalysisException e) {
-            DefaultLog.getInstance().warn(String.format("Cannot process header of %s", document));
-            document.getMetaData().setDocumentType(Document.Type.UNKNOWN);
+        if (Document.Type.IGNORED != document.getMetaData().getDocumentType()) {
+            try (Reader reader = document.reader()) {
+                DefaultLog.getInstance().debug(format("Processing: %s", document));
+                HeaderCheckWorker worker = new HeaderCheckWorker(generatedMatcher, reader, licenses, document);
+                worker.read();
+            } catch (IOException e) {
+                DefaultLog.getInstance().warn(String.format("Cannot read header of %s", document));
+                document.getMetaData().setDocumentType(Document.Type.UNKNOWN);
+            } catch (RatHeaderAnalysisException e) {
+                DefaultLog.getInstance().warn(String.format("Cannot process header of %s", document));
+                document.getMetaData().setDocumentType(Document.Type.UNKNOWN);
+            }
         }
     }
 }

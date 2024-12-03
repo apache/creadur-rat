@@ -127,6 +127,10 @@ public abstract class Document implements Comparable<Document> {
         return metaData;
     }
 
+    public final boolean isIgnored() {
+        return Type.IGNORED == metaData.getDocumentType();
+    }
+
     /**
      * Representations suitable for logging.
      * @return a <code>String</code> representation

@@ -161,8 +161,10 @@ public class ReportTest {
         RatReport report = new RatReport() {
             @Override
             public void report(Document document)  {
-                String[] tokens = document.getName().tokenize(document.getName().localized());
-                results.add(Arguments.of(tokens[1], document));
+                if (!document.isIgnored()) {
+                    String[] tokens = document.getName().tokenize(document.getName().localized());
+                    results.add(Arguments.of(tokens[1], document));
+                }
             }
         };
         walker.run(report);
