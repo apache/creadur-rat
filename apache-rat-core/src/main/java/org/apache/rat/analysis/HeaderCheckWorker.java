@@ -143,7 +143,7 @@ public class HeaderCheckWorker {
             if (document.getMetaData().detectedLicense()) {
                 if (document.getMetaData().licenses().anyMatch(
                         lic -> ILicenseFamily.GENERATED.getFamilyCategory().equals(lic.getLicenseFamily().getFamilyCategory()))) {
-                    document.getMetaData().setDocumentType(Document.Type.GENERATED);
+                    document.getMetaData().setDocumentType(Document.Type.IGNORED);
                 }
             } else {
                 document.getMetaData().reportOnLicense(UnknownLicense.INSTANCE);

@@ -183,7 +183,7 @@ public class ClaimStatistic {
             case UNKNOWN:
                 incCounter(Counter.UNKNOWN, value);
                 break;
-            case GENERATED:
+            case IGNORED:
                 incCounter(Counter.GENERATED, value);
                 break;
         }

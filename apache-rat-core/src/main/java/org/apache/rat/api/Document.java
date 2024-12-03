@@ -42,7 +42,7 @@ public abstract class Document implements Comparable<Document> {
         /** A binary file. */
         BINARY,
         /** A generated document. */
-        GENERATED,
+        IGNORED,
         /** A notice document (e.g. LICENSE file). */
         NOTICE,
         /** A standard document. */

@@ -77,7 +77,7 @@ Archives:
    char         type
     A       Archive file
     B       Binary file
-    G       Generated file
+    I       Ignored file
     N       Notice file
     S       Standard file
     U       Unknown file.

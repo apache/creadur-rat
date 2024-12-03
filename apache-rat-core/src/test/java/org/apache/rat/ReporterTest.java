@@ -88,7 +88,7 @@ public class ReporterTest {
 
         assertEquals(1, statistic.getCounter(Type.ARCHIVE));
         assertEquals(2, statistic.getCounter(Type.BINARY));
-        assertEquals(1, statistic.getCounter(Type.GENERATED));
+        assertEquals(1, statistic.getCounter(Type.IGNORED));
         assertEquals(2, statistic.getCounter(Type.NOTICE));
         assertEquals(8, statistic.getCounter(Type.STANDARD));
         assertEquals(0, statistic.getCounter(Type.UNKNOWN));
@@ -105,7 +105,7 @@ public class ReporterTest {
         assertEquals(2, statistic.getCounter(ClaimStatistic.Counter.UNKNOWN));
 
         List<Type> typeList = statistic.getDocumentTypes();
-        assertEquals(Arrays.asList(Type.ARCHIVE, Type.BINARY, Type.GENERATED, Type.NOTICE, Type.STANDARD), typeList);
+        assertEquals(Arrays.asList(Type.ARCHIVE, Type.BINARY, Type.IGNORED, Type.NOTICE, Type.STANDARD), typeList);
 
         TreeMap<String, Integer> expected = new TreeMap<>();
         expected.put("Unknown license", 2);
@@ -205,7 +205,7 @@ public class ReporterTest {
         nodeList = XmlUtils.getNodeList(doc, xPath, "/rat-report/resource[@type='BINARY']");
         assertEquals(2, nodeList.getLength());
 
-        nodeList = XmlUtils.getNodeList(doc, xPath, "/rat-report/resource[@type='GENERATED']");
+        nodeList = XmlUtils.getNodeList(doc, xPath, "/rat-report/resource[@type='IGNORED']");
         assertEquals(1, nodeList.getLength());
 
         nodeList = XmlUtils.getNodeList(doc, xPath, "/rat-report/resource[@type='UNKNOWN']");
@@ -214,7 +214,7 @@ public class ReporterTest {
         nodeList = XmlUtils.getNodeList(doc, xPath, "/rat-report/resource[@type='NOTICE']");
         assertEquals(2, nodeList.getLength());
 
-        nodeList = XmlUtils.getNodeList(doc, xPath, "/rat-report/resource[@type='GENERATED']/license/notes");
+        nodeList = XmlUtils.getNodeList(doc, xPath, "/rat-report/resource[@type='IGNORED']/license/notes");
         assertEquals(1, nodeList.getLength());
     }
 
@@ -354,7 +354,7 @@ public class ReporterTest {
         checkNode(doc, xPath, "/tri.txt", new LicenseInfo("TMF", "BSD-3", true, false),
                 "STANDARD");
         checkNode(doc, xPath, "/generated.txt", new LicenseInfo("GEN", true, true),
-                "GENERATED");
+                "IGNORED");
         NodeList nodeList = (NodeList) xPath.compile("/rat-report/resource").evaluate(doc, XPathConstants.NODESET);
         assertEquals(14, nodeList.getLength());
         Validator validator = initValidator();
