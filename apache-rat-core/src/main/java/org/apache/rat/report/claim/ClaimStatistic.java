@@ -45,7 +45,7 @@ public class ClaimStatistic {
         /** count of distinct document types */
         DOCUMENT_TYPES("A count of distinct document types.", -1, 1),
         /** count of generated files */
-        GENERATED("A count of generated files.", -1, 0),
+        IGNORED("A count of generated files.", -1, 0),
         /** count of license categories */
         LICENSE_CATEGORIES("A count of distinct license categories.", -1, 1),
         /** count of distinct license names */
@@ -184,7 +184,7 @@ public class ClaimStatistic {
                 incCounter(Counter.UNKNOWN, value);
                 break;
             case IGNORED:
-                incCounter(Counter.GENERATED, value);
+                incCounter(Counter.IGNORED, value);
                 break;
         }
     }

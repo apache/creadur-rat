@@ -106,7 +106,7 @@ public class RatCheckMojoTest extends BetterAbstractMojoTestCase {
                 ReporterTestUtils.counterText(ClaimStatistic.Counter.BINARIES, 0),
                 ReporterTestUtils.counterText(ClaimStatistic.Counter.ARCHIVES, 0),
                 ReporterTestUtils.counterText(ClaimStatistic.Counter.STANDARDS, 1),
-                ReporterTestUtils.counterText(ClaimStatistic.Counter.GENERATED, 0),
+                ReporterTestUtils.counterText(ClaimStatistic.Counter.IGNORED, 0),
                 ReporterTestUtils.counterText(ClaimStatistic.Counter.UNKNOWN, 0),
                 ReporterTestUtils.apacheLicenseVersion2(1)
         };
@@ -133,7 +133,7 @@ public class RatCheckMojoTest extends BetterAbstractMojoTestCase {
                 ReporterTestUtils.counterText(ClaimStatistic.Counter.BINARIES, 0),
                 ReporterTestUtils.counterText(ClaimStatistic.Counter.ARCHIVES, 0),
                 ReporterTestUtils.counterText(ClaimStatistic.Counter.STANDARDS, 2),
-                ReporterTestUtils.counterText(ClaimStatistic.Counter.GENERATED, 0),
+                ReporterTestUtils.counterText(ClaimStatistic.Counter.IGNORED, 0),
                 ReporterTestUtils.apacheLicenseVersion2(1),
                 ReporterTestUtils.unknownLicense(1),
                 ReporterTestUtils.documentOut(false, Document.Type.STANDARD, "/src.txt") +
@@ -163,7 +163,7 @@ public class RatCheckMojoTest extends BetterAbstractMojoTestCase {
                 ReporterTestUtils.counterText(ClaimStatistic.Counter.BINARIES, 0),
                 ReporterTestUtils.counterText(ClaimStatistic.Counter.ARCHIVES, 0),
                 ReporterTestUtils.counterText(ClaimStatistic.Counter.STANDARDS, 2),
-                ReporterTestUtils.counterText(ClaimStatistic.Counter.GENERATED, 0),
+                ReporterTestUtils.counterText(ClaimStatistic.Counter.IGNORED, 0),
                 ReporterTestUtils.apacheLicenseVersion2(1),
                 ReporterTestUtils.unknownLicense(1),
                 ReporterTestUtils.documentOut(false, Document.Type.STANDARD, "/src.apt") +
@@ -191,7 +191,7 @@ public class RatCheckMojoTest extends BetterAbstractMojoTestCase {
                 ReporterTestUtils.counterText(ClaimStatistic.Counter.BINARIES, 0),
                 ReporterTestUtils.counterText(ClaimStatistic.Counter.ARCHIVES, 0),
                 ReporterTestUtils.counterText(ClaimStatistic.Counter.STANDARDS, 0),
-                ReporterTestUtils.counterText(ClaimStatistic.Counter.GENERATED, 1),
+                ReporterTestUtils.counterText(ClaimStatistic.Counter.IGNORED, 1),
         };
         final String[] notExpected = {
                 "^Apache License Version 2.0: ",
@@ -237,7 +237,7 @@ public class RatCheckMojoTest extends BetterAbstractMojoTestCase {
                 ReporterTestUtils.counterText(ClaimStatistic.Counter.BINARIES, 0),
                 ReporterTestUtils.counterText(ClaimStatistic.Counter.ARCHIVES, 0),
                 ReporterTestUtils.counterText(ClaimStatistic.Counter.STANDARDS, 1),
-                ReporterTestUtils.counterText(ClaimStatistic.Counter.GENERATED, 0),
+                ReporterTestUtils.counterText(ClaimStatistic.Counter.IGNORED, 0),
                 ReporterTestUtils.apacheLicenseVersion2(1),
                 "^BSD: 1 ",
                 "^Creative Commons Attribution: 1 ",
@@ -272,7 +272,7 @@ public class RatCheckMojoTest extends BetterAbstractMojoTestCase {
                 ReporterTestUtils.counterText(ClaimStatistic.Counter.BINARIES, 0),
                 ReporterTestUtils.counterText(ClaimStatistic.Counter.ARCHIVES, 0),
                 ReporterTestUtils.counterText(ClaimStatistic.Counter.STANDARDS, 6),
-                ReporterTestUtils.counterText(ClaimStatistic.Counter.GENERATED, 0),
+                ReporterTestUtils.counterText(ClaimStatistic.Counter.IGNORED, 0),
                 ReporterTestUtils.counterText(ClaimStatistic.Counter.UNKNOWN, 4),
                 ReporterTestUtils.apacheLicenseVersion2(2),
                 ReporterTestUtils.unknownLicense(4),
@@ -328,7 +328,7 @@ public class RatCheckMojoTest extends BetterAbstractMojoTestCase {
                 ReporterTestUtils.counterText(ClaimStatistic.Counter.BINARIES, 0),
                 ReporterTestUtils.counterText(ClaimStatistic.Counter.ARCHIVES, 0),
                 ReporterTestUtils.counterText(ClaimStatistic.Counter.STANDARDS, 3),
-                ReporterTestUtils.counterText(ClaimStatistic.Counter.GENERATED, 0),
+                ReporterTestUtils.counterText(ClaimStatistic.Counter.IGNORED, 0),
                 ReporterTestUtils.apacheLicenseVersion2(2),
                 ReporterTestUtils.unknownLicense(1),
                 ReporterTestUtils.documentOut(false, Document.Type.STANDARD, "/bar.md") +

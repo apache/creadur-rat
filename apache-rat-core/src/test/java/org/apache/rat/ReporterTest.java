@@ -96,7 +96,7 @@ public class ReporterTest {
         assertEquals(1, statistic.getCounter(ClaimStatistic.Counter.ARCHIVES));
         assertEquals(2, statistic.getCounter(ClaimStatistic.Counter.BINARIES));
         assertEquals(5, statistic.getCounter(ClaimStatistic.Counter.DOCUMENT_TYPES));
-        assertEquals(1, statistic.getCounter(ClaimStatistic.Counter.GENERATED));
+        assertEquals(1, statistic.getCounter(ClaimStatistic.Counter.IGNORED));
         assertEquals(5, statistic.getCounter(ClaimStatistic.Counter.LICENSE_CATEGORIES));
         assertEquals(6, statistic.getCounter(ClaimStatistic.Counter.LICENSE_NAMES));
         assertEquals(2, statistic.getCounter(ClaimStatistic.Counter.NOTICES));
@@ -195,7 +195,7 @@ public class ReporterTest {
         nodeList = XmlUtils.getNodeList(doc, xPath, "/rat-report/resource/license[@id='?????']");
         assertEquals(2, nodeList.getLength());
 
-        // GENERATED, UNKNOWN, ARCHIVE, NOTICE, BINARY, STANDARD
+        // IGNORED, UNKNOWN, ARCHIVE, NOTICE, BINARY, STANDARD
         nodeList = XmlUtils.getNodeList(doc, xPath, "/rat-report/resource[@type='STANDARD']");
         assertEquals(8, nodeList.getLength());
 
@@ -263,7 +263,7 @@ public class ReporterTest {
         TextUtils.assertPatternInTarget("^Binaries:\\s*2 ", document);
         TextUtils.assertPatternInTarget("^Archives:\\s*1 ", document);
         TextUtils.assertPatternInTarget("^Standards:\\s*8 ", document);
-        TextUtils.assertPatternInTarget("^Generated:\\s*1 ", document);
+        TextUtils.assertPatternInTarget("^Ignored:\\s*1 ", document);
         TextUtils.assertPatternInTarget("^Unapproved:\\s*2 ", document);
         TextUtils.assertPatternInTarget("^Unknown:\\s*2 ", document);
 
