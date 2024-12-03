@@ -82,13 +82,6 @@
         <filtering>true</filtering>
         <directory>src/main/filtered-resources</directory>
       </resource>
-      <resource>
-        <directory>..</directory>
-        <targetPath>META-INF</targetPath>
-        <includes>
-          <include>RELEASE_NOTES.txt</include>
-        </includes>
-      </resource>
     </resources>
     <plugins>
       <plugin>
