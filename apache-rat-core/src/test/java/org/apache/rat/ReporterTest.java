@@ -92,13 +92,13 @@ public class ReporterTest {
         assertEquals(2, statistic.getCounter(Type.NOTICE));
         assertEquals(8, statistic.getCounter(Type.STANDARD));
         assertEquals(0, statistic.getCounter(Type.UNKNOWN));
-        assertEquals(9, statistic.getCounter(ClaimStatistic.Counter.APPROVED));
+        assertEquals(8, statistic.getCounter(ClaimStatistic.Counter.APPROVED));
         assertEquals(1, statistic.getCounter(ClaimStatistic.Counter.ARCHIVES));
         assertEquals(2, statistic.getCounter(ClaimStatistic.Counter.BINARIES));
         assertEquals(5, statistic.getCounter(ClaimStatistic.Counter.DOCUMENT_TYPES));
         assertEquals(1, statistic.getCounter(ClaimStatistic.Counter.IGNORED));
-        assertEquals(5, statistic.getCounter(ClaimStatistic.Counter.LICENSE_CATEGORIES));
-        assertEquals(6, statistic.getCounter(ClaimStatistic.Counter.LICENSE_NAMES));
+        assertEquals(4, statistic.getCounter(ClaimStatistic.Counter.LICENSE_CATEGORIES));
+        assertEquals(5, statistic.getCounter(ClaimStatistic.Counter.LICENSE_NAMES));
         assertEquals(2, statistic.getCounter(ClaimStatistic.Counter.NOTICES));
         assertEquals(8, statistic.getCounter(ClaimStatistic.Counter.STANDARDS));
         assertEquals(2, statistic.getCounter(ClaimStatistic.Counter.UNAPPROVED));
@@ -112,7 +112,6 @@ public class ReporterTest {
         expected.put("Apache License Version 2.0", 5);
         expected.put("The MIT License", 1);
         expected.put("BSD 3 clause", 1);
-        expected.put("Generated Files", 1);
         expected.put("The Telemanagement Forum License", 1);
         TreeMap<String, Integer> actual = new TreeMap<>();
 
@@ -125,7 +124,6 @@ public class ReporterTest {
         expected.put("?????", 2);
         expected.put("AL   ", 5);
         expected.put("BSD-3", 2);
-        expected.put("GEN  ", 1);
         expected.put("MIT  ", 1);
         actual.clear();
         for (String licenseCategory : statistic.getLicenseFamilyCategories()) {
@@ -214,8 +212,8 @@ public class ReporterTest {
         nodeList = XmlUtils.getNodeList(doc, xPath, "/rat-report/resource[@type='NOTICE']");
         assertEquals(2, nodeList.getLength());
 
-        nodeList = XmlUtils.getNodeList(doc, xPath, "/rat-report/resource[@type='IGNORED']/license/notes");
-        assertEquals(1, nodeList.getLength());
+        nodeList = XmlUtils.getNodeList(doc, xPath, "/rat-report/resource[@type='IGNORED']/license");
+        assertEquals(0, nodeList.getLength());
     }
 
     /**
@@ -269,7 +267,6 @@ public class ReporterTest {
 
         TextUtils.assertPatternInTarget("^Apache License Version 2.0: 5 ", document);
         TextUtils.assertPatternInTarget("^BSD 3 clause: 1 ", document);
-        TextUtils.assertPatternInTarget("^Generated Files: 1 ", document);
         TextUtils.assertPatternInTarget("^The MIT License: 1 ", document);
         TextUtils.assertPatternInTarget("^The Telemanagement Forum License: 1 ", document);
         TextUtils.assertPatternInTarget("^Unknown license: 2 ", document);
@@ -277,7 +274,6 @@ public class ReporterTest {
         TextUtils.assertPatternInTarget("^\\Q?????\\E: 2 ", document);
         TextUtils.assertPatternInTarget("^AL   : 5 ", document);
         TextUtils.assertPatternInTarget("^BSD-3: 2 ", document);
-        TextUtils.assertPatternInTarget("^GEN  : 1 ", document);
         TextUtils.assertPatternInTarget("^MIT  : 1 ", document);
 
         TextUtils.assertPatternInTarget(
@@ -353,8 +349,7 @@ public class ReporterTest {
         checkNode(doc, xPath, "/tri.txt", new LicenseInfo("BSD-3", true, false), "STANDARD");
         checkNode(doc, xPath, "/tri.txt", new LicenseInfo("TMF", "BSD-3", true, false),
                 "STANDARD");
-        checkNode(doc, xPath, "/generated.txt", new LicenseInfo("GEN", true, true),
-                "IGNORED");
+        checkNode(doc, xPath, "/generated.txt", null, "IGNORED");
         NodeList nodeList = (NodeList) xPath.compile("/rat-report/resource").evaluate(doc, XPathConstants.NODESET);
         assertEquals(14, nodeList.getLength());
         Validator validator = initValidator();

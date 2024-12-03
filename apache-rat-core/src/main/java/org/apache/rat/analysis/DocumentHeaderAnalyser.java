@@ -36,13 +36,16 @@ class DocumentHeaderAnalyser implements IDocumentAnalyser {
 
     /** The license to analyse */
     private final Collection<ILicense> licenses;
+    /** The matcher for generated headers */
+    private final IHeaderMatcher generatedMatcher;
 
     /**
      * Constructs the HeaderAnalyser for the specific license.
      * @param licenses The licenses to analyse
      */
-    DocumentHeaderAnalyser(final Collection<ILicense> licenses) {
+    DocumentHeaderAnalyser(final IHeaderMatcher generatedMatcher, final Collection<ILicense> licenses) {
         super();
+        this.generatedMatcher = generatedMatcher;
         this.licenses = licenses;
     }
 
@@ -50,7 +53,7 @@ class DocumentHeaderAnalyser implements IDocumentAnalyser {
     public void analyse(final Document document) {
         try (Reader reader = document.reader()) {
             DefaultLog.getInstance().debug(format("Processing: %s", document));
-            HeaderCheckWorker worker = new HeaderCheckWorker(reader, licenses, document);
+            HeaderCheckWorker worker = new HeaderCheckWorker(generatedMatcher, reader, licenses, document);
             worker.read();
         } catch (IOException e) {
             DefaultLog.getInstance().warn(String.format("Cannot read header of %s", document));

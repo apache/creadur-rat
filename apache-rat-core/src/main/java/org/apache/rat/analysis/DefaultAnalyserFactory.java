@@ -67,9 +67,10 @@ public final class DefaultAnalyserFactory {
 
         /** The licenses to analyze */
         private final Collection<ILicense> licenses;
-
         /** the Report Configuration */
         private final ReportConfiguration configuration;
+        /** The matcher for generated filed */
+        private final IHeaderMatcher generatedMatcher;
 
         /**
          * Constructs a DocumentAnalyser for the specified license.
@@ -79,6 +80,8 @@ public final class DefaultAnalyserFactory {
         DefaultAnalyser(final ReportConfiguration config, final Collection<ILicense> licenses) {
             this.licenses = licenses;
             this.configuration = config;
+            this.generatedMatcher = configuration.getGeneratedMatcher();
+
         }
 
         /**
@@ -108,7 +111,7 @@ public final class DefaultAnalyserFactory {
             switch (document.getMetaData().getDocumentType()) {
             case STANDARD:
                 licensePredicate = licenseFilter(configuration.getStandardProcessing()).negate();
-                new DocumentHeaderAnalyser(licenses).analyse(document);
+                new DocumentHeaderAnalyser(generatedMatcher, licenses).analyse(document);
                 if (configuration.getStandardProcessing() != Defaults.STANDARD_PROCESSING) {
                     document.getMetaData().removeLicenses(licensePredicate);
                 }

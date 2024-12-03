@@ -59,30 +59,4 @@ public class XMLConfigurationWriterTest {
         reader.read(strReader);
         reader.readLicenses();
     }
-    
-    @Test
-    public void testGen() throws Exception {
-        ReportConfiguration config = new ReportConfiguration();
-        config.setFrom(Defaults.builder().build());
-        config.listFamilies(LicenseFilter.ALL);
-        config.listLicenses(LicenseFilter.ALL);
-        XMLConfigurationWriter underTest = new XMLConfigurationWriter(config);
-        Optional<ILicense> opt = config.getLicenses(LicenseFilter.APPROVED).stream()
-                .filter(l -> "GEN".equals(l.getId())).findAny();
-        assertTrue(opt.isPresent());
-        Description description = opt.get().getDescription();
-        StringWriter sw = new StringWriter();
-        XmlWriter writer = new XmlWriter(sw);
-        underTest.writeDescription(writer, description, opt.get());
-        writer.closeDocument();
-        String result = sw.toString();
-
-        XPath xPath = XPathFactory.newInstance().newXPath();
-        Document doc = XmlUtils.toDom(new ByteArrayInputStream(result.getBytes()));
-
-        Node any = (Node) xPath.compile("/license[@id='GEN']/any").evaluate(doc, XPathConstants.NODE);
-        assertNotNull(any, "GEN/any node missing");
-        assertEquals(0, any.getChildNodes().getLength());
-        assertNotNull(any.getAttributes().getNamedItem("resource"), "'resource' attribute missing");
-    }
 }

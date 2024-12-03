@@ -93,6 +93,7 @@ public class XmlReportFactoryTest {
         assertEquals(2, statistic.getCounter(Document.Type.NOTICE), "Notice files");
         assertEquals(8, statistic.getCounter(Document.Type.STANDARD), "Standard files");
         assertEquals(1, statistic.getCounter(Document.Type.ARCHIVE), "Archives");
+        assertEquals(1, statistic.getCounter(Document.Type.IGNORED), "Ignored documents");
     }
 
     @Test
