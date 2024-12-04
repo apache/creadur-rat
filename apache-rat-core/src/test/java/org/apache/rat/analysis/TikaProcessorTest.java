@@ -49,7 +49,7 @@ public class TikaProcessorTest {
      * because the encoding of the stream was different from the
      * platform's default encoding.
      *
-     * @see "RAT-81"
+     * @see <a href="https://issues.apache.org/jira/browse/RAT-81">RAT-81</a>
      */
     @Test
     public void RAT81() {
@@ -84,6 +84,12 @@ public class TikaProcessorTest {
         FileDocument doc = mkDocument("/binaries/UTF8_with_signature.xml");
         TikaProcessor.process(doc);
         assertEquals(Document.Type.STANDARD, doc.getMetaData().getDocumentType());
+    }
+
+    @Test
+    public void RAT178Test() {
+        FileDocument doc = new FileDocument(new File("/not_a_real_file"), DocumentNameMatcher.MATCHES_ALL);
+        assertThrows(RatDocumentAnalysisException.class, () ->TikaProcessor.process(doc));
     }
 
     @Test
@@ -131,7 +137,7 @@ public class TikaProcessorTest {
                 }
             }
         }
-        System.out.println( "untested mime types");
+        System.out.println("untested mime types");
         unseenMime.keySet().forEach(System.out::println);
         for (Document.Type type : Document.Type.values()) {
             System.out.format("Tested %s %s files%n", statistic.getCounter(type), type);

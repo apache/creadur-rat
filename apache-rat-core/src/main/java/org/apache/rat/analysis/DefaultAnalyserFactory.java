@@ -32,6 +32,7 @@ import org.apache.rat.document.RatDocumentAnalysisException;
 import org.apache.rat.license.ILicense;
 import org.apache.rat.license.LicenseSetFactory;
 import org.apache.rat.utils.DefaultLog;
+import org.apache.rat.utils.Log;
 import org.apache.rat.walker.ArchiveWalker;
 
 /**
@@ -52,8 +53,10 @@ public final class DefaultAnalyserFactory {
         if (licenses.isEmpty()) {
             throw new ConfigurationException("At least one license must be defined");
         }
-        DefaultLog.getInstance().debug("Licenses in Test");
-        licenses.forEach(DefaultLog.getInstance()::debug);
+        if (DefaultLog.getInstance().isEnabled(Log.Level.DEBUG)) {
+            DefaultLog.getInstance().debug("Currently active Licenses are:");
+            licenses.forEach(DefaultLog.getInstance()::debug);
+        }
         return new DefaultAnalyser(configuration, licenses);
     }
 
