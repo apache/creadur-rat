@@ -40,7 +40,7 @@ import java.util.stream.Collectors;
 /* DO NOT EDIT - GENERATED FILE */
 
 /**
- * Generated class to provide Maven support for standard Rat command line options
+ * Generated class to provide Maven support for standard RAT command line options
  */
 ${class}
 
@@ -83,7 +83,6 @@ ${static}
 ${commonArgs}
 
 ${constructor}
-
 
     /*  GENERATED METHODS */
 

@@ -28,82 +28,136 @@ Default Output Example
 +------------------------------------------+
 *****************************************************
 Summary
--------
-Generated at: 2024-03-30T14:40:39+01:00
+*****************************************************
+Generated at: 2024-11-28T08:03:52Z
+    by Apache Creadur RAT 0.17 (Apache Software Foundation)
 
-Notes: 2
-Binaries: 2
-Archives: 1
-Standards: 8
+-----------------------------------------------------
+Counters
+-----------------------------------------------------
+    (Entries starting with '!' exceed the minimum or maximum values)
+  Approved:           9    A count of approved licenses.
+  Archives:           1    A count of archive files.
+  Binaries:           2    A count of binary files.
+  Document types:     5    A count of distinct document types.
+  Generated:          1    A count of generated files.
+  License categories: 5    A count of distinct license categories.
+  License names:      6    A count of distinct license names.
+  Notices:            2    A count of notice files.
+  Standards:          8    A count of standard files.
+! Unapproved:         2    A count of unapproved licenses.
+  Unknown:            2    A count of unknown file types.
 
-Apache Licensed: 5
-Generated Documents: 1
 
-JavaDocs are generated, thus a license header is optional.
-Generated files do not require license headers.
+-----------------------------------------------------
+Licenses detected
+-----------------------------------------------------
 
-2 Unknown Licenses
+Apache License Version 2.0: 5
+BSD 3 clause: 1
+Generated Files: 1
+The MIT License: 1
+The Telemanagement Forum License: 1
+Unknown license: 2
+
+-----------------------------------------------------
+License Categories detected
+-----------------------------------------------------
+
+?????: 2
+AL   : 5
+BSD-3: 2
+GEN  : 1
+MIT  : 1
+
+-----------------------------------------------------
+Document Types detected
+-----------------------------------------------------
+
+ARCHIVE: 1
+BINARY: 2
+GENERATED: 1
+NOTICE: 2
+STANDARD: 8
 
 *****************************************************
-
-Files with unapproved licenses:
-
-  src/test/resources/elements/Source.java
-  src/test/resources/elements/sub/Empty.txt
-
+Files with unapproved licenses
 *****************************************************
 
+  /Source.java
+  /sub/Empty.txt
+
 *****************************************************
-  Documents with unapproved licenses will start with a '!'
+Archives
+*****************************************************
+
+ /dummy.jar
+
+*****************************************************
+Detail
+*****************************************************
+
+  The line following documents with unapproved licenses will start with a '!'
   The next character identifies the document type.
 
    char         type
-    a       Archive file
-    b       Binary file
-    g       Generated file
-    n       Notice file
-    s       Standard file
-    u       Unknown file.
+    A       Archive file
+    B       Binary file
+    G       Generated file
+    N       Notice file
+    S       Standard file
+    U       Unknown file.
 
- s src/test/resources/elements/ILoggerFactory.java
+/ILoggerFactory.java
+  S         text/x-java-source    ISO-8859-1
     MIT      MIT           The MIT License
 
- b src/test/resources/elements/Image.png
+/Image.png
+  B         image/png
 
- n src/test/resources/elements/LICENSE
+/LICENSE
+  N         text/plain
 
- n src/test/resources/elements/NOTICE
+/NOTICE
+  N         text/plain
 
-!s src/test/resources/elements/Source.java
+/Source.java
+ !S         text/x-java-source    ISO-8859-1
     ?????    ?????         Unknown license (Unapproved)
 
- s src/test/resources/elements/Text.txt
+/Text.txt
+  S         text/plain    ISO-8859-1
     AL       AL            Apache License Version 2.0
 
- s src/test/resources/elements/TextHttps.txt
+/TextHttps.txt
+  S         text/plain    ISO-8859-1
     AL       AL            Apache License Version 2.0
 
- s src/test/resources/elements/Xml.xml
+/Xml.xml
+  S         application/xml    ISO-8859-1
     AL       AL            Apache License Version 2.0
 
- s src/test/resources/elements/buildr.rb
+/buildr.rb
+  S         text/x-ruby    ISO-8859-1
     AL       AL            Apache License Version 2.0
 
- a src/test/resources/elements/dummy.jar
+/dummy.jar
+  A         application/java-archive
 
- g src/test/resources/elements/generated.txt
+/generated.txt
+  G         text/plain
     GEN      GEN           Generated Files
 
- b src/test/resources/elements/plain.json
+/plain.json
+  B         application/json
 
- s src/test/resources/elements/tri.txt
+/sub/Empty.txt
+ !S         text/plain    UTF-8
+    ?????    ?????         Unknown license (Unapproved)
+
+/tri.txt
+  S         text/plain    ISO-8859-1
     AL       AL            Apache License Version 2.0
     BSD-3    BSD-3         BSD 3 clause
     BSD-3    TMF           The Telemanagement Forum License
-
-!s src/test/resources/elements/sub/Empty.txt
-    ?????    ?????         Unknown license (Unapproved)
-
-
-*****************************************************
 +------------------------------------------+

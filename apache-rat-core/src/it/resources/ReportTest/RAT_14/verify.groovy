@@ -29,17 +29,17 @@ import static org.junit.jupiter.api.Assertions.assertNotNull
 output = new File(args[0])
 content = output.text
 
-TextUtils.assertPatternInTarget("^Approved:\\s+3 ", content)
-TextUtils.assertPatternInTarget("^Archives:\\s+2 ", content)
-TextUtils.assertPatternInTarget("^Binaries:\\s+2 ", content)
-TextUtils.assertPatternInTarget("^Document types:\\s+5 ", content)
-TextUtils.assertPatternInTarget("^Ignored:\\s+1 ", content)
-TextUtils.assertPatternInTarget("^License categories:\\s+2 ", content)
-TextUtils.assertPatternInTarget("^License names:\\s+2 ", content)
-TextUtils.assertPatternInTarget("^Notices:\\s+1 ", content)
-TextUtils.assertPatternInTarget("^Standards: \\s+5 ", content)
-TextUtils.assertPatternInTarget("^Unapproved:\\s+2 ", content)
-TextUtils.assertPatternInTarget("^Unknown:\\s+2 ", content)
+TextUtils.assertPatternInTarget("^  Approved:\\s+3 ", content)
+TextUtils.assertPatternInTarget("^  Archives:\\s+2 ", content)
+TextUtils.assertPatternInTarget("^  Binaries:\\s+2 ", content)
+TextUtils.assertPatternInTarget("^  Document types:\\s+5 ", content)
+TextUtils.assertPatternInTarget("^  Ignored:\\s+1 ", content)
+TextUtils.assertPatternInTarget("^  License categories:\\s+2 ", content)
+TextUtils.assertPatternInTarget("^  License names:\\s+2 ", content)
+TextUtils.assertPatternInTarget("^  Notices:\\s+1 ", content)
+TextUtils.assertPatternInTarget("^  Standards: \\s+5 ", content)
+TextUtils.assertPatternInTarget("^  Unapproved:\\s+2 ", content)
+TextUtils.assertPatternInTarget("^  Unknown:\\s+2 ", content)
 
 logOutput = new File(args[1])
 log = logOutput.text

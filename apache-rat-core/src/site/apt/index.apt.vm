@@ -46,7 +46,7 @@ Developing Rat
 *----------+--------------+----------------+
 <<Modules that run Rat>>
 
- Support for new build tools and alternative ways to run rat should be coded
+ Support for new build tools and alternative ways to run RAT should be coded
  in new modules building on <<<apache-rat-core>>>. Developers interested in
  improving existing support for a specific build tool should start by taking
  a look at that module.
