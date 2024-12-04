@@ -16,11 +16,11 @@
  */
 import org.apache.rat.testhelpers.TextUtils
 
-f = new File( basedir, 'target/rat.txt' )
+f = new File(basedir, 'target/rat.txt')
 assert f.exists()
 
 content = f.text
 
-assert TextUtils.isMatching("^/src.apt\\s+G ", content)
-assert content.contains( '    YAL      MyLicense     Yet another license' )
-assert content.contains( '    GEN      Not           Not ')
+assert TextUtils.isMatching("^  /src.apt\\s+G ", content)
+assert content.contains('    YAL      MyLicense     Yet another license')
+assert content.contains('    GEN      Not           Not ')

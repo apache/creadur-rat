@@ -48,7 +48,7 @@
                 <xsl:with-param name="name"><xsl:value-of select="@name"/></xsl:with-param>
                 <xsl:with-param name="count"><xsl:value-of select="@count"/></xsl:with-param>
                 <xsl:with-param name="description"><xsl:value-of select="@description"/></xsl:with-param>
-                <xsl:with-param name="leadin"><xsl:choose>
+                <xsl:with-param name="prefix"><xsl:choose>
                     <xsl:when test='@approval="false"'><xsl:text>! </xsl:text></xsl:when>
                     <xsl:otherwise><xsl:text>  </xsl:text></xsl:otherwise>
                 </xsl:choose></xsl:with-param>
@@ -106,8 +106,8 @@
             <xsl:with-param name="title">Detail</xsl:with-param>
         </xsl:call-template>
         <xsl:text>
-  The line following documents with unapproved licenses will start with a '!'
-  The next character identifies the document type.
+  Documents with unapproved licenses will start with a '!'
+  The first character on the next line identifies the document type.
    
    char         type
     A       Archive file
@@ -124,9 +124,9 @@
                 <xsl:with-param name="mediaType"><xsl:value-of select='@mediaType'/></xsl:with-param>
                 <xsl:with-param name="encoding"><xsl:value-of select='@encoding'/></xsl:with-param>
                 <xsl:with-param name="type"><xsl:value-of select="substring(@type, 1, 1)"/></xsl:with-param>
-                <xsl:with-param name="leadin"><xsl:choose>
+                <xsl:with-param name="prefix"><xsl:choose>
                     <xsl:when test='license/@approval="false"'>
-                        <xsl:text> !</xsl:text>
+                        <xsl:text>! </xsl:text>
                     </xsl:when>
                     <xsl:otherwise>
                         <xsl:text>  </xsl:text>
@@ -162,9 +162,9 @@
         <xsl:param name="name" />
         <xsl:param name="count" />
         <xsl:param name="description" />
-        <xsl:param name="leadin"/>
+        <xsl:param name="prefix"/>
 
-        <xsl:value-of select='concat($leadin, substring(concat($name, ":                  "), 1, 20),
+        <xsl:value-of select='concat($prefix, substring(concat($name, ":                  "), 1, 20),
             $count, "    ", $description, $newline)'/>
     </xsl:template>
 
@@ -173,9 +173,9 @@
         <xsl:param name="type"/>
         <xsl:param name="mediaType"/>
         <xsl:param name="encoding" />
-        <xsl:param name="leadin"/>
+        <xsl:param name="prefix"/>
 
-        <xsl:value-of select='concat($name, $newline, $leadin, $type, "         ", $mediaType, "    ",$encoding)'/>
+        <xsl:value-of select='concat($prefix, $name, $newline, "  ", $type, "         ", $mediaType, "    ",$encoding)'/>
     </xsl:template>
 
     <xsl:template name="license">

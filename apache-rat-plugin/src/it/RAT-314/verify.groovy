@@ -16,14 +16,14 @@
  */
 import org.apache.rat.testhelpers.TextUtils
 
-content = new File( basedir, 'build.log' ).text
+content = new File(basedir, 'build.log').text
 
-assert content.contains( 'BUILD SUCCESS' )
+assert content.contains('BUILD SUCCESS')
 
-assert ! content.contains( '[WARNING] No resources included' )
+assert ! content.contains('[WARNING] No resources included')
 
-report = new File( basedir, 'target/site/rat-report.html' ).text
+report = new File(basedir, 'target/site/rat-report.html').text
 
-assert !report.contains( 'Unknown License' )
-assert TextUtils.isMatching("^/pom.xml\\s+S ", report)
-assert report.contains( 'AL       AL            Apache License Version 2.0' )
+assert !report.contains('Unknown License')
+assert TextUtils.isMatching("^  /pom.xml\\s+S ", report)
+assert report.contains('AL       AL            Apache License Version 2.0')

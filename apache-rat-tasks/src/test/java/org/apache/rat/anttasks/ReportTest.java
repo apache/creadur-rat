@@ -78,7 +78,7 @@ public class ReportTest extends AbstractRatAntTaskTest {
     }
     
     private String logLine(boolean approved, String fileText, String id) {
-        return String.format( "\\Q%s\\E\\s+%sS .*\\s+\\Q%s\\E ", fileText, approved?" ":"!", id);
+        return String.format( "%s \\Q%s\\E\\s+S .*\\s+\\Q%s\\E ", approved?" ":"!", fileText, id);
     }
     
     @Test

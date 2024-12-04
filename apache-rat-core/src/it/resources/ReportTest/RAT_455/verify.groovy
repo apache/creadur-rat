@@ -21,5 +21,5 @@ import org.apache.rat.testhelpers.TextUtils
 output = new File(args[0])
 content = output.text
 
-assert TextUtils.isMatching('^/GPL.md\\s+!S ', content)
+assert TextUtils.isMatching('^! /GPL.md\\s+S ', content)
 assert TextUtils.isMatching('^\\s+GPL\\s+GPL1\\s+GNU General Public License V1.0 \\(Unapproved\\)', content)

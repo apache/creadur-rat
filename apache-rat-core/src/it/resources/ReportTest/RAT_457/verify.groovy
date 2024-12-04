@@ -21,7 +21,7 @@ import org.apache.rat.testhelpers.TextUtils
 output = new File(args[0])
 content = output.text
 
-assert TextUtils.isMatching('^/apache-rat-0.17-SNAPSHOT.jar\\s+!A ', content)
+assert TextUtils.isMatching('^! /apache-rat-0.17-SNAPSHOT.jar\\s+A ', content)
 
 logOutput = new File(args[1])
 log = logOutput.text
