@@ -61,7 +61,7 @@ public class DirectoryWalker extends Walker {
         final SortedSet<Document> documents = document.listChildren();
         if (documents != null) {
             for (final Document doc : documents) {
-                if (Document.Type.IGNORED == doc.getMetaData().getDocumentType() || !doc.isDirectory()) {
+                if (doc.isIgnored() || !doc.isDirectory()) {
                     report.report(doc);
                 } else {
                     process(report, doc);

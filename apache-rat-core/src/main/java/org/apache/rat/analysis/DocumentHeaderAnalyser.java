@@ -51,7 +51,7 @@ class DocumentHeaderAnalyser implements IDocumentAnalyser {
 
     @Override
     public void analyse(final Document document) {
-        if (Document.Type.IGNORED != document.getMetaData().getDocumentType()) {
+        if (!document.isIgnored()) {
             try (Reader reader = document.reader()) {
                 DefaultLog.getInstance().debug(format("Processing: %s", document));
                 HeaderCheckWorker worker = new HeaderCheckWorker(generatedMatcher, reader, licenses, document);

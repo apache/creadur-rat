@@ -210,7 +210,7 @@ public class XmlElements {
                 .write(Attributes.NAME, document.getName().localized("/"))
                 .write(Attributes.TYPE, metaData.getDocumentType().toString())
                 .write(Attributes.MEDIA_TYPE, metaData.getMediaType().toString());
-        if (Document.Type.STANDARD == metaData.getDocumentType()) {
+        if (Document.Type.STANDARD == metaData.getDocumentType() || metaData.hasCharset()) {
             result = result.write(Attributes.ENCODING, metaData.getCharset().displayName());
         }
         if (document.isIgnored() && document.isDirectory()) {

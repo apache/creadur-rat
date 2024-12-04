@@ -135,8 +135,10 @@ public final class TikaProcessor {
             String[] parts = result.split("/");
             MediaType mediaType = new MediaType(parts[0], parts[1]);
             document.getMetaData().setMediaType(mediaType);
-            document.getMetaData()
-                    .setDocumentType(fromMediaType(mediaType));
+            if (!document.isIgnored()) {
+                document.getMetaData()
+                        .setDocumentType(fromMediaType(mediaType));
+            }
             if (Document.Type.STANDARD == document.getMetaData().getDocumentType()) {
                 document.getMetaData().setCharset(detectCharset(stream, document.getName()));
                 if (NoteGuesser.isNote(document)) {

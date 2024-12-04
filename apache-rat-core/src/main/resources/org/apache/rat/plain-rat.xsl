@@ -124,6 +124,12 @@
                 <xsl:with-param name="mediaType"><xsl:value-of select='@mediaType'/></xsl:with-param>
                 <xsl:with-param name="encoding"><xsl:value-of select='@encoding'/></xsl:with-param>
                 <xsl:with-param name="type"><xsl:value-of select="substring(@type, 1, 1)"/></xsl:with-param>
+                <xsl:with-param name="isDirectory"><xsl:choose>
+                    <xsl:when test='@isDirectory="true"'>
+                        <xsl:text> (directory)</xsl:text>
+                    </xsl:when>
+                    <xsl:otherwise></xsl:otherwise>
+                </xsl:choose></xsl:with-param>
                 <xsl:with-param name="prefix"><xsl:choose>
                     <xsl:when test='license/@approval="false"'>
                         <xsl:text>! </xsl:text>
@@ -173,9 +179,10 @@
         <xsl:param name="type"/>
         <xsl:param name="mediaType"/>
         <xsl:param name="encoding" />
+        <xsl:param name="isDirectory" />
         <xsl:param name="prefix"/>
 
-        <xsl:value-of select='concat($prefix, $name, $newline, "  ", $type, "         ", $mediaType, "    ",$encoding)'/>
+        <xsl:value-of select='concat($prefix, $name, $newline, "  ", $type, "         ", $mediaType, "    ",$encoding, $isDirectory)'/>
     </xsl:template>
 
     <xsl:template name="license">

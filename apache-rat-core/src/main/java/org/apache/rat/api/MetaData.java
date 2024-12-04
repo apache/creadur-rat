@@ -74,6 +74,14 @@ public class MetaData {
     }
 
     /**
+     * Returns {@code true} if {@link #setCharset} has been called.
+     * @return {@code true} if {@link #setCharset} has been called.
+     */
+    public boolean hasCharset() {
+        return charset != null;
+    }
+
+    /**
      * Gets the defined media type.
      * @return the media type.
      */
