@@ -124,7 +124,9 @@ public class XmlElements {
         /** The media type for a document */
         MEDIA_TYPE,
         /** The encoding for a text document */
-        ENCODING
+        ENCODING,
+        /** Denotes a skipped directory */
+        IS_DIRECTORY
     }
 
     /** The XMLWriter that we write to */
@@ -210,6 +212,9 @@ public class XmlElements {
                 .write(Attributes.MEDIA_TYPE, metaData.getMediaType().toString());
         if (Document.Type.STANDARD == metaData.getDocumentType()) {
             result = result.write(Attributes.ENCODING, metaData.getCharset().displayName());
+        }
+        if (document.isIgnored() && document.isDirectory()) {
+            result = result.write(Attributes.IS_DIRECTORY, Boolean.TRUE.toString());
         }
         return result;
     }
