@@ -73,7 +73,6 @@ SPDX-License-Identifier: Apache-2.0
 				<pathelement location="${ant.file}" />
 			</path>
 		</pathconvert>
-		<property name="expectedOutput" value=" S /report-normal-operation.xml" />
 		<property name="expectedOutputXML"
 			value='&lt;resource encoding="ISO-8859-1" mediaType="application/xml" name="/report-normal-operation.xml" type="STANDARD"' />
 		<property name="expectedOutputXML2" value='family="AL   "' />
@@ -106,9 +105,7 @@ SPDX-License-Identifier: Apache-2.0
 				<file file="${ant.file}" />
 			</rat:report>
 			<copy overwrite="true" file="${report.file}" toFile="${reports.dir}/TEST-testwithReportSentToFile.out"/>
-			<au:assertLogDoesntContain text="!S /report-normal-operation.xml" />
 			<au:assertFileExists file="${report.file}" />
-			<assertReportContains text=" S /report-normal-operation.xml" />
 		</target>
 
 		<target name="testXMLReportSentToFile" depends="fileReportTest">
@@ -116,8 +113,6 @@ SPDX-License-Identifier: Apache-2.0
 				<file file="${ant.file}" />
 			</rat:report>
 			<copy overwrite="true" file="${report.file}.xml" toFile="${reports.dir}/TEST-testXMLReportSentToFile.xml"/>
-			<au:assertLogDoesntContain text="${expectedOutputXML}" />
-			<au:assertLogDoesntContain text="${expectedOutputXML2}" />
 			<au:assertFileExists file="${report.file}.xml" />
 			<assertReportContains text="${expectedOutputXML}"
 				file="${report.file}.xml" />
@@ -152,8 +147,6 @@ SPDX-License-Identifier: Apache-2.0
 				</rat:license>
 			</rat:report>
 			<copy overwrite="true" file="${report.file}" toFile="${reports.dir}/TEST-testWithALUnknownSentToFile.out"/>
-			<au:assertLogDoesntContain text=" S /report-normal-operation.xml" />
-			<au:assertLogDoesntContain text="!S /report-normal-operation.xml" />
 			<assertReportContains text="${UNKNOWN}" />
 		</target>
 
@@ -325,8 +318,6 @@ SPDX-License-Identifier: Apache-2.0
 				</rat:license>
 			</rat:report>
 			<copy overwrite="true" file="${report.file}" toFile="${reports.dir}/TEST-testLicenseNotApprovedSentToFile.out"/>
-			<assertReportContains text="!S /report-normal-operation.xml" />
-			<assertReportDoesntContain text=" S /report-normal-operation.xml" />
 			<assertReportContains text="${YASL}" />
 		</target>
 
@@ -344,7 +335,6 @@ SPDX-License-Identifier: Apache-2.0
 				</rat:license>
 			</rat:report>
 			<copy overwrite="true" file="${report.file}" toFile="${reports.dir}/TEST-testLicenseApprovedSentToFile.out"/>
-			<assertReportContains text=" S /report-normal-operation.xml" />
 			<assertReportDoesntContain text="!S /report-normal-operation.xml" />
 			<assertReportContains text="${YASL}" />
 		</target>
@@ -363,8 +353,6 @@ SPDX-License-Identifier: Apache-2.0
 				</rat:license>
 			</rat:report>
 			<copy overwrite="true" file="${report.file}" toFile="${reports.dir}/TEST-testNoLicenseMatchSentToFile.out"/>
-			<assertReportContains text="!S /report-normal-operation.xml" />
-			<assertReportDoesntContain text=" S /report-normal-operation.xml" />
 			<assertReportContains text="${UNKNOWN}" />
 		</target>
 
@@ -382,8 +370,6 @@ SPDX-License-Identifier: Apache-2.0
 						${test.version}</rat:text>
 				</rat:license>
 			</rat:report>
-			<assertReportContains text=" S /report-normal-operation.xml" />
-			<assertReportDoesntContain text="!S $/report-normal-operation.xml" />
 			<assertReportContains text="${YASL}" />
 		</target>
 

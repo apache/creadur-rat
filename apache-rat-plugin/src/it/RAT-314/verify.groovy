@@ -14,14 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-content = new File( basedir, 'build.log' ).text
+import org.apache.rat.testhelpers.TextUtils
 
-assert content.contains( 'BUILD SUCCESS' )
+content = new File(basedir, 'build.log').text
 
-assert ! content.contains( '[WARNING] No resources included' )
+assert content.contains('BUILD SUCCESS')
 
-report = new File( basedir, 'target/site/rat-report.html' ).text
+assert ! content.contains('[WARNING] No resources included')
 
-assert !report.contains( 'Unknown License' )
-assert report.contains( 'S /pom.xml' )
-assert report.contains( 'AL       AL            Apache License Version 2.0' )
+report = new File(basedir, 'target/site/rat-report.html').text
+
+assert !report.contains('Unknown License')
+assert TextUtils.isMatching("^  /pom.xml\\s+S ", report)
+assert report.contains('AL       AL            Apache License Version 2.0')

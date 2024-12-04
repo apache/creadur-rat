@@ -247,6 +247,7 @@
         <configuration>
           <cloneProjectsTo>${project.build.directory}/invoker</cloneProjectsTo>
           <localRepositoryPath>${project.build.directory}/local-repo</localRepositoryPath>
+          <addTestClassPath>true</addTestClassPath>
           <settingsFile>src/it/settings.xml</settingsFile>
           <postBuildHookScript>verify</postBuildHookScript>
         </configuration>

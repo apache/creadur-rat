@@ -59,4 +59,4 @@ There are several ways to use the Antlib:
         xmlns:rat="antlib:org.apache.rat.anttasks"
         xmlns="antlib:org.apache.tools.ant">
 
-    All tasks of this library will automatically be available in the rat namespace without any taskdef.
+    All tasks of this library will automatically be available in the "rat" namespace without any taskdef.
