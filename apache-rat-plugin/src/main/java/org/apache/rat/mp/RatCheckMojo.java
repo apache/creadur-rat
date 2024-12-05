@@ -131,7 +131,7 @@ public class RatCheckMojo extends AbstractRatMojo {
     }
 
     /**
-     * Will ignore rat errors and display a log message if any. Its use is NOT
+     * Will ignore RAT errors and display a log message if any. Its use is NOT
      * RECOMMENDED, but quite convenient on occasion.
      *
      * @since 0.9
@@ -227,7 +227,7 @@ public class RatCheckMojo extends AbstractRatMojo {
     }
 
     /**
-     * Reads the location of the rat text file from the Mojo.
+     * Reads the location of the RAT text file from the Mojo.
      *
      * @return Value of the "reportFile" property.
      * @throws MojoFailureException If no output file was specified.

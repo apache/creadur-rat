@@ -72,6 +72,30 @@ The <action> type attribute can be one of:
     </release>
     -->
     <release version="0.17-SNAPSHOT" date="xxxx-yy-zz" description="Current SNAPSHOT - release to be done">
+      <action issue="RAT-453" type="add" dev="claudenw">
+        Change layout and rendering of RAT report to contain RAT version information, counter values, encoding information of scanned files and aggregation by license type.
+      </action>
+      <action issue="RAT-178" type="add" dev="claudenw">
+        Added tests to TikaProcessorTests and DefaultAnalyserFactoryTest to properly handle non-existent and unreadable files during processing runs of our BinaryGuesser.
+      </action>
+      <action issue="RAT-405" type="add" dev="claudenw">
+        Do not show sample output of scanned files in XML anymore. As files are report different tooling can be used to edit/check the files.
+      </action>
+      <action issue="RAT-259" type="add" dev="claudenw">
+        Add new option --input-source to explicitly specify which files to scan for licenses.
+      </action>
+      <action issue="RAT-455" type="add" dev="claudenw">
+        Disallow GPL license family by default as ASF does not allow this license family.
+      </action>
+      <action issue="RAT-457" type="fix" dev="claudenw">
+        Added core integration test to verify JAR processing works correctly.
+      </action>
+      <action issue="RAT-458" type="add" dev="claudenw">
+        Added core integration test to verify log level can be set from the command line.
+      </action>
+      <action issue="RAT-107" type="fix" dev="claudenw">
+        Exclusions of defaults should work recursively and in submodules now. Added unit and integration tests.
+      </action>
       <action issue="RAT-2" type="add" dev="claudenw">
         Added --input-exclude-size as an option to skip the scanning of very small files.
       </action>

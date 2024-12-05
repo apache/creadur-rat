@@ -60,8 +60,6 @@ public class XmlElements {
         LICENSE(),
         /** A notes element */
         NOTES(),
-        /** A sample from the file */
-        SAMPLE(),
         /** A statistics element */
         STATISTICS(),
         /** A statistic entry */
@@ -214,20 +212,6 @@ public class XmlElements {
             result = result.write(Attributes.ENCODING, metaData.getCharset().displayName());
         }
         return result;
-    }
-
-    /**
-     * Creates a sample element. Closes the sample element before returning.
-     * @param sample the sample ot display.
-     * @return this
-     * @throws RatException on error.
-     */
-    public XmlElements sample(final String sample) throws RatException {
-        try {
-        return write(Elements.SAMPLE).cdata(sample).closeElement();
-        } catch (IOException e) {
-            throw new RatException("Can not write CDATA for 'notes' element", e);
-        }
     }
 
     /**

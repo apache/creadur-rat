@@ -1,0 +1,6 @@
+--input-exclude
+**
+--input-source
+src/it/resources/ReportTest/RAT_259/list.txt
+--counter-max
+UNAPPROVED:2

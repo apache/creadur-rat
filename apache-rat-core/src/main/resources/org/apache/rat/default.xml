@@ -5,9 +5,7 @@
 		<family id="CDDL1"
 			name="COMMON DEVELOPMENT AND DISTRIBUTION LICENSE Version 1.0" />
 		<family id="GEN" name="Generated Files" />
-		<family id="GPL1" name="GNU General Public License, version 1" />
-		<family id="GPL2" name="GNU General Public License, version 2" />
-		<family id="GPL3" name="GNU General Public License, version 3" />
+		<family id="GPL" name="GNU General Public License family" />
 		<family id="MIT" name="The MIT License" />
 		<family id="OASIS" name="OASIS Open License" />
 		<family id="W3C" name="W3C Software Copyright" />
@@ -74,7 +72,7 @@
 			<any resource="/org/apache/rat/generation-keywords.txt" />
 		</license>
 
-		<license family="GPL1">
+		<license family="GPL" id="GPL1" name="GNU General Public License V1.0">
 			<any>
 				<text>This program is free software; you can redistribute it
 					and/or modify
@@ -88,7 +86,7 @@
 			</any>
 		</license>
 
-		<license family="GPL2">
+		<license family="GPL" id="GPL2" name="GNU General Public License V2.0">
 			<any>
 				<text>This program is free software; you can
 					redistribute it and/or modify it under the terms of the
@@ -101,7 +99,7 @@
 			</any>
 		</license>
 
-		<license family="GPL3">
+		<license family="GPL" id="GPL3" name="GNU General Public License V3.0">
 			<any>
 				<text>This program is free software: you can
 					redistribute it and/or modify it under the terms of the
@@ -244,9 +242,6 @@
 		<family license_ref="BSD-3" />
 		<family license_ref='CDDL1' />
 		<family license_ref='GEN' />
-		<family license_ref='GPL1' />
-		<family license_ref='GPL2' />
-		<family license_ref='GPL3' />
 		<family license_ref='MIT' />
 		<family license_ref='OASIS' />
 		<family license_ref='W3C' />

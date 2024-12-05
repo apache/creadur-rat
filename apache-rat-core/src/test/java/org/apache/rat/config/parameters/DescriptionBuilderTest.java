@@ -25,7 +25,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.File;
-import java.io.IOException;
 import java.lang.reflect.Method;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -41,6 +40,7 @@ import org.apache.rat.analysis.matchers.AndMatcher;
 import org.apache.rat.analysis.matchers.CopyrightMatcher;
 import org.apache.rat.api.Document;
 import org.apache.rat.document.DocumentName;
+import org.apache.rat.document.DocumentNameMatcher;
 import org.apache.rat.document.FileDocument;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -115,18 +115,17 @@ public class DescriptionBuilderTest {
     /**
      * Scans the build classes directory to locate all class files that have Description annotations and ensure its validity.
      * @return A stream of class and descriptions to validate.
-     * @throws IOException on IO error
      * @throws URISyntaxException if URI is incorrect.
      * @throws ClassNotFoundException if class can not be found.
      */
-    public static Stream<Arguments> descriptionSource() throws IOException, URISyntaxException, ClassNotFoundException {
+    public static Stream<Arguments> descriptionSource() throws URISyntaxException, ClassNotFoundException {
         List<Arguments> arguments = new ArrayList<>();
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         URL url = classLoader.getResource("");
         File baseDir = new File(url.toURI());
         baseDir = new File(baseDir.getParent(), "classes");
-        DocumentName documentName = new DocumentName(baseDir);
-        FileDocument fileDocument =  new FileDocument(documentName, baseDir, x -> true);
+        DocumentName documentName = DocumentName.builder(baseDir).build();
+        FileDocument fileDocument =  new FileDocument(documentName, baseDir, DocumentNameMatcher.MATCHES_ALL);
         DocumentProcessor processor = new DocumentProcessor();
         processor.accept(fileDocument);
 
@@ -136,9 +135,7 @@ public class DescriptionBuilderTest {
             Class<?> clazz = Class.forName(className);
             List<Description> descriptionList = DescriptionBuilder.getConfigComponents(clazz);
             if (descriptionList != null) {
-                descriptionList.forEach( desc -> {
-                    arguments.add(Arguments.of(clazz, desc));
-                });
+                descriptionList.forEach( desc -> arguments.add(Arguments.of(clazz, desc)));
             }
         }
 

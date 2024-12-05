@@ -147,7 +147,6 @@ public class HeaderCheckWorker {
                 }
             } else {
                 document.getMetaData().reportOnLicense(UnknownLicense.INSTANCE);
-                document.getMetaData().setSampleHeader(headers.raw());
             }
         } catch (IOException e) {
             throw new RatHeaderAnalysisException("Cannot read header for " + document, e);

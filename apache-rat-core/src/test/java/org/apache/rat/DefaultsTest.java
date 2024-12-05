@@ -18,11 +18,6 @@
  */
 package org.apache.rat;
 
-
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import java.util.Arrays;
 import java.util.Set;
 import java.util.TreeSet;
@@ -31,10 +26,11 @@ import org.apache.rat.license.ILicense;
 import org.apache.rat.license.LicenseSetFactory.LicenseFilter;
 import org.junit.jupiter.api.Test;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 
 public class DefaultsTest {
-    private static final String[] FAMILIES = { "BSD-3", "GEN  ", "AL   ", "OASIS", "W3CD ", "W3C  ", "GPL1 ",
-            "GPL2 ", "GPL3 ", "MIT  ", "CDDL1" };
+    private static final String[] FAMILIES = { "BSD-3", "GEN  ", "GPL  ", "AL   ", "OASIS", "W3CD ", "W3C  ", "MIT  ", "CDDL1" };
 
     @Test
     public void defaultConfigTest() {
@@ -44,8 +40,8 @@ public class DefaultsTest {
 
         Set<String> names = new TreeSet<>();
         licenses.forEach(x -> names.add(x.getLicenseFamily().getFamilyCategory()));
-        assertEquals(FAMILIES.length, names.size());
+        assertThat(names.size()).isEqualTo(FAMILIES.length);
         names.removeAll(Arrays.asList(FAMILIES));
-        assertTrue(names.isEmpty());
+        assertThat(names).isEmpty();
     }
 }

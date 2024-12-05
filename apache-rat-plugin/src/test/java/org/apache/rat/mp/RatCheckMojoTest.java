@@ -27,7 +27,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.io.File;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.maven.plugin.MojoFailureException;
 import org.apache.rat.ReportConfiguration;
 import org.apache.rat.ReportConfigurationTest;
 import org.apache.rat.ReporterTestUtils;
@@ -73,7 +72,7 @@ public class RatCheckMojoTest extends BetterAbstractMojoTestCase {
         AbstractRatMojo mojo = (AbstractRatMojo) lookupConfiguredMojo(testPom, pGoal);
         assertNotNull(mojo);
 
-        assertNotNull("The mojo is missing its MavenProject, which will result in an NPE during rat runs.",
+        assertNotNull("The mojo is missing its MavenProject, which will result in an NPE during RAT runs.",
                 mojo.getProject());
 
         if (mojo instanceof RatReportMojo) {
@@ -103,12 +102,12 @@ public class RatCheckMojoTest extends BetterAbstractMojoTestCase {
         final String[] expected = {
                 ReporterTestUtils.documentOut(true, Document.Type.STANDARD, "/pom.xml") +
                         ReporterTestUtils.APACHE_LICENSE,
-                ReporterTestUtils.counterText(ClaimStatistic.Counter.NOTICES, 0),
-                ReporterTestUtils.counterText(ClaimStatistic.Counter.BINARIES, 0),
-                ReporterTestUtils.counterText(ClaimStatistic.Counter.ARCHIVES, 0),
-                ReporterTestUtils.counterText(ClaimStatistic.Counter.STANDARDS, 1),
-                ReporterTestUtils.counterText(ClaimStatistic.Counter.GENERATED, 0),
-                ReporterTestUtils.counterText(ClaimStatistic.Counter.UNKNOWN, 0),
+                ReporterTestUtils.counterText(ClaimStatistic.Counter.NOTICES, 0, false),
+                ReporterTestUtils.counterText(ClaimStatistic.Counter.BINARIES, 0, false),
+                ReporterTestUtils.counterText(ClaimStatistic.Counter.ARCHIVES, 0, false),
+                ReporterTestUtils.counterText(ClaimStatistic.Counter.STANDARDS, 1, false),
+                ReporterTestUtils.counterText(ClaimStatistic.Counter.GENERATED, 0, false),
+                ReporterTestUtils.counterText(ClaimStatistic.Counter.UNKNOWN, 0, false),
                 ReporterTestUtils.apacheLicenseVersion2(1)
         };
 
@@ -129,12 +128,12 @@ public class RatCheckMojoTest extends BetterAbstractMojoTestCase {
         final RatCheckMojo mojo = newRatCheckMojo("it2");
         final File ratTxtFile = mojo.getRatTxtFile();
         final String[] expected = {
-                "^Files with unapproved licenses:\\s+\\Q/src.txt\\E\\s+",
-                ReporterTestUtils.counterText(ClaimStatistic.Counter.NOTICES, 0),
-                ReporterTestUtils.counterText(ClaimStatistic.Counter.BINARIES, 0),
-                ReporterTestUtils.counterText(ClaimStatistic.Counter.ARCHIVES, 0),
-                ReporterTestUtils.counterText(ClaimStatistic.Counter.STANDARDS, 2),
-                ReporterTestUtils.counterText(ClaimStatistic.Counter.GENERATED, 0),
+                "^Files with unapproved licenses\\s+\\*+\\s+\\Q/src.txt\\E\\s+",
+                ReporterTestUtils.counterText(ClaimStatistic.Counter.NOTICES, 0, false),
+                ReporterTestUtils.counterText(ClaimStatistic.Counter.BINARIES, 0, false),
+                ReporterTestUtils.counterText(ClaimStatistic.Counter.ARCHIVES, 0, false),
+                ReporterTestUtils.counterText(ClaimStatistic.Counter.STANDARDS, 2, false),
+                ReporterTestUtils.counterText(ClaimStatistic.Counter.GENERATED, 0, false),
                 ReporterTestUtils.apacheLicenseVersion2(1),
                 ReporterTestUtils.unknownLicense(1),
                 ReporterTestUtils.documentOut(false, Document.Type.STANDARD, "/src.txt") +
@@ -159,12 +158,13 @@ public class RatCheckMojoTest extends BetterAbstractMojoTestCase {
     public void testIt3() throws Exception {
         final RatCheckMojo mojo = (RatCheckMojo) newRatMojo("it3", "check", true);
         final File ratTxtFile = mojo.getRatTxtFile();
-        final String[] expected = { "^Files with unapproved licenses:\\s+\\Q/src.apt\\E\\s+",
-                ReporterTestUtils.counterText(ClaimStatistic.Counter.NOTICES, 0),
-                ReporterTestUtils.counterText(ClaimStatistic.Counter.BINARIES, 0),
-                ReporterTestUtils.counterText(ClaimStatistic.Counter.ARCHIVES, 0),
-                ReporterTestUtils.counterText(ClaimStatistic.Counter.STANDARDS, 2),
-                ReporterTestUtils.counterText(ClaimStatistic.Counter.GENERATED, 0),
+        final String[] expected = {
+                "^Files with unapproved licenses\\s+\\*+\\s+\\Q/src.apt\\E\\s+",
+                ReporterTestUtils.counterText(ClaimStatistic.Counter.NOTICES, 0, false),
+                ReporterTestUtils.counterText(ClaimStatistic.Counter.BINARIES, 0, false),
+                ReporterTestUtils.counterText(ClaimStatistic.Counter.ARCHIVES, 0, false),
+                ReporterTestUtils.counterText(ClaimStatistic.Counter.STANDARDS, 2, false),
+                ReporterTestUtils.counterText(ClaimStatistic.Counter.GENERATED, 0, false),
                 ReporterTestUtils.apacheLicenseVersion2(1),
                 ReporterTestUtils.unknownLicense(1),
                 ReporterTestUtils.documentOut(false, Document.Type.STANDARD, "/src.apt") +
@@ -188,11 +188,11 @@ public class RatCheckMojoTest extends BetterAbstractMojoTestCase {
         final RatCheckMojo mojo = (RatCheckMojo) newRatMojo("it5", "check", true);
         final File ratTxtFile = mojo.getRatTxtFile();
         final String[] expected = {
-                ReporterTestUtils.counterText(ClaimStatistic.Counter.NOTICES, 0),
-                ReporterTestUtils.counterText(ClaimStatistic.Counter.BINARIES, 0),
-                ReporterTestUtils.counterText(ClaimStatistic.Counter.ARCHIVES, 0),
-                ReporterTestUtils.counterText(ClaimStatistic.Counter.STANDARDS, 0),
-                ReporterTestUtils.counterText(ClaimStatistic.Counter.GENERATED, 1),
+                ReporterTestUtils.counterText(ClaimStatistic.Counter.NOTICES, 0, false),
+                ReporterTestUtils.counterText(ClaimStatistic.Counter.BINARIES, 0, false),
+                ReporterTestUtils.counterText(ClaimStatistic.Counter.ARCHIVES, 0, false),
+                ReporterTestUtils.counterText(ClaimStatistic.Counter.STANDARDS, 0, true),
+                ReporterTestUtils.counterText(ClaimStatistic.Counter.GENERATED, 1, false),
         };
         final String[] notExpected = {
                 "^Apache License Version 2.0: ",
@@ -234,11 +234,11 @@ public class RatCheckMojoTest extends BetterAbstractMojoTestCase {
                         ReporterTestUtils.APACHE_LICENSE +
                         ReporterTestUtils.licenseOut("BSD", "BSD") +
                         ReporterTestUtils.licenseOut("CC BY", "Creative Commons Attribution (Unapproved)"),
-                ReporterTestUtils.counterText(ClaimStatistic.Counter.NOTICES, 0),
-                ReporterTestUtils.counterText(ClaimStatistic.Counter.BINARIES, 0),
-                ReporterTestUtils.counterText(ClaimStatistic.Counter.ARCHIVES, 0),
-                ReporterTestUtils.counterText(ClaimStatistic.Counter.STANDARDS, 1),
-                ReporterTestUtils.counterText(ClaimStatistic.Counter.GENERATED, 0),
+                ReporterTestUtils.counterText(ClaimStatistic.Counter.NOTICES, 0, false),
+                ReporterTestUtils.counterText(ClaimStatistic.Counter.BINARIES, 0, false),
+                ReporterTestUtils.counterText(ClaimStatistic.Counter.ARCHIVES, 0, false),
+                ReporterTestUtils.counterText(ClaimStatistic.Counter.STANDARDS, 1, false),
+                ReporterTestUtils.counterText(ClaimStatistic.Counter.GENERATED, 0, false),
                 ReporterTestUtils.apacheLicenseVersion2(1),
                 "^BSD: 1 ",
                 "^Creative Commons Attribution: 1 ",
@@ -265,16 +265,16 @@ public class RatCheckMojoTest extends BetterAbstractMojoTestCase {
     /**
      * Tests verifying gitignore parsing
      */
-    public void testRAT335GitIgnore() throws Exception {
+    public void testRAT_335GitIgnoreParsing() throws Exception {
         final RatCheckMojo mojo = newRatCheckMojo("RAT-335-GitIgnore");
         final File ratTxtFile = mojo.getRatTxtFile();
         final String[] expected = {
-                ReporterTestUtils.counterText(ClaimStatistic.Counter.NOTICES, 1),
-                ReporterTestUtils.counterText(ClaimStatistic.Counter.BINARIES, 0),
-                ReporterTestUtils.counterText(ClaimStatistic.Counter.ARCHIVES, 0),
-                ReporterTestUtils.counterText(ClaimStatistic.Counter.STANDARDS, 6),
-                ReporterTestUtils.counterText(ClaimStatistic.Counter.GENERATED, 0),
-                ReporterTestUtils.counterText(ClaimStatistic.Counter.UNKNOWN, 4),
+                ReporterTestUtils.counterText(ClaimStatistic.Counter.NOTICES, 1, false),
+                ReporterTestUtils.counterText(ClaimStatistic.Counter.BINARIES, 0, false),
+                ReporterTestUtils.counterText(ClaimStatistic.Counter.ARCHIVES, 0, false),
+                ReporterTestUtils.counterText(ClaimStatistic.Counter.STANDARDS, 6, false),
+                ReporterTestUtils.counterText(ClaimStatistic.Counter.GENERATED, 0, false),
+                ReporterTestUtils.counterText(ClaimStatistic.Counter.UNKNOWN, 4, false),
                 ReporterTestUtils.apacheLicenseVersion2(2),
                 ReporterTestUtils.unknownLicense(4),
                 ReporterTestUtils.documentOut(true, Document.Type.STANDARD, "/pom.xml") +
@@ -323,12 +323,13 @@ public class RatCheckMojoTest extends BetterAbstractMojoTestCase {
 
         // Create the test file with a content on which it must fail
         File barFile = new File(dir, "bar.md");
+        assertThat(barFile).exists();
         final String[] expected = {
-                ReporterTestUtils.counterText(ClaimStatistic.Counter.NOTICES, 0),
-                ReporterTestUtils.counterText(ClaimStatistic.Counter.BINARIES, 0),
-                ReporterTestUtils.counterText(ClaimStatistic.Counter.ARCHIVES, 0),
-                ReporterTestUtils.counterText(ClaimStatistic.Counter.STANDARDS, 3),
-                ReporterTestUtils.counterText(ClaimStatistic.Counter.GENERATED, 0),
+                ReporterTestUtils.counterText(ClaimStatistic.Counter.NOTICES, 0, false),
+                ReporterTestUtils.counterText(ClaimStatistic.Counter.BINARIES, 0, false),
+                ReporterTestUtils.counterText(ClaimStatistic.Counter.ARCHIVES, 0, false),
+                ReporterTestUtils.counterText(ClaimStatistic.Counter.STANDARDS, 3, false),
+                ReporterTestUtils.counterText(ClaimStatistic.Counter.GENERATED, 0, false),
                 ReporterTestUtils.apacheLicenseVersion2(2),
                 ReporterTestUtils.unknownLicense(1),
                 ReporterTestUtils.documentOut(false, Document.Type.STANDARD, "/bar.md") +
@@ -344,4 +345,21 @@ public class RatCheckMojoTest extends BetterAbstractMojoTestCase {
             ensureRatReportIsCorrect(ratTxtFile, expected, TextUtils.EMPTY);
         }
     }
+
+    /**
+    * Tests implicit excludes apply to submodules too
+    */
+   public void testRAT_107() throws Exception {
+       final RatCheckMojo mojo = (RatCheckMojo) newRatMojo("RAT-107", "check", true);
+       final File ratTxtFile = mojo.getRatTxtFile();
+       final String[] expected = {};
+       final String[] notExpected = {};
+       setVariableValueToObject(mojo, "excludeSubProjects", Boolean.FALSE);
+       mojo.setInputExcludeParsedScm("MAVEN");
+       mojo.setInputExcludeParsedScm("idea");
+       mojo.setInputExcludeParsedScm("eclipse");
+       mojo.execute();
+
+       ensureRatReportIsCorrect(ratTxtFile, expected, notExpected);
+   }
 }

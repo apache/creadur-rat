@@ -60,7 +60,7 @@ public class ReportTest extends AbstractRatAntTaskTest {
         for (int i = 0; i < 4; i++) {
             baseFile = baseFile.getParentFile();
         }
-        documentName = new DocumentName(antFile, new DocumentName(baseFile));
+        documentName = DocumentName.builder(antFile).setBaseName(baseFile).build();
         System.setProperty(MagicNames.PROJECT_BASEDIR, documentName.getBaseName());
         super.setUp();
     }
@@ -78,7 +78,7 @@ public class ReportTest extends AbstractRatAntTaskTest {
     }
     
     private String logLine(boolean approved, String fileText, String id) {
-        return String.format( "%sS \\Q%s\\E\\s+\\Q%s\\E ", approved?" ":"!", fileText, id);
+        return String.format( "%s \\Q%s\\E\\s+S .*\\s+\\Q%s\\E ", approved?" ":"!", fileText, id);
     }
     
     @Test
@@ -90,7 +90,7 @@ public class ReportTest extends AbstractRatAntTaskTest {
     @Test
     public void testWithReportSentToFile() throws Exception {
         final File reportFile = new File(getTempDir(), "selftest.report");
-        final String alLine = " S \\Q" + documentName.localized("/") + "\\E";
+        final String alLine = String.format("\\Q%s\\E\\s+S ", documentName.localized("/"));
 
         if (!getTempDir().mkdirs() && !getTempDir().isDirectory()) {
             throw new IOException("Could not create temporary directory " + getTempDir());
