@@ -19,11 +19,13 @@
 package org.apache.rat.tools;
 
 import java.io.CharArrayWriter;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.Writer;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Deque;
@@ -42,6 +44,7 @@ import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
 import org.apache.commons.csv.QuoteMode;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.function.FailableConsumer;
 import org.apache.rat.OptionCollection;
 import org.apache.rat.help.AbstractHelp;
 
@@ -150,13 +153,27 @@ public final class Naming {
             };
         }
 
-        try (Writer underWriter = cl.getArgs().length != 0 ? new FileWriter(cl.getArgs()[0]) : new OutputStreamWriter(System.out)) {
+        final FailableConsumer<Writer, IOException> writerConsumer = underWriter -> {
             if (cl.hasOption(CSV)) {
                 printCSV(columns, filter, cl.hasOption(CLI), mavenFilter, antFilter, descriptionFunction, underWriter);
             }
             else {
                 printText(columns, filter, cl.hasOption(CLI), mavenFilter, antFilter, descriptionFunction, underWriter, width);
             }
+        };
+        // Once more: We are using the default character set, because
+        //  a) We want to make Spotbugs happy. (Using the default character set is okay, but doing
+        //     it silently is not.
+        //  b) We want to retain compatibility.
+        if (cl.getArgs().length != 0) {
+            try (OutputStream out = new FileOutputStream(cl.getArgs()[0]);
+                 Writer underWriter = new OutputStreamWriter(out, Charset.defaultCharset())) {
+                writerConsumer.accept(underWriter);
+            }
+        } else {
+            // Do *not* use try-with-resources, because we don't want to close System.out.
+            Writer underWriter = new OutputStreamWriter(System.out, Charset.defaultCharset());
+            writerConsumer.accept(underWriter);
         }
     }
 

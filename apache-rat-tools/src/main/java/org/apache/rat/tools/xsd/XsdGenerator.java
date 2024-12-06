@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -45,6 +46,9 @@ import org.apache.rat.configuration.MatcherBuilderTracker;
 import org.apache.rat.configuration.XMLConfig;
 import org.apache.rat.license.SimpleLicense;
 import org.apache.rat.tools.xsd.XsdWriter.Type;
+
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 
 /**
  * Generates the XSD for a configuration.
@@ -68,6 +72,7 @@ public class XsdGenerator {
      * @throws IOException on IO errors.
      * @throws TransformerException if the XSD can not be pretty printed.
      */
+    @SuppressFBWarnings
     public static void main(final String[] args) throws IOException, TransformerException {
         XsdGenerator generator = new XsdGenerator();
 
@@ -93,7 +98,9 @@ public class XsdGenerator {
      */
     public InputStream getInputStream() throws IOException {
         try (ByteArrayOutputStream baos = new ByteArrayOutputStream();
-             Writer writer = new OutputStreamWriter(baos)) {
+             // Explicit use of default character makes Spotbugs happy, and retains
+             // binary compatibility.
+             Writer writer = new OutputStreamWriter(baos, Charset.defaultCharset())) {
             write(writer);
             return new ByteArrayInputStream(baos.toByteArray());
         }

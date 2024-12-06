@@ -20,12 +20,13 @@ package org.apache.rat.tools;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -110,11 +111,20 @@ public final class AntGenerator {
 
         String pkgName = String.join(File.separator, new CasedString(StringCase.DOT, packageName).getSegments());
         File file = new File(new File(new File(destDir), pkgName), className + ".java");
-        file.getParentFile().mkdirs();
+        File dir = file.getParentFile();
+        if (dir != null  &&  !dir.isDirectory()  &&  !dir.mkdirs()) {
+            throw new IOException("Unable to create directory: " + dir);
+        }
         try (InputStream template = AntGenerator.class.getResourceAsStream("/Ant.tpl");
-             FileWriter writer = new FileWriter(file);
+             FileOutputStream fos = new FileOutputStream(file);
+             /* It is questionable, whether the default character set is a good idea here.
+              * However, we want to retain upwards compatibility, and still make Spotbugs happy.
+              */
+             Writer writer = new OutputStreamWriter(fos, Charset.defaultCharset());
              ByteArrayOutputStream bos = new ByteArrayOutputStream();
-             OutputStreamWriter customClasses = new OutputStreamWriter(bos)) {
+             /* Again, questionable choice of character set for the same reasons.
+              */
+             OutputStreamWriter customClasses = new OutputStreamWriter(bos, Charset.defaultCharset())) {
             if (template == null) {
                 throw new RuntimeException("Template /Ant.tpl not found");
             }
@@ -145,7 +155,8 @@ public final class AntGenerator {
                     case "${classes}":
                         customClasses.flush();
                         customClasses.close();
-                        writer.write(bos.toString());
+                        // Once more, default character set for compatibiliy reasons only.
+                        writer.write(bos.toString(Charset.defaultCharset().name()));
                         break;
                     case "${commonArgs}":
                         try (InputStream argsTpl = MavenGenerator.class.getResourceAsStream("/Args.tpl")) {
@@ -163,7 +174,7 @@ public final class AntGenerator {
         }
     }
 
-    private static void writeMethods(final FileWriter writer, final List<AntOption> options, final Writer customClasses) throws IOException {
+    private static void writeMethods(final Writer writer, final List<AntOption> options, final Writer customClasses) throws IOException {
         for (AntOption option : options) {
 
             if (option.isAttribute()) {

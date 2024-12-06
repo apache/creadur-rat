@@ -18,10 +18,13 @@
  */
 package org.apache.rat.tools;
 
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.nio.charset.Charset;
+import java.util.function.Consumer;
 
 import org.apache.rat.help.Help;
 
@@ -41,8 +44,16 @@ public final class ArgumentTypes {
     private ArgumentTypes() { }
 
     public static void main(final String[] args) throws IOException {
-        try (Writer writer = args.length > 0 ? new FileWriter(args[0]) : new OutputStreamWriter(System.out)) {
-            new Help(writer).printArgumentTypes();
+        final Consumer<Writer> writerConsumer = writer -> new Help(writer).printArgumentTypes();
+        if (args.length > 0) {
+            try (OutputStream os = new FileOutputStream(args[0]);
+                 Writer writer = new OutputStreamWriter(os, Charset.defaultCharset())) {
+                writerConsumer.accept(writer);
+            }
+        } else {
+            // Do *not* use try-with-resources, because we don't want to close System.out.
+            Writer writer = new OutputStreamWriter(System.out, Charset.defaultCharset());
+            writerConsumer.accept(writer);
         }
     }
 }
