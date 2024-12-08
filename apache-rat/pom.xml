@@ -92,7 +92,7 @@
               <goal>unpack</goal>
             </goals>
             <configuration>
-              <artifact>org.apache.rat:apache-rat-testdata:${parent.version}</artifact>
+              <artifact>org.apache.rat:apache-rat-testdata:${project.parent.version}</artifact>
               <outputDirectory>${project.build.testOutputDirectory}</outputDirectory>
               <overWriteIfNewer>true</overWriteIfNewer>
               <excludes>META-INF/**</excludes>
@@ -286,6 +286,13 @@
           <filesets>
             <fileset>
               <directory>src/site/apt/</directory>
+              <includes>
+                <include>*.txt</include>
+              </includes>
+              <followSymlinks>false</followSymlinks>
+            </fileset>
+            <fileset>
+              <directory>src/site/examples/</directory>
               <includes>
                 <include>*.txt</include>
               </includes>
