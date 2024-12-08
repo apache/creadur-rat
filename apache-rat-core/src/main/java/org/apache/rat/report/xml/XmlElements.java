@@ -213,8 +213,8 @@ public class XmlElements {
         if (Document.Type.STANDARD == metaData.getDocumentType() || metaData.hasCharset()) {
             result = result.write(Attributes.ENCODING, metaData.getCharset().displayName());
         }
-        if (document.isIgnored() && document.isDirectory()) {
-            result = result.write(Attributes.IS_DIRECTORY, Boolean.TRUE.toString());
+        if (document.isIgnored()) {
+            result = result.write(Attributes.IS_DIRECTORY, Boolean.toString(document.isDirectory()));
         }
         return result;
     }

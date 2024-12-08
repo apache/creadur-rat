@@ -28,7 +28,7 @@ import java.util.SortedSet;
 import org.apache.rat.api.Document;
 
 /**
- * Document wrapping a File object.
+ * Document wrapping a File object that is ignored by rule.
  */
 public class IgnoredDocument extends Document {
 
