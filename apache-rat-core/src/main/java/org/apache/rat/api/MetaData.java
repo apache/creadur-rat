@@ -45,9 +45,8 @@ public class MetaData {
     private MediaType mediaType;
     /** The document type for this document */
     private Document.Type documentType;
-    /** the flag for directory types */
+    /** The flag for directory types */
     private boolean isDirectory;
-
 
     /**
      * Create metadata without a content type.
@@ -156,7 +155,7 @@ public class MetaData {
     }
 
     /**
-     * Set the directory flag
+     * Set the directory flag.
      * @param state the state to set the directory flag in.
      */
     public void setIsDirectory(final boolean state) {
@@ -164,7 +163,7 @@ public class MetaData {
     }
 
     /**
-     * Return true if the directory flag was set.
+     * Return {@code true} if the directory flag was set.
      * @return the directory flag.
      */
     public boolean isDirectory() {

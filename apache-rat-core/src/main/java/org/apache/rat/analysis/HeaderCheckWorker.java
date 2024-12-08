@@ -103,7 +103,7 @@ public class HeaderCheckWorker {
      * Convenience constructor wraps given <code>Reader</code> in a
      * <code>BufferedReader</code>.
      *
-     * @param generatedMatcher The matcher for generated headers
+     * @param generatedMatcher The matcher for generated headers.
      * @param reader The reader on the document. Not null.
      * @param licenses The licenses to check against. Not null.
      * @param name The document that is being checked. Possibly null.
@@ -115,7 +115,7 @@ public class HeaderCheckWorker {
     /**
      * Constructs a check worker for the license against the specified document.
      *
-     * @param generatedMatcher The matcher for generated headers
+     * @param generatedMatcher The matcher for generated headers.
      * @param reader The reader on the document. Not null.
      * @param numberOfRetainedHeaderLine the maximum number of lines to read to find
      * the license information.
@@ -140,7 +140,7 @@ public class HeaderCheckWorker {
     /**
      * Read the input and perform the header check.
      *
-     * @throws RatHeaderAnalysisException on IO Exception.
+     * @throws RatHeaderAnalysisException on IO exception.
      */
     public void read() throws RatHeaderAnalysisException {
         try {

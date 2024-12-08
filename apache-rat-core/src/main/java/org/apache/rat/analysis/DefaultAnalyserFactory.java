@@ -61,7 +61,7 @@ public final class DefaultAnalyserFactory {
     }
 
     /**
-     * A DocumentAnalyser a collection of licenses
+     * A DocumentAnalyser a collection of licenses.
      */
     private static final class DefaultAnalyser implements IDocumentAnalyser {
 
@@ -69,7 +69,7 @@ public final class DefaultAnalyserFactory {
         private final Collection<ILicense> licenses;
         /** the Report Configuration */
         private final ReportConfiguration configuration;
-        /** The matcher for generated filed */
+        /** The matcher for generated files */
         private final IHeaderMatcher generatedMatcher;
 
         /**
@@ -81,7 +81,6 @@ public final class DefaultAnalyserFactory {
             this.licenses = licenses;
             this.configuration = config;
             this.generatedMatcher = configuration.getGeneratedMatcher();
-
         }
 
         /**

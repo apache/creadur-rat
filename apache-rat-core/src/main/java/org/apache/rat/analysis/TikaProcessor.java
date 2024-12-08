@@ -47,7 +47,8 @@ public final class TikaProcessor {
     private static final Tika TIKA = new Tika();
     /** A map of mime type string to non-BINARY types.
      * "text" types are already handled somewhere else
-     * BINARY unless listed here*/
+     * BINARY unless listed here
+     */
     private static final Map<String, Document.Type> DOCUMENT_TYPE_MAP;
 
     static {

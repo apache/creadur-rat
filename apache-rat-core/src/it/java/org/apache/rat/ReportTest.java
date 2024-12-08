@@ -88,6 +88,7 @@ public class ReportTest {
     @ParameterizedTest(name = "{index} {0}")
     @MethodSource("args")
     public void integrationTest(String testName, Document commandLineDoc) throws Exception {
+        DefaultLog.getInstance().log(Log.Level.INFO, "Running test for " + testName);
         File baseDir = new File(commandLineDoc.getName().getName()).getParentFile();
 
         // get the arguments

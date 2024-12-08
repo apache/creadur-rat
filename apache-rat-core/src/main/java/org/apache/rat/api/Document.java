@@ -41,7 +41,7 @@ public abstract class Document implements Comparable<Document> {
         ARCHIVE,
         /** A binary file. */
         BINARY,
-        /** A generated document. */
+        /** A generated document that is ignored. */
         IGNORED,
         /** A notice document (e.g. LICENSE file). */
         NOTICE,
@@ -127,6 +127,10 @@ public abstract class Document implements Comparable<Document> {
         return metaData;
     }
 
+    /**
+     * Checks if document is ignored or not.
+     * @return {@code true} if the document is of type {@code IGNORED}.
+     */
     public final boolean isIgnored() {
         return Type.IGNORED == metaData.getDocumentType();
     }
@@ -142,13 +146,13 @@ public abstract class Document implements Comparable<Document> {
     }
 
     /**
-     * Determines if this Document is a directory type.
+     * Determines if this document is a directory type.
      * @return {@code true} if this is a directory.
      */
     public abstract boolean isDirectory();
 
     /**
-     * Gets a sorted set of Documents that are children of this document.
+     * Gets a sorted set of documents that are children of this document.
      * @return A sorted set of child Documents. May be empty.
      */
     public abstract SortedSet<Document> listChildren();
