@@ -55,6 +55,8 @@
               <exclude>src/main/resources/Args.tpl</exclude>
               <!-- These files have bad license headers because they are used to test bad license headers -->
               <exclude>src/test/resources/**</exclude>
+              <!-- These files have bad license headers because they are used to generate example reports -->
+              <exclude>src/main/resources/org/apache/rat/tools/ExampleGeneratorResources/**</exclude>
             </excludes>
           </configuration>
         </plugin>
@@ -115,6 +117,16 @@
           <artifactId>xz</artifactId>
         </exclusion>
       </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-api</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-params</artifactId>
+      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.assertj</groupId>

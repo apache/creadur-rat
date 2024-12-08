@@ -46,7 +46,6 @@ import org.apache.rat.license.LicenseSetFactory.LicenseFilter;
 import org.apache.rat.report.claim.ClaimStatistic;
 import org.apache.rat.testhelpers.TextUtils;
 import org.apache.rat.testhelpers.XmlUtils;
-import org.junit.Ignore;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.NodeList;
 

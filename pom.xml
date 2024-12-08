@@ -86,6 +86,11 @@ agnostic home for software distribution comprehension and audit tools.
       </dependency>
       <dependency>
         <groupId>org.apache.rat</groupId>
+        <artifactId>apache-rat-testdata</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.rat</groupId>
         <artifactId>apache-rat-core</artifactId>
         <version>${project.version}</version>
         <type>test-jar</type>
@@ -838,6 +843,7 @@ agnostic home for software distribution comprehension and audit tools.
     <module>apache-rat-tasks</module>
     <module>apache-rat</module>
     <module>apache-rat-tools</module>
+    <module>apache-rat-testdata</module>
   </modules>
   <licenses>
     <license>
