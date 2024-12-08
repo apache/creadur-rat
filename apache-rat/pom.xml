@@ -73,6 +73,7 @@
         <artifactId>maven-dependency-plugin</artifactId>
         <executions>
           <execution>
+            <id>unpack dependencies</id>
             <phase>prepare-package</phase>
             <goals>
               <goal>unpack-dependencies</goal>
@@ -80,7 +81,20 @@
             <configuration>
               <includeScope>runtime</includeScope>
               <outputDirectory>${project.build.outputDirectory}</outputDirectory>
-              <overWriteIfNewer>false</overWriteIfNewer>
+              <overWriteIfNewer>true</overWriteIfNewer>
+              <excludes>META-INF/**</excludes>
+            </configuration>
+          </execution>
+          <execution>
+            <id>unpack testdata</id>
+            <phase>prepare-package</phase>
+            <goals>
+              <goal>unpack</goal>
+            </goals>
+            <configuration>
+              <artifact>org.apache.rat:apache-rat-testdata:${parent.version}</artifact>
+              <outputDirectory>${project.build.testOutputDirectory}</outputDirectory>
+              <overWriteIfNewer>true</overWriteIfNewer>
               <excludes>META-INF/**</excludes>
             </configuration>
           </execution>
@@ -190,9 +204,12 @@
               <arguments>
                 <argument>-cp</argument>
                 <argument>target/apache-rat-${project.version}.jar</argument>
-                <argument>org.apache.rat.tools.ExampleGenerator</argument>
+                <argument>org.apache.rat.Report</argument>
+                <argument>--counter-max</argument>
+                <argument>UNAPPROVED:2</argument>
                 <argument>--output-file</argument>
-                <argument>${project.basedir}/src/site/examples/default_output.txt</argument>
+                <argument>${project.basedir}/src/site/examples/default-output.txt</argument>
+                <argument>${project.build.testOutputDirectory}/examples/exampleData</argument>
               </arguments>
             </configuration>
           </execution>
@@ -207,11 +224,14 @@
               <arguments>
                 <argument>-cp</argument>
                 <argument>target/apache-rat-${project.version}.jar</argument>
-                <argument>org.apache.rat.tools.ExampleGenerator</argument>
+                <argument>org.apache.rat.Report</argument>
+                <argument>--counter-max</argument>
+                <argument>UNAPPROVED:2</argument>
                 <argument>--output-file</argument>
-                <argument>${project.basedir}/src/site/examples/rat_report.txt</argument>
+                <argument>${project.basedir}/src/site/examples/rat-report.txt</argument>
                 <argument>--output-style</argument>
                 <argument>xml</argument>
+                <argument>${project.build.testOutputDirectory}/examples/exampleData</argument>
               </arguments>
             </configuration>
           </execution>
@@ -226,11 +246,14 @@
               <arguments>
                 <argument>-cp</argument>
                 <argument>target/apache-rat-${project.version}.jar</argument>
-                <argument>org.apache.rat.tools.ExampleGenerator</argument>
+                <argument>org.apache.rat.Report</argument>
+                <argument>--counter-max</argument>
+                <argument>UNAPPROVED:2</argument>
                 <argument>--output-file</argument>
                 <argument>${project.basedir}/src/site/examples/unapproved-licenses.txt</argument>
                 <argument>--output-style</argument>
                 <argument>unapproved-licenses</argument>
+                <argument>${project.build.testOutputDirectory}/examples/exampleData</argument>
               </arguments>
             </configuration>
           </execution>
