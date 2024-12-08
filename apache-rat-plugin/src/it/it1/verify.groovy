@@ -14,13 +14,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import org.apache.rat.testhelpers.TextUtils
+import org.apache.rat.testhelpers.XmlUtils
+import org.w3c.dom.Document
 
-f = new File(basedir, 'target/rat.txt')
+import javax.xml.xpath.XPath
+import javax.xml.xpath.XPathFactory
+
+private static Map<String, String> mapOf(String... parts) {
+    Map<String, String> map = new HashMap<>();
+    for (int i=0; i<parts.length; i+=2) {
+        map.put(parts[i], parts[i+1]);
+    }
+    return map;
+}
+
+f = new File(basedir, 'out.xml')
 assert f.exists()
 
-content = f.text
+Document document = XmlUtils.toDom(new FileInputStream(f));
+XPath xPath = XPathFactory.newInstance().newXPath();
 
-assert TextUtils.isMatching("^  /src.apt\\s+G ", content)
-assert content.contains('    YAL      MyLicense     Yet another license')
-assert content.contains('    GEN      Not           Not ')
+XmlUtils.assertAttributes(document, xPath, "/rat-report/resource[@name='/src.apt']",
+        mapOf("encoding", "ISO-8859-1", "mediaType", "text/plain", "type", "STANDARD" ));
+
+XmlUtils.assertAttributes(document, xPath, "/rat-report/resource[@name='/src.apt']/license[@id='MyLicense']",
+        mapOf("approval", "true", "family", "YAL  ", "name", "Yet another license" ));
+
+XmlUtils.assertAttributes(document, xPath, "/rat-report/resource[@name='/src.apt']/license[@id='Not']",
+        mapOf("approval", "true", "family", "YAL  ", "name", "Not testing" ));

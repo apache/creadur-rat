@@ -23,11 +23,14 @@ import java.util.Iterator;
 import java.util.stream.Stream;
 import org.apache.rat.document.DocumentName;
 import org.apache.rat.document.DocumentNameMatcher;
+import org.apache.rat.document.FileDocument;
 import org.apache.rat.utils.ExtendedIterator;
+import org.junit.Ignore;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -100,5 +103,17 @@ public class GitFileProcessorTest extends AbstractIgnoreProcessorTest {
         lst.add(Arguments.of("/filename/", "filename"));
 
         return lst.stream();
+    }
+
+    @Test
+    @Ignore("RAT-335 ")
+    public void test_RAT_335() {
+        GitFileProcessor underTest = new GitFileProcessor();
+        URL url = GitFileProcessorTest.class.getClassLoader().getResource("RAT_355/src/");
+        File file = new File(url.getFile());
+
+        DocumentName documentName = DocumentName.builder(file).setBaseName(File.separator).build();
+        List<String> lst = underTest.apply(documentName);
+        System.out.println(lst);
     }
 }
