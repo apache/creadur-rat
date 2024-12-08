@@ -45,7 +45,8 @@ public class MetaData {
     private MediaType mediaType;
     /** The document type for this document */
     private Document.Type documentType;
-
+    /** The flag for directory types */
+    private boolean isDirectory;
 
     /**
      * Create metadata without a content type.
@@ -69,6 +70,14 @@ public class MetaData {
      */
     public void setCharset(final Charset charset) {
         this.charset = charset;
+    }
+
+    /**
+     * Returns {@code true} if {@link #setCharset} has been called.
+     * @return {@code true} if {@link #setCharset} has been called.
+     */
+    public boolean hasCharset() {
+        return charset != null;
     }
 
     /**
@@ -143,6 +152,22 @@ public class MetaData {
      */
     public void setDocumentType(final Document.Type type) {
         this.documentType = type;
+    }
+
+    /**
+     * Set the directory flag.
+     * @param state the state to set the directory flag in.
+     */
+    public void setIsDirectory(final boolean state) {
+        this.isDirectory = state;
+    }
+
+    /**
+     * Return {@code true} if the directory flag was set.
+     * @return the directory flag.
+     */
+    public boolean isDirectory() {
+        return isDirectory;
     }
 
     /**

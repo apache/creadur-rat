@@ -18,6 +18,7 @@
  */
 package org.apache.rat.testhelpers;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.IOException;
@@ -31,6 +32,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
+import java.util.Map;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.FactoryConfigurationError;
@@ -164,6 +166,24 @@ public final class XmlUtils {
             transformer.transform(new DOMSource(document), new StreamResult(new OutputStreamWriter(out, StandardCharsets.UTF_8)));
         } catch (TransformerException e) {
             e.printStackTrace(new PrintStream(out));
+        }
+    }
+
+    public static String getAttribute(Object source, XPath xPath, String xpath, String attribute) throws XPathExpressionException {
+        Node node = XmlUtils.getNode(source, xPath, xpath);
+        NamedNodeMap attr = node.getAttributes();
+        node = attr.getNamedItem(attribute);
+        assertThat(node).as(attribute+" was not found").isNotNull();
+        return node.getNodeValue();
+    }
+
+    public static void assertAttributes(Object source, XPath xPath, String xpath, Map<String, String> attributes) throws XPathExpressionException {
+        Node node = XmlUtils.getNode(source, xPath, xpath);
+        NamedNodeMap attr = node.getAttributes();
+        for (Map.Entry<String, String> entry : attributes.entrySet()) {
+            node = attr.getNamedItem(entry.getKey());
+            assertThat(node).as(() -> entry.getKey() + " was not found on " + xpath).isNotNull();
+            assertThat(node.getNodeValue()).as(() -> entry.getKey() + " on " + xpath).isEqualTo(entry.getValue());
         }
     }
 }

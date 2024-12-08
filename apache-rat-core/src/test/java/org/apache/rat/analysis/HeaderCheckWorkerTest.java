@@ -21,20 +21,39 @@ package org.apache.rat.analysis;
 
 import java.io.StringReader;
 
+import java.util.Collections;
+import java.util.stream.Collectors;
 import org.apache.rat.api.Document;
+import org.apache.rat.configuration.builders.AnyBuilder;
+import org.apache.rat.license.ILicenseFamily;
+import org.apache.rat.license.ILicenseFamilyBuilder;
 import org.apache.rat.testhelpers.TestingDocument;
 import org.apache.rat.license.ILicense;
 import org.apache.rat.testhelpers.TestingLicense;
+import org.apache.rat.testhelpers.TestingMatcher;
 import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.Test;
+
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 public class HeaderCheckWorkerTest {
 
     @Test
-    public void isFinished() throws Exception {
+    public void emptyInputIsUnknownTest() throws Exception {
         final Document subject = new TestingDocument("subject");
         ILicense matcher = new TestingLicense("test", "test");
-        HeaderCheckWorker worker = new HeaderCheckWorker(new StringReader(""), Lists.list(matcher), subject);
+        HeaderCheckWorker worker = new HeaderCheckWorker(new TestingMatcher(), new StringReader(""), Lists.list(matcher), subject);
         worker.read();
+        assertThat(subject.getMetaData().unapprovedLicenses().count()).isEqualTo(1);
+        assertThat(subject.getMetaData().unapprovedLicenses().collect(Collectors.toList()).get(0).getLicenseFamily()).isEqualTo(ILicenseFamily.UNKNOWN);
+    }
+
+    @Test
+    public void generatedFileDetectionTest() throws Exception {
+        final Document subject = new TestingDocument(new StringReader("Generated from configure.ac by autoheader"), "subject");
+        IHeaderMatcher matcher = new AnyBuilder().setResource("/org/apache/rat/generation-keywords.txt").build();
+        HeaderCheckWorker worker = new HeaderCheckWorker(matcher, subject.reader(), Collections.emptyList(), subject);
+        worker.read();
+        assertThat(subject.getMetaData().getDocumentType()).isEqualTo(Document.Type.IGNORED);
     }
 }

@@ -11,15 +11,14 @@
         <artifactId>apache-rat-plugin</artifactId>
         <version>@pom.version@</version>
         <configuration>
+          <outputStyle>xml</outputStyle>
           <families>
             <family>
               <id>YAL</id>
               <name>Yet another license</name>
             </family>
           </families>
-          <approvedLicenses>
-            <approvedLicense>YAL</approvedLicense>
-          </approvedLicenses>
+          <licenseFamiliesDenied>YAL</licenseFamiliesDenied>
           <licenses>
             <license>
               <id>MyLicense</id>
@@ -27,7 +26,7 @@
               <text>Yet Another License</text>
             </license>
             <license>
-              <family>GEN</family>
+              <family>YAL</family>
               <id>CpyrT</id>
               <name>Copyright with tags</name>
               <notes/>
@@ -38,28 +37,28 @@
               </copyright>
             </license>
             <license>
-              <family>GEN</family>
+              <family>YAL</family>
               <id>RegxT</id>
               <name>Regex with tag</name>
               <notes/>
               <regex>regex tag</regex>
             </license>
             <license>
-              <family>GEN</family>
+              <family>YAL</family>
               <id>SpdxT</id>
               <name>Spdx with tag</name>
               <notes/>
               <spdx>spxd-tag</spdx>
             </license>
             <license>
-              <family>GEN</family>
+              <family>YAL</family>
               <id>TextT</id>
               <name>Text with tag</name>
               <notes/>
               <text>text-tag</text>
             </license>
             <license>
-              <family>GEN</family>
+              <family>YAL</family>
               <id>Not</id>
               <name>Not testing</name>
               <notes/>
@@ -68,7 +67,7 @@
               </not>
             </license>
             <license>
-              <family>GEN</family>
+              <family>YAL</family>
               <id>All</id>
               <name>All testing</name>
               <notes/>
@@ -78,7 +77,7 @@
               </all>
             </license>
             <license>
-              <family>GEN</family>
+              <family>YAL</family>
               <id>Any</id>
               <name>Any testing</name>
               <notes/>

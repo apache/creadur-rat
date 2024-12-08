@@ -18,15 +18,13 @@
  */
 package org.apache.rat.walker;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import java.util.stream.Collectors;
 import org.apache.rat.ReportConfiguration;
 import org.apache.rat.api.Document;
 import org.apache.rat.api.RatException;
@@ -38,6 +36,8 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class DirectoryWalkerTest {
 
@@ -90,12 +90,13 @@ public class DirectoryWalkerTest {
     @Test
     public void noFiltersTest() throws RatException {
         DirectoryWalker walker = new DirectoryWalker(toWalk());
-        List<String> scanned = new ArrayList<>();
+        List<Document> scanned = new ArrayList<>();
         walker.run(new TestRatReport(scanned));
         String[] expected = {"/regular/regularFile", "/regular/.hiddenFile", "/.hidden/regularFile", "/.hidden/.hiddenFile"};
-        assertEquals(4, scanned.size());
+        List<String> actual = scanned.stream().filter(d -> !d.isIgnored()).map(d -> d.getName().localized("/")).collect(Collectors.toList());
+        assertThat(actual).size().isEqualTo(4);
         for (String ex : expected) {
-            assertTrue(scanned.contains(ex), ()-> String.format("Missing %s", ex));
+            assertThat(actual).as(()-> String.format("Missing %s", ex)).contains(ex);
         }
     }
 
@@ -103,12 +104,20 @@ public class DirectoryWalkerTest {
     public void noHiddenFileFiltersTest() throws RatException {
         reportConfiguration.addExcludedCollection(StandardCollection.HIDDEN_FILE);
         DirectoryWalker walker = new DirectoryWalker(toWalk());
-        List<String> scanned = new ArrayList<>();
+        List<Document> scanned = new ArrayList<>();
         walker.run(new TestRatReport(scanned));
+        List<String> actual = scanned.stream().filter(d -> !d.isIgnored()).map(d -> d.getName().localized("/")).collect(Collectors.toList());
         String[] expected = {"/regular/regularFile", "/.hidden/regularFile"};
-        assertEquals(2, scanned.size());
+        assertThat(actual.size()).isEqualTo(2);
         for (String ex : expected) {
-            assertTrue(scanned.contains(ex), ()-> String.format("Missing %s", ex));
+            assertThat(actual).as(()-> String.format("Missing %s", ex)).contains(ex);
+        }
+
+        actual = scanned.stream().filter(Document::isIgnored).map(d -> d.getName().localized("/")).collect(Collectors.toList());
+        expected = new String[] {"/regular/.hiddenFile", "/.hidden/.hiddenFile"};
+        assertThat(actual.size()).isEqualTo(2);
+        for (String ex : expected) {
+            assertThat(actual).as(()-> String.format("Missing ignored %s", ex)).contains(ex);
         }
     }
 
@@ -116,13 +125,20 @@ public class DirectoryWalkerTest {
     public void noHiddenDirectoryFiltersTest() throws RatException {
         reportConfiguration.addExcludedCollection(StandardCollection.HIDDEN_DIR);
         DirectoryWalker walker = new DirectoryWalker(toWalk());
-        List<String> scanned = new ArrayList<>();
+        List<Document> scanned = new ArrayList<>();
         walker.run(new TestRatReport(scanned));
+        List<String> actual = scanned.stream().filter(d -> !d.isIgnored()).map(d -> d.getName().localized("/")).collect(Collectors.toList());
         String[] expected = {"/regular/regularFile", "/regular/.hiddenFile"};
-         assertEquals(2, scanned.size());
+        assertThat(actual.size()).isEqualTo(2);
         for (String ex : expected) {
-            assertTrue(scanned.contains(ex), ()-> String.format("Missing %s", ex));
+            assertThat(actual).as(()-> String.format("Missing %s", ex)).contains(ex);
         }
+
+        List<Document> excluded = scanned.stream().filter(Document::isIgnored).collect(Collectors.toList());
+        assertThat(excluded.size()).isEqualTo(1);
+        Document d = excluded.get(0);
+        assertThat(d.getName().localized("/")).isEqualTo("/.hidden");
+        assertThat(d.isIgnored()).isTrue();
     }
 
     @Test
@@ -130,20 +146,21 @@ public class DirectoryWalkerTest {
         reportConfiguration.addExcludedCollection(StandardCollection.HIDDEN_DIR);
         reportConfiguration.addExcludedCollection(StandardCollection.HIDDEN_FILE);
         DirectoryWalker walker = new DirectoryWalker(toWalk());
-        List<String> scanned = new ArrayList<>();
+        List<Document> scanned = new ArrayList<>();
         walker.run(new TestRatReport(scanned));
+        List<String> actual = scanned.stream().filter(d -> !d.isIgnored()).map(d -> d.getName().localized("/")).collect(Collectors.toList());
         String[] expected = {"/regular/regularFile"};
-        assertEquals(1, scanned.size());
+        assertThat(actual.size()).isEqualTo(1);
         for (String ex : expected) {
-            assertTrue(scanned.contains(ex), ()-> String.format("Missing %s", ex));
+            assertThat(actual).as(()-> String.format("Missing %s", ex)).contains(ex);
         }
     }
 
     static class TestRatReport implements RatReport {
 
-        private final List<String> scanned;
+        private final List<Document> scanned;
 
-        public TestRatReport(List<String> scanned) {
+        public TestRatReport(List<Document> scanned) {
             this.scanned = scanned;
         }
 
@@ -154,7 +171,7 @@ public class DirectoryWalkerTest {
 
         @Override
         public void report(Document document) {
-            scanned.add(document.getName().localized("/"));
+            scanned.add(document);
         }
 
         @Override

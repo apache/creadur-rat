@@ -945,7 +945,8 @@ public enum Arg {
             }
             return result;
         } catch (Throwable t) {
-            throw new ConfigurationException(format("'%s' converter for %s does not produce a class of tye %s", this, option, option.getType()));
+            throw new ConfigurationException(format("'%s' converter for %s '%s' does not produce a class of type %s", this,
+                    option.getKey(), option.getConverter().getClass().getName(), option.getType()));
         }
     }
 
