@@ -53,13 +53,12 @@ public class Resources {
         return getResourceFromBase(TEST_RESOURCE_BASE_PATH, pResource);
     }
 
-    /**
-     * Locates a main resource file in the class path.
-     */
-    public static File getMainResourceFile(String pResource) throws IOException {
-        return getResourceFromBase(RESOURCE_BASE_PATH, pResource);
-    }
 
+    /**
+     * Locates a file in the unpacked example data archive.
+     * @param pResource the name of the resource to find.
+     * @return the File for the resource.
+     */
     public static File getExampleResource(String pResource) {
         URL url = Resources.class.getResource("/examples/" + pResource);
         Objects.requireNonNull(url, "/examples/" + pResource + " not found");
@@ -109,22 +108,7 @@ public class Resources {
      * Locates a resource file in the class path and returns a
      * {@link BufferedReader}.
      */
-    public static BufferedReader getBufferedResourceReader(String pResource) throws IOException {
-        return new BufferedReader(getResourceReader(pResource));
-    }
-
-    /**
-     * Locates a resource file in the class path and returns a
-     * {@link BufferedReader}.
-     */
     public static BufferedReader getBufferedReader(File file) throws IOException {
         return new BufferedReader(new InputStreamReader(Files.newInputStream(file.toPath()), StandardCharsets.UTF_8));
-    }
-
-    /**
-     * Locates the name of a directory, which contains the given resource file.
-     */
-    public static String getResourceDirectory(String pResource) throws IOException {
-        return getResourceFile(pResource).getParentFile().getAbsolutePath();
     }
 }
