@@ -62,12 +62,9 @@ import org.apache.rat.test.utils.Resources;
 import org.apache.rat.testhelpers.TextUtils;
 import org.apache.rat.testhelpers.XmlUtils;
 import org.apache.rat.walker.DirectoryWalker;
-import org.assertj.core.util.Files;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.w3c.dom.Document;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
@@ -80,7 +77,7 @@ public class ReporterTest {
     final String basedir;
 
     ReporterTest() {
-        basedir = new File(Files.currentFolder(), "target/test-classes/elements").getPath();
+        basedir = Resources.getExampleResource("exampleData").getPath();
     }
 
     @Test
@@ -337,7 +334,7 @@ public class ReporterTest {
 
     private ReportConfiguration initializeConfiguration() throws IOException {
         Defaults defaults = Defaults.builder().build();
-        final File elementsFile = new File(Resources.getResourceDirectory("elements/Source.java"));
+        final File elementsFile = Resources.getExampleResource("exampleData");
         final ReportConfiguration configuration = new ReportConfiguration();
         configuration.setFrom(defaults);
         DocumentName documentName = DocumentName.builder(elementsFile).build();

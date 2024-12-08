@@ -25,8 +25,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.util.Objects;
 
 /**
  * Utility class, which provides static methods for creating test cases.
@@ -56,6 +58,12 @@ public class Resources {
      */
     public static File getMainResourceFile(String pResource) throws IOException {
         return getResourceFromBase(RESOURCE_BASE_PATH, pResource);
+    }
+
+    public static File getExampleResource(String pResource) {
+        URL url = Resources.class.getResource("/examples/" + pResource);
+        Objects.requireNonNull(url, "/examples/" + pResource + " not found");
+        return new File(url.getFile());
     }
 
     /**
