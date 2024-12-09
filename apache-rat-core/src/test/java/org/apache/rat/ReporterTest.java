@@ -26,7 +26,6 @@ import static org.assertj.core.api.Fail.fail;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.IOException;
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
 
@@ -167,7 +166,7 @@ public class ReporterTest {
     
     private static Map<String, String> mapOf(String... parts) {
         Map<String, String> map = new HashMap<>();
-        for (int i=0; i<parts.length; i+=2) {
+        for (int i = 0; i < parts.length; i+=2) {
             map.put(parts[i], parts[i+1]);
         }
         return map;
@@ -204,7 +203,6 @@ public class ReporterTest {
         expected.put("/tri.txt", mapOf("encoding", "ISO-8859-1", "mediaType", "text/plain",
                 "type", "STANDARD"));
 
-
         File output = new File(tempDirectory, "testXMLOutput");
 
         CommandLine commandLine = new DefaultParser().parse(OptionCollection.buildOptions(), new String[]{"--output-style", "xml", "--output-file", output.getPath(), basedir});
@@ -218,7 +216,6 @@ public class ReporterTest {
         for (Map.Entry<String, Map<String, String>> entry : expected.entrySet()) {
             XmlUtils.assertAttributes(doc, xPath, String.format("/rat-report/resource[@name='%s']", entry.getKey()), entry.getValue());
         }
-
 
         NodeList nodeList = XmlUtils.getNodeList(doc, xPath, "/rat-report/resource/license[@approval='false']");
         assertThat(nodeList.getLength()).isEqualTo(2);
@@ -283,9 +280,6 @@ public class ReporterTest {
         expected.put("/generated.txt", Collections.emptyMap());
         expected.put("/plain.json", Collections.emptyMap());
         expected.put("/sub/Empty.txt", unknownLicense);
-        expected.put("/tri.txt", apacheLicense);
-        expected.put("/tri.txt", mapOf("approval", "true", "family", "BSD-3", "id", "BSD-3",
-                "name", "BSD 3 clause"));
         expected.put("/tri.txt", mapOf("approval", "true", "family", "BSD-3", "id", "TMF",
                 "name", "The Telemanagement Forum License"));
 
@@ -300,17 +294,16 @@ public class ReporterTest {
                         entry.getKey(), attrs.get("id")), attrs);
             }
         }
-
     }
 
     /**
      * Finds a node via xpath on the document. And then checks family, approval and
      * type of elements of the node.
      *
-     * @param doc The document to check/
+     * @param doc The document to check
      * @param xpath the XPath instance to use.
      * @param resource the xpath statement to locate the node.
-     * @param licenseInfo the license info for the node. (may = null)
+     * @param licenseInfo the license info for the node. (can be null)
      * @param type the type of resource located.
      * @throws Exception on XPath error.
      */
@@ -332,7 +325,7 @@ public class ReporterTest {
         }
     }
 
-    private ReportConfiguration initializeConfiguration() throws IOException {
+    private ReportConfiguration initializeConfiguration() {
         Defaults defaults = Defaults.builder().build();
         final File elementsFile = Resources.getExampleResource("exampleData");
         final ReportConfiguration configuration = new ReportConfiguration();
