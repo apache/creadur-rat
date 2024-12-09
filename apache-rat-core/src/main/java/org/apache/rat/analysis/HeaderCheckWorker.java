@@ -29,7 +29,6 @@ import org.apache.rat.ConfigurationException;
 import org.apache.rat.analysis.matchers.FullTextMatcher;
 import org.apache.rat.api.Document;
 import org.apache.rat.license.ILicense;
-import org.apache.rat.license.ILicenseFamily;
 
 /**
  * Reads from a stream to check license.
@@ -58,6 +57,9 @@ public class HeaderCheckWorker {
     private final Collection<ILicense> licenses;
     /** The document being processed */
     private final Document document;
+    /**  The matcher for generated headers */
+    private final IHeaderMatcher generatedMatcher;
+
 
     /**
      * Read the input and perform the header check.
@@ -101,25 +103,28 @@ public class HeaderCheckWorker {
      * Convenience constructor wraps given <code>Reader</code> in a
      * <code>BufferedReader</code>.
      *
+     * @param generatedMatcher The matcher for generated headers.
      * @param reader The reader on the document. Not null.
      * @param licenses The licenses to check against. Not null.
      * @param name The document that is being checked. Possibly null.
      */
-    public HeaderCheckWorker(final Reader reader, final Collection<ILicense> licenses, final Document name) {
-        this(reader, DEFAULT_NUMBER_OF_RETAINED_HEADER_LINES, licenses, name);
+    public HeaderCheckWorker(final IHeaderMatcher generatedMatcher, final Reader reader, final Collection<ILicense> licenses, final Document name) {
+        this(generatedMatcher, reader, DEFAULT_NUMBER_OF_RETAINED_HEADER_LINES, licenses, name);
     }
 
     /**
      * Constructs a check worker for the license against the specified document.
      *
+     * @param generatedMatcher The matcher for generated headers.
      * @param reader The reader on the document. Not null.
      * @param numberOfRetainedHeaderLine the maximum number of lines to read to find
      * the license information.
      * @param licenses The licenses to check against. Not null.
      * @param document The document that is being checked. Possibly null.
      */
-    public HeaderCheckWorker(final Reader reader, final int numberOfRetainedHeaderLine, final Collection<ILicense> licenses,
-            final Document document) {
+    public HeaderCheckWorker(final IHeaderMatcher generatedMatcher, final Reader reader,
+                             final int numberOfRetainedHeaderLine, final Collection<ILicense> licenses,
+                             final Document document) {
         Objects.requireNonNull(reader, "Reader may not be null");
         Objects.requireNonNull(licenses, "Licenses may not be null");
         if (numberOfRetainedHeaderLine < 0) {
@@ -129,24 +134,24 @@ public class HeaderCheckWorker {
         this.numberOfRetainedHeaderLines = numberOfRetainedHeaderLine;
         this.licenses = licenses;
         this.document = document;
+        this.generatedMatcher = generatedMatcher;
     }
 
     /**
      * Read the input and perform the header check.
      *
-     * @throws RatHeaderAnalysisException on IO Exception.
+     * @throws RatHeaderAnalysisException on IO exception.
      */
     public void read() throws RatHeaderAnalysisException {
         try {
             final IHeaders headers = readHeader(reader, numberOfRetainedHeaderLines);
-            licenses.stream().filter(lic -> lic.matches(headers)).forEach(document.getMetaData()::reportOnLicense);
-            if (document.getMetaData().detectedLicense()) {
-                if (document.getMetaData().licenses().anyMatch(
-                        lic -> ILicenseFamily.GENERATED.getFamilyCategory().equals(lic.getLicenseFamily().getFamilyCategory()))) {
-                    document.getMetaData().setDocumentType(Document.Type.GENERATED);
-                }
+            if (generatedMatcher.matches(headers)) {
+                document.getMetaData().setDocumentType(Document.Type.IGNORED);
             } else {
-                document.getMetaData().reportOnLicense(UnknownLicense.INSTANCE);
+                licenses.stream().filter(lic -> lic.matches(headers)).forEach(document.getMetaData()::reportOnLicense);
+                if (!document.getMetaData().detectedLicense()) {
+                    document.getMetaData().reportOnLicense(UnknownLicense.INSTANCE);
+                }
             }
         } catch (IOException e) {
             throw new RatHeaderAnalysisException("Cannot read header for " + document, e);

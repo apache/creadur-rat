@@ -61,15 +61,16 @@ public final class DefaultAnalyserFactory {
     }
 
     /**
-     * A DocumentAnalyser a collection of licenses
+     * A DocumentAnalyser a collection of licenses.
      */
     private static final class DefaultAnalyser implements IDocumentAnalyser {
 
         /** The licenses to analyze */
         private final Collection<ILicense> licenses;
-
         /** the Report Configuration */
         private final ReportConfiguration configuration;
+        /** The matcher for generated files */
+        private final IHeaderMatcher generatedMatcher;
 
         /**
          * Constructs a DocumentAnalyser for the specified license.
@@ -79,6 +80,7 @@ public final class DefaultAnalyserFactory {
         DefaultAnalyser(final ReportConfiguration config, final Collection<ILicense> licenses) {
             this.licenses = licenses;
             this.configuration = config;
+            this.generatedMatcher = configuration.getGeneratedMatcher();
         }
 
         /**
@@ -101,37 +103,33 @@ public final class DefaultAnalyserFactory {
 
         @Override
         public void analyse(final Document document) throws RatDocumentAnalysisException {
-
-            TikaProcessor.process(document);
             Predicate<ILicense> licensePredicate;
 
+            TikaProcessor.process(document);
             switch (document.getMetaData().getDocumentType()) {
-            case STANDARD:
-                licensePredicate = licenseFilter(configuration.getStandardProcessing()).negate();
-                new DocumentHeaderAnalyser(licenses).analyse(document);
-                if (configuration.getStandardProcessing() != Defaults.STANDARD_PROCESSING) {
-                    document.getMetaData().removeLicenses(licensePredicate);
-                }
-                break;
-            case ARCHIVE:
-                licensePredicate = licenseFilter(configuration.getArchiveProcessing());
-                if (configuration.getArchiveProcessing() != ReportConfiguration.Processing.NOTIFICATION) {
-                    ArchiveWalker archiveWalker = new ArchiveWalker(document);
-                    try {
-                        for (Document doc : archiveWalker.getDocuments()) {
-                            analyse(doc);
-                            doc.getMetaData().licenses().filter(licensePredicate).forEach(lic -> document.getMetaData().reportOnLicense(lic));
-                        }
-                    } catch (RatException e) {
-                        throw new RatDocumentAnalysisException(e);
+                case STANDARD:
+                    new DocumentHeaderAnalyser(generatedMatcher, licenses).analyse(document);
+                    if (configuration.getStandardProcessing() != Defaults.STANDARD_PROCESSING) {
+                        licensePredicate = licenseFilter(configuration.getStandardProcessing()).negate();
+                        document.getMetaData().removeLicenses(licensePredicate);
                     }
-                }
-                break;
-            case NOTICE:
-            case BINARY:
-            case UNKNOWN:
-            default:
-                break;
+                    break;
+                case ARCHIVE:
+                    if (configuration.getArchiveProcessing() != ReportConfiguration.Processing.NOTIFICATION) {
+                        ArchiveWalker archiveWalker = new ArchiveWalker(document);
+                        try {
+                            licensePredicate = licenseFilter(configuration.getArchiveProcessing());
+                            for (Document doc : archiveWalker.getDocuments()) {
+                                analyse(doc);
+                                doc.getMetaData().licenses().filter(licensePredicate).forEach(lic -> document.getMetaData().reportOnLicense(lic));
+                            }
+                        } catch (RatException e) {
+                            throw new RatDocumentAnalysisException(e);
+                        }
+                    }
+                    break;
+                default:
+                    break;
             }
         }
     }

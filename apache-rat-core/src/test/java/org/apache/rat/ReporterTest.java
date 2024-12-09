@@ -26,12 +26,14 @@ import static org.assertj.core.api.Fail.fail;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.IOException;
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
 
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.TreeMap;
 import javax.xml.XMLConstants;
 import javax.xml.transform.Source;
@@ -59,7 +61,6 @@ import org.apache.rat.test.utils.Resources;
 import org.apache.rat.testhelpers.TextUtils;
 import org.apache.rat.testhelpers.XmlUtils;
 import org.apache.rat.walker.DirectoryWalker;
-import org.assertj.core.util.Files;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.w3c.dom.Document;
@@ -75,7 +76,7 @@ public class ReporterTest {
     final String basedir;
 
     ReporterTest() {
-        basedir = new File(Files.currentFolder(), "target/test-classes/elements").getPath();
+        basedir = Resources.getExampleResource("exampleData").getPath();
     }
 
     @Test
@@ -88,31 +89,30 @@ public class ReporterTest {
 
         assertThat(statistic.getCounter(Type.ARCHIVE)).isEqualTo(1);
         assertThat(statistic.getCounter(Type.BINARY)).isEqualTo(2);
-        assertThat(statistic.getCounter(Type.GENERATED)).isEqualTo(1);
+        assertThat(statistic.getCounter(Type.IGNORED)).isEqualTo(2);
         assertThat(statistic.getCounter(Type.NOTICE)).isEqualTo(2);
         assertThat(statistic.getCounter(Type.STANDARD)).isEqualTo(8);
         assertThat(statistic.getCounter(Type.UNKNOWN)).isEqualTo(0);
-        assertThat(statistic.getCounter(ClaimStatistic.Counter.APPROVED)).isEqualTo(9);
+        assertThat(statistic.getCounter(ClaimStatistic.Counter.APPROVED)).isEqualTo(8);
         assertThat(statistic.getCounter(ClaimStatistic.Counter.ARCHIVES)).isEqualTo(1);
         assertThat(statistic.getCounter(ClaimStatistic.Counter.BINARIES)).isEqualTo(2);
         assertThat(statistic.getCounter(ClaimStatistic.Counter.DOCUMENT_TYPES)).isEqualTo(5);
-        assertThat(statistic.getCounter(ClaimStatistic.Counter.GENERATED)).isEqualTo(1);
-        assertThat(statistic.getCounter(ClaimStatistic.Counter.LICENSE_CATEGORIES)).isEqualTo(5);
-        assertThat(statistic.getCounter(ClaimStatistic.Counter.LICENSE_NAMES)).isEqualTo(6);
+        assertThat(statistic.getCounter(ClaimStatistic.Counter.IGNORED)).isEqualTo(2);
+        assertThat(statistic.getCounter(ClaimStatistic.Counter.LICENSE_CATEGORIES)).isEqualTo(4);
+        assertThat(statistic.getCounter(ClaimStatistic.Counter.LICENSE_NAMES)).isEqualTo(5);
         assertThat(statistic.getCounter(ClaimStatistic.Counter.NOTICES)).isEqualTo(2);
         assertThat(statistic.getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(8);
         assertThat(statistic.getCounter(ClaimStatistic.Counter.UNAPPROVED)).isEqualTo(2);
         assertThat(statistic.getCounter(ClaimStatistic.Counter.UNKNOWN)).isEqualTo(2);
 
         List<Type> typeList = statistic.getDocumentTypes();
-        assertThat(typeList).isEqualTo(Arrays.asList(Type.ARCHIVE, Type.BINARY, Type.GENERATED, Type.NOTICE, Type.STANDARD));
+        assertThat(typeList).isEqualTo(Arrays.asList(Type.ARCHIVE, Type.BINARY, Type.IGNORED, Type.NOTICE, Type.STANDARD));
 
         TreeMap<String, Integer> expected = new TreeMap<>();
         expected.put("Unknown license", 2);
         expected.put("Apache License Version 2.0", 5);
         expected.put("The MIT License", 1);
         expected.put("BSD 3 clause", 1);
-        expected.put("Generated Files", 1);
         expected.put("The Telemanagement Forum License", 1);
         TreeMap<String, Integer> actual = new TreeMap<>();
 
@@ -125,7 +125,6 @@ public class ReporterTest {
         expected.put("?????", 2);
         expected.put("AL   ", 5);
         expected.put("BSD-3", 2);
-        expected.put("GEN  ", 1);
         expected.put("MIT  ", 1);
         actual.clear();
         for (String licenseCategory : statistic.getLicenseFamilyCategories()) {
@@ -164,9 +163,46 @@ public class ReporterTest {
         String content = FileUtils.readFileToString(output, StandardCharsets.UTF_8);
         verifyStandardContent(content);
     }
+    
+    private static Map<String, String> mapOf(String... parts) {
+        Map<String, String> map = new HashMap<>();
+        for (int i = 0; i < parts.length; i+=2) {
+            map.put(parts[i], parts[i+1]);
+        }
+        return map;
+    }
 
     @Test
     public void testXMLOutput() throws Exception {
+        Map<String, Map<String, String>> expected = new HashMap<>();
+        expected.put("/.hiddenDirectory", mapOf("isDirectory", "true", "mediaType", "application/octet-stream",
+                "type", "IGNORED"));
+        expected.put("/ILoggerFactory.java", mapOf("encoding", "ISO-8859-1", "mediaType", "text/x-java-source",
+                "type", "STANDARD"));
+        expected.put("/Image.png", mapOf("mediaType", "image/png", "type", "BINARY"));
+        expected.put("/LICENSE", mapOf("encoding", "ISO-8859-1", "mediaType", "text/plain", "type", "NOTICE"));
+        expected.put("/NOTICE", mapOf("encoding", "ISO-8859-1", "mediaType", "text/plain", "type", "NOTICE"));
+        expected.put("/Source.java", mapOf("encoding", "ISO-8859-1", "mediaType", "text/x-java-source",
+                "type", "STANDARD"));
+        expected.put("/Text.txt", mapOf("encoding", "ISO-8859-1", "mediaType", "text/plain",
+                "type", "STANDARD"));
+        expected.put("/TextHttps.txt", mapOf("encoding", "ISO-8859-1", "mediaType", "text/plain",
+                "type", "STANDARD"));
+        expected.put("/Xml.xml", mapOf("encoding", "ISO-8859-1", "mediaType", "application/xml",
+                "type", "STANDARD"));
+        expected.put("/buildr.rb", mapOf("encoding", "ISO-8859-1", "mediaType", "text/x-ruby",
+                "type", "STANDARD"));
+        expected.put("/dummy.jar", mapOf("mediaType", "application/java-archive",
+                "type", "ARCHIVE"));
+        expected.put("/generated.txt", mapOf("encoding", "ISO-8859-1", "mediaType", "text/plain",
+                "type", "IGNORED"));
+        expected.put("/plain.json", mapOf("mediaType", "application/json",
+                "type", "BINARY"));
+        expected.put("/sub/Empty.txt", mapOf("encoding", "UTF-8", "mediaType", "text/plain",
+                "type", "STANDARD"));
+        expected.put("/tri.txt", mapOf("encoding", "ISO-8859-1", "mediaType", "text/plain",
+                "type", "STANDARD"));
+
         File output = new File(tempDirectory, "testXMLOutput");
 
         CommandLine commandLine = new DefaultParser().parse(OptionCollection.buildOptions(), new String[]{"--output-style", "xml", "--output-file", output.getPath(), basedir});
@@ -176,6 +212,10 @@ public class ReporterTest {
         assertThat(output).exists();
         Document doc = XmlUtils.toDom(java.nio.file.Files.newInputStream(output.toPath()));
         XPath xPath = XPathFactory.newInstance().newXPath();
+
+        for (Map.Entry<String, Map<String, String>> entry : expected.entrySet()) {
+            XmlUtils.assertAttributes(doc, xPath, String.format("/rat-report/resource[@name='%s']", entry.getKey()), entry.getValue());
+        }
 
         NodeList nodeList = XmlUtils.getNodeList(doc, xPath, "/rat-report/resource/license[@approval='false']");
         assertThat(nodeList.getLength()).isEqualTo(2);
@@ -205,8 +245,8 @@ public class ReporterTest {
         nodeList = XmlUtils.getNodeList(doc, xPath, "/rat-report/resource[@type='BINARY']");
         assertThat(nodeList.getLength()).isEqualTo(2);
 
-        nodeList = XmlUtils.getNodeList(doc, xPath, "/rat-report/resource[@type='GENERATED']");
-        assertThat(nodeList.getLength()).isEqualTo(1);
+        nodeList = XmlUtils.getNodeList(doc, xPath, "/rat-report/resource[@type='IGNORED']");
+        assertThat(nodeList.getLength()).isEqualTo(2);
 
         nodeList = XmlUtils.getNodeList(doc, xPath, "/rat-report/resource[@type='UNKNOWN']");
         assertThat(nodeList.getLength()).isEqualTo(0);
@@ -214,18 +254,56 @@ public class ReporterTest {
         nodeList = XmlUtils.getNodeList(doc, xPath, "/rat-report/resource[@type='NOTICE']");
         assertThat(nodeList.getLength()).isEqualTo(2);
 
-        nodeList = XmlUtils.getNodeList(doc, xPath, "/rat-report/resource[@type='GENERATED']/license/notes");
+        nodeList = XmlUtils.getNodeList(doc, xPath, "/rat-report/resource[@type='IGNORED']/license");
+        assertThat(nodeList.getLength()).isEqualTo(0);
+
+        nodeList = XmlUtils.getNodeList(doc, xPath, "/rat-report/resource[@isDirectory='true']");
         assertThat(nodeList.getLength()).isEqualTo(1);
+
+        // check licenses
+        Map<String, String> apacheLicense = mapOf("approval", "true", "family", "AL   ", "id", "AL", "name", "Apache License Version 2.0");
+        Map<String, String> unknownLicense = mapOf("approval", "false", "family", "?????",
+                "id", "?????", "name", "Unknown license");
+        expected = new HashMap<>();
+        expected.put("/.hiddenDirectory", Collections.emptyMap());
+        expected.put("/ILoggerFactory.java", mapOf("approval", "true", "family", "MIT  ",
+                "id", "MIT", "name", "The MIT License"));
+        expected.put("/Image/png", Collections.emptyMap());
+        expected.put("/LICENSE", Collections.emptyMap());
+        expected.put("/NOTICE", Collections.emptyMap());
+        expected.put("/Source.java", unknownLicense);
+        expected.put("/Text.txt", apacheLicense);
+        expected.put("/TextHttps.txt", apacheLicense);
+        expected.put("/Xml.xml", apacheLicense);
+        expected.put("/buildr.rb", apacheLicense);
+        expected.put("/dummy.jar", Collections.emptyMap());
+        expected.put("/generated.txt", Collections.emptyMap());
+        expected.put("/plain.json", Collections.emptyMap());
+        expected.put("/sub/Empty.txt", unknownLicense);
+        expected.put("/tri.txt", mapOf("approval", "true", "family", "BSD-3", "id", "TMF",
+                "name", "The Telemanagement Forum License"));
+
+        for (Map.Entry<String, Map<String, String>> entry : expected.entrySet()) {
+            Map<String, String> attrs = entry.getValue();
+            if (attrs.isEmpty()) {
+                String xpath = String.format("/rat-report/resource[@name='%s']/license",entry.getKey());
+                nodeList = XmlUtils.getNodeList(doc, xPath, xpath);
+                assertThat(nodeList.getLength()).as(xpath).isEqualTo(0);
+            } else {
+                XmlUtils.assertAttributes(doc, xPath, String.format("/rat-report/resource[@name='%s']/license[@id='%s']",
+                        entry.getKey(), attrs.get("id")), attrs);
+            }
+        }
     }
 
     /**
      * Finds a node via xpath on the document. And then checks family, approval and
      * type of elements of the node.
      *
-     * @param doc The document to check/
+     * @param doc The document to check
      * @param xpath the XPath instance to use.
      * @param resource the xpath statement to locate the node.
-     * @param licenseInfo the license info for the node. (may = null)
+     * @param licenseInfo the license info for the node. (can be null)
      * @param type the type of resource located.
      * @throws Exception on XPath error.
      */
@@ -247,9 +325,9 @@ public class ReporterTest {
         }
     }
 
-    private ReportConfiguration initializeConfiguration() throws IOException {
+    private ReportConfiguration initializeConfiguration() {
         Defaults defaults = Defaults.builder().build();
-        final File elementsFile = new File(Resources.getResourceDirectory("elements/Source.java"));
+        final File elementsFile = Resources.getExampleResource("exampleData");
         final ReportConfiguration configuration = new ReportConfiguration();
         configuration.setFrom(defaults);
         DocumentName documentName = DocumentName.builder(elementsFile).build();
@@ -263,13 +341,12 @@ public class ReporterTest {
         TextUtils.assertPatternInTarget("^  Binaries:\\s*2 ", document);
         TextUtils.assertPatternInTarget("^  Archives:\\s*1 ", document);
         TextUtils.assertPatternInTarget("^  Standards:\\s*8 ", document);
-        TextUtils.assertPatternInTarget("^  Generated:\\s*1 ", document);
+        TextUtils.assertPatternInTarget("^  Ignored:\\s*2 ", document);
         TextUtils.assertPatternInTarget("^! Unapproved:\\s*2 ", document);
         TextUtils.assertPatternInTarget("^  Unknown:\\s*2 ", document);
 
         TextUtils.assertPatternInTarget("^Apache License Version 2.0: 5 ", document);
         TextUtils.assertPatternInTarget("^BSD 3 clause: 1 ", document);
-        TextUtils.assertPatternInTarget("^Generated Files: 1 ", document);
         TextUtils.assertPatternInTarget("^The MIT License: 1 ", document);
         TextUtils.assertPatternInTarget("^The Telemanagement Forum License: 1 ", document);
         TextUtils.assertPatternInTarget("^Unknown license: 2 ", document);
@@ -277,7 +354,6 @@ public class ReporterTest {
         TextUtils.assertPatternInTarget("^\\Q?????\\E: 2 ", document);
         TextUtils.assertPatternInTarget("^AL   : 5 ", document);
         TextUtils.assertPatternInTarget("^BSD-3: 2 ", document);
-        TextUtils.assertPatternInTarget("^GEN  : 1 ", document);
         TextUtils.assertPatternInTarget("^MIT  : 1 ", document);
 
         TextUtils.assertPatternInTarget(
@@ -353,10 +429,9 @@ public class ReporterTest {
         checkNode(doc, xPath, "/tri.txt", new LicenseInfo("BSD-3", true, false), "STANDARD");
         checkNode(doc, xPath, "/tri.txt", new LicenseInfo("TMF", "BSD-3", true, false),
                 "STANDARD");
-        checkNode(doc, xPath, "/generated.txt", new LicenseInfo("GEN", true, true),
-                "GENERATED");
+        checkNode(doc, xPath, "/generated.txt", null, "IGNORED");
         NodeList nodeList = (NodeList) xPath.compile("/rat-report/resource").evaluate(doc, XPathConstants.NODESET);
-        assertThat(nodeList.getLength()).isEqualTo(14);
+        assertThat(nodeList.getLength()).isEqualTo(15);
         Validator validator = initValidator();
         try {
             validator.validate(new DOMSource(doc));
@@ -365,15 +440,14 @@ public class ReporterTest {
         }
     }
 
-    private static final String NL = System.lineSeparator();
-    private static final String SEPARATOR = "*****************************************************";
-    private static final String HEADER = SEPARATOR + NL + //
-            "Summary" + NL + //
-            SEPARATOR + NL + //
-            "Generated at: ";
-
     @Test
     public void plainReportTest() throws Exception {
+        final String NL = System.lineSeparator();
+        final String SEPARATOR = "*****************************************************";
+        final String HEADER = SEPARATOR + NL + //
+                "Summary" + NL + //
+                SEPARATOR + NL + //
+                "Generated at: ";
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         ReportConfiguration configuration = initializeConfiguration();
         configuration.setOut(() -> out);
@@ -384,7 +458,6 @@ public class ReporterTest {
 
         TextUtils.assertNotContains("<?xml version=\"1.0\" encoding=\"UTF-8\"?>", document);
         assertThat(document).as(() -> "'Generated at' is not present in \n" + document).startsWith(HEADER);
-
 
         verifyStandardContent(document);
     }

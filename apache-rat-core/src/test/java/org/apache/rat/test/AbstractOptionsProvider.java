@@ -527,15 +527,15 @@ public abstract class AbstractOptionsProvider {
             ReportConfiguration config = generateConfig(ImmutablePair.nullPair());
             assertEquals(0, config.getClaimValidator().getMax(ClaimStatistic.Counter.UNAPPROVED));
             args[0] = "Unapproved:-1";
-            args[1] = "generated:1";
+            args[1] = "ignored:1";
             config = generateConfig(ImmutablePair.of(option, args));
             assertEquals(Integer.MAX_VALUE, config.getClaimValidator().getMax(ClaimStatistic.Counter.UNAPPROVED));
-            assertEquals(1, config.getClaimValidator().getMax(ClaimStatistic.Counter.GENERATED));
+            assertEquals(1, config.getClaimValidator().getMax(ClaimStatistic.Counter.IGNORED));
             args[1] = "unapproved:5";
-            args[0] = "generated:0";
+            args[0] = "ignored:0";
             config = generateConfig(ImmutablePair.of(option, args));
             assertEquals(5, config.getClaimValidator().getMax(ClaimStatistic.Counter.UNAPPROVED));
-            assertEquals(0, config.getClaimValidator().getMax(ClaimStatistic.Counter.GENERATED));
+            assertEquals(0, config.getClaimValidator().getMax(ClaimStatistic.Counter.IGNORED));
         } catch (IOException e) {
             fail(e.getMessage());
         }
@@ -549,15 +549,15 @@ public abstract class AbstractOptionsProvider {
             ReportConfiguration config = generateConfig(ImmutablePair.nullPair());
             assertEquals(0, config.getClaimValidator().getMin(ClaimStatistic.Counter.UNAPPROVED));
             args[0] = "Unapproved:1";
-            args[1] = "generated:1";
+            args[1] = "ignored:1";
             config = generateConfig(ImmutablePair.of(option, args));
             assertEquals(1, config.getClaimValidator().getMin(ClaimStatistic.Counter.UNAPPROVED));
-            assertEquals(1, config.getClaimValidator().getMin(ClaimStatistic.Counter.GENERATED));
+            assertEquals(1, config.getClaimValidator().getMin(ClaimStatistic.Counter.IGNORED));
             args[1] = "unapproved:5";
-            args[0] = "generated:0";
+            args[0] = "ignored:0";
             config = generateConfig(ImmutablePair.of(option, args));
             assertEquals(5, config.getClaimValidator().getMin(ClaimStatistic.Counter.UNAPPROVED));
-            assertEquals(0, config.getClaimValidator().getMin(ClaimStatistic.Counter.GENERATED));
+            assertEquals(0, config.getClaimValidator().getMin(ClaimStatistic.Counter.IGNORED));
         } catch (IOException e) {
             fail(e.getMessage());
         }
