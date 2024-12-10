@@ -26,7 +26,6 @@ import java.util.stream.Collectors;
 import org.apache.rat.api.Document;
 import org.apache.rat.configuration.builders.AnyBuilder;
 import org.apache.rat.license.ILicenseFamily;
-import org.apache.rat.license.ILicenseFamilyBuilder;
 import org.apache.rat.testhelpers.TestingDocument;
 import org.apache.rat.license.ILicense;
 import org.apache.rat.testhelpers.TestingLicense;

@@ -16,30 +16,14 @@
  */
 package org.apache.rat.configuration;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
-import java.io.ByteArrayInputStream;
 import java.io.StringReader;
 import java.io.StringWriter;
-import java.util.Optional;
-
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathFactory;
 
 import org.apache.rat.Defaults;
 import org.apache.rat.ReportConfiguration;
 import org.apache.rat.api.RatException;
-import org.apache.rat.config.parameters.Description;
-import org.apache.rat.license.ILicense;
 import org.apache.rat.license.LicenseSetFactory.LicenseFilter;
-import org.apache.rat.report.xml.writer.XmlWriter;
-import org.apache.rat.testhelpers.XmlUtils;
 import org.junit.jupiter.api.Test;
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
 
 public class XMLConfigurationWriterTest {
 

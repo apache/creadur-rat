@@ -98,7 +98,6 @@ public class XmlReportFactoryTest {
 
     @Test
     public void testNoLicense()  {
-
         final ILicense mockLicense = mock(ILicense.class);
         when(mockLicense.matches(any())).thenReturn(true);
         when(mockLicense.getLicenseFamily()).thenReturn(family);

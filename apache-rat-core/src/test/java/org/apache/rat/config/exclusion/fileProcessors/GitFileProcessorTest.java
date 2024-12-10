@@ -23,7 +23,6 @@ import java.util.Iterator;
 import java.util.stream.Stream;
 import org.apache.rat.document.DocumentName;
 import org.apache.rat.document.DocumentNameMatcher;
-import org.apache.rat.document.FileDocument;
 import org.apache.rat.utils.ExtendedIterator;
 import org.junit.Ignore;
 import org.junit.jupiter.api.Test;

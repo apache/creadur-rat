@@ -107,7 +107,6 @@ public class RatCheckMojoTest extends BetterAbstractMojoTestCase {
      * @throws Exception The test failed.
      */
     public void testIt1() throws Exception {
-
         final RatCheckMojo mojo = newRatCheckMojo("it1");
         final File ratTxtFile = mojo.getRatTxtFile();
 
@@ -128,7 +127,6 @@ public class RatCheckMojoTest extends BetterAbstractMojoTestCase {
         data.put(ClaimStatistic.Counter.UNAPPROVED, "0");
         data.put(ClaimStatistic.Counter.UNKNOWN, "0");
 
-
         org.w3c.dom.Document document = XmlUtils.toDom(new FileInputStream(ratTxtFile));
         XPath xPath = XPathFactory.newInstance().newXPath();
 
@@ -144,7 +142,6 @@ public class RatCheckMojoTest extends BetterAbstractMojoTestCase {
 
         XmlUtils.assertAttributes(document, xPath, "/rat-report/resource[@name='/pom.xml']",
                 mapOf("mediaType", "application/xml", "type", "STANDARD", "encoding", "ISO-8859-1"));
-
     }
 
     private static Map<String, String> mapOf(String... parts) {
@@ -161,7 +158,6 @@ public class RatCheckMojoTest extends BetterAbstractMojoTestCase {
      * @throws Exception The test failed.
      */
     public void testIt2() throws Exception {
-
         final RatCheckMojo mojo = newRatCheckMojo("it2");
         final File ratTxtFile = mojo.getRatTxtFile();
         final String[] expected = {
@@ -255,7 +251,6 @@ public class RatCheckMojoTest extends BetterAbstractMojoTestCase {
         data.put(ClaimStatistic.Counter.STANDARDS, "1");
         data.put(ClaimStatistic.Counter.UNAPPROVED, "4");
         data.put(ClaimStatistic.Counter.UNKNOWN, "0");
-
 
         org.w3c.dom.Document document = XmlUtils.toDom(new FileInputStream(ratTxtFile));
         XPath xPath = XPathFactory.newInstance().newXPath();
@@ -372,7 +367,6 @@ public class RatCheckMojoTest extends BetterAbstractMojoTestCase {
             data.put(ClaimStatistic.Counter.UNAPPROVED, "4");
             data.put(ClaimStatistic.Counter.UNKNOWN, "4");
 
-
             org.w3c.dom.Document document = XmlUtils.toDom(new FileInputStream(ratTxtFile));
             XPath xPath = XPathFactory.newInstance().newXPath();
 
@@ -398,7 +392,6 @@ public class RatCheckMojoTest extends BetterAbstractMojoTestCase {
 
             XmlUtils.assertAttributes(document, xPath, "/rat-report/statistics/licenseName[@name='Unknown license']",
                     mapOf("count", "4" ));
-
 
             // Document types
             XmlUtils.assertAttributes(document, xPath, "/rat-report/statistics/documentType[@name='IGNORED']",

@@ -1,4 +1,4 @@
-package ReportTest.RAT_355
+package RAT_355
 
 import org.apache.rat.report.claim.ClaimStatistic
 import org.apache.rat.testhelpers.XmlUtils
@@ -12,11 +12,11 @@ import javax.xml.xpath.XPathFactory
 import static org.assertj.core.api.Assertions.assertThat
 
 private static Map<String, String> mapOf(String... parts) {
-    Map<String, String> map = new HashMap<>();
+    Map<String, String> map = new HashMap<>()
     for (int i=0; i<parts.length; i+=2) {
-        map.put(parts[i], parts[i+1]);
+        map.put(parts[i], parts[i+1])
     }
-    return map;
+    return map
 }
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -37,45 +37,44 @@ private static Map<String, String> mapOf(String... parts) {
 output = new File(args[0])
 content = output.text
 
-//Map<ClaimStatistic.Counter, String> data = new HashMap<>();
-//data.put(ClaimStatistic.Counter.APPROVED, "2");
-//data.put(ClaimStatistic.Counter.ARCHIVES, "0");
-//data.put(ClaimStatistic.Counter.BINARIES, "0");
-//data.put(ClaimStatistic.Counter.DOCUMENT_TYPES, "3");
-//data.put(ClaimStatistic.Counter.IGNORED, "6");
-//data.put(ClaimStatistic.Counter.LICENSE_CATEGORIES, "2");
-//data.put(ClaimStatistic.Counter.LICENSE_NAMES, "2");
-//data.put(ClaimStatistic.Counter.NOTICES, "1");
-//data.put(ClaimStatistic.Counter.STANDARDS, "6");
-//data.put(ClaimStatistic.Counter.UNAPPROVED, "4");
-//data.put(ClaimStatistic.Counter.UNKNOWN, "4");
+//Map<ClaimStatistic.Counter, String> data = new HashMap<>()
+//data.put(ClaimStatistic.Counter.APPROVED, "2")
+//data.put(ClaimStatistic.Counter.ARCHIVES, "0")
+//data.put(ClaimStatistic.Counter.BINARIES, "0")
+//data.put(ClaimStatistic.Counter.DOCUMENT_TYPES, "3")
+//data.put(ClaimStatistic.Counter.IGNORED, "6")
+//data.put(ClaimStatistic.Counter.LICENSE_CATEGORIES, "2")
+//data.put(ClaimStatistic.Counter.LICENSE_NAMES, "2")
+//data.put(ClaimStatistic.Counter.NOTICES, "1")
+//data.put(ClaimStatistic.Counter.STANDARDS, "6")
+//data.put(ClaimStatistic.Counter.UNAPPROVED, "4")
+//data.put(ClaimStatistic.Counter.UNKNOWN, "4")
 
-
-Document document = XmlUtils.toDom(new FileInputStream(args[0]));
-XPath xPath = XPathFactory.newInstance().newXPath();
+Document document = XmlUtils.toDom(new FileInputStream(args[0]))
+XPath xPath = XPathFactory.newInstance().newXPath()
 
 //for (ClaimStatistic.Counter counter : ClaimStatistic.Counter.values()) {
-//    String xpath = String.format("/rat-report/statistics/statistic[@name='%s']", counter.displayName());
+//    String xpath = String.format("/rat-report/statistics/statistic[@name='%s']", counter.displayName())
 //    Map<String, String> map = mapOf("approval",
 //            counter == ClaimStatistic.Counter.UNAPPROVED ? "false" : "true",
 //            "count", data.get(counter),
 //            "description", counter.getDescription());
-//    XmlUtils.assertAttributes(document, xPath, xpath, map);
+//    XmlUtils.assertAttributes(document, xPath, xpath, map)
 //}
 
 //// license categories
 //XmlUtils.assertAttributes(document, xPath, "/rat-report/statistics/licenseCategory[@name='?????']",
-//        mapOf("count", "4" ));
+//        mapOf("count", "4" ))
 //
 //XmlUtils.assertAttributes(document, xPath, "/rat-report/statistics/licenseCategory[@name='AL   ']",
-//        mapOf("count", "2" ));
+//        mapOf("count", "2" ))
 //
 //// license names
 //XmlUtils.assertAttributes(document, xPath, "/rat-report/statistics/licenseName[@name='Apache License Version 2.0']",
-//        mapOf("count", "2" ));
+//        mapOf("count", "2" ))
 //
 //XmlUtils.assertAttributes(document, xPath, "/rat-report/statistics/licenseName[@name='Unknown license']",
-//        mapOf("count", "4" ));
+//        mapOf("count", "4" ))
 
 List<String> ignoredFiles = new ArrayList<>(Arrays.asList(
         "/dir1/dir1.txt",
@@ -84,31 +83,28 @@ List<String> ignoredFiles = new ArrayList<>(Arrays.asList(
         "/dir2/dir2.md",
         "/dir3/dir3.log",
         "/.gitignore",
-        "/root.md"));
+        "/root.md"))
 
-NodeList nodeList = XmlUtils.getNodeList(document, xPath, "/rat-report/resource[@type='IGNORED']");
+NodeList nodeList = XmlUtils.getNodeList(document, xPath, "/rat-report/resource[@type='IGNORED']")
 for (int i=0;i< nodeList.getLength(); i++) {
-    NamedNodeMap attr = nodeList.item(i).getAttributes();
-    String s = attr.getNamedItem("name").getNodeValue();
-    assertThat(ignoredFiles).contains(s);
-    ignoredFiles.remove(s);
+    NamedNodeMap attr = nodeList.item(i).getAttributes()
+    String s = attr.getNamedItem("name").getNodeValue()
+    assertThat(ignoredFiles).contains(s)
+    ignoredFiles.remove(s)
 }
-assertThat(ignoredFiles).isEmpty();
-
+assertThat(ignoredFiles).isEmpty()
 
 // Document types
 XmlUtils.assertAttributes(document, xPath, "/rat-report/statistics/documentType[@name='IGNORED']",
-        mapOf("count", "6" ));
+        mapOf("count", "6" ))
 
 XmlUtils.assertAttributes(document, xPath, "/rat-report/statistics/documentType[@name='NOTICE']",
-        mapOf("count", "1" ));
+        mapOf("count", "1" ))
 
 XmlUtils.assertAttributes(document, xPath, "/rat-report/statistics/documentType[@name='STANDARD']",
-        mapOf("count", "6" ));
-
+        mapOf("count", "6" ))
 
 /*
-
 TextUtils.assertPatternInTarget("^  Approved:\\s+8 ", content)
 TextUtils.assertPatternInTarget("^  Archives:\\s+1 ", content)
 TextUtils.assertPatternInTarget("^  Binaries:\\s+2 ", content)
