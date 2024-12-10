@@ -74,7 +74,7 @@ public final class XmlReportFactory {
         reporters.add(new ClaimValidatorReport(writer, statistic, configuration));
 
         final IDocumentAnalyser analyser = DefaultAnalyserFactory.createDefaultAnalyser(configuration);
-        final DefaultPolicy policy = new DefaultPolicy(configuration.getLicenseFamilies(LicenseFilter.APPROVED));
+        final DefaultPolicy policy = new DefaultPolicy(configuration.getLicenseSetFactory());
 
         final IDocumentAnalyser[] analysers = {analyser, policy};
         DocumentAnalyserMultiplexer analysisMultiplexer = new DocumentAnalyserMultiplexer(analysers);

@@ -96,7 +96,14 @@
             </configuration>
           </execution>
         </executions>
-      </plugin>  
+      </plugin>
+      <plugin>
+        <groupId>com.github.spotbugs</groupId>
+        <artifactId>spotbugs-maven-plugin</artifactId>
+        <configuration>
+          <excludeFilterFile>spotbugs-ignore.xml</excludeFilterFile>
+        </configuration>
+      </plugin>
     </plugins>
   </build>
   <dependencies>

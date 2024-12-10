@@ -105,7 +105,7 @@ public abstract class AbstractRatMojo extends BaseRatMojo {
 
     /**
      * Whether to add the default list of license matchers.
-     * @deprecated Use &lt;config&gt;.
+     * @deprecated By default, license matchers are added.  Use &lt;configurationNoDefaults&gt; to remove them.
      */
     @Deprecated
     @Parameter(property = "rat.addDefaultLicenseMatchers")
@@ -176,9 +176,8 @@ public abstract class AbstractRatMojo extends BaseRatMojo {
      * <li>configuration files for IDEA, see
      * <a href="#useIdeaDefaultExcludes">useIdeaDefaultExcludes</a></li>
      * </ul>
-     * @deprecated When set to true specifies that the STANDARD_PATTERNS are excluded, as are
-     * the STANDARD_SCMS patterns. Use the various InputExclude and InputInclude elements to
-     * explicitly specify what to include or exclude.
+     * @deprecated use &lt;inputExcludeStd&gt;&lt;exclude&gt;STANDARD_PATTERNS&lt;/exclude&gt;
+     * &lt;exclude&gt;STANDARD_SCM&lt;/exclude&gt;&lt;/inputExcludeStd&gt;
      */
     @Parameter(property = "rat.useDefaultExcludes", defaultValue = "true")
     @Deprecated

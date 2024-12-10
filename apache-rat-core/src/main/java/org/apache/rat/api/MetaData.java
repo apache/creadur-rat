@@ -19,15 +19,12 @@
 package org.apache.rat.api;
 
 import java.nio.charset.Charset;
-import java.util.HashSet;
-import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 import org.apache.rat.license.ILicense;
-import org.apache.rat.license.ILicenseFamily;
 import org.apache.tika.mime.MediaType;
 
 /**
@@ -38,7 +35,7 @@ public class MetaData {
     /** The list of matched licenses */
     private final SortedSet<ILicense> matchedLicenses;
     /** The list of License Family Categories that are approved */
-    private final Set<String> approvedLicenses;
+    private Predicate<ILicense> approvalPredicate;
     /** The charset for this document */
     private Charset charset;
     /** The media type for this document */
@@ -52,7 +49,7 @@ public class MetaData {
      */
     public MetaData() {
         this.matchedLicenses = new TreeSet<>();
-        this.approvedLicenses = new HashSet<>();
+        this.approvalPredicate = x -> true;
     }
 
     /**
@@ -97,11 +94,10 @@ public class MetaData {
 
     /**
      * Sets the set of approved licenses.
-     * @param approvedLicenseFamilies the set of approved license families.
+     * @param approvalPredicate the predicate to validate licenses.
      */
-    public void setApprovedLicenses(final Set<ILicenseFamily> approvedLicenseFamilies) {
-        licenses().filter(lic -> approvedLicenseFamilies.contains(lic.getLicenseFamily()))
-                .forEach(lic -> approvedLicenses.add(lic.getId()));
+    public void setApprovalPredicate(final Predicate<ILicense> approvalPredicate) {
+        this.approvalPredicate = approvalPredicate;
     }
 
     /**
@@ -126,7 +122,7 @@ public class MetaData {
      * @return {@code true} if the license is in the list of approved licenses, {@code false} otherwise.
      */
     public boolean isApproved(final ILicense license) {
-        return approvedLicenses.contains(license.getId());
+        return approvalPredicate.test(license);
     }
 
     /**
@@ -172,6 +168,7 @@ public class MetaData {
 
     @Override
     public String toString() {
-        return String.format("MetaData[%s license, %s approved]", matchedLicenses.size(), approvedLicenses.size());
+        return String.format("MetaData[%s license, %s approved]", matchedLicenses.size(),
+                matchedLicenses.stream().filter(approvalPredicate).count());
     }
 }

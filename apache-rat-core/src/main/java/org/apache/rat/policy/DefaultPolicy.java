@@ -18,14 +18,14 @@
  */
 package org.apache.rat.policy;
 
-import java.util.Collection;
+
 import java.util.Collections;
 import java.util.SortedSet;
-import java.util.TreeSet;
 
 import org.apache.rat.api.Document;
 import org.apache.rat.document.IDocumentAnalyser;
 import org.apache.rat.license.ILicenseFamily;
+import org.apache.rat.license.LicenseSetFactory;
 
 /**
  * A default Document Analyser that determines if the matched license is in the
@@ -33,29 +33,20 @@ import org.apache.rat.license.ILicenseFamily;
  */
 public class DefaultPolicy implements IDocumentAnalyser {
     /** The set of all approved license families */
-    private final SortedSet<ILicenseFamily> approvedLicenseFamilies;
+    private final LicenseSetFactory licenseSetFactory;
 
     /**
      * Constructor with the list of approved license families.
-     * @param approvedLicenseFamilies the approved license families.
+     * @param licenseSetFactory the licenseSetFactory to determine valie licenses
      */
-    public DefaultPolicy(final Collection<ILicenseFamily> approvedLicenseFamilies) {
-        this.approvedLicenseFamilies = new TreeSet<>();
-        this.approvedLicenseFamilies.addAll(approvedLicenseFamilies);
-    }
-
-    /**
-     * Adds an ILicenseFamily to the list of approved licenses.
-     * @param approvedLicense license to be approved.
-     */
-    public void add(final ILicenseFamily approvedLicense) {
-        this.approvedLicenseFamilies.add(approvedLicense);
+    public DefaultPolicy(final LicenseSetFactory licenseSetFactory) {
+        this.licenseSetFactory = licenseSetFactory;
     }
 
     @Override
     public void analyse(final Document document) {
         if (document != null) {
-            document.getMetaData().setApprovedLicenses(getApprovedLicenseFamilies());
+            document.getMetaData().setApprovalPredicate(licenseSetFactory.getApprovedLicensePredicate());
         }
     }
 
@@ -65,6 +56,6 @@ public class DefaultPolicy implements IDocumentAnalyser {
      * @return sorted set of license family definitions.
      */
     public SortedSet<ILicenseFamily> getApprovedLicenseFamilies() {
-        return Collections.unmodifiableSortedSet(approvedLicenseFamilies);
+        return Collections.unmodifiableSortedSet(licenseSetFactory.getLicenseFamilies(LicenseSetFactory.LicenseFilter.APPROVED));
     }
 }
