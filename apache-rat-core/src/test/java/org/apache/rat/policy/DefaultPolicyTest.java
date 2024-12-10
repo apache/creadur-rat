@@ -21,7 +21,6 @@ package org.apache.rat.policy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import java.util.Collections;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
@@ -57,11 +56,13 @@ public class DefaultPolicyTest {
     private Document document;
     private DefaultPolicy policy;
     private Defaults defaults;
+    private LicenseSetFactory licenseSetFactory;
 
     @BeforeEach
     public void setUp() {
         defaults = Defaults.builder().build();
-        policy = new DefaultPolicy(defaults.getLicenseSetFactory().getLicenseFamilies(LicenseFilter.APPROVED));
+        licenseSetFactory = defaults.getLicenseSetFactory();
+        policy = new DefaultPolicy(licenseSetFactory);
         document = new TestingDocument("subject");
     }
 
@@ -124,23 +125,23 @@ public class DefaultPolicyTest {
         policy.analyse(document);
         assertApproval(false);
 
-        policy.add(testingFamily);
-        assertNotNull(LicenseSetFactory.familySearch(testingFamily, policy.getApprovedLicenseFamilies()),
-                "Did not properly add ILicenseFamily");
+        licenseSetFactory.approveLicenseCategory(testingFamily.getFamilyCategory());
         policy.analyse(document);
         assertApproval(true);
     }
 
     @Test
     public void testAddNewApprovedLicenseNoDefaults() {
-        policy = new DefaultPolicy(Collections.emptySet());
+        LicenseSetFactory licenseSetFactory = new LicenseSetFactory();
+        policy = new DefaultPolicy(licenseSetFactory);
         assertEquals(0, policy.getApprovedLicenseFamilies().size());
         ILicenseFamily testingFamily = makeFamily("test", "Testing License Family");
         setMetadata(testingFamily);
         policy.analyse(document);
         assertApproval(false);
 
-        policy.add(testingFamily);
+        licenseSetFactory.addLicense(new TestingLicense(testingFamily.getFamilyCategory().trim(), new TestingMatcher(), testingFamily));
+        licenseSetFactory.approveLicenseCategory(testingFamily.getFamilyCategory());
         assertEquals(1, policy.getApprovedLicenseFamilies().size());
         assertNotNull(LicenseSetFactory.familySearch(testingFamily, policy.getApprovedLicenseFamilies()),
                 "Did not properly add ILicenseFamily");

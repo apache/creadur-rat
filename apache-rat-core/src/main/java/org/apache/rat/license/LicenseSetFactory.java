@@ -238,7 +238,7 @@ public class LicenseSetFactory {
      * Adds a license family category (id) to the list of approved licenses
      * @param familyCategory the category to add.
      */
-    public void addLicenseCategory(final String familyCategory) {
+    public void approveLicenseCategory(final String familyCategory) {
         approvedLicenseCategories.add(ILicenseFamily.makeCategory(familyCategory));
     }
 
@@ -276,20 +276,26 @@ public class LicenseSetFactory {
     }
 
     /**
+     * Gets a predicate to filter for approved licenses.
+     * @return a predicate that returns {@code true} if the license is approved.
+     */
+    public Predicate<ILicense> getApprovedLicensePredicate() {
+        return lic -> !removedLicenseIds.contains(lic.getId()) && (approvedLicenseIds.contains(lic.getId()) ||
+                isApprovedCategory(lic.getLicenseFamily()));
+    }
+
+    /**
      * Gets the License objects based on the filter.
      * @param filter the types of LicenseFamily objects to return.
      * @return a SortedSet of ILicense objects.
      */
     public SortedSet<ILicense> getLicenses(final LicenseFilter filter) {
-        Predicate<ILicense> approved =  l -> (isApprovedCategory(l.getLicenseFamily()) ||
-                approvedLicenseIds.contains(l.getId())) && !removedLicenseIds.contains(l.getId());
-
         switch (filter) {
         case ALL:
             return Collections.unmodifiableSortedSet(licenses);
         case APPROVED:
             SortedSet<ILicense> result = new TreeSet<>();
-            licenses.stream().filter(approved).forEach(result::add);
+            licenses.stream().filter(getApprovedLicensePredicate()).forEach(result::add);
             return result;
         case NONE:
         default:
