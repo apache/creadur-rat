@@ -4,7 +4,6 @@
 		<family id="AL" name="Apache License Version 2.0" />
 		<family id="CDDL1"
 			name="COMMON DEVELOPMENT AND DISTRIBUTION LICENSE Version 1.0" />
-		<family id="GEN" name="Generated Files" />
 		<family id="GPL" name="GNU General Public License family" />
 		<family id="MIT" name="The MIT License" />
 		<family id="OASIS" name="OASIS Open License" />
@@ -64,12 +63,6 @@
 
 		<license family="BSD-3" id="DOJO" name="DOJO License">
 			<text>http://dojotoolkit.org/community/licensing.shtml</text>
-		</license>
-
-		<license family="GEN">
-			<note>
-				Files that are automatically generated.</note>
-			<any resource="/org/apache/rat/generation-keywords.txt" />
 		</license>
 
 		<license family="GPL" id="GPL1" name="GNU General Public License V1.0">
@@ -241,7 +234,6 @@
 		<family license_ref='AL' />
 		<family license_ref="BSD-3" />
 		<family license_ref='CDDL1' />
-		<family license_ref='GEN' />
 		<family license_ref='MIT' />
 		<family license_ref='OASIS' />
 		<family license_ref='W3C' />

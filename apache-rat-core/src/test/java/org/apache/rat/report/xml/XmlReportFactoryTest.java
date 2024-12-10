@@ -69,7 +69,7 @@ public class XmlReportFactoryTest {
 
     @Test
     public void standardReport() throws Exception {
-        final File elementsDir = Resources.getResourceFile("elements/Source.java").getParentFile();
+        final File elementsDir = Resources.getExampleResource("exampleData");
         final ReportConfiguration configuration = new ReportConfiguration();
         final TestingLicense testingLicense = new TestingLicense("TEST", new TestingMatcher(true), family);
         configuration.setFrom(Defaults.builder().build());
@@ -93,11 +93,11 @@ public class XmlReportFactoryTest {
         assertEquals(2, statistic.getCounter(Document.Type.NOTICE), "Notice files");
         assertEquals(8, statistic.getCounter(Document.Type.STANDARD), "Standard files");
         assertEquals(1, statistic.getCounter(Document.Type.ARCHIVE), "Archives");
+        assertEquals(2, statistic.getCounter(Document.Type.IGNORED), "Ignored documents");
     }
 
     @Test
     public void testNoLicense()  {
-
         final ILicense mockLicense = mock(ILicense.class);
         when(mockLicense.matches(any())).thenReturn(true);
         when(mockLicense.getLicenseFamily()).thenReturn(family);

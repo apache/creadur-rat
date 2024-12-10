@@ -421,7 +421,7 @@ public abstract class AbstractOptionsProvider {
         PrintStream origin = System.out;
         try (PrintStream out = new PrintStream(output)){
             System.setOut(out);
-            ReportConfiguration config = generateConfig(ImmutablePair.of(HELP_LICENSES.option(), null));
+            generateConfig(ImmutablePair.of(HELP_LICENSES.option(), null));
         } catch (IOException e) {
             fail(e.getMessage());
         } finally {
@@ -527,15 +527,15 @@ public abstract class AbstractOptionsProvider {
             ReportConfiguration config = generateConfig(ImmutablePair.nullPair());
             assertEquals(0, config.getClaimValidator().getMax(ClaimStatistic.Counter.UNAPPROVED));
             args[0] = "Unapproved:-1";
-            args[1] = "generated:1";
+            args[1] = "ignored:1";
             config = generateConfig(ImmutablePair.of(option, args));
             assertEquals(Integer.MAX_VALUE, config.getClaimValidator().getMax(ClaimStatistic.Counter.UNAPPROVED));
-            assertEquals(1, config.getClaimValidator().getMax(ClaimStatistic.Counter.GENERATED));
+            assertEquals(1, config.getClaimValidator().getMax(ClaimStatistic.Counter.IGNORED));
             args[1] = "unapproved:5";
-            args[0] = "generated:0";
+            args[0] = "ignored:0";
             config = generateConfig(ImmutablePair.of(option, args));
             assertEquals(5, config.getClaimValidator().getMax(ClaimStatistic.Counter.UNAPPROVED));
-            assertEquals(0, config.getClaimValidator().getMax(ClaimStatistic.Counter.GENERATED));
+            assertEquals(0, config.getClaimValidator().getMax(ClaimStatistic.Counter.IGNORED));
         } catch (IOException e) {
             fail(e.getMessage());
         }
@@ -549,15 +549,15 @@ public abstract class AbstractOptionsProvider {
             ReportConfiguration config = generateConfig(ImmutablePair.nullPair());
             assertEquals(0, config.getClaimValidator().getMin(ClaimStatistic.Counter.UNAPPROVED));
             args[0] = "Unapproved:1";
-            args[1] = "generated:1";
+            args[1] = "ignored:1";
             config = generateConfig(ImmutablePair.of(option, args));
             assertEquals(1, config.getClaimValidator().getMin(ClaimStatistic.Counter.UNAPPROVED));
-            assertEquals(1, config.getClaimValidator().getMin(ClaimStatistic.Counter.GENERATED));
+            assertEquals(1, config.getClaimValidator().getMin(ClaimStatistic.Counter.IGNORED));
             args[1] = "unapproved:5";
-            args[0] = "generated:0";
+            args[0] = "ignored:0";
             config = generateConfig(ImmutablePair.of(option, args));
             assertEquals(5, config.getClaimValidator().getMin(ClaimStatistic.Counter.UNAPPROVED));
-            assertEquals(0, config.getClaimValidator().getMin(ClaimStatistic.Counter.GENERATED));
+            assertEquals(0, config.getClaimValidator().getMin(ClaimStatistic.Counter.IGNORED));
         } catch (IOException e) {
             fail(e.getMessage());
         }
@@ -692,7 +692,7 @@ public abstract class AbstractOptionsProvider {
             for (Level level : Level.values()) {
                 try {
                     args[0] = level.name();
-                    ReportConfiguration config = generateConfig(ImmutablePair.of(option, args));
+                    generateConfig(ImmutablePair.of(option, args));
                     assertEquals(level, DefaultLog.getInstance().getLevel());
                 } catch (IOException e) {
                     fail(e.getMessage());
@@ -876,7 +876,7 @@ public abstract class AbstractOptionsProvider {
                             }
                     }
                 if (!missingTests.isEmpty()) {
-                        System.out.println("The following tests are excluded: '"+String.join( "', '", missingTests )+"'");
+                        System.out.println("The following tests are excluded: '" + String.join( "', '", missingTests ) + "'");
                     }
                 return lst.stream();
             }

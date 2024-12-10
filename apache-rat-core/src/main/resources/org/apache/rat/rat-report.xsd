@@ -47,6 +47,7 @@
                         <xs:attribute type="xs:string" name="type" use="required"/>
                         <xs:attribute type="xs:string" name="mediaType" use="required" />
                         <xs:attribute type="xs:string" name="encoding" use="optional" />
+                        <xs:attribute type="xs:boolean" name="isDirectory" use="optional" />
                     </xs:complexType>
                 </xs:element>
                 <xs:element name="statistics" maxOccurs="1" minOccurs="0">
@@ -54,7 +55,7 @@
                         <xs:sequence>
                             <xs:element name="statistic" maxOccurs="unbounded" minOccurs="0">
                                 <xs:complexType mixed="true">
-                                    <xs:attribute type="xs:string" name="approval" use="required"/>
+                                    <xs:attribute type="xs:boolean" name="approval" use="required"/>
                                     <xs:attribute type="xs:integer" name="count" use="required"/>
                                     <xs:attribute type="xs:string" name="description" use="required"/>
                                     <xs:attribute type="xs:string" name="name" use="required"/>

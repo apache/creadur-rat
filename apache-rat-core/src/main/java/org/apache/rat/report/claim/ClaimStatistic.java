@@ -44,8 +44,8 @@ public class ClaimStatistic {
         BINARIES("A count of binary files.", -1, 0),
         /** count of distinct document types */
         DOCUMENT_TYPES("A count of distinct document types.", -1, 1),
-        /** count of generated files */
-        GENERATED("A count of generated files.", -1, 0),
+        /** count of generated/ignored files */
+        IGNORED("A count of ignored files.", -1, 0),
         /** count of license categories */
         LICENSE_CATEGORIES("A count of distinct license categories.", -1, 1),
         /** count of distinct license names */
@@ -60,11 +60,11 @@ public class ClaimStatistic {
         UNKNOWN("A count of unknown file types.", -1, 0);
 
         /** The description of the counter */
-        private String description;
+        private final String description;
         /** The default max value for the counter */
-        private int defaultMaxValue;
-        /** THe default minimum value for the counter */
-        private int defaultMinValue;
+        private final int defaultMaxValue;
+        /** The default minimum value for the counter */
+        private final int defaultMinValue;
 
         Counter(final String description, final int defaultMaxValue, final int defaultMinValue) {
             this.description = description;
@@ -183,8 +183,8 @@ public class ClaimStatistic {
             case UNKNOWN:
                 incCounter(Counter.UNKNOWN, value);
                 break;
-            case GENERATED:
-                incCounter(Counter.GENERATED, value);
+            case IGNORED:
+                incCounter(Counter.IGNORED, value);
                 break;
         }
     }
@@ -273,7 +273,7 @@ public class ClaimStatistic {
 
         /**
          * Increment the count.
-         * @param count the count to increment by (may be negative)
+         * @param count the count to increment by (can be negative).
          * @return this.
          */
         public IntCounter increment(final int count) {

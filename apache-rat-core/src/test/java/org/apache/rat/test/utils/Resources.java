@@ -25,8 +25,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.util.Objects;
 
 /**
  * Utility class, which provides static methods for creating test cases.
@@ -51,11 +53,16 @@ public class Resources {
         return getResourceFromBase(TEST_RESOURCE_BASE_PATH, pResource);
     }
 
+
     /**
-     * Locates a main resource file in the class path.
+     * Locates a file in the unpacked example data archive.
+     * @param pResource the name of the resource to find.
+     * @return the File for the resource.
      */
-    public static File getMainResourceFile(String pResource) throws IOException {
-        return getResourceFromBase(RESOURCE_BASE_PATH, pResource);
+    public static File getExampleResource(String pResource) {
+        URL url = Resources.class.getResource("/examples/" + pResource);
+        Objects.requireNonNull(url, "/examples/" + pResource + " not found");
+        return new File(url.getFile());
     }
 
     /**
@@ -101,22 +108,7 @@ public class Resources {
      * Locates a resource file in the class path and returns a
      * {@link BufferedReader}.
      */
-    public static BufferedReader getBufferedResourceReader(String pResource) throws IOException {
-        return new BufferedReader(getResourceReader(pResource));
-    }
-
-    /**
-     * Locates a resource file in the class path and returns a
-     * {@link BufferedReader}.
-     */
     public static BufferedReader getBufferedReader(File file) throws IOException {
         return new BufferedReader(new InputStreamReader(Files.newInputStream(file.toPath()), StandardCharsets.UTF_8));
-    }
-
-    /**
-     * Locates the name of a directory, which contains the given resource file.
-     */
-    public static String getResourceDirectory(String pResource) throws IOException {
-        return getResourceFile(pResource).getParentFile().getAbsolutePath();
     }
 }
