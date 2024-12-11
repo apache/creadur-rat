@@ -91,7 +91,6 @@
             <configuration>
               <includeArtifactIds>apache-rat-core</includeArtifactIds>
               <excludeClassifiers>tests</excludeClassifiers>
-              <include>META-INF/RELEASE_NOTES.txt</include>
               <outputDirectory>${project.build.outputDirectory}</outputDirectory>
             </configuration>
           </execution>
