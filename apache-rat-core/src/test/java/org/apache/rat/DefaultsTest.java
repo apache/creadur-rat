@@ -30,7 +30,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 
 public class DefaultsTest {
-    private static final String[] FAMILIES = { "BSD-3", "GEN  ", "GPL  ", "AL   ", "OASIS", "W3CD ", "W3C  ", "MIT  ", "CDDL1" };
+    private static final String[] FAMILIES = { "BSD-3", "GPL  ", "AL   ", "OASIS", "W3CD ", "W3C  ", "MIT  ", "CDDL1" };
 
     @Test
     public void defaultConfigTest() {

@@ -27,6 +27,7 @@
         <artifactId>apache-rat-plugin</artifactId>
         <version>@pom.version@</version>
         <configuration>
+          <outputStyle>xml</outputStyle>
         </configuration>
       </plugin>
     </plugins>

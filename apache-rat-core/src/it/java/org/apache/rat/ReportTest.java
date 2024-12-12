@@ -88,6 +88,7 @@ public class ReportTest {
     @ParameterizedTest(name = "{index} {0}")
     @MethodSource("args")
     public void integrationTest(String testName, Document commandLineDoc) throws Exception {
+        DefaultLog.getInstance().log(Log.Level.INFO, "Running test for " + testName);
         File baseDir = new File(commandLineDoc.getName().getName()).getParentFile();
 
         // get the arguments
@@ -161,8 +162,10 @@ public class ReportTest {
         RatReport report = new RatReport() {
             @Override
             public void report(Document document)  {
-                String[] tokens = document.getName().tokenize(document.getName().localized());
-                results.add(Arguments.of(tokens[1], document));
+                if (!document.isIgnored()) {
+                    String[] tokens = document.getName().tokenize(document.getName().localized());
+                    results.add(Arguments.of(tokens[1], document));
+                }
             }
         };
         walker.run(report);

@@ -38,7 +38,7 @@ public class FileDocumentTest {
     @BeforeEach
     public void setUp() throws Exception {
         File basedir = new File(Files.currentFolder(), Resources.SRC_TEST_RESOURCES);
-        file = Resources.getResourceFile("elements/Source.java");
+        file = Resources.getExampleResource("exampleData/Source.java");
         document = new FileDocument(DocumentName.builder(basedir).build(), file, DocumentNameMatcher.MATCHES_ALL);
     }
 

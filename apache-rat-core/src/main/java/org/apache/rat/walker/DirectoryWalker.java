@@ -61,7 +61,7 @@ public class DirectoryWalker extends Walker {
         final SortedSet<Document> documents = document.listChildren();
         if (documents != null) {
             for (final Document doc : documents) {
-                if (!doc.isDirectory()) {
+                if (doc.isIgnored() || !doc.isDirectory()) {
                     report.report(doc);
                 } else {
                     process(report, doc);
