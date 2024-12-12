@@ -40,19 +40,13 @@
       <groupId>org.apache.rat</groupId>
       <artifactId>apache-rat-tasks</artifactId>
     </dependency>
+    <dependency>
+      <groupId>org.apache.rat</groupId>
+      <artifactId>apache-rat-testdata</artifactId>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
   <build>
-    <resources>
-      <resource>
-        <directory>..</directory>
-        <targetPath>META-INF</targetPath>
-        <includes>
-          <include>RELEASE_NOTES.txt</include>
-          <include>LICENSE</include>
-          <include>NOTICE</include>
-        </includes>
-      </resource>
-    </resources>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -67,7 +61,20 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-dependency-plugin</artifactId>
         <executions>
+          <!-- Copy resource files from the apache-rat-core project. -->
           <execution>
+            <id>copy-release-notes-from-core</id>
+            <goals><goal>unpack-dependencies</goal></goals>
+            <phase>generate-resources</phase>
+            <configuration>
+              <includeArtifactIds>apache-rat-core</includeArtifactIds>
+              <excludeClassifiers>tests</excludeClassifiers>
+              <include>META-INF/RELEASE_NOTES.txt</include>
+              <outputDirectory>${project.build.outputDirectory}</outputDirectory>
+            </configuration>
+          </execution>
+          <execution>
+            <id>unpack dependencies</id>
             <phase>prepare-package</phase>
             <goals>
               <goal>unpack-dependencies</goal>
@@ -75,7 +82,20 @@
             <configuration>
               <includeScope>runtime</includeScope>
               <outputDirectory>${project.build.outputDirectory}</outputDirectory>
-              <overWriteIfNewer>false</overWriteIfNewer>
+              <overWriteIfNewer>true</overWriteIfNewer>
+              <excludes>META-INF/**</excludes>
+            </configuration>
+          </execution>
+          <execution>
+            <id>unpack testdata</id>
+            <phase>prepare-package</phase>
+            <goals>
+              <goal>unpack</goal>
+            </goals>
+            <configuration>
+              <artifact>org.apache.rat:apache-rat-testdata:${project.parent.version}</artifact>
+              <outputDirectory>${project.build.testOutputDirectory}</outputDirectory>
+              <overWriteIfNewer>true</overWriteIfNewer>
               <excludes>META-INF/**</excludes>
             </configuration>
           </execution>
@@ -175,6 +195,70 @@
             </configuration>
           </execution>
           <execution>
+            <id>default_output_generation</id>
+            <phase>pre-site</phase>
+            <goals>
+              <goal>exec</goal>
+            </goals>
+            <configuration>
+              <executable>java</executable>
+              <arguments>
+                <argument>-cp</argument>
+                <argument>target/apache-rat-${project.version}.jar</argument>
+                <argument>org.apache.rat.Report</argument>
+                <argument>--counter-max</argument>
+                <argument>UNAPPROVED:2</argument>
+                <argument>--output-file</argument>
+                <argument>${project.basedir}/src/site/examples/default-output.txt</argument>
+                <argument>${project.build.testOutputDirectory}/examples/exampleData</argument>
+              </arguments>
+            </configuration>
+          </execution>
+          <execution>
+            <id>xml_output_generation</id>
+            <phase>pre-site</phase>
+            <goals>
+              <goal>exec</goal>
+            </goals>
+            <configuration>
+              <executable>java</executable>
+              <arguments>
+                <argument>-cp</argument>
+                <argument>target/apache-rat-${project.version}.jar</argument>
+                <argument>org.apache.rat.Report</argument>
+                <argument>--counter-max</argument>
+                <argument>UNAPPROVED:2</argument>
+                <argument>--output-file</argument>
+                <argument>${project.basedir}/src/site/examples/rat-report.txt</argument>
+                <argument>--output-style</argument>
+                <argument>xml</argument>
+                <argument>${project.build.testOutputDirectory}/examples/exampleData</argument>
+              </arguments>
+            </configuration>
+          </execution>
+          <execution>
+            <id>unapproved_licenses_generation</id>
+            <phase>pre-site</phase>
+            <goals>
+              <goal>exec</goal>
+            </goals>
+            <configuration>
+              <executable>java</executable>
+              <arguments>
+                <argument>-cp</argument>
+                <argument>target/apache-rat-${project.version}.jar</argument>
+                <argument>org.apache.rat.Report</argument>
+                <argument>--counter-max</argument>
+                <argument>UNAPPROVED:2</argument>
+                <argument>--output-file</argument>
+                <argument>${project.basedir}/src/site/examples/unapproved-licenses.txt</argument>
+                <argument>--output-style</argument>
+                <argument>unapproved-licenses</argument>
+                <argument>${project.build.testOutputDirectory}/examples/exampleData</argument>
+              </arguments>
+            </configuration>
+          </execution>
+          <execution>
             <id>XSD generation</id>
             <phase>pre-site</phase>
             <goals>
@@ -203,6 +287,13 @@
           <filesets>
             <fileset>
               <directory>src/site/apt/</directory>
+              <includes>
+                <include>*.txt</include>
+              </includes>
+              <followSymlinks>false</followSymlinks>
+            </fileset>
+            <fileset>
+              <directory>src/site/examples/</directory>
               <includes>
                 <include>*.txt</include>
               </includes>

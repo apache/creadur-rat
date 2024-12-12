@@ -101,14 +101,14 @@ public class TikaProcessorTest {
 
     @Test
     public void plainTextTest() throws Exception {
-        FileDocument doc = mkDocument("/elements/Text.txt");
+        FileDocument doc = mkDocument(Resources.getExampleResource("exampleData/Text.txt"));
         TikaProcessor.process(doc);
         assertEquals(Document.Type.STANDARD, doc.getMetaData().getDocumentType());
     }
 
     @Test
     public void emptyFileTest() throws Exception {
-        FileDocument doc = mkDocument("/elements/sub/Empty.txt");
+        FileDocument doc = mkDocument(Resources.getExampleResource("exampleData/sub/Empty.txt"));
         TikaProcessor.process(doc);
         assertEquals(Document.Type.STANDARD, doc.getMetaData().getDocumentType());
     }

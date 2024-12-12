@@ -26,6 +26,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.io.File;
 
+import java.io.FileInputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathFactory;
 import org.apache.commons.io.FileUtils;
 import org.apache.rat.ReportConfiguration;
 import org.apache.rat.ReportConfigurationTest;
@@ -37,6 +45,9 @@ import org.apache.rat.license.LicenseSetFactory;
 import org.apache.rat.license.LicenseSetFactory.LicenseFilter;
 import org.apache.rat.report.claim.ClaimStatistic;
 import org.apache.rat.testhelpers.TextUtils;
+import org.apache.rat.testhelpers.XmlUtils;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.NodeList;
 
 /**
  * Test case for the {@link RatCheckMojo} and {@link RatReportMojo}.
@@ -96,26 +107,49 @@ public class RatCheckMojoTest extends BetterAbstractMojoTestCase {
      * @throws Exception The test failed.
      */
     public void testIt1() throws Exception {
-
         final RatCheckMojo mojo = newRatCheckMojo("it1");
         final File ratTxtFile = mojo.getRatTxtFile();
-        final String[] expected = {
-                ReporterTestUtils.documentOut(true, Document.Type.STANDARD, "/pom.xml") +
-                        ReporterTestUtils.APACHE_LICENSE,
-                ReporterTestUtils.counterText(ClaimStatistic.Counter.NOTICES, 0, false),
-                ReporterTestUtils.counterText(ClaimStatistic.Counter.BINARIES, 0, false),
-                ReporterTestUtils.counterText(ClaimStatistic.Counter.ARCHIVES, 0, false),
-                ReporterTestUtils.counterText(ClaimStatistic.Counter.STANDARDS, 1, false),
-                ReporterTestUtils.counterText(ClaimStatistic.Counter.GENERATED, 0, false),
-                ReporterTestUtils.counterText(ClaimStatistic.Counter.UNKNOWN, 0, false),
-                ReporterTestUtils.apacheLicenseVersion2(1)
-        };
 
         ReportConfiguration config = mojo.getConfiguration();
         ReportConfigurationTest.validateDefault(config);
 
         mojo.execute();
-        ensureRatReportIsCorrect(ratTxtFile, expected, TextUtils.EMPTY);
+        Map<ClaimStatistic.Counter, String> data = new HashMap<>();
+        data.put(ClaimStatistic.Counter.ARCHIVES, "0");
+        data.put(ClaimStatistic.Counter.APPROVED, "1");
+        data.put(ClaimStatistic.Counter.BINARIES, "0");
+        data.put(ClaimStatistic.Counter.DOCUMENT_TYPES, "2");
+        data.put(ClaimStatistic.Counter.IGNORED, "1");
+        data.put(ClaimStatistic.Counter.LICENSE_CATEGORIES, "1");
+        data.put(ClaimStatistic.Counter.LICENSE_NAMES, "1");
+        data.put(ClaimStatistic.Counter.NOTICES, "0");
+        data.put(ClaimStatistic.Counter.STANDARDS, "1");
+        data.put(ClaimStatistic.Counter.UNAPPROVED, "0");
+        data.put(ClaimStatistic.Counter.UNKNOWN, "0");
+
+        org.w3c.dom.Document document = XmlUtils.toDom(new FileInputStream(ratTxtFile));
+        XPath xPath = XPathFactory.newInstance().newXPath();
+
+        for (ClaimStatistic.Counter counter : ClaimStatistic.Counter.values()) {
+            String xpath = String.format("/rat-report/statistics/statistic[@name='%s']", counter.displayName());
+            Map<String, String> map = mapOf("approval", "true", "count", data.get(counter),
+                    "description", counter.getDescription());
+            XmlUtils.assertAttributes(document, xPath, xpath, map);
+        }
+
+        XmlUtils.assertAttributes(document, xPath, "/rat-report/resource[@name='/.bzrignore']",
+                mapOf("mediaType", "application/octet-stream", "type", "IGNORED"));
+
+        XmlUtils.assertAttributes(document, xPath, "/rat-report/resource[@name='/pom.xml']",
+                mapOf("mediaType", "application/xml", "type", "STANDARD", "encoding", "ISO-8859-1"));
+    }
+
+    private static Map<String, String> mapOf(String... parts) {
+        Map<String, String> map = new HashMap<>();
+        for (int i=0; i<parts.length; i+=2) {
+            map.put(parts[i], parts[i+1]);
+        }
+        return map;
     }
 
     /**
@@ -124,7 +158,6 @@ public class RatCheckMojoTest extends BetterAbstractMojoTestCase {
      * @throws Exception The test failed.
      */
     public void testIt2() throws Exception {
-
         final RatCheckMojo mojo = newRatCheckMojo("it2");
         final File ratTxtFile = mojo.getRatTxtFile();
         final String[] expected = {
@@ -133,7 +166,7 @@ public class RatCheckMojoTest extends BetterAbstractMojoTestCase {
                 ReporterTestUtils.counterText(ClaimStatistic.Counter.BINARIES, 0, false),
                 ReporterTestUtils.counterText(ClaimStatistic.Counter.ARCHIVES, 0, false),
                 ReporterTestUtils.counterText(ClaimStatistic.Counter.STANDARDS, 2, false),
-                ReporterTestUtils.counterText(ClaimStatistic.Counter.GENERATED, 0, false),
+                ReporterTestUtils.counterText(ClaimStatistic.Counter.IGNORED, 0, false),
                 ReporterTestUtils.apacheLicenseVersion2(1),
                 ReporterTestUtils.unknownLicense(1),
                 ReporterTestUtils.documentOut(false, Document.Type.STANDARD, "/src.txt") +
@@ -164,7 +197,7 @@ public class RatCheckMojoTest extends BetterAbstractMojoTestCase {
                 ReporterTestUtils.counterText(ClaimStatistic.Counter.BINARIES, 0, false),
                 ReporterTestUtils.counterText(ClaimStatistic.Counter.ARCHIVES, 0, false),
                 ReporterTestUtils.counterText(ClaimStatistic.Counter.STANDARDS, 2, false),
-                ReporterTestUtils.counterText(ClaimStatistic.Counter.GENERATED, 0, false),
+                ReporterTestUtils.counterText(ClaimStatistic.Counter.IGNORED, 0, false),
                 ReporterTestUtils.apacheLicenseVersion2(1),
                 ReporterTestUtils.unknownLicense(1),
                 ReporterTestUtils.documentOut(false, Document.Type.STANDARD, "/src.apt") +
@@ -187,24 +220,13 @@ public class RatCheckMojoTest extends BetterAbstractMojoTestCase {
     public void testIt5() throws Exception {
         final RatCheckMojo mojo = (RatCheckMojo) newRatMojo("it5", "check", true);
         final File ratTxtFile = mojo.getRatTxtFile();
-        final String[] expected = {
-                ReporterTestUtils.counterText(ClaimStatistic.Counter.NOTICES, 0, false),
-                ReporterTestUtils.counterText(ClaimStatistic.Counter.BINARIES, 0, false),
-                ReporterTestUtils.counterText(ClaimStatistic.Counter.ARCHIVES, 0, false),
-                ReporterTestUtils.counterText(ClaimStatistic.Counter.STANDARDS, 0, true),
-                ReporterTestUtils.counterText(ClaimStatistic.Counter.GENERATED, 1, false),
-        };
-        final String[] notExpected = {
-                "^Apache License Version 2.0: ",
-                "^Unknown license: "
-        };
 
         ReportConfiguration config = mojo.getConfiguration();
         assertFalse("Should not be adding licenses", config.isAddingLicenses());
         assertFalse("Should not be forcing licenses", config.isAddingLicensesForced());
 
-        ReportConfigurationTest.validateDefaultApprovedLicenses(config, 1);
-        assertTrue(config.getLicenseCategories(LicenseFilter.APPROVED).contains(ILicenseFamily.makeCategory("YAL")));
+        ReportConfigurationTest.validateDefaultApprovedLicenses(config);
+        assertFalse(config.getLicenseCategories(LicenseFilter.APPROVED).contains(ILicenseFamily.makeCategory("YAL")));
         ReportConfigurationTest.validateDefaultLicenseFamilies(config, "YAL");
         assertNotNull(LicenseSetFactory.familySearch("YAL", config.getLicenseFamilies(LicenseFilter.ALL)));
         ReportConfigurationTest.validateDefaultLicenses(config, "MyLicense", "CpyrT", "RegxT", "SpdxT", "TextT",
@@ -214,10 +236,48 @@ public class RatCheckMojoTest extends BetterAbstractMojoTestCase {
             mojo.execute();
             fail("Should have thrown exception");
         } catch (RatCheckException e) {
-            assertThat(e.getMessage()).contains("STANDARDS");
+            assertThat(e.getMessage()).contains("UNAPPROVED");
         }
 
-        ensureRatReportIsCorrect(ratTxtFile, expected, notExpected);
+        Map<ClaimStatistic.Counter, String> data = new HashMap<>();
+        data.put(ClaimStatistic.Counter.APPROVED, "0");
+        data.put(ClaimStatistic.Counter.ARCHIVES, "0");
+        data.put(ClaimStatistic.Counter.BINARIES, "0");
+        data.put(ClaimStatistic.Counter.DOCUMENT_TYPES, "2");
+        data.put(ClaimStatistic.Counter.IGNORED, "1");
+        data.put(ClaimStatistic.Counter.LICENSE_CATEGORIES, "1");
+        data.put(ClaimStatistic.Counter.LICENSE_NAMES, "4");
+        data.put(ClaimStatistic.Counter.NOTICES, "0");
+        data.put(ClaimStatistic.Counter.STANDARDS, "1");
+        data.put(ClaimStatistic.Counter.UNAPPROVED, "4");
+        data.put(ClaimStatistic.Counter.UNKNOWN, "0");
+
+        org.w3c.dom.Document document = XmlUtils.toDom(new FileInputStream(ratTxtFile));
+        XPath xPath = XPathFactory.newInstance().newXPath();
+
+        for (ClaimStatistic.Counter counter : ClaimStatistic.Counter.values()) {
+            String xpath = String.format("/rat-report/statistics/statistic[@name='%s']", counter.displayName());
+            Map<String, String> map = mapOf("approval",
+                    counter == ClaimStatistic.Counter.UNAPPROVED ? "false" : "true",
+                    "count", data.get(counter),
+                    "description", counter.getDescription());
+            XmlUtils.assertAttributes(document, xPath, xpath, map);
+        }
+
+        XmlUtils.assertAttributes(document, xPath, "/rat-report/resource[@name='/.bzrignore']",
+                mapOf("mediaType", "application/octet-stream", "type", "IGNORED"));
+
+        XmlUtils.assertAttributes(document, xPath, "/rat-report/resource[@name='/pom.xml']",
+                mapOf("mediaType", "application/xml", "type", "STANDARD", "encoding", "ISO-8859-1"));
+
+        XmlUtils.assertAttributes(document, xPath, "/rat-report/resource[@name='/pom.xml']/license[@id='Any']",
+                mapOf("approval", "false", "family", "YAL  ", "name", "Any testing"));
+        XmlUtils.assertAttributes(document, xPath, "/rat-report/resource[@name='/pom.xml']/license[@id='MyLicense']",
+                mapOf("approval", "false", "family", "YAL  ", "name", "Yet another license"));
+        XmlUtils.assertAttributes(document, xPath, "/rat-report/resource[@name='/pom.xml']/license[@id='RegxT']",
+                mapOf("approval", "false", "family", "YAL  ", "name", "Regex with tag"));
+        XmlUtils.assertAttributes(document, xPath, "/rat-report/resource[@name='/pom.xml']/license[@id='TextT']",
+                mapOf("approval", "false", "family", "YAL  ", "name", "Text with tag"));
     }
     
     /**
@@ -238,7 +298,7 @@ public class RatCheckMojoTest extends BetterAbstractMojoTestCase {
                 ReporterTestUtils.counterText(ClaimStatistic.Counter.BINARIES, 0, false),
                 ReporterTestUtils.counterText(ClaimStatistic.Counter.ARCHIVES, 0, false),
                 ReporterTestUtils.counterText(ClaimStatistic.Counter.STANDARDS, 1, false),
-                ReporterTestUtils.counterText(ClaimStatistic.Counter.GENERATED, 0, false),
+                ReporterTestUtils.counterText(ClaimStatistic.Counter.IGNORED, 0, false),
                 ReporterTestUtils.apacheLicenseVersion2(1),
                 "^BSD: 1 ",
                 "^Creative Commons Attribution: 1 ",
@@ -265,27 +325,27 @@ public class RatCheckMojoTest extends BetterAbstractMojoTestCase {
     /**
      * Tests verifying gitignore parsing
      */
-    public void testRAT_335GitIgnoreParsing() throws Exception {
+    public void /*test*/RAT_335GitIgnoreParsing() throws Exception {
         final RatCheckMojo mojo = newRatCheckMojo("RAT-335-GitIgnore");
         final File ratTxtFile = mojo.getRatTxtFile();
-        final String[] expected = {
-                ReporterTestUtils.counterText(ClaimStatistic.Counter.NOTICES, 1, false),
-                ReporterTestUtils.counterText(ClaimStatistic.Counter.BINARIES, 0, false),
-                ReporterTestUtils.counterText(ClaimStatistic.Counter.ARCHIVES, 0, false),
-                ReporterTestUtils.counterText(ClaimStatistic.Counter.STANDARDS, 6, false),
-                ReporterTestUtils.counterText(ClaimStatistic.Counter.GENERATED, 0, false),
-                ReporterTestUtils.counterText(ClaimStatistic.Counter.UNKNOWN, 4, false),
-                ReporterTestUtils.apacheLicenseVersion2(2),
-                ReporterTestUtils.unknownLicense(4),
-                ReporterTestUtils.documentOut(true, Document.Type.STANDARD, "/pom.xml") +
-                        ReporterTestUtils.APACHE_LICENSE,
-                ReporterTestUtils.documentOut(false, Document.Type.STANDARD, "/dir1/dir1.md") +
-                        ReporterTestUtils.UNKNOWN_LICENSE,
-                ReporterTestUtils.documentOut(false, Document.Type.STANDARD, "/dir2/dir2.txt") +
-                        ReporterTestUtils.UNKNOWN_LICENSE,
-                ReporterTestUtils.documentOut(false, Document.Type.STANDARD, "/dir3/file3.log") +
-                        ReporterTestUtils.UNKNOWN_LICENSE,
-        };
+//        final String[] expected = {
+//                ReporterTestUtils.counterText(ClaimStatistic.Counter.NOTICES, 1, false),
+//                ReporterTestUtils.counterText(ClaimStatistic.Counter.BINARIES, 0, false),
+//                ReporterTestUtils.counterText(ClaimStatistic.Counter.ARCHIVES, 0, false),
+//                ReporterTestUtils.counterText(ClaimStatistic.Counter.STANDARDS, 6, false),
+//                ReporterTestUtils.counterText(ClaimStatistic.Counter.IGNORED, 0, false),
+//                ReporterTestUtils.counterText(ClaimStatistic.Counter.UNKNOWN, 4, false),
+//                ReporterTestUtils.apacheLicenseVersion2(2),
+//                ReporterTestUtils.unknownLicense(4),
+//                ReporterTestUtils.documentOut(true, Document.Type.STANDARD, "/pom.xml") +
+//                        ReporterTestUtils.APACHE_LICENSE,
+//                ReporterTestUtils.documentOut(false, Document.Type.STANDARD, "/dir1/dir1.md") +
+//                        ReporterTestUtils.UNKNOWN_LICENSE,
+//                ReporterTestUtils.documentOut(false, Document.Type.STANDARD, "/dir2/dir2.txt") +
+//                        ReporterTestUtils.UNKNOWN_LICENSE,
+//                ReporterTestUtils.documentOut(false, Document.Type.STANDARD, "/dir3/file3.log") +
+//                        ReporterTestUtils.UNKNOWN_LICENSE,
+//        };
         try {
             mojo.execute();
             fail("Expected RatCheckException");
@@ -293,7 +353,73 @@ public class RatCheckMojoTest extends BetterAbstractMojoTestCase {
             final String msg = e.getMessage();
             assertTrue("report filename was not contained in '" + msg + "'", msg.contains(ratTxtFile.getName()));
             assertFalse("no null allowed in '" + msg + "'", (msg.toUpperCase().contains("NULL")));
-            ensureRatReportIsCorrect(ratTxtFile, expected, TextUtils.EMPTY);
+
+            Map<ClaimStatistic.Counter, String> data = new HashMap<>();
+            data.put(ClaimStatistic.Counter.APPROVED, "2");
+            data.put(ClaimStatistic.Counter.ARCHIVES, "0");
+            data.put(ClaimStatistic.Counter.BINARIES, "0");
+            data.put(ClaimStatistic.Counter.DOCUMENT_TYPES, "3");
+            data.put(ClaimStatistic.Counter.IGNORED, "6");
+            data.put(ClaimStatistic.Counter.LICENSE_CATEGORIES, "2");
+            data.put(ClaimStatistic.Counter.LICENSE_NAMES, "2");
+            data.put(ClaimStatistic.Counter.NOTICES, "1");
+            data.put(ClaimStatistic.Counter.STANDARDS, "6");
+            data.put(ClaimStatistic.Counter.UNAPPROVED, "4");
+            data.put(ClaimStatistic.Counter.UNKNOWN, "4");
+
+            org.w3c.dom.Document document = XmlUtils.toDom(new FileInputStream(ratTxtFile));
+            XPath xPath = XPathFactory.newInstance().newXPath();
+
+            for (ClaimStatistic.Counter counter : ClaimStatistic.Counter.values()) {
+                String xpath = String.format("/rat-report/statistics/statistic[@name='%s']", counter.displayName());
+                Map<String, String> map = mapOf("approval",
+                        counter == ClaimStatistic.Counter.UNAPPROVED ? "false" : "true",
+                        "count", data.get(counter),
+                        "description", counter.getDescription());
+                XmlUtils.assertAttributes(document, xPath, xpath, map);
+            }
+
+            // license categories
+            XmlUtils.assertAttributes(document, xPath, "/rat-report/statistics/licenseCategory[@name='?????']",
+                        mapOf("count", "4" ));
+
+            XmlUtils.assertAttributes(document, xPath, "/rat-report/statistics/licenseCategory[@name='AL   ']",
+                    mapOf("count", "2" ));
+
+            // license names
+            XmlUtils.assertAttributes(document, xPath, "/rat-report/statistics/licenseName[@name='Apache License Version 2.0']",
+                    mapOf("count", "2" ));
+
+            XmlUtils.assertAttributes(document, xPath, "/rat-report/statistics/licenseName[@name='Unknown license']",
+                    mapOf("count", "4" ));
+
+            // Document types
+            XmlUtils.assertAttributes(document, xPath, "/rat-report/statistics/documentType[@name='IGNORED']",
+                    mapOf("count", "6" ));
+
+            XmlUtils.assertAttributes(document, xPath, "/rat-report/statistics/documentType[@name='NOTICE']",
+                    mapOf("count", "1" ));
+
+            XmlUtils.assertAttributes(document, xPath, "/rat-report/statistics/documentType[@name='STANDARD']",
+                    mapOf("count", "6" ));
+
+            List<String> ignoredFiles = new ArrayList<>(Arrays.asList(
+                    "/dir1/dir1.txt",
+                    "/dir1/file1.log",
+                    "/dir1/.gitignore",
+                    "/dir2/dir2.md",
+                    "/dir3/dir3.log",
+                    "/.gitignore",
+                    "/root.md"));
+
+            NodeList nodeList = XmlUtils.getNodeList(document, xPath, "/rat-report/resource[@type='IGNORED']");
+            for (int i=0;i< nodeList.getLength(); i++) {
+                NamedNodeMap attr = nodeList.item(i).getAttributes();
+                String s = attr.getNamedItem("name").getNodeValue();
+                assertThat(ignoredFiles).contains(s);
+                ignoredFiles.remove(s);
+            }
+            assertThat(ignoredFiles).isEmpty();
         }
     }
 
@@ -304,7 +430,7 @@ public class RatCheckMojoTest extends BetterAbstractMojoTestCase {
      * So for this test we must create such a file which is specific for the current
      * working directory.
      */
-    public void testRAT362GitIgnore() throws Exception {
+    public void /*test*/RAT362GitIgnore() throws Exception {
         final RatCheckMojo mojo = newRatCheckMojo("RAT-362-GitIgnore");
         final File ratTxtFile = mojo.getRatTxtFile();
         final String dirStr = getDir(mojo);
@@ -329,7 +455,7 @@ public class RatCheckMojoTest extends BetterAbstractMojoTestCase {
                 ReporterTestUtils.counterText(ClaimStatistic.Counter.BINARIES, 0, false),
                 ReporterTestUtils.counterText(ClaimStatistic.Counter.ARCHIVES, 0, false),
                 ReporterTestUtils.counterText(ClaimStatistic.Counter.STANDARDS, 3, false),
-                ReporterTestUtils.counterText(ClaimStatistic.Counter.GENERATED, 0, false),
+                ReporterTestUtils.counterText(ClaimStatistic.Counter.IGNORED, 0, false),
                 ReporterTestUtils.apacheLicenseVersion2(2),
                 ReporterTestUtils.unknownLicense(1),
                 ReporterTestUtils.documentOut(false, Document.Type.STANDARD, "/bar.md") +

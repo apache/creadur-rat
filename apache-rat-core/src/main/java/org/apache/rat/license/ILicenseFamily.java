@@ -28,8 +28,6 @@ public interface ILicenseFamily extends Comparable<ILicenseFamily> {
 
     /** The license family for unknown licenses */
     ILicenseFamily UNKNOWN = new Builder().setLicenseFamilyName("Unknown license").setLicenseFamilyCategory("?????").build();
-    /** The license family for generated files */
-    ILicenseFamily GENERATED = new Builder().setLicenseFamilyName("Generated file").setLicenseFamilyCategory("GEN").build();
 
     /**
      * Gets the family name.

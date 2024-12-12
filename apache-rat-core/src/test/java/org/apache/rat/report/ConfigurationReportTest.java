@@ -48,7 +48,7 @@ public class ConfigurationReportTest {
     private StringWriter sw;
     private IXmlWriter writer;
 
-    private final String[] FAMILY_IDS = { "AL", "BSD-3", "CDDL1", "GEN", "GPL", "MIT", "OASIS", "W3C", "W3CD", };
+    private final String[] FAMILY_IDS = { "AL", "BSD-3", "CDDL1", "GPL", "MIT", "OASIS", "W3C", "W3CD", };
 
     @BeforeEach
     public void setup() {
