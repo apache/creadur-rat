@@ -237,8 +237,6 @@ agnostic home for software distribution comprehension and audit tools.
           <statusIds>Resolved,Closed</statusIds>
           <!-- Don't include sub-task -->
           <typeIds>Bug,New Feature,Task,Improvement,Wish,Test</typeIds>
-          <!-- For JIRA >= 5.1 -->
-          <useJql>true</useJql>
           <!-- TODO: what's the meaning of these copy-paste variables? -->
           <onlyCurrentVersion>${commons.changes.onlyCurrentVersion}</onlyCurrentVersion>
           <maxEntries>${commons.changes.maxEntries}</maxEntries>
@@ -251,6 +249,7 @@ agnostic home for software distribution comprehension and audit tools.
             <reports>
               <report>changes-report</report>
               <report>jira-report</report>
+              <report>github-report</report>
             </reports>
           </reportSet>
         </reportSets>
