@@ -15,38 +15,33 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
-    <parent>
-        <groupId>org.apache.rat</groupId>
-        <artifactId>apache-rat-project</artifactId>
-        <version>0.17-SNAPSHOT</version>
-    </parent>
-
-    <artifactId>apache-rat-testdata</artifactId>
-
-    <properties>
-        <maven.compiler.source>${javaVersion}</maven.compiler.source>
-        <maven.compiler.target>${javaVersion}</maven.compiler.target>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    </properties>
-
-    <build>
-        <pluginManagement>
-        <plugins>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>org.apache.rat</groupId>
+    <artifactId>apache-rat-project</artifactId>
+    <version>0.17-SNAPSHOT</version>
+  </parent>
+  <artifactId>apache-rat-testdata</artifactId>
+  <name>Apache Creadur Rat::Testdata</name>
+  <properties>
+    <maven.compiler.source>${javaVersion}</maven.compiler.source>
+    <maven.compiler.target>${javaVersion}</maven.compiler.target>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>
+  <build>
+    <pluginManagement>
+      <plugins>
         <plugin>
-            <groupId>org.apache.rat</groupId>
-            <artifactId>apache-rat-plugin</artifactId>
-            <configuration>
-                <excludes>
-                    <exclude>src/main/resources/examples/**</exclude>
-                </excludes>
-            </configuration>
+          <groupId>org.apache.rat</groupId>
+          <artifactId>apache-rat-plugin</artifactId>
+          <configuration>
+            <excludes>
+              <exclude>src/main/resources/examples/**</exclude>
+            </excludes>
+          </configuration>
         </plugin>
-        </plugins>
-        </pluginManagement>
-    </build>
-
+      </plugins>
+    </pluginManagement>
+  </build>
 </project>
