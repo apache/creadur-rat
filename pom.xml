@@ -86,6 +86,11 @@ agnostic home for software distribution comprehension and audit tools.
       </dependency>
       <dependency>
         <groupId>org.apache.rat</groupId>
+        <artifactId>apache-rat-testdata</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.rat</groupId>
         <artifactId>apache-rat-core</artifactId>
         <version>${project.version}</version>
         <type>test-jar</type>
@@ -427,7 +432,7 @@ agnostic home for software distribution comprehension and audit tools.
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-invoker-plugin</artifactId>
-          <version>3.8.1</version>
+          <version>3.9.0</version>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
@@ -838,6 +843,7 @@ agnostic home for software distribution comprehension and audit tools.
     <module>apache-rat-tasks</module>
     <module>apache-rat</module>
     <module>apache-rat-tools</module>
+    <module>apache-rat-testdata</module>
   </modules>
   <licenses>
     <license>

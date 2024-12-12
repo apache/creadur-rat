@@ -47,7 +47,8 @@ public final class TikaProcessor {
     private static final Tika TIKA = new Tika();
     /** A map of mime type string to non-BINARY types.
      * "text" types are already handled somewhere else
-     * BINARY unless listed here*/
+     * BINARY unless listed here
+     */
     private static final Map<String, Document.Type> DOCUMENT_TYPE_MAP;
 
     static {
@@ -135,8 +136,10 @@ public final class TikaProcessor {
             String[] parts = result.split("/");
             MediaType mediaType = new MediaType(parts[0], parts[1]);
             document.getMetaData().setMediaType(mediaType);
-            document.getMetaData()
-                    .setDocumentType(fromMediaType(mediaType));
+            if (!document.isIgnored()) {
+                document.getMetaData()
+                        .setDocumentType(fromMediaType(mediaType));
+            }
             if (Document.Type.STANDARD == document.getMetaData().getDocumentType()) {
                 document.getMetaData().setCharset(detectCharset(stream, document.getName()));
                 if (NoteGuesser.isNote(document)) {

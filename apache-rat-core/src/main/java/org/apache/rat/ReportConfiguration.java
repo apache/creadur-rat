@@ -39,11 +39,13 @@ import java.util.SortedSet;
 import java.util.function.Consumer;
 
 import org.apache.commons.io.function.IOSupplier;
+import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.commandline.StyleSheets;
 import org.apache.rat.config.AddLicenseHeaders;
 import org.apache.rat.config.exclusion.ExclusionProcessor;
 import org.apache.rat.config.exclusion.StandardCollection;
 import org.apache.rat.config.results.ClaimValidator;
+import org.apache.rat.configuration.builders.AnyBuilder;
 import org.apache.rat.document.DocumentName;
 import org.apache.rat.document.DocumentNameMatcher;
 import org.apache.rat.document.FileDocument;
@@ -218,6 +220,14 @@ public class ReportConfiguration {
         sources.forEach(file -> builder.addReportable(new FileListWalker(new FileDocument(file, DocumentNameMatcher.MATCHES_ALL))));
         reportables.forEach(builder::addReportable);
         return builder;
+    }
+
+    /**
+     * Gets the matcher that matches generated text.
+     * @return the matcher that matches generated text.
+     */
+    public IHeaderMatcher getGeneratedMatcher() {
+        return new AnyBuilder().setResource("/org/apache/rat/generation-keywords.txt").build();
     }
 
     /**
