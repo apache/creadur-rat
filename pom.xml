@@ -253,9 +253,9 @@ agnostic home for software distribution comprehension and audit tools.
         <reportSets>
           <reportSet>
             <reports>
-              <report>changes-report</report>
-              <report>jira-report</report>
-              <report>github-report</report>
+              <report>changes</report>
+              <report>jira-changes</report>
+              <report>github-changes</report>
             </reports>
           </reportSet>
         </reportSets>
