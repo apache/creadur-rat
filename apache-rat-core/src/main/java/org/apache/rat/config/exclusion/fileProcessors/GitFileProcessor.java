@@ -29,6 +29,11 @@ import org.apache.rat.document.DocumentNameMatcher;
  * @see <a href='https://git-scm.com/docs/gitignore'>.gitignore documentation</a>
  */
 public class GitFileProcessor extends DescendingFileProcessor {
+    // create a list of levels that a list of processors at that level.
+    // will return a custom matcher that from an overridden FileProcessor.customDocumentNameMatchers method
+    // build LevelMatcher as a system that returns Include, Exclude or no status for each check.
+    // put the level matcher in an array with other level matchers at the specific level below the root
+    // When searching start at the lowest level and work up the tree.
 
     /**
      * Constructs a file processor that processes a .gitignore file and ignores any lines starting with "#".
