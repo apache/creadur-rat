@@ -25,6 +25,7 @@ import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 import org.apache.rat.license.ILicense;
+import org.apache.rat.utils.DefaultLog;
 import org.apache.tika.mime.MediaType;
 
 /**
@@ -50,7 +51,10 @@ public class MetaData {
      */
     public MetaData() {
         this.matchedLicenses = new TreeSet<>();
-        this.approvalPredicate = x -> true;
+        this.approvalPredicate = x -> {
+                DefaultLog.getInstance().error("Approved Predicate was not set.");
+                throw new IllegalStateException("Approved Predicate was not set.");
+        };
     }
 
     /**

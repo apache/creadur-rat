@@ -254,7 +254,7 @@ public class LicenseSetFactory {
      * Adds a license family category (id) to the list of approved licenses
      * @param licenseId the license ID to add.
      */
-    public void addLicenseId(final String licenseId) {
+    public void approveLicenseId(final String licenseId) {
         approvedLicenseIds.add(licenseId);
     }
 

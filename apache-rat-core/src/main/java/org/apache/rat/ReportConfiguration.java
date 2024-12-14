@@ -685,7 +685,7 @@ public class ReportConfiguration {
      * @param licenseId the license id to add.
      */
     public void addApprovedLicenseId(final String licenseId) {
-        licenseSetFactory.addLicenseId(licenseId);
+        licenseSetFactory.approveLicenseId(licenseId);
     }
 
     /**

@@ -38,18 +38,49 @@ import org.apache.rat.walker.ArchiveWalker;
 /**
  * Creates default analysers.
  */
-public final class DefaultAnalyserFactory {
+public final class AnalyserFactory {
 
-    private DefaultAnalyserFactory() {
+    private AnalyserFactory() {
         // do not instantiate
     }
+
     /**
-     * Creates a DocumentAnalyser from a collection of ILicenses.
+     * Creates an anlayser that adds the approved license predicate to the document metadata.
+     * <p>
+     *     Note you probably do not want this as it is automatically added to {@link #createConfiguredAnalyser}.
+     * </p>
+     * @param approvalPredicate the predicate to approve licenses.
+     * @return A document analyser that sets the approvalPredicate in document metadata.
+     */
+    public static IDocumentAnalyser createPolicy(final Predicate<ILicense> approvalPredicate) {
+        return document -> {
+            if (document != null) {
+                document.getMetaData().setApprovalPredicate(approvalPredicate);
+            }
+        };
+    }
+
+    /**
+     * Creates an analyser that calls each of the provided analysers in order.
+     * @param analysers the array of analysers to call.
+     * @return an analyser that will call all the provided analysers.
+     */
+    public static IDocumentAnalyser createMultiplexer(final IDocumentAnalyser... analysers) {
+        return document -> {
+            for (IDocumentAnalyser analyser : analysers) {
+                analyser.analyse(document);
+            }
+        };
+    }
+
+    /**
+     * Creates a DocumentAnalyser from teh report configuraiton.
      * @param configuration the ReportConfiguration
      * @return A document analyser that uses the provides licenses.
      */
-    public static IDocumentAnalyser createDefaultAnalyser(final ReportConfiguration configuration) {
-        Set<ILicense> licenses = configuration.getLicenses(LicenseSetFactory.LicenseFilter.ALL);
+    public static IDocumentAnalyser createConfiguredAnalyser(final ReportConfiguration configuration) {
+        LicenseSetFactory licenseSetFactory = configuration.getLicenseSetFactory();
+        Set<ILicense> licenses = licenseSetFactory.getLicenses(LicenseSetFactory.LicenseFilter.ALL);
         if (licenses.isEmpty()) {
             throw new ConfigurationException("At least one license must be defined");
         }
@@ -57,7 +88,8 @@ public final class DefaultAnalyserFactory {
             DefaultLog.getInstance().debug("Currently active Licenses are:");
             licenses.forEach(DefaultLog.getInstance()::debug);
         }
-        return new DefaultAnalyser(configuration, licenses);
+        return createMultiplexer(createPolicy(licenseSetFactory.getApprovedLicensePredicate()),
+         new DefaultAnalyser(configuration, licenses));
     }
 
     /**

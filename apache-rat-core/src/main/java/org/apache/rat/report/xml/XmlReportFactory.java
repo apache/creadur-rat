@@ -22,11 +22,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.rat.ReportConfiguration;
-import org.apache.rat.analysis.DefaultAnalyserFactory;
-import org.apache.rat.document.DocumentAnalyserMultiplexer;
-import org.apache.rat.document.IDocumentAnalyser;
+import org.apache.rat.analysis.AnalyserFactory;
 import org.apache.rat.license.LicenseSetFactory.LicenseFilter;
-import org.apache.rat.policy.DefaultPolicy;
 import org.apache.rat.report.ConfigurationReport;
 import org.apache.rat.report.RatReport;
 import org.apache.rat.report.claim.ClaimAggregator;
@@ -73,11 +70,6 @@ public final class XmlReportFactory {
         reporters.add(new SimpleXmlClaimReporter(writer));
         reporters.add(new ClaimValidatorReport(writer, statistic, configuration));
 
-        final IDocumentAnalyser analyser = DefaultAnalyserFactory.createDefaultAnalyser(configuration);
-        final DefaultPolicy policy = new DefaultPolicy(configuration.getLicenseSetFactory());
-
-        final IDocumentAnalyser[] analysers = {analyser, policy};
-        DocumentAnalyserMultiplexer analysisMultiplexer = new DocumentAnalyserMultiplexer(analysers);
-        return new ClaimReporterMultiplexer(writer, configuration.isDryRun(), analysisMultiplexer, reporters);
+        return new ClaimReporterMultiplexer(writer, configuration.isDryRun(), AnalyserFactory.createConfiguredAnalyser(configuration), reporters);
     }
 }
