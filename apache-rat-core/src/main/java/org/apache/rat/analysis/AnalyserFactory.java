@@ -27,7 +27,7 @@ import org.apache.rat.Defaults;
 import org.apache.rat.ReportConfiguration;
 import org.apache.rat.api.Document;
 import org.apache.rat.api.RatException;
-import org.apache.rat.document.IDocumentAnalyser;
+import org.apache.rat.document.DocumentAnalyser;
 import org.apache.rat.document.RatDocumentAnalysisException;
 import org.apache.rat.license.ILicense;
 import org.apache.rat.license.LicenseSetFactory;
@@ -52,7 +52,7 @@ public final class AnalyserFactory {
      * @param approvalPredicate the predicate to approve licenses.
      * @return A document analyser that sets the approvalPredicate in document metadata.
      */
-    public static IDocumentAnalyser createPolicy(final Predicate<ILicense> approvalPredicate) {
+    public static DocumentAnalyser createPolicy(final Predicate<ILicense> approvalPredicate) {
         return document -> {
             if (document != null) {
                 document.getMetaData().setApprovalPredicate(approvalPredicate);
@@ -65,9 +65,9 @@ public final class AnalyserFactory {
      * @param analysers the array of analysers to call.
      * @return an analyser that will call all the provided analysers.
      */
-    public static IDocumentAnalyser createMultiplexer(final IDocumentAnalyser... analysers) {
+    public static DocumentAnalyser createMultiplexer(final DocumentAnalyser... analysers) {
         return document -> {
-            for (IDocumentAnalyser analyser : analysers) {
+            for (DocumentAnalyser analyser : analysers) {
                 analyser.analyse(document);
             }
         };
@@ -78,7 +78,7 @@ public final class AnalyserFactory {
      * @param configuration the ReportConfiguration
      * @return A document analyser that uses the provided licenses.
      */
-    public static IDocumentAnalyser createConfiguredAnalyser(final ReportConfiguration configuration) {
+    public static DocumentAnalyser createConfiguredAnalyser(final ReportConfiguration configuration) {
         LicenseSetFactory licenseSetFactory = configuration.getLicenseSetFactory();
         Set<ILicense> licenses = licenseSetFactory.getLicenses(LicenseSetFactory.LicenseFilter.ALL);
         if (licenses.isEmpty()) {
@@ -95,7 +95,7 @@ public final class AnalyserFactory {
     /**
      * A DocumentAnalyser a collection of licenses.
      */
-    private static final class DefaultAnalyser implements IDocumentAnalyser {
+    private static final class DefaultAnalyser implements DocumentAnalyser {
 
         /** The licenses to analyze */
         private final Collection<ILicense> licenses;

@@ -31,7 +31,7 @@ import org.apache.rat.Defaults;
 import org.apache.rat.ReportConfiguration;
 import org.apache.rat.api.Document;
 import org.apache.rat.document.DocumentNameMatcher;
-import org.apache.rat.document.IDocumentAnalyser;
+import org.apache.rat.document.DocumentAnalyser;
 import org.apache.rat.document.DocumentName;
 import org.apache.rat.document.FileDocument;
 import org.apache.rat.document.RatDocumentAnalysisException;
@@ -54,7 +54,7 @@ public class AnalyserFactoryTest {
 
     private StringWriter out;
     private SimpleXmlClaimReporter reporter;
-    private IDocumentAnalyser analyser;
+    private DocumentAnalyser analyser;
 
     AnalyserFactoryTest() {
         basedir = DocumentName.builder(new File(Files.currentFolder(), Resources.SRC_TEST_RESOURCES)).build();
@@ -146,7 +146,6 @@ public class AnalyserFactoryTest {
         assertThatThrownBy(() -> analyser.analyse(document)).isInstanceOf(RatDocumentAnalysisException.class);
     }
 
-
     @Test
     public void archiveTypeAnalyser() throws Exception {
         final Document document = new FileDocument(basedir,
@@ -200,7 +199,6 @@ public class AnalyserFactoryTest {
 
     @Test
     public void standardNotificationTest() throws Exception {
-
         Defaults defaults = Defaults.builder().build();
         ReportConfiguration config = new ReportConfiguration();
         config.setFrom(defaults);
@@ -220,7 +218,6 @@ public class AnalyserFactoryTest {
 
     @Test
     public void standardAbsenceTest() throws Exception {
-
         Defaults defaults = Defaults.builder().build();
         ReportConfiguration config = new ReportConfiguration();
         config.setFrom(defaults);
@@ -257,7 +254,6 @@ public class AnalyserFactoryTest {
         assertThat(document.getMetaData().detectedLicense()).isFalse();
     }
 
-
     @Test
     public void testMultiplexer() throws Exception {
         TestingDocumentAnalyser[] analysers = {
@@ -265,11 +261,11 @@ public class AnalyserFactoryTest {
                 new TestingDocumentAnalyser(),
                 new TestingDocumentAnalyser()
         };
-        IDocumentAnalyser multiplexer = AnalyserFactory.createMultiplexer(analysers);
+        DocumentAnalyser multiplexer = AnalyserFactory.createMultiplexer(analysers);
         TestingDocument document = new TestingDocument();
 
         multiplexer.analyse(document);
-        for (int i=0; i < analysers.length; i++) {
+        for (int i = 0; i < analysers.length; i++) {
             assertThat(analysers[i].matches.size()).as("Matcher "+i).isEqualTo(1);
             assertThat(analysers[i].matches.get(0)).as("Matcher "+i).isEqualTo(document);
         }

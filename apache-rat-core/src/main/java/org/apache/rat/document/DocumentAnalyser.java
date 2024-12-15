@@ -24,7 +24,7 @@ import org.apache.rat.api.Document;
  * Analyses Documents.
  */
 @FunctionalInterface
-public interface IDocumentAnalyser {
+public interface DocumentAnalyser {
     /**
      * Analyse the specified document.
      * @param document the document to analyze
