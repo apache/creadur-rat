@@ -45,7 +45,7 @@ public final class AnalyserFactory {
     }
 
     /**
-     * Creates an anlayser that adds the approved license predicate to the document metadata.
+     * Creates an analyser that adds the approved license predicate to the document metadata.
      * <p>
      *     Note you probably do not want this as it is automatically added to {@link #createConfiguredAnalyser}.
      * </p>
@@ -74,9 +74,9 @@ public final class AnalyserFactory {
     }
 
     /**
-     * Creates a DocumentAnalyser from teh report configuraiton.
+     * Creates a DocumentAnalyser from the report configuration.
      * @param configuration the ReportConfiguration
-     * @return A document analyser that uses the provides licenses.
+     * @return A document analyser that uses the provided licenses.
      */
     public static IDocumentAnalyser createConfiguredAnalyser(final ReportConfiguration configuration) {
         LicenseSetFactory licenseSetFactory = configuration.getLicenseSetFactory();
@@ -85,7 +85,7 @@ public final class AnalyserFactory {
             throw new ConfigurationException("At least one license must be defined");
         }
         if (DefaultLog.getInstance().isEnabled(Log.Level.DEBUG)) {
-            DefaultLog.getInstance().debug("Currently active Licenses are:");
+            DefaultLog.getInstance().debug("Currently active licenses are:");
             licenses.forEach(DefaultLog.getInstance()::debug);
         }
         return createMultiplexer(createPolicy(licenseSetFactory.getApprovedLicensePredicate()),
