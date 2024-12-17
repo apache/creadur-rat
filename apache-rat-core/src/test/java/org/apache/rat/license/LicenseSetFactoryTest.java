@@ -123,7 +123,6 @@ public class LicenseSetFactoryTest {
         assertThat(licenseSetFactory.getApprovedLicensePredicate().test(license))
                 .as("Found unapproved family " + family)
                 .isFalse();
-
     }
 
     @Test
@@ -135,7 +134,7 @@ public class LicenseSetFactoryTest {
         ILicenseFamily family = makeFamily("test", "Testing License Family");
         TestingLicense license = new TestingLicense(family.getFamilyCategory().trim(), new TestingMatcher(), family);
         assertThat(licenseSetFactory.getApprovedLicensePredicate().test(license))
-                .as("Did found unapproved family " + family)
+                .as("Did find unapproved family " + family)
                 .isFalse();
 
         licenseSetFactory.addLicense(license);
