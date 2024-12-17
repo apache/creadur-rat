@@ -22,9 +22,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.rat.api.Document;
-import org.apache.rat.document.IDocumentAnalyser;
+import org.apache.rat.document.DocumentAnalyser;
 
-public class TestingDocumentAnalyser implements IDocumentAnalyser {
+public class TestingDocumentAnalyser implements DocumentAnalyser {
 
     public final List<Document> matches = new ArrayList<>();
 

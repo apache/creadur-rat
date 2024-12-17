@@ -23,7 +23,7 @@ import java.util.List;
 
 import org.apache.rat.api.Document;
 import org.apache.rat.api.RatException;
-import org.apache.rat.document.IDocumentAnalyser;
+import org.apache.rat.document.DocumentAnalyser;
 import org.apache.rat.document.RatDocumentAnalysisException;
 import org.apache.rat.report.RatReport;
 import org.apache.rat.report.xml.XmlElements;
@@ -34,7 +34,7 @@ import org.apache.rat.report.xml.writer.IXmlWriter;
  */
 public class ClaimReporterMultiplexer implements RatReport {
     /** The document analyser to use */
-    private final IDocumentAnalyser analyser;
+    private final DocumentAnalyser analyser;
     /** A list of reports that are being updated */
     private final List<? extends RatReport> reporters;
     /** If {@code true} this is a dry run do not generate report */
@@ -48,7 +48,7 @@ public class ClaimReporterMultiplexer implements RatReport {
      * @param analyser the analyser to use.
      * @param reporters the reports to execute.
      */
-    public ClaimReporterMultiplexer(final IXmlWriter writer, final boolean dryRun, final IDocumentAnalyser analyser,
+    public ClaimReporterMultiplexer(final IXmlWriter writer, final boolean dryRun, final DocumentAnalyser analyser,
                                     final List<? extends RatReport> reporters) {
         this.analyser  = analyser;
         this.reporters = reporters;

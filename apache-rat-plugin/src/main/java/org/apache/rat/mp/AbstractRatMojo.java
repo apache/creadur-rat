@@ -78,7 +78,7 @@ public abstract class AbstractRatMojo extends BaseRatMojo {
      * Specifies the licenses to accept. By default, these are added to the default
      * licenses, unless you set &lt;addDefaultLicenseMatchers&gt; to false. Arguments should be
      * file name of &lt;Configs&gt; file structure.
-     * @deprecated Use &lt;config&gt;.
+     * @deprecated Use specific configuration under &lt;configuration&gt;.
      * @since 0.8
      */
     @Parameter
@@ -87,7 +87,7 @@ public abstract class AbstractRatMojo extends BaseRatMojo {
 
     /**
      * Specifies the additional licenses file.
-     * @deprecated Use &lt;config&gt;.
+     * @deprecated Use specific configuration under &lt;configuration&gt;.
      */
     @Parameter
     @Deprecated
@@ -105,21 +105,21 @@ public abstract class AbstractRatMojo extends BaseRatMojo {
 
     /**
      * Whether to add the default list of license matchers.
-     * @deprecated Use &lt;config&gt;.
+     * @deprecated By default, license matchers are added.  Use &lt;configurationNoDefaults&gt; to remove them.
      */
     @Deprecated
     @Parameter(property = "rat.addDefaultLicenseMatchers")
     private boolean addDefaultLicenseMatchers;
 
     /** The list of approved licenses
-     * @deprecated Use &lt;config&gt;.
+     * @deprecated Use specific configuration under &lt;configuration&gt;.
      */
     @Deprecated
     @Parameter(required = false)
     private String[] approvedLicenses;
 
     /** The file of approved licenses
-     * @deprecated Use &lt;config&gt;.
+     * @deprecated Use specific configuration under &lt;configuration&gt;.
      */
     @Deprecated
     @Parameter(property = "rat.approvedFile")
@@ -176,9 +176,8 @@ public abstract class AbstractRatMojo extends BaseRatMojo {
      * <li>configuration files for IDEA, see
      * <a href="#useIdeaDefaultExcludes">useIdeaDefaultExcludes</a></li>
      * </ul>
-     * @deprecated When set to true specifies that the STANDARD_PATTERNS are excluded, as are
-     * the STANDARD_SCMS patterns. Use the various InputExclude and InputInclude elements to
-     * explicitly specify what to include or exclude.
+     * @deprecated use &lt;inputExcludeStd&gt;&lt;exclude&gt;STANDARD_PATTERNS&lt;/exclude&gt;
+     * &lt;exclude&gt;STANDARD_SCM&lt;/exclude&gt;&lt;/inputExcludeStd&gt;
      */
     @Parameter(property = "rat.useDefaultExcludes", defaultValue = "true")
     @Deprecated
