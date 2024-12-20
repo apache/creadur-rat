@@ -136,7 +136,7 @@ public class ExclusionProcessor {
 
     /**
      * Add the patterns from collections of patterns as excluded patterns.
-     * @param patterns the strings to that define patterns to be ecxcuded from processing.
+     * @param patterns the strings to that define patterns to be excluded from processing.
      * @return this
      */
     public ExclusionProcessor addExcludedPatterns(final Iterable<String> patterns) {

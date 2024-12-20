@@ -23,7 +23,7 @@ import java.io.Reader;
 import java.util.Collection;
 
 import org.apache.rat.api.Document;
-import org.apache.rat.document.IDocumentAnalyser;
+import org.apache.rat.document.DocumentAnalyser;
 import org.apache.rat.license.ILicense;
 import org.apache.rat.utils.DefaultLog;
 
@@ -32,7 +32,7 @@ import static java.lang.String.format;
 /**
  * A Document analyzer that analyses document headers for a license.
  */
-class DocumentHeaderAnalyser implements IDocumentAnalyser {
+class DocumentHeaderAnalyser implements DocumentAnalyser {
 
     /** The license to analyse */
     private final Collection<ILicense> licenses;

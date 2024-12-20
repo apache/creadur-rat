@@ -135,7 +135,7 @@ public final class Defaults {
         }
 
         LicenseSetFactory result = new LicenseSetFactory(licenses);
-        approvedLicenseCategories.forEach(result::addLicenseCategory);
+        approvedLicenseCategories.forEach(result::approveLicenseCategory);
         return result;
     }
 
