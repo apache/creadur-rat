@@ -18,6 +18,7 @@
  */
 package org.apache.rat.config.exclusion.fileProcessors;
 
+import org.apache.rat.config.exclusion.MatcherSet;
 import org.apache.rat.document.DocumentName;
 
 import static java.lang.String.format;
@@ -25,11 +26,11 @@ import static java.lang.String.format;
 /**
  * A processor for {@code .bzrignore} files.
  */
-public final class BazaarIgnoreProcessor extends DescendingFileProcessor {
+public final class BazaarIgnoreBuilder extends MatcherSet.Builder {
     /**
      * Constructor.
      */
-    public BazaarIgnoreProcessor() {
+    public BazaarIgnoreBuilder() {
         super(".bzrignore", "#");
     }
 

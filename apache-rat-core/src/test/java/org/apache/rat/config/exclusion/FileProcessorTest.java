@@ -35,7 +35,7 @@ public class FileProcessorTest {
     @ParameterizedTest(name="{index} {1}")
     @MethodSource("localizePatternData")
     void localizePatternTest(DocumentName baseName, String pattern, String expectedStr) {
-        assertThat(FileProcessor.EMPTY.localizePattern(baseName, pattern)).isEqualTo(expectedStr);
+        assertThat(MatcherSet.Builder.localizePattern(baseName, pattern)).isEqualTo(expectedStr);
     }
 
     public static Stream<Arguments> localizePatternData() {

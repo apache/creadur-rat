@@ -30,7 +30,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 
-public class AbstractIgnoreProcessorTest {
+public class AbstractIgnoreBuilderTest {
 
     @TempDir
     protected File baseDir;

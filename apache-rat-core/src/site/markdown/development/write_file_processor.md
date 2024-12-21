@@ -22,7 +22,7 @@
 >  * Rat [Exclude Expressions](../exclusion_expression.html): The expressions that are used to match file names
 
 
-A FileProcessor is a module that locates files with a specific name in the directory tree and reads from them file patterns that are translated into Rat exclude expressions. These files are normally found in the file directory tree and their restrictions normally only applies to files at the same directory level as the processed file or below.  This type of file is implemented by the `org.apache.rat.config.exclusion.fileProcessors.DescendingFileProcessor`.
+A FileProcessor is a module that locates files with a specific name in the directory tree and reads from them file patterns that are translated into Rat exclude expressions. These files are normally found in the file directory tree and their restrictions normally only applies to files at the same directory level as the processed file or below.  This type of file is implemented by the `org.apache.rat.config.exclusion.MatcherSet.Builder`.
 
 The `DescendingFileProcessor` takes a file name and one or more comment prefixes as in the constructor.  The file name is normally a file that is generally hidden on Linux systems like ".gitignore" or ".hgignore".  The `DescendingFileProcessor` will scan the directories looking for files with the specified name.  If one is found it is passed to the `process(DocumentName)` method which reads the document and returns a list of exclude expressions.
 

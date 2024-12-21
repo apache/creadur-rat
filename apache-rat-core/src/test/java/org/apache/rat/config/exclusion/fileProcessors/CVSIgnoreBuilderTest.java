@@ -19,7 +19,9 @@
 package org.apache.rat.config.exclusion.fileProcessors;
 
 import java.util.ArrayList;
-import org.apache.rat.utils.DefaultLog;
+import org.apache.rat.config.exclusion.MatcherSet;
+import org.apache.rat.document.DocumentName;
+import org.apache.rat.document.DocumentNameMatcher;
 import org.apache.rat.utils.ExtendedIterator;
 import org.junit.jupiter.api.Test;
 
@@ -28,22 +30,29 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class CVSFileProcessorTest extends AbstractIgnoreProcessorTest {
+public class CVSIgnoreBuilderTest extends AbstractIgnoreBuilderTest {
 
     @Test
     public void processExampleFileTest() throws IOException {
         String[] lines = {
                 "thingone thingtwo", System.lineSeparator(), "one_fish", "two_fish", "", "red_* blue_*"};
 
-        List<String> expected = ExtendedIterator.create(Arrays.asList("thingone", "thingtwo", "one_fish", "two_fish", "red_*", "blue_*").iterator())
-                .map(s -> new File(baseDir, s).getPath()).addTo(new ArrayList<>());
+        List<String> expected = Arrays.asList("thingone", "thingtwo", "one_fish", "two_fish", "red_fish", "blue_fish");
 
         writeFile(".cvsignore", Arrays.asList(lines));
 
-        CVSFileProcessor processor = new CVSFileProcessor();
-        List<String> actual = processor.apply(baseName);
-        assertEquals(expected, actual);
+        CVSIgnoreBuilder processor = new CVSIgnoreBuilder();
+        MatcherSet matcherSet = processor.build(baseName);
+
+        assertThat(matcherSet.includes()).isPresent();
+        assertThat(matcherSet.excludes()).isNotPresent();
+        DocumentNameMatcher matcher = matcherSet.includes().orElseThrow(() -> new IllegalStateException("How?"));
+        for (String name : expected) {
+            DocumentName docName = baseName.resolve(name);
+            assertThat(matcher.matches(docName)).as(docName.getName()).isTrue();
+        }
     }
 }
