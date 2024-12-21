@@ -32,6 +32,8 @@ import org.apache.rat.utils.DefaultLog;
 import org.apache.rat.utils.ExtendedIterator;
 
 import static java.lang.String.format;
+import static org.apache.rat.document.DocumentNameMatcher.MATCHES_ALL;
+import static org.apache.rat.document.DocumentNameMatcher.MATCHES_NONE;
 
 /**
  * Processes the include and exclude patterns and applies the result against a base directory
@@ -204,84 +206,133 @@ public class ExclusionProcessor {
         if (lastMatcher == null || !basedir.equals(lastMatcherBaseDir)) {
             lastMatcherBaseDir = basedir;
 
-            final Set<String> incl = new TreeSet<>();
-            final Set<String> excl = new TreeSet<>();
-            final List<DocumentNameMatcher> inclMatchers = new ArrayList<>();
-
             // add the file processors
-            for (StandardCollection sc : fileProcessors) {
-                ExtendedIterator<FileProcessor> iter =  sc.fileProcessor();
-                if (iter.hasNext()) {
-                    iter.forEachRemaining(fp -> {
-                        segregateList(excl, incl, fp.apply(basedir));
-                        fp.customDocumentNameMatchers().forEach(inclMatchers::add);
-                    });
-                } else {
-                    DefaultLog.getInstance().info(String.format("%s does not have a fileProcessor.", sc));
-                }
-            }
+            final List<MatcherSet> fileProcessors = extractFileProcessors(basedir, new ArrayList<>());
 
-            // add the standard patterns
-            segregateList(incl, excl, new FileProcessor(includedPatterns).apply(basedir));
-            segregateList(excl, incl, new FileProcessor(excludedPatterns).apply(basedir));
+            DocumentName.Builder nameBuilder = DocumentName.builder().setBaseName(basedir);
+            MatcherSet.Builder fromCommandLine = new MatcherSet.Builder()
+                    .addExcluded(nameBuilder.setName("excludedPatterns").build(), excludedPatterns)
+                    .addIncluded(nameBuilder.setName("includedPatterns").build(), includedPatterns);
+            extractCollectionPatterns(nameBuilder, fromCommandLine);
+            extractCollectionMatchers(fromCommandLine);
+            extractPaths(fromCommandLine);
 
-            // add the collection patterns
-            for (StandardCollection sc : includedCollections) {
-                Set<String> patterns = sc.patterns();
-                if (patterns.isEmpty()) {
-                    DefaultLog.getInstance().info(String.format("%s does not have a defined collection for inclusion.", sc));
-                } else {
-                    segregateList(incl, excl, new FileProcessor(sc.patterns()).apply(basedir));
-                }
-            }
-            for (StandardCollection sc : excludedCollections) {
-                Set<String> patterns = sc.patterns();
-                if (patterns.isEmpty()) {
-                    DefaultLog.getInstance().info(String.format("%s does not have a defined collection for exclusion.", sc));
-                } else {
-                    segregateList(excl, incl, new FileProcessor(sc.patterns()).apply(basedir));
-                }
-            }
+            fileProcessors.add(fromCommandLine.build(basedir));
 
-            // add the matchers
-            ExtendedIterator.create(includedCollections.iterator())
-                    .map(StandardCollection::staticDocumentNameMatcher)
-                    .filter(Objects::nonNull)
-                    .forEachRemaining(inclMatchers::add);
-
-            List<DocumentNameMatcher> exclMatchers = ExtendedIterator.create(excludedCollections.iterator())
-                    .map(StandardCollection::staticDocumentNameMatcher)
-                    .filter(Objects::nonNull)
-                    .addTo(new ArrayList<>());
-
-            if (!incl.isEmpty()) {
-                inclMatchers.add(new DocumentNameMatcher("included patterns", MatchPatterns.from(basedir.getDirectorySeparator(), incl), basedir));
-            }
-            if (!excl.isEmpty()) {
-                exclMatchers.add(new DocumentNameMatcher("excluded patterns", MatchPatterns.from(basedir.getDirectorySeparator(), excl), basedir));
-            }
-
-            if (!includedPaths.isEmpty()) {
-                for (DocumentNameMatcher matcher : includedPaths) {
-                    DefaultLog.getInstance().info(format("Including path matcher %s", matcher));
-                    inclMatchers.add(matcher);
-                }
-            }
-            if (!excludedPaths.isEmpty()) {
-                for (DocumentNameMatcher matcher : excludedPaths) {
-                    DefaultLog.getInstance().info(format("Excluding path matcher %s", matcher));
-                    exclMatchers.add(matcher);
-                }
-            }
-
-            lastMatcher = DocumentNameMatcher.MATCHES_ALL;
-            if (!exclMatchers.isEmpty()) {
-                lastMatcher = DocumentNameMatcher.not(DocumentNameMatcher.or(exclMatchers));
-                if (!inclMatchers.isEmpty()) {
-                    lastMatcher = DocumentNameMatcher.or(DocumentNameMatcher.or(inclMatchers), lastMatcher);
-                }
-            }
+            lastMatcher = createMatcher(fileProcessors);
         }
         return lastMatcher;
+    }
+
+    private List<MatcherSet> extractFileProcessors(final DocumentName basedir, final List<MatcherSet> fileProcessorList) {
+        for (StandardCollection sc : fileProcessors) {
+            ExtendedIterator<MatcherSet> iter =  sc.fileProcessorBuilder().map(builder -> builder.build(basedir));
+            if (iter.hasNext()) {
+                iter.forEachRemaining(fileProcessorList::add);
+            } else {
+                DefaultLog.getInstance().debug(String.format("%s does not have a fileProcessor.", sc));
+            }
+        }
+        return fileProcessorList;
+    }
+
+    private void extractPatterns(final DocumentName commandLine, final MatcherSet.Builder fromCommandLine) {
+        fromCommandLine
+                .addExcluded(commandLine, excludedPatterns)
+                .addIncluded(commandLine, includedPatterns);
+    }
+
+    private void extractCollectionPatterns(final DocumentName.Builder nameBuilder, final MatcherSet.Builder fileProcessorBuilder) {
+        // add the collection patterns
+        final Set<String> incl = new TreeSet<>();
+        final Set<String> excl = new TreeSet<>();
+        for (StandardCollection sc : includedCollections) {
+            Set<String> patterns = sc.patterns();
+            if (patterns.isEmpty()) {
+                DefaultLog.getInstance().debug(String.format("%s does not have a defined collection for inclusion.", sc));
+            } else {
+                MatcherSet.Builder.segregateList(incl, excl, sc.patterns());
+            }
+        }
+        for (StandardCollection sc : excludedCollections) {
+            Set<String> patterns = sc.patterns();
+            if (patterns.isEmpty()) {
+                DefaultLog.getInstance().info(String.format("%s does not have a defined collection for exclusion.", sc));
+            } else {
+                MatcherSet.Builder.segregateList(excl, incl, sc.patterns());
+            }
+        }
+        nameBuilder.setName("collections");
+        fileProcessorBuilder
+                .addExcluded(nameBuilder.setName("excludedCollections").build(), excl)
+                .addIncluded(nameBuilder.setName("includedCollections").build(), incl);
+
+    }
+
+    private void extractCollectionMatchers(final MatcherSet.Builder fromCommandLine) {
+        // add the matchers
+        ExtendedIterator.create(includedCollections.iterator())
+                .map(StandardCollection::staticDocumentNameMatcher)
+                .filter(Objects::nonNull)
+                .forEachRemaining(fromCommandLine::addIncluded);
+
+        ExtendedIterator.create(excludedCollections.iterator())
+                .map(StandardCollection::staticDocumentNameMatcher)
+                .filter(Objects::nonNull)
+                .forEachRemaining(fromCommandLine::addExcluded);
+
+    }
+
+    private void extractPaths(final MatcherSet.Builder fromCommandLine) {
+        if (!includedPaths.isEmpty()) {
+            for (DocumentNameMatcher matcher : includedPaths) {
+                DefaultLog.getInstance().info(format("Including path matcher %s", matcher));
+                fromCommandLine.addIncluded(matcher);
+            }
+        }
+        if (!excludedPaths.isEmpty()) {
+            for (DocumentNameMatcher matcher : excludedPaths) {
+                DefaultLog.getInstance().info(format("Excluding path matcher %s", matcher));
+                fromCommandLine.addExcluded(matcher);
+            }
+        }
+
+    }
+
+    private DocumentNameMatcher createMatcher(List<MatcherSet> fileProcessors) {
+
+        List<DocumentNameMatcher> includedList = new ArrayList<>();
+        List<DocumentNameMatcher> excludedList = new ArrayList<>();
+
+        for (MatcherSet processor : fileProcessors) {
+            if (processor.includes().isPresent()) {
+                includedList.add(processor.includes().get());
+            }
+            if (processor.excludes().isPresent()) {
+                excludedList.add(processor.excludes().get());
+            }
+        }
+
+        final DocumentNameMatcher included = includedList.isEmpty() ? MATCHES_NONE : DocumentNameMatcher.or(includedList);
+        final DocumentNameMatcher excluded = excludedList.isEmpty() ? MATCHES_NONE : DocumentNameMatcher.or(excludedList);
+
+        if (excluded == MATCHES_NONE) {
+            return (included == MATCHES_NONE) ? MATCHES_ALL : included;
+        } else {
+            if (included == MATCHES_NONE) {
+                return DocumentNameMatcher.not(excluded);
+            }
+            Predicate<DocumentName> pred = documentName -> {
+                if (included.matches(documentName)) {
+                    return true;
+                }
+                if (excluded.matches(documentName)) {
+                    return false;
+                }
+                return true;
+            };
+            final String name = format("or(%s, not(%s)", included, excluded);
+            return new DocumentNameMatcher(name, pred);
+        }
     }
 }
