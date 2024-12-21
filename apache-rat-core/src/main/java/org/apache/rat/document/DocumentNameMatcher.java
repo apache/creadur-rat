@@ -23,9 +23,13 @@ import java.io.FileFilter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 import java.util.function.Predicate;
 
+import org.apache.rat.ConfigurationException;
 import org.apache.rat.config.exclusion.plexus.MatchPattern;
 import org.apache.rat.config.exclusion.plexus.MatchPatterns;
 
@@ -40,6 +44,8 @@ public final class DocumentNameMatcher {
     private final Predicate<DocumentName> predicate;
     /** The name of this matcher. */
     private final String name;
+
+    private final boolean isCollection;
 
     /**
      * A matcher that matches all documents.
@@ -59,6 +65,7 @@ public final class DocumentNameMatcher {
     public DocumentNameMatcher(final String name, final Predicate<DocumentName> predicate) {
         this.name = name;
         this.predicate = predicate;
+        this.isCollection = predicate instanceof MatcherPredicate;
     }
 
     /**
@@ -108,6 +115,10 @@ public final class DocumentNameMatcher {
         this(fileFilter.toString(), fileFilter);
     }
 
+    public boolean isCollection() {
+        return isCollection;
+    }
+
     @Override
     public String toString() {
         return name;
@@ -150,30 +161,41 @@ public final class DocumentNameMatcher {
         return String.join(", ", children);
     }
 
+    private static Optional<DocumentNameMatcher> standardCollectionCheck(Collection<DocumentNameMatcher> matchers, DocumentNameMatcher override) {
+        if (matchers.isEmpty()) {
+            throw new ConfigurationException("Empty matcher collection");
+        }
+        if (matchers.size() == 1) {
+            return Optional.of(matchers.iterator().next());
+        }
+        if (matchers.contains(override)) {
+            return Optional.of(override);
+        }
+        return Optional.empty();
+    }
+
     /**
      * Performs a logical {@code OR} across the collection of matchers.
      * @param matchers the matchers to check.
      * @return a matcher that returns {@code true} if any of the enclosed matchers returns {@code true}.
      */
     public static DocumentNameMatcher or(final Collection<DocumentNameMatcher> matchers) {
-        if (matchers.isEmpty()) {
-            return MATCHES_NONE;
-        }
-        if (matchers.size() == 1) {
-            return matchers.iterator().next();
-        }
-        if (matchers.contains(MATCHES_ALL)) {
-            return MATCHES_ALL;
+        Optional<DocumentNameMatcher> opt = standardCollectionCheck(matchers, MATCHES_ALL);
+        if (opt.isPresent()) {
+            return opt.get();
         }
 
-        return new DocumentNameMatcher(format("or(%s)", join(matchers)), (Predicate<DocumentName>) documentName -> {
-                for (DocumentNameMatcher matcher : matchers) {
-                    if (matcher.matches(documentName)) {
-                        return true;
-                    }
-                }
-                return false;
-            });
+        Set<DocumentNameMatcher> myList = new HashSet<>();
+        for (DocumentNameMatcher matcher : matchers) {
+            if (matcher.predicate instanceof MatcherPredicate && ((MatcherPredicate)matcher.predicate).matchValue) {
+                // nested "or"
+                ((MatcherPredicate)matcher.predicate).matchers.forEach(myList::add);
+            } else {
+                myList.add(matcher);
+            }
+        }
+        opt = standardCollectionCheck(matchers, MATCHES_ALL);
+        return opt.orElseGet(() -> new DocumentNameMatcher(format("or(%s)", join(myList)), new MatcherPredicate(true, myList)));
     }
 
     /**
@@ -191,24 +213,22 @@ public final class DocumentNameMatcher {
      * @return a matcher that returns {@code true} if all the enclosed matchers return {@code true}.
      */
     public static DocumentNameMatcher and(final Collection<DocumentNameMatcher> matchers) {
-        if (matchers.isEmpty()) {
-            return MATCHES_NONE;
-        }
-        if (matchers.size() == 1) {
-            return matchers.iterator().next();
-        }
-        if (matchers.contains(MATCHES_NONE)) {
-            return MATCHES_NONE;
+        Optional<DocumentNameMatcher> opt = standardCollectionCheck(matchers, MATCHES_NONE);
+        if (opt.isPresent()) {
+            return opt.get();
         }
 
-        return new DocumentNameMatcher(format("and(%s)", join(matchers)), (Predicate<DocumentName>) documentName -> {
-                for (DocumentNameMatcher matcher : matchers) {
-                if (!matcher.matches(documentName)) {
-                    return false;
-                }
+        Set<DocumentNameMatcher> myList = new HashSet<>();
+        for (DocumentNameMatcher matcher : matchers) {
+            if (matcher.predicate instanceof MatcherPredicate && !((MatcherPredicate)matcher.predicate).matchValue) {
+                // nested "and"
+                ((MatcherPredicate)matcher.predicate).matchers.forEach(myList::add);
+            } else {
+                myList.add(matcher);
             }
-                return true;
-        });
+        }
+        opt = standardCollectionCheck(matchers, MATCHES_NONE);
+        return opt.orElseGet(() -> new DocumentNameMatcher(format("and(%s)", join(myList)), new MatcherPredicate(false, myList)));
     }
 
     /**
@@ -218,5 +238,25 @@ public final class DocumentNameMatcher {
      */
     public static DocumentNameMatcher and(final DocumentNameMatcher... matchers) {
         return and(Arrays.asList(matchers));
+    }
+
+    private static class MatcherPredicate implements Predicate<DocumentName> {
+        final Iterable<DocumentNameMatcher> matchers;
+        final boolean matchValue;
+
+        MatcherPredicate(boolean matchValue, Iterable<DocumentNameMatcher> matchers) {
+            this.matchers = matchers;
+            this.matchValue = matchValue;
+        }
+
+        @Override
+        public boolean test(DocumentName documentName) {
+            for (DocumentNameMatcher matcher : matchers) {
+                if (matcher.matches(documentName)) {
+                    return true;
+                }
+            }
+            return !matchValue;
+        }
     }
 }

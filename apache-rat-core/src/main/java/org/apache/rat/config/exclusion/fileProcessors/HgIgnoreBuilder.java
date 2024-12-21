@@ -18,11 +18,11 @@
  */
 package org.apache.rat.config.exclusion.fileProcessors;
 
-import java.util.List;
 import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.rat.config.exclusion.MatcherSet;
 import org.apache.rat.document.DocumentName;
 
 import static java.lang.String.format;
@@ -30,7 +30,7 @@ import static java.lang.String.format;
 /**
  * A processor for the {@code .hgignore} files.
  */
-public final class HgIgnoreProcessor extends DescendingFileProcessor {
+public final class  HgIgnoreBuilder extends MatcherSet.Builder {
     /**
      * The state enumeration for the processor. When processing the file the processor changes
      * syntax state depending on the input.
@@ -50,15 +50,15 @@ public final class HgIgnoreProcessor extends DescendingFileProcessor {
     /**
      * Constructs the .hgignore processor.
      */
-    public HgIgnoreProcessor() {
+    public HgIgnoreBuilder() {
         super(".hgignore", "#");
         state = Syntax.REGEXP;
     }
 
     @Override
-    protected List<String> process(final DocumentName baseName) {
+    protected void process(final DocumentName baseName) {
         state = Syntax.REGEXP;
-        return super.process(baseName);
+        super.process(baseName);
     }
 
     @Override

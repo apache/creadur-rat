@@ -90,8 +90,9 @@ public class ReportConfigurationTest {
 
     @Test
     public void testAddIncludedFilter() {
+        DocumentName dirName = DocumentName.builder(tempDir).build();
         underTest.addExcludedFilter(DirectoryFileFilter.INSTANCE);
-        DocumentNameMatcher matcher = underTest.getNameMatcher(DocumentName.builder(new File(File.separator)).build());
+        DocumentNameMatcher matcher = underTest.getNameMatcher(dirName);
         assertEquals("not(DirectoryFileFilter)", matcher.toString());
         assertFalse(matcher.matches(DocumentName.builder(tempDir).build()));
         File f = new File(tempDir, "foo.txt");

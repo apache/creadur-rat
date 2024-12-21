@@ -48,11 +48,14 @@ public final class ExclusionUtils {
     /** The list of comment prefixes that are used to filter comment lines.  */
     public static final List<String> COMMENT_PREFIXES = Arrays.asList("#", "##", "//", "/**", "/*");
 
+    /** Prefix used to negate the given pattern. */
+    public static final String NEGATION_PREFIX = "!";
+
     /** A predicate that filters out lines that do NOT start with "!" */
-    public static final Predicate<String> NOT_MATCH_FILTER = s -> s.startsWith("!");
+    public static final Predicate<String> NOT_MATCH_FILTER = s -> s.startsWith(NEGATION_PREFIX);
 
     /** A predicate that filters out lines that start with "!" */
-    public static final Predicate<String> MATCH_FILTER = s -> !s.startsWith("!");
+    public static final Predicate<String> MATCH_FILTER = NOT_MATCH_FILTER.negate();
 
     private ExclusionUtils() {
         // do not instantiate
