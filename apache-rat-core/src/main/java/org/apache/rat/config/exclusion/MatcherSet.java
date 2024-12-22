@@ -37,7 +37,6 @@ import org.apache.rat.config.exclusion.plexus.MatchPatterns;
 import org.apache.rat.config.exclusion.plexus.SelectorUtils;
 import org.apache.rat.document.DocumentName;
 import org.apache.rat.document.DocumentNameMatcher;
-import org.apache.rat.utils.ExtendedIterator;
 
 /**
  * The file processor reads the file specified in the DocumentName.
@@ -57,34 +56,7 @@ public interface MatcherSet {
     class Builder {
 
         /** A String format pattern to print a regex string */
-        public static final String REGEX_FMT = "%%regex[%s]";
-
-        /**
-         * Modifies the {@link MatchPattern} formatted {@code pattern} argument by expanding the pattern and
-         * by adjusting the pattern to include the basename from the {@code documentName} argument.
-         * @param documentName the name of the file being read.
-         * @param pattern the pattern to format.
-         * @return the completely formatted pattern
-         */
-        public static String localizePattern(final DocumentName documentName, final String pattern) {
-            boolean prefix = pattern.startsWith(ExclusionUtils.NEGATION_PREFIX);
-            String workingPattern = prefix ? pattern.substring(1) : pattern;
-            String normalizedPattern = SelectorUtils.extractPattern(workingPattern, documentName.getDirectorySeparator());
-            StringBuilder sb = new StringBuilder();
-            if (SelectorUtils.isRegexPrefixedPattern(workingPattern)) {
-                sb.append(prefix ? ExclusionUtils.NEGATION_PREFIX : "")
-                        .append(SelectorUtils.REGEX_HANDLER_PREFIX)
-                        .append("\\Q").append(documentName.getBaseName())
-                        .append(documentName.getDirectorySeparator())
-                        .append("\\E").append(normalizedPattern)
-                        .append(SelectorUtils.PATTERN_HANDLER_SUFFIX);
-                return sb.toString();
-            } else {
-                sb.append(documentName.getBaseName())
-                        .append(documentName.getDirectorySeparator()).append(normalizedPattern);
-                return (prefix ? ExclusionUtils.NEGATION_PREFIX : "") + DocumentName.builder(documentName).setName(sb.toString()).build().getName();
-            }
-        }
+        protected static final String REGEX_FMT = "%%regex[%s]";
 
         /**
          * Adds to lists of qualified file patterns. Non-matching patterns start with a {@code !}.
@@ -120,15 +92,6 @@ public interface MatcherSet {
 
         /**
          * Constructor.
-         * @param fileName The name of the file to process.
-         * @param commentPrefix the comment prefix
-         */
-        protected Builder(final String fileName, final String commentPrefix) {
-            this(fileName, commentPrefix == null ? null : Collections.singletonList(commentPrefix));
-        }
-
-        /**
-         * Constructor.
          * @param fileName name of the file to process
          * @param commentPrefixes a collection of comment prefixes.
          */
@@ -144,22 +107,24 @@ public interface MatcherSet {
          * Default implementation returns the @{code entry} argument.
          * @param documentName the name of the document that the file was read from.
          * @param entry the entry from that document.
-         * @return the modified string or null to skip the string.
+         * @return the modified string or an empty Optional to skip the string.
          */
-        protected String modifyEntry(final DocumentName documentName, final String entry) {
-            return entry;
+        protected Optional<String> modifyEntry(final DocumentName documentName, final String entry) {
+            return Optional.of(entry);
         }
 
         public Builder addIncluded(DocumentName fromDocument, Set<String> names) {
             if (!names.isEmpty()) {
-                addIncluded(new DocumentNameMatcher(fromDocument.localized("/"), MatchPatterns.from(names), fromDocument.getBaseDocumentName()));
+                String name = String.format("'included %s'", fromDocument.localized("/").substring(1));
+                addIncluded(new DocumentNameMatcher(name, MatchPatterns.from(names), fromDocument.getBaseDocumentName()));
             }
             return this;
         }
 
         public Builder addExcluded(DocumentName fromDocument, Set<String> names) {
             if (!names.isEmpty()) {
-                addExcluded(new DocumentNameMatcher(fromDocument.localized("/"), MatchPatterns.from(names), fromDocument.getBaseDocumentName()));
+                String name = String.format("'excluded %s'", fromDocument.localized("/").substring(1));
+                addExcluded(new DocumentNameMatcher(name, MatchPatterns.from(names), fromDocument.getBaseDocumentName()));
             }
             return this;
         }
@@ -179,14 +144,24 @@ public interface MatcherSet {
          * @param documentName the file to read.
          */
          protected void process(final DocumentName documentName) {
-             Set<String> included = new HashSet<>();
-             Set<String> excluded = new HashSet<>();
              List<String> iterable = new ArrayList<>();
              ExclusionUtils.asIterator(new File(documentName.getName()), commentFilter)
-                    .map(entry -> modifyEntry(documentName, entry))
+                    .map(entry -> modifyEntry(documentName, entry).orElse(null))
                     .filter(Objects::nonNull)
-                    .map(entry -> localizePattern(documentName, entry))
+                    .map(entry -> ExclusionUtils.localizePattern(documentName, entry))
                             .forEachRemaining(iterable::add);
+             segregateProcessResult(documentName, iterable);
+         }
+
+        /**
+         * Moves properly formatted file names includes, excludes into the proper
+         * {@link #included} and {@link #excluded} DocumentMatchers.
+         * @param documentName the nome of the document being processed.
+         * @param iterable the list of properly formatted include and excludes from the input.
+         */
+        protected void segregateProcessResult(final DocumentName documentName, List<String> iterable) {
+             Set<String> included = new HashSet<>();
+             Set<String> excluded = new HashSet<>();
              segregateList(included, excluded, iterable);
              addExcluded(documentName, excluded);
              addIncluded(documentName, included);

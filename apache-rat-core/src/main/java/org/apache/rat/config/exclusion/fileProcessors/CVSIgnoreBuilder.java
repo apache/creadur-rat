@@ -31,7 +31,7 @@ import org.apache.rat.document.DocumentName;
 /**
  * A file processor for the {@code .csvignore} file.
  */
-public class CVSIgnoreBuilder extends MatcherSet.Builder {
+public class CVSIgnoreBuilder extends AbstractBuilder {
     /**
      * The constructor.
      */
@@ -49,10 +49,10 @@ public class CVSIgnoreBuilder extends MatcherSet.Builder {
             String[] parts = line.split("\\s+");
             for (String part : parts) {
                 if (!part.isEmpty()) {
-                    result.add(localizePattern(documentName, part));
+                    result.add(ExclusionUtils.localizePattern(documentName, part));
                 }
             }
         }
-        addIncluded(documentName.getBaseDocumentName(), result);
+        addExcluded(documentName, result);
     }
 }

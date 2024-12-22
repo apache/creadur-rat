@@ -23,7 +23,7 @@ import java.io.FileFilter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -65,7 +65,7 @@ public final class DocumentNameMatcher {
     public DocumentNameMatcher(final String name, final Predicate<DocumentName> predicate) {
         this.name = name;
         this.predicate = predicate;
-        this.isCollection = predicate instanceof MatcherPredicate;
+        this.isCollection = predicate instanceof CollectionPredicate;
     }
 
     /**
@@ -85,8 +85,23 @@ public final class DocumentNameMatcher {
      */
     public DocumentNameMatcher(final String name, final MatchPatterns patterns, final DocumentName basedir) {
         this(name, (Predicate<DocumentName>) documentName -> patterns.matches(documentName.getName(),
-                MatchPattern.tokenizePathToString(documentName.getName(), basedir.getDirectorySeparator()),
+                tokenize(documentName.getName(), basedir.getDirectorySeparator()),
                 basedir.isCaseSensitive()));
+    }
+
+    /**
+     * Tokenizes name for faster Matcher processing.
+     * @param name the name to tokenize
+     * @param dirSeparator the directory separator
+     * @return the tokenized name.
+     */
+    private static char[][] tokenize(String name, String dirSeparator) {
+        String[] tokenizedName = MatchPattern.tokenizePathToString(name, dirSeparator);
+        char[][] tokenizedNameChar = new char[tokenizedName.length][];
+        for (int i = 0; i < tokenizedName.length; i++) {
+            tokenizedNameChar[i] = tokenizedName[i].toCharArray();
+        }
+        return tokenizedNameChar;
     }
 
     /**
@@ -185,17 +200,18 @@ public final class DocumentNameMatcher {
             return opt.get();
         }
 
-        Set<DocumentNameMatcher> myList = new HashSet<>();
+        // preserve order
+        Set<DocumentNameMatcher> workingSet = new LinkedHashSet<>();
         for (DocumentNameMatcher matcher : matchers) {
-            if (matcher.predicate instanceof MatcherPredicate && ((MatcherPredicate)matcher.predicate).matchValue) {
-                // nested "or"
-                ((MatcherPredicate)matcher.predicate).matchers.forEach(myList::add);
+            // check for nested or
+            if (matcher.predicate instanceof Or) {
+                ((Or)matcher.predicate).matchers.forEach(workingSet::add);
             } else {
-                myList.add(matcher);
+                workingSet.add(matcher);
             }
         }
-        opt = standardCollectionCheck(matchers, MATCHES_ALL);
-        return opt.orElseGet(() -> new DocumentNameMatcher(format("or(%s)", join(myList)), new MatcherPredicate(true, myList)));
+        return standardCollectionCheck(matchers, MATCHES_ALL)
+                .orElseGet(() -> new DocumentNameMatcher(format("or(%s)", join(workingSet)), new Or(workingSet)));
     }
 
     /**
@@ -218,17 +234,18 @@ public final class DocumentNameMatcher {
             return opt.get();
         }
 
-        Set<DocumentNameMatcher> myList = new HashSet<>();
+        // preserve order
+        Set<DocumentNameMatcher> workingSet = new LinkedHashSet<>();
         for (DocumentNameMatcher matcher : matchers) {
-            if (matcher.predicate instanceof MatcherPredicate && !((MatcherPredicate)matcher.predicate).matchValue) {
-                // nested "and"
-                ((MatcherPredicate)matcher.predicate).matchers.forEach(myList::add);
+            //  check for nexted And
+            if (matcher.predicate instanceof And) {
+                ((And)matcher.predicate).matchers.forEach(workingSet::add);
             } else {
-                myList.add(matcher);
+                workingSet.add(matcher);
             }
         }
         opt = standardCollectionCheck(matchers, MATCHES_NONE);
-        return opt.orElseGet(() -> new DocumentNameMatcher(format("and(%s)", join(myList)), new MatcherPredicate(false, myList)));
+        return opt.orElseGet(() -> new DocumentNameMatcher(format("and(%s)", join(workingSet)), new And(workingSet)));
     }
 
     /**
@@ -240,13 +257,36 @@ public final class DocumentNameMatcher {
         return and(Arrays.asList(matchers));
     }
 
-    private static class MatcherPredicate implements Predicate<DocumentName> {
-        final Iterable<DocumentNameMatcher> matchers;
-        final boolean matchValue;
+    /**
+     * A marker interface to indicate this predicate contains a collection of matchers.
+     */
+    private interface CollectionPredicate extends Predicate<DocumentName>{}
 
-        MatcherPredicate(boolean matchValue, Iterable<DocumentNameMatcher> matchers) {
+    private static class And implements CollectionPredicate {
+
+        private final Iterable<DocumentNameMatcher> matchers;
+
+        And(final Iterable<DocumentNameMatcher> matchers) {
             this.matchers = matchers;
-            this.matchValue = matchValue;
+        }
+
+        @Override
+        public boolean test(DocumentName documentName) {
+            for (DocumentNameMatcher matcher : matchers) {
+                if (!matcher.matches(documentName)) {
+                    return false;
+                }
+            }
+            return true;
+        }
+    }
+
+    private static class Or implements CollectionPredicate {
+
+        private final Iterable<DocumentNameMatcher> matchers;
+
+        Or(final Iterable<DocumentNameMatcher> matchers) {
+            this.matchers = matchers;
         }
 
         @Override
@@ -256,7 +296,7 @@ public final class DocumentNameMatcher {
                     return true;
                 }
             }
-            return !matchValue;
+            return false;
         }
     }
 }
