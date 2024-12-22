@@ -46,9 +46,9 @@ public class CVSIgnoreBuilderTest extends AbstractIgnoreBuilderTest {
         CVSIgnoreBuilder processor = new CVSIgnoreBuilder();
         MatcherSet matcherSet = processor.build(baseName);
 
-        assertThat(matcherSet.includes()).isPresent();
-        assertThat(matcherSet.excludes()).isNotPresent();
-        DocumentNameMatcher matcher = matcherSet.includes().orElseThrow(() -> new IllegalStateException("How?"));
+        assertThat(matcherSet.excludes()).isPresent();
+        assertThat(matcherSet.includes()).isNotPresent();
+        DocumentNameMatcher matcher = matcherSet.excludes().orElseThrow(() -> new IllegalStateException("How?"));
         for (String name : expected) {
             DocumentName docName = baseName.resolve(name);
             assertThat(matcher.matches(docName)).as(docName.getName()).isTrue();

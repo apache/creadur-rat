@@ -22,10 +22,9 @@ import java.io.File;
 
 import java.io.FileFilter;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
+import java.util.Optional;
 import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.function.Consumer;
@@ -42,7 +41,7 @@ import static org.apache.rat.config.exclusion.ExclusionUtils.NEGATION_PREFIX;
  * Processes the .gitignore file.
  * @see <a href='https://git-scm.com/docs/gitignore'>.gitignore documentation</a>
  */
-public class GitIgnoreBuilder extends MatcherSet.Builder {
+public class GitIgnoreBuilder extends AbstractBuilder {
     // create a list of levels that a list of processors at that level.
     // will return a custom matcher that from an overridden MatcherSet.customDocumentNameMatchers method
     // build LevelMatcher as a system that returns Include, Exclude or no status for each check.
@@ -112,12 +111,24 @@ public class GitIgnoreBuilder extends MatcherSet.Builder {
     }
 
     @Override
-    public String modifyEntry(final DocumentName documentName, final String entry) {
+    public Optional<String> modifyEntry(final DocumentName documentName, final String entry) {
         return modifyEntry(documentName, entry, this::addIncluded, this::addExcluded);
     }
 
-    private static String modifyEntry(final DocumentName documentName, final String entry, Consumer<DocumentNameMatcher> include,
-                                      Consumer<DocumentNameMatcher> exclude) {
+    /**
+     * Convert the string entry.
+     * If the string ends with a slash an {@link DocumentNameMatcher#and} is constructed from a directory check and the file
+     * name matcher.  In this case an empty Optional is returned.
+     * If the string starts with {@link ExclusionUtils#NEGATION_PREFIX} then the entry is placed in the include list, otherwise
+     * the entry is placed in the exclude list and the name of the check returned.
+     * @param documentName The name of the document being processed.
+     * @param entry The entry from the document
+     * @param include A consumer to accept the included DocumentNameMatchers.
+     * @param exclude A consumer to accept the excluded DocumentNameMatchers.
+     * @return and Optional containing the name of the matcher.
+     */
+    private static Optional<String> modifyEntry(final DocumentName documentName, final String entry, Consumer<DocumentNameMatcher> include,
+                                                Consumer<DocumentNameMatcher> exclude) {
         // An optional prefix "!" which negates the pattern;
         boolean prefix = entry.startsWith(NEGATION_PREFIX);
         String pattern = prefix || entry.startsWith(ESCAPED_COMMENT) || entry.startsWith(ESCAPED_NEGATION) ?
@@ -148,33 +159,28 @@ public class GitIgnoreBuilder extends MatcherSet.Builder {
             } else {
                 include.accept(matcher);
             }
-            return null;
+            return Optional.empty();
         }
-        return prefix ? NEGATION_PREFIX + pattern : pattern;
+        return Optional.of(prefix ? NEGATION_PREFIX + pattern : pattern);
     }
 
-    private class LevelBuilder extends MatcherSet.Builder {
+    private static class LevelBuilder extends AbstractBuilder {
         LevelBuilder(int level) {
             super(IGNORE_FILE+"-"+level, COMMENT_PREFIX);
         }
 
-        public String modifyEntry(final DocumentName documentName, final String entry) {
+        public Optional<String> modifyEntry(final DocumentName documentName, final String entry) {
             return GitIgnoreBuilder.modifyEntry(documentName, entry, this::addIncluded, this::addExcluded);
         }
 
         public void process(DocumentName directory, DocumentName documentName) {
-            Set<String> included = new HashSet<>();
-            Set<String> excluded = new HashSet<>();
             List<String> iterable = new ArrayList<>();
             ExclusionUtils.asIterator(new File(documentName.getName()), commentFilter)
-                    .map(entry -> modifyEntry(documentName, entry))
+                    .map(entry -> modifyEntry(documentName, entry).orElse(null))
                     .filter(Objects::nonNull)
-                    .map(entry -> localizePattern(documentName, entry))
+                    .map(entry -> ExclusionUtils.localizePattern(documentName, entry))
                     .forEachRemaining(iterable::add);
-            segregateList(included, excluded, iterable);
-            addExcluded(directory, excluded);
-            addIncluded(directory, included);
-
+            segregateProcessResult(directory, iterable);
         }
     }
 }

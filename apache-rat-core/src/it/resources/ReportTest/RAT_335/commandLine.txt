@@ -1,7 +1,5 @@
 --output-style
 xml
---input-exclude
-**/.gitignore
 --input-exclude-parsed-scm
 GIT
 --

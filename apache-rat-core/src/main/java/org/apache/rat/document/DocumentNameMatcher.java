@@ -23,7 +23,6 @@ import java.io.FileFilter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Optional;
@@ -66,7 +65,7 @@ public final class DocumentNameMatcher {
     public DocumentNameMatcher(final String name, final Predicate<DocumentName> predicate) {
         this.name = name;
         this.predicate = predicate;
-        this.isCollection = predicate instanceof CollectionPredicateImpl;
+        this.isCollection = predicate instanceof CollectionPredicate;
     }
 
     /**
@@ -85,7 +84,9 @@ public final class DocumentNameMatcher {
      * @param basedir the base directory for the scanning.
      */
     public DocumentNameMatcher(final String name, final MatchPatterns patterns, final DocumentName basedir) {
-        this(name, new MatchPatternsPredicate(basedir, patterns));
+        this(name, (Predicate<DocumentName>) documentName -> patterns.matches(documentName.getName(),
+                tokenize(documentName.getName(), basedir.getDirectorySeparator()),
+                basedir.isCaseSensitive()));
     }
 
     /**
@@ -94,7 +95,7 @@ public final class DocumentNameMatcher {
      * @param dirSeparator the directory separator.
      * @return the tokenized name.
      */
-    private static char[][] tokenize(final String name, final String dirSeparator) {
+    private static char[][] tokenize(String name, String dirSeparator) {
         String[] tokenizedName = MatchPattern.tokenizePathToString(name, dirSeparator);
         char[][] tokenizedNameChar = new char[tokenizedName.length][];
         for (int i = 0; i < tokenizedName.length; i++) {
@@ -211,8 +212,7 @@ public final class DocumentNameMatcher {
         return String.join(", ", children);
     }
 
-    private static Optional<DocumentNameMatcher> standardCollectionCheck(final Collection<DocumentNameMatcher> matchers,
-                                                                         final DocumentNameMatcher override) {
+    private static Optional<DocumentNameMatcher> standardCollectionCheck(final Collection<DocumentNameMatcher> matchers, final DocumentNameMatcher override) {
         if (matchers.isEmpty()) {
             throw new ConfigurationException("Empty matcher collection");
         }

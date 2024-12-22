@@ -79,7 +79,7 @@ import static org.assertj.core.api.Fail.fail;
  */
 public abstract class AbstractOptionsProvider implements ArgumentsProvider {
     /**
-     * A map of test Options to tests
+     * A map of test Options to tests.
      */
     protected final Map<String, OptionCollectionTest.OptionTest> testMap = new TreeMap<>();
     /** The list of exclude args */
@@ -329,7 +329,6 @@ public abstract class AbstractOptionsProvider implements ArgumentsProvider {
                 "**/fish", "*_fish",
                 "# some colorful directories",
                 "red/", "blue/*/"};
-
         String[] notExcluded = {"thingone", "dir/fish_two", "some/thingone", "blue/fish/dory" };
         String[] excluded = {"thingtwo", "some/things", "dir/fish", "red/fish", "blue/fish", "some/fish", "another/red_fish"};
 
