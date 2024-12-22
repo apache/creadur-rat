@@ -48,9 +48,9 @@ public class HgIgnoreBuilderTest extends AbstractIgnoreBuilderTest {
 
         HgIgnoreBuilder processor = new HgIgnoreBuilder();
         MatcherSet matcherSet = processor.build(baseName);
-        assertThat(matcherSet.includes()).isPresent();
-        assertThat(matcherSet.excludes()).isNotPresent();
-        DocumentNameMatcher matcher = matcherSet.includes().orElseThrow(() -> new IllegalStateException("How?"));
+        assertThat(matcherSet.excludes()).isPresent();
+        assertThat(matcherSet.includes()).isNotPresent();
+        DocumentNameMatcher matcher = matcherSet.excludes().orElseThrow(() -> new IllegalStateException("How?"));
         for (String name : expected) {
             DocumentName docName = baseName.resolve(name);
             assertThat(matcher.matches(docName)).as(docName.getName()).isTrue();
@@ -61,20 +61,19 @@ public class HgIgnoreBuilderTest extends AbstractIgnoreBuilderTest {
     public void processDefaultFileTest() throws IOException {
         String[] lines = {"^[A-Z]*\\.txt", "[0-9]*\\.txt"};
 
-        List<String> expected = Arrays.asList("ABIGNAME.txt", "endsIn9.txt");
+        List<String> match = Arrays.asList("ABIGNAME.txt", "endsIn9.txt");
+        List<String> notMatch = Arrays.asList("asmallName.txt", "endsin.doc");
 
-
-        List<String> denied = Arrays.asList("asmallName.txt", "endsin.doc");
         writeFile(".hgignore", Arrays.asList(lines));
 
         HgIgnoreBuilder processor = new HgIgnoreBuilder();
         MatcherSet matcherSet = processor.build(baseName);
-        DocumentNameMatcher matcher = matcherSet.includes().orElseThrow(() -> new IllegalStateException("How?"));
-        for (String name : expected) {
+        DocumentNameMatcher matcher = matcherSet.excludes().orElseThrow(() -> new IllegalStateException("How?"));
+        for (String name : match) {
             DocumentName docName = baseName.resolve(name);
             assertThat(matcher.matches(docName)).as(docName.getName()).isTrue();
         }
-        for (String name : denied) {
+        for (String name : notMatch) {
             DocumentName docName = DocumentName.builder().setName(name).setBaseName(baseDir).build();
             assertThat(matcher.matches(docName)).as(docName.getName()).isFalse();
         }

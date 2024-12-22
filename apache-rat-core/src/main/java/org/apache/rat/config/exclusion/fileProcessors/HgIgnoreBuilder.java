@@ -19,6 +19,7 @@
 package org.apache.rat.config.exclusion.fileProcessors;
 
 import java.util.Locale;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -30,7 +31,7 @@ import static java.lang.String.format;
 /**
  * A processor for the {@code .hgignore} files.
  */
-public final class  HgIgnoreBuilder extends MatcherSet.Builder {
+public final class  HgIgnoreBuilder extends AbstractBuilder {
     /**
      * The state enumeration for the processor. When processing the file the processor changes
      * syntax state depending on the input.
@@ -62,16 +63,16 @@ public final class  HgIgnoreBuilder extends MatcherSet.Builder {
     }
 
     @Override
-    public String modifyEntry(final DocumentName baseName, final String entry) {
+    public Optional<String> modifyEntry(final DocumentName baseName, final String entry) {
         Matcher m = SYNTAX_CHECK.matcher(entry.toLowerCase(Locale.ROOT));
         if (m.matches()) {
             state = Syntax.valueOf(m.group(1).toUpperCase());
-            return null;
+            return Optional.empty();
         }
         if (state == Syntax.REGEXP) {
             String pattern = entry.startsWith("^") ? entry.substring(1) : ".*" + entry;
-            return format(REGEX_FMT, pattern);
+            return Optional.of(format(REGEX_FMT, pattern));
         }
-        return entry;
+        return Optional.of(entry);
     }
 }

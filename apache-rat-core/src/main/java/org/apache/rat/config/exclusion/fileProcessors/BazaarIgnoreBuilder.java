@@ -18,6 +18,7 @@
  */
 package org.apache.rat.config.exclusion.fileProcessors;
 
+import java.util.Optional;
 import org.apache.rat.config.exclusion.MatcherSet;
 import org.apache.rat.document.DocumentName;
 
@@ -26,7 +27,7 @@ import static java.lang.String.format;
 /**
  * A processor for {@code .bzrignore} files.
  */
-public final class BazaarIgnoreBuilder extends MatcherSet.Builder {
+public final class BazaarIgnoreBuilder extends AbstractBuilder {
     /**
      * Constructor.
      */
@@ -35,12 +36,12 @@ public final class BazaarIgnoreBuilder extends MatcherSet.Builder {
     }
 
     @Override
-    public String modifyEntry(final DocumentName baseName, final String entry) {
+    public Optional<String> modifyEntry(final DocumentName baseName, final String entry) {
         if (entry.startsWith("RE:")) {
             String line = entry.substring("RE:".length()).trim();
             String pattern = line.startsWith("^") ? line.substring(1) : line;
-            return format(REGEX_FMT, pattern);
+            return Optional.of(format(REGEX_FMT, pattern));
         }
-        return entry;
+        return Optional.of(entry);
     }
 }

@@ -34,6 +34,8 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.LineIterator;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.rat.ConfigurationException;
+import org.apache.rat.config.exclusion.plexus.MatchPattern;
+import org.apache.rat.config.exclusion.plexus.SelectorUtils;
 import org.apache.rat.document.DocumentName;
 import org.apache.rat.document.DocumentNameMatcher;
 import org.apache.rat.utils.ExtendedIterator;
@@ -186,6 +188,33 @@ public final class ExclusionUtils {
     private static void verifyFile(final File file) {
         if (file == null || !file.exists() || !file.isFile()) {
             throw new ConfigurationException(format("%s is not a valid file.", file));
+        }
+    }
+
+    /**
+     * Modifies the {@link MatchPattern} formatted {@code pattern} argument by expanding the pattern and
+     * by adjusting the pattern to include the basename from the {@code documentName} argument.
+     * @param documentName the name of the file being read.
+     * @param pattern the pattern to format.
+     * @return the completely formatted pattern
+     */
+    public static String localizePattern(final DocumentName documentName, final String pattern) {
+        boolean prefix = pattern.startsWith(NEGATION_PREFIX);
+        String workingPattern = prefix ? pattern.substring(1) : pattern;
+        String normalizedPattern = SelectorUtils.extractPattern(workingPattern, documentName.getDirectorySeparator());
+        StringBuilder sb = new StringBuilder();
+        if (SelectorUtils.isRegexPrefixedPattern(workingPattern)) {
+            sb.append(prefix ? NEGATION_PREFIX : "")
+                    .append(SelectorUtils.REGEX_HANDLER_PREFIX)
+                    .append("\\Q").append(documentName.getBaseName())
+                    .append(documentName.getDirectorySeparator())
+                    .append("\\E").append(normalizedPattern)
+                    .append(SelectorUtils.PATTERN_HANDLER_SUFFIX);
+            return sb.toString();
+        } else {
+            sb.append(documentName.getBaseName())
+                    .append(documentName.getDirectorySeparator()).append(normalizedPattern);
+            return (prefix ? NEGATION_PREFIX : "") + DocumentName.builder(documentName).setName(sb.toString()).build().getName();
         }
     }
 }
