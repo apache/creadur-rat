@@ -23,6 +23,7 @@ import java.io.FileFilter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Optional;
@@ -134,6 +135,13 @@ public final class DocumentNameMatcher {
         return isCollection;
     }
 
+    /**
+     * Returns the predicate that this DocumentNameMatcher is using.
+     * @return The predicate that this DocumentNameMatcher is using.
+     */
+    public Predicate<DocumentName> getPredicate() {
+        return predicate;
+    }
     @Override
     public String toString() {
         return name;
@@ -205,7 +213,7 @@ public final class DocumentNameMatcher {
         for (DocumentNameMatcher matcher : matchers) {
             // check for nested or
             if (matcher.predicate instanceof Or) {
-                ((Or)matcher.predicate).matchers.forEach(workingSet::add);
+                ((Or)matcher.predicate).getMatchers().forEach(workingSet::add);
             } else {
                 workingSet.add(matcher);
             }
@@ -239,13 +247,35 @@ public final class DocumentNameMatcher {
         for (DocumentNameMatcher matcher : matchers) {
             //  check for nexted And
             if (matcher.predicate instanceof And) {
-                ((And)matcher.predicate).matchers.forEach(workingSet::add);
+                ((And)matcher.predicate).getMatchers().forEach(workingSet::add);
             } else {
                 workingSet.add(matcher);
             }
         }
         opt = standardCollectionCheck(matchers, MATCHES_NONE);
         return opt.orElseGet(() -> new DocumentNameMatcher(format("and(%s)", join(workingSet)), new And(workingSet)));
+    }
+
+    /**
+     * A particular matcher that will not match any excluded unless they are listed in the includes.
+     * @param includes the DocumentNameMatcher to match the includes.
+     * @param excludes the DocumentNameMatcher to match the excludes.
+     * @return a DocumentNameMatcher with the specified logic.
+     */
+    public static DocumentNameMatcher matcherSet(final DocumentNameMatcher includes,
+                                                 final DocumentNameMatcher excludes) {
+        if (excludes == MATCHES_NONE) {
+            return MATCHES_ALL;
+        } else {
+            if (includes == MATCHES_NONE) {
+                return not(excludes);
+            }
+        }
+        if (includes == MATCHES_ALL) {
+            return MATCHES_ALL;
+        }
+        List<DocumentNameMatcher> workingSet = Arrays.asList(includes, excludes);
+        return new DocumentNameMatcher(format("matcherSet(%s)", join(workingSet)), new MatcherPredicate(workingSet));
     }
 
     /**
@@ -260,19 +290,32 @@ public final class DocumentNameMatcher {
     /**
      * A marker interface to indicate this predicate contains a collection of matchers.
      */
-    private interface CollectionPredicate extends Predicate<DocumentName>{}
+    // package private for testing access
+    abstract static class CollectionPredicate implements Predicate<DocumentName> {
+        // package private for testing acess.
+        private  final Iterable<DocumentNameMatcher> matchers;
 
-    private static class And implements CollectionPredicate {
-
-        private final Iterable<DocumentNameMatcher> matchers;
-
-        And(final Iterable<DocumentNameMatcher> matchers) {
+        protected CollectionPredicate(Iterable<DocumentNameMatcher> matchers) {
             this.matchers = matchers;
+        }
+
+        public Iterable<DocumentNameMatcher> getMatchers() {
+            return matchers;
+        }
+    }
+
+    /**
+     * An implementation of "and" logic across a collection of DocumentNameMatchers.
+     */
+    // package private for testing access
+    static class And extends CollectionPredicate {
+        And(final Iterable<DocumentNameMatcher> matchers) {
+            super(matchers);
         }
 
         @Override
         public boolean test(DocumentName documentName) {
-            for (DocumentNameMatcher matcher : matchers) {
+            for (DocumentNameMatcher matcher : getMatchers()) {
                 if (!matcher.matches(documentName)) {
                     return false;
                 }
@@ -281,22 +324,47 @@ public final class DocumentNameMatcher {
         }
     }
 
-    private static class Or implements CollectionPredicate {
-
-        private final Iterable<DocumentNameMatcher> matchers;
-
+    /**
+     * An implementation of "or" logic across a collection of DocumentNameMatchers.
+     */
+    // package private for testing access
+    static class Or extends CollectionPredicate {
         Or(final Iterable<DocumentNameMatcher> matchers) {
-            this.matchers = matchers;
+            super(matchers);
         }
 
         @Override
         public boolean test(DocumentName documentName) {
-            for (DocumentNameMatcher matcher : matchers) {
+            for (DocumentNameMatcher matcher : getMatchers()) {
                 if (matcher.matches(documentName)) {
                     return true;
                 }
             }
             return false;
+        }
+    }
+
+    /**
+     * An implementation of "or" logic across a collection of DocumentNameMatchers.
+     */
+    // package private for testing access
+    static class MatcherPredicate extends CollectionPredicate {
+        MatcherPredicate(final Iterable<DocumentNameMatcher> matchers) {
+            super(matchers);
+        }
+
+        @Override
+        public boolean test(final DocumentName documentName) {
+            Iterator<DocumentNameMatcher> iter = getMatchers().iterator();
+            // included
+            if (iter.next().matches(documentName)) {
+                return true;
+            }
+            // excluded
+            if (iter.next().matches(documentName)) {
+                return false;
+            }
+            return true;
         }
     }
 }

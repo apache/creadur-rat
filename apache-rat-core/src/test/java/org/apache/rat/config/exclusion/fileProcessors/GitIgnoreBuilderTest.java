@@ -20,10 +20,16 @@ package org.apache.rat.config.exclusion.fileProcessors;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.Optional;
+import java.util.function.Consumer;
+import java.util.function.Predicate;
 import java.util.stream.Stream;
 import org.apache.rat.config.exclusion.MatcherSet;
 import org.apache.rat.document.DocumentName;
 import org.apache.rat.document.DocumentNameMatcher;
+import org.apache.rat.document.DocumentNameMatcherTest;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -36,6 +42,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.not;
+import static org.assertj.core.api.Fail.fail;
 
 public class GitIgnoreBuilderTest extends AbstractIgnoreBuilderTest {
 
@@ -49,28 +56,13 @@ public class GitIgnoreBuilderTest extends AbstractIgnoreBuilderTest {
                 "# some colorful directories",
                 "red/", "blue/*/"};
 
-        List<String> excluded = Arrays.asList("some/things", "some/fish", "another/red_fish");
+        List<String> matches = Arrays.asList("some/things", "some/fish", "another/red_fish");
 
-        List<String> included = Arrays.asList("some/thingone");
+        List<String> notMatches = Arrays.asList("some/thingone", "thingone");
 
         writeFile(".gitignore", Arrays.asList(lines));
 
-        GitIgnoreBuilder processor = new GitIgnoreBuilder();
-        MatcherSet matcherSet = processor.build(baseName);
-        assertThat(matcherSet.includes()).isPresent();
-        assertThat(matcherSet.excludes()).isPresent();
-
-        DocumentNameMatcher matcher = matcherSet.includes().orElseThrow(() -> new IllegalStateException("How?"));
-        for (String name : included) {
-            DocumentName docName = baseName.resolve(name);
-            assertThat(matcher.matches(docName)).as(docName.getName()).isTrue();
-        }
-
-        matcher = matcherSet.excludes().orElseThrow(() -> new IllegalStateException("How?"));
-        for (String name : excluded) {
-            DocumentName docName = baseName.resolve(name);
-            assertThat(matcher.matches(docName)).as(docName.getName()).isTrue();
-        }
+        assertCorrect(new GitIgnoreBuilder(), matches, notMatches);
     }
 
     // see https://git-scm.com/docs/gitignore
@@ -79,11 +71,17 @@ public class GitIgnoreBuilderTest extends AbstractIgnoreBuilderTest {
     public void modifyEntryTest(String source, String expected) {
         GitIgnoreBuilder underTest = new GitIgnoreBuilder();
         DocumentName testName = DocumentName.builder().setName("GitIgnoreBuilderTest").setBaseName("testDir").build();
+        List<MatcherSet> matcherSets = new ArrayList<>();
+        Optional<String> entry = underTest.modifyEntry(matcherSets::add, testName, source);
+
+
         if (source.endsWith("/")) {
-            assertThat(underTest.modifyEntry(testName, source)).isNotPresent();
-            assertThat(underTest.getIncluded().toString()).isEqualTo(expected);
+            assertThat(entry).isNotPresent();
+            assertThat(matcherSets).hasSize(1);
+            DocumentNameMatcher matcher = matcherSets.get(0).createMatcher();
+            assertThat(matcher.toString()).isEqualTo(expected);
         } else {
-            assertThat(underTest.modifyEntry(testName, source)).contains(expected);
+            assertThat(entry.get()).isEqualTo(expected);
         }
     }
 
@@ -99,8 +97,10 @@ public class GitIgnoreBuilderTest extends AbstractIgnoreBuilderTest {
         lst.add(Arguments.of("file/name", "file/name"));
         lst.add(Arguments.of("/file/name", "file/name"));
         lst.add(Arguments.of("filename", "**/filename"));
-        lst.add(Arguments.of("filename/", "and(isDirectory, **/filename)"));
-        lst.add(Arguments.of("/filename/", "and(isDirectory, filename)"));
+        lst.add(Arguments.of("filename/", "not(and(isDirectory, **/filename))"));
+        lst.add(Arguments.of("/filename/", "not(and(isDirectory, filename))"));
+        // inclusion by itself becomes nothing.
+        lst.add(Arguments.of("!filename/", "TRUE"));
 
         return lst.stream();
     }
@@ -123,23 +123,20 @@ public class GitIgnoreBuilderTest extends AbstractIgnoreBuilderTest {
         File file = new File(url.getFile());
 
         DocumentName documentName = DocumentName.builder(file).build();
-        MatcherSet matcherSet = underTest.build(documentName);
-        assertThat(matcherSet.excludes()).isPresent();
-        assertThat(matcherSet.includes()).isPresent();
+        List<MatcherSet> matcherSets = underTest.build(documentName);
+        DocumentNameMatcher matcher = MatcherSet.merge(matcherSets).createMatcher();
 
-        // includes test
-        DocumentNameMatcher matcher = matcherSet.includes().orElseThrow(() -> new IllegalStateException("How?"));
-        assertThat(matcher.toString()).isEqualTo("or('included dir1/.gitignore', 'included .gitignore')");
-        assertMatches(documentName, matcher, new String[]{"subdir/file1.log", "dir1/dir1.md", "dir1/somedir/dir1.md",
-                        "dir1/file1.log"},
-                 new String[]{"dir1/joe.txt", "subdir/joe.txt", "subdir/joe.md", "dir1/joe.md" });
+        DocumentName candidate = DocumentName.builder()
+                .setName("/home/claude/apache/creadur-rat/apache-rat-core/target/test-classes/GitIgnoreBuilderTest/src/dir1/file1.log")
+                .setBaseName("home/claude/apache/creadur-rat/apache-rat-core/target/test-classes/GitIgnoreBuilderTest/src/").build();
+        DocumentNameMatcherTest.decompose(matcher, candidate);
 
-        // excludes tests
-        matcher = matcherSet.excludes().orElseThrow(() -> new IllegalStateException("How?"));
-        assertThat(matcher.toString()).isEqualTo("or('excluded dir1/.gitignore', 'excluded .gitignore')");
-        assertMatches(documentName, matcher, new String[]{ "dir1/file1.txt", "dir1/somedir/file1.txt", "dir1/file1.log",
-                        "dir1/somedir/file1.log", "subdir/dir1.md", "subdir/some.log"},
-                new String[]{"subdir/afile.txt" });
+        assertThat(matcher.toString()).isEqualTo("matcherSet(or('included dir1/.gitignore', 'included .gitignore'), or('excluded dir1/.gitignore', **/.gitignore, 'excluded .gitignore'))");
 
+        List<String> notMatching = Arrays.asList("README.txt", "dir1/dir1.md", "dir2/dir2.txt", "dir3/file3.log", "dir1/file1.log");
+
+        List<String> matching = Arrays.asList(".gitignore", "root.md", "dir1/.gitignore", "dir1/dir1.txt",  "dir2/dir2.md", "dir3/dir3.log");
+
+        assertCorrect(matcherSets, documentName.getBaseDocumentName(), matching, notMatching);
     }
 }

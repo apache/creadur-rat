@@ -40,19 +40,14 @@ public class CVSIgnoreBuilderTest extends AbstractIgnoreBuilderTest {
         String[] lines = {
                 "thingone thingtwo", System.lineSeparator(), "one_fish", "two_fish", "", "red_* blue_*"};
 
-        List<String> expected = Arrays.asList("thingone", "thingtwo", "one_fish", "two_fish", "red_fish", "blue_fish");
+        List<String> matching = Arrays.asList("thingone", "thingtwo", "one_fish", "two_fish", "red_fish", "blue_fish");
+        List<String> notMatching = Arrays.asList("thing", "two", "fish_red", "subdir/two_fish", "subdir/red_fish", "subdir/blue_fish");
 
         writeFile(".cvsignore", Arrays.asList(lines));
 
         CVSIgnoreBuilder processor = new CVSIgnoreBuilder();
-        MatcherSet matcherSet = processor.build(baseName);
+        DocumentNameMatcher matcher = MatcherSet.merge(processor.build(baseName)).createMatcher();
 
-        assertThat(matcherSet.excludes()).isPresent();
-        assertThat(matcherSet.includes()).isNotPresent();
-        DocumentNameMatcher matcher = matcherSet.excludes().orElseThrow(() -> new IllegalStateException("How?"));
-        for (String name : expected) {
-            DocumentName docName = baseName.resolve(name);
-            assertThat(matcher.matches(docName)).as(docName.getName()).isTrue();
-        }
+        assertCorrect(new CVSIgnoreBuilder(), matching, notMatching);
     }
 }

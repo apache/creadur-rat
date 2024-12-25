@@ -29,6 +29,7 @@ import org.apache.rat.commandline.Arg;
 import org.apache.rat.commandline.StyleSheets;
 import org.apache.rat.config.exclusion.StandardCollection;
 import org.apache.rat.document.DocumentNameMatcher;
+import org.apache.rat.document.DocumentNameMatcherTest;
 import org.apache.rat.document.DocumentName;
 import org.apache.rat.license.ILicense;
 import org.apache.rat.license.ILicenseFamily;
@@ -37,7 +38,6 @@ import org.apache.rat.report.claim.ClaimStatistic;
 import org.apache.rat.testhelpers.TextUtils;
 import org.apache.rat.utils.DefaultLog;
 import org.apache.rat.utils.Log.Level;
-import org.apache.rat.utils.ExtendedIterator;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.params.provider.Arguments;
 
@@ -204,9 +204,11 @@ public abstract class AbstractOptionsProvider {
     /* tests to be implemented */
     protected abstract void helpTest();
 
+    /** Displayd the option and value under test */
     private String displayArgAndName(Option option, String fname) {
         return String.format("%s %s", option.getLongOpt(), fname);
     }
+
     // exclude tests
     private void execExcludeTest(Option option, String[] args) {
         String[] notExcluded = {"notbaz", "well._afile"};
@@ -275,17 +277,22 @@ public abstract class AbstractOptionsProvider {
                 "**/fish", "*_fish",
                 "# some colorful directories",
                 "red/", "blue/*/"};
-        String[] notExcluded = {"thingone", "dir/fish_two"};
-        String[] excluded = {"thingtwo", "dir/fish", "red/fish", "blue/fish"};
+
+        String[] notExcluded = {"thingone", "dir/fish_two", "some/thingone", "blue/fish/dory" };
+        String[] excluded = {"thingtwo", "some/things", "dir/fish", "red/fish", "blue/fish", "some/fish", "another/red_fish"};
 
         writeFile(".gitignore", Arrays.asList(lines));
+        File dir = new File(baseDir, "red");
+        dir.mkdirs();
+        dir = new File(baseDir, "blue");
+        dir = new File(dir, "fish");
+        dir.mkdirs();
 
-        List<String> expected = ExtendedIterator.create(Arrays.asList("thing*", "**/fish", "*_fish", "red/**", "blue/*/**").iterator())
-                .map(s -> new File(baseDir, s).getPath()).addTo(new ArrayList<>());
-        expected.add(0, "!" + new File(baseDir, "thingone").getPath());
+
         try {
             ReportConfiguration config = generateConfig(ImmutablePair.of(option, args));
             DocumentNameMatcher excluder = config.getDocumentExcluder(baseName());
+            DocumentNameMatcherTest.decompose(excluder, mkDocName("thingone"));
             for (String fname : excluded) {
                 assertThat(excluder.matches(mkDocName(fname))).as(() -> displayArgAndName(option, fname)).isFalse();
             }

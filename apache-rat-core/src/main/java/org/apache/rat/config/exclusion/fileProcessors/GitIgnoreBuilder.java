@@ -20,15 +20,8 @@ package org.apache.rat.config.exclusion.fileProcessors;
 
 import java.io.File;
 
-import java.io.FileFilter;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
-import java.util.SortedMap;
-import java.util.TreeMap;
 import java.util.function.Consumer;
-import org.apache.commons.io.filefilter.DirectoryFileFilter;
 import org.apache.rat.config.exclusion.ExclusionUtils;
 import org.apache.rat.config.exclusion.MatcherSet;
 import org.apache.rat.config.exclusion.plexus.MatchPatterns;
@@ -41,78 +34,18 @@ import static org.apache.rat.config.exclusion.ExclusionUtils.NEGATION_PREFIX;
  * Processes the .gitignore file.
  * @see <a href='https://git-scm.com/docs/gitignore'>.gitignore documentation</a>
  */
-public class GitIgnoreBuilder extends AbstractBuilder {
-    // create a list of levels that a list of processors at that level.
-    // will return a custom matcher that from an overridden MatcherSet.customDocumentNameMatchers method
-    // build LevelMatcher as a system that returns Include, Exclude or no status for each check.
-    // put the level matcher in an array with other level matchers at the specific level below the root
-    // When searching start at the lowest level and work up the tree.
-
+public class GitIgnoreBuilder extends AbstractFileProcessorBuilder {
     private static final String IGNORE_FILE = ".gitignore";
     private static final String COMMENT_PREFIX = "#";
     private static final String ESCAPED_COMMENT = "\\#";
     private static final String ESCAPED_NEGATION = "\\!";
     private static final String SLASH = "/";
 
-    private SortedMap<Integer, LevelBuilder> levelBuilders = new TreeMap<>();
-
-
     /**
      * Constructs a file processor that processes a .gitignore file and ignores any lines starting with "#".
      */
     public GitIgnoreBuilder() {
-        super(IGNORE_FILE, COMMENT_PREFIX);
-    }
-
-    /**
-     * Process the directory tree looking for files that match the filter. Process any matching file and return
-     * a list of fully qualified patterns.
-     * @param directory The name of the directory to process.
-     * @param fileFilter the filter to detect processable files with.
-     * @return the list of fully qualified file patterns.
-     */
-    protected void checkDirectory(final DocumentName directory, final FileFilter fileFilter) {
-        checkDirectory(0, directory, fileFilter);
-        List<Integer> keys = new ArrayList<>(levelBuilders.keySet());
-        keys.sort( (a, b) -> -1 * a.compareTo(b));
-        for (int level : keys) {
-            LevelBuilder levelBuilder  = levelBuilders.get(level);
-            MatcherSet fileProcessor = levelBuilder.build(directory);
-            fileProcessor.excludes().ifPresent(this::addExcluded);
-            fileProcessor.includes().ifPresent(this::addIncluded);
-        }
-    }
-
-    private void checkDirectory(final int level, final DocumentName directory, final FileFilter fileFilter) {
-        File dirFile = new File(directory.getName());
-        for (File f : listFiles(dirFile, fileFilter)) {
-            LevelBuilder levelBuilder = levelBuilders.computeIfAbsent(level, LevelBuilder::new);
-            DocumentName dirBasedName = DocumentName.builder(f).setBaseName(directory.getBaseName()).build();
-            levelBuilder.process(dirBasedName, DocumentName.builder(f).setBaseName(directory.getName()).build());
-        }
-        for (File dir : listFiles(dirFile, DirectoryFileFilter.DIRECTORY)) {
-            checkDirectory(level + 1, DocumentName.builder(dir).setBaseName(directory.getBaseName()).build(), fileFilter);
-        }
-    }
-    /**
-     * package private for testing.
-     * @return the included DocumentNameMatcher.
-     */
-    DocumentNameMatcher getIncluded() {
-        return included;
-    }
-
-    /**
-     * package private for testing.
-     * @return the excluded DocumentNameMatcher.
-     */
-    DocumentNameMatcher getExcluded() {
-        return excluded;
-    }
-
-    @Override
-    public Optional<String> modifyEntry(final DocumentName documentName, final String entry) {
-        return modifyEntry(documentName, entry, this::addIncluded, this::addExcluded);
+        super(IGNORE_FILE, COMMENT_PREFIX, true);
     }
 
     /**
@@ -123,12 +56,10 @@ public class GitIgnoreBuilder extends AbstractBuilder {
      * the entry is placed in the exclude list and the name of the check returned.
      * @param documentName The name of the document being processed.
      * @param entry The entry from the document
-     * @param include A consumer to accept the included DocumentNameMatchers.
-     * @param exclude A consumer to accept the excluded DocumentNameMatchers.
      * @return and Optional containing the name of the matcher.
      */
-    private static Optional<String> modifyEntry(final DocumentName documentName, final String entry, Consumer<DocumentNameMatcher> include,
-                                                Consumer<DocumentNameMatcher> exclude) {
+    @Override
+    protected Optional<String> modifyEntry(final Consumer<MatcherSet> matcherSetConsumer, final DocumentName documentName, final String entry) {
         // An optional prefix "!" which negates the pattern;
         boolean prefix = entry.startsWith(NEGATION_PREFIX);
         String pattern = prefix || entry.startsWith(ESCAPED_COMMENT) || entry.startsWith(ESCAPED_NEGATION) ?
@@ -154,33 +85,16 @@ public class GitIgnoreBuilder extends AbstractBuilder {
                     .build();
             DocumentNameMatcher matcher = DocumentNameMatcher.and(new DocumentNameMatcher("isDirectory", File::isDirectory),
                     new DocumentNameMatcher(name, MatchPatterns.from(matcherPattern.localized(SLASH))));
+
+            MatcherSet.Builder builder = new MatcherSet.Builder();
             if (prefix) {
-                exclude.accept(matcher);
+                builder.addIncluded(matcher);
             } else {
-                include.accept(matcher);
+                builder.addExcluded(matcher);
             }
+            matcherSetConsumer.accept(builder.build());
             return Optional.empty();
         }
         return Optional.of(prefix ? NEGATION_PREFIX + pattern : pattern);
-    }
-
-    private static class LevelBuilder extends AbstractBuilder {
-        LevelBuilder(int level) {
-            super(IGNORE_FILE+"-"+level, COMMENT_PREFIX);
-        }
-
-        public Optional<String> modifyEntry(final DocumentName documentName, final String entry) {
-            return GitIgnoreBuilder.modifyEntry(documentName, entry, this::addIncluded, this::addExcluded);
-        }
-
-        public void process(DocumentName directory, DocumentName documentName) {
-            List<String> iterable = new ArrayList<>();
-            ExclusionUtils.asIterator(new File(documentName.getName()), commentFilter)
-                    .map(entry -> modifyEntry(documentName, entry).orElse(null))
-                    .filter(Objects::nonNull)
-                    .map(entry -> ExclusionUtils.localizePattern(documentName, entry))
-                    .forEachRemaining(iterable::add);
-            segregateProcessResult(directory, iterable);
-        }
     }
 }
