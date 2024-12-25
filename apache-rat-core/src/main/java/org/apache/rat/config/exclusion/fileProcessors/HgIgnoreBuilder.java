@@ -81,7 +81,7 @@ public final class  HgIgnoreBuilder extends AbstractFileProcessorBuilder {
             return Optional.of(format(REGEX_FMT, pattern));
         } else {
             if (entry.startsWith("*")) {
-                return Optional.of("**/"+entry);
+                return Optional.of("**/" + entry);
             }
         }
         return Optional.of(entry);

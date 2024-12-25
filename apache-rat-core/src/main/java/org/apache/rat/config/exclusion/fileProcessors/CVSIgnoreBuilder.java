@@ -21,9 +21,9 @@ package org.apache.rat.config.exclusion.fileProcessors;
 import java.io.File;
 import java.util.HashSet;
 import java.util.Iterator;
-
 import java.util.Set;
 import java.util.function.Consumer;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.rat.config.exclusion.ExclusionUtils;
 import org.apache.rat.config.exclusion.MatcherSet;

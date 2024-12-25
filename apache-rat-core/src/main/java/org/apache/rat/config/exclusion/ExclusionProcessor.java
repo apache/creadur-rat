@@ -24,8 +24,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
-
 import java.util.stream.Collectors;
+
 import org.apache.rat.document.DocumentName;
 import org.apache.rat.document.DocumentNameMatcher;
 import org.apache.rat.utils.DefaultLog;
@@ -222,14 +222,15 @@ public class ExclusionProcessor {
      * @param nameBuilder The name builder for the pattern.  File names are resolved against the generated name.
      * @param matcherBuilder the MatcherSet.Builder to add the patterns to.
      */
-    private void extractPatterns(DocumentName.Builder nameBuilder, MatcherSet.Builder matcherBuilder) {
+    private void extractPatterns(final DocumentName.Builder nameBuilder, final MatcherSet.Builder matcherBuilder) {
         DocumentName name = nameBuilder.setName("Patterns").build();
         if (!excludedPatterns.isEmpty()) {
-            matcherBuilder.addExcluded(name, excludedPatterns.stream().map(s -> ExclusionUtils.localizePattern(name.getBaseDocumentName(), s)).collect(Collectors.toSet()));
+            matcherBuilder.addExcluded(name, excludedPatterns.stream()
+                    .map(s -> ExclusionUtils.localizePattern(name.getBaseDocumentName(), s)).collect(Collectors.toSet()));
         }
         if (!includedPatterns.isEmpty()) {
-
-            matcherBuilder.addIncluded(name, includedPatterns.stream().map(s -> ExclusionUtils.localizePattern(name.getBaseDocumentName(), s)).collect(Collectors.toSet()));
+            matcherBuilder.addIncluded(name, includedPatterns.stream()
+                    .map(s -> ExclusionUtils.localizePattern(name.getBaseDocumentName(), s)).collect(Collectors.toSet()));
         }
     }
 

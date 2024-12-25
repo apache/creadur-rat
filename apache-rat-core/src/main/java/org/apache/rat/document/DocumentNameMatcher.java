@@ -45,7 +45,7 @@ public final class DocumentNameMatcher {
     private final Predicate<DocumentName> predicate;
     /** The name of this matcher. */
     private final String name;
-
+    /** {@code true} this this matcher is a collection of matchers */
     private final boolean isCollection;
 
     /**
@@ -96,7 +96,7 @@ public final class DocumentNameMatcher {
      * @param dirSeparator the directory separator
      * @return the tokenized name.
      */
-    private static char[][] tokenize(String name, String dirSeparator) {
+    private static char[][] tokenize(final String name, final String dirSeparator) {
         String[] tokenizedName = MatchPattern.tokenizePathToString(name, dirSeparator);
         char[][] tokenizedNameChar = new char[tokenizedName.length][];
         for (int i = 0; i < tokenizedName.length; i++) {
@@ -184,7 +184,8 @@ public final class DocumentNameMatcher {
         return String.join(", ", children);
     }
 
-    private static Optional<DocumentNameMatcher> standardCollectionCheck(Collection<DocumentNameMatcher> matchers, DocumentNameMatcher override) {
+    private static Optional<DocumentNameMatcher> standardCollectionCheck(final Collection<DocumentNameMatcher> matchers,
+                                                                         final DocumentNameMatcher override) {
         if (matchers.isEmpty()) {
             throw new ConfigurationException("Empty matcher collection");
         }
@@ -213,7 +214,7 @@ public final class DocumentNameMatcher {
         for (DocumentNameMatcher matcher : matchers) {
             // check for nested or
             if (matcher.predicate instanceof Or) {
-                ((Or)matcher.predicate).getMatchers().forEach(workingSet::add);
+                ((Or) matcher.predicate).getMatchers().forEach(workingSet::add);
             } else {
                 workingSet.add(matcher);
             }
@@ -247,7 +248,7 @@ public final class DocumentNameMatcher {
         for (DocumentNameMatcher matcher : matchers) {
             //  check for nexted And
             if (matcher.predicate instanceof And) {
-                ((And)matcher.predicate).getMatchers().forEach(workingSet::add);
+                ((And) matcher.predicate).getMatchers().forEach(workingSet::add);
             } else {
                 workingSet.add(matcher);
             }
@@ -292,13 +293,21 @@ public final class DocumentNameMatcher {
      */
     // package private for testing access
     abstract static class CollectionPredicate implements Predicate<DocumentName> {
-        // package private for testing acess.
-        private  final Iterable<DocumentNameMatcher> matchers;
+        /** The collection for matchers that make up this predicate */
+        private final Iterable<DocumentNameMatcher> matchers;
 
-        protected CollectionPredicate(Iterable<DocumentNameMatcher> matchers) {
+        /**
+         * Constructs a collecton predicate from the collection of matchers
+         * @param matchers the colleciton of matchers to use.
+         */
+        protected CollectionPredicate(final Iterable<DocumentNameMatcher> matchers) {
             this.matchers = matchers;
         }
 
+        /**
+         * Gets the internal matchers.
+         * @return an iterable over the internal matchers.
+         */
         public Iterable<DocumentNameMatcher> getMatchers() {
             return matchers;
         }
@@ -314,7 +323,7 @@ public final class DocumentNameMatcher {
         }
 
         @Override
-        public boolean test(DocumentName documentName) {
+        public boolean test(final DocumentName documentName) {
             for (DocumentNameMatcher matcher : getMatchers()) {
                 if (!matcher.matches(documentName)) {
                     return false;
@@ -334,7 +343,7 @@ public final class DocumentNameMatcher {
         }
 
         @Override
-        public boolean test(DocumentName documentName) {
+        public boolean test(final DocumentName documentName) {
             for (DocumentNameMatcher matcher : getMatchers()) {
                 if (matcher.matches(documentName)) {
                     return true;

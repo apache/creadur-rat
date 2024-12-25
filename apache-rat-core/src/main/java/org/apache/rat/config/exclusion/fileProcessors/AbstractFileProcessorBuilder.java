@@ -21,7 +21,6 @@ package org.apache.rat.config.exclusion.fileProcessors;
 import java.io.File;
 import java.io.FileFilter;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -33,6 +32,7 @@ import java.util.TreeMap;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+
 import org.apache.commons.io.filefilter.DirectoryFileFilter;
 import org.apache.commons.io.filefilter.NameFileFilter;
 import org.apache.commons.lang3.StringUtils;
@@ -44,24 +44,32 @@ import org.apache.rat.document.DocumentName;
 import org.apache.rat.document.DocumentNameMatcher;
 
 /**
- *     // create a list of levels that a list of processors at that level.
- *     // will return a custom matcher that from an overridden MatcherSet.customDocumentNameMatchers method
- *     // build LevelMatcher as a system that returns Include, Exclude or no status for each check.
- *     // put the level matcher in an array with other level matchers at the specific level below the root
- *     // When searching start at the lowest level and work up the tree.
+ * Creates a List of {@link MatcherSet}s that represent the inclusions and exclusions of this file processor.
+ * <p>
+ *     By default this processor:
+ * </p>
+ * <ul>
+ *     <li>Creates a list of levels that correspond the depth of the directories where the specific include/exclude file is located.
+ *     Directory depth is relative to the initially discovered include/exclude file.</li>
+ *     <li>A MatcherSet is created for each include/exclude file located, and the MatcherSet is added to the proper level.</li>
+ *     <li>During the build:
+ *     <ul>
+ *         <li>Each level creates a MatcherSet for the level.</li>
+ *         <li>The MatcherSet for each level is returned in reverse order (deepest first).  This ensures that most include/exclude
+ *         files will be properly handled.</li>
+ *     </ul></li>
+ *  </ul>
  */
 public abstract class AbstractFileProcessorBuilder {
     /** A String format pattern to print a regex string */
     protected static final String REGEX_FMT = "%%regex[%s]";
-
     /** The name of the file being processed */
     protected final String fileName;
-
     /** The predicate that will return {@code false} for any comment line in the file. */
     protected final Predicate<String> commentFilter;
-
+    /** the collection of level builders */
     private final SortedMap<Integer, LevelBuilder> levelBuilders;
-
+    /** if {@code true} then the processor file name will be included in the list of files to ignore */
     private final boolean includeProcessorFile;
 
     /**
@@ -94,12 +102,22 @@ public abstract class AbstractFileProcessorBuilder {
         this.includeProcessorFile = includeProcessorFile;
     }
 
-    private List<MatcherSet> createMatcherSetList(DocumentName dir) {
+    /**
+     * Creates the MatcherSet from each level and returns them in a list in reverse order.
+     * @return a list of MatcherSet
+     */
+
+    private List<MatcherSet> createMatcherSetList() {
         List<Integer> keys = new ArrayList<>(levelBuilders.keySet());
         keys.sort((a, b) -> -1 * Integer.compare(a, b));
-        return keys.stream().map( key -> levelBuilders.get(key).asMatcherSet(dir)).collect(Collectors.toList());
+        return keys.stream().map(key -> levelBuilders.get(key).asMatcherSet()).collect(Collectors.toList());
     }
 
+    /**
+     * Builder the list of MatcherSet that define the inclusions/exclusions for the file processor.
+     * @param dir the directory agains which name resolution should be made.
+     * @return the List of MatcherSet that represent this file processor.
+     */
     public final List<MatcherSet> build(final DocumentName dir) {
         if (includeProcessorFile) {
             String name = String.format("**/%s", fileName);
@@ -107,18 +125,14 @@ public abstract class AbstractFileProcessorBuilder {
             MatcherSet matcherSet = new MatcherSet.Builder()
                     .addExcluded(new DocumentNameMatcher(name, MatchPatterns.from(Collections.singletonList(pattern)), dir))
             .build();
-            LevelBuilder levelBuilder = levelBuilders.computeIfAbsent(0, LevelBuilder::new);
+            LevelBuilder levelBuilder = levelBuilders.computeIfAbsent(0, k -> new LevelBuilder());
             levelBuilder.add(matcherSet);
         }
 
         checkDirectory(0, dir, new NameFileFilter(fileName));
 
-        List<MatcherSet> result = null;
-        if (levelBuilders.size() == 1) {
-            result = Collections.singletonList(levelBuilders.get(0).asMatcherSet(dir));
-        } else {
-            result = createMatcherSetList(dir);
-        }
+        List<MatcherSet> result = levelBuilders.size() == 1 ? Collections.singletonList(levelBuilders.get(0).asMatcherSet())
+            : createMatcherSetList();
         levelBuilders.clear();
         return result;
     }
@@ -153,7 +167,7 @@ public abstract class AbstractFileProcessorBuilder {
     private void checkDirectory(final int level, final DocumentName directory, final FileFilter fileFilter) {
         File dirFile = new File(directory.getName());
         for (File f : listFiles(dirFile, fileFilter)) {
-            LevelBuilder levelBuilder = levelBuilders.computeIfAbsent(level, LevelBuilder::new);
+            LevelBuilder levelBuilder = levelBuilders.computeIfAbsent(level, k -> new LevelBuilder());
             DocumentName dirBasedName = DocumentName.builder(f).setBaseName(directory.getBaseName()).build();
             levelBuilder.add(process(levelBuilder::add, dirBasedName, DocumentName.builder(f).setBaseName(directory.getName()).build()));
         }
@@ -184,51 +198,29 @@ public abstract class AbstractFileProcessorBuilder {
         return result == null ? new File[0] : result;
     }
 
-    protected static class FileProcessorPredicate implements Predicate<DocumentName> {
-        private final Collection<MatcherSet> matcherSets;
-        FileProcessorPredicate(Collection<MatcherSet> matcherSets) {
-            this.matcherSets = matcherSets;
-        }
-
-        public Collection<MatcherSet> getMatcherSets() {
-            return matcherSets;
-        }
-
-        @Override
-        public boolean test(DocumentName documentName) {
-            for (MatcherSet matcherSet : matcherSets) {
-                if (matcherSet.includes().orElse(DocumentNameMatcher.MATCHES_NONE).matches(documentName)) {
-                    return true;
-                }
-                if (matcherSet.excludes().orElse(DocumentNameMatcher.MATCHES_NONE).matches(documentName)) {
-                    return false;
-                }
-            }
-            return true;
-        }
-    }
-
-    static class LevelBuilder {
+    /**
+     * Manages the merging of {@link MatcherSet}s for the specified level.
+     */
+    private static class LevelBuilder {
         /**
          * The list of MatcherSets that this builder produced.
          */
-        private final MatcherSet.Builder builder;
+        private final MatcherSet.Builder builder = new MatcherSet.Builder();
 
-        public LevelBuilder(Integer integer) {
-            int level = integer;
-            builder = new MatcherSet.Builder();
+        /**
+         * Adds a MatcherSet to this level.
+         * @param matcherSet the matcher set to add.
+         */
+        public void add(final MatcherSet matcherSet) {
+            matcherSet.includes().ifPresent(builder::addIncluded);
+            matcherSet.excludes().ifPresent(builder::addExcluded);
         }
 
-        public void add(MatcherSet matcherSet) {
-            if (matcherSet.includes().isPresent()) {
-                builder.addIncluded(matcherSet.includes().get());
-            }
-            if (matcherSet.excludes().isPresent()) {
-                builder.addExcluded(matcherSet.excludes().get());
-            }
-        }
-
-        public MatcherSet asMatcherSet(DocumentName dir) {
+        /**
+         * Constructs the MatcherSet for this level.
+         * @return the MatcherSet.
+         */
+        public MatcherSet asMatcherSet() {
             return builder.build();
         }
     }

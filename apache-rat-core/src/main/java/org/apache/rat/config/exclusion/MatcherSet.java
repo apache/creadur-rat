@@ -18,19 +18,16 @@
  */
 package org.apache.rat.config.exclusion;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-
 import java.util.Set;
-import java.util.function.Predicate;
+
 import org.apache.rat.config.exclusion.plexus.MatchPattern;
 import org.apache.rat.config.exclusion.plexus.MatchPatterns;
 import org.apache.rat.config.exclusion.plexus.SelectorUtils;
 import org.apache.rat.document.DocumentName;
 import org.apache.rat.document.DocumentNameMatcher;
 
-import static org.apache.rat.document.DocumentNameMatcher.MATCHES_ALL;
 import static org.apache.rat.document.DocumentNameMatcher.MATCHES_NONE;
 
 /**
@@ -63,7 +60,7 @@ public interface MatcherSet {
 
     /**
      * A MatcherSet that assumes the files contain the already formatted strings and just need to be
-     * localized for the fileName.
+     * localized for the fileName.  When {@link #build()} is called the builder is reset to the initial state.
      */
     class Builder {
 
@@ -92,7 +89,14 @@ public interface MatcherSet {
         public Builder() {
         }
 
-        public Builder addIncluded(DocumentName fromDocument, Set<String> names) {
+        /**
+         * Adds included file names from the specified document.  File names are resolved relative to the directory
+         * of the {@code fromDocument}.
+         * @param fromDocument the document the names were read from.
+         * @param names the names that were read from the document.
+         * @return this
+         */
+        public Builder addIncluded(final DocumentName fromDocument, final Set<String> names) {
             if (!names.isEmpty()) {
                 String name = String.format("'included %s'", fromDocument.localized("/").substring(1));
                 addIncluded(new DocumentNameMatcher(name, MatchPatterns.from(names), fromDocument.getBaseDocumentName()));
@@ -100,7 +104,14 @@ public interface MatcherSet {
             return this;
         }
 
-        public Builder addExcluded(DocumentName fromDocument, Set<String> names) {
+        /**
+         * Adds excluded file names from the specified document.  File names are resolved relative to the directory
+         * of the {@code fromDocument}.
+         * @param fromDocument the document the names were read from.
+         * @param names the names that were read from the document.
+         * @return this
+         */
+        public Builder addExcluded(final DocumentName fromDocument, final Set<String> names) {
             if (!names.isEmpty()) {
                 String name = String.format("'excluded %s'", fromDocument.localized("/").substring(1));
                 addExcluded(new DocumentNameMatcher(name, MatchPatterns.from(names), fromDocument.getBaseDocumentName()));
@@ -108,20 +119,35 @@ public interface MatcherSet {
             return this;
         }
 
-        public Builder addIncluded(DocumentNameMatcher matcher) {
+
+        /**
+         * Adds specified DocumentNameMatcher to the included matchers.
+         * @param matcher A document name matcher to add to the included set.
+         * @return this
+         */
+        public Builder addIncluded(final DocumentNameMatcher matcher) {
             this.included = this.included == null ? matcher : DocumentNameMatcher.or(this.included, matcher);
             return this;
         }
 
-        public Builder addExcluded(DocumentNameMatcher matcher) {
+        /**
+         * Adds specified DocumentNameMatcher to the excluded matchers.
+         * @param matcher A document name matcher to add to the excluded set.
+         * @return this
+         */
+        public Builder addExcluded(final DocumentNameMatcher matcher) {
             this.excluded = this.excluded == null ? matcher : DocumentNameMatcher.or(this.excluded, matcher);
             return this;
         }
 
+        /**
+         * Builds a MatcherSet.  When {@link #build()} is called the builder is reset to the initial state.
+         * @return the MatcherSet based upon the included and excluded matchers.
+         */
         public MatcherSet build() {
             MatcherSet result = new MatcherSet() {
-                final DocumentNameMatcher myIncluded = included;
-                final DocumentNameMatcher myExcluded = excluded;
+                private final DocumentNameMatcher myIncluded = included;
+                private final DocumentNameMatcher myExcluded = excluded;
 
                 @Override
                 public Optional<DocumentNameMatcher> includes() {

@@ -19,9 +19,9 @@
 package org.apache.rat.config.exclusion.fileProcessors;
 
 import java.io.File;
-
 import java.util.Optional;
 import java.util.function.Consumer;
+
 import org.apache.rat.config.exclusion.ExclusionUtils;
 import org.apache.rat.config.exclusion.MatcherSet;
 import org.apache.rat.config.exclusion.plexus.MatchPatterns;
@@ -35,10 +35,15 @@ import static org.apache.rat.config.exclusion.ExclusionUtils.NEGATION_PREFIX;
  * @see <a href='https://git-scm.com/docs/gitignore'>.gitignore documentation</a>
  */
 public class GitIgnoreBuilder extends AbstractFileProcessorBuilder {
+    /** The name of the file we read from */
     private static final String IGNORE_FILE = ".gitignore";
+    /** The comment prefix */
     private static final String COMMENT_PREFIX = "#";
+    /** An escaped comment in the .gitignore file.  (Not a comment) */
     private static final String ESCAPED_COMMENT = "\\#";
+    /** An escaped negation in the .gitignore file. (Not a negation) */
     private static final String ESCAPED_NEGATION = "\\!";
+    /** The slash string */
     private static final String SLASH = "/";
 
     /**
