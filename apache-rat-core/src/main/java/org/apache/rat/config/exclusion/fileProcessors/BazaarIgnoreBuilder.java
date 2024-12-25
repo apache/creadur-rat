@@ -20,6 +20,7 @@ package org.apache.rat.config.exclusion.fileProcessors;
 
 import java.util.Optional;
 import java.util.function.Consumer;
+
 import org.apache.rat.config.exclusion.MatcherSet;
 import org.apache.rat.document.DocumentName;
 

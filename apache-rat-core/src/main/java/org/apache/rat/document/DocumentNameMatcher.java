@@ -95,7 +95,7 @@ public final class DocumentNameMatcher {
      * @param dirSeparator the directory separator.
      * @return the tokenized name.
      */
-    private static char[][] tokenize(String name, String dirSeparator) {
+    private static char[][] tokenize(final String name, final String dirSeparator) {
         String[] tokenizedName = MatchPattern.tokenizePathToString(name, dirSeparator);
         char[][] tokenizedNameChar = new char[tokenizedName.length][];
         for (int i = 0; i < tokenizedName.length; i++) {
