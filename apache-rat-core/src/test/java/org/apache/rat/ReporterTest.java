@@ -332,7 +332,7 @@ public class ReporterTest {
         configuration.setFrom(defaults);
         DocumentName documentName = DocumentName.builder(elementsFile).build();
         configuration.addSource(new DirectoryWalker(new FileDocument(documentName, elementsFile,
-                configuration.getNameMatcher(documentName))));
+                configuration.getDocumentExcluder(documentName))));
         return configuration;
     }
 

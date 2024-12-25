@@ -125,30 +125,10 @@ assertThat(ignoredFiles).isEmpty()
 
 // Document types
 XmlUtils.assertAttributes(document, xPath, "/rat-report/statistics/documentType[@name='IGNORED']",
-        mapOf("count", "6" ))
+        mapOf("count", "7" ))
 
 XmlUtils.assertAttributes(document, xPath, "/rat-report/statistics/documentType[@name='NOTICE']",
         mapOf("count", "1" ))
 
 XmlUtils.assertAttributes(document, xPath, "/rat-report/statistics/documentType[@name='STANDARD']",
-        mapOf("count", "6" ))
-
-/*
-TextUtils.assertPatternInTarget("^  Approved:\\s+8 ", content)
-TextUtils.assertPatternInTarget("^  Archives:\\s+1 ", content)
-TextUtils.assertPatternInTarget("^  Binaries:\\s+2 ", content)
-TextUtils.assertPatternInTarget("^  Document types:\\s+5 ", content)
-TextUtils.assertPatternInTarget("^  Ignored:\\s+1 ", content)
-TextUtils.assertPatternInTarget("^  License categories:\\s+4 ", content)
-TextUtils.assertPatternInTarget("^  License names:\\s+5", content)
-TextUtils.assertPatternInTarget("^  Notices:\\s+2 ", content)
-TextUtils.assertPatternInTarget("^  Standards:\\s+8 ", content)
-TextUtils.assertPatternInTarget("^  Unapproved:\\s+2 ", content)
-TextUtils.assertPatternInTarget("^  Unknown:\\s+2 ", content)
-
-logOutput = new File(args[1])
-log = logOutput.text
-
-TextUtils.assertPatternNotInTarget("^ERROR:", log)
-TextUtils.assertPatternNotInTarget("^WARN:", log)
-*/
+        mapOf("count", "3" ))

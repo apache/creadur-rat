@@ -18,7 +18,10 @@
  */
 package org.apache.rat.config.exclusion.fileProcessors;
 
+import java.util.List;
+import org.apache.rat.config.exclusion.MatcherSet;
 import org.apache.rat.document.DocumentName;
+import org.apache.rat.document.DocumentNameMatcher;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.condition.EnabledOnOs;
@@ -30,6 +33,12 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
+/**
+ * The base class for FileProcessor builder tests.
+ * Provides supporting methods for creating test files and for validating results.
+ */
 public class AbstractIgnoreBuilderTest {
 
     @TempDir
@@ -51,6 +60,13 @@ public class AbstractIgnoreBuilderTest {
         System.gc();
     }
 
+    /**
+     * Writes a text file to the baseDir directory.
+     * @param name the name of the file.
+     * @param lines the lines to write to the file.
+     * @return the File that was written.
+     * @throws IOException if file cannot be created.
+     */
     protected File writeFile(String name, Iterable<String> lines) throws IOException {
         File file = new File(baseDir, name);
         try (PrintWriter writer = new PrintWriter(new FileWriter(file))) {
@@ -59,4 +75,32 @@ public class AbstractIgnoreBuilderTest {
         return file;
     }
 
+    /**
+     * Asserts the correctness of the exlcuder.  An excluder returns false if the document name is matched.
+     * @param builder An FileProcessorBuilder that will create the excluder.
+     * @param matching the matching strings.
+     * @param notMatching the non-matching strings.
+     */
+    protected void assertCorrect(AbstractFileProcessorBuilder builder, Iterable<String> matching, Iterable<String> notMatching) {
+        assertCorrect(builder.build(baseName), baseName, matching, notMatching);
+    }
+
+    /**
+     * Asserts the correctness of the excluder.  An excluder returns false if the document name is matched.
+     * @param matcherSets the list of matchers to create the DocumentNameMatcher from.
+     * @param baseDir the base directory for the excluder test.
+     * @param matching the matching strings.
+     * @param notMatching the non-matching strings.
+     */
+    protected void assertCorrect(List<MatcherSet> matcherSets, DocumentName baseDir, Iterable<String> matching, Iterable<String> notMatching) {
+        DocumentNameMatcher excluder = MatcherSet.merge(matcherSets).createMatcher();
+        for (String name : matching) {
+            DocumentName docName = baseDir.resolve(name);
+            assertThat(excluder.matches(docName)).as(docName.getName()).isFalse();
+        }
+        for (String name : notMatching) {
+            DocumentName docName = baseDir.resolve(name);
+            assertThat(excluder.matches(docName)).as(docName.getName()).isTrue();
+        }
+    }
 }

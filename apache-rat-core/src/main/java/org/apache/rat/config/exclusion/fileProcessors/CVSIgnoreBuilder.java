@@ -23,6 +23,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 
 import java.util.Set;
+import java.util.function.Consumer;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.rat.config.exclusion.ExclusionUtils;
 import org.apache.rat.config.exclusion.MatcherSet;
@@ -30,17 +31,21 @@ import org.apache.rat.document.DocumentName;
 
 /**
  * A file processor for the {@code .csvignore} file.
+ * @see <a href="https://www.gnu.org/software/trans-coord/manual/cvs/html_node/cvsignore.html#cvsignore">Ignoring files via cvsignore</a>
+ * <p>
+ *     The patterns found in .cvsignore are only valid for the directory that contains them, not for any sub-directories.
+ * </p>
  */
-public class CVSIgnoreBuilder extends AbstractBuilder {
+public class CVSIgnoreBuilder extends AbstractFileProcessorBuilder {
     /**
      * The constructor.
      */
     public CVSIgnoreBuilder() {
-        super(".cvsignore", (String) null);
+        super(".cvsignore", (String) null, true);
     }
 
     @Override
-    protected void process(final DocumentName documentName) {
+    protected MatcherSet process(final Consumer<MatcherSet> matcherSetConsumer, final DocumentName dirBasedName, final DocumentName documentName) {
         final File dir = new File(documentName.getName());
         Set<String> result = new HashSet<>();
         Iterator<String> iter = ExclusionUtils.asIterator(dir, StringUtils::isNotBlank);
@@ -53,6 +58,6 @@ public class CVSIgnoreBuilder extends AbstractBuilder {
                 }
             }
         }
-        addExcluded(documentName, result);
+        return new MatcherSet.Builder().addExcluded(documentName, result).build();
     }
 }
