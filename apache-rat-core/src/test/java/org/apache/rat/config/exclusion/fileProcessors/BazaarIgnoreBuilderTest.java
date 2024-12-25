@@ -18,17 +18,12 @@
  */
 package org.apache.rat.config.exclusion.fileProcessors;
 
-import java.util.ArrayList;
-import org.apache.rat.config.exclusion.MatcherSet;
 import org.apache.rat.document.DocumentName;
 import org.apache.rat.document.DocumentNameMatcher;
-import org.apache.rat.utils.ExtendedIterator;
 import org.junit.jupiter.api.Test;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -41,19 +36,12 @@ public class BazaarIgnoreBuilderTest extends AbstractIgnoreBuilderTest {
                 "# a comment", "*.elc", "*.pyc", "*~", System.lineSeparator(),
                 "# switch to regexp syntax.",  "RE:^\\.pc" };
 
-        List<String> expected = Arrays.asList("test.elc", "test.pyc", "test.thing~", ".pc");
+        List<String> matching = Arrays.asList("test.elc", "test.pyc", "test.thing~", ".pc");
+        List<String> notMatching = Arrays.asList("test.foo", ".pc/stuff", "subidr/test.elc");
 
         writeFile(".bzrignore", Arrays.asList(lines));
 
-        BazaarIgnoreBuilder processor = new BazaarIgnoreBuilder();
-        MatcherSet matcherSet = processor.build(baseName);
-        assertThat(matcherSet.excludes()).isPresent();
-        assertThat(matcherSet.includes()).isNotPresent();
-        DocumentNameMatcher matcher = matcherSet.excludes().orElseThrow(() -> new IllegalStateException("How?"));
-        for (String name : expected) {
-            DocumentName docName = baseName.resolve(name);
-            assertThat(matcher.matches(docName)).as(docName.getName()).isTrue();
-        }
+        assertCorrect(new BazaarIgnoreBuilder(), matching, notMatching);
     }
 
 }

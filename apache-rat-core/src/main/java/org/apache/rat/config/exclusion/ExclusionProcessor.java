@@ -25,7 +25,6 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
 
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import org.apache.rat.config.exclusion.plexus.MatchPatterns;
 import org.apache.rat.document.DocumentName;
@@ -34,8 +33,6 @@ import org.apache.rat.utils.DefaultLog;
 import org.apache.rat.utils.ExtendedIterator;
 
 import static java.lang.String.format;
-import static org.apache.rat.document.DocumentNameMatcher.MATCHES_ALL;
-import static org.apache.rat.document.DocumentNameMatcher.MATCHES_NONE;
 
 /**
  * Processes the include and exclude patterns and applies the result against a base directory
@@ -205,17 +202,16 @@ public class ExclusionProcessor {
             lastMatcherBaseDir = basedir;
 
             // add the file processors
-            final List<MatcherSet> fileProcessors = extractFileProcessors(basedir);
+            final List<MatcherSet> matchers = extractFileProcessors(basedir);
             final MatcherSet.Builder fromCommandLine = new MatcherSet.Builder();
             DocumentName.Builder nameBuilder = DocumentName.builder().setBaseName(basedir);
             extractPatterns(nameBuilder, fromCommandLine);
             extractCollectionPatterns(nameBuilder, fromCommandLine);
             extractCollectionMatchers(fromCommandLine);
             extractPaths(fromCommandLine);
+            matchers.add(fromCommandLine.build());
 
-            fileProcessors.add(fromCommandLine.build(basedir));
-
-            lastMatcher = createMatcher(fileProcessors);
+            lastMatcher = MatcherSet.merge(matchers).createMatcher();
         }
         return lastMatcher;
     }
@@ -228,9 +224,9 @@ public class ExclusionProcessor {
     private List<MatcherSet> extractFileProcessors(final DocumentName basedir) {
         final List<MatcherSet> fileProcessorList = new ArrayList<>();
         for (StandardCollection sc : fileProcessors) {
-            ExtendedIterator<MatcherSet> iter =  sc.fileProcessorBuilder().map(builder -> builder.build(basedir));
+            ExtendedIterator<List<MatcherSet>> iter =  sc.fileProcessorBuilder().map(builder -> builder.build(basedir));
             if (iter.hasNext()) {
-                iter.forEachRemaining(fileProcessorList::add);
+                iter.forEachRemaining(fileProcessorList::addAll);
             } else {
                 DefaultLog.getInstance().debug(String.format("%s does not have a fileProcessor.", sc));
             }
@@ -318,43 +314,6 @@ public class ExclusionProcessor {
                 DefaultLog.getInstance().info(format("Excluding path matcher %s", matcher));
                 matcherBuilder.addExcluded(matcher);
             }
-        }
-    }
-
-    private DocumentNameMatcher createMatcher(List<MatcherSet> fileProcessors) {
-
-        List<DocumentNameMatcher> includedList = new ArrayList<>();
-        List<DocumentNameMatcher> excludedList = new ArrayList<>();
-
-        for (MatcherSet processor : fileProcessors) {
-            if (processor.includes().isPresent()) {
-                includedList.add(processor.includes().get());
-            }
-            if (processor.excludes().isPresent()) {
-                excludedList.add(processor.excludes().get());
-            }
-        }
-
-        final DocumentNameMatcher included = includedList.isEmpty() ? MATCHES_NONE : DocumentNameMatcher.or(includedList);
-        final DocumentNameMatcher excluded = excludedList.isEmpty() ? MATCHES_NONE : DocumentNameMatcher.or(excludedList);
-
-        if (excluded == MATCHES_NONE) {
-            return (included == MATCHES_NONE) ? MATCHES_ALL : included;
-        } else {
-            if (included == MATCHES_NONE) {
-                return DocumentNameMatcher.not(excluded);
-            }
-            Predicate<DocumentName> pred = documentName -> {
-                if (included.matches(documentName)) {
-                    return true;
-                }
-                if (excluded.matches(documentName)) {
-                    return false;
-                }
-                return true;
-            };
-            final String name = DocumentNameMatcher.or(included, DocumentNameMatcher.not(excluded)).toString();
-            return new DocumentNameMatcher(name, pred);
         }
     }
 }

@@ -39,43 +39,26 @@ public class HgIgnoreBuilderTest extends AbstractIgnoreBuilderTest {
     @Test
     public void processExampleFileTest() throws IOException {
         String[] lines = {
-        "# use glob syntax.", "syntax: glob", "*.elc", "*.pyc", "*~", System.lineSeparator(),
+        "# use glob syntax.", "syntax: glob", "*.elc", "*.pyc", "*~", "*.c", System.lineSeparator(),
             "# switch to regexp syntax.", "syntax: regexp", "^\\.pc" };
 
-        List<String> expected = Arrays.asList("test.elc", "test.pyc", "test.thing~", ".pc");
+        List<String> matching = Arrays.asList("test.elc", "test.pyc", "subdir/test.pyc", "test.thing~", ".pc", "foo.c", "/subdir/foo.c" );
+        List<String> notMatching = Arrays.asList("test.foo", "test.thing~/subdir", ".pc/subdir");
 
         writeFile(".hgignore", Arrays.asList(lines));
 
-        HgIgnoreBuilder processor = new HgIgnoreBuilder();
-        MatcherSet matcherSet = processor.build(baseName);
-        assertThat(matcherSet.excludes()).isPresent();
-        assertThat(matcherSet.includes()).isNotPresent();
-        DocumentNameMatcher matcher = matcherSet.excludes().orElseThrow(() -> new IllegalStateException("How?"));
-        for (String name : expected) {
-            DocumentName docName = baseName.resolve(name);
-            assertThat(matcher.matches(docName)).as(docName.getName()).isTrue();
-        }
+        assertCorrect(new HgIgnoreBuilder(), matching, notMatching);
     }
 
     @Test
     public void processDefaultFileTest() throws IOException {
-        String[] lines = {"^[A-Z]*\\.txt", "[0-9]*\\.txt"};
+        String[] lines = {"^[A-Z]*\\.txt", "[0-9]+\\.txt"};
 
-        List<String> match = Arrays.asList("ABIGNAME.txt", "endsIn9.txt");
-        List<String> notMatch = Arrays.asList("asmallName.txt", "endsin.doc");
+        List<String> matching = Arrays.asList("ABIGNAME.txt", "endsIn9.txt");
+        List<String> notMatching = Arrays.asList("asmallName.txt", "endsin.doc");
 
         writeFile(".hgignore", Arrays.asList(lines));
 
-        HgIgnoreBuilder processor = new HgIgnoreBuilder();
-        MatcherSet matcherSet = processor.build(baseName);
-        DocumentNameMatcher matcher = matcherSet.excludes().orElseThrow(() -> new IllegalStateException("How?"));
-        for (String name : match) {
-            DocumentName docName = baseName.resolve(name);
-            assertThat(matcher.matches(docName)).as(docName.getName()).isTrue();
-        }
-        for (String name : notMatch) {
-            DocumentName docName = DocumentName.builder().setName(name).setBaseName(baseDir).build();
-            assertThat(matcher.matches(docName)).as(docName.getName()).isFalse();
-        }
+        assertCorrect(new HgIgnoreBuilder(), matching, notMatching);
     }
 }

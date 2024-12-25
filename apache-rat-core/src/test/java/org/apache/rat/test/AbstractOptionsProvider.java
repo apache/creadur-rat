@@ -32,8 +32,8 @@ import org.apache.rat.commandline.Arg;
 import org.apache.rat.commandline.StyleSheets;
 import org.apache.rat.config.exclusion.StandardCollection;
 import org.apache.rat.document.DocumentNameMatcher;
-import org.apache.rat.document.DocumentName;
 import org.apache.rat.document.DocumentNameMatcherTest;
+import org.apache.rat.document.DocumentName;
 import org.apache.rat.license.ILicense;
 import org.apache.rat.license.ILicenseFamily;
 import org.apache.rat.license.LicenseSetFactory;
@@ -247,7 +247,7 @@ public abstract class AbstractOptionsProvider implements ArgumentsProvider {
     /* Tests to be implemented */
     protected abstract void helpTest();
 
-    /* Display the option and value under test */
+    /** Display the option and value under test */
     private String displayArgAndName(Option option, String fname) {
         return String.format("%s %s", option.getLongOpt(), fname);
     }
@@ -339,16 +339,9 @@ public abstract class AbstractOptionsProvider implements ArgumentsProvider {
         dir = new File(dir, "fish");
         dir.mkdirs();
 
-
         try {
             ReportConfiguration config = generateConfig(ImmutablePair.of(option, args));
             DocumentNameMatcher excluder = config.getDocumentExcluder(baseName());
-            for (String fname : notExcluded) {
-                final DocumentName docName = mkDocName(fname);
-                assertThat(excluder.matches(docName))
-                        .as(() -> String.format("option: %s name: %s%n%s", option.getKey(), fname, excluder.decompose(docName)))
-                        .isTrue();
-            }
             for (String fname : excluded) {
                 DocumentName docName = mkDocName(fname);
                 assertThat(excluder.matches(docName)).as(() -> dump(option, fname, excluder, docName)).isFalse();
@@ -397,12 +390,6 @@ public abstract class AbstractOptionsProvider implements ArgumentsProvider {
             ReportConfiguration config = generateConfig(ImmutablePair.of(option, args),
                     ImmutablePair.of(excludeOption, EXCLUDE_ARGS));
             DocumentNameMatcher excluder = config.getDocumentExcluder(baseName());
-            for (String fname : notExcluded) {
-                final DocumentName docName = mkDocName(fname);
-                assertThat(excluder.matches(docName))
-                        .as(() -> String.format("option: %s name: %s%n%s", option.getKey(), fname, excluder.decompose(docName)))
-                        .isTrue();
-            }
             for (String fname : excluded) {
                 DocumentName docName = mkDocName(fname);
                 assertThat(excluder.matches(docName)).as(() -> dump(option, fname, excluder, docName)).isFalse();

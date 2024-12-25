@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.Predicate;
 
+import org.apache.rat.config.exclusion.fileProcessors.AbstractFileProcessorBuilder;
 import org.apache.rat.config.exclusion.fileProcessors.BazaarIgnoreBuilder;
 import org.apache.rat.config.exclusion.fileProcessors.CVSIgnoreBuilder;
 import org.apache.rat.config.exclusion.fileProcessors.GitIgnoreBuilder;
@@ -200,12 +201,12 @@ public enum StandardCollection {
     /** A document name matcher supplier to create a document name matcher. May be null */
     private final DocumentNameMatcher staticDocumentNameMatcher;
     /** The MatcherSet to process the exclude file associated with this exclusion. May be null. */
-    private final MatcherSet.Builder fileProcessorBuilder;
+    private final AbstractFileProcessorBuilder fileProcessorBuilder;
     /** The description of this collection */
     private final String desc;
 
     StandardCollection(final String desc, final Collection<String> patterns, final DocumentNameMatcher documentNameMatcher,
-                       final MatcherSet.Builder fileProcessorBuilder) {
+                       final AbstractFileProcessorBuilder fileProcessorBuilder) {
         this.desc = desc;
         this.patterns = patterns == null ? Collections.emptyList() : new HashSet<>(patterns);
         this.staticDocumentNameMatcher = documentNameMatcher;
@@ -263,8 +264,8 @@ public enum StandardCollection {
      *
      * @return the fileProcessor if it exists, {@code null} otherwise.
      */
-    public ExtendedIterator<MatcherSet.Builder> fileProcessorBuilder() {
-        List<MatcherSet.Builder> lst = new ArrayList<>();
+    public ExtendedIterator<AbstractFileProcessorBuilder> fileProcessorBuilder() {
+        List<AbstractFileProcessorBuilder> lst = new ArrayList<>();
         for (StandardCollection sc : getCollections()) {
             if (sc.fileProcessorBuilder != null) {
                 lst.add(sc.fileProcessorBuilder);
