@@ -124,10 +124,10 @@ assertThat(ignoredFiles).isEmpty()
 
 // Document types
 XmlUtils.assertAttributes(document, xPath, "/rat-report/statistics/documentType[@name='IGNORED']",
-        mapOf("count", "7" ))
+        mapOf("count", "6" ))
 
 XmlUtils.assertAttributes(document, xPath, "/rat-report/statistics/documentType[@name='NOTICE']",
         mapOf("count", "1" ))
 
 XmlUtils.assertAttributes(document, xPath, "/rat-report/statistics/documentType[@name='STANDARD']",
-        mapOf("count", "3" ))
+        mapOf("count", "4" ))
