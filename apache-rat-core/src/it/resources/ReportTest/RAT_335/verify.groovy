@@ -106,7 +106,6 @@ XPath xPath = XPathFactory.newInstance().newXPath()
 
 List<String> ignoredFiles = new ArrayList<>(Arrays.asList(
         "/dir1/dir1.txt",
-        "/dir1/file1.log",
         "/dir1/.gitignore",
         "/dir2/dir2.md",
         "/dir3/dir3.log",
