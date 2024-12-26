@@ -270,7 +270,7 @@ public class ExclusionProcessor {
         for (StandardCollection sc : excludedCollections) {
             Set<String> patterns = sc.patterns();
             if (patterns.isEmpty()) {
-                DefaultLog.getInstance().info(String.format("%s does not have a defined collection for exclusion.", sc));
+                DefaultLog.getInstance().debug(String.format("%s does not have a defined collection for exclusion.", sc));
             } else {
                 MatcherSet.Builder.segregateList(excl, incl, sc.patterns());
             }

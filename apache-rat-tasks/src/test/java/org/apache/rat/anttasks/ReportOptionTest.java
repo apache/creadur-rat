@@ -17,7 +17,6 @@
 package org.apache.rat.anttasks;
 
 import java.nio.file.Path;
-import java.util.List;
 import org.apache.commons.cli.Option;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
@@ -28,6 +27,7 @@ import org.apache.rat.testhelpers.TestingLog;
 import org.apache.rat.utils.DefaultLog;
 import org.apache.rat.utils.Log;
 import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ArgumentsProvider;
@@ -73,12 +73,12 @@ public class ReportOptionTest  {
         }
     }
 
-    final static class AntOptionsProvider extends AbstractOptionsProvider implements ArgumentsProvider {
+    final class AntOptionsProvider extends AbstractOptionsProvider implements ArgumentsProvider {
 
         final AtomicBoolean helpCalled = new AtomicBoolean(false);
 
-        public AntOptionsProvider() {
-            super(BaseAntTask.unsupportedArgs(), testPath.toFile());
+        public OptionsProvider() {
+            super(BaseAntTask.unsupportedArgs());
         }
 
         protected ReportConfiguration generateConfig(List<Pair<Option, String[]>> args) {

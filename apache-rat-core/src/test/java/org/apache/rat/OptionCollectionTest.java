@@ -56,28 +56,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.fail;
 
 public class OptionCollectionTest {
-
     @TempDir
     static Path testPath;
 
     @AfterAll
     static void preserveData() {
         AbstractOptionsProvider.preserveData(testPath.toFile(), "optionTest");
-    }
-
-    /**
-     * The base directory for the test.
-     * We do not use TempFile because we want the evidence of the run
-     * to exist after a failure.
-     */
-    private final File baseDir;
-
-    /**
-     * Constructor.
-     */
-    public OptionCollectionTest() {
-        baseDir = new File("target/optionTools");
-        baseDir.mkdirs();
     }
 
     /**
@@ -128,7 +112,7 @@ public class OptionCollectionTest {
         ReportConfiguration config;
         try {
             DefaultLog.setInstance(log);
-            String[] args = {"--dir", baseDir.getAbsolutePath()};
+            String[] args = {"--dir", testPath.toFile().getAbsolutePath()};
             config = OptionCollection.parseCommands(testPath.toFile(), args, (o) -> {
             }, true);
         } finally {
