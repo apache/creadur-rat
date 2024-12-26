@@ -50,7 +50,22 @@ public class Resources {
      * Locates a test resource file in the class path.
      */
     public static File getResourceFile(String pResource) throws IOException {
-        return getResourceFromBase(TEST_RESOURCE_BASE_PATH, pResource);
+        File f = getResourceFromBase(TEST_RESOURCE_BASE_PATH, pResource);
+        if (!f.isFile()) {
+            throw new FileNotFoundException("Unable to locate resource file: " + pResource);
+        }
+        return f;
+    }
+
+    /**
+     * Locates a test resource directory in the class path.
+     */
+    public static File getResourceDirectory(String pResource) throws IOException {
+        File f = getResourceFromBase(TEST_RESOURCE_BASE_PATH, pResource);
+        if (!f.isDirectory()) {
+            throw new FileNotFoundException("Unable to locate resource file: " + pResource);
+        }
+        return f;
     }
 
 
@@ -71,9 +86,6 @@ public class Resources {
      */
     private static File getResourceFromBase(File baseDir, String pResource) throws IOException {
         File f = new File(baseDir, pResource);
-        if (!f.isFile()) {
-            throw new FileNotFoundException("Unable to locate resource file: " + pResource);
-        }
         return f.getCanonicalFile();
     }
 

@@ -27,6 +27,7 @@
         <artifactId>apache-rat-plugin</artifactId>
         <version>@pom.version@</version>
         <configuration>
+          <outputStyle>xml</outputStyle>
           <!-- Minimize the number of active rules to keep the test minimal -->
           <excludes>
             <exclude>**/.gitignore</exclude>

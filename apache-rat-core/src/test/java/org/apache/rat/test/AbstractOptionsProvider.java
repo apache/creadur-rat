@@ -18,7 +18,10 @@
  */
 package org.apache.rat.test;
 
+import java.nio.file.FileSystems;
+import java.nio.file.Path;
 import org.apache.commons.cli.Option;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
@@ -82,18 +85,25 @@ public abstract class AbstractOptionsProvider {
     protected static final String[] INCLUDE_ARGS = {"B.bar", "justbaz"};
     /**
      * The directory to place test data in.
-     * We do not use temp file here as we want the evidence to survive failure.
      */
-    protected final File baseDir;
+    protected File baseDir;
+
+    public static void preserveData(File baseDir, String targetDir) {
+        final Path recordPath = FileSystems.getDefault().getPath("target", targetDir);
+        recordPath.toFile().mkdirs();
+        try {
+            FileUtils.copyDirectory(baseDir, recordPath.toFile());
+        } catch (IOException e) {
+            System.err.format("Unable to copy data from %s to %s%n", baseDir, recordPath);
+        }
+    }
 
     protected DocumentName baseName() {
         return DocumentName.builder(baseDir).build();
     }
 
-    protected AbstractOptionsProvider(Collection<String> unsupportedArgs) {
-        baseDir = new File("target/optionTools");
-        baseDir.mkdirs();
-
+    protected AbstractOptionsProvider(Collection<String> unsupportedArgs, File baseDir) {
+        this.baseDir = baseDir;
         testMap.put("addLicense", this::addLicenseTest);
         testMap.put("config", this::configTest);
         testMap.put("configuration-no-defaults", this::configurationNoDefaultsTest);
