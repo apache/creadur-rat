@@ -16,6 +16,7 @@
  */
 package org.apache.rat.anttasks;
 
+import java.nio.file.Path;
 import org.apache.commons.cli.Option;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
@@ -25,7 +26,9 @@ import org.apache.rat.ReportConfiguration;
 import org.apache.rat.testhelpers.TestingLog;
 import org.apache.rat.utils.DefaultLog;
 import org.apache.rat.utils.Log;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ArgumentsProvider;
 import org.junit.jupiter.params.provider.ArgumentsSource;
@@ -43,17 +46,18 @@ import static org.junit.jupiter.api.Assertions.fail;
  * Tests to ensure the option setting works correctly.
  */
 public class ReportOptionTest  {
-    // devhint: we do want to keep data in case of test failures, thus do not use TempDir here
-    static final File baseDir = new File("target/optionTest");
+    @TempDir
+    static Path testPath;
+
     static ReportConfiguration reportConfiguration;
 
-    @BeforeAll
-    public static void makeDirs() {
-        baseDir.mkdirs();
+    @AfterAll
+    static void preserveData() {
+        AbstractOptionsProvider.preserveData(testPath.toFile(), "optionTest");
     }
 
     @ParameterizedTest
-    @ArgumentsSource(OptionsProvider.class)
+    @ArgumentsSource(AntOptionsProvider.class)
     public void testOptionsUpdateConfig(String name, OptionCollectionTest.OptionTest test) {
         test.test();
     }
@@ -68,15 +72,16 @@ public class ReportOptionTest  {
         }
     }
 
-    static class OptionsProvider extends AbstractOptionsProvider implements ArgumentsProvider {
+    final class AntOptionsProvider extends AbstractOptionsProvider implements ArgumentsProvider {
 
         final AtomicBoolean helpCalled = new AtomicBoolean(false);
 
-        public OptionsProvider() {
-            super(BaseAntTask.unsupportedArgs());
+        public AntOptionsProvider() {
+            super(BaseAntTask.unsupportedArgs(), testPath.toFile());
         }
 
-        protected ReportConfiguration generateConfig(Pair<Option, String[]>... args) {
+        @SafeVarargs
+        protected final ReportConfiguration generateConfig(Pair<Option, String[]>... args) {
             BuildTask task = args[0].getKey() == null ? new BuildTask() : new BuildTask(args[0].getKey());
             task.setUp(args);
             task.buildRule.executeTarget(task.name);
@@ -118,7 +123,8 @@ public class ReportOptionTest  {
                 antFile = new File(baseDir, name + ".xml");
             }
 
-            public void setUp(Pair<Option, String[]>... args) {
+            @SafeVarargs
+            public final void setUp(Pair<Option, String[]>... args) {
                 StringBuilder childElements = new StringBuilder();
                 StringBuilder attributes = new StringBuilder();
                 if (args[0].getKey() != null) {

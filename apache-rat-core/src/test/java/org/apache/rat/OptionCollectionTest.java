@@ -18,6 +18,7 @@
  */
 package org.apache.rat;
 
+import java.nio.file.Path;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.Option;
@@ -29,10 +30,12 @@ import org.apache.rat.test.AbstractOptionsProvider;
 import org.apache.rat.testhelpers.TestingLog;
 import org.apache.rat.utils.DefaultLog;
 import org.apache.rat.utils.Log;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledOnOs;
 import org.junit.jupiter.api.condition.OS;
+import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ArgumentsProvider;
 import org.junit.jupiter.params.provider.ArgumentsSource;
@@ -54,20 +57,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
 public class OptionCollectionTest {
+    @TempDir
+    static Path testPath;
 
-    /**
-     * The base directory for the test.
-     * We do not use TempFile because we want the evidence of the run
-     * to exist after a failure.
-     */
-    private final File baseDir;
-
-    /**
-     * Constructor.
-     */
-    public OptionCollectionTest() {
-        baseDir = new File("target/optionTools");
-        baseDir.mkdirs();
+    @AfterAll
+    static void preserveData() {
+        AbstractOptionsProvider.preserveData(testPath.toFile(), "optionTest");
     }
 
     /**
@@ -118,7 +113,7 @@ public class OptionCollectionTest {
         ReportConfiguration config;
         try {
             DefaultLog.setInstance(log);
-            String[] args = {"--dir", baseDir.getAbsolutePath()};
+            String[] args = {"--dir", testPath.toFile().getAbsolutePath()};
             config = OptionCollection.parseCommands(args, (o) -> {
             }, true);
         } finally {
@@ -161,7 +156,7 @@ public class OptionCollectionTest {
      * @param test the option test to execute.
      */
     @ParameterizedTest
-    @ArgumentsSource(OptionsProvider.class)
+    @ArgumentsSource(CliOptionsProvider.class)
     public void testOptionsUpdateConfig(String name, OptionTest test) {
         DefaultLog.getInstance().log(Log.Level.INFO, "Running test for: " + name);
         test.test();
@@ -170,7 +165,7 @@ public class OptionCollectionTest {
     /**
      * A class to provide the Options and tests to the testOptionsUpdateConfig.
      */
-    static class OptionsProvider extends AbstractOptionsProvider implements ArgumentsProvider {
+    static class CliOptionsProvider extends AbstractOptionsProvider implements ArgumentsProvider {
 
         /** A flag to determine if help was called */
         final AtomicBoolean helpCalled = new AtomicBoolean(false);
@@ -190,8 +185,8 @@ public class OptionCollectionTest {
         /**
          * Constructor. Sets the baseDir and loads the testMap.
          */
-        public OptionsProvider() {
-            super(Collections.emptyList());
+        public CliOptionsProvider() {
+            super(Collections.emptyList(), testPath.toFile());
         }
 
         /**
@@ -201,7 +196,8 @@ public class OptionCollectionTest {
          * @return A ReportConfiguration
          * @throws IOException on critical error.
          */
-        protected ReportConfiguration generateConfig(Pair<Option, String[]>... args) throws IOException {
+        @SafeVarargs
+        protected final ReportConfiguration generateConfig(Pair<Option, String[]>... args) throws IOException {
             helpCalled.set(false);
             List<String> sArgs = new ArrayList<>();
             for (Pair<Option, String[]> pair : args) {

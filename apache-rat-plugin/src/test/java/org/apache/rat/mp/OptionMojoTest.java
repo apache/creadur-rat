@@ -19,6 +19,7 @@
 package org.apache.rat.mp;
 
 import org.apache.commons.cli.Option;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -30,8 +31,10 @@ import org.apache.rat.OptionCollectionTest;
 import org.apache.rat.ReportConfiguration;
 import org.apache.rat.plugin.BaseRatMojo;
 import org.codehaus.plexus.component.configurator.ComponentConfigurationException;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ArgumentsProvider;
 import org.junit.jupiter.params.provider.ArgumentsSource;
@@ -41,7 +44,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
@@ -51,26 +53,34 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 
 public class OptionMojoTest {
-    static final Path testPath = FileSystems.getDefault().getPath("target", "optionTest");
+
+    @TempDir
+    static Path testPath;
+
     static String POM_FMT;
 
     @BeforeAll
     public static void makeDirs() throws IOException {
-        testPath.toFile().mkdirs();
         POM_FMT = IOUtils.resourceToString("/optionTest/pom.tpl", StandardCharsets.UTF_8);
     }
 
+    @AfterAll
+    static void preserveData() {
+         AbstractOptionsProvider.preserveData(testPath.toFile(), "optionTest");
+    }
+
     @ParameterizedTest
-    @ArgumentsSource(OptionsProvider.class)
-    public void testOptionsUpdateConfig(String name, OptionCollectionTest.OptionTest test) {
+    @ArgumentsSource(MojoOptionsProvider.class)
+    void testOptionsUpdateConfig(String name, OptionCollectionTest.OptionTest test) {
         test.test();
     }
 
-    public static class OptionsProvider extends AbstractOptionsProvider implements ArgumentsProvider  {
+    static class MojoOptionsProvider extends AbstractOptionsProvider implements ArgumentsProvider  {
 
         private RatCheckMojo mojo = null;
-        public OptionsProvider() {
-            super(BaseRatMojo.unsupportedArgs());
+
+        public MojoOptionsProvider() {
+            super(BaseRatMojo.unsupportedArgs(), testPath.toFile());
         }
 
        private RatCheckMojo generateMojo(Pair<Option,String[]>... args) throws IOException {
