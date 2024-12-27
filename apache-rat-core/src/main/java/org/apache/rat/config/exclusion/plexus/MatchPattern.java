@@ -141,7 +141,7 @@ public final class MatchPattern {
         return tokenizedNameChar;
     }
 
-    public static MatchPattern fromString(final     String source) {
+    public static MatchPattern fromString(final String source) {
         return new MatchPattern(source, File.separator);
     }
 }

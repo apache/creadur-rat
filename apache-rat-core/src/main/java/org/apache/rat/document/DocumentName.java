@@ -69,7 +69,7 @@ public final class DocumentName implements Comparable<DocumentName> {
 
     // determine the case sensitivity of the file system we are operating on.
     static {
-        boolean fsSensitive = true;
+        boolean fsSensitive;
         File f = null;
         try {
             Path p = Files.createTempDirectory("NameSet");
@@ -96,7 +96,6 @@ public final class DocumentName implements Comparable<DocumentName> {
                 ROOTS.add(name);
             }
         }
-
     }
 
     /**

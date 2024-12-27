@@ -19,7 +19,9 @@
 package org.apache.rat.config.exclusion.fileProcessors;
 
 import java.util.List;
+import org.apache.rat.config.exclusion.ExclusionUtils;
 import org.apache.rat.config.exclusion.MatcherSet;
+import org.apache.rat.config.exclusion.plexus.SelectorUtils;
 import org.apache.rat.document.DocumentName;
 import org.apache.rat.document.DocumentNameMatcher;
 import org.junit.jupiter.api.AfterEach;
@@ -95,11 +97,11 @@ public class AbstractIgnoreBuilderTest {
     protected void assertCorrect(List<MatcherSet> matcherSets, DocumentName baseDir, Iterable<String> matching, Iterable<String> notMatching) {
         DocumentNameMatcher excluder = MatcherSet.merge(matcherSets).createMatcher();
         for (String name : matching) {
-            DocumentName docName = baseDir.resolve(name);
+            DocumentName docName = baseDir.resolve(SelectorUtils.extractPattern(name, File.separator));
             assertThat(excluder.matches(docName)).as(docName.getName()).isFalse();
         }
         for (String name : notMatching) {
-            DocumentName docName = baseDir.resolve(name);
+            DocumentName docName = baseDir.resolve(SelectorUtils.extractPattern(name, File.separator));
             assertThat(excluder.matches(docName)).as(docName.getName()).isTrue();
         }
     }
