@@ -38,7 +38,9 @@ import org.apache.rat.config.exclusion.plexus.MatchPattern;
 import org.apache.rat.config.exclusion.plexus.SelectorUtils;
 import org.apache.rat.document.DocumentName;
 import org.apache.rat.document.DocumentNameMatcher;
+import org.apache.rat.utils.DefaultLog;
 import org.apache.rat.utils.ExtendedIterator;
+import org.apache.rat.utils.Log;
 
 import static java.lang.String.format;
 
@@ -117,7 +119,20 @@ public final class ExclusionUtils {
      * @return a FileFilter.
      */
     public static FileFilter asFileFilter(final DocumentName parent, final DocumentNameMatcher nameMatcher) {
-        return file -> nameMatcher.matches(DocumentName.builder(file).setBaseName(parent.getBaseName()).build());
+        return file -> {
+            DocumentName candidate = DocumentName.builder(file).setBaseName(parent.getBaseName()).build();
+            boolean result = nameMatcher.matches(candidate);
+            Log log = DefaultLog.getInstance();
+            if (log.isEnabled(Log.Level.DEBUG)) {
+                log.debug(format("FILTER TEST for %s -> %s", file, result));
+                if (!result) {
+                    List< DocumentNameMatcher.DecomposeData> data = nameMatcher.decompose(candidate);
+                    log.debug("Decomposition for " + candidate);
+                    data.forEach(log::debug);
+                }
+            }
+            return result;
+        };
     }
 
     /**

@@ -41,6 +41,9 @@ public interface MatcherSet {
     Optional<DocumentNameMatcher> includes();
     Optional<DocumentNameMatcher> excludes();
 
+    default String getDescription() {
+        return String.format("MatcherSet: include [%s] exclude [%s]", includes().orElse(MATCHES_NONE), excludes().orElse(MATCHES_NONE));
+    }
     /**
      * Creates a DocumentNameMatcher from an iterable of MatcherSets.
      * @return A DocumentNameMatcher that processes the matcher sets.

@@ -64,7 +64,7 @@ myArgs[1] = "UNAPPROVED:-1"
 myArgs[2] = "--"
 myArgs[3] = src.getAbsolutePath()
 
-ReportConfiguration configuration = OptionCollection.parseCommands(myArgs, { opts -> })
+ReportConfiguration configuration = OptionCollection.parseCommands(src, myArgs, { opts -> })
 assertNotNull(configuration)
 configuration.validate(DefaultLog.getInstance().&error)
 Reporter reporter = new Reporter(configuration)

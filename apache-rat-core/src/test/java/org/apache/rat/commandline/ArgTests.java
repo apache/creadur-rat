@@ -56,7 +56,7 @@ public class ArgTests {
 
         CommandLine commandLine = createCommandLine(new String[] {"--output-file", name});
         OutputFileConfig configuration = new OutputFileConfig();
-        ArgumentContext ctxt = new ArgumentContext(configuration, commandLine);
+        ArgumentContext ctxt = new ArgumentContext(new File("."), configuration, commandLine);
         Arg.processArgs(ctxt);
         assertEquals(expected.getAbsolutePath(), configuration.actual.getAbsolutePath());
     }

@@ -184,6 +184,15 @@ public interface Log {
      * @return the Writer backed by this log.
      */
     default Writer asWriter() {
+        return asWriter(Level.INFO);
+    }
+
+    /**
+     * Returns a Writer backed by this log. All messages are logged at "INFO" level.
+     * @return the Writer backed by this log.
+     * @param level the Log level to write at.
+     */
+    default Writer asWriter(Level level) {
         return new Writer() {
             private StringBuilder sb = new StringBuilder();
 
@@ -195,7 +204,7 @@ public interface Log {
                     sb.append(txt);
                 } else {
                     while (pos > -1) {
-                        Log.this.info(sb.append(txt, 0, pos).toString());
+                        Log.this.log(level, sb.append(txt, 0, pos).toString());
                         sb.delete(0, sb.length());
                         txt = txt.substring(pos + 1);
                         pos = txt.indexOf(System.lineSeparator());
@@ -207,7 +216,7 @@ public interface Log {
             @Override
             public void flush() {
                 if (sb.length() > 0) {
-                    Log.this.info(sb.toString());
+                    Log.this.log(level, sb.toString());
                 }
                 sb = new StringBuilder();
             }
@@ -218,4 +227,5 @@ public interface Log {
             }
         };
     }
+
 }

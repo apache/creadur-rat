@@ -17,6 +17,7 @@
 package org.apache.rat.anttasks;
 
 import java.nio.file.Path;
+import java.util.List;
 import org.apache.commons.cli.Option;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
@@ -80,9 +81,8 @@ public class ReportOptionTest  {
             super(BaseAntTask.unsupportedArgs(), testPath.toFile());
         }
 
-        @SafeVarargs
-        protected final ReportConfiguration generateConfig(Pair<Option, String[]>... args) {
-            BuildTask task = args[0].getKey() == null ? new BuildTask() : new BuildTask(args[0].getKey());
+        protected final ReportConfiguration generateConfig(List<Pair<Option, String[]>> args) {
+            BuildTask task = args.get(0).getKey() == null ? new BuildTask() : new BuildTask(args.get(0).getKey());
             task.setUp(args);
             task.buildRule.executeTarget(task.name);
             return reportConfiguration;
@@ -99,6 +99,8 @@ public class ReportOptionTest  {
             Log oldLog = DefaultLog.setInstance(testLog);
             try {
                 ReportConfiguration config = generateConfig(ImmutablePair.of(HELP_LICENSES.option(), null));
+            } catch (IOException e) {
+                throw new RuntimeException(e);
             } finally {
                 DefaultLog.setInstance(oldLog);
             }
@@ -124,10 +126,10 @@ public class ReportOptionTest  {
             }
 
             @SafeVarargs
-            public final void setUp(Pair<Option, String[]>... args) {
+            public final void setUp(List<Pair<Option, String[]>> args) {
                 StringBuilder childElements = new StringBuilder();
                 StringBuilder attributes = new StringBuilder();
-                if (args[0].getKey() != null) {
+                if (args.get(0).getKey() != null) {
                     for (Pair<Option, String[]> pair : args) {
                         AntOption argOption = new AntOption(pair.getKey());
 

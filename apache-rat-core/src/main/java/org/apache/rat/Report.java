@@ -18,6 +18,8 @@
  */
 package org.apache.rat;
 
+import java.io.File;
+
 import org.apache.commons.cli.Options;
 import org.apache.rat.document.RatDocumentAnalysisException;
 import org.apache.rat.help.Help;
@@ -39,7 +41,7 @@ public final class Report {
      */
     public static void main(final String[] args) throws Exception {
         DefaultLog.getInstance().info(new VersionInfo().toString());
-        ReportConfiguration configuration = OptionCollection.parseCommands(args, Report::printUsage);
+        ReportConfiguration configuration = OptionCollection.parseCommands(new File("."), args, Report::printUsage);
         if (configuration != null) {
             configuration.validate(DefaultLog.getInstance()::error);
             Reporter reporter = new Reporter(configuration);

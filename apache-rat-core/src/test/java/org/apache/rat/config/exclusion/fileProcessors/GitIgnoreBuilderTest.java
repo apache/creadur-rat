@@ -20,16 +20,11 @@ package org.apache.rat.config.exclusion.fileProcessors;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
 import java.util.Optional;
-import java.util.function.Consumer;
-import java.util.function.Predicate;
 import java.util.stream.Stream;
 import org.apache.rat.config.exclusion.MatcherSet;
 import org.apache.rat.document.DocumentName;
 import org.apache.rat.document.DocumentNameMatcher;
-import org.apache.rat.document.DocumentNameMatcherTest;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -129,7 +124,7 @@ public class GitIgnoreBuilderTest extends AbstractIgnoreBuilderTest {
         DocumentName candidate = DocumentName.builder()
                 .setName("/home/claude/apache/creadur-rat/apache-rat-core/target/test-classes/GitIgnoreBuilderTest/src/dir1/file1.log")
                 .setBaseName("home/claude/apache/creadur-rat/apache-rat-core/target/test-classes/GitIgnoreBuilderTest/src/").build();
-        DocumentNameMatcherTest.decompose(matcher, candidate);
+        System.out.println("Decomposition for "+candidate);
 
         assertThat(matcher.toString()).isEqualTo("matcherSet(or('included dir1/.gitignore', 'included .gitignore'), or('excluded dir1/.gitignore', **/.gitignore, 'excluded .gitignore'))");
 

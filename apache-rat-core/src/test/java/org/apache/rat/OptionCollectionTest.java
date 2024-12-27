@@ -24,6 +24,7 @@ import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.rat.commandline.ArgumentContext;
 import org.apache.rat.license.LicenseSetFactory;
 import org.apache.rat.report.IReportable;
 import org.apache.rat.test.AbstractOptionsProvider;
@@ -98,7 +99,7 @@ public class OptionCollectionTest {
         try {
             DefaultLog.setInstance(log);
             String[] args = {"--dir", "target", "-a"};
-            ReportConfiguration config = OptionCollection.parseCommands(args, o -> fail("Help printed"), true);
+            ReportConfiguration config = OptionCollection.parseCommands(testPath.toFile(), args, o -> fail("Help printed"), true);
             assertThat(config).isNotNull();
         } finally {
             DefaultLog.setInstance(null);
@@ -114,7 +115,7 @@ public class OptionCollectionTest {
         try {
             DefaultLog.setInstance(log);
             String[] args = {"--dir", testPath.toFile().getAbsolutePath()};
-            config = OptionCollection.parseCommands(args, (o) -> {
+            config = OptionCollection.parseCommands(testPath.toFile(), args, (o) -> {
             }, true);
         } finally {
             DefaultLog.setInstance(null);
@@ -126,7 +127,7 @@ public class OptionCollectionTest {
     @Test
     public void testShortenedOptions() throws IOException {
         String[] args = {"--output-lic", "ALL"};
-        ReportConfiguration config = OptionCollection.parseCommands(args, (o) -> {
+        ReportConfiguration config = OptionCollection.parseCommands(testPath.toFile(), args, (o) -> {
         }, true);
         assertThat(config).isNotNull();
         assertThat(config.listLicenses()).isEqualTo(LicenseSetFactory.LicenseFilter.ALL);
@@ -136,7 +137,8 @@ public class OptionCollectionTest {
     public void testDefaultConfiguration() throws ParseException {
         String[] empty = {};
         CommandLine cl = new DefaultParser().parse(OptionCollection.buildOptions(), empty);
-        ReportConfiguration config = OptionCollection.createConfiguration(cl);
+        ArgumentContext context = new ArgumentContext(new File("."), cl);
+        ReportConfiguration config = OptionCollection.createConfiguration(context);
         ReportConfigurationTest.validateDefault(config);
     }
 
@@ -144,7 +146,7 @@ public class OptionCollectionTest {
     @ValueSource(strings = { ".", "./", "target", "./target" })
     public void getReportableTest(String fName) throws IOException {
         File expected = new File(fName);
-        ReportConfiguration config = OptionCollection.parseCommands(new String[]{fName}, o -> fail("Help called"), false);
+        ReportConfiguration config = OptionCollection.parseCommands(testPath.toFile(), new String[]{fName}, o -> fail("Help called"), false);
         IReportable reportable = OptionCollection.getReportable(expected, config);
         assertNotNull(reportable, () -> format("'%s' returned null", fName));
         assertThat(reportable.getName().getName()).isEqualTo(expected.getAbsolutePath());
@@ -174,7 +176,7 @@ public class OptionCollectionTest {
         public void helpTest() {
             String[] args = {longOpt(OptionCollection.HELP)};
             try {
-                ReportConfiguration config = OptionCollection.parseCommands(args, o -> helpCalled.set(true), true);
+                ReportConfiguration config = OptionCollection.parseCommands(testPath.toFile(), args, o -> helpCalled.set(true), true);
                 assertNull(config, "Should not have config");
                 assertTrue(helpCalled.get(), "Help was not called");
             } catch (IOException e) {
@@ -196,8 +198,7 @@ public class OptionCollectionTest {
          * @return A ReportConfiguration
          * @throws IOException on critical error.
          */
-        @SafeVarargs
-        protected final ReportConfiguration generateConfig(Pair<Option, String[]>... args) throws IOException {
+        protected final ReportConfiguration generateConfig(List<Pair<Option, String[]>> args) throws IOException {
             helpCalled.set(false);
             List<String> sArgs = new ArrayList<>();
             for (Pair<Option, String[]> pair : args) {
@@ -209,7 +210,7 @@ public class OptionCollectionTest {
                     }
                 }
             }
-            ReportConfiguration config = OptionCollection.parseCommands(sArgs.toArray(new String[0]), o -> helpCalled.set(true), true);
+            ReportConfiguration config = OptionCollection.parseCommands(testPath.toFile(), sArgs.toArray(new String[0]), o -> helpCalled.set(true), true);
             assertFalse(helpCalled.get(), "Help was called");
             return config;
         }

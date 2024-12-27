@@ -18,9 +18,6 @@
  */
 package org.apache.rat.document;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import java.util.function.Predicate;
 import org.junit.jupiter.api.Test;
 
@@ -69,45 +66,5 @@ public class DocumentNameMatcherTest {
         assertThat(DocumentNameMatcher.matcherSet(SOME, MATCHES_ALL).toString()).as("X,All").isEqualTo("matcherSet(X, TRUE)");
         assertThat(DocumentNameMatcher.matcherSet(SOME, MATCHES_NONE)).as("X,None").isEqualTo(MATCHES_ALL);
         assertThat(DocumentNameMatcher.matcherSet(SOME, SOME).toString()).as("X,X").isEqualTo("matcherSet(X, X)");
-    }
-
-    public static void decompose(DocumentNameMatcher matcher, DocumentName candidate) {
-        List<DecomposeData> result = new ArrayList<>();
-
-        decompose(0, matcher, candidate, result);
-        System.out.println("Decomposition for "+candidate);
-        for (DecomposeData d : result) {
-            System.out.println(d);
-        }
-    }
-    private static void decompose(int level, DocumentNameMatcher matcher, DocumentName candidate, List<DecomposeData> result) {
-        Predicate<DocumentName> pred = matcher.getPredicate();
-        result.add(new DecomposeData(level, matcher.toString(), pred.test(candidate)));
-        if (pred instanceof DocumentNameMatcher.CollectionPredicate) {
-            DocumentNameMatcher.CollectionPredicate collection = (DocumentNameMatcher.CollectionPredicate) pred;
-            for(DocumentNameMatcher subMatcher : collection.getMatchers()) {
-                decompose(level + 1, subMatcher, candidate, result);
-            }
-        }
-    }
-
-    public static class DecomposeData {
-        int level;
-        String name;;
-        boolean result;
-
-        DecomposeData(int level, String name, boolean result) {
-            this.level = level;
-            this.name = name;
-            this.result = result;
-        }
-
-        @Override
-        public String toString() {
-            char[] chars = new char[level*2];
-            Arrays.fill(chars, ' ');
-            String fill = new String(chars);
-            return String.format("%s%s : %s", fill, name, result);
-        }
     }
 }

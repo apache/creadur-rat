@@ -202,10 +202,10 @@ public final class XmlUtils {
     }
 
     public static void assertIsPresent(Object source, XPath xPath, String xpath) throws XPathExpressionException {
-        assertThat(isPresent(source, xPath, xpath)).isTrue();
+        assertThat(isPresent(source, xPath, xpath)).as("Presence of "+xpath).isTrue();
     }
 
     public static void assertIsNotPresent(Object source, XPath xPath, String xpath) throws XPathExpressionException {
-        assertThat(isPresent(source, xPath, xpath)).isFalse();
+        assertThat(isPresent(source, xPath, xpath)).as("Non-presence of "+xpath).isFalse();
     }
 }
