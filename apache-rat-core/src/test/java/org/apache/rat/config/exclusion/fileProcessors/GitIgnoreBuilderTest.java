@@ -36,8 +36,6 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.not;
-import static org.assertj.core.api.Fail.fail;
 
 public class GitIgnoreBuilderTest extends AbstractIgnoreBuilderTest {
 
@@ -68,7 +66,6 @@ public class GitIgnoreBuilderTest extends AbstractIgnoreBuilderTest {
         DocumentName testName = DocumentName.builder().setName("GitIgnoreBuilderTest").setBaseName("testDir").build();
         List<MatcherSet> matcherSets = new ArrayList<>();
         Optional<String> entry = underTest.modifyEntry(matcherSets::add, testName, source);
-
 
         if (source.endsWith("/")) {
             assertThat(entry).isNotPresent();
