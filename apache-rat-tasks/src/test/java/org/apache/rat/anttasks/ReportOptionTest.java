@@ -73,7 +73,7 @@ public class ReportOptionTest  {
         }
     }
 
-    final class AntOptionsProvider extends AbstractOptionsProvider implements ArgumentsProvider {
+    final static class AntOptionsProvider extends AbstractOptionsProvider implements ArgumentsProvider {
 
         final AtomicBoolean helpCalled = new AtomicBoolean(false);
 
@@ -125,7 +125,6 @@ public class ReportOptionTest  {
                 antFile = new File(baseDir, name + ".xml");
             }
 
-            @SafeVarargs
             public final void setUp(List<Pair<Option, String[]>> args) {
                 StringBuilder childElements = new StringBuilder();
                 StringBuilder attributes = new StringBuilder();
