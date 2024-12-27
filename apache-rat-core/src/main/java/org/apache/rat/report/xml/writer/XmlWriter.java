@@ -482,7 +482,7 @@ public final class XmlWriter implements IXmlWriter {
 
     /**
      * Writes an attribute of an element. Note that this is only allowed directly
-     * after {@link #openElement(CharSequence)} or {@link #attribute}.
+     * after {@link #openElement(CharSequence)} or a previous {@code attribute} call.
      *
      * @param name the attribute name, not null
      * @param value the attribute value, not null
@@ -717,7 +717,7 @@ public final class XmlWriter implements IXmlWriter {
     }
 
     @Override
-    public void close() throws Exception {
+    public void close() throws IOException {
         closeDocument();
     }
 }

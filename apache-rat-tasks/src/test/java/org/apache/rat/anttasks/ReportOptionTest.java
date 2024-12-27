@@ -17,6 +17,7 @@
 package org.apache.rat.anttasks;
 
 import java.nio.file.Path;
+import java.util.List;
 import org.apache.commons.cli.Option;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
@@ -77,11 +78,11 @@ public class ReportOptionTest  {
 
         final AtomicBoolean helpCalled = new AtomicBoolean(false);
 
-        public OptionsProvider() {
-            super(BaseAntTask.unsupportedArgs());
+        public AntOptionsProvider() {
+            super(BaseAntTask.unsupportedArgs(), testPath.toFile());
         }
 
-        protected ReportConfiguration generateConfig(List<Pair<Option, String[]>> args) {
+        protected final ReportConfiguration generateConfig(final List<Pair<Option, String[]>> args) {
             BuildTask task = args.get(0).getKey() == null ? new BuildTask() : new BuildTask(args.get(0).getKey());
             task.setUp(args);
             task.buildRule.executeTarget(task.name);

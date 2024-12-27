@@ -32,7 +32,6 @@ import org.apache.rat.commandline.Arg;
 import org.apache.rat.commandline.StyleSheets;
 import org.apache.rat.config.exclusion.StandardCollection;
 import org.apache.rat.document.DocumentNameMatcher;
-import org.apache.rat.document.DocumentNameMatcherTest;
 import org.apache.rat.document.DocumentName;
 import org.apache.rat.license.ILicense;
 import org.apache.rat.license.ILicenseFamily;
@@ -119,7 +118,7 @@ public abstract class AbstractOptionsProvider implements ArgumentsProvider {
      * @param baseDir the directory to copy the /src/test/resources to.
      * @return the {@code baseDir} argument.
      */
-    public static File setup(File baseDir) {
+    public static File setup(final File baseDir) {
         try {
             final File sourceDir = Resources.getResourceDirectory("OptionTools");
             FileUtils.copyDirectory(sourceDir, new File(baseDir,"/src/test/resources/OptionTools"));
@@ -244,7 +243,7 @@ public abstract class AbstractOptionsProvider implements ArgumentsProvider {
         return DocumentName.builder(new File(baseDir, name)).build();
     }
 
-    /* Tests to be implemented */
+    /* Help test */
     protected abstract void helpTest();
 
     /** Display the option and value under test */

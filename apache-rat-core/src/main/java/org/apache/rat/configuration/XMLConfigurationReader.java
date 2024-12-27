@@ -21,6 +21,7 @@ package org.apache.rat.configuration;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
+import java.io.StringWriter;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URI;
@@ -124,6 +125,21 @@ public final class XMLConfigurationReader implements LicenseReader, MatcherReade
                 return licenseFamilies;
             }
         };
+    }
+
+    /**
+     * Creates textual representation of a node for display.
+     * @param node the node to create the textual representation of.
+     * @return The textual representation of the node for display.
+     */
+    private String nodeText(final Node node) {
+        StringWriter stringWriter = new StringWriter().append("<").append(node.getNodeName());
+        NamedNodeMap attr = node.getAttributes();
+        for (int i = 0; i < attr.getLength(); i++) {
+            Node n = attr.item(i);
+            stringWriter.append(String.format(" %s='%s'", n.getNodeName(), n.getNodeValue()));
+        }
+        return stringWriter.append(">").toString();
     }
 
     @Override
@@ -327,22 +343,27 @@ public final class XMLConfigurationReader implements LicenseReader, MatcherReade
      */
     private Pair<Boolean, List<Node>> processChildNodes(final Description description, final Node parent,
             final BiPredicate<Node, Description> childProcessor) {
-        boolean foundChildren = false;
-        List<Node> children = new ArrayList<>();
-        // check XML child nodes.
-        if (parent.hasChildNodes()) {
+        try {
+            boolean foundChildren = false;
+            List<Node> children = new ArrayList<>();
+            // check XML child nodes.
+            if (parent.hasChildNodes()) {
 
-            nodeListConsumer(parent.getChildNodes(), n -> {
-                if (n.getNodeType() == Node.ELEMENT_NODE) {
-                    children.add(n);
+                nodeListConsumer(parent.getChildNodes(), n -> {
+                    if (n.getNodeType() == Node.ELEMENT_NODE) {
+                        children.add(n);
+                    }
+                });
+                foundChildren = !children.isEmpty();
+                if (foundChildren) {
+                    processChildren(description, children, childProcessor);
                 }
-            });
-            foundChildren = !children.isEmpty();
-            if (foundChildren) {
-                processChildren(description, children, childProcessor);
             }
+            return new ImmutablePair<>(foundChildren, children);
+        } catch (RuntimeException exception) {
+            DefaultLog.getInstance().error(String.format("Child node extraction error in: '%s'", nodeText(parent)));
+            throw exception;
         }
-        return new ImmutablePair<>(foundChildren, children);
     }
 
     /**
@@ -408,6 +429,7 @@ public final class XMLConfigurationReader implements LicenseReader, MatcherReade
             }
 
         } catch (DOMException e) {
+            DefaultLog.getInstance().error(String.format("Matcher error in: '%s'", nodeText(matcherNode)));
             throw new ConfigurationException(e);
         }
         return builder.hasId() ? new IDRecordingBuilder(matchers, builder) : builder;
@@ -445,34 +467,39 @@ public final class XMLConfigurationReader implements LicenseReader, MatcherReade
      * @return the License definition.
      */
     private ILicense parseLicense(final Node licenseNode) {
-        ILicense.Builder builder = ILicense.builder();
-        // get the description for the builder
-        Description description = builder.getDescription();
-        // set the BUILDER_PARAM options from the description
-        processBuilderParams(description, builder);
-        // set the children from attributes.
-        description.setChildren(builder, attributes(licenseNode));
-        // set children from the child nodes
-        Pair<Boolean, List<Node>> pair = processChildNodes(description, licenseNode,
-                licenseChildNodeProcessor(builder, description));
-        List<Node> children = pair.getRight();
+        try {
+            ILicense.Builder builder = ILicense.builder();
+            // get the description for the builder
+            Description description = builder.getDescription();
+            // set the BUILDER_PARAM options from the description
+            processBuilderParams(description, builder);
+            // set the children from attributes.
+            description.setChildren(builder, attributes(licenseNode));
+            // set children from the child nodes
+            Pair<Boolean, List<Node>> pair = processChildNodes(description, licenseNode,
+                    licenseChildNodeProcessor(builder, description));
+            List<Node> children = pair.getRight();
 
-        // check for inline nodes that can accept child nodes.
-        List<Description> childDescriptions = description.getChildren().values().stream()
-                .filter(d -> XMLConfig.isLicenseInline(d.getCommonName())).collect(Collectors.toList());
-        for (Description childDescription : childDescriptions) {
-            Iterator<Node> iter = children.iterator();
-            while (iter.hasNext()) {
-                callSetter(childDescription, builder, parseMatcher(iter.next()));
-                iter.remove();
+            // check for inline nodes that can accept child nodes.
+            List<Description> childDescriptions = description.getChildren().values().stream()
+                    .filter(d -> XMLConfig.isLicenseInline(d.getCommonName())).collect(Collectors.toList());
+            for (Description childDescription : childDescriptions) {
+                Iterator<Node> iter = children.iterator();
+                while (iter.hasNext()) {
+                    callSetter(childDescription, builder, parseMatcher(iter.next()));
+                    iter.remove();
+                }
             }
-        }
 
-        if (!children.isEmpty()) {
-            children.forEach(n -> DefaultLog.getInstance().warn(String.format("unrecognised child node '%s' in node '%s'%n",
-                    n.getNodeName(), licenseNode.getNodeName())));
+            if (!children.isEmpty()) {
+                children.forEach(n -> DefaultLog.getInstance().warn(String.format("unrecognised child node '%s' in node '%s'%n",
+                        n.getNodeName(), licenseNode.getNodeName())));
+            }
+            return builder.build();
+        } catch (RuntimeException exception) {
+            DefaultLog.getInstance().error(String.format("License error in: '%s'", nodeText(licenseNode)));
+            throw exception;
         }
-        return builder.build();
     }
 
     @Override
@@ -519,12 +546,17 @@ public final class XMLConfigurationReader implements LicenseReader, MatcherReade
      */
     private void parseFamily(final Node familyNode) {
         if (XMLConfig.FAMILY.equals(familyNode.getNodeName())) {
-            ILicenseFamily result = parseFamily(attributes(familyNode));
-            if (result == null) {
-                throw new ConfigurationException(
-                        String.format("families/family tag requires %s attribute", XMLConfig.ATT_ID));
+            try {
+                ILicenseFamily result = parseFamily(attributes(familyNode));
+                if (result == null) {
+                    throw new ConfigurationException(
+                            String.format("families/family tag requires %s attribute", XMLConfig.ATT_ID));
+                }
+                licenseFamilies.add(result);
+            } catch (RuntimeException exception) {
+                DefaultLog.getInstance().error(String.format("Family error in: '%s'", nodeText(familyNode)));
+                throw exception;
             }
-            licenseFamilies.add(result);
         }
     }
 
@@ -535,21 +567,26 @@ public final class XMLConfigurationReader implements LicenseReader, MatcherReade
      */
     private void parseApproved(final Node approvedNode) {
         if (XMLConfig.FAMILY.equals(approvedNode.getNodeName())) {
-            Map<String, String> attributes = attributes(approvedNode);
-            if (attributes.containsKey(XMLConfig.ATT_LICENSE_REF)) {
-                approvedFamilies.add(attributes.get(XMLConfig.ATT_LICENSE_REF));
-            } else if (attributes.containsKey(XMLConfig.ATT_ID)) {
-                ILicenseFamily target = parseFamily(attributes);
-                if (target != null) {
-                    licenseFamilies.add(target);
-                    String familyCategory = target.getFamilyCategory();
-                    if (StringUtils.isNotBlank(familyCategory)) {
-                        approvedFamilies.add(familyCategory);
+            try {
+                Map<String, String> attributes = attributes(approvedNode);
+                if (attributes.containsKey(XMLConfig.ATT_LICENSE_REF)) {
+                    approvedFamilies.add(attributes.get(XMLConfig.ATT_LICENSE_REF));
+                } else if (attributes.containsKey(XMLConfig.ATT_ID)) {
+                    ILicenseFamily target = parseFamily(attributes);
+                    if (target != null) {
+                        licenseFamilies.add(target);
+                        String familyCategory = target.getFamilyCategory();
+                        if (StringUtils.isNotBlank(familyCategory)) {
+                            approvedFamilies.add(familyCategory);
+                        }
                     }
+                } else {
+                    throw new ConfigurationException(String.format("family tag requires %s or %s attribute",
+                            XMLConfig.ATT_LICENSE_REF, XMLConfig.ATT_ID));
                 }
-            } else {
-                throw new ConfigurationException(String.format("family tag requires %s or %s attribute",
-                        XMLConfig.ATT_LICENSE_REF, XMLConfig.ATT_ID));
+            } catch (RuntimeException exception) {
+                DefaultLog.getInstance().error(String.format("Approved error in: '%s'", nodeText(approvedNode)));
+                throw exception;
             }
         }
     }
@@ -569,11 +606,16 @@ public final class XMLConfigurationReader implements LicenseReader, MatcherReade
     }
 
     private void parseMatcherBuilder(final Node classNode) {
-        Map<String, String> attributes = attributes(classNode);
-        if (attributes.get(XMLConfig.ATT_CLASS_NAME) == null) {
-            throw new ConfigurationException("matcher must have a " + XMLConfig.ATT_CLASS_NAME + " attribute");
+        try {
+            Map<String, String> attributes = attributes(classNode);
+            if (attributes.get(XMLConfig.ATT_CLASS_NAME) == null) {
+                throw new ConfigurationException("matcher must have a " + XMLConfig.ATT_CLASS_NAME + " attribute");
+            }
+            MatcherBuilderTracker.addBuilder(attributes.get(XMLConfig.ATT_CLASS_NAME), attributes.get(XMLConfig.ATT_NAME));
+        } catch (RuntimeException exception) {
+            DefaultLog.getInstance().error(String.format("Matcher error in: '%s'", nodeText(classNode)));
+            throw exception;
         }
-        MatcherBuilderTracker.addBuilder(attributes.get(XMLConfig.ATT_CLASS_NAME), attributes.get(XMLConfig.ATT_NAME));
     }
 
     @Override
