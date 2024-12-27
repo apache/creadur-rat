@@ -74,7 +74,7 @@ public class ReportOptionTest  {
         }
     }
 
-    final class AntOptionsProvider extends AbstractOptionsProvider implements ArgumentsProvider {
+    final static class AntOptionsProvider extends AbstractOptionsProvider implements ArgumentsProvider {
 
         final AtomicBoolean helpCalled = new AtomicBoolean(false);
 
