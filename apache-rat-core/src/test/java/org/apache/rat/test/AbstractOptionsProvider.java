@@ -32,12 +32,12 @@ import org.apache.rat.commandline.Arg;
 import org.apache.rat.commandline.StyleSheets;
 import org.apache.rat.config.exclusion.StandardCollection;
 import org.apache.rat.document.DocumentNameMatcher;
-import org.apache.rat.document.DocumentNameMatcherTest;
 import org.apache.rat.document.DocumentName;
 import org.apache.rat.license.ILicense;
 import org.apache.rat.license.ILicenseFamily;
 import org.apache.rat.license.LicenseSetFactory;
 import org.apache.rat.report.claim.ClaimStatistic;
+import org.apache.rat.test.utils.Resources;
 import org.apache.rat.testhelpers.TextUtils;
 import org.apache.rat.utils.DefaultLog;
 import org.apache.rat.utils.Log.Level;
@@ -102,8 +102,18 @@ public abstract class AbstractOptionsProvider {
         return DocumentName.builder(baseDir).build();
     }
 
+    public static File setup(File baseDir) {
+        try {
+            final File sourceDir = Resources.getResourceDirectory("OptionTools");
+            FileUtils.copyDirectory(sourceDir, new File(baseDir,"/src/test/resources/OptionTools"));
+        } catch (IOException e) {
+            DefaultLog.getInstance().error("Can not copy 'OptionTools' to " + baseDir, e);
+        }
+        return baseDir;
+    }
+
     protected AbstractOptionsProvider(Collection<String> unsupportedArgs, File baseDir) {
-        this.baseDir = baseDir;
+        this.baseDir = setup(baseDir);
         testMap.put("addLicense", this::addLicenseTest);
         testMap.put("config", this::configTest);
         testMap.put("configuration-no-defaults", this::configurationNoDefaultsTest);
@@ -187,6 +197,12 @@ public abstract class AbstractOptionsProvider {
         unsupportedArgs.forEach(testMap::remove);
     }
 
+    @SafeVarargs
+    protected final ReportConfiguration generateConfig(Pair<Option, String[]>... args) throws IOException {
+        List<Pair<Option, String[]>> options = Arrays.asList(args);
+        return generateConfig(options);
+    }
+
     /**
      * Create the report configuration from the argument pairs.
      * There must be at least one arg. It may be `ImmutablePair.nullPair()`.
@@ -195,7 +211,7 @@ public abstract class AbstractOptionsProvider {
      * @return The generated ReportConfiguration.
      * @throws IOException on error.
      */
-    protected abstract ReportConfiguration generateConfig(Pair<Option, String[]>... args) throws IOException;
+    protected abstract ReportConfiguration generateConfig(List<Pair<Option, String[]>> args) throws IOException;
 
     protected File writeFile(String name, Iterable<String> lines) {
         File file = new File(baseDir, name);
@@ -302,7 +318,6 @@ public abstract class AbstractOptionsProvider {
         try {
             ReportConfiguration config = generateConfig(ImmutablePair.of(option, args));
             DocumentNameMatcher excluder = config.getDocumentExcluder(baseName());
-            DocumentNameMatcherTest.decompose(excluder, mkDocName("thingone"));
             for (String fname : excluded) {
                 assertThat(excluder.matches(mkDocName(fname))).as(() -> displayArgAndName(option, fname)).isFalse();
             }

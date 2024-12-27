@@ -586,7 +586,8 @@ public enum Arg {
             Defaults.Builder defaultBuilder = Defaults.builder();
             if (CONFIGURATION.isSelected()) {
                 for (String fn : context.getCommandLine().getOptionValues(CONFIGURATION.getSelected())) {
-                    defaultBuilder.add(fn);
+                    File file = context.resolve(fn);
+                    defaultBuilder.add(file);
                 }
             }
             if (CONFIGURATION_NO_DEFAULTS.isSelected()) {
@@ -603,11 +604,12 @@ public enum Arg {
             }
             if (FAMILIES_APPROVED_FILE.isSelected()) {
                 try {
-                    File f = context.getCommandLine().getParsedOptionValue(FAMILIES_APPROVED_FILE.getSelected());
+                    String fileName = context.getCommandLine().getOptionValue(FAMILIES_APPROVED_FILE.getSelected());
+                    File f = context.resolve(fileName);
                     try (InputStream in = Files.newInputStream(f.toPath())) {
                         context.getConfiguration().addApprovedLicenseCategories(IOUtils.readLines(in, StandardCharsets.UTF_8));
                     }
-                } catch (IOException | ParseException e) {
+                } catch (IOException e) {
                     throw new ConfigurationException(e);
                 }
             }
@@ -618,11 +620,12 @@ public enum Arg {
             }
             if (FAMILIES_DENIED_FILE.isSelected()) {
                 try {
-                    File f = context.getCommandLine().getParsedOptionValue(FAMILIES_DENIED_FILE.getSelected());
+                    String fileName = context.getCommandLine().getOptionValue(FAMILIES_DENIED_FILE.getSelected());
+                    File f = context.resolve(fileName);
                     try (InputStream in = Files.newInputStream(f.toPath())) {
                         context.getConfiguration().removeApprovedLicenseCategories(IOUtils.readLines(in, StandardCharsets.UTF_8));
                     }
-                } catch (IOException | ParseException e) {
+                } catch (IOException e) {
                     throw new ConfigurationException(e);
                 }
             }
@@ -634,11 +637,12 @@ public enum Arg {
             }
             if (LICENSES_APPROVED_FILE.isSelected()) {
                 try {
-                    File f = context.getCommandLine().getParsedOptionValue(LICENSES_APPROVED_FILE.getSelected());
-                    try (InputStream in = Files.newInputStream(f.toPath())) {
+                    String fileName = context.getCommandLine().getOptionValue(LICENSES_APPROVED_FILE.getSelected());
+                    File file = context.resolve(fileName);
+                    try (InputStream in = Files.newInputStream(file.toPath())) {
                         context.getConfiguration().addApprovedLicenseIds(IOUtils.readLines(in, StandardCharsets.UTF_8));
                     }
-                } catch (IOException | ParseException e) {
+                } catch (IOException e) {
                     throw new ConfigurationException(e);
                 }
             }
@@ -649,11 +653,12 @@ public enum Arg {
             }
             if (LICENSES_DENIED_FILE.isSelected()) {
                 try {
-                    File f = context.getCommandLine().getParsedOptionValue(LICENSES_DENIED_FILE.getSelected());
-                    try (InputStream in = Files.newInputStream(f.toPath())) {
+                    String fileName = context.getCommandLine().getOptionValue(LICENSES_DENIED_FILE.getSelected());
+                    File file = context.resolve(fileName);
+                    try (InputStream in = Files.newInputStream(file.toPath())) {
                         context.getConfiguration().removeApprovedLicenseIds(IOUtils.readLines(in, StandardCharsets.UTF_8));
                     }
-                } catch (IOException | ParseException e) {
+                } catch (IOException e) {
                     throw new ConfigurationException(e);
                 }
             }

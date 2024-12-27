@@ -195,6 +195,8 @@ public class ExclusionProcessor {
             matchers.add(fromCommandLine.build());
 
             lastMatcher = MatcherSet.merge(matchers).createMatcher();
+            DefaultLog.getInstance().debug(format("Created matcher set for %s%n%s", basedir.getName(),
+                    lastMatcher));
         }
         return lastMatcher;
     }

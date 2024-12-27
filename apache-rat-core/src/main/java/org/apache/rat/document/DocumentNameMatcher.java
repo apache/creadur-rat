@@ -142,9 +142,32 @@ public final class DocumentNameMatcher {
     public Predicate<DocumentName> getPredicate() {
         return predicate;
     }
+
     @Override
     public String toString() {
         return name;
+    }
+
+    /**
+     * Decomposes the matcher execution against the candidate.
+     * @param candidate the candiate to check.
+     * @return a list of {@link DecomposeData} for each evaluation in the matcher.
+     */
+    public List<DecomposeData> decompose(final DocumentName candidate) {
+        final List<DecomposeData> result = new ArrayList<>();
+        decompose(0, this, candidate, result);
+        return result;
+    }
+
+    private void decompose(final int level, final DocumentNameMatcher matcher, final DocumentName candidate, final List<DecomposeData> result) {
+        final Predicate<DocumentName> pred = matcher.getPredicate();
+        result.add(new DecomposeData(level, matcher.toString(), pred.test(candidate)));
+        if (pred instanceof DocumentNameMatcher.CollectionPredicate) {
+            final DocumentNameMatcher.CollectionPredicate collection = (DocumentNameMatcher.CollectionPredicate) pred;
+            for (DocumentNameMatcher subMatcher : collection.getMatchers()) {
+                decompose(level + 1, subMatcher, candidate, result);
+            }
+        }
     }
 
     /**
@@ -374,6 +397,32 @@ public final class DocumentNameMatcher {
                 return false;
             }
             return true;
+        }
+    }
+
+    /**
+     * Data from a {@link DocumentNameMatcher#decompose(DocumentName)} call.
+     */
+    public static final class DecomposeData {
+        /** the level this data was generated at */
+        private final int level;
+        /** The name of the DocumentNameMatcher that created this result */
+        private final String name;;
+        /** The result of the check. */
+        private final boolean result;
+
+        private DecomposeData(final int level, final String name, final boolean result) {
+            this.level = level;
+            this.name = name;
+            this.result = result;
+        }
+
+        @Override
+        public String toString() {
+            final char[] chars = new char[level * 2];
+            Arrays.fill(chars, ' ');
+            final String fill = new String(chars);
+            return String.format("%s%s : %s", fill, name, result);
         }
     }
 }

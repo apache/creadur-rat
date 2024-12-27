@@ -52,6 +52,7 @@ import org.apache.commons.cli.ParseException;
 import org.apache.commons.io.FileUtils;
 import org.apache.rat.api.Document.Type;
 import org.apache.rat.api.RatException;
+import org.apache.rat.commandline.ArgumentContext;
 import org.apache.rat.commandline.StyleSheets;
 import org.apache.rat.document.FileDocument;
 import org.apache.rat.document.DocumentName;
@@ -84,7 +85,8 @@ public class ReporterTest {
         File output = new File(tempDirectory, "testExecute");
 
         CommandLine cl = new DefaultParser().parse(OptionCollection.buildOptions(), new String[]{"--output-style", "xml", "--output-file", output.getPath(), basedir});
-        ReportConfiguration config = OptionCollection.createConfiguration(cl);
+        ArgumentContext ctxt = new ArgumentContext(new File("."), cl);
+        ReportConfiguration config = OptionCollection.createConfiguration(ctxt);
         ClaimStatistic statistic = new Reporter(config).execute();
 
         assertThat(statistic.getCounter(Type.ARCHIVE)).isEqualTo(1);
@@ -137,7 +139,9 @@ public class ReporterTest {
     public void testOutputOption() throws Exception {
         File output = new File(tempDirectory, "test");
         CommandLine commandLine = new DefaultParser().parse(OptionCollection.buildOptions(), new String[]{"-o", output.getCanonicalPath(), basedir});
-        ReportConfiguration config = OptionCollection.createConfiguration(commandLine);
+        ArgumentContext ctxt = new ArgumentContext(new File("."), commandLine);
+
+        ReportConfiguration config = OptionCollection.createConfiguration(ctxt);
         new Reporter(config).output();
         assertThat(output.exists()).isTrue();
         String content = FileUtils.readFileToString(output, StandardCharsets.UTF_8);
@@ -154,7 +158,9 @@ public class ReporterTest {
         try (PrintStream out = new PrintStream(output)) {
             System.setOut(out);
             CommandLine commandLine = new DefaultParser().parse(OptionCollection.buildOptions(), new String[]{basedir});
-            ReportConfiguration config = OptionCollection.createConfiguration(commandLine);
+            ArgumentContext ctxt = new ArgumentContext(new File("."), commandLine);
+
+            ReportConfiguration config = OptionCollection.createConfiguration(ctxt);
             new Reporter(config).output();
         } finally {
             System.setOut(origin);
@@ -204,9 +210,10 @@ public class ReporterTest {
                 "type", "STANDARD"));
 
         File output = new File(tempDirectory, "testXMLOutput");
-
         CommandLine commandLine = new DefaultParser().parse(OptionCollection.buildOptions(), new String[]{"--output-style", "xml", "--output-file", output.getPath(), basedir});
-        ReportConfiguration config = OptionCollection.createConfiguration(commandLine);
+        ArgumentContext ctxt = new ArgumentContext(new File("."), commandLine);
+
+        ReportConfiguration config = OptionCollection.createConfiguration(ctxt);
         new Reporter(config).output();
 
         assertThat(output).exists();

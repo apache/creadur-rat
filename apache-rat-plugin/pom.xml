@@ -99,6 +99,7 @@
               <exclude>src/it/CustomLicense/src/**/</exclude>
               <!-- RAT-171: needs to be added since SCM ignores are only parsed in project root -->
               <exclude>**/.bzrignore</exclude>
+              <exlcude>invoker_target/**</exlcude>
               <exclude>src/test/resources/XmlOutputExamples/**/*</exclude>
             </excludes>
           </configuration>
@@ -246,7 +247,7 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-invoker-plugin</artifactId>
         <configuration>
-          <cloneProjectsTo>${project.build.directory}/invoker</cloneProjectsTo>
+          <cloneProjectsTo>${project.basedir}/invoker_target</cloneProjectsTo>
           <localRepositoryPath>${project.build.directory}/local-repo</localRepositoryPath>
           <addTestClassPath>true</addTestClassPath>
           <settingsFile>src/it/settings.xml</settingsFile>
@@ -261,6 +262,17 @@
             </goals>
           </execution>
         </executions>
+      </plugin>
+      <plugin>
+        <artifactId>maven-clean-plugin</artifactId>
+        <configuration>
+          <filesets>
+            <fileset>
+              <directory>invoker_target</directory>
+              <followSymlinks>false</followSymlinks>
+            </fileset>
+          </filesets>
+        </configuration>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>

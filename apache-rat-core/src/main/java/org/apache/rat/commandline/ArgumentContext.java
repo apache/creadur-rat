@@ -18,10 +18,13 @@
  */
 package org.apache.rat.commandline;
 
+import java.io.File;
+
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.ParseException;
 import org.apache.rat.ReportConfiguration;
+import org.apache.rat.document.DocumentName;
 import org.apache.rat.utils.DefaultLog;
 
 import static java.lang.String.format;
@@ -35,15 +38,28 @@ public class ArgumentContext {
     private final ReportConfiguration configuration;
     /** The command line that is building the configuration */
     private final CommandLine commandLine;
+    /** The directory from which relative file names will be resolved */
+    private final DocumentName workingDirectory;
 
     /**
-     * Constructor.
+     * Creates a context with the specified configuration.
+     * @param workingDirectory the directory from which relative file names will be resolved.
      * @param configuration The configuration that is being built.
      * @param commandLine The command line that is building the configuration.
      */
-    public ArgumentContext(final ReportConfiguration configuration, final CommandLine commandLine) {
+    public ArgumentContext(final File workingDirectory, final ReportConfiguration configuration, final CommandLine commandLine) {
+        this.workingDirectory = DocumentName.builder().setName(workingDirectory.getAbsoluteFile()).build();
         this.commandLine = commandLine;
         this.configuration = configuration;
+    }
+
+    /**
+     * Creates a context with an emtpy configuration.
+     * @param workingDirectory The directory from which to resolve relative file names.
+     * @param commandLine The command line.
+     */
+    public ArgumentContext(final File workingDirectory, final CommandLine commandLine) {
+        this(workingDirectory, new ReportConfiguration(), commandLine);
     }
 
     /**
@@ -67,6 +83,27 @@ public class ArgumentContext {
      */
     public CommandLine getCommandLine() {
         return commandLine;
+    }
+
+    /**
+     * Gets the directory name from which releative file names will be resolved.
+     * @return The directory name from which releative file names will be resolved.
+     */
+    public DocumentName getWorkingDirectory() {
+        return workingDirectory;
+    }
+
+    /**
+     * Resolves the file name to the working directory if necessayr.
+     * @param fileName the file name to resolve.
+     * @return the file name string.
+     */
+    public File resolve(final String fileName) {
+        if (!fileName.startsWith("/")) {
+            DocumentName fn = DocumentName.builder().setName(fileName).setBaseName("/").build();
+            return new File(workingDirectory.resolve(fn.localized()).getName());
+        }
+        return new File(fileName);
     }
 
     /**

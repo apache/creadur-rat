@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rat-config>
+    <families>
+        <family id="CC" name="Creative Commons"/>"
+        <family id="YAL" name="Yet another license family"/>"
+    </families>
+    <licenses>
+        <license family="CC" id="CC-BY-NC-ND"
+                 name="Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International">
+            <text>Attribution-NonCommercial-NoDerivatives</text>
+        </license>
+        <license family="YAL"
+                 name="Yet another license">
+            <any>
+                <text>Yet another license</text>
+                <spdx name="YAL"/>
+            </any>
+        </license>
+    </licenses>
+    <approved>
+        <family license_ref='CC'/>
+    </approved>
+</rat-config>

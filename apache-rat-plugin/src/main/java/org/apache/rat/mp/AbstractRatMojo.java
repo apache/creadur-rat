@@ -255,6 +255,10 @@ public abstract class AbstractRatMojo extends BaseRatMojo {
     @Parameter(defaultValue = "${project}", required = true, readonly = true)
     protected MavenProject project;
 
+    protected AbstractRatMojo() {
+        DefaultLog.setInstance(makeLog());
+    }
+
     /**
      * @return the Maven project.
      */
@@ -349,10 +353,9 @@ public abstract class AbstractRatMojo extends BaseRatMojo {
 
     private org.apache.rat.utils.Log makeLog() {
         return new org.apache.rat.utils.Log() {
-            private final org.apache.maven.plugin.logging.Log log = getLog();
-
             @Override
             public Level getLevel() {
+                final org.apache.maven.plugin.logging.Log log = getLog();
                 if (log.isDebugEnabled()) {
                     return Level.DEBUG;
                 }
@@ -370,6 +373,7 @@ public abstract class AbstractRatMojo extends BaseRatMojo {
 
             @Override
             public void log(final Level level, final String message, final Throwable throwable) {
+                final org.apache.maven.plugin.logging.Log log = getLog();
                 switch (level) {
                     case DEBUG:
                         if (throwable != null) {
@@ -406,6 +410,7 @@ public abstract class AbstractRatMojo extends BaseRatMojo {
 
             @Override
             public void log(final Level level, final String msg) {
+                final org.apache.maven.plugin.logging.Log log = getLog();
                 switch (level) {
                     case DEBUG:
                         log.debug(msg);
@@ -459,10 +464,9 @@ public abstract class AbstractRatMojo extends BaseRatMojo {
     }
 
     protected ReportConfiguration getConfiguration() throws MojoExecutionException {
+        Log log = DefaultLog.getInstance();
         if (reportConfiguration == null) {
-            DefaultLog.setInstance(makeLog());
             try {
-                Log log = DefaultLog.getInstance();
                 if (super.getLog().isDebugEnabled()) {
                     log.debug("Start BaseRatMojo Configuration options");
                     for (Map.Entry<String, List<String>> entry : args.entrySet()) {
@@ -476,7 +480,8 @@ public abstract class AbstractRatMojo extends BaseRatMojo {
 
                 setIncludeExclude();
 
-                ReportConfiguration config = OptionCollection.parseCommands(args().toArray(new String[0]),
+                getLog().warn("Basedir is : " + basedir);
+                ReportConfiguration config = OptionCollection.parseCommands(basedir, args().toArray(new String[0]),
                         o -> getLog().warn("Help option not supported"),
                         true);
                 reportDeprecatedProcessing();
@@ -498,7 +503,7 @@ public abstract class AbstractRatMojo extends BaseRatMojo {
                     }
                 }
                 if (families != null || getDeprecatedConfigs().findAny().isPresent()) {
-                    if (super.getLog().isDebugEnabled()) {
+                    if (log.isEnabled(Log.Level.DEBUG)) {
                         log.debug(format("%s license families loaded from pom", families.length));
                     }
                     Consumer<ILicenseFamily> logger = super.getLog().isDebugEnabled() ? l -> log.debug(format("Family: %s", l))
@@ -519,10 +524,10 @@ public abstract class AbstractRatMojo extends BaseRatMojo {
                 }
 
                 if (licenses != null) {
-                    if (super.getLog().isDebugEnabled()) {
+                    if (log.isEnabled(Log.Level.DEBUG)) {
                         log.debug(format("%s licenses loaded from pom", licenses.length));
                     }
-                    Consumer<ILicense> logger = super.getLog().isDebugEnabled() ? l -> log.debug(format("License: %s", l))
+                    Consumer<ILicense> logger = log.isEnabled(Log.Level.DEBUG) ? l -> log.debug(format("License: %s", l))
                             : l -> {
                     };
                     Consumer<ILicense> addApproved = (approvedLicenses == null || approvedLicenses.length == 0)

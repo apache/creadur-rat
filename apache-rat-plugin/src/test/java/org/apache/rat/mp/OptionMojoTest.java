@@ -19,7 +19,6 @@
 package org.apache.rat.mp;
 
 import org.apache.commons.cli.Option;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -83,8 +82,10 @@ public class OptionMojoTest {
             super(BaseRatMojo.unsupportedArgs(), testPath.toFile());
         }
 
-       private RatCheckMojo generateMojo(Pair<Option,String[]>... args) throws IOException {
-           MavenOption keyOption = new MavenOption(args[0].getKey() == null ? Option.builder().longOpt("no-option").build() : args[0].getKey());
+       private RatCheckMojo generateMojo(List<Pair<Option, String[]>> args) throws IOException {
+           MavenOption keyOption = new MavenOption(args.get(0).getKey() == null ?
+                   Option.builder().longOpt("no-option").build() :
+                   args.get(0).getKey());
            List<String> mavenOptions = new ArrayList<>();
            for (Pair<Option, String[]> pair : args) {
                if (pair.getKey() != null) {
@@ -94,7 +95,6 @@ public class OptionMojoTest {
                            mavenOptions.add(new MavenOption(pair.getKey()).xmlNode(value));
                        }
                    } else {
-                       MavenOption mavenOption = new MavenOption(pair.getKey());
                        mavenOptions.add(new MavenOption(pair.getKey()).xmlNode("true"));
                    }
                }
@@ -121,9 +121,10 @@ public class OptionMojoTest {
        }
 
         @Override
-        protected ReportConfiguration generateConfig(Pair<Option, String[]>... args) throws IOException {
+        protected final ReportConfiguration generateConfig(List<Pair<Option, String[]>> args) throws IOException {
             try {
                 this.mojo = generateMojo(args);
+                AbstractOptionsProvider.setup(this.mojo.getProject().getBasedir());
                 return mojo.getConfiguration();
             } catch (MojoExecutionException e) {
                 throw new IOException(e.getMessage(), e);
@@ -134,65 +135,6 @@ public class OptionMojoTest {
         protected void helpTest() {
             fail("Should not call help");
         }
-
-/*
-        private void execExcludeTest(Option option, String[] args) {
-
-            try {
-                ReportConfiguration config = generateConfig(ImmutablePair.of(option, args));
-                File workingDir = mojo.getProject().getBasedir();
-                for (String fn : new String[] {"some.foo", "B.bar", "justbaz", "notbaz"}) {
-                    try (FileOutputStream fos = new FileOutputStream(new File(workingDir, fn))) {
-                        fos.write("Hello world".getBytes());
-                    }
-                }
-
-                assertThat(ds.getExcludedList()).contains("some.foo");
-                assertThat(ds.getExcludedList()).contains("B.bar");
-                assertThat(ds.getExcludedList()).contains("justbaz");
-                assertThat(ds.getIncludedList()).contains("notbaz");
-            } catch (IOException | MojoExecutionException e) {
-                fail(e.getMessage(), e);
-            }
-        }
-
-        @Override
-        protected void excludeTest() {
-            String[] args = { "*.foo", "*.bar", "justbaz"};
-            execExcludeTest(Arg.EXCLUDE.find("exclude"), args);
-        }
-
-        @Override
-        protected void inputExcludeTest() {
-            String[] args = { "*.foo", "*.bar", "justbaz"};
-            execExcludeTest(Arg.EXCLUDE.find("input-exclude"), args);
-        }
-
-        private void excludeFileTest(Option option) {
-            File outputFile = new File(baseDir, "exclude.txt");
-            try (FileWriter fw = new FileWriter(outputFile)) {
-                fw.write("*.foo");
-                fw.write(System.lineSeparator());
-                fw.write("*.bar");
-                fw.write(System.lineSeparator());
-                fw.write("justbaz");
-                fw.write(System.lineSeparator());
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-            execExcludeTest(option, new String[] {outputFile.getPath()});
-        }
-
-        protected void excludeFileTest() {
-            excludeFileTest(Arg.EXCLUDE_FILE.find("exclude-file"));
-        }
-
-
-        protected void inputExcludeFileTest() {
-            excludeFileTest(Arg.EXCLUDE_FILE.find("input-exclude-file"));
-        }
-
- */
     }
 
     public abstract static class SimpleMojoTestcase extends BetterAbstractMojoTestCase {
