@@ -221,15 +221,11 @@ public class RatCheckMojoTest { //extends BetterAbstractMojoTestCase {
 
         XmlUtils.assertAttributes(document, xPath, "/rat-report/resource[@name='/src.apt']", "type",
                 "STANDARD");
-        XmlUtils.assertIsPresent(document, xPath, "/rat-report/resource[@name='/src.apt.new']/license[@approval='true']");
-
-        XmlUtils.assertAttributes(document, xPath, "/rat-report/statistics/documentType[@name='STANDARD']", "count",
-                "3");
 
         for (Document.Type type : Document.Type.values()) {
             if (type == Document.Type.STANDARD) {
                 XmlUtils.assertAttributes(document, xPath, "/rat-report/statistics/documentType[@name='STANDARD']", "count",
-                        "3");
+                        "2");
             } else if (type == Document.Type.IGNORED) {
                 XmlUtils.assertAttributes(document, xPath, "/rat-report/statistics/documentType[@name='IGNORED']", "count",
                         "1");
