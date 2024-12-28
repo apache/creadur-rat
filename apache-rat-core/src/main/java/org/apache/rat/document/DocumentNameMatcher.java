@@ -85,9 +85,7 @@ public final class DocumentNameMatcher {
      * @param basedir the base directory for the scanning.
      */
     public DocumentNameMatcher(final String name, final MatchPatterns patterns, final DocumentName basedir) {
-        this(name, (Predicate<DocumentName>) documentName -> patterns.matches(documentName.getName(),
-                tokenize(documentName.getName(), basedir.getDirectorySeparator()),
-                basedir.isCaseSensitive()));
+        this(name, new MatchPatternsPredicate(basedir, patterns));
     }
 
     /**
@@ -120,7 +118,7 @@ public final class DocumentNameMatcher {
      * @param fileFilter the file filter to execute.
      */
     public DocumentNameMatcher(final String name, final FileFilter fileFilter) {
-        this(name, (Predicate<DocumentName>) documentName -> fileFilter.accept(new File(documentName.getName())));
+        this(name, new FileFilterPredicate(fileFilter));
     }
 
     /**
@@ -161,7 +159,7 @@ public final class DocumentNameMatcher {
 
     private void decompose(final int level, final DocumentNameMatcher matcher, final DocumentName candidate, final List<DecomposeData> result) {
         final Predicate<DocumentName> pred = matcher.getPredicate();
-        result.add(new DecomposeData(level, matcher.toString(), pred.test(candidate)));
+        result.add(new DecomposeData(level, matcher, pred.test(candidate)));
         if (pred instanceof DocumentNameMatcher.CollectionPredicate) {
             final DocumentNameMatcher.CollectionPredicate collection = (DocumentNameMatcher.CollectionPredicate) pred;
             for (DocumentNameMatcher subMatcher : collection.getMatchers()) {
@@ -192,8 +190,7 @@ public final class DocumentNameMatcher {
             return MATCHES_ALL;
         }
 
-        return new DocumentNameMatcher(format("not(%s)", nameMatcher),
-                (Predicate<DocumentName>) documentName -> !nameMatcher.matches(documentName));
+        return new DocumentNameMatcher(format("not(%s)", nameMatcher), new NotPredicate(nameMatcher));
     }
 
     /**
@@ -312,9 +309,79 @@ public final class DocumentNameMatcher {
     }
 
     /**
+     * A DocumentName predicate that uses MatchPatterns.
+     */
+    public static final class MatchPatternsPredicate implements Predicate<DocumentName> {
+        /** The base diirectory for the pattern matches */
+        private final DocumentName basedir;
+        /** The patter matchers */
+        private final MatchPatterns patterns;
+
+        private MatchPatternsPredicate(final DocumentName basedir, final MatchPatterns patterns) {
+            this.basedir = basedir;
+            this.patterns = patterns;
+        }
+
+        @Override
+        public boolean test(final DocumentName documentName) {
+            return patterns.matches(documentName.getName(),
+                    tokenize(documentName.getName(), basedir.getDirectorySeparator()),
+                    basedir.isCaseSensitive());
+        }
+
+        @Override
+        public String toString() {
+            return patterns.toString();
+        }
+    }
+
+    /**
+     * A DocumentName predicate reverses another DocumentNameMatcher
+     */
+    public static final class NotPredicate implements Predicate<DocumentName> {
+        /** The document name matcher to reverse */
+        private final DocumentNameMatcher nameMatcher;
+
+        private NotPredicate(final DocumentNameMatcher nameMatcher) {
+            this.nameMatcher = nameMatcher;
+        }
+
+        @Override
+        public boolean test(final DocumentName documentName) {
+            return !nameMatcher.matches(documentName);
+        }
+
+        @Override
+        public String toString() {
+            return nameMatcher.predicate.toString();
+        }
+    }
+
+    /**
+     * A DocumentName predicate that uses FileFilter.
+     */
+    public static final class FileFilterPredicate implements Predicate<DocumentName> {
+        /** The file filter */
+        private final FileFilter fileFilter;
+
+        private FileFilterPredicate(final FileFilter fileFilter) {
+            this.fileFilter = fileFilter;
+        }
+
+        @Override
+        public boolean test(final DocumentName documentName) {
+            return fileFilter.accept(new File(documentName.getName()));
+        }
+
+        @Override
+        public String toString() {
+            return fileFilter.toString();
+        }
+    }
+
+    /**
      * A marker interface to indicate this predicate contains a collection of matchers.
      */
-    // package private for testing access
     abstract static class CollectionPredicate implements Predicate<DocumentName> {
         /** The collection for matchers that make up this predicate */
         private final Iterable<DocumentNameMatcher> matchers;
@@ -333,6 +400,14 @@ public final class DocumentNameMatcher {
          */
         public Iterable<DocumentNameMatcher> getMatchers() {
             return matchers;
+        }
+
+        public String toString() {
+            StringBuilder builder = new StringBuilder();
+            for (DocumentNameMatcher matcher : matchers) {
+                builder.append(matcher.predicate.toString()).append(System.lineSeparator());
+            }
+            return builder.toString();
         }
     }
 
@@ -407,13 +482,13 @@ public final class DocumentNameMatcher {
         /** the level this data was generated at */
         private final int level;
         /** The name of the DocumentNameMatcher that created this result */
-        private final String name;;
+        private final DocumentNameMatcher matcher;
         /** The result of the check. */
         private final boolean result;
 
-        private DecomposeData(final int level, final String name, final boolean result) {
+        private DecomposeData(final int level, final DocumentNameMatcher matcher, final boolean result) {
             this.level = level;
-            this.name = name;
+            this.matcher = matcher;
             this.result = result;
         }
 
@@ -422,7 +497,11 @@ public final class DocumentNameMatcher {
             final char[] chars = new char[level * 2];
             Arrays.fill(chars, ' ');
             final String fill = new String(chars);
-            return String.format("%s%s : %s", fill, name, result);
+            return fill +
+                    matcher.toString() + " : " + result +
+                    System.lineSeparator() +
+                    fill + "    " +
+                    matcher.predicate.toString();
         }
     }
 }
