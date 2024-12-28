@@ -84,9 +84,7 @@ public final class DocumentNameMatcher {
      * @param basedir the base directory for the scanning.
      */
     public DocumentNameMatcher(final String name, final MatchPatterns patterns, final DocumentName basedir) {
-        this(name, (Predicate<DocumentName>) documentName -> patterns.matches(documentName.getName(),
-                tokenize(documentName.getName(), basedir.getDirectorySeparator()),
-                basedir.isCaseSensitive()));
+        this(name, new MatchPatternsPredicate(basedir, patterns));
     }
 
     /**
