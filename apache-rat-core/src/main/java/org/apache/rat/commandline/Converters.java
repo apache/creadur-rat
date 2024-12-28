@@ -19,10 +19,12 @@
 package org.apache.rat.commandline;
 
 import java.io.File;
+import java.io.IOException;
 
 import org.apache.commons.cli.Converter;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.rat.ConfigurationException;
+import org.apache.rat.document.DocumentName;
 import org.apache.rat.report.claim.ClaimStatistic;
 
 import static java.lang.String.format;
@@ -39,7 +41,8 @@ public final class Converters {
     /**
      * Creates a File with fully qualified name
      */
-    public static final Converter<File, NullPointerException> FILE_CONVERTER = s -> new File(s).getAbsoluteFile();
+    public static final FileConverter FILE_CONVERTER = new FileConverter();
+
     /**
      * converts the Converter pattern into a Converter, count pair.
      */
@@ -55,4 +58,52 @@ public final class Converters {
             throw new ConfigurationException(format("'%s' is not a valid Counter", parts[0]), e);
         }
     };
+
+    /**
+     * A converter that can handle relative or absolute files.
+     */
+    public static final class FileConverter implements Converter<File, NullPointerException> {
+        /** The working directory to resolve relative files agains */
+        private DocumentName workingDirectory;
+
+        /**
+         * The constructor.
+         */
+        private FileConverter() {
+            // private construction only.
+        }
+
+        /**
+         * Sets the working directory for the conversion.
+         * @param workingDirectory
+         */
+        public void setWorkingDirectory(final DocumentName workingDirectory) {
+            this.workingDirectory = workingDirectory;
+        }
+
+        /**
+         * Applies the conversion function to the specified file name.
+         * @param fileName the file name to create a file from.
+         * @return a File.
+         * @throws NullPointerException if {@code fileName} is null.
+         */
+        public File apply(final String fileName) throws NullPointerException {
+            File file = new File(fileName);
+            // is this a relative file?
+            if (!fileName.startsWith(File.separator)) {
+                // check for a root provided (e.g. C:\\)"
+                DocumentName.Builder builder = DocumentName.builder(file);
+                final DocumentName name = builder.build();
+                if (name.getRoot().isEmpty()) {
+                    // no root, resolve against workingDirectory
+                    file = new File(workingDirectory.resolve(fileName).getName()).getAbsoluteFile();
+                }
+            }
+            try {
+                return file.getCanonicalFile();
+            } catch (IOException e) {
+                return file.getAbsoluteFile();
+            }
+        }
+    }
 }
