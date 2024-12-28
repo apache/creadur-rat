@@ -80,14 +80,20 @@ public abstract class AbstractOptionsProvider {
      * A map of test Options to tests
      */
     protected final Map<String, OptionCollectionTest.OptionTest> testMap = new TreeMap<>();
-
+    /** The list of exclude args */
     protected static final String[] EXCLUDE_ARGS = {"*.foo", "%regex[[A-Z]\\.bar]", "justbaz"};
+    /** the list of include args */
     protected static final String[] INCLUDE_ARGS = {"B.bar", "justbaz"};
     /**
      * The directory to place test data in.
      */
     protected File baseDir;
 
+    /**
+     * Copy the runtime data to the "target" directory.
+     * @param baseDir the base directory to copy to.
+     * @param targetDir the directory relative to the base directory to copy to.
+     */
     public static void preserveData(File baseDir, String targetDir) {
         final Path recordPath = FileSystems.getDefault().getPath("target", targetDir);
         recordPath.toFile().mkdirs();
@@ -98,10 +104,19 @@ public abstract class AbstractOptionsProvider {
         }
     }
 
+    /**
+     * Gets the document name based on the baseDir.
+     * @return The document name based on the baseDir.
+     */
     protected DocumentName baseName() {
         return DocumentName.builder(baseDir).build();
     }
 
+    /**
+     * Copies the test data to the specified directory.
+     * @param baseDir the directory to copy the /src/test/resources to.
+     * @return the {@code baseDir} argument.
+     */
     public static File setup(File baseDir) {
         try {
             final File sourceDir = Resources.getResourceDirectory("OptionTools");
@@ -255,7 +270,7 @@ public abstract class AbstractOptionsProvider {
 
     private void excludeFileTest(Option option) {
         File outputFile = writeFile("exclude.txt", Arrays.asList(EXCLUDE_ARGS));
-        execExcludeTest(option, new String[]{outputFile.getPath()});
+        execExcludeTest(option, new String[]{outputFile.getAbsolutePath()});
     }
 
     protected void excludeFileTest() {
@@ -375,7 +390,7 @@ public abstract class AbstractOptionsProvider {
 
     private void includeFileTest(Option option) {
         File outputFile = writeFile("include.txt", Arrays.asList(INCLUDE_ARGS));
-        execIncludeTest(option, new String[]{outputFile.getPath()});
+        execIncludeTest(option, new String[]{outputFile.getAbsolutePath()});
     }
 
     protected void inputIncludeFileTest() {
@@ -470,7 +485,7 @@ public abstract class AbstractOptionsProvider {
     protected void licensesApprovedFileTest() {
         File outputFile = writeFile("licensesApproved.txt", Arrays.asList("one", "two"));
         execLicensesApprovedTest(Arg.LICENSES_APPROVED_FILE.find("licenses-approved-file"),
-                new String[]{outputFile.getPath()});
+                new String[]{outputFile.getAbsolutePath()});
     }
 
     protected void licensesApprovedTest() {
@@ -495,7 +510,8 @@ public abstract class AbstractOptionsProvider {
 
     protected void licensesDeniedFileTest() {
         File outputFile = writeFile("licensesDenied.txt", Collections.singletonList("ILLUMOS"));
-        execLicensesDeniedTest(Arg.LICENSES_DENIED_FILE.find("licenses-denied-file"), new String[]{outputFile.getPath()});
+        execLicensesDeniedTest(Arg.LICENSES_DENIED_FILE.find("licenses-denied-file"),
+                new String[]{outputFile.getAbsolutePath()});
     }
 
     private void execLicenseFamiliesApprovedTest(Option option, String[] args) {
@@ -522,7 +538,7 @@ public abstract class AbstractOptionsProvider {
     protected void licenseFamiliesApprovedFileTest() {
         File outputFile = writeFile("familiesApproved.txt", Collections.singletonList("catz"));
         execLicenseFamiliesApprovedTest(Arg.FAMILIES_APPROVED_FILE.find("license-families-approved-file"),
-                new String[]{outputFile.getPath()});
+                new String[]{outputFile.getAbsolutePath()});
     }
 
     protected void licenseFamiliesApprovedTest() {
@@ -545,7 +561,7 @@ public abstract class AbstractOptionsProvider {
     protected void licenseFamiliesDeniedFileTest() {
         File outputFile = writeFile("familiesDenied.txt", Collections.singletonList("GPL"));
         execLicenseFamiliesDeniedTest(Arg.FAMILIES_DENIED_FILE.find("license-families-denied-file"),
-                new String[]{outputFile.getPath()});
+                new String[]{outputFile.getAbsolutePath()});
     }
 
     protected void licenseFamiliesDeniedTest() {

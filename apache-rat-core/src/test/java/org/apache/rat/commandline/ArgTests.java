@@ -18,6 +18,7 @@
  */
 package org.apache.rat.commandline;
 
+import java.io.IOException;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.Options;
@@ -31,7 +32,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 
 import java.io.File;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class ArgTests {
 
@@ -43,7 +44,7 @@ public class ArgTests {
 
     @ParameterizedTest
     @ValueSource(strings = { "rat.txt", "./rat.txt", "/rat.txt", "target/rat.test" })
-    public void outputFleNameNoDirectoryTest(String name) throws ParseException {
+    public void outputFleNameNoDirectoryTest(String name) throws ParseException, IOException {
         class OutputFileConfig extends ReportConfiguration  {
             private File actual = null;
             @Override
@@ -58,6 +59,6 @@ public class ArgTests {
         OutputFileConfig configuration = new OutputFileConfig();
         ArgumentContext ctxt = new ArgumentContext(new File("."), configuration, commandLine);
         Arg.processArgs(ctxt);
-        assertEquals(expected.getAbsolutePath(), configuration.actual.getAbsolutePath());
+        assertThat(configuration.actual.getAbsolutePath()).isEqualTo(expected.getCanonicalPath());
     }
 }
