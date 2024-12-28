@@ -64,10 +64,11 @@ import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.stream.Stream;
+import org.junit.jupiter.params.provider.ArgumentsProvider;
 
 import static org.apache.rat.commandline.Arg.HELP_LICENSES;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.fail;
+import static org.assertj.core.api.Fail.fail;
 
 /**
  * A list of methods that an OptionsProvider in a test case must support.
@@ -75,7 +76,7 @@ import static org.junit.Assert.fail;
  * tests an Option from OptionCollection that must be implemented in the UI.
  * Each method in this interface tests an Option in {@link org.apache.rat.OptionCollection}.
  */
-public abstract class AbstractOptionsProvider {
+public abstract class AbstractOptionsProvider implements ArgumentsProvider {
     /**
      * A map of test Options to tests
      */
@@ -250,6 +251,16 @@ public abstract class AbstractOptionsProvider {
         return String.format("%s %s", option.getLongOpt(), fname);
     }
 
+    private String dump(DocumentNameMatcher nameMatcher, DocumentName name) {
+        StringBuilder sb = new StringBuilder();
+        nameMatcher.decompose(name).forEach(s -> sb.append(s).append("\n"));
+        return sb.toString();
+    }
+
+    private String dump(Option option, String fname, DocumentNameMatcher matcher, DocumentName name) {
+        return String.format("%s%n%s", displayArgAndName(option, fname), dump(matcher, name));
+    }
+
     // exclude tests
     private void execExcludeTest(Option option, String[] args) {
         String[] notExcluded = {"notbaz", "well._afile"};
@@ -258,10 +269,12 @@ public abstract class AbstractOptionsProvider {
             ReportConfiguration config = generateConfig(ImmutablePair.of(option, args));
             DocumentNameMatcher excluder = config.getDocumentExcluder(baseName());
             for (String fname : notExcluded) {
-                assertThat(excluder.matches(mkDocName(fname))).as(() -> displayArgAndName(option, fname)).isTrue();
+                DocumentName docName = mkDocName(fname);
+                assertThat(excluder.matches(docName)).as(() -> dump(option, fname, matcher, docName)).isTrue();
             }
             for (String fname : excluded) {
-                assertThat(excluder.matches(mkDocName(fname))).as(() -> displayArgAndName(option, fname)).isFalse();
+                DocumentName docName = mkDocName(fname);
+                assertThat(excluder.matches(docName)).as(() -> dump(option, fname, matcher, docName)).isFalse();
             }
         } catch (IOException e) {
             fail(e.getMessage());
@@ -298,10 +311,12 @@ public abstract class AbstractOptionsProvider {
             ReportConfiguration config = generateConfig(ImmutablePair.of(option, args));
             DocumentNameMatcher excluder = config.getDocumentExcluder(baseName());
             for (String fname : excluded) {
-                assertThat(excluder.matches(mkDocName(fname))).as(() -> displayArgAndName(option, fname)).isFalse();
+                DocumentName docName = mkDocName(fname);
+                assertThat(excluder.matches(docName)).as(() -> dump(option, fname, matcher, docName)).isFalse();
             }
             for (String fname : notExcluded) {
-                assertThat(excluder.matches(mkDocName(fname))).as(() -> displayArgAndName(option, fname)).isTrue();
+                DocumentName docName = mkDocName(fname);
+                assertThat(excluder.matches(docName)).as(() -> dump(option, fname, matcher, docName)).isTrue();
             }
         } catch (IOException e) {
             fail(e.getMessage());
@@ -334,10 +349,12 @@ public abstract class AbstractOptionsProvider {
             ReportConfiguration config = generateConfig(ImmutablePair.of(option, args));
             DocumentNameMatcher excluder = config.getDocumentExcluder(baseName());
             for (String fname : excluded) {
-                assertThat(excluder.matches(mkDocName(fname))).as(() -> displayArgAndName(option, fname)).isFalse();
+                DocumentName docName = mkDocName(fname);
+                assertThat(excluder.matches(docName)).as(() -> dump(option, fname, excluder, docName)).isFalse();
             }
             for (String fname : notExcluded) {
-                assertThat(excluder.matches(mkDocName(fname))).as(() -> displayArgAndName(option, fname)).isTrue();
+                DocumentName docName = mkDocName(fname);
+                assertThat(excluder.matches(docName)).as(() -> dump(option, fname, excluder, docName)).isTrue();
             }
         } catch (IOException e) {
             fail(e.getMessage());
@@ -358,10 +375,12 @@ public abstract class AbstractOptionsProvider {
             ReportConfiguration config = generateConfig(ImmutablePair.of(option, args));
             DocumentNameMatcher excluder = config.getDocumentExcluder(baseName());
             for (String fname : excluded) {
-                assertThat(excluder.matches(mkDocName(fname))).as(() -> displayArgAndName(option, fname)).isFalse();
+                DocumentName docName = mkDocName(fname);
+                assertThat(excluder.matches(docName)).as(() -> dump(option, fname, matcher, docName)).isFalse();
             }
             for (String fname : notExcluded) {
-                assertThat(excluder.matches(mkDocName(fname))).as(() -> displayArgAndName(option, fname)).isTrue();
+                DocumentName docName = mkDocName(fname);
+                assertThat(excluder.matches(docName)).as(() -> dump(option, fname, matcher, docName)).isTrue();
             }
         } catch (IOException e) {
             fail(e.getMessage());
@@ -378,10 +397,12 @@ public abstract class AbstractOptionsProvider {
                     ImmutablePair.of(excludeOption, EXCLUDE_ARGS));
             DocumentNameMatcher excluder = config.getDocumentExcluder(baseName());
             for (String fname : excluded) {
-                assertThat(excluder.matches(mkDocName(fname))).as(() -> displayArgAndName(option, fname)).isFalse();
+                DocumentName docName = mkDocName(fname);
+                assertThat(excluder.matches(docName)).as(() -> dump(option, fname, matcher, docName)).isFalse();
             }
             for (String fname : notExcluded) {
-                assertThat(excluder.matches(mkDocName(fname))).as(() -> displayArgAndName(option, fname)).isTrue();
+                DocumentName docName = mkDocName(fname);
+                assertThat(excluder.matches(docName)).as(() -> dump(option, fname, matcher, docName)).isTrue();
             }
         } catch (IOException e) {
             fail(e.getMessage());
@@ -420,10 +441,12 @@ public abstract class AbstractOptionsProvider {
             ReportConfiguration config = generateConfig(excludes, ImmutablePair.of(option, args));
             DocumentNameMatcher excluder = config.getDocumentExcluder(baseName());
             for (String fname : excluded) {
-                assertThat(excluder.matches(mkDocName(fname))).as(() -> displayArgAndName(option, fname)).isFalse();
+                DocumentName docName = mkDocName(fname);
+                assertThat(excluder.matches(docName)).as(() -> dump(option, fname, matcher, docName)).isFalse();
             }
             for (String fname : notExcluded) {
-                assertThat(excluder.matches(mkDocName(fname))).as(() -> displayArgAndName(option, fname)).isTrue();
+                DocumentName docName = mkDocName(fname);
+                assertThat(excluder.matches(docName)).as(() -> dump(option, fname, matcher, docName)).isTrue();
             }
         } catch (IOException e) {
             fail(e.getMessage());
@@ -914,6 +937,7 @@ public abstract class AbstractOptionsProvider {
         }
     }
 
+    @Override
     final public Stream<? extends Arguments> provideArguments(ExtensionContext context) {
         List<Arguments> lst = new ArrayList<>();
         List<String> missingTests = new ArrayList<>();
