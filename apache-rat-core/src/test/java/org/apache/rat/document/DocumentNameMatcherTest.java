@@ -18,7 +18,10 @@
  */
 package org.apache.rat.document;
 
+import java.io.File;
+import java.io.FileFilter;
 import java.util.function.Predicate;
+import org.apache.commons.io.filefilter.NameFileFilter;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
