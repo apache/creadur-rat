@@ -184,7 +184,7 @@ public abstract class AbstractOptionsProvider implements ArgumentsProvider {
         verifyAllMethodsDefinedAndNeeded(unsupportedArgs);
     }
 
-    private void verifyAllMethodsDefinedAndNeeded(Collection<String> unsupportedArgs) {
+    private void verifyAllMethodsDefinedAndNeeded(final Collection<String> unsupportedArgs) {
         // verify all options have functions.
         final List<String> argNames = new ArrayList<>();
         Arg.getOptions().getOptions().forEach(o -> {
@@ -214,7 +214,7 @@ public abstract class AbstractOptionsProvider implements ArgumentsProvider {
     }
 
     @SafeVarargs
-    protected final ReportConfiguration generateConfig(Pair<Option, String[]>... args) throws IOException {
+    protected final ReportConfiguration generateConfig(final Pair<Option, String[]>... args) throws IOException {
         List<Pair<Option, String[]>> options = Arrays.asList(args);
         return generateConfig(options);
     }
@@ -227,9 +227,9 @@ public abstract class AbstractOptionsProvider implements ArgumentsProvider {
      * @return The generated ReportConfiguration.
      * @throws IOException on error.
      */
-    protected abstract ReportConfiguration generateConfig(List<Pair<Option, String[]>> args) throws IOException;
+    protected abstract ReportConfiguration generateConfig(final List<Pair<Option, String[]>> args) throws IOException;
 
-    protected File writeFile(String name, Iterable<String> lines) {
+    protected File writeFile(final String name, final Iterable<String> lines) {
         File file = new File(baseDir, name);
         try (PrintWriter writer = new PrintWriter(new FileWriter(file))) {
             lines.forEach(writer::println);
@@ -239,7 +239,7 @@ public abstract class AbstractOptionsProvider implements ArgumentsProvider {
         return file;
     }
 
-    protected DocumentName mkDocName(String name) {
+    protected DocumentName mkDocName(final String name) {
         return DocumentName.builder(new File(baseDir, name)).build();
     }
 
@@ -247,17 +247,23 @@ public abstract class AbstractOptionsProvider implements ArgumentsProvider {
     protected abstract void helpTest();
 
     /** Display the option and value under test */
-    private String displayArgAndName(Option option, String fname) {
+    private String displayArgAndName(final Option option, final String fname) {
         return String.format("%s %s", option.getLongOpt(), fname);
     }
 
-    private String dump(Option option, String fname, DocumentNameMatcher matcher, DocumentName name) {
+    private String dump(final DocumentNameMatcher nameMatcher, final DocumentName name) {
+        StringBuilder sb = new StringBuilder();
+        nameMatcher.decompose(name).forEach(s -> sb.append(s).append("\n"));
+        return sb.toString();
+    }
+
+    private String dump(final Option option, final String fname, final DocumentNameMatcher matcher, final DocumentName name) {
         return String.format("Argument and Name: %s%nMatcher decomposition:%n%s", displayArgAndName(option, fname),
                 DocumentNameMatcherTest.processDecompose(matcher, name));
     }
 
     // exclude tests
-    private void execExcludeTest(Option option, String[] args) {
+    private void execExcludeTest(final Option option, final String[] args) {
         String[] notExcluded = {"notbaz", "well._afile"};
         String[] excluded = {"some.foo", "B.bar", "justbaz"};
         try {
