@@ -128,7 +128,7 @@ public abstract class AbstractOptionsProvider implements ArgumentsProvider {
         return baseDir;
     }
 
-    protected AbstractOptionsProvider(Collection<String> unsupportedArgs, File baseDir) {
+    protected AbstractOptionsProvider(final Collection<String> unsupportedArgs, final File baseDir) {
         this.baseDir = setup(baseDir);
         testMap.put("addLicense", this::addLicenseTest);
         testMap.put("config", this::configTest);
@@ -243,7 +243,7 @@ public abstract class AbstractOptionsProvider implements ArgumentsProvider {
         return DocumentName.builder(new File(baseDir, name)).build();
     }
 
-    /* Help test */
+    /** Help test */
     protected abstract void helpTest();
 
     /** Display the option and value under test */
