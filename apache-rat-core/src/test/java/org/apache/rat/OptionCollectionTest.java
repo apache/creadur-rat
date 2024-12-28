@@ -51,11 +51,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import static java.lang.String.format;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.assertj.core.api.Fail.fail;
 
 public class OptionCollectionTest {
     @TempDir
@@ -148,7 +144,7 @@ public class OptionCollectionTest {
         File expected = new File(fName);
         ReportConfiguration config = OptionCollection.parseCommands(testPath.toFile(), new String[]{fName}, o -> fail("Help called"), false);
         IReportable reportable = OptionCollection.getReportable(expected, config);
-        assertNotNull(reportable, () -> format("'%s' returned null", fName));
+        assertThat(reportable).as(() -> format("'%s' returned null", fName)).isNotNull();
         assertThat(reportable.getName().getName()).isEqualTo(expected.getAbsolutePath());
     }
 
@@ -177,8 +173,8 @@ public class OptionCollectionTest {
             String[] args = {longOpt(OptionCollection.HELP)};
             try {
                 ReportConfiguration config = OptionCollection.parseCommands(testPath.toFile(), args, o -> helpCalled.set(true), true);
-                assertNull(config, "Should not have config");
-                assertTrue(helpCalled.get(), "Help was not called");
+                assertThat(config).as("Should not have config").isNull();
+                assertThat(helpCalled.get()).as("Help was not called").isTrue();
             } catch (IOException e) {
                 fail(e.getMessage());
             }
@@ -211,7 +207,7 @@ public class OptionCollectionTest {
                 }
             }
             ReportConfiguration config = OptionCollection.parseCommands(testPath.toFile(), sArgs.toArray(new String[0]), o -> helpCalled.set(true), true);
-            assertFalse(helpCalled.get(), "Help was called");
+            assertThat(helpCalled.get()).as("Help was called").isFalse();
             return config;
         }
     }

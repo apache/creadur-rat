@@ -51,7 +51,13 @@ public class ExclusionProcessorTest {
     }
 
     private void testParseExclusion(DocumentNameMatcher nameMatcher, DocumentName name, boolean expected) {
-        assertThat(nameMatcher.matches(name)).as(() -> format("Failed on [%s %s]", basedir, name)).isEqualTo(expected);
+        assertThat(nameMatcher.matches(name)).as(() -> format("Failed on [%s %s]%n%s", basedir, name, dump(nameMatcher, name))).isEqualTo(expected);
+    }
+
+    private String dump(DocumentNameMatcher nameMatcher, DocumentName name) {
+        StringBuilder sb = new StringBuilder();
+        nameMatcher.decompose(name).forEach(s -> sb.append(s).append("\n"));
+        return sb.toString();
     }
 
     private DocumentName mkName(String pth) {
