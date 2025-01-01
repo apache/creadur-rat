@@ -18,6 +18,7 @@
  */
 package org.apache.rat.document;
 
+
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FilenameFilter;

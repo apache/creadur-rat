@@ -192,12 +192,20 @@ public final class ExclusionUtils {
 
     /**
      * Returns {@code true} if the file name represents a hidden file.
-     * @param f the file to check.
+     * @param file the file to check.
      * @return {@code true} if it is the name of a hidden file.
      */
-    public static boolean isHidden(final File f) {
-        String s = f.getName();
-        return s.startsWith(".") && !(s.equals(".") || s.equals(".."));
+    public static boolean isHidden(final File file) {
+        return isHidden(file.getName());
+    }
+
+    /**
+     * Returns {@code true} if the filename represents a hidden file
+     * @param fileName the file to check.
+     * @return true if it is the name of a hidden file.
+     */
+    public static boolean isHidden(final String fileName) {
+        return fileName.startsWith(".") && !(fileName.equals(".") || fileName.equals(".."));
     }
 
     private static void verifyFile(final File file) {

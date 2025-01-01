@@ -132,7 +132,7 @@ public class DocumentName implements Comparable<DocumentName> {
     }
 
     /**
-     * Creates a builder from a File. The {@link #baseName} is set to the file name if it is a directory otherwise
+     * Creates a builder from a File.  The {@link #baseName} is set to the file name if it is a directory otherwise
      * it is set to the directory containing the file.
      * @param file The file to set defaults from.
      * @return the Builder.
@@ -188,7 +188,7 @@ public class DocumentName implements Comparable<DocumentName> {
         if (StringUtils.isBlank(child)) {
             return this;
         }
-        String separator = fsInfo.dirSeparator();
+        String separator = getDirectorySeparator();
         String pattern = separator.equals("/") ? child.replace('\\', '/') :
                 child.replace('/', '\\');
 
@@ -196,7 +196,24 @@ public class DocumentName implements Comparable<DocumentName> {
              pattern = name + separator + pattern;
         }
 
-        return new Builder(this).setName(pattern).build();
+        return new Builder(this).setName(normalize(pattern)).build();
+    }
+
+    private String normalize(String pattern) {
+        List<String> parts = new ArrayList<>(Arrays.asList(tokenize(pattern)));
+        for (int i=0; i<parts.size(); i++) {
+            String part = parts.get(i);
+            if (part.equals("..")) {
+                if (i == 0) {
+                    throw new IllegalStateException("can not creat path before root");
+                }
+                parts.set(i - 1, null);
+                parts.set(i, null);
+            } else if (part.equals(".")) {
+                parts.set(i, null);
+            }
+        }
+        return parts.stream().filter(Objects::nonNull).collect(Collectors.joining(getDirectorySeparator()));
     }
 
     /**
@@ -293,6 +310,15 @@ public class DocumentName implements Comparable<DocumentName> {
                 root.replace('/', '\\');
         String result = String.join(dirSeparator, tokens);
         return startsWithRootOrSeparator(result, modifiedRoot, dirSeparator) ? result : dirSeparator + result;
+    }
+
+    /**
+     * Tokenizes the string based on the directory separator of this DocumentName.
+     * @param source the source to tokenize
+     * @return the array of tokenized strings.
+     */
+    public String[] tokenize(final String source) {
+        return source.split("\\Q" + fsInfo.dirSeparator() + "\\E");
     }
 
     /**
@@ -425,7 +451,13 @@ public class DocumentName implements Comparable<DocumentName> {
                 }
             }
             return Optional.empty();
-        }
+    public boolean equals(final Object other) {
+        return EqualsBuilder.reflectionEquals(this, other);
+    }
+
+    @Override
+    public int hashCode() {
+        return HashCodeBuilder.reflectionHashCode(this);
 
         /**
          * Tokenizes the string based on the directory separator of this DocumentName.
@@ -465,7 +497,6 @@ public class DocumentName implements Comparable<DocumentName> {
         public int compareTo(final FSInfo other) {
             return CompareToBuilder.reflectionCompare(this, other);
         }
-
         @Override
         public boolean equals(final Object other) {
             return EqualsBuilder.reflectionEquals(this, other);

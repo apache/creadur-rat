@@ -87,7 +87,7 @@ public final class MatchPatterns {
         return false;
     }
 
-    public static MatchPatterns from(final String separator, final String... sources) {
+    public static MatchPatterns from(final String separator, final String separator, final String... sources) {
         final int length = sources.length;
         MatchPattern[] result = new MatchPattern[length];
         for (int i = 0; i < length; i++) {

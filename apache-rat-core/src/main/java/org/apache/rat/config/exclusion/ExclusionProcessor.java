@@ -204,7 +204,7 @@ public class ExclusionProcessor {
             // add the file processors
             final List<MatcherSet> matchers = extractFileProcessors(basedir);
             final MatcherSet.Builder fromCommandLine = new MatcherSet.Builder();
-            DocumentName.Builder nameBuilder = DocumentName.builder().setBaseName(basedir);
+            DocumentName.Builder nameBuilder = DocumentName.builder(basedir).setBaseName(basedir);
             extractPatterns(nameBuilder, fromCommandLine);
             extractCollectionPatterns(nameBuilder, fromCommandLine);
             extractCollectionMatchers(fromCommandLine);
@@ -236,6 +236,10 @@ public class ExclusionProcessor {
         return fileProcessorList;
     }
 
+    private String preparePattern(DocumentName documentName, String pattern) {
+        return ExclusionUtils.localizePattern(documentName,
+                        ExclusionUtils.convertSeparator(pattern, "/", documentName.getDirectorySeparator()));
+    }
     /**
      * Extracts {@link #includedPatterns} and {@link #excludedPatterns} into the specified matcherBuilder.
      * @param nameBuilder The name builder for the pattern.  File names are resolved against the generated name.
@@ -245,11 +249,12 @@ public class ExclusionProcessor {
         DocumentName name = nameBuilder.setName("Patterns").build();
         if (!excludedPatterns.isEmpty()) {
             matcherBuilder.addExcluded(name, excludedPatterns.stream()
-                    .map(s -> ExclusionUtils.localizePattern(name.getBaseDocumentName(), s)).collect(Collectors.toSet()));
+                    .map(s -> preparePattern(name, s))
+                    .collect(Collectors.toSet()));
         }
         if (!includedPatterns.isEmpty()) {
             matcherBuilder.addIncluded(name, includedPatterns.stream()
-                    .map(s -> ExclusionUtils.localizePattern(name.getBaseDocumentName(), s)).collect(Collectors.toSet()));
+                    .map(s -> preparePattern(name, s)).collect(Collectors.toSet()));
         }
     }
 
@@ -279,9 +284,8 @@ public class ExclusionProcessor {
         }
         DocumentName name = nameBuilder.setName("Collections").build();
         matcherBuilder
-                .addExcluded(name, excl)
-                .addIncluded(name, incl);
-
+                .addExcluded(name, excl.stream().map(s -> preparePattern(name.getBaseDocumentName(), s)).collect(Collectors.toSet()))
+                .addIncluded(name, incl.stream().map(s -> preparePattern(name.getBaseDocumentName(), s)).collect(Collectors.toSet()));
     }
 
     /**
