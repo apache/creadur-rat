@@ -45,7 +45,7 @@ public class CVSIgnoreBuilder extends AbstractFileProcessorBuilder {
     }
 
     @Override
-    protected MatcherSet process(final Consumer<MatcherSet> matcherSetConsumer, final DocumentName dirBasedName, final DocumentName documentName) {
+    protected MatcherSet process(final Consumer<MatcherSet> matcherSetConsumer, final DocumentName root, final DocumentName documentName) {
         final File dir = new File(documentName.getName());
         Set<String> result = new HashSet<>();
         Iterator<String> iter = ExclusionUtils.asIterator(dir, StringUtils::isNotBlank);

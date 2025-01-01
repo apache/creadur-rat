@@ -48,7 +48,7 @@ public class ArgumentContext {
      * @param commandLine The command line that is building the configuration.
      */
     public ArgumentContext(final File workingDirectory, final ReportConfiguration configuration, final CommandLine commandLine) {
-        this.workingDirectory = DocumentName.builder().setName(workingDirectory.getAbsoluteFile()).build();
+        this.workingDirectory = DocumentName.builder(workingDirectory).build();
         this.commandLine = commandLine;
         this.configuration = configuration;
     }

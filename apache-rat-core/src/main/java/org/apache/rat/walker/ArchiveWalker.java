@@ -24,6 +24,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
@@ -82,19 +83,19 @@ public class ArchiveWalker extends Walker {
      */
     public Collection<Document> getDocuments() throws RatException {
         List<Document> result = new ArrayList<>();
+        //DocumentName.FSInfo archiveInfo = new DocumentName.FSInfo(true, Arrays.asList("/"), "/");
         try (ArchiveInputStream<? extends ArchiveEntry> input = new ArchiveStreamFactory().createArchiveInputStream(createInputStream())) {
             ArchiveEntry entry = null;
             while ((entry = input.getNextEntry()) != null) {
                 if (!entry.isDirectory() && input.canReadEntryData(entry)) {
-                    DocumentName innerName = DocumentName.builder().setDirSeparator("/").setName(entry.getName())
-                            .setBaseName(".").setCaseSensitive(true).build();
+                    DocumentName innerName = DocumentName.builder().setName(entry.getName())
+                            .setBaseName(".").build();
                     if (this.getDocument().getNameExcluder().matches(innerName)) {
                         ByteArrayOutputStream baos = new ByteArrayOutputStream();
                         IOUtils.copy(input, baos);
                         DocumentName archiveName = getDocument().getName();
                         String outerNameStr = format("%s#%s", archiveName.getName(), entry.getName());
-                        DocumentName outerName = DocumentName.builder(archiveName).setName(outerNameStr)
-                                .setCaseSensitive(true).build();
+                        DocumentName outerName = DocumentName.builder(archiveName).setName(outerNameStr).build();
                         result.add(new ArchiveEntryDocument(outerName, baos.toByteArray(), getDocument().getNameExcluder()));
                     }
                 }

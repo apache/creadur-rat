@@ -18,18 +18,29 @@
  */
 package org.apache.rat.config.exclusion;
 
+import com.google.common.jimfs.Configuration;
+import com.google.common.jimfs.Jimfs;
+import java.io.IOException;
+import java.nio.file.FileSystem;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Stream;
 import org.apache.rat.document.DocumentName;
+import org.apache.rat.document.FSInfoTest;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.apache.rat.document.FSInfoTest.OSX;
+import static org.apache.rat.document.FSInfoTest.UNIX;
+import static org.apache.rat.document.FSInfoTest.WINDOWS;
 
 public class FileProcessorTest {
 
+    private static final String BACKSLASH = "\\";
     FileProcessorTest() {}
 
     @ParameterizedTest(name="{index} {1}")
@@ -38,24 +49,39 @@ public class FileProcessorTest {
         assertThat(ExclusionUtils.localizePattern(baseName, pattern)).isEqualTo(expectedStr);
     }
 
-    public static Stream<Arguments> localizePatternData() {
-        List<Arguments>  lst = new ArrayList<>();
-        DocumentName baseName = DocumentName.builder().setName("fileBeingRead").setBaseName("baseDir").setDirSeparator("/").build();
+    public static Stream<Arguments> localizePatternData() throws IOException {
+        List<Arguments> lst = new ArrayList<>();
+        Map<String, String> patterns = new HashMap<>();
+        patterns.put("file", "%1$sbaseDir%1$sfile");
+        patterns.put("!file", "!%1$sbaseDir%1$sfile");
+        patterns.put("%regex[file]", "%%regex[\\Q%1$sbaseDir%1$s\\Efile]");
+        patterns.put("!%regex[file]", "!%%regex[\\Q%1$sbaseDir%1$s\\Efile]");
+        patterns.put("%ant[file]", "%1$sbaseDir%1$sfile");
+        patterns.put("!%ant[file]", "!%1$sbaseDir%1$sfile");
 
-        lst.add(Arguments.of(baseName, "file", "/baseDir/file"));
-        lst.add(Arguments.of(baseName, "!file", "!/baseDir/file"));
-        lst.add(Arguments.of(baseName, "%regex[file]", "%regex[\\Q/baseDir/\\Efile]"));
-        lst.add(Arguments.of(baseName, "!%regex[file]", "!%regex[\\Q/baseDir/\\Efile]"));
-        lst.add(Arguments.of(baseName, "%ant[file]", "/baseDir/file"));
-        lst.add(Arguments.of(baseName, "!%ant[file]", "!/baseDir/file"));
+        patterns.put("file/**", "%1$sbaseDir%1$sfile%1$s**");
+        patterns.put("!file/**", "!%1$sbaseDir%1$sfile%1$s**");
+        patterns.put("%regex[file/.*]", "%%regex[\\Q%1$sbaseDir%1$s\\Efile/.*]");
+        patterns.put("!%regex[file/.*]", "!%%regex[\\Q%1$sbaseDir%1$s\\Efile/.*]");
+        patterns.put("%ant[file/**]", "%1$sbaseDir%1$sfile%1$s**");
+        patterns.put("!%ant[file/**]", "!%1$sbaseDir%1$sfile%1$s**");
 
-        lst.add(Arguments.of(baseName, "file/**", "/baseDir/file/**"));
-        lst.add(Arguments.of(baseName, "!file/**", "!/baseDir/file/**"));
-        lst.add(Arguments.of(baseName, "%regex[file/.*]", "%regex[\\Q/baseDir/\\Efile/.*]"));
-        lst.add(Arguments.of(baseName, "!%regex[file/.*]", "!%regex[\\Q/baseDir/\\Efile/.*]"));
-        lst.add(Arguments.of(baseName, "%ant[file/**]", "/baseDir/file/**"));
-        lst.add(Arguments.of(baseName, "!%ant[file/**]", "!/baseDir/file/**"));
 
+        DocumentName baseName = DocumentName.builder(FSInfoTest.UNIX).setName("fileBeingRead").setBaseName("baseDir").build();
+        for (Map.Entry<String, String> pattern : patterns.entrySet()) {
+            lst.add(Arguments.of(baseName, pattern.getKey(), String.format(pattern.getValue(), UNIX.dirSeparator())));
+        }
+
+
+        baseName = DocumentName.builder(FSInfoTest.WINDOWS).setName("fileBeingRead").setBaseName("baseDir").build();
+        for (Map.Entry<String, String> pattern : patterns.entrySet()) {
+            lst.add(Arguments.of(baseName, pattern.getKey(), String.format(pattern.getValue(), WINDOWS.dirSeparator())));
+        }
+
+        baseName = DocumentName.builder(FSInfoTest.OSX).setName("fileBeingRead").setBaseName("baseDir").build();
+        for (Map.Entry<String, String> pattern : patterns.entrySet()) {
+            lst.add(Arguments.of(baseName, pattern.getKey(), String.format(pattern.getValue(), OSX.dirSeparator())));
+        }
         return lst.stream();
     }
 }

@@ -102,7 +102,7 @@ public interface MatcherSet {
         public Builder addIncluded(final DocumentName fromDocument, final Set<String> names) {
             if (!names.isEmpty()) {
                 String name = String.format("'included %s'", fromDocument.localized("/").substring(1));
-                addIncluded(new DocumentNameMatcher(name, MatchPatterns.from(names), fromDocument.getBaseDocumentName()));
+                addIncluded(new DocumentNameMatcher(name, MatchPatterns.from("/", names), fromDocument.getBaseDocumentName()));
             }
             return this;
         }
@@ -117,7 +117,7 @@ public interface MatcherSet {
         public Builder addExcluded(final DocumentName fromDocument, final Set<String> names) {
             if (!names.isEmpty()) {
                 String name = String.format("'excluded %s'", fromDocument.localized("/").substring(1));
-                addExcluded(new DocumentNameMatcher(name, MatchPatterns.from(names), fromDocument.getBaseDocumentName()));
+                addExcluded(new DocumentNameMatcher(name, MatchPatterns.from(fromDocument.getDirectorySeparator(), names), fromDocument.getBaseDocumentName()));
             }
             return this;
         }

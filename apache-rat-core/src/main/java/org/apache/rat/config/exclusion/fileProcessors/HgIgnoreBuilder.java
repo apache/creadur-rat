@@ -60,9 +60,9 @@ public final class  HgIgnoreBuilder extends AbstractFileProcessorBuilder {
     }
 
     @Override
-    protected MatcherSet process(final Consumer<MatcherSet> matcherSetConsumer, final DocumentName dirBasedName, final DocumentName documentName) {
+    protected MatcherSet process(final Consumer<MatcherSet> matcherSetConsumer, final DocumentName root, final DocumentName documentName) {
         state = Syntax.REGEXP;
-        return super.process(matcherSetConsumer, dirBasedName, documentName);
+        return super.process(matcherSetConsumer, root, documentName);
     }
 
     @Override
