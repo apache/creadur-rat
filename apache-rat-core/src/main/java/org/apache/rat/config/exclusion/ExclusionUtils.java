@@ -192,12 +192,20 @@ public final class ExclusionUtils {
 
     /**
      * Returns {@code true} if the file name represents a hidden file
-     * @param f the file to check.
+     * @param file the file to check.
      * @return true if it is the name of a hidden file.
      */
-    public static boolean isHidden(final File f) {
-        String s = f.getName();
-        return s.startsWith(".") && !(s.equals(".") || s.equals(".."));
+    public static boolean isHidden(final File file) {
+        return isHidden(file.getName());
+    }
+
+    /**
+     * Returns {@code true} if the filename represents a hidden file
+     * @param fileName the file to check.
+     * @return true if it is the name of a hidden file.
+     */
+    public static boolean isHidden(final String fileName) {
+        return fileName.startsWith(".") && !(fileName.equals(".") || fileName.equals(".."));
     }
 
     private static void verifyFile(final File file) {
@@ -217,19 +225,30 @@ public final class ExclusionUtils {
         boolean prefix = pattern.startsWith(NEGATION_PREFIX);
         String workingPattern = prefix ? pattern.substring(1) : pattern;
         String normalizedPattern = SelectorUtils.extractPattern(workingPattern, documentName.getDirectorySeparator());
-        StringBuilder sb = new StringBuilder();
-        if (SelectorUtils.isRegexPrefixedPattern(workingPattern)) {
-            sb.append(prefix ? NEGATION_PREFIX : "")
+
+        String result = SelectorUtils.isRegexPrefixedPattern(workingPattern) ?
+            new StringBuilder(prefix ? NEGATION_PREFIX : "")
                     .append(SelectorUtils.REGEX_HANDLER_PREFIX)
                     .append("\\Q").append(documentName.getBaseName())
                     .append(documentName.getDirectorySeparator())
                     .append("\\E").append(normalizedPattern)
-                    .append(SelectorUtils.PATTERN_HANDLER_SUFFIX);
-            return sb.toString();
-        } else {
-            sb.append(documentName.getBaseName())
-                    .append(documentName.getDirectorySeparator()).append(normalizedPattern);
-            return (prefix ? NEGATION_PREFIX : "") + DocumentName.builder(documentName).setName(sb.toString()).build().getName();
+                    .append(SelectorUtils.PATTERN_HANDLER_SUFFIX)
+                    .toString()
+                : documentName.getBaseDocumentName().resolve(normalizedPattern).getName();
+        return (prefix ? NEGATION_PREFIX : "") + result;
+    }
+
+    /**
+     * Tokenizes the string based on the directory separator.
+     * @param source the source to tokenize
+     * @param from the directory separator for the source.
+     * @param to the directory separator for the result.
+     * @return the source string with the separators converted.
+     */
+    public static String convertSeparator(final String source, final String from, final String to) {
+        if (StringUtils.isEmpty(source) || from.equals(to)) {
+            return source;
         }
+        return String.join(to, source.split("\\Q" + from + "\\E"));
     }
 }

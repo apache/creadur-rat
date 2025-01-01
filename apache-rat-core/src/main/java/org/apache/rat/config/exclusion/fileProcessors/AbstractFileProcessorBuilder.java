@@ -115,21 +115,21 @@ public abstract class AbstractFileProcessorBuilder {
 
     /**
      * Builder the list of MatcherSet that define the inclusions/exclusions for the file processor.
-     * @param dir the directory agains which name resolution should be made.
+     * @param root the directory against which name resolution should be made.
      * @return the List of MatcherSet that represent this file processor.
      */
-    public final List<MatcherSet> build(final DocumentName dir) {
+    public final List<MatcherSet> build(final DocumentName root) {
         if (includeProcessorFile) {
             String name = String.format("**/%s", fileName);
-            String pattern = ExclusionUtils.localizePattern(dir, name);
+            String pattern = ExclusionUtils.localizePattern(root, name);
             MatcherSet matcherSet = new MatcherSet.Builder()
-                    .addExcluded(new DocumentNameMatcher(name, MatchPatterns.from(Collections.singletonList(pattern)), dir))
+                    .addExcluded(new DocumentNameMatcher(name, MatchPatterns.from("/", Collections.singletonList(pattern)), root))
             .build();
             LevelBuilder levelBuilder = levelBuilders.computeIfAbsent(0, k -> new LevelBuilder());
             levelBuilder.add(matcherSet);
         }
 
-        checkDirectory(0, dir, new NameFileFilter(fileName));
+        checkDirectory(0, root, root, new NameFileFilter(fileName));
 
         List<MatcherSet> result = levelBuilders.size() == 1 ? Collections.singletonList(levelBuilders.get(0).asMatcherSet())
             : createMatcherSetList();
@@ -140,9 +140,12 @@ public abstract class AbstractFileProcessorBuilder {
     /**
      * Process by reading the file, creating a MatcherSet, and adding it to the
      * matcherSets.
+     * @param matcherSetConsumer the consumer to add the custom matcher sets to.
+     * @param root The root against which to resolve names.
      * @param documentName the file to read.
+     * @return A matcher set based on the strings in the file.
      */
-    protected MatcherSet process(final Consumer<MatcherSet> matcherSetConsumer, final DocumentName dirBasedName, final DocumentName documentName) {
+    protected MatcherSet process(final Consumer<MatcherSet> matcherSetConsumer, final DocumentName root, final DocumentName documentName) {
         final MatcherSet.Builder matcherSetBuilder = new MatcherSet.Builder();
         final List<String> iterable = new ArrayList<>();
         ExclusionUtils.asIterator(new File(documentName.getName()), commentFilter)
@@ -154,25 +157,26 @@ public abstract class AbstractFileProcessorBuilder {
         Set<String> included = new HashSet<>();
         Set<String> excluded = new HashSet<>();
         MatcherSet.Builder.segregateList(excluded, included, iterable);
-        matcherSetBuilder.addExcluded(dirBasedName, excluded);
-        matcherSetBuilder.addIncluded(dirBasedName, included);
+        matcherSetBuilder.addExcluded(root, excluded);
+        matcherSetBuilder.addIncluded(root, included);
         return matcherSetBuilder.build();
     }
 
     /**
      * Process the directory tree looking for files that match the filter. Call {@link #process} on any matching file.
+     * @param level the level being precessed
+     * @param root the directory against which names should be resolved.
      * @param directory The name of the directory to process.
      * @param fileFilter the filter to detect processable files with.
      */
-    private void checkDirectory(final int level, final DocumentName directory, final FileFilter fileFilter) {
-        File dirFile = new File(directory.getName());
-        for (File f : listFiles(dirFile, fileFilter)) {
+    private void checkDirectory(final int level, final DocumentName root, final DocumentName directory, final FileFilter fileFilter) {
+        File dirFile = directory.asFile();
+        for (File file : listFiles(dirFile, fileFilter)) {
             LevelBuilder levelBuilder = levelBuilders.computeIfAbsent(level, k -> new LevelBuilder());
-            DocumentName dirBasedName = DocumentName.builder(f).setBaseName(directory.getBaseName()).build();
-            levelBuilder.add(process(levelBuilder::add, dirBasedName, DocumentName.builder(f).setBaseName(directory.getName()).build()));
+            levelBuilder.add(process(levelBuilder::add, root, DocumentName.builder(file).build()));
         }
         for (File dir : listFiles(dirFile, DirectoryFileFilter.DIRECTORY)) {
-            checkDirectory(level + 1, DocumentName.builder(dir).setBaseName(directory.getBaseName()).build(), fileFilter);
+            checkDirectory(level + 1, root, DocumentName.builder(dir).setBaseName(directory.getBaseName()).build(), fileFilter);
         }
     }
 

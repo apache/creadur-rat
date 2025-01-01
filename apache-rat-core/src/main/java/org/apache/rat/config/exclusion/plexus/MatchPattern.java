@@ -49,7 +49,7 @@ public final class MatchPattern {
 
     private final char[][] tokenizedChar;
 
-    private MatchPattern(final String source, final String separator) {
+    public MatchPattern(final String source, final String separator) {
         regexPattern = SelectorUtils.isRegexPrefixedPattern(source)
                 ? source.substring(
                 SelectorUtils.REGEX_HANDLER_PREFIX.length(),
@@ -141,7 +141,4 @@ public final class MatchPattern {
         return tokenizedNameChar;
     }
 
-    public static MatchPattern fromString(final String source) {
-        return new MatchPattern(source, File.separator);
-    }
 }

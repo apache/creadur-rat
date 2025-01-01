@@ -96,23 +96,23 @@ public final class MatchPatterns {
         return false;
     }
 
-    public static MatchPatterns from(final String... sources) {
+    public static MatchPatterns from(final String separator, final String... sources) {
         final int length = sources.length;
         MatchPattern[] result = new MatchPattern[length];
         for (int i = 0; i < length; i++) {
-            result[i] = MatchPattern.fromString(sources[i]);
+            result[i] = new MatchPattern(sources[i], separator);
         }
         return new MatchPatterns(result);
     }
 
-    public static MatchPatterns from(final Iterable<String> strings) {
-        return new MatchPatterns(getMatchPatterns(strings));
+    public static MatchPatterns from(final String separator, final Iterable<String> strings) {
+        return new MatchPatterns(getMatchPatterns(separator, strings));
     }
 
-    private static MatchPattern[] getMatchPatterns(final Iterable<String> items) {
+    private static MatchPattern[] getMatchPatterns(final String separator, final Iterable<String> items) {
         List<MatchPattern> result = new ArrayList<>();
         for (String string : items) {
-            result.add(MatchPattern.fromString(string));
+            result.add(new MatchPattern(string, separator));
         }
         return result.toArray(new MatchPattern[0]);
     }
