@@ -71,7 +71,7 @@ public class AnalyserFactoryTest {
 
     @Test
     public void standardTypeAnalyser() throws Exception {
-        final Document document = new FileDocument(basedir,
+        final Document document = new FileDocument(
                 Resources.getExampleResource("exampleData/Text.txt"), DocumentNameMatcher.MATCHES_ALL);
         analyser.analyse(document);
         assertThat(document.getMetaData().getDocumentType()).isEqualTo(Document.Type.STANDARD);

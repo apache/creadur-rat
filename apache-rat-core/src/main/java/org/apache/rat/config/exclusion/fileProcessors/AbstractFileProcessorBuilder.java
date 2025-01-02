@@ -157,8 +157,9 @@ public abstract class AbstractFileProcessorBuilder {
         Set<String> included = new HashSet<>();
         Set<String> excluded = new HashSet<>();
         MatcherSet.Builder.segregateList(excluded, included, iterable);
-        matcherSetBuilder.addExcluded(root, excluded);
-        matcherSetBuilder.addIncluded(root, included);
+        DocumentName displayName = DocumentName.builder(root).setName(documentName.getName()).build();
+        matcherSetBuilder.addExcluded(displayName, excluded);
+        matcherSetBuilder.addIncluded(displayName, included);
         return matcherSetBuilder.build();
     }
 
