@@ -451,13 +451,7 @@ public class DocumentName implements Comparable<DocumentName> {
                 }
             }
             return Optional.empty();
-    public boolean equals(final Object other) {
-        return EqualsBuilder.reflectionEquals(this, other);
-    }
-
-    @Override
-    public int hashCode() {
-        return HashCodeBuilder.reflectionHashCode(this);
+        }
 
         /**
          * Tokenizes the string based on the directory separator of this DocumentName.
@@ -497,6 +491,7 @@ public class DocumentName implements Comparable<DocumentName> {
         public int compareTo(final FSInfo other) {
             return CompareToBuilder.reflectionCompare(this, other);
         }
+
         @Override
         public boolean equals(final Object other) {
             return EqualsBuilder.reflectionEquals(this, other);
