@@ -21,6 +21,7 @@ package org.apache.rat.commandline;
 import java.io.File;
 import java.io.IOException;
 
+import java.nio.file.FileSystems;
 import org.apache.commons.cli.Converter;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.rat.ConfigurationException;
@@ -92,9 +93,7 @@ public final class Converters {
             // is this a relative file?
             if (!fileName.startsWith(File.separator)) {
                 // check for a root provided (e.g. C:\\)"
-                DocumentName.Builder builder = DocumentName.builder(file);
-                final DocumentName name = builder.build();
-                if (name.getRoot().isEmpty()) {
+                if (!DocumentName.DEFAULT_FSINFO.rootFor(file.getAbsolutePath()).isPresent()) {
                     // no root, resolve against workingDirectory
                     file = new File(workingDirectory.resolve(fileName).getName()).getAbsoluteFile();
                 }
