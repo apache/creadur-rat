@@ -31,6 +31,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.CompareToBuilder;
@@ -66,8 +67,8 @@ public class DocumentName implements Comparable<DocumentName> {
     private final FSInfo fsInfo;
     /** The root for the DocumentName. May be empty but not null. */
     private final String root;
-
-    private static final FSInfo DEFAULT_FSINFO = new FSInfo(FileSystems.getDefault());
+    /** The File System info for the default file system */
+    public static final FSInfo DEFAULT_FSINFO = new FSInfo(FileSystems.getDefault());
 
     private static boolean isCaseSensitive(FileSystem fs) {
         boolean isCaseSensitive = false;
@@ -266,10 +267,14 @@ public class DocumentName implements Comparable<DocumentName> {
         if (tokens.length == 1) {
             return dirSeparator + tokens[0];
         }
+        Predicate<String> check = s -> s.startsWith(dirSeparator);
         String modifiedRoot =  dirSeparator.equals("/") ? root.replace('\\', '/') :
                 root.replace('/', '\\');
+        if (StringUtils.isNotEmpty(modifiedRoot)) {
+            check = check.or(s -> s.startsWith(modifiedRoot));
+        }
         String result = String.join(dirSeparator, tokens);
-        return result.startsWith(dirSeparator) || result.startsWith(modifiedRoot) ? result : dirSeparator + result;
+        return check.test(result) ? result : dirSeparator + result;
     }
 
 
@@ -451,9 +456,9 @@ public class DocumentName implements Comparable<DocumentName> {
             }
             if (!sameNameFlag) {
                 Objects.requireNonNull(baseName, "Basename cannot be null");
-                if (!name.startsWith(baseName.name)) {
-                    throw new IllegalArgumentException(String.format("name '%s' must start with baseName '%s'", name, baseName.name));
-                }
+//                if (!name.startsWith(baseName.name)) {
+//                    throw new IllegalArgumentException(String.format("name '%s' must start with baseName '%s'", name, baseName.name));
+//                }
             }
         }
 
@@ -542,6 +547,10 @@ public class DocumentName implements Comparable<DocumentName> {
                 File p = file.getParentFile();
                 if (p != null) {
                     setBaseName(p);
+                } else {
+                    Builder baseBuilder = new Builder(this.fsInfo).setName(this.directorySeparator());
+                    baseBuilder.sameNameFlag = true;
+                    setBaseName(baseBuilder.build());
                 }
             }
             return this;

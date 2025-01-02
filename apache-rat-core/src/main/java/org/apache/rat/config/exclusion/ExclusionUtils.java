@@ -226,16 +226,17 @@ public final class ExclusionUtils {
         String workingPattern = prefix ? pattern.substring(1) : pattern;
         String normalizedPattern = SelectorUtils.extractPattern(workingPattern, documentName.getDirectorySeparator());
 
-        String result = SelectorUtils.isRegexPrefixedPattern(workingPattern) ?
-            new StringBuilder(prefix ? NEGATION_PREFIX : "")
-                    .append(SelectorUtils.REGEX_HANDLER_PREFIX)
+        StringBuilder sb = new StringBuilder(prefix ? NEGATION_PREFIX : "");
+        if (SelectorUtils.isRegexPrefixedPattern(workingPattern)) {
+            sb.append(SelectorUtils.REGEX_HANDLER_PREFIX)
                     .append("\\Q").append(documentName.getBaseName())
                     .append(documentName.getDirectorySeparator())
                     .append("\\E").append(normalizedPattern)
-                    .append(SelectorUtils.PATTERN_HANDLER_SUFFIX)
-                    .toString()
-                : documentName.getBaseDocumentName().resolve(normalizedPattern).getName();
-        return (prefix ? NEGATION_PREFIX : "") + result;
+                    .append(SelectorUtils.PATTERN_HANDLER_SUFFIX);
+        } else {
+            sb.append(documentName.getBaseDocumentName().resolve(normalizedPattern).getName());
+        }
+        return sb.toString();
     }
 
     /**
