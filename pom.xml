@@ -198,7 +198,7 @@ agnostic home for software distribution comprehension and audit tools.
       <dependency>
         <groupId>org.assertj</groupId>
         <artifactId>assertj-core</artifactId>
-        <version>3.27.0</version>
+        <version>3.27.1</version>
         <scope>test</scope>
       </dependency>
       <dependency>
