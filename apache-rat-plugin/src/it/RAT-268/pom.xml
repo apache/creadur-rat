@@ -33,12 +33,12 @@
         <artifactId>apache-rat-plugin</artifactId>
         <version>@pom.version@</version>
         <configuration>
-          <counter-mins>
-            <counter-min>STANDARDS:0</counter-min>
-          </counter-mins>
-          <excludes>
+          <counterMins>
+            <counter>STANDARDS:0</counter>
+          </counterMins>
+          <inputExcludes>
             <exclude>**/src.apt</exclude>
-          </excludes>
+          </inputExcludes>
         </configuration>
       </plugin>
     </plugins>

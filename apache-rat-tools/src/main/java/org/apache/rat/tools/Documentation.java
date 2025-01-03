@@ -18,6 +18,7 @@
  */
 package org.apache.rat.tools;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.Writer;
 
@@ -45,7 +46,7 @@ public final class Documentation {
      * @throws IOException on error
      */
     public static void main(final String[] args) throws IOException {
-        ReportConfiguration config = OptionCollection.parseCommands(args, Documentation::printUsage, true);
+        ReportConfiguration config = OptionCollection.parseCommands(new File("."), args, Documentation::printUsage, true);
         if (config != null) {
             try (Writer writer = config.getWriter().get()) {
                 new Licenses(config, writer).output();

@@ -33,8 +33,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class FileListWalkerTest {
 
@@ -84,7 +83,7 @@ public class FileListWalkerTest {
 
 
         source = new File(working, "source.txt");
-        DocumentName sourceName = DocumentName.builder(source).setBaseName(working.getAbsolutePath()).build();
+        DocumentName sourceName = DocumentName.builder(source).build();
         File regular = new File(working, "regular");
         regular.mkdir();
         fileWriter(regular, "regularFile", "regular file");
@@ -112,7 +111,7 @@ public class FileListWalkerTest {
             System.out.flush();
         }
 
-        hiddenName = DocumentName.builder(hiddenFile).setBaseName(rootName.getBaseName()).build();
+        //hiddenName = DocumentName.builder(hiddenFile).setBaseName(rootName.getBaseName()).build();
     }
     
     @Test
@@ -122,10 +121,7 @@ public class FileListWalkerTest {
         walker.run(new TestRatReport(scanned));
         String[] expected = {regularName.localized("/"), hiddenName.localized("/"),
         anotherName.localized("/")};
-        assertEquals(3, scanned.size());
-        for (String ex : expected) {
-            assertTrue(scanned.contains(ex), ()-> String.format("Missing %s from %s", ex, String.join(", ", scanned)));
-        }
+        assertThat(scanned).containsExactly(expected);
     }
 
     static class TestRatReport implements RatReport {

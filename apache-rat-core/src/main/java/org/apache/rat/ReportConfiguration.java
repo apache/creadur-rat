@@ -414,11 +414,11 @@ public class ReportConfiguration {
     }
 
     /**
-     * Get the DocumentNameMatcher based on the directory.
+     * Get the DocumentNameMatcher that excludes files found in the directory tree..
      * @param baseDir the DocumentName for the base directory.
      * @return the DocumentNameMatcher for the base directory.
      */
-    public DocumentNameMatcher getNameMatcher(final DocumentName baseDir) {
+    public DocumentNameMatcher getDocumentExcluder(final DocumentName baseDir) {
         return exclusionProcessor.getNameMatcher(baseDir);
     }
 

@@ -30,6 +30,7 @@ import java.io.StringReader;
 import java.lang.reflect.UndeclaredThrowableException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import java.util.Map;
@@ -98,7 +99,8 @@ public final class XmlUtils {
     }
 
     public static boolean isPresent(Object source, XPath xPath, String xpath) throws XPathExpressionException {
-        return !xPath.compile(xpath).evaluate(source).equals("null");
+        Object node = xPath.compile(xpath).evaluate(source, XPathConstants.NODE);
+        return node != null;
     }
 
     public static List<Node> getNodes(Object source, XPath xPath, String xpath) throws XPathExpressionException {
@@ -177,6 +179,18 @@ public final class XmlUtils {
         return node.getNodeValue();
     }
 
+    public static Map<String, String> mapOf(String... parts) {
+        Map<String, String> map = new HashMap<>();
+        for (int i=0; i<parts.length; i+=2) {
+            map.put(parts[i], parts[i+1]);
+        }
+        return map;
+    }
+
+    public static void assertAttributes(Object source, XPath xPath, String xpath, String... mapValues) throws XPathExpressionException {
+        assertAttributes(source, xPath, xpath, mapOf(mapValues));
+    }
+
     public static void assertAttributes(Object source, XPath xPath, String xpath, Map<String, String> attributes) throws XPathExpressionException {
         Node node = XmlUtils.getNode(source, xPath, xpath);
         NamedNodeMap attr = node.getAttributes();
@@ -185,5 +199,13 @@ public final class XmlUtils {
             assertThat(node).as(() -> entry.getKey() + " was not found on " + xpath).isNotNull();
             assertThat(node.getNodeValue()).as(() -> entry.getKey() + " on " + xpath).isEqualTo(entry.getValue());
         }
+    }
+
+    public static void assertIsPresent(Object source, XPath xPath, String xpath) throws XPathExpressionException {
+        assertThat(isPresent(source, xPath, xpath)).as("Presence of "+xpath).isTrue();
+    }
+
+    public static void assertIsNotPresent(Object source, XPath xPath, String xpath) throws XPathExpressionException {
+        assertThat(isPresent(source, xPath, xpath)).as("Non-presence of "+xpath).isFalse();
     }
 }

@@ -75,9 +75,37 @@ XPath xPath = XPathFactory.newInstance().newXPath()
 //XmlUtils.assertAttributes(document, xPath, "/rat-report/statistics/licenseName[@name='Unknown license']",
 //        mapOf("count", "4" ))
 
+
+
+//Note the output when running in the real commandline version of git
+//
+//# Files that must be ignored (dropping the gitignore matches outside of this test tree)
+//$ git check-ignore --no-index --verbose $(find . -type f|sort)
+//
+// apache-rat-core/src/it/resources/ReportTest/RAT_335/src/dir1/.gitignore:2:!dir1.md	./dir1/dir1.md
+// apache-rat-core/src/it/resources/ReportTest/RAT_335/src/dir1/.gitignore:1:*.txt	./dir1/dir1.txt
+// apache-rat-core/src/it/resources/ReportTest/RAT_335/src/dir1/.gitignore:3:file1.log	./dir1/file1.log
+// .gitignore:20:**/.gitignore	./dir1/.gitignore
+// apache-rat-core/src/it/resources/ReportTest/RAT_335/src/.gitignore:1:*.md	./dir2/dir2.md
+// apache-rat-core/src/it/resources/ReportTest/RAT_335/src/.gitignore:4:*.log	./dir3/dir3.log
+// apache-rat-core/src/it/resources/ReportTest/RAT_335/src/.gitignore:7:!file*.log	./dir3/file3.log
+//         .gitignore:20:**/.gitignore	./.gitignore
+// apache-rat-core/src/it/resources/ReportTest/RAT_335/src/.gitignore:1:*.md	./root.md
+
+/* list of excluded files:
+
+./dir1/dir1.txt
+./dir1/file1.log
+./dir1/.gitignore
+./dir2/dir2.md
+./dir3/dir3.log
+./.gitignore
+./root.md
+
+ */
+
 List<String> ignoredFiles = new ArrayList<>(Arrays.asList(
         "/dir1/dir1.txt",
-        "/dir1/file1.log",
         "/dir1/.gitignore",
         "/dir2/dir2.md",
         "/dir3/dir3.log",
@@ -102,24 +130,4 @@ XmlUtils.assertAttributes(document, xPath, "/rat-report/statistics/documentType[
         mapOf("count", "1" ))
 
 XmlUtils.assertAttributes(document, xPath, "/rat-report/statistics/documentType[@name='STANDARD']",
-        mapOf("count", "6" ))
-
-/*
-TextUtils.assertPatternInTarget("^  Approved:\\s+8 ", content)
-TextUtils.assertPatternInTarget("^  Archives:\\s+1 ", content)
-TextUtils.assertPatternInTarget("^  Binaries:\\s+2 ", content)
-TextUtils.assertPatternInTarget("^  Document types:\\s+5 ", content)
-TextUtils.assertPatternInTarget("^  Ignored:\\s+1 ", content)
-TextUtils.assertPatternInTarget("^  License categories:\\s+4 ", content)
-TextUtils.assertPatternInTarget("^  License names:\\s+5", content)
-TextUtils.assertPatternInTarget("^  Notices:\\s+2 ", content)
-TextUtils.assertPatternInTarget("^  Standards:\\s+8 ", content)
-TextUtils.assertPatternInTarget("^  Unapproved:\\s+2 ", content)
-TextUtils.assertPatternInTarget("^  Unknown:\\s+2 ", content)
-
-logOutput = new File(args[1])
-log = logOutput.text
-
-TextUtils.assertPatternNotInTarget("^ERROR:", log)
-TextUtils.assertPatternNotInTarget("^WARN:", log)
-*/
+        mapOf("count", "4" ))

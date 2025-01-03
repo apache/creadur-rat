@@ -1,0 +1,7 @@
+*.md
+
+# This makes it ignore dir3/dir3.log and dir3/file3.log
+*.log
+
+# This makes it "unignore" dir3/file3.log
+!file*.log

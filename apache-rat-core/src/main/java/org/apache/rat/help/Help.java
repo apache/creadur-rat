@@ -85,7 +85,7 @@ public final class Help extends AbstractHelp {
             helpFormatter.printWrapped(writer, helpFormatter.getWidth(), helpFormatter.getLeftPadding() + HELP_PADDING + HELP_PADDING,
                     argumentPadding + "Provides a path matcher: " + sc.hasStaticDocumentNameMatcher());
             helpFormatter.printWrapped(writer, helpFormatter.getWidth(), helpFormatter.getLeftPadding() + HELP_PADDING + HELP_PADDING,
-                    argumentPadding + "Provides a file processor: " + sc.fileProcessor().hasNext());
+                    argumentPadding + "Provides a file processor: " + sc.fileProcessorBuilder().hasNext());
         }
         writer.println("\nA path matcher will match specific information about the file.");
         writer.println("\nA file processor will process the associated \"ignore\" file for include and exclude directives");

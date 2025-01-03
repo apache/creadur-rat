@@ -23,9 +23,14 @@ import java.io.FileFilter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 import java.util.function.Predicate;
 
+import org.apache.rat.ConfigurationException;
 import org.apache.rat.config.exclusion.plexus.MatchPattern;
 import org.apache.rat.config.exclusion.plexus.MatchPatterns;
 
@@ -40,6 +45,8 @@ public final class DocumentNameMatcher {
     private final Predicate<DocumentName> predicate;
     /** The name of this matcher. */
     private final String name;
+    /** {@code true} this this matcher is a collection of matchers */
+    private final boolean isCollection;
 
     /**
      * A matcher that matches all documents.
@@ -59,6 +66,7 @@ public final class DocumentNameMatcher {
     public DocumentNameMatcher(final String name, final Predicate<DocumentName> predicate) {
         this.name = name;
         this.predicate = predicate;
+        this.isCollection = predicate instanceof CollectionPredicate;
     }
 
     /**
@@ -77,9 +85,22 @@ public final class DocumentNameMatcher {
      * @param basedir the base directory for the scanning.
      */
     public DocumentNameMatcher(final String name, final MatchPatterns patterns, final DocumentName basedir) {
-        this(name, (Predicate<DocumentName>) documentName -> patterns.matches(documentName.getName(),
-                MatchPattern.tokenizePathToString(documentName.getName(), basedir.getDirectorySeparator()),
-                basedir.isCaseSensitive()));
+        this(name, new MatchPatternsPredicate(basedir, patterns));
+    }
+
+    /**
+     * Tokenizes name for faster Matcher processing.
+     * @param name the name to tokenize
+     * @param dirSeparator the directory separator
+     * @return the tokenized name.
+     */
+    private static char[][] tokenize(final String name, final String dirSeparator) {
+        String[] tokenizedName = MatchPattern.tokenizePathToString(name, dirSeparator);
+        char[][] tokenizedNameChar = new char[tokenizedName.length][];
+        for (int i = 0; i < tokenizedName.length; i++) {
+            tokenizedNameChar[i] = tokenizedName[i].toCharArray();
+        }
+        return tokenizedNameChar;
     }
 
     /**
@@ -97,7 +118,7 @@ public final class DocumentNameMatcher {
      * @param fileFilter the file filter to execute.
      */
     public DocumentNameMatcher(final String name, final FileFilter fileFilter) {
-        this(name, (Predicate<DocumentName>) documentName -> fileFilter.accept(new File(documentName.getName())));
+        this(name, new FileFilterPredicate(fileFilter));
     }
 
     /**
@@ -108,9 +129,43 @@ public final class DocumentNameMatcher {
         this(fileFilter.toString(), fileFilter);
     }
 
+    public boolean isCollection() {
+        return isCollection;
+    }
+
+    /**
+     * Returns the predicate that this DocumentNameMatcher is using.
+     * @return The predicate that this DocumentNameMatcher is using.
+     */
+    public Predicate<DocumentName> getPredicate() {
+        return predicate;
+    }
+
     @Override
     public String toString() {
         return name;
+    }
+
+    /**
+     * Decomposes the matcher execution against the candidate.
+     * @param candidate the candiate to check.
+     * @return a list of {@link DecomposeData} for each evaluation in the matcher.
+     */
+    public List<DecomposeData> decompose(final DocumentName candidate) {
+        final List<DecomposeData> result = new ArrayList<>();
+        decompose(0, this, candidate, result);
+        return result;
+    }
+
+    private void decompose(final int level, final DocumentNameMatcher matcher, final DocumentName candidate, final List<DecomposeData> result) {
+        final Predicate<DocumentName> pred = matcher.getPredicate();
+        result.add(new DecomposeData(level, matcher, pred.test(candidate)));
+//        if (pred instanceof DocumentNameMatcher.CollectionPredicate) {
+//            final DocumentNameMatcher.CollectionPredicate collection = (DocumentNameMatcher.CollectionPredicate) pred;
+//            for (DocumentNameMatcher subMatcher : collection.getMatchers()) {
+//                decompose(level + 1, subMatcher, candidate, result);
+//            }
+//        }
     }
 
     /**
@@ -135,8 +190,7 @@ public final class DocumentNameMatcher {
             return MATCHES_ALL;
         }
 
-        return new DocumentNameMatcher(format("not(%s)", nameMatcher),
-                (Predicate<DocumentName>) documentName -> !nameMatcher.matches(documentName));
+        return new DocumentNameMatcher(format("not(%s)", nameMatcher), new NotPredicate(nameMatcher));
     }
 
     /**
@@ -150,30 +204,43 @@ public final class DocumentNameMatcher {
         return String.join(", ", children);
     }
 
+    private static Optional<DocumentNameMatcher> standardCollectionCheck(final Collection<DocumentNameMatcher> matchers,
+                                                                         final DocumentNameMatcher override) {
+        if (matchers.isEmpty()) {
+            throw new ConfigurationException("Empty matcher collection");
+        }
+        if (matchers.size() == 1) {
+            return Optional.of(matchers.iterator().next());
+        }
+        if (matchers.contains(override)) {
+            return Optional.of(override);
+        }
+        return Optional.empty();
+    }
+
     /**
      * Performs a logical {@code OR} across the collection of matchers.
      * @param matchers the matchers to check.
      * @return a matcher that returns {@code true} if any of the enclosed matchers returns {@code true}.
      */
     public static DocumentNameMatcher or(final Collection<DocumentNameMatcher> matchers) {
-        if (matchers.isEmpty()) {
-            return MATCHES_NONE;
-        }
-        if (matchers.size() == 1) {
-            return matchers.iterator().next();
-        }
-        if (matchers.contains(MATCHES_ALL)) {
-            return MATCHES_ALL;
+        Optional<DocumentNameMatcher> opt = standardCollectionCheck(matchers, MATCHES_ALL);
+        if (opt.isPresent()) {
+            return opt.get();
         }
 
-        return new DocumentNameMatcher(format("or(%s)", join(matchers)), (Predicate<DocumentName>) documentName -> {
-                for (DocumentNameMatcher matcher : matchers) {
-                    if (matcher.matches(documentName)) {
-                        return true;
-                    }
-                }
-                return false;
-            });
+        // preserve order
+        Set<DocumentNameMatcher> workingSet = new LinkedHashSet<>();
+        for (DocumentNameMatcher matcher : matchers) {
+            // check for nested or
+            if (matcher.predicate instanceof Or) {
+                ((Or) matcher.predicate).getMatchers().forEach(workingSet::add);
+            } else {
+                workingSet.add(matcher);
+            }
+        }
+        return standardCollectionCheck(matchers, MATCHES_ALL)
+                .orElseGet(() -> new DocumentNameMatcher(format("or(%s)", join(workingSet)), new Or(workingSet)));
     }
 
     /**
@@ -191,24 +258,45 @@ public final class DocumentNameMatcher {
      * @return a matcher that returns {@code true} if all the enclosed matchers return {@code true}.
      */
     public static DocumentNameMatcher and(final Collection<DocumentNameMatcher> matchers) {
-        if (matchers.isEmpty()) {
-            return MATCHES_NONE;
-        }
-        if (matchers.size() == 1) {
-            return matchers.iterator().next();
-        }
-        if (matchers.contains(MATCHES_NONE)) {
-            return MATCHES_NONE;
+        Optional<DocumentNameMatcher> opt = standardCollectionCheck(matchers, MATCHES_NONE);
+        if (opt.isPresent()) {
+            return opt.get();
         }
 
-        return new DocumentNameMatcher(format("and(%s)", join(matchers)), (Predicate<DocumentName>) documentName -> {
-                for (DocumentNameMatcher matcher : matchers) {
-                if (!matcher.matches(documentName)) {
-                    return false;
-                }
+        // preserve order
+        Set<DocumentNameMatcher> workingSet = new LinkedHashSet<>();
+        for (DocumentNameMatcher matcher : matchers) {
+            //  check for nexted And
+            if (matcher.predicate instanceof And) {
+                ((And) matcher.predicate).getMatchers().forEach(workingSet::add);
+            } else {
+                workingSet.add(matcher);
             }
-                return true;
-        });
+        }
+        opt = standardCollectionCheck(matchers, MATCHES_NONE);
+        return opt.orElseGet(() -> new DocumentNameMatcher(format("and(%s)", join(workingSet)), new And(workingSet)));
+    }
+
+    /**
+     * A particular matcher that will not match any excluded unless they are listed in the includes.
+     * @param includes the DocumentNameMatcher to match the includes.
+     * @param excludes the DocumentNameMatcher to match the excludes.
+     * @return a DocumentNameMatcher with the specified logic.
+     */
+    public static DocumentNameMatcher matcherSet(final DocumentNameMatcher includes,
+                                                 final DocumentNameMatcher excludes) {
+        if (excludes == MATCHES_NONE) {
+            return MATCHES_ALL;
+        } else {
+            if (includes == MATCHES_NONE) {
+                return not(excludes);
+            }
+        }
+        if (includes == MATCHES_ALL) {
+            return MATCHES_ALL;
+        }
+        List<DocumentNameMatcher> workingSet = Arrays.asList(includes, excludes);
+        return new DocumentNameMatcher(format("matcherSet(%s)", join(workingSet)), new MatcherPredicate(workingSet));
     }
 
     /**
@@ -218,5 +306,202 @@ public final class DocumentNameMatcher {
      */
     public static DocumentNameMatcher and(final DocumentNameMatcher... matchers) {
         return and(Arrays.asList(matchers));
+    }
+
+    /**
+     * A DocumentName predicate that uses MatchPatterns.
+     */
+    public static final class MatchPatternsPredicate implements Predicate<DocumentName> {
+        /** The base diirectory for the pattern matches */
+        private final DocumentName basedir;
+        /** The patter matchers */
+        private final MatchPatterns patterns;
+
+        private MatchPatternsPredicate(final DocumentName basedir, final MatchPatterns patterns) {
+            this.basedir = basedir;
+            this.patterns = patterns;
+        }
+
+        @Override
+        public boolean test(final DocumentName documentName) {
+            return patterns.matches(documentName.getName(),
+                    tokenize(documentName.getName(), basedir.getDirectorySeparator()),
+                    basedir.isCaseSensitive());
+        }
+
+        @Override
+        public String toString() {
+            return patterns.toString();
+        }
+    }
+
+    /**
+     * A DocumentName predicate reverses another DocumentNameMatcher
+     */
+    public static final class NotPredicate implements Predicate<DocumentName> {
+        /** The document name matcher to reverse */
+        private final DocumentNameMatcher nameMatcher;
+
+        private NotPredicate(final DocumentNameMatcher nameMatcher) {
+            this.nameMatcher = nameMatcher;
+        }
+
+        @Override
+        public boolean test(final DocumentName documentName) {
+            return !nameMatcher.matches(documentName);
+        }
+
+        @Override
+        public String toString() {
+            return nameMatcher.predicate.toString();
+        }
+    }
+
+    /**
+     * A DocumentName predicate that uses FileFilter.
+     */
+    public static final class FileFilterPredicate implements Predicate<DocumentName> {
+        /** The file filter */
+        private final FileFilter fileFilter;
+
+        private FileFilterPredicate(final FileFilter fileFilter) {
+            this.fileFilter = fileFilter;
+        }
+
+        @Override
+        public boolean test(final DocumentName documentName) {
+            return fileFilter.accept(new File(documentName.getName()));
+        }
+
+        @Override
+        public String toString() {
+            return fileFilter.toString();
+        }
+    }
+
+    /**
+     * A marker interface to indicate this predicate contains a collection of matchers.
+     */
+    abstract static class CollectionPredicate implements Predicate<DocumentName> {
+        /** The collection for matchers that make up this predicate */
+        private final Iterable<DocumentNameMatcher> matchers;
+
+        /**
+         * Constructs a collecton predicate from the collection of matchers
+         * @param matchers the colleciton of matchers to use.
+         */
+        protected CollectionPredicate(final Iterable<DocumentNameMatcher> matchers) {
+            this.matchers = matchers;
+        }
+
+        /**
+         * Gets the internal matchers.
+         * @return an iterable over the internal matchers.
+         */
+        public Iterable<DocumentNameMatcher> getMatchers() {
+            return matchers;
+        }
+
+        public String toString() {
+            StringBuilder builder = new StringBuilder();
+            for (DocumentNameMatcher matcher : matchers) {
+                builder.append(matcher.predicate.toString()).append(System.lineSeparator());
+            }
+            return builder.toString();
+        }
+    }
+
+    /**
+     * An implementation of "and" logic across a collection of DocumentNameMatchers.
+     */
+    // package private for testing access
+    static class And extends CollectionPredicate {
+        And(final Iterable<DocumentNameMatcher> matchers) {
+            super(matchers);
+        }
+
+        @Override
+        public boolean test(final DocumentName documentName) {
+            for (DocumentNameMatcher matcher : getMatchers()) {
+                if (!matcher.matches(documentName)) {
+                    return false;
+                }
+            }
+            return true;
+        }
+    }
+
+    /**
+     * An implementation of "or" logic across a collection of DocumentNameMatchers.
+     */
+    // package private for testing access
+    static class Or extends CollectionPredicate {
+        Or(final Iterable<DocumentNameMatcher> matchers) {
+            super(matchers);
+        }
+
+        @Override
+        public boolean test(final DocumentName documentName) {
+            for (DocumentNameMatcher matcher : getMatchers()) {
+                if (matcher.matches(documentName)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+    }
+
+    /**
+     * An implementation of "or" logic across a collection of DocumentNameMatchers.
+     */
+    // package private for testing access
+    static class MatcherPredicate extends CollectionPredicate {
+        MatcherPredicate(final Iterable<DocumentNameMatcher> matchers) {
+            super(matchers);
+        }
+
+        @Override
+        public boolean test(final DocumentName documentName) {
+            Iterator<DocumentNameMatcher> iter = getMatchers().iterator();
+            // included
+            if (iter.next().matches(documentName)) {
+                return true;
+            }
+            // excluded
+            if (iter.next().matches(documentName)) {
+                return false;
+            }
+            return true;
+        }
+    }
+
+    /**
+     * Data from a {@link DocumentNameMatcher#decompose(DocumentName)} call.
+     */
+    public static final class DecomposeData {
+        /** the level this data was generated at */
+        private final int level;
+        /** The name of the DocumentNameMatcher that created this result */
+        private final DocumentNameMatcher matcher;
+        /** The result of the check. */
+        private final boolean result;
+
+        private DecomposeData(final int level, final DocumentNameMatcher matcher, final boolean result) {
+            this.level = level;
+            this.matcher = matcher;
+            this.result = result;
+        }
+
+        @Override
+        public String toString() {
+            final char[] chars = new char[level * 2];
+            Arrays.fill(chars, ' ');
+            final String fill = new String(chars);
+            return fill +
+                    matcher.toString() + " : " + result +
+                    System.lineSeparator() +
+                    fill + "    " +
+                    matcher.predicate.toString();
+        }
     }
 }
