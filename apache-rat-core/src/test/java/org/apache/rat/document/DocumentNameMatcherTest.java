@@ -78,12 +78,17 @@ public class DocumentNameMatcherTest {
 
     @Test
     void testDecompose() {
-        DocumentNameMatcher matcher = new DocumentNameMatcher("FileFilterTest", new NameFileFilter("File.name"));
-        String result = processDecompose(matcher, testName);
-        assertThat(result).contains("FileFilterTest: >>false<<").contains("Predicate: NameFileFilter(File.name)");
+        DocumentNameMatcher matcher1 = new DocumentNameMatcher("FileFilterTest", new NameFileFilter("File.name"));
+        String result = processDecompose(matcher1, testName);
+        assertThat(result).contains("FileFilterTest: >>false<<").contains("  NameFileFilter(File.name)");
 
-        matcher = new DocumentNameMatcher("MatchPatternsTest", MatchPatterns.from("/", "**/test*", "**/*Name"));
-        System.out.println(processDecompose(matcher, testName));
+        DocumentNameMatcher matcher2 = new DocumentNameMatcher("MatchPatternsTest", MatchPatterns.from("/", "**/test1*", "**/*Name"));
+        result = processDecompose(matcher2, testName);
+        assertThat(result).contains("MatchPatternsTest: >>true<<").contains("  **/test1*: >>false<<").contains("  **/*Name: >>true<<");
+
+        DocumentNameMatcher matcher3 = DocumentNameMatcher.matcherSet(matcher1, matcher2);
+        result = processDecompose(matcher3, testName);
+        assertThat(result).contains("MatchPatternsTest: >>true<<").contains("  **/test1*: >>false<<").contains("  **/*Name: >>true<<");
 
     }
 }

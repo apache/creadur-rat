@@ -173,12 +173,6 @@ public final class DocumentNameMatcher {
     private void decompose(final int level, final DocumentNameMatcher matcher, final DocumentName candidate, final List<DecomposeData> result) {
         final Predicate<DocumentName> pred = matcher.getPredicate();
         result.add(new DecomposeData(level, matcher, candidate, pred.test(candidate)));
-        if (pred instanceof CollectionPredicate) {
-            final CollectionPredicate collection = (CollectionPredicate) pred;
-            for (DocumentNameMatcher subMatcher : collection.getMatchers()) {
-                decompose(level + 1, subMatcher, candidate, result);
-            }
-        }
     }
 
     /**
@@ -390,7 +384,7 @@ public final class DocumentNameMatcher {
 
         @Override
         public String toString() {
-            return "Predicate: " + fileFilter.toString();
+            return fileFilter.toString();
         }
     }
 
@@ -515,14 +509,30 @@ public final class DocumentNameMatcher {
 
         @Override
         public String toString() {
-            final char[] chars = new char[level * 2];
-            Arrays.fill(chars, ' ');
-            final String fill = new String(chars);
-            return format("%s%s: >>%s<< %s%n%s    predicate: %s",
+            final String fill = createFill(level);
+            return format("%s%s: >>%s<< %s%n%s",
                     fill, matcher.toString(), result,
                     level == 0 ? candidate.getName() : "",
-                    fill,
-                    matcher.predicate.toString());
+                    matcher.predicate instanceof CollectionPredicate ?
+                            decompose(level + 1, (CollectionPredicate)matcher.predicate, candidate) :
+                    String.format("%s%s >>%s<<", createFill(level + 1), matcher.predicate.toString(), matcher.predicate.test(candidate)));
+        }
+
+        private String createFill(final int level) {
+            final char[] chars = new char[level * 2];
+            Arrays.fill(chars, ' ');
+            return new String(chars);
+        }
+
+        private String decompose(final int level, final CollectionPredicate predicate, final DocumentName candidate) {
+            List<DecomposeData> result = new ArrayList<>();
+
+            for (DocumentNameMatcher nameMatcher : predicate.getMatchers()) {
+                nameMatcher.decompose(level, nameMatcher, candidate, result);
+            }
+            StringBuilder sb = new StringBuilder();
+            result.forEach(x -> sb.append(x).append(System.lineSeparator()));
+            return sb.toString();
         }
     }
 }
