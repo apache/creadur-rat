@@ -155,7 +155,7 @@ public class OptionCollectionTest {
      * @param name The name of the test.
      * @param test the option test to execute.
      */
-    @ParameterizedTest
+    @ParameterizedTest( name = "{index} {0}")
     @ArgumentsSource(CliOptionsProvider.class)
     public void testOptionsUpdateConfig(String name, OptionTest test) {
         DefaultLog.getInstance().log(Log.Level.INFO, "Running test for: " + name);
