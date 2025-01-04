@@ -22,6 +22,7 @@ package org.apache.rat.config.exclusion.plexus;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.function.Predicate;
 
@@ -50,6 +51,10 @@ public final class MatchPatterns {
             sources.add(pattern.source());
         }
         return "[" + String.join(", ", sources) + "]";
+    }
+
+    public Iterable<MatchPattern> patterns() {
+        return Arrays.asList(patterns);
     }
 
     /**

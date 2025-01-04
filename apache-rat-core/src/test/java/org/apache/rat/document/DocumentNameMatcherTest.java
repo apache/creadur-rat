@@ -18,10 +18,9 @@
  */
 package org.apache.rat.document;
 
-import java.io.File;
-import java.io.FileFilter;
 import java.util.function.Predicate;
 import org.apache.commons.io.filefilter.NameFileFilter;
+import org.apache.rat.config.exclusion.plexus.MatchPatterns;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -69,5 +68,23 @@ public class DocumentNameMatcherTest {
         assertThat(DocumentNameMatcher.matcherSet(SOME, MATCHES_ALL).toString()).as("X,All").isEqualTo("matcherSet(X, TRUE)");
         assertThat(DocumentNameMatcher.matcherSet(SOME, MATCHES_NONE)).as("X,None").isEqualTo(MATCHES_ALL);
         assertThat(DocumentNameMatcher.matcherSet(SOME, SOME).toString()).as("X,X").isEqualTo("matcherSet(X, X)");
+    }
+
+    @Test
+    void testDecompose() {
+        DocumentNameMatcher matcher = new DocumentNameMatcher("FileFilterTest", new NameFileFilter("File.name"));
+        final StringBuilder sb = new StringBuilder();
+        matcher.decompose(testName).forEach(s -> sb.append(s).append("\n"));
+        String result = sb.toString();
+        assertThat(result).contains("FileFilterTest : >>false<<").contains("Predicate: NameFileFilter(File.name)");
+
+        matcher = new DocumentNameMatcher("MatchPatternsTest", MatchPatterns.from("/", "**/test*", "**/*Name"));
+
+        sb.setLength(0);
+        matcher.decompose(testName).forEach(s -> sb.append(s).append("\n"));
+        result = sb.toString();
+
+        System.out.println(sb.toString());
+
     }
 }

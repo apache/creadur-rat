@@ -66,7 +66,7 @@ public final class DocumentNameMatcher {
     public DocumentNameMatcher(final String name, final Predicate<DocumentName> predicate) {
         this.name = name;
         this.predicate = predicate;
-        this.isCollection = predicate instanceof CollectionPredicate;
+        this.isCollection = predicate instanceof CollectionPredicateImpl;
     }
 
     /**
@@ -109,7 +109,20 @@ public final class DocumentNameMatcher {
      * @param matchers fully specified matchers.
      */
     public DocumentNameMatcher(final String name, final MatchPatterns matchers) {
-        this(name, (Predicate<DocumentName>) documentName -> matchers.matches(documentName.getName(), documentName.isCaseSensitive()));
+        this(name, new CollectionPredicate() {
+            @Override
+            public Iterable<DocumentNameMatcher> getMatchers() {
+                final List<DocumentNameMatcher> result = new ArrayList<>();
+                matchers.patterns().forEach(p -> result.add(new DocumentNameMatcher(p.source(),
+                        (Predicate<DocumentName>) x -> MatchPatterns.from("/", p.source()).matches(x.getName(), x.isCaseSensitive()))));
+                return result;
+            }
+
+            @Override
+            public boolean test(final DocumentName documentName) {
+                return matchers.matches(documentName.getName(), documentName.isCaseSensitive());
+            }
+        });
     }
 
     /**
@@ -159,9 +172,9 @@ public final class DocumentNameMatcher {
 
     private void decompose(final int level, final DocumentNameMatcher matcher, final DocumentName candidate, final List<DecomposeData> result) {
         final Predicate<DocumentName> pred = matcher.getPredicate();
-        result.add(new DecomposeData(level, matcher, pred.test(candidate)));
-        if (pred instanceof DocumentNameMatcher.CollectionPredicate) {
-            final DocumentNameMatcher.CollectionPredicate collection = (DocumentNameMatcher.CollectionPredicate) pred;
+        result.add(new DecomposeData(level, matcher, candidate, pred.test(candidate)));
+        if (pred instanceof CollectionPredicate) {
+            final CollectionPredicate collection = (CollectionPredicate) pred;
             for (DocumentNameMatcher subMatcher : collection.getMatchers()) {
                 decompose(level + 1, subMatcher, candidate, result);
             }
@@ -308,6 +321,8 @@ public final class DocumentNameMatcher {
         return and(Arrays.asList(matchers));
     }
 
+
+
     /**
      * A DocumentName predicate that uses MatchPatterns.
      */
@@ -379,10 +394,13 @@ public final class DocumentNameMatcher {
         }
     }
 
+    interface CollectionPredicate extends Predicate<DocumentName> {
+        Iterable<DocumentNameMatcher> getMatchers();
+    }
     /**
      * A marker interface to indicate this predicate contains a collection of matchers.
      */
-    abstract static class CollectionPredicate implements Predicate<DocumentName> {
+    abstract static class CollectionPredicateImpl implements CollectionPredicate {
         /** The collection for matchers that make up this predicate */
         private final Iterable<DocumentNameMatcher> matchers;
 
@@ -390,7 +408,7 @@ public final class DocumentNameMatcher {
          * Constructs a collecton predicate from the collection of matchers
          * @param matchers the colleciton of matchers to use.
          */
-        protected CollectionPredicate(final Iterable<DocumentNameMatcher> matchers) {
+        protected CollectionPredicateImpl(final Iterable<DocumentNameMatcher> matchers) {
             this.matchers = matchers;
         }
 
@@ -415,7 +433,7 @@ public final class DocumentNameMatcher {
      * An implementation of "and" logic across a collection of DocumentNameMatchers.
      */
     // package private for testing access
-    static class And extends CollectionPredicate {
+    static class And extends CollectionPredicateImpl {
         And(final Iterable<DocumentNameMatcher> matchers) {
             super(matchers);
         }
@@ -435,7 +453,7 @@ public final class DocumentNameMatcher {
      * An implementation of "or" logic across a collection of DocumentNameMatchers.
      */
     // package private for testing access
-    static class Or extends CollectionPredicate {
+    static class Or extends CollectionPredicateImpl {
         Or(final Iterable<DocumentNameMatcher> matchers) {
             super(matchers);
         }
@@ -455,7 +473,7 @@ public final class DocumentNameMatcher {
      * An implementation of "or" logic across a collection of DocumentNameMatchers.
      */
     // package private for testing access
-    static class MatcherPredicate extends CollectionPredicate {
+    static class MatcherPredicate extends CollectionPredicateImpl {
         MatcherPredicate(final Iterable<DocumentNameMatcher> matchers) {
             super(matchers);
         }
@@ -485,11 +503,14 @@ public final class DocumentNameMatcher {
         private final DocumentNameMatcher matcher;
         /** The result of the check. */
         private final boolean result;
+        /** The candidate */
+        private final DocumentName candidate;
 
-        private DecomposeData(final int level, final DocumentNameMatcher matcher, final boolean result) {
+        private DecomposeData(final int level, final DocumentNameMatcher matcher, final DocumentName candidate, final boolean result) {
             this.level = level;
             this.matcher = matcher;
             this.result = result;
+            this.candidate = candidate;
         }
 
         @Override
@@ -498,9 +519,10 @@ public final class DocumentNameMatcher {
             Arrays.fill(chars, ' ');
             final String fill = new String(chars);
             return fill +
-                    matcher.toString() + " : " + result +
+                    matcher.toString() + " : >>" + result + "<<  " +
+                    (level == 0 ? candidate.getName() : "") +
                     System.lineSeparator() +
-                    fill + "  predicate: " +
+                    fill + "    " +
                     matcher.predicate.toString();
         }
     }
