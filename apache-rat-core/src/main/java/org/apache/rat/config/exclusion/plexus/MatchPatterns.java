@@ -24,6 +24,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.rat.utils.DefaultLog;
 
@@ -81,7 +82,8 @@ public final class MatchPatterns {
     }
 
     public boolean matches(final String name, final char[][] tokenizedNameChar, final boolean isCaseSensitive) {
-        DefaultLog.getInstance().warn(String.format("Matching %s against %s case-sensitivity: %s", name, tokenizedNameChar, isCaseSensitive));
+        DefaultLog.getInstance().warn(String.format("Matching %s against %s case-sensitivity: %s", name,
+                Arrays.asList(tokenizedNameChar).stream().map(String::new).collect(Collectors.toList()), isCaseSensitive));
         for (MatchPattern pattern : patterns) {
             if (pattern.matchPath(name, tokenizedNameChar, isCaseSensitive)) {
                 return true;
