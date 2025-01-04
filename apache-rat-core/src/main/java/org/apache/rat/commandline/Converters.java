@@ -21,7 +21,6 @@ package org.apache.rat.commandline;
 import java.io.File;
 import java.io.IOException;
 
-import java.nio.file.FileSystems;
 import org.apache.commons.cli.Converter;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.rat.ConfigurationException;

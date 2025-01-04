@@ -30,8 +30,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-
 import java.util.stream.Collectors;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.CompareToBuilder;
 import org.apache.commons.lang3.builder.EqualsBuilder;
@@ -69,14 +69,19 @@ public class DocumentName implements Comparable<DocumentName> {
     /** The File System info for the default file system */
     public static final FSInfo DEFAULT_FSINFO = new FSInfo(FileSystems.getDefault());
 
-    private static boolean isCaseSensitive(FileSystem fs) {
+    /**
+     * Determines if the file system is case-sensitive.
+     * @param fileSystem the file system to check
+     * @return {@code true} if the file system is case-sensitive.
+     */
+    private static boolean isCaseSensitive(final FileSystem fileSystem) {
         boolean isCaseSensitive = false;
         Path nameSet = null;
         Path filea = null;
         Path fileA = null;
         try {
             try {
-                Path root = fs.getPath("");
+                Path root = fileSystem.getPath("");
                 nameSet = Files.createTempDirectory(root, "NameSet");
                 filea = nameSet.resolve("a");
                 fileA = nameSet.resolve("A");
@@ -103,18 +108,29 @@ public class DocumentName implements Comparable<DocumentName> {
     }
 
     /**
-     * Creates a Builder with directory separator and case sensitivity based on the local file system.
+     * Creates a Builder with the default File system info.
      * @return the Builder.
+     * @see FSInfo
      */
     public static Builder builder() {
         return new Builder(DEFAULT_FSINFO);
     }
 
-    public static Builder builder(FSInfo fsInfo) {
+    /**
+     * Creates a builder with the specified FSInfo instance.
+     * @param fsInfo the FSInfo to use for the builder.
+     * @return a new builder.
+     */
+    public static Builder builder(final FSInfo fsInfo) {
         return new Builder(fsInfo);
     }
 
-    public static Builder builder(FileSystem fileSystem) {
+    /**
+     * Creates a builder for the specified file system.
+     * @param fileSystem the file system to create ethe builder on.
+     * @return a new builder.
+     */
+    public static Builder builder(final FileSystem fileSystem) {
         return new Builder(fileSystem);
     }
 
@@ -148,10 +164,18 @@ public class DocumentName implements Comparable<DocumentName> {
         this.baseName = builder.sameNameFlag ? this : builder.baseName;
     }
 
+    /**
+     * Creates a file from the document name.
+     * @return a new File object.
+     */
     public File asFile() {
         return new File(getName());
     }
 
+    /**
+     * Creates a path from the document name.
+     * @return an new Path object.
+     */
     public Path asPath() {
         return Paths.get(name);
     }
@@ -218,7 +242,14 @@ public class DocumentName implements Comparable<DocumentName> {
         return fsInfo.dirSeparator();
     }
 
-    boolean startsWithRootOrSeparator(String candidate, String root, String separator) {
+    /**
+     * Determines if the candidate starts with the root or separator strings.
+     * @param candidate the candidate ot check. If blank method will return false.
+     * @param root the root to check. If blank the root check is skipped.
+     * @param separator the separator to check. If blank the check is skipped.
+     * @return true if either the root or separator check returned true.
+     */
+    boolean startsWithRootOrSeparator(final String candidate, final String root, final String separator) {
         if (StringUtils.isBlank(candidate)) {
             return false;
         }
@@ -308,35 +339,64 @@ public class DocumentName implements Comparable<DocumentName> {
         return HashCodeBuilder.reflectionHashCode(this);
     }
 
-    public static class FSInfo implements Comparable<FSInfo>{
+    /**
+     * The File system information needed to process document names.
+     */
+    public static class FSInfo implements Comparable<FSInfo> {
+        /** The separator between directory names */
         private final String separator;
+        /** The case-sensitivity flag. */
         private final boolean isCaseSensitive;
+        /** The list of roots for the file system */
         private final List<String> roots;
 
-        public FSInfo(FileSystem fileSystem) {
+        /**
+         * Constructor. Extracts the necessary data from the file system.
+         * @param fileSystem the file system to extract data from.
+         */
+        public FSInfo(final FileSystem fileSystem) {
             this.separator = fileSystem.getSeparator();
             this.isCaseSensitive = DocumentName.isCaseSensitive(fileSystem);
             roots = new ArrayList<>();
             fileSystem.getRootDirectories().forEach(r -> roots.add(r.toString()));
         }
 
-        FSInfo(String separator, boolean isCaseSensitive, List<String> roots) {
+        /**
+         * Constructor for virtual/abstract file systems for example the entry names within an an archive.
+         * @param separator the separator string to use.
+         * @param isCaseSensitive the case-sensitivity flag.
+         * @param roots the roots for the file system.
+         */
+        FSInfo(final String separator, final boolean isCaseSensitive, final List<String> roots) {
             this.separator = separator;
             this.isCaseSensitive = isCaseSensitive;
             this.roots = new ArrayList<>(roots);
         }
 
+        /**
+         * Gets the directory separator.
+         * @return The directory separator.
+         */
         public String dirSeparator() {
             return separator;
         }
 
+        /**
+         * Gets the case-sensitivity flag.
+         * @return the case-sensitivity flag.
+         */
         public boolean isCaseSensitive() {
             return isCaseSensitive;
         }
 
-        public Optional<String> rootFor(String workingName) {
+        /**
+         * Retrieves the root extracted from the name.
+         * @param name the name to extract the root from
+         * @return an optional containing the root or empty.
+         */
+        public Optional<String> rootFor(final String name) {
             for (String sysRoot : roots) {
-                if (workingName.startsWith(sysRoot)) {
+                if (name.startsWith(sysRoot)) {
                     return Optional.of(sysRoot);
                 }
             }
@@ -357,12 +417,12 @@ public class DocumentName implements Comparable<DocumentName> {
          * @param pattern the file name pattern
          * @return the normalized file name.
          */
-        public String normalize(String pattern) {
+        public String normalize(final String pattern) {
             if (StringUtils.isBlank(pattern)) {
                 return "";
             }
             List<String> parts = new ArrayList<>(Arrays.asList(tokenize(pattern)));
-            for (int i=0; i<parts.size(); i++) {
+            for (int i = 0; i < parts.size(); i++) {
                 String part = parts.get(i);
                 if (part.equals("..")) {
                     if (i == 0) {
@@ -378,12 +438,12 @@ public class DocumentName implements Comparable<DocumentName> {
         }
 
         @Override
-        public int compareTo(FSInfo other) {
+        public int compareTo(final FSInfo other) {
             return CompareToBuilder.reflectionCompare(this, other);
         }
 
         @Override
-        public boolean equals(Object other) {
+        public boolean equals(final Object other) {
             return EqualsBuilder.reflectionEquals(this, other);
         }
 
@@ -408,14 +468,10 @@ public class DocumentName implements Comparable<DocumentName> {
         /** A flag for baseName same as this */
         private boolean sameNameFlag;
 
-        private Builder() {
-            fsInfo = DEFAULT_FSINFO;
-            root = "";
-        }
         /**
          * Create with default settings.
          */
-        private Builder(FSInfo fsInfo) {
+        private Builder(final FSInfo fsInfo) {
             this.fsInfo = fsInfo;
             root = "";
         }
@@ -423,7 +479,7 @@ public class DocumentName implements Comparable<DocumentName> {
         /**
          * Create with default settings.
          */
-        private Builder(FileSystem fileSystem) {
+        private Builder(final FileSystem fileSystem) {
             fsInfo = fileSystem.equals(FileSystems.getDefault()) ? DEFAULT_FSINFO : new FSInfo(fileSystem);
             root = "";
         }
@@ -465,6 +521,7 @@ public class DocumentName implements Comparable<DocumentName> {
         public String directorySeparator() {
             return fsInfo.dirSeparator();
         }
+
         /**
          * Verify that the builder will build a proper DocumentName.
          */
@@ -606,7 +663,7 @@ public class DocumentName implements Comparable<DocumentName> {
          * Executes the builder, sets the base name and clears the sameName flag.
          * @param builder the builder for the base name.
          */
-        private void setBaseName(DocumentName.Builder builder) {
+        private void setBaseName(final DocumentName.Builder builder) {
             this.baseName = builder.build();
             this.sameNameFlag = false;
         }

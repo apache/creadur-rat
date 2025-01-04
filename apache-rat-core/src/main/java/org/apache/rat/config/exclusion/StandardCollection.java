@@ -103,7 +103,7 @@ public enum StandardCollection {
             null,
             new DocumentNameMatcher("HIDDEN_DIR", new Predicate<DocumentName>() {
                 @Override
-                public boolean test(DocumentName documentName) {
+                public boolean test(final DocumentName documentName) {
                     File file = documentName.asFile();
                     return file.isDirectory() && ExclusionUtils.isHidden(documentName.getShortName());
                 }
@@ -120,7 +120,7 @@ public enum StandardCollection {
             null,
             new DocumentNameMatcher("HIDDEN_FILE", new Predicate<DocumentName>() {
                 @Override
-                public boolean test(DocumentName documentName) {
+                public boolean test(final DocumentName documentName) {
                     File file = documentName.asFile();
                     return file.isFile() && ExclusionUtils.isHidden(documentName.getShortName());
                 }

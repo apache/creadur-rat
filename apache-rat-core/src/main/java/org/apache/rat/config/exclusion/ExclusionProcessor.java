@@ -219,7 +219,14 @@ public class ExclusionProcessor {
         return fileProcessorList;
     }
 
-    private String preparePattern(DocumentName documentName, String pattern) {
+    /**
+     * Converts the pattern to use the directory separator specified by the document name and localises it for
+     * exclusion processing.
+     * @param documentName The document name to adjust the pattern against.
+     * @param pattern the pattern.
+     * @return the prepared pattern.
+     */
+    private String preparePattern(final DocumentName documentName, final String pattern) {
         return ExclusionUtils.localizePattern(documentName,
                         ExclusionUtils.convertSeparator(pattern, "/", documentName.getDirectorySeparator()));
     }
