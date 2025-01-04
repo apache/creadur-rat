@@ -514,7 +514,7 @@ public final class DocumentNameMatcher {
                     fill, matcher.toString(), result,
                     level == 0 ? candidate.getName() : "",
                     matcher.predicate instanceof CollectionPredicate ?
-                            decompose(level + 1, (CollectionPredicate)matcher.predicate, candidate) :
+                            decompose(level + 1, (CollectionPredicate) matcher.predicate, candidate) :
                     String.format("%s%s >>%s<<", createFill(level + 1), matcher.predicate.toString(), matcher.predicate.test(candidate)));
         }
 
