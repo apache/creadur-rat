@@ -160,12 +160,12 @@ public final class DocumentNameMatcher {
     private void decompose(final int level, final DocumentNameMatcher matcher, final DocumentName candidate, final List<DecomposeData> result) {
         final Predicate<DocumentName> pred = matcher.getPredicate();
         result.add(new DecomposeData(level, matcher, pred.test(candidate)));
-//        if (pred instanceof DocumentNameMatcher.CollectionPredicate) {
-//            final DocumentNameMatcher.CollectionPredicate collection = (DocumentNameMatcher.CollectionPredicate) pred;
-//            for (DocumentNameMatcher subMatcher : collection.getMatchers()) {
-//                decompose(level + 1, subMatcher, candidate, result);
-//            }
-//        }
+        if (pred instanceof DocumentNameMatcher.CollectionPredicate) {
+            final DocumentNameMatcher.CollectionPredicate collection = (DocumentNameMatcher.CollectionPredicate) pred;
+            for (DocumentNameMatcher subMatcher : collection.getMatchers()) {
+                decompose(level + 1, subMatcher, candidate, result);
+            }
+        }
     }
 
     /**
