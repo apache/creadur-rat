@@ -34,6 +34,12 @@ public class DocumentNameMatcherTest {
     private final static DocumentNameMatcher SOME = new DocumentNameMatcher("X", (Predicate<DocumentName>)name -> false);
     private final static DocumentName testName = DocumentName.builder().setName("testName").setBaseName("/").build();
 
+    public static String processDecompose(DocumentNameMatcher matcher, DocumentName candidate) {
+        StringBuilder sb = new StringBuilder();
+        matcher.decompose(candidate).forEach(s -> sb.append(s).append("\n"));
+        return sb.toString();
+    }
+
     @Test
     public void orTest() {
         assertThat(DocumentNameMatcher.or(TRUE, FALSE).matches(testName)).as("T,F").isTrue();
@@ -73,18 +79,11 @@ public class DocumentNameMatcherTest {
     @Test
     void testDecompose() {
         DocumentNameMatcher matcher = new DocumentNameMatcher("FileFilterTest", new NameFileFilter("File.name"));
-        final StringBuilder sb = new StringBuilder();
-        matcher.decompose(testName).forEach(s -> sb.append(s).append("\n"));
-        String result = sb.toString();
+        String result = processDecompose(matcher, testName);
         assertThat(result).contains("FileFilterTest : >>false<<").contains("Predicate: NameFileFilter(File.name)");
 
         matcher = new DocumentNameMatcher("MatchPatternsTest", MatchPatterns.from("/", "**/test*", "**/*Name"));
-
-        sb.setLength(0);
-        matcher.decompose(testName).forEach(s -> sb.append(s).append("\n"));
-        result = sb.toString();
-
-        System.out.println(sb.toString());
+        System.out.println(processDecompose(matcher, testName));
 
     }
 }

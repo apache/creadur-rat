@@ -33,6 +33,7 @@ import org.apache.rat.commandline.StyleSheets;
 import org.apache.rat.config.exclusion.StandardCollection;
 import org.apache.rat.document.DocumentNameMatcher;
 import org.apache.rat.document.DocumentName;
+import org.apache.rat.document.DocumentNameMatcherTest;
 import org.apache.rat.license.ILicense;
 import org.apache.rat.license.ILicenseFamily;
 import org.apache.rat.license.LicenseSetFactory;
@@ -251,14 +252,9 @@ public abstract class AbstractOptionsProvider implements ArgumentsProvider {
         return String.format("%s %s", option.getLongOpt(), fname);
     }
 
-    private String dump(DocumentNameMatcher nameMatcher, DocumentName name) {
-        StringBuilder sb = new StringBuilder();
-        nameMatcher.decompose(name).forEach(s -> sb.append(s).append("\n"));
-        return sb.toString();
-    }
-
     private String dump(Option option, String fname, DocumentNameMatcher matcher, DocumentName name) {
-        return String.format("Argument and Name: %s%nMatcher decomposition:%n%s", displayArgAndName(option, fname), dump(matcher, name));
+        return String.format("Argument and Name: %s%nMatcher decomposition:%n%s", displayArgAndName(option, fname),
+                DocumentNameMatcherTest.processDecompose(matcher, name));
     }
 
     // exclude tests

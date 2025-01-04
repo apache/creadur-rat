@@ -518,12 +518,11 @@ public final class DocumentNameMatcher {
             final char[] chars = new char[level * 2];
             Arrays.fill(chars, ' ');
             final String fill = new String(chars);
-            return fill +
-                    matcher.toString() + " : >>" + result + "<<  " +
-                    (level == 0 ? candidate.getName() : "") +
-                    System.lineSeparator() +
-                    fill + "    " +
-                    matcher.predicate.toString();
+            return format( "%s%s: >>%s<< %s%n%s    predicate: %s",
+                    fill, matcher.toString(), result,
+                    (level == 0 ? candidate.getName() : ""),
+                    fill,
+                    matcher.predicate.toString());
         }
     }
 }
