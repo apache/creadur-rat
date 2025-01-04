@@ -54,11 +54,12 @@ package org.apache.rat.config.exclusion.plexus;
  * <http://www.codehaus.org/>.
  *
  */
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
+
+import org.apache.rat.utils.DefaultLog;
 
 @SuppressWarnings({"checkstyle:RegexpSingleLine", "checkstyle:JavadocVariable"})
 /**
@@ -397,6 +398,7 @@ public final class SelectorUtils {
     }
 
     static boolean matchAntPathPattern(final char[][] patDirs, final char[][] strDirs, final boolean isCaseSensitive) {
+        DefaultLog.getInstance().warn(String.format("... Comparing against %s", (Object) patDirs));
         int patIdxStart = 0;
         int patIdxEnd = patDirs.length - 1;
         int strIdxStart = 0;

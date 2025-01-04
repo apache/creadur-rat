@@ -72,21 +72,21 @@ public class DocumentNameTest {
         lst.add(Arguments.of("unix", base, "..\\up\\and\\down", expected));
 
         // WINDOWS
-        base = DocumentName.builder(WINDOWS).setName("\\dir\\windows").setBaseName("C:\\\\").build();
+        base = DocumentName.builder(WINDOWS).setName("\\dir\\windows").setBaseName("C:\\").build();
 
-        expected = DocumentName.builder(WINDOWS).setName("\\dir\\windows\\relative").setBaseName("C:\\\\").build();
+        expected = DocumentName.builder(WINDOWS).setName("\\dir\\windows\\relative").setBaseName("C:\\").build();
         lst.add(Arguments.of("windows", base, "relative", expected));
 
-        expected = DocumentName.builder(WINDOWS).setName("\\from\\root").setBaseName("C:\\\\").build();
+        expected = DocumentName.builder(WINDOWS).setName("\\from\\root").setBaseName("C:\\").build();
         lst.add(Arguments.of("windows", base, "/from/root", expected));
 
-        expected = DocumentName.builder(WINDOWS).setName("dir\\up\\and\\down").setBaseName("C:\\\\").build();
+        expected = DocumentName.builder(WINDOWS).setName("dir\\up\\and\\down").setBaseName("C:\\").build();
         lst.add(Arguments.of("windows", base, "../up/and/down", expected));
 
-        expected = DocumentName.builder(WINDOWS).setName("\\from\\root").setBaseName("C:\\\\").build();
+        expected = DocumentName.builder(WINDOWS).setName("\\from\\root").setBaseName("C:\\").build();
         lst.add(Arguments.of("windows", base, "\\from\\root", expected));
 
-        expected = DocumentName.builder(WINDOWS).setName("dir\\up\\and\\down").setBaseName("C:\\\\").build();
+        expected = DocumentName.builder(WINDOWS).setName("dir\\up\\and\\down").setBaseName("C:\\").build();
         lst.add(Arguments.of("windows", base, "..\\up\\and\\down", expected));
 
         // OSX
@@ -184,9 +184,9 @@ public class DocumentNameTest {
         lst.add(Arguments.of("foo/bar foo", DocumentName.builder(UNIX)
                 .setName("/foo/bar").setBaseName("foo"), "", "foo/bar", "foo", "/"));
 
-        DocumentName.Builder builder = DocumentName.builder(WINDOWS).setName("\\foo\\bar").setBaseName("C:\\\\foo")
-                .setRoot("C:\\");
-        lst.add(Arguments.of("\\foo\\bar foo", builder, "C:\\", "foo\\bar", "foo", "\\"));
+        DocumentName.Builder builder = DocumentName.builder(WINDOWS).setName("\\foo\\bar").setBaseName("C:\\foo")
+                .setRoot("C:");
+        lst.add(Arguments.of("\\foo\\bar foo", builder, "C:", "foo\\bar", "foo", "\\"));
 
         lst.add(Arguments.of("foo/bar foo", DocumentName.builder(OSX)
                 .setName("/foo/bar").setBaseName("foo"), "", "foo/bar", "foo", "/"));

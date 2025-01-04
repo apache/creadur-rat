@@ -24,7 +24,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.function.Predicate;
+
+import org.apache.rat.utils.DefaultLog;
 
 @SuppressWarnings({"checkstyle:RegexpSingleLine", "checkstyle:JavadocVariable"})
 /**
@@ -80,21 +81,9 @@ public final class MatchPatterns {
     }
 
     public boolean matches(final String name, final char[][] tokenizedNameChar, final boolean isCaseSensitive) {
+        DefaultLog.getInstance().warn(String.format("Matching %s against %s case-sensitivity: %s", name, tokenizedNameChar, isCaseSensitive));
         for (MatchPattern pattern : patterns) {
             if (pattern.matchPath(name, tokenizedNameChar, isCaseSensitive)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public Predicate<String> asPredicate(final boolean isCaseSensitive) {
-        return name -> matches(name, isCaseSensitive);
-    }
-
-    public boolean matchesPatternStart(final String name, final boolean isCaseSensitive) {
-        for (MatchPattern includesPattern : patterns) {
-            if (includesPattern.matchPatternStart(name, isCaseSensitive)) {
                 return true;
             }
         }
