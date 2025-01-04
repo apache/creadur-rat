@@ -56,8 +56,10 @@ package org.apache.rat.config.exclusion.plexus;
  */
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.StringTokenizer;
+import java.util.stream.Collectors;
 
 import org.apache.rat.utils.DefaultLog;
 
@@ -398,7 +400,7 @@ public final class SelectorUtils {
     }
 
     static boolean matchAntPathPattern(final char[][] patDirs, final char[][] strDirs, final boolean isCaseSensitive) {
-        DefaultLog.getInstance().warn(String.format("... Comparing against %s", (Object) patDirs));
+        DefaultLog.getInstance().warn(String.format("... Comparing against %s", Arrays.asList(patDirs).stream().map(String::new).collect(Collectors.toList())));
         int patIdxStart = 0;
         int patIdxEnd = patDirs.length - 1;
         int strIdxStart = 0;
