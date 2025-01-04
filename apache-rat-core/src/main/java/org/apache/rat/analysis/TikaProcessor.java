@@ -123,16 +123,36 @@ public final class TikaProcessor {
     }
 
     /**
+     * Extracts the media type properly from zero length files.
+     * @param stream the InputStream from the file.
+     * @param documentName the name of the document
+     * @return the mime type for the document
+     * @throws IOException on error.
+     */
+    private static String detectMediaType(InputStream stream, DocumentName documentName) throws IOException {
+        stream.mark(1);
+        int ch = stream.read();
+        stream.reset();
+        Metadata metadata = new Metadata();
+        String name = documentName.localized();
+        if (ch == -1) {
+            name = name.substring(name.lastIndexOf("/") + 1);
+            metadata.set(TikaCoreProperties.RESOURCE_NAME_KEY, name);
+            return TIKA.detect(null, metadata);
+        }
+        metadata.set(TikaCoreProperties.RESOURCE_NAME_KEY, name);
+        return TIKA.detect(stream, metadata);
+    }
+
+    /**
      * Process the input document.
      * @param document the Document to process.
      * @return the mimetype as a string.
      * @throws RatDocumentAnalysisException on error.
      */
     public static String process(final Document document) throws RatDocumentAnalysisException {
-        Metadata metadata = new Metadata();
         try (InputStream stream = markSupportedInputStream(document.inputStream())) {
-            metadata.set(TikaCoreProperties.RESOURCE_NAME_KEY, document.getName().getName());
-            String result = TIKA.detect(stream, metadata);
+            String result = detectMediaType(stream, document.getName());
             String[] parts = result.split("/");
             MediaType mediaType = new MediaType(parts[0], parts[1]);
             document.getMetaData().setMediaType(mediaType);
@@ -146,7 +166,6 @@ public final class TikaProcessor {
                     document.getMetaData().setDocumentType(Document.Type.NOTICE);
                 }
             }
-
             return result;
         } catch (IOException e) {
             throw new RatDocumentAnalysisException(e);

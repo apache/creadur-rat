@@ -258,12 +258,8 @@ public class RatCheckMojoTest { //extends BetterAbstractMojoTestCase {
 
         ReportConfigurationTest.validateDefaultLicenses(config, "CC-BY-NC-ND", "YAL");
         assertThat(LicenseSetFactory.search("YAL", "YAL", config.getLicenses(LicenseFilter.ALL))).isPresent();
-        //try {
-            mojo.execute();
-           // fail("Should have thrown exception");
-//        } catch (RatCheckException e) {
-//            assertThat(e.getMessage()).contains("LICENSE_CATEGORIES, LICENSE_NAMES, STANDARDS exceeded");
-//        }
+
+        mojo.execute();
 
         Map<ClaimStatistic.Counter, String> data = new HashMap<>();
         data.put(ClaimStatistic.Counter.APPROVED, "1");

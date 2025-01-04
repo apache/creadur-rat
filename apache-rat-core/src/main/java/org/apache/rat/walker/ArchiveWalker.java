@@ -36,6 +36,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.rat.api.Document;
 import org.apache.rat.api.RatException;
 import org.apache.rat.document.ArchiveEntryDocument;
+import org.apache.rat.document.ArchiveEntryName;
 import org.apache.rat.document.DocumentName;
 import org.apache.rat.report.RatReport;
 import org.apache.rat.utils.DefaultLog;
@@ -93,10 +94,8 @@ public class ArchiveWalker extends Walker {
                     if (this.getDocument().getNameExcluder().matches(innerName)) {
                         ByteArrayOutputStream baos = new ByteArrayOutputStream();
                         IOUtils.copy(input, baos);
-                        DocumentName archiveName = getDocument().getName();
-                        String outerNameStr = format("%s#%s", archiveName.getName(), entry.getName());
-                        DocumentName outerName = DocumentName.builder(archiveName).setName(outerNameStr).build();
-                        result.add(new ArchiveEntryDocument(outerName, baos.toByteArray(), getDocument().getNameExcluder()));
+                        ArchiveEntryName entryName = new ArchiveEntryName(getDocument().getName(), entry.getName());
+                        result.add(new ArchiveEntryDocument(entryName, baos.toByteArray(), getDocument().getNameExcluder()));
                     }
                 }
             }

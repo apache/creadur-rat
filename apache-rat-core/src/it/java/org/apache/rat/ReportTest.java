@@ -163,7 +163,7 @@ public class ReportTest {
             @Override
             public void report(Document document)  {
                 if (!document.isIgnored()) {
-                    String[] tokens = document.getName().tokenize(document.getName().localized());
+                    String[] tokens = DocumentName.DEFAULT_FSINFO.tokenize(document.getName().localized());
                     results.add(Arguments.of(tokens[1], document));
                 }
             }

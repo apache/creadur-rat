@@ -849,12 +849,12 @@ public enum Arg {
 
         if (OUTPUT_FILE.isSelected()) {
             try {
-                File f = context.getCommandLine().getParsedOptionValue(OUTPUT_FILE.getSelected());
-                File parent = f.getParentFile();
+                File file = context.getCommandLine().getParsedOptionValue(OUTPUT_FILE.getSelected());
+                File parent = file.getParentFile();
                 if (!parent.mkdirs() && !parent.isDirectory()) {
-                    DefaultLog.getInstance().error("Could not create report parent directory " + f);
+                    DefaultLog.getInstance().error("Could not create report parent directory " + file);
                 }
-                context.getConfiguration().setOut(f);
+                context.getConfiguration().setOut(file);
             } catch (ParseException e) {
                 context.logParseException(e, OUTPUT_FILE.getSelected(), "System.out");
                 context.getConfiguration().setOut((IOSupplier<OutputStream>) null);

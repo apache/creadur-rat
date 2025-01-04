@@ -213,55 +213,34 @@ public class DocumentNameTest {
     @Test
     void archiveEntryNameTest() throws IOException {
         String entryName = "./anArchiveEntry.txt";
-
-
         DocumentName archiveName = DocumentName.builder(WINDOWS)
                 .setName("C:\\archives\\anArchive.zip").setBaseName("C:\\archives").build();
+
         assertThat(archiveName.getRoot()).isEqualTo("C:");
         assertThat(archiveName.getDirectorySeparator()).isEqualTo("\\");
         assertThat(archiveName.getBaseName()).isEqualTo("C:\\archives");
         assertThat(archiveName.getName()).isEqualTo("C:\\archives\\anArchive.zip");
         assertThat(archiveName.localized()).isEqualTo("\\anArchive.zip");
 
-        DocumentName innerName = DocumentName.builder(UNIX)
-                .setName(entryName)
-                .setBaseName(".").build();
-        assertThat(innerName.getRoot()).isEqualTo("");
-        assertThat(innerName.getDirectorySeparator()).isEqualTo("/");
-        assertThat(innerName.getBaseName()).isEqualTo("/.");
-        assertThat(innerName.getName()).isEqualTo("/" + entryName);
-        assertThat(innerName.localized()).isEqualTo("/anArchiveEntry.txt");
 
-        String outerNameStr = format("%s#%s", archiveName.getName(), entryName);
-        DocumentName outerName = DocumentName.builder(archiveName).setName(outerNameStr)
-                .build();
+        ArchiveEntryName archiveEntryName = new ArchiveEntryName(archiveName, entryName);
 
-        assertThat(outerName.getRoot()).isEqualTo("C:");
-        assertThat(outerName.getDirectorySeparator()).isEqualTo("\\");
-        assertThat(outerName.getBaseName()).isEqualTo("C:\\archives");
-        assertThat(outerName.getName()).isEqualTo("C:\\archives\\anArchive.zip#./anArchiveEntry.txt");
-        assertThat(outerName.localized()).isEqualTo("\\anArchive.zip#./anArchiveEntry.txt");
-        assertThat(outerName.localized("/")).isEqualTo("/anArchive.zip#./anArchiveEntry.txt");
+        assertThat(archiveEntryName.getRoot()).isEqualTo(archiveName.getName()+"#");
+        assertThat(archiveEntryName.getDirectorySeparator()).isEqualTo("/");
+        assertThat(archiveEntryName.getBaseName()).isEqualTo("C:\\archives\\anArchive.zip#");
+        assertThat(archiveEntryName.getName()).isEqualTo("C:\\archives\\anArchive.zip#/anArchiveEntry.txt");
+        assertThat(archiveEntryName.localized()).isEqualTo("/anArchiveEntry.txt");
+        assertThat(archiveEntryName.localized("/")).isEqualTo("/anArchive.zip#/anArchiveEntry.txt");
 
         // test with directory
         entryName = "./someDir/anArchiveEntry.txt";
-        innerName = DocumentName.builder(UNIX)
-                .setName(entryName)
-                .setBaseName(".").build();
-        assertThat(innerName.getRoot()).isEqualTo("");
-        assertThat(innerName.getDirectorySeparator()).isEqualTo("/");
-        assertThat(innerName.getBaseName()).isEqualTo("/.");
-        assertThat(innerName.getName()).isEqualTo("/" + entryName);
-        assertThat(innerName.localized()).isEqualTo("/someDir/anArchiveEntry.txt");
+        archiveEntryName = new ArchiveEntryName(archiveName, entryName);
 
-        outerNameStr = format("%s#%s", archiveName.getName(), entryName);
-        outerName = DocumentName.builder(archiveName).setName(outerNameStr).build();
-
-        assertThat(outerName.getRoot()).isEqualTo("C:");
-        assertThat(outerName.getDirectorySeparator()).isEqualTo("\\");
-        assertThat(outerName.getBaseName()).isEqualTo("C:\\archives");
-        assertThat(outerName.getName()).isEqualTo("C:\\archives\\anArchive.zip#./someDir/anArchiveEntry.txt");
-        assertThat(outerName.localized()).isEqualTo("\\anArchive.zip#./someDir/anArchiveEntry.txt");
-        assertThat(outerName.localized("/")).isEqualTo("/anArchive.zip#./someDir/anArchiveEntry.txt");
+        assertThat(archiveEntryName.getRoot()).isEqualTo(archiveName.getName()+"#");
+        assertThat(archiveEntryName.getDirectorySeparator()).isEqualTo("/");
+        assertThat(archiveEntryName.getBaseName()).isEqualTo("C:\\archives\\anArchive.zip#");
+        assertThat(archiveEntryName.getName()).isEqualTo("C:\\archives\\anArchive.zip#/someDir/anArchiveEntry.txt");
+        assertThat(archiveEntryName.localized()).isEqualTo("/someDir/anArchiveEntry.txt");
+        assertThat(archiveEntryName.localized("/")).isEqualTo("/anArchive.zip#/someDir/anArchiveEntry.txt");
     }
 }

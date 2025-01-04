@@ -25,6 +25,7 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.rat.commandline.ArgumentContext;
+import org.apache.rat.document.DocumentName;
 import org.apache.rat.license.LicenseSetFactory;
 import org.apache.rat.report.IReportable;
 import org.apache.rat.test.AbstractOptionsProvider;
@@ -141,11 +142,12 @@ public class OptionCollectionTest {
     @ParameterizedTest
     @ValueSource(strings = { ".", "./", "target", "./target" })
     public void getReportableTest(String fName) throws IOException {
-        File expected = new File(fName);
+        File base = new File(fName);
+        String expected = DocumentName.DEFAULT_FSINFO.normalize(base.getAbsolutePath());
         ReportConfiguration config = OptionCollection.parseCommands(testPath.toFile(), new String[]{fName}, o -> fail("Help called"), false);
-        IReportable reportable = OptionCollection.getReportable(expected, config);
+        IReportable reportable = OptionCollection.getReportable(base, config);
         assertThat(reportable).as(() -> format("'%s' returned null", fName)).isNotNull();
-        assertThat(reportable.getName().getName()).isEqualTo(expected.getAbsolutePath());
+        assertThat(reportable.getName().getName()).isEqualTo(expected);
     }
 
     /**
