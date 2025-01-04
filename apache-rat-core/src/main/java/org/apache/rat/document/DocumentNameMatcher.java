@@ -392,7 +392,7 @@ public final class DocumentNameMatcher {
     }
 
     /**
-     * A marker class to indicate this predicate contains a collection of matchers.
+     * An implementation of CollectionPredicate.
      */
     abstract static class CollectionPredicateImpl implements CollectionPredicate {
         /** The collection for matchers that make up this predicate */
