@@ -495,7 +495,7 @@ public final class DocumentNameMatcher {
         private final DocumentNameMatcher matcher;
         /** The result of the check. */
         private final boolean result;
-        /** The actual candidate. */
+        /** The candidate */
         private final DocumentName candidate;
 
         private DecomposeData(final int level, final DocumentNameMatcher matcher, final DocumentName candidate, final boolean result) {

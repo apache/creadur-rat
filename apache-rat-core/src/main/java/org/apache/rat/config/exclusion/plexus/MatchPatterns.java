@@ -56,6 +56,10 @@ public final class MatchPatterns {
         return Arrays.asList(patterns);
     }
 
+    public Iterable<MatchPattern> patterns() {
+        return Arrays.asList(patterns);
+    }
+
     /**
      * <p>Checks these MatchPatterns against a specified string.</p>
      *
