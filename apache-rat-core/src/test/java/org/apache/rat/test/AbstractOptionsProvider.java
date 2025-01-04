@@ -258,7 +258,7 @@ public abstract class AbstractOptionsProvider implements ArgumentsProvider {
     }
 
     private String dump(Option option, String fname, DocumentNameMatcher matcher, DocumentName name) {
-        return String.format("%s%n%s", displayArgAndName(option, fname), dump(matcher, name));
+        return String.format("Argument and Name: %s%nMatcher decomposition:%n%s", displayArgAndName(option, fname), dump(matcher, name));
     }
 
     // exclude tests

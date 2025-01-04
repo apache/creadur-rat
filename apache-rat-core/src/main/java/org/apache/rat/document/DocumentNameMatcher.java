@@ -375,7 +375,7 @@ public final class DocumentNameMatcher {
 
         @Override
         public String toString() {
-            return fileFilter.toString();
+            return "Predicate: " + fileFilter.toString();
         }
     }
 
@@ -403,7 +403,7 @@ public final class DocumentNameMatcher {
         }
 
         public String toString() {
-            StringBuilder builder = new StringBuilder();
+            StringBuilder builder = new StringBuilder(this.getClass().getName()).append(": ").append(System.lineSeparator());
             for (DocumentNameMatcher matcher : matchers) {
                 builder.append(matcher.predicate.toString()).append(System.lineSeparator());
             }
@@ -500,7 +500,7 @@ public final class DocumentNameMatcher {
             return fill +
                     matcher.toString() + " : " + result +
                     System.lineSeparator() +
-                    fill + "    " +
+                    fill + "  predicate: " +
                     matcher.predicate.toString();
         }
     }
