@@ -24,6 +24,7 @@ import org.apache.rat.config.exclusion.MatcherSet;
 import org.apache.rat.config.exclusion.plexus.SelectorUtils;
 import org.apache.rat.document.DocumentName;
 import org.apache.rat.document.DocumentNameMatcher;
+import org.apache.rat.document.DocumentNameMatcherTest;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.condition.EnabledOnOs;
@@ -98,11 +99,11 @@ public class AbstractIgnoreBuilderTest {
         DocumentNameMatcher excluder = MatcherSet.merge(matcherSets).createMatcher();
         for (String name : matching) {
             DocumentName docName = baseDir.resolve(SelectorUtils.extractPattern(name, File.separator));
-            assertThat(excluder.matches(docName)).as(docName.getName()).isFalse();
+            assertThat(excluder.matches(docName)).as(() -> DocumentNameMatcherTest.processDecompose(excluder, docName)).isFalse();
         }
         for (String name : notMatching) {
             DocumentName docName = baseDir.resolve(SelectorUtils.extractPattern(name, File.separator));
-            assertThat(excluder.matches(docName)).as(docName.getName()).isTrue();
+            assertThat(excluder.matches(docName)).as(() -> DocumentNameMatcherTest.processDecompose(excluder, docName)).isTrue();
         }
     }
 }
