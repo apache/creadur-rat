@@ -56,10 +56,6 @@ public final class MatchPatterns {
         return Arrays.asList(patterns);
     }
 
-    public Iterable<MatchPattern> patterns() {
-        return Arrays.asList(patterns);
-    }
-
     /**
      * <p>Checks these MatchPatterns against a specified string.</p>
      *
@@ -91,7 +87,7 @@ public final class MatchPatterns {
         return false;
     }
 
-    public static MatchPatterns from(final String separator, final String separator, final String... sources) {
+    public static MatchPatterns from(final String separator, final String... sources) {
         final int length = sources.length;
         MatchPattern[] result = new MatchPattern[length];
         for (int i = 0; i < length; i++) {
