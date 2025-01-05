@@ -89,7 +89,7 @@ public class GitIgnoreBuilder extends AbstractFileProcessorBuilder {
             DocumentName matcherPattern = DocumentName.builder(documentName).setName(name.replace(SLASH, documentName.getDirectorySeparator()))
                     .build();
             DocumentNameMatcher matcher = DocumentNameMatcher.and(new DocumentNameMatcher("isDirectory", File::isDirectory),
-                    new DocumentNameMatcher(name, MatchPatterns.from(matcherPattern.localized(SLASH))));
+                    new DocumentNameMatcher(name, MatchPatterns.from(matcherPattern.localized(documentName.getDirectorySeparator()))));
 
             MatcherSet.Builder builder = new MatcherSet.Builder();
             if (prefix) {

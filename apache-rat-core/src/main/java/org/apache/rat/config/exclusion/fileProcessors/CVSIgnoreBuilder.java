@@ -54,7 +54,7 @@ public class CVSIgnoreBuilder extends AbstractFileProcessorBuilder {
             String[] parts = line.split("\\s+");
             for (String part : parts) {
                 if (!part.isEmpty()) {
-                    result.add(ExclusionUtils.localizePattern(documentName, part));
+                    result.add(ExclusionUtils.qualifyPattern(documentName, part));
                 }
             }
         }

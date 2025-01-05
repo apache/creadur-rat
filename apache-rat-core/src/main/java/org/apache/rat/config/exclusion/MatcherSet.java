@@ -21,6 +21,7 @@ package org.apache.rat.config.exclusion;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Consumer;
 
 import org.apache.rat.config.exclusion.plexus.MatchPattern;
 import org.apache.rat.config.exclusion.plexus.MatchPatterns;
@@ -93,17 +94,28 @@ public interface MatcherSet {
         }
 
         /**
+         * Converts a collection names into DocumentNameMatchers that use the {@code fromDocument} directory separator.
+         * @param dest the consumer to accept the DocumentNameMatcher.
+         * @param nameFmt the format for the matcher names.  Requires '%s' for the {@code fromDocument} localized name.
+         * @param fromDocument the document that the patterns are associated with.
+         * @param names the list of patterns.  If empty no action is taken.
+         */
+        private void processNames(final Consumer<DocumentNameMatcher> dest, final String nameFmt, final DocumentName fromDocument, final Set<String> names) {
+            if (!names.isEmpty()) {
+                String name = String.format(nameFmt, fromDocument.localized("/").substring(1));
+                //Stream<String> iter = names.stream().map(s ->ExclusionUtils.convertSeparator(s, "/", fromDocument.getDirectorySeparator()));
+                dest.accept(new DocumentNameMatcher(name, MatchPatterns.from(fromDocument.getDirectorySeparator(), names), fromDocument.getBaseDocumentName()));
+            }
+        }
+        /**
          * Adds included file names from the specified document.  File names are resolved relative to the directory
          * of the {@code fromDocument}.
          * @param fromDocument the document the names were read from.
-         * @param names the names that were read from the document.
+         * @param names the names that were read from the document.  Must be use the separator specified by {@code fromDocument}.
          * @return this
          */
         public Builder addIncluded(final DocumentName fromDocument, final Set<String> names) {
-            if (!names.isEmpty()) {
-                String name = String.format("'included %s'", fromDocument.localized("/").substring(1));
-                addIncluded(new DocumentNameMatcher(name, MatchPatterns.from("/", names), fromDocument.getBaseDocumentName()));
-            }
+            processNames(this::addIncluded, "'included %s'", fromDocument, names);
             return this;
         }
 
@@ -111,14 +123,11 @@ public interface MatcherSet {
          * Adds excluded file names from the specified document.  File names are resolved relative to the directory
          * of the {@code fromDocument}.
          * @param fromDocument the document the names were read from.
-         * @param names the names that were read from the document.
+         * @param names the names that were read from the document.  Must be use the separator specified by {@code fromDocument}.
          * @return this
          */
         public Builder addExcluded(final DocumentName fromDocument, final Set<String> names) {
-            if (!names.isEmpty()) {
-                String name = String.format("'excluded %s'", fromDocument.localized("/").substring(1));
-                addExcluded(new DocumentNameMatcher(name, MatchPatterns.from(fromDocument.getDirectorySeparator(), names), fromDocument.getBaseDocumentName()));
-            }
+            processNames(this::addExcluded, "'excluded %s'", fromDocument, names);
             return this;
         }
 
@@ -144,7 +153,7 @@ public interface MatcherSet {
         }
 
         /**
-         * Builds a MatcherSet.  When {@link #build()} is called the builder is reset to the initial state.
+         * Builds a MatcherSet.  When {@code build()} is called the builder is reset to the initial state.
          * @return the MatcherSet based upon the included and excluded matchers.
          */
         public MatcherSet build() {

@@ -221,7 +221,7 @@ public final class ExclusionUtils {
      * @param pattern the pattern to format.
      * @return the completely formatted pattern
      */
-    public static String localizePattern(final DocumentName documentName, final String pattern) {
+    public static String qualifyPattern(final DocumentName documentName, final String pattern) {
         boolean prefix = pattern.startsWith(NEGATION_PREFIX);
         String workingPattern = prefix ? pattern.substring(1) : pattern;
         String normalizedPattern = SelectorUtils.extractPattern(workingPattern, documentName.getDirectorySeparator());

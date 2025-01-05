@@ -121,7 +121,7 @@ public abstract class AbstractFileProcessorBuilder {
     public final List<MatcherSet> build(final DocumentName root) {
         if (includeProcessorFile) {
             String name = String.format("**/%s", fileName);
-            String pattern = ExclusionUtils.localizePattern(root, name);
+            String pattern = ExclusionUtils.qualifyPattern(root, name);
             MatcherSet matcherSet = new MatcherSet.Builder()
                     .addExcluded(new DocumentNameMatcher(name, MatchPatterns.from("/", Collections.singletonList(pattern)), root))
             .build();
@@ -148,10 +148,10 @@ public abstract class AbstractFileProcessorBuilder {
     protected MatcherSet process(final Consumer<MatcherSet> matcherSetConsumer, final DocumentName root, final DocumentName documentName) {
         final MatcherSet.Builder matcherSetBuilder = new MatcherSet.Builder();
         final List<String> iterable = new ArrayList<>();
-        ExclusionUtils.asIterator(new File(documentName.getName()), commentFilter)
+        ExclusionUtils.asIterator(documentName.asFile(), commentFilter)
                 .map(entry -> modifyEntry(matcherSetConsumer, documentName, entry).orElse(null))
                 .filter(Objects::nonNull)
-                .map(entry -> ExclusionUtils.localizePattern(documentName, entry))
+                .map(entry -> ExclusionUtils.qualifyPattern(documentName, entry))
                 .forEachRemaining(iterable::add);
 
         Set<String> included = new HashSet<>();
