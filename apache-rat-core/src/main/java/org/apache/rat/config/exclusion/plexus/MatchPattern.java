@@ -67,6 +67,7 @@ public final class MatchPattern {
         for (int i = 0; i < tokenized.length; i++) {
             tokenizedChar[i] = tokenized[i].toCharArray();
         }
+        DefaultLog.getInstance().warn("MatchPattern( " + source + ", " + separator + ") ... " + this.toString());
     }
 
     public boolean matchPath(final String str, final boolean isCaseSensitive) {
