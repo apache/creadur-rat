@@ -123,7 +123,7 @@ public abstract class AbstractFileProcessorBuilder {
             String name = String.format("**/%s", fileName);
             String pattern = ExclusionUtils.qualifyPattern(root, name);
             MatcherSet matcherSet = new MatcherSet.Builder()
-                    .addExcluded(new DocumentNameMatcher(name, MatchPatterns.from("/", Collections.singletonList(pattern)), root))
+                    .addExcluded(new DocumentNameMatcher(name, MatchPatterns.from(root.getDirectorySeparator(), Collections.singletonList(pattern)), root))
             .build();
             LevelBuilder levelBuilder = levelBuilders.computeIfAbsent(0, k -> new LevelBuilder());
             levelBuilder.add(matcherSet);
