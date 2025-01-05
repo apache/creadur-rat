@@ -78,8 +78,6 @@ public final class MatchPatterns {
     }
 
     public boolean matches(final String name, final char[][] tokenizedNameChar, final boolean isCaseSensitive) {
-        DefaultLog.getInstance().warn(String.format("Matching %s as %s case-sensitivity: %s", name,
-                Arrays.asList(tokenizedNameChar).stream().map(String::new).collect(Collectors.toList()), isCaseSensitive));
         for (MatchPattern pattern : patterns) {
             if (pattern.matchPath(name, tokenizedNameChar, isCaseSensitive)) {
                 return true;
