@@ -103,7 +103,6 @@ public interface MatcherSet {
         private void processNames(final Consumer<DocumentNameMatcher> dest, final String nameFmt, final DocumentName fromDocument, final Set<String> names) {
             if (!names.isEmpty()) {
                 String name = String.format(nameFmt, fromDocument.localized("/").substring(1));
-                //Stream<String> iter = names.stream().map(s ->ExclusionUtils.convertSeparator(s, "/", fromDocument.getDirectorySeparator()));
                 dest.accept(new DocumentNameMatcher(name, MatchPatterns.from(fromDocument.getDirectorySeparator(), names), fromDocument.getBaseDocumentName()));
             }
         }

@@ -400,7 +400,6 @@ public final class SelectorUtils {
     }
 
     static boolean matchAntPathPattern(final char[][] patDirs, final char[][] strDirs, final boolean isCaseSensitive) {
-        DefaultLog.getInstance().warn(String.format("... Comparing against %s", Arrays.asList(patDirs).stream().map(String::new).collect(Collectors.toList())));
         int patIdxStart = 0;
         int patIdxEnd = patDirs.length - 1;
         int strIdxStart = 0;
