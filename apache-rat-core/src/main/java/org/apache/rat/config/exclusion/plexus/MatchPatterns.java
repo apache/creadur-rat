@@ -44,15 +44,11 @@ public final class MatchPatterns {
 
     @Override
     public String toString() {
-        return source();
+        return Arrays.stream(patterns).map(MatchPattern::toString).collect(Collectors.toList()).toString();
     }
 
     public String source() {
-        List<String> sources = new ArrayList<>();
-        for (MatchPattern pattern : patterns) {
-            sources.add(pattern.source());
-        }
-        return "[" + String.join(", ", sources) + "]";
+        return Arrays.stream(patterns).map(MatchPattern::source).collect(Collectors.toList()).toString();
     }
 
     public Iterable<MatchPattern> patterns() {
