@@ -19,6 +19,7 @@ package org.apache.rat.config.exclusion.plexus;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.StringTokenizer;
 
@@ -116,7 +117,7 @@ public final class MatchPattern {
 
     @Override
     public String toString() {
-        return source;
+        return Arrays.asList(tokenized).toString();
     }
 
     public String source() {
