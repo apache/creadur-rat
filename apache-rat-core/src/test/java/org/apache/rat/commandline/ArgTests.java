@@ -26,6 +26,7 @@ import org.apache.commons.cli.ParseException;
 import org.apache.rat.DeprecationReporter;
 import org.apache.rat.OptionCollection;
 import org.apache.rat.ReportConfiguration;
+import org.apache.rat.document.DocumentName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
@@ -51,10 +52,10 @@ public class ArgTests {
                 actual = file;
             }
         }
+        String fileName = name.replace("/", DocumentName.FSInfo.getDefault().dirSeparator());
+        File expected = new File(fileName);
 
-        File expected = new File(name);
-
-        CommandLine commandLine = createCommandLine(new String[] {"--output-file", name});
+        CommandLine commandLine = createCommandLine(new String[] {"--output-file", fileName});
         OutputFileConfig configuration = new OutputFileConfig();
         ArgumentContext ctxt = new ArgumentContext(new File("."), configuration, commandLine);
         Arg.processArgs(ctxt);
