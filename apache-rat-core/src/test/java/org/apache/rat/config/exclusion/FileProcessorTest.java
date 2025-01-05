@@ -18,10 +18,7 @@
  */
 package org.apache.rat.config.exclusion;
 
-import com.google.common.jimfs.Configuration;
-import com.google.common.jimfs.Jimfs;
 import java.io.IOException;
-import java.nio.file.FileSystem;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -46,7 +43,7 @@ public class FileProcessorTest {
     @ParameterizedTest(name="{index} {1}")
     @MethodSource("localizePatternData")
     void localizePatternTest(DocumentName baseName, String pattern, String expectedStr) {
-        assertThat(ExclusionUtils.localizePattern(baseName, pattern)).isEqualTo(expectedStr);
+        assertThat(ExclusionUtils.qualifyPattern(baseName, pattern)).isEqualTo(expectedStr);
     }
 
     public static Stream<Arguments> localizePatternData() throws IOException {

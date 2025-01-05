@@ -227,7 +227,7 @@ public class ExclusionProcessor {
      * @return the prepared pattern.
      */
     private String preparePattern(final DocumentName documentName, final String pattern) {
-        return ExclusionUtils.localizePattern(documentName,
+        return ExclusionUtils.qualifyPattern(documentName,
                         ExclusionUtils.convertSeparator(pattern, "/", documentName.getDirectorySeparator()));
     }
     /**

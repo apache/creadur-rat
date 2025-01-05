@@ -29,7 +29,7 @@ public class ArchiveEntryName extends DocumentName {
 
     private static DocumentName.Builder prepareBuilder(final DocumentName archiveFileName, final String archiveEntryName) {
         String root = archiveFileName.getName() + "#";
-        FSInfo fsInfo = new FSInfo("/", true, Collections.singletonList(root));
+        FSInfo fsInfo = new FSInfo("archiveEntry", "/", true, Collections.singletonList(root));
         return DocumentName.builder(fsInfo)
                 .setRoot(root)
                 .setBaseName(root + "/")

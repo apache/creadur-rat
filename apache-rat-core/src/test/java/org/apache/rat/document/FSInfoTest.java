@@ -20,24 +20,14 @@ package org.apache.rat.document;
 
 import com.google.common.jimfs.Configuration;
 import com.google.common.jimfs.Jimfs;
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.Arrays;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Stream;
-import org.apache.commons.lang3.tuple.Pair;
-import org.assertj.core.util.Files;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
-
-import static java.lang.String.format;
-import static org.assertj.core.api.Assertions.assertThat;
 
 public class FSInfoTest {
     public static final DocumentName.FSInfo DEFAULT;
@@ -49,12 +39,22 @@ public class FSInfoTest {
         try (FileSystem osx = Jimfs.newFileSystem(Configuration.osX());
              FileSystem unix = Jimfs.newFileSystem(Configuration.unix());
              FileSystem windows = Jimfs.newFileSystem(Configuration.windows())) {
-            OSX = new DocumentName.FSInfo(osx);
-            UNIX = new DocumentName.FSInfo(unix);
-            WINDOWS = new DocumentName.FSInfo(windows);
-            DEFAULT = new DocumentName.FSInfo(FileSystems.getDefault());
+            OSX = new DocumentName.FSInfo("osx", osx);
+            UNIX = new DocumentName.FSInfo("unix", unix);
+            WINDOWS = new DocumentName.FSInfo("windows", windows);
+            DEFAULT = new DocumentName.FSInfo("default", FileSystems.getDefault());
         } catch (IOException e) {
             throw new RuntimeException("Unable to creat FSInfo objects: " + e.getMessage(), e);
         }
+    }
+
+    public static final DocumentName.FSInfo[] TEST_SUITE = {UNIX, WINDOWS, OSX};
+
+    /**
+     * Provided arguments for parameterized tests that only require the fsInfo.
+     * @return a stream of TEST_SUITE based Arguments.
+     */
+    public static Stream<Arguments> fsInfoArgs() {
+        return Arrays.stream(TEST_SUITE).map(Arguments::of);
     }
 }

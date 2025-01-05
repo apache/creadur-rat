@@ -21,27 +21,116 @@ package org.apache.rat.document;
 import com.google.common.jimfs.Configuration;
 import com.google.common.jimfs.Jimfs;
 import java.io.File;
+import java.io.FileFilter;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.nio.file.FileSystem;
+import java.nio.file.FileSystems;
+import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Stream;
+
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.rat.config.exclusion.ExclusionUtils;
+import org.apache.rat.document.DocumentName.FSInfo;
+
 import org.assertj.core.util.Files;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.mockito.Mockito;
 
-import static java.lang.String.format;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.apache.rat.document.FSInfoTest.OSX;
 import static org.apache.rat.document.FSInfoTest.UNIX;
 import static org.apache.rat.document.FSInfoTest.WINDOWS;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.any;
 
 public class DocumentNameTest {
+
+    public static DocumentName mkName(Path tempDir, FSInfo fsInfo) throws IOException {
+        File docFile = mkFile(tempDir.toFile(), fsInfo);
+        DocumentName result = DocumentName.builder(fsInfo).setName(docFile).build();
+        DocumentName mocked = Mockito.spy(result);
+
+        String fn = result.localized(FileSystems.getDefault().getSeparator());
+        File file = tempDir.resolve(fn.substring(1)).toFile();
+        File mockedFile = mkFile(file, fsInfo);
+        when(mocked.asFile()).thenReturn(mockedFile);
+
+        assertThat(mocked.asFile()).isEqualTo(mockedFile);
+        return mocked;
+    }
+
+    private static File[] listFiles(File file, FSInfo fsInfo) {
+        File[] fileList = file.listFiles();
+        if (fileList == null) {
+            return fileList;
+        }
+        return Arrays.stream(fileList).map(f -> mkFile(f, fsInfo)).toArray(File[]::new);
+    }
+
+    private static File[] listFiles(File file, FSInfo fsInfo, FileFilter filter) {
+        File[] fileList = file.listFiles();
+        if (fileList == null) {
+            return fileList;
+        }
+        return Arrays.stream(fileList).map(f -> mkFile(f, fsInfo)).filter(filter::accept).toArray(File[]::new);
+    }
+
+    private static File[] listFiles(File file, FSInfo fsInfo, FilenameFilter filter) {
+        File[] fileList = file.listFiles();
+        if (fileList == null) {
+            return fileList;
+        }
+        return Arrays.stream(fileList).map(f -> mkFile(f, fsInfo)).filter(x -> filter.accept(x, x.getName())).toArray(File[]::new);
+    }
+
+    public static File mkFile(final File file, final FSInfo fsInfo) {
+        File mockedFile = mock(File.class);
+        when(mockedFile.listFiles()).thenAnswer( env -> listFiles(file, fsInfo));
+        when(mockedFile.listFiles(any(FilenameFilter.class))).thenAnswer( env -> listFiles(file, fsInfo, env.getArgument(0, FilenameFilter.class)));
+        when(mockedFile.listFiles(any(FileFilter.class))).thenAnswer(env -> listFiles(file, fsInfo, env.getArgument(0, FileFilter.class)));
+        when(mockedFile.getName()).thenReturn(ExclusionUtils.convertSeparator(file.getName(), FSInfoTest.DEFAULT.dirSeparator(), fsInfo.dirSeparator()));
+        when(mockedFile.getAbsolutePath()).thenReturn(ExclusionUtils.convertSeparator(file.getAbsolutePath(), FSInfoTest.DEFAULT.dirSeparator(), fsInfo.dirSeparator()));
+        when(mockedFile.isFile()).thenAnswer(env -> file.isFile());
+        when(mockedFile.exists()).thenAnswer(emv -> file.exists());
+        when(mockedFile.isDirectory()).thenAnswer(env -> file.isDirectory());
+
+        return mockedFile;
+    }
+
+    public static DocumentName mkName(Path tempDir, DocumentName baseDir, String pth) throws IOException {
+        DocumentName result = baseDir.resolve(ExclusionUtils.convertSeparator(pth, "/", baseDir.getDirectorySeparator()));
+        DocumentName mocked = Mockito.spy(result);
+
+        String fn = result.localized(FileSystems.getDefault().getSeparator());
+        File file = tempDir.resolve(fn.substring(1)).toFile();
+        File parent = file.getParentFile();
+        if (parent.exists() && !parent.isDirectory()) {
+            parent.delete();
+        }
+        parent.mkdirs();
+        if (file.exists()) {
+            if (file.isDirectory()) {
+                FileUtils.deleteDirectory(file);
+            } else {
+                FileUtils.delete(file);
+            }
+        }
+        file.createNewFile();
+        when(mocked.asFile()).thenReturn(file);
+        return mocked;
+    }
+
 
     @ParameterizedTest(name = "{index} {0} {2}")
     @MethodSource("resolveTestData")
@@ -49,7 +138,6 @@ public class DocumentNameTest {
        DocumentName actual = base.resolve(toResolve);
        assertThat(actual).isEqualTo(expected);
     }
-
 
     private static Stream<Arguments> resolveTestData() {
         List<Arguments> lst = new ArrayList<>();

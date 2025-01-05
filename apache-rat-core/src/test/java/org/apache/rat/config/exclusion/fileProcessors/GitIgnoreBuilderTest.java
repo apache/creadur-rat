@@ -25,15 +25,18 @@ import java.util.stream.Stream;
 import org.apache.rat.config.exclusion.MatcherSet;
 import org.apache.rat.document.DocumentName;
 import org.apache.rat.document.DocumentNameMatcher;
+import org.apache.rat.document.FSInfoTest;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
+import org.junit.jupiter.api.TestFactory;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -41,29 +44,32 @@ public class GitIgnoreBuilderTest extends AbstractIgnoreBuilderTest {
 
     @Test
     public void processExampleFileTest() throws IOException {
-        String[] lines = {
-                "# somethings",
-                "!thingone", "thing*", System.lineSeparator(),
-                "# some fish",
-                "**/fish", "*_fish",
-                "# some colorful directories",
-                "red/", "blue/*/"};
+        try {
+            String[] lines = {
+                    "# somethings",
+                    "!thingone", "thing*", System.lineSeparator(),
+                    "# some fish",
+                    "**/fish", "*_fish",
+                    "# some colorful directories",
+                    "red/", "blue/*/"};
+            List<String> matches = Arrays.asList("some/things", "some/fish", "another/red_fish");
 
-        List<String> matches = Arrays.asList("some/things", "some/fish", "another/red_fish");
+            List<String> notMatches = Arrays.asList("some/thingone", "thingone");
 
-        List<String> notMatches = Arrays.asList("some/thingone", "thingone");
+            writeFile(".gitignore", Arrays.asList(lines));
 
-        writeFile(".gitignore", Arrays.asList(lines));
-
-        assertCorrect(new GitIgnoreBuilder(), matches, notMatches);
+            assertCorrect(new GitIgnoreBuilder(), matches, notMatches);
+        } finally {
+            System.getProperties().remove("FSInfo");
+        }
     }
 
     // see https://git-scm.com/docs/gitignore
     @ParameterizedTest
     @MethodSource("modifyEntryData")
-    public void modifyEntryTest(String source, String expected) {
+    public void modifyEntryTest(DocumentName.FSInfo fsInfo, String source, String expected) {
         GitIgnoreBuilder underTest = new GitIgnoreBuilder();
-        DocumentName testName = DocumentName.builder().setName("GitIgnoreBuilderTest").setBaseName("testDir").build();
+        DocumentName testName = DocumentName.builder(fsInfo).setName("GitIgnoreBuilderTest").setBaseName("testDir").build();
         List<MatcherSet> matcherSets = new ArrayList<>();
         Optional<String> entry = underTest.modifyEntry(matcherSets::add, testName, source);
 
@@ -79,21 +85,21 @@ public class GitIgnoreBuilderTest extends AbstractIgnoreBuilderTest {
 
     private static Stream<Arguments> modifyEntryData() {
         List<Arguments> lst = new ArrayList<>();
+        for (DocumentName.FSInfo fsInfo : FSInfoTest.TEST_SUITE) {
+            lst.add(Arguments.of(fsInfo, "\\#filename", "**/#filename"));
 
-        lst.add(Arguments.of("\\#filename", "**/#filename"));
-
-        lst.add(Arguments.of("!#filename", "!**/#filename"));
-        lst.add(Arguments.of("\\#filename", "**/#filename"));
-        lst.add(Arguments.of("!#filename", "!**/#filename"));
-        lst.add(Arguments.of("/filename", "filename"));
-        lst.add(Arguments.of("file/name", "file/name"));
-        lst.add(Arguments.of("/file/name", "file/name"));
-        lst.add(Arguments.of("filename", "**/filename"));
-        lst.add(Arguments.of("filename/", "not(and(isDirectory, **/filename))"));
-        lst.add(Arguments.of("/filename/", "not(and(isDirectory, filename))"));
-        // inclusion by itself becomes nothing.
-        lst.add(Arguments.of("!filename/", "TRUE"));
-
+            lst.add(Arguments.of(fsInfo, "!#filename", "!**/#filename"));
+            lst.add(Arguments.of(fsInfo, "\\#filename", "**/#filename"));
+            lst.add(Arguments.of(fsInfo, "!#filename", "!**/#filename"));
+            lst.add(Arguments.of(fsInfo, "/filename", "filename"));
+            lst.add(Arguments.of(fsInfo, "file/name", "file/name"));
+            lst.add(Arguments.of(fsInfo, "/file/name", "file/name"));
+            lst.add(Arguments.of(fsInfo, "filename", "**/filename"));
+            lst.add(Arguments.of(fsInfo, "filename/", "not(and(isDirectory, **/filename))"));
+            lst.add(Arguments.of(fsInfo, "/filename/", "not(and(isDirectory, filename))"));
+            // inclusion by itself becomes nothing.
+            lst.add(Arguments.of(fsInfo, "!filename/", "TRUE"));
+        }
         return lst.stream();
     }
 

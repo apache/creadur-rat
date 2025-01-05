@@ -143,7 +143,7 @@ public class OptionCollectionTest {
     @ValueSource(strings = { ".", "./", "target", "./target" })
     public void getReportableTest(String fName) throws IOException {
         File base = new File(fName);
-        String expected = DocumentName.DEFAULT_FSINFO.normalize(base.getAbsolutePath());
+        String expected = DocumentName.FSInfo.getDefault().normalize(base.getAbsolutePath());
         ReportConfiguration config = OptionCollection.parseCommands(testPath.toFile(), new String[]{fName}, o -> fail("Help called"), false);
         IReportable reportable = OptionCollection.getReportable(base, config);
         assertThat(reportable).as(() -> format("'%s' returned null", fName)).isNotNull();

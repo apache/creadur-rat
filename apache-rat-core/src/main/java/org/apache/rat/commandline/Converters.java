@@ -92,7 +92,7 @@ public final class Converters {
             // is this a relative file?
             if (!fileName.startsWith(File.separator)) {
                 // check for a root provided (e.g. C:\\)"
-                if (!DocumentName.DEFAULT_FSINFO.rootFor(fileName).isPresent()) {
+                if (!DocumentName.FSInfo.getDefault().rootFor(fileName).isPresent()) {
                     // no root, resolve against workingDirectory
                     file = new File(workingDirectory.resolve(fileName).getName()).getAbsoluteFile();
                 }

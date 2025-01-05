@@ -18,13 +18,15 @@
  */
 package org.apache.rat.config.exclusion.fileProcessors;
 
+import java.nio.file.Path;
 import java.util.List;
-import org.apache.rat.config.exclusion.ExclusionUtils;
+import java.util.stream.Stream;
 import org.apache.rat.config.exclusion.MatcherSet;
 import org.apache.rat.config.exclusion.plexus.SelectorUtils;
 import org.apache.rat.document.DocumentName;
 import org.apache.rat.document.DocumentNameMatcher;
 import org.apache.rat.document.DocumentNameMatcherTest;
+import org.apache.rat.document.FSInfoTest;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.condition.EnabledOnOs;
@@ -35,6 +37,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import org.junit.jupiter.params.provider.Arguments;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -45,12 +48,22 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class AbstractIgnoreBuilderTest {
 
     @TempDir
-    protected File baseDir;
+    protected Path tmpPath;
     protected DocumentName baseName;
 
     @BeforeEach
-    public void setup() {
-        baseName = DocumentName.builder(baseDir).build();
+    protected void setup() throws IOException {
+        baseName = DocumentName.builder(tmpPath.toFile()).build();
+    }
+
+    protected static Stream<Arguments> fsInfoArgs() {
+        return FSInfoTest.fsInfoArgs();
+    }
+
+    @AfterEach
+    @EnabledOnOs(OS.WINDOWS)
+    void reset() {
+        baseName = null;
     }
 
     /**
@@ -71,7 +84,7 @@ public class AbstractIgnoreBuilderTest {
      * @throws IOException if file cannot be created.
      */
     protected File writeFile(String name, Iterable<String> lines) throws IOException {
-        File file = new File(baseDir, name);
+        File file = new File(tmpPath.toFile(), name);
         try (PrintWriter writer = new PrintWriter(new FileWriter(file))) {
             lines.forEach(writer::println);
         }
@@ -98,11 +111,11 @@ public class AbstractIgnoreBuilderTest {
     protected void assertCorrect(List<MatcherSet> matcherSets, DocumentName baseDir, Iterable<String> matching, Iterable<String> notMatching) {
         DocumentNameMatcher excluder = MatcherSet.merge(matcherSets).createMatcher();
         for (String name : matching) {
-            DocumentName docName = baseDir.resolve(SelectorUtils.extractPattern(name, File.separator));
+            DocumentName docName = baseDir.resolve(SelectorUtils.extractPattern(name, baseDir.getDirectorySeparator()));
             assertThat(excluder.matches(docName)).as(() -> DocumentNameMatcherTest.processDecompose(excluder, docName)).isFalse();
         }
         for (String name : notMatching) {
-            DocumentName docName = baseDir.resolve(SelectorUtils.extractPattern(name, File.separator));
+            DocumentName docName = baseDir.resolve(SelectorUtils.extractPattern(name, baseDir.getDirectorySeparator()));
             assertThat(excluder.matches(docName)).as(() -> DocumentNameMatcherTest.processDecompose(excluder, docName)).isTrue();
         }
     }
