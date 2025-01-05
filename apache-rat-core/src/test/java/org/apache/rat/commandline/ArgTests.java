@@ -41,7 +41,7 @@ public class ArgTests {
                 .setAllowPartialMatching(true).build().parse(opts, args);
     }
 
-    @ParameterizedTest
+    @ParameterizedTest(name = "{0}")
     @ValueSource(strings = { "rat.txt", "./rat.txt", "/rat.txt", "target/rat.test" })
     public void outputFleNameNoDirectoryTest(String name) throws ParseException, IOException {
         class OutputFileConfig extends ReportConfiguration  {
