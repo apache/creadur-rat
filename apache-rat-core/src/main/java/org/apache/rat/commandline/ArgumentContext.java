@@ -54,7 +54,7 @@ public class ArgumentContext {
     }
 
     /**
-     * Creates a context with an emtpy configuration.
+     * Creates a context with an empty configuration.
      * @param workingDirectory The directory from which to resolve relative file names.
      * @param commandLine The command line.
      */
@@ -86,7 +86,7 @@ public class ArgumentContext {
     }
 
     /**
-     * Gets the directory name from which releative file names will be resolved.
+     * Gets the directory name from which relative file names will be resolved.
      * @return The directory name from which releative file names will be resolved.
      */
     public DocumentName getWorkingDirectory() {
@@ -94,7 +94,7 @@ public class ArgumentContext {
     }
 
 //    /**
-//     * Resolves the file name to the working directory if necessayr.
+//     * Resolves the file name to the working directory if necessary.
 //     * @param fileName the file name to resolve.
 //     * @return the file name string.
 //     */
