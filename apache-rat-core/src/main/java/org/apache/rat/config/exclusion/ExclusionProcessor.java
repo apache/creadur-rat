@@ -26,7 +26,6 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 
-import org.apache.rat.config.exclusion.plexus.MatchPatterns;
 import org.apache.rat.document.DocumentName;
 import org.apache.rat.document.DocumentNameMatcher;
 import org.apache.rat.utils.DefaultLog;
@@ -249,7 +248,7 @@ public class ExclusionProcessor {
     }
     /**
      * Extracts {@link #includedPatterns} and {@link #excludedPatterns} into the specified matcherBuilder.
-     * @param nameBuilder The name builder for the pattern.  File names are resolved against the generated name.
+     * @param nameBuilder The name builder for the pattern. File names are resolved against the generated name.
      * @param matcherBuilder the MatcherSet.Builder to add the patterns to.
      */
     private void extractPatterns(final DocumentName.Builder nameBuilder, final MatcherSet.Builder matcherBuilder) {
@@ -309,7 +308,6 @@ public class ExclusionProcessor {
                 .map(StandardCollection::staticDocumentNameMatcher)
                 .filter(Objects::nonNull)
                 .forEachRemaining(matcherBuilder::addExcluded);
-
     }
 
     /**
