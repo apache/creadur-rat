@@ -232,7 +232,7 @@ public class ExclusionProcessor {
     }
     /**
      * Extracts {@link #includedPatterns} and {@link #excludedPatterns} into the specified matcherBuilder.
-     * @param nameBuilder The name builder for the pattern.  File names are resolved against the generated name.
+     * @param nameBuilder The name builder for the pattern. File names are resolved against the generated name.
      * @param matcherBuilder the MatcherSet.Builder to add the patterns to.
      */
     private void extractPatterns(final DocumentName.Builder nameBuilder, final MatcherSet.Builder matcherBuilder) {
@@ -292,7 +292,6 @@ public class ExclusionProcessor {
                 .map(StandardCollection::staticDocumentNameMatcher)
                 .filter(Objects::nonNull)
                 .forEachRemaining(matcherBuilder::addExcluded);
-
     }
 
     /**
@@ -313,6 +312,5 @@ public class ExclusionProcessor {
             }
         }
     }
-
 
 }

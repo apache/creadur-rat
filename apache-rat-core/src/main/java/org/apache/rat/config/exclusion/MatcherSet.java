@@ -46,7 +46,7 @@ public interface MatcherSet {
         return String.format("MatcherSet: include [%s] exclude [%s]", includes().orElse(MATCHES_NONE), excludes().orElse(MATCHES_NONE));
     }
     /**
-     * Creates a DocumentNameMatcher from an iterable of MatcherSets.
+     * Creates a DocumentNameMatcher from an iterable of matcher sets.
      * @return A DocumentNameMatcher that processes the matcher sets.
      */
     default DocumentNameMatcher createMatcher() {
@@ -64,7 +64,7 @@ public interface MatcherSet {
 
     /**
      * A MatcherSet that assumes the files contain the already formatted strings and just need to be
-     * localized for the fileName.  When {@link #build()} is called the builder is reset to the initial state.
+     * localized for the fileName. When {@link #build()} is called the builder is reset to the initial state.
      */
     class Builder {
 
@@ -98,7 +98,7 @@ public interface MatcherSet {
          * @param dest the consumer to accept the DocumentNameMatcher.
          * @param nameFmt the format for the matcher names.  Requires '%s' for the {@code fromDocument} localized name.
          * @param fromDocument the document that the patterns are associated with.
-         * @param names the list of patterns.  If empty no action is taken.
+         * @param names the list of patterns. If empty no action is taken.
          */
         private void processNames(final Consumer<DocumentNameMatcher> dest, final String nameFmt, final DocumentName fromDocument, final Set<String> names) {
             if (!names.isEmpty()) {
@@ -107,10 +107,10 @@ public interface MatcherSet {
             }
         }
         /**
-         * Adds included file names from the specified document.  File names are resolved relative to the directory
+         * Adds included file names from the specified document. File names are resolved relative to the directory
          * of the {@code fromDocument}.
          * @param fromDocument the document the names were read from.
-         * @param names the names that were read from the document.  Must be use the separator specified by {@code fromDocument}.
+         * @param names the names that were read from the document. Must be use the separator specified by {@code fromDocument}.
          * @return this
          */
         public Builder addIncluded(final DocumentName fromDocument, final Set<String> names) {
@@ -119,17 +119,16 @@ public interface MatcherSet {
         }
 
         /**
-         * Adds excluded file names from the specified document.  File names are resolved relative to the directory
+         * Adds excluded file names from the specified document. File names are resolved relative to the directory
          * of the {@code fromDocument}.
          * @param fromDocument the document the names were read from.
-         * @param names the names that were read from the document.  Must be use the separator specified by {@code fromDocument}.
+         * @param names the names that were read from the document. Must be use the separator specified by {@code fromDocument}.
          * @return this
          */
         public Builder addExcluded(final DocumentName fromDocument, final Set<String> names) {
             processNames(this::addExcluded, "'excluded %s'", fromDocument, names);
             return this;
         }
-
 
         /**
          * Adds specified DocumentNameMatcher to the included matchers.
@@ -152,7 +151,7 @@ public interface MatcherSet {
         }
 
         /**
-         * Builds a MatcherSet.  When {@code build()} is called the builder is reset to the initial state.
+         * Builds a MatcherSet. When {@code build()} is called the builder is reset to the initial state.
          * @return the MatcherSet based upon the included and excluded matchers.
          */
         public MatcherSet build() {
