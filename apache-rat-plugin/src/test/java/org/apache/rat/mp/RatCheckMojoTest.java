@@ -51,6 +51,8 @@ import org.apache.rat.testhelpers.XmlUtils;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 import org.junit.jupiter.api.io.TempDir;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.NodeList;
@@ -58,7 +60,7 @@ import org.w3c.dom.NodeList;
 /**
  * Test case for the {@link RatCheckMojo} and {@link RatReportMojo}.
  */
-public class RatCheckMojoTest { //extends BetterAbstractMojoTestCase {
+public class RatCheckMojoTest {
 
     @TempDir
     static Path tempDir;
@@ -70,6 +72,11 @@ public class RatCheckMojoTest { //extends BetterAbstractMojoTestCase {
         AbstractOptionsProvider.preserveData(tempDir.toFile(), "unit");
     }
 
+    @AfterAll
+    @EnabledOnOs(OS.WINDOWS)
+    static void cleanup() {
+        System.gc(); // hacky workaround for windows bug.
+    }
 
     private RatCheckMojo getMojo(File pomFile) throws IOException {
         try {
