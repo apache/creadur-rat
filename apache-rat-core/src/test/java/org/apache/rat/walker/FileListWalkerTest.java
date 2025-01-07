@@ -110,8 +110,6 @@ public class FileListWalkerTest {
             writer.flush();
             System.out.flush();
         }
-
-        //hiddenName = DocumentName.builder(hiddenFile).setBaseName(rootName.getBaseName()).build();
     }
     
     @Test

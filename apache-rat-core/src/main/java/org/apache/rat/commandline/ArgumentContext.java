@@ -93,19 +93,6 @@ public class ArgumentContext {
         return workingDirectory;
     }
 
-//    /**
-//     * Resolves the file name to the working directory if necessary.
-//     * @param fileName the file name to resolve.
-//     * @return the file name string.
-//     */
-//    public File resolve(final String fileName) {
-//        if (!fileName.startsWith("/")) {
-//            DocumentName fn = DocumentName.builder().setName(fileName).setBaseName("/").build();
-//            return new File(workingDirectory.resolve(fn.localized()).getName());
-//        }
-//        return new File(fileName);
-//    }
-
     /**
      * Logs a ParseException as a warning.
      * @param exception the parse exception to log

@@ -214,7 +214,7 @@ public enum StandardCollection {
     private final Collection<String> patterns;
     /** A document name matcher supplier to create a document name matcher. May be null */
     private final DocumentNameMatcher staticDocumentNameMatcher;
-    /** The MatcherSet to process the exclude file associated with this exclusion. May be null. */
+    /** The AbstractFileProcessorBuilder to process the exclude file associated with this exclusion. May be null. */
     private final AbstractFileProcessorBuilder fileProcessorBuilder;
     /** The description of this collection */
     private final String desc;

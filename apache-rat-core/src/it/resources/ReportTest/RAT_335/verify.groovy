@@ -36,73 +36,8 @@ private static Map<String, String> mapOf(String... parts) {
 output = new File(args[0])
 content = output.text
 
-//Map<ClaimStatistic.Counter, String> data = new HashMap<>()
-//data.put(ClaimStatistic.Counter.APPROVED, "2")
-//data.put(ClaimStatistic.Counter.ARCHIVES, "0")
-//data.put(ClaimStatistic.Counter.BINARIES, "0")
-//data.put(ClaimStatistic.Counter.DOCUMENT_TYPES, "3")
-//data.put(ClaimStatistic.Counter.IGNORED, "6")
-//data.put(ClaimStatistic.Counter.LICENSE_CATEGORIES, "2")
-//data.put(ClaimStatistic.Counter.LICENSE_NAMES, "2")
-//data.put(ClaimStatistic.Counter.NOTICES, "1")
-//data.put(ClaimStatistic.Counter.STANDARDS, "6")
-//data.put(ClaimStatistic.Counter.UNAPPROVED, "4")
-//data.put(ClaimStatistic.Counter.UNKNOWN, "4")
-
 Document document = XmlUtils.toDom(new FileInputStream(args[0]))
 XPath xPath = XPathFactory.newInstance().newXPath()
-
-//for (ClaimStatistic.Counter counter : ClaimStatistic.Counter.values()) {
-//    String xpath = String.format("/rat-report/statistics/statistic[@name='%s']", counter.displayName())
-//    Map<String, String> map = mapOf("approval",
-//            counter == ClaimStatistic.Counter.UNAPPROVED ? "false" : "true",
-//            "count", data.get(counter),
-//            "description", counter.getDescription())
-//    XmlUtils.assertAttributes(document, xPath, xpath, map)
-//}
-
-//// license categories
-//XmlUtils.assertAttributes(document, xPath, "/rat-report/statistics/licenseCategory[@name='?????']",
-//        mapOf("count", "4" ))
-//
-//XmlUtils.assertAttributes(document, xPath, "/rat-report/statistics/licenseCategory[@name='AL   ']",
-//        mapOf("count", "2" ))
-//
-//// license names
-//XmlUtils.assertAttributes(document, xPath, "/rat-report/statistics/licenseName[@name='Apache License Version 2.0']",
-//        mapOf("count", "2" ))
-//
-//XmlUtils.assertAttributes(document, xPath, "/rat-report/statistics/licenseName[@name='Unknown license']",
-//        mapOf("count", "4" ))
-
-
-
-//Note the output when running in the real commandline version of git
-//
-//# Files that must be ignored (dropping the gitignore matches outside of this test tree)
-//$ git check-ignore --no-index --verbose $(find . -type f|sort)
-//
-// apache-rat-core/src/it/resources/ReportTest/RAT_335/src/dir1/.gitignore:2:!dir1.md	./dir1/dir1.md
-// apache-rat-core/src/it/resources/ReportTest/RAT_335/src/dir1/.gitignore:1:*.txt	./dir1/dir1.txt
-// apache-rat-core/src/it/resources/ReportTest/RAT_335/src/dir1/.gitignore:3:file1.log	./dir1/file1.log
-// .gitignore:20:**/.gitignore	./dir1/.gitignore
-// apache-rat-core/src/it/resources/ReportTest/RAT_335/src/.gitignore:1:*.md	./dir2/dir2.md
-// apache-rat-core/src/it/resources/ReportTest/RAT_335/src/.gitignore:4:*.log	./dir3/dir3.log
-// apache-rat-core/src/it/resources/ReportTest/RAT_335/src/.gitignore:7:!file*.log	./dir3/file3.log
-//         .gitignore:20:**/.gitignore	./.gitignore
-// apache-rat-core/src/it/resources/ReportTest/RAT_335/src/.gitignore:1:*.md	./root.md
-
-/* list of excluded files:
-
-./dir1/dir1.txt
-./dir1/file1.log
-./dir1/.gitignore
-./dir2/dir2.md
-./dir3/dir3.log
-./.gitignore
-./root.md
-
- */
 
 List<String> ignoredFiles = new ArrayList<>(Arrays.asList(
         "/dir1/dir1.txt",
