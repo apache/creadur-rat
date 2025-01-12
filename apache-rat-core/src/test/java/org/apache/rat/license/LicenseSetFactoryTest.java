@@ -167,26 +167,4 @@ public class LicenseSetFactoryTest {
                 .isFalse();
 
     }
-
-//        @Test
-//        public void testNonStandardDocumentsDoNotFailLicenseTests() {
-//            Document.Type[] nonStandardDocuments = { Document.Type.NOTICE, Document.Type.ARCHIVE, Document.Type.BINARY };
-//            for (Document.Type d : nonStandardDocuments) {
-//                document = new TestingDocument("subject");
-//                document.getMetaData().setDocumentType(d);
-//                document.getMetaData().setApprovalPredicate(licenseSetFactory.getApprovedLicensePredicate());
-//                for (ILicenseFamily family : APPROVED_FAMILIES) {
-//                    TestingLicense license = new TestingLicense(family.getFamilyCategory().trim(), new TestingMatcher(), family);
-//                    assertThat(document.getMetaData().isApproved(license)).isFalse();
-//                }
-//            }
-//        }
-//
-//        @Test
-//        public void testUnclassifiedDocumentsDoNotFailLicenseTests() {
-//            document.getMetaData().setDocumentType(Document.Type.STANDARD);
-//            policy.analyse(document);
-//            assertApproval(false);
-//        }
-
 }
