@@ -47,7 +47,6 @@ public class HgIgnoreProcessorTest extends AbstractIgnoreProcessorTest {
         HgIgnoreProcessor processor = new HgIgnoreProcessor();
         List<String> actual = processor.apply(baseName);
         assertEquals(expected, actual);
-
     }
 
     @Test

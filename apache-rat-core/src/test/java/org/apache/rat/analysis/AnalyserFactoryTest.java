@@ -18,10 +18,8 @@
  */
 package org.apache.rat.analysis;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.io.File;
 import java.io.StringWriter;
@@ -33,13 +31,15 @@ import org.apache.rat.Defaults;
 import org.apache.rat.ReportConfiguration;
 import org.apache.rat.api.Document;
 import org.apache.rat.document.DocumentNameMatcher;
-import org.apache.rat.document.IDocumentAnalyser;
+import org.apache.rat.document.DocumentAnalyser;
 import org.apache.rat.document.DocumentName;
 import org.apache.rat.document.FileDocument;
 import org.apache.rat.document.RatDocumentAnalysisException;
 import org.apache.rat.report.claim.SimpleXmlClaimReporter;
 import org.apache.rat.report.xml.writer.XmlWriter;
 import org.apache.rat.test.utils.Resources;
+import org.apache.rat.testhelpers.TestingDocument;
+import org.apache.rat.testhelpers.TestingDocumentAnalyser;
 import org.apache.rat.testhelpers.TextUtils;
 import org.assertj.core.util.Files;
 import org.junit.jupiter.api.BeforeEach;
@@ -48,15 +48,15 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
-public class DefaultAnalyserFactoryTest {
+public class AnalyserFactoryTest {
 
     private final DocumentName basedir;
 
     private StringWriter out;
     private SimpleXmlClaimReporter reporter;
-    private IDocumentAnalyser analyser;
+    private DocumentAnalyser analyser;
 
-    DefaultAnalyserFactoryTest() {
+    AnalyserFactoryTest() {
         basedir = DocumentName.builder(new File(Files.currentFolder(), Resources.SRC_TEST_RESOURCES)).build();
     }
 
@@ -66,7 +66,7 @@ public class DefaultAnalyserFactoryTest {
         reporter = new SimpleXmlClaimReporter(new XmlWriter(out));
         ReportConfiguration config = new ReportConfiguration();
         config.addLicense(UnknownLicense.INSTANCE);
-        analyser = DefaultAnalyserFactory.createDefaultAnalyser(config);
+        analyser = AnalyserFactory.createConfiguredAnalyser(config);
     }
 
     @Test
@@ -74,10 +74,10 @@ public class DefaultAnalyserFactoryTest {
         final Document document = new FileDocument(basedir,
                 Resources.getExampleResource("exampleData/Text.txt"), DocumentNameMatcher.MATCHES_ALL);
         analyser.analyse(document);
-        assertEquals(Document.Type.STANDARD, document.getMetaData().getDocumentType());
-        assertEquals("text/plain", document.getMetaData().getMediaType().toString());
-        assertEquals(1, document.getMetaData().licenses().count());
-        document.getMetaData().licenses().forEach(lic -> assertEquals(UnknownLicense.INSTANCE, lic));
+        assertThat(document.getMetaData().getDocumentType()).isEqualTo(Document.Type.STANDARD);
+        assertThat(document.getMetaData().getMediaType().toString()).isEqualTo("text/plain");
+        assertThat(document.getMetaData().licenses().count()).isEqualTo(1);
+        document.getMetaData().licenses().forEach(lic -> assertThat(lic).isEqualTo(UnknownLicense.INSTANCE));
     }
 
     @Test
@@ -85,8 +85,8 @@ public class DefaultAnalyserFactoryTest {
         final Document document = new FileDocument(basedir,
                 Resources.getExampleResource("exampleData/LICENSE"), DocumentNameMatcher.MATCHES_ALL);
         analyser.analyse(document);
-        assertEquals(Document.Type.NOTICE, document.getMetaData().getDocumentType());
-        assertEquals("text/plain", document.getMetaData().getMediaType().toString());
+        assertThat(document.getMetaData().getDocumentType()).isEqualTo(Document.Type.NOTICE);
+        assertThat(document.getMetaData().getMediaType().toString()).isEqualTo("text/plain");
     }
 
     @Test
@@ -94,8 +94,8 @@ public class DefaultAnalyserFactoryTest {
         final Document document = new FileDocument(basedir,
                 Resources.getExampleResource("exampleData/Image.png"), DocumentNameMatcher.MATCHES_ALL);
         analyser.analyse(document);
-        assertEquals(Document.Type.BINARY, document.getMetaData().getDocumentType());
-        assertEquals("image/png", document.getMetaData().getMediaType().toString());
+        assertThat(document.getMetaData().getDocumentType()).isEqualTo(Document.Type.BINARY);
+        assertThat(document.getMetaData().getMediaType().toString()).isEqualTo("image/png");
     }
 
     @Test
@@ -105,10 +105,10 @@ public class DefaultAnalyserFactoryTest {
         Defaults defaults = Defaults.builder().build();
         ReportConfiguration config = new ReportConfiguration();
         config.setFrom(defaults);
-        analyser = DefaultAnalyserFactory.createDefaultAnalyser(config);
+        analyser = AnalyserFactory.createConfiguredAnalyser(config);
         analyser.analyse(document);
-        assertEquals(Document.Type.ARCHIVE, document.getMetaData().getDocumentType());
-        assertEquals("application/java-archive", document.getMetaData().getMediaType().toString());
+        assertThat(document.getMetaData().getDocumentType()).isEqualTo(Document.Type.ARCHIVE);
+        assertThat(document.getMetaData().getMediaType().toString()).isEqualTo("application/java-archive");
     }
 
     private static Stream<Arguments> archiveProcessingTestData() {
@@ -128,11 +128,11 @@ public class DefaultAnalyserFactoryTest {
         ReportConfiguration config = new ReportConfiguration();
         config.setFrom(defaults);
         config.setArchiveProcessing(archiveProcessing);
-        analyser = DefaultAnalyserFactory.createDefaultAnalyser(config);
+        analyser = AnalyserFactory.createConfiguredAnalyser(config);
         analyser.analyse(document);
-        assertEquals(Document.Type.ARCHIVE, document.getMetaData().getDocumentType());
-        assertEquals("application/java-archive", document.getMetaData().getMediaType().toString());
-        assertEquals(expectedLicenseCount, document.getMetaData().licenses().count());
+        assertThat(document.getMetaData().getDocumentType()).isEqualTo(Document.Type.ARCHIVE);
+        assertThat(document.getMetaData().getMediaType().toString()).isEqualTo("application/java-archive");
+        assertThat(document.getMetaData().licenses().count()).isEqualTo(expectedLicenseCount);
     }
 
     @Test
@@ -142,18 +142,17 @@ public class DefaultAnalyserFactoryTest {
         Defaults defaults = Defaults.builder().build();
         ReportConfiguration config = new ReportConfiguration();
         config.setFrom(defaults);
-        analyser = DefaultAnalyserFactory.createDefaultAnalyser(config);
-        assertThrows(RatDocumentAnalysisException.class, () -> analyser.analyse(document));
+        analyser = AnalyserFactory.createConfiguredAnalyser(config);
+        assertThatThrownBy(() -> analyser.analyse(document)).isInstanceOf(RatDocumentAnalysisException.class);
     }
-
 
     @Test
     public void archiveTypeAnalyser() throws Exception {
         final Document document = new FileDocument(basedir,
                 Resources.getExampleResource("exampleData/dummy.jar"), DocumentNameMatcher.MATCHES_ALL);
         analyser.analyse(document);
-        assertEquals(Document.Type.ARCHIVE, document.getMetaData().getDocumentType());
-        assertEquals("application/java-archive", document.getMetaData().getMediaType().toString());
+        assertThat(document.getMetaData().getDocumentType()).isEqualTo(Document.Type.ARCHIVE);
+        assertThat(document.getMetaData().getMediaType().toString()).isEqualTo("application/java-archive");
     }
 
     @Test
@@ -161,8 +160,8 @@ public class DefaultAnalyserFactoryTest {
         final Document document = new FileDocument(basedir,
                 Resources.getResourceFile("/jira/RAT211/side_left.bmp"), DocumentNameMatcher.MATCHES_ALL);
         analyser.analyse(document);
-        assertEquals(Document.Type.BINARY, document.getMetaData().getDocumentType());
-        assertEquals("image/bmp", document.getMetaData().getMediaType().toString());
+        assertThat(document.getMetaData().getDocumentType()).isEqualTo(Document.Type.BINARY);
+        assertThat(document.getMetaData().getMediaType().toString()).isEqualTo("image/bmp");
     }
 
     @Test
@@ -170,8 +169,8 @@ public class DefaultAnalyserFactoryTest {
         final Document document = new FileDocument(basedir,
                 Resources.getResourceFile("/jira/RAT211/leader-election-message-arrives.dia"), DocumentNameMatcher.MATCHES_ALL);
         analyser.analyse(document);
-        assertEquals(Document.Type.ARCHIVE, document.getMetaData().getDocumentType());
-        assertEquals("application/gzip", document.getMetaData().getMediaType().toString());
+        assertThat(document.getMetaData().getDocumentType()).isEqualTo(Document.Type.ARCHIVE);
+        assertThat(document.getMetaData().getMediaType().toString()).isEqualTo("application/gzip");
     }
 
     @Test
@@ -200,42 +199,40 @@ public class DefaultAnalyserFactoryTest {
 
     @Test
     public void standardNotificationTest() throws Exception {
-
         Defaults defaults = Defaults.builder().build();
         ReportConfiguration config = new ReportConfiguration();
         config.setFrom(defaults);
         config.setStandardProcessing(ReportConfiguration.Processing.NOTIFICATION);
-        analyser = DefaultAnalyserFactory.createDefaultAnalyser(config);
+        analyser = AnalyserFactory.createConfiguredAnalyser(config);
 
         Document document = new FileDocument(basedir,
                 Resources.getExampleResource("exampleData/Text.txt"), DocumentNameMatcher.MATCHES_ALL);
         analyser.analyse(document);
-        assertFalse(document.getMetaData().detectedLicense());
+        assertThat(document.getMetaData().detectedLicense()).isFalse();
 
         document = new FileDocument(basedir,
                 Resources.getExampleResource("exampleData/sub/Empty.txt"), DocumentNameMatcher.MATCHES_ALL);
         analyser.analyse(document);
-        assertFalse(document.getMetaData().detectedLicense());
+        assertThat(document.getMetaData().detectedLicense()).isFalse();
     }
 
     @Test
     public void standardAbsenceTest() throws Exception {
-
         Defaults defaults = Defaults.builder().build();
         ReportConfiguration config = new ReportConfiguration();
         config.setFrom(defaults);
         config.setStandardProcessing(ReportConfiguration.Processing.ABSENCE);
-        analyser = DefaultAnalyserFactory.createDefaultAnalyser(config);
+        analyser = AnalyserFactory.createConfiguredAnalyser(config);
 
         Document document = new FileDocument(basedir,
                 Resources.getExampleResource("exampleData/Text.txt"), DocumentNameMatcher.MATCHES_ALL);
         analyser.analyse(document);
-        assertTrue(document.getMetaData().detectedLicense());
+        assertThat(document.getMetaData().detectedLicense()).isTrue();
 
         document = new FileDocument(basedir,
                 Resources.getExampleResource("exampleData/sub/Empty.txt"), DocumentNameMatcher.MATCHES_ALL);
         analyser.analyse(document);
-        assertTrue(document.getMetaData().detectedLicense());
+        assertThat(document.getMetaData().detectedLicense()).isTrue();
     }
 
     @Test
@@ -244,16 +241,33 @@ public class DefaultAnalyserFactoryTest {
         ReportConfiguration config = new ReportConfiguration();
         config.setFrom(defaults);
         config.setStandardProcessing(ReportConfiguration.Processing.PRESENCE);
-        analyser = DefaultAnalyserFactory.createDefaultAnalyser(config);
+        analyser = AnalyserFactory.createConfiguredAnalyser(config);
 
         Document document = new FileDocument(basedir,
                 Resources.getExampleResource("exampleData/Text.txt"), DocumentNameMatcher.MATCHES_ALL);
         analyser.analyse(document);
-        assertTrue(document.getMetaData().detectedLicense());
+        assertThat(document.getMetaData().detectedLicense()).isTrue();
 
         document = new FileDocument(basedir,
                 Resources.getExampleResource("exampleData/sub/Empty.txt"), DocumentNameMatcher.MATCHES_ALL);
         analyser.analyse(document);
-        assertFalse(document.getMetaData().detectedLicense());
+        assertThat(document.getMetaData().detectedLicense()).isFalse();
+    }
+
+    @Test
+    public void testMultiplexer() throws Exception {
+        TestingDocumentAnalyser[] analysers = {
+                new TestingDocumentAnalyser(),
+                new TestingDocumentAnalyser(),
+                new TestingDocumentAnalyser()
+        };
+        DocumentAnalyser multiplexer = AnalyserFactory.createMultiplexer(analysers);
+        TestingDocument document = new TestingDocument();
+
+        multiplexer.analyse(document);
+        for (int i = 0; i < analysers.length; i++) {
+            assertThat(analysers[i].matches.size()).as("Matcher " + i).isEqualTo(1);
+            assertThat(analysers[i].matches.get(0)).as("Matcher " + i).isEqualTo(document);
+        }
     }
 }

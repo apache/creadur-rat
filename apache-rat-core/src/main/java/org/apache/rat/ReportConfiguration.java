@@ -452,7 +452,6 @@ public class ReportConfiguration {
         if (getStyleSheet() == null) {
             setStyleSheet(StyleSheets.PLAIN.getStyleSheet());
         }
-
         defaults.getStandardExclusion().forEach(this::addExcludedCollection);
     }
 
@@ -612,7 +611,7 @@ public class ReportConfiguration {
      * @param familyCategory the category to add.
      */
     public void addApprovedLicenseCategory(final String familyCategory) {
-        licenseSetFactory.addLicenseCategory(familyCategory);
+        licenseSetFactory.approveLicenseCategory(familyCategory);
     }
 
     /**
@@ -686,7 +685,7 @@ public class ReportConfiguration {
      * @param licenseId the license id to add.
      */
     public void addApprovedLicenseId(final String licenseId) {
-        licenseSetFactory.addLicenseId(licenseId);
+        licenseSetFactory.approveLicenseId(licenseId);
     }
 
     /**
@@ -803,6 +802,14 @@ public class ReportConfiguration {
      */
     public ClaimValidator getClaimValidator() {
         return claimValidator;
+    }
+
+    /**
+     * Gets the enclosed LicenseSetFactory.
+     * @return the license set factory.
+     */
+    public LicenseSetFactory getLicenseSetFactory() {
+        return licenseSetFactory;
     }
 
     /**

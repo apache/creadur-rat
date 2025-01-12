@@ -23,6 +23,7 @@ import java.io.StringReader;
 
 import java.util.Collections;
 import java.util.stream.Collectors;
+import org.apache.rat.Defaults;
 import org.apache.rat.api.Document;
 import org.apache.rat.configuration.builders.AnyBuilder;
 import org.apache.rat.license.ILicenseFamily;
@@ -40,6 +41,7 @@ public class HeaderCheckWorkerTest {
     @Test
     public void emptyInputIsUnknownTest() throws Exception {
         final Document subject = new TestingDocument("subject");
+        subject.getMetaData().setApprovalPredicate(Defaults.builder().build().getLicenseSetFactory().getApprovedLicensePredicate());
         ILicense matcher = new TestingLicense("test", "test");
         HeaderCheckWorker worker = new HeaderCheckWorker(new TestingMatcher(), new StringReader(""), Lists.list(matcher), subject);
         worker.read();

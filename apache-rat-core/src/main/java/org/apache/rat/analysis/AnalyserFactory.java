@@ -27,7 +27,7 @@ import org.apache.rat.Defaults;
 import org.apache.rat.ReportConfiguration;
 import org.apache.rat.api.Document;
 import org.apache.rat.api.RatException;
-import org.apache.rat.document.IDocumentAnalyser;
+import org.apache.rat.document.DocumentAnalyser;
 import org.apache.rat.document.RatDocumentAnalysisException;
 import org.apache.rat.license.ILicense;
 import org.apache.rat.license.LicenseSetFactory;
@@ -38,32 +38,64 @@ import org.apache.rat.walker.ArchiveWalker;
 /**
  * Creates default analysers.
  */
-public final class DefaultAnalyserFactory {
+public final class AnalyserFactory {
 
-    private DefaultAnalyserFactory() {
+    private AnalyserFactory() {
         // do not instantiate
     }
+
     /**
-     * Creates a DocumentAnalyser from a collection of ILicenses.
-     * @param configuration the ReportConfiguration
-     * @return A document analyser that uses the provides licenses.
+     * Creates an analyser that adds the approved license predicate to the document metadata.
+     * <p>
+     *     Note you probably do not want this as it is automatically added to {@link #createConfiguredAnalyser}.
+     * </p>
+     * @param approvalPredicate the predicate to approve licenses.
+     * @return A document analyser that sets the approvalPredicate in document metadata.
      */
-    public static IDocumentAnalyser createDefaultAnalyser(final ReportConfiguration configuration) {
-        Set<ILicense> licenses = configuration.getLicenses(LicenseSetFactory.LicenseFilter.ALL);
+    public static DocumentAnalyser createPolicy(final Predicate<ILicense> approvalPredicate) {
+        return document -> {
+            if (document != null) {
+                document.getMetaData().setApprovalPredicate(approvalPredicate);
+            }
+        };
+    }
+
+    /**
+     * Creates an analyser that calls each of the provided analysers in order.
+     * @param analysers the array of analysers to call.
+     * @return an analyser that will call all the provided analysers.
+     */
+    public static DocumentAnalyser createMultiplexer(final DocumentAnalyser... analysers) {
+        return document -> {
+            for (DocumentAnalyser analyser : analysers) {
+                analyser.analyse(document);
+            }
+        };
+    }
+
+    /**
+     * Creates a DocumentAnalyser from the report configuration.
+     * @param configuration the ReportConfiguration
+     * @return A document analyser that uses the provided licenses.
+     */
+    public static DocumentAnalyser createConfiguredAnalyser(final ReportConfiguration configuration) {
+        LicenseSetFactory licenseSetFactory = configuration.getLicenseSetFactory();
+        Set<ILicense> licenses = licenseSetFactory.getLicenses(LicenseSetFactory.LicenseFilter.ALL);
         if (licenses.isEmpty()) {
             throw new ConfigurationException("At least one license must be defined");
         }
         if (DefaultLog.getInstance().isEnabled(Log.Level.DEBUG)) {
-            DefaultLog.getInstance().debug("Currently active Licenses are:");
+            DefaultLog.getInstance().debug("Currently active licenses are:");
             licenses.forEach(DefaultLog.getInstance()::debug);
         }
-        return new DefaultAnalyser(configuration, licenses);
+        return createMultiplexer(createPolicy(licenseSetFactory.getApprovedLicensePredicate()),
+         new DefaultAnalyser(configuration, licenses));
     }
 
     /**
      * A DocumentAnalyser a collection of licenses.
      */
-    private static final class DefaultAnalyser implements IDocumentAnalyser {
+    private static final class DefaultAnalyser implements DocumentAnalyser {
 
         /** The licenses to analyze */
         private final Collection<ILicense> licenses;
