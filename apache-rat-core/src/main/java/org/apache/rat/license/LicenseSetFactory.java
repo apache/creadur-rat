@@ -328,12 +328,10 @@ public class LicenseSetFactory {
     /**
      * Gets the License ids based on the filter.
      *
-     * @param filter the types of License IDs to return.
+     * @param filter the types of License Ids to return.
      * @return The list of all licenses in the category regardless of whether or not it is used by an ILicense implementation.
      */
     public SortedSet<String> getLicenseCategories(final LicenseFilter filter) {
-        Predicate<ILicense> approved = l -> (isApprovedCategory(l.getLicenseFamily()) ||
-                approvedLicenseIds.contains(l.getId())) && !removedLicenseIds.contains(l.getId());
         SortedSet<String> result = new TreeSet<>();
         switch (filter) {
             case ALL:
@@ -344,7 +342,6 @@ public class LicenseSetFactory {
                 return result;
             case APPROVED:
                 approvedLicenseCategories.stream().filter(s -> !removedLicenseCategories.contains(s)).forEach(result::add);
-                //licenses.stream().filter(approved).forEach(l -> result.add(l.getLicenseFamily().getFamilyCategory()));
                 families.stream().filter(this::isApprovedCategory).forEach(f -> result.add(f.getFamilyCategory()));
                 return result;
             case NONE:
@@ -356,7 +353,7 @@ public class LicenseSetFactory {
     /**
      * Gets the License ids based on the filter.
      *
-     * @param filter the types of License IDs to return.
+     * @param filter the types of License Ids to return.
      * @return The list of all licenses in the category regardless of whether or not it is used by an ILicense implementation.
      */
     public SortedSet<String> getLicenseIds(final LicenseFilter filter) {
@@ -447,7 +444,7 @@ public class LicenseSetFactory {
      * Search a SortedSet of licenses for the matching license.
      * License must match both family code, and license id.
      *
-     * @param target the license to search for. Must not be null.
+     * @param target the license to search for. Must not be {@code null}.
      * @param licenses the SortedSet of licenses to search.
      * @return the matching license or {@code null} if not found.
      */
