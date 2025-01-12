@@ -18,11 +18,13 @@
  */
 package org.apache.rat;
 
+import java.nio.file.Path;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.rat.document.DocumentName;
 import org.apache.rat.license.LicenseSetFactory;
 import org.apache.rat.report.IReportable;
 import org.apache.rat.test.AbstractOptionsProvider;
@@ -46,6 +48,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static java.lang.String.format;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -148,11 +151,12 @@ public class OptionCollectionTest {
     @ParameterizedTest
     @ValueSource(strings = { ".", "./", "target", "./target" })
     public void getReportableTest(String fName) throws IOException {
-        File expected = new File(fName);
+        File base = new File(fName);
+        String expected = DocumentName.FSInfo.getDefault().normalize(base.getAbsolutePath());
         ReportConfiguration config = OptionCollection.parseCommands(new String[]{fName}, o -> fail("Help called"), false);
-        IReportable reportable = OptionCollection.getReportable(expected, config);
-        assertNotNull(reportable, () -> format("'%s' returned null", fName));
-        assertThat(reportable.getName().getName()).isEqualTo(expected.getAbsolutePath());
+        IReportable reportable = OptionCollection.getReportable(base, config);
+        assertThat(reportable).as(() -> format("'%s' returned null", fName)).isNotNull();
+        assertThat(reportable.getName().getName()).isEqualTo(expected);
     }
 
     /**
