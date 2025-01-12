@@ -44,7 +44,6 @@ import java.util.SortedSet;
 import java.util.function.Function;
 
 import org.apache.commons.io.filefilter.DirectoryFileFilter;
-import org.apache.commons.io.function.IOSupplier;
 import org.apache.rat.ReportConfiguration.NoCloseOutputStream;
 import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.config.AddLicenseHeaders;
