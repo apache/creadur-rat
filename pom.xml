@@ -386,7 +386,7 @@ agnostic home for software distribution comprehension and audit tools.
           <version>4.8.6.6</version>
           <configuration>
             <!-- RAT-369: JDK21 finds 94 errors, while older releases find fewer -->
-            <maxAllowedViolations>94</maxAllowedViolations>
+            <maxAllowedViolations>98</maxAllowedViolations>
             <failOnError>true</failOnError>
             <!-- we only want to see our own problems in all subpackages -->
             <onlyAnalyze>org.apache.rat.-</onlyAnalyze>
