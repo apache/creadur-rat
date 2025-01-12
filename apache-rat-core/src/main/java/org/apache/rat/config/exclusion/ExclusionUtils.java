@@ -185,4 +185,18 @@ public final class ExclusionUtils {
             throw new ConfigurationException(format("%s is not a valid file.", file));
         }
     }
+
+    /**
+     * Tokenizes the string based on the directory separator.
+     * @param source the source to tokenize
+     * @param from the directory separator for the source.
+     * @param to the directory separator for the result.
+     * @return the source string with the separators converted.
+     */
+    public static String convertSeparator(final String source, final String from, final String to) {
+        if (StringUtils.isEmpty(source) || from.equals(to)) {
+            return source;
+        }
+        return String.join(to, source.split("\\Q" + from + "\\E"));
+    }
 }

@@ -50,13 +50,13 @@ public class TestingDocument extends Document {
     }
 
     public TestingDocument(String name, DocumentNameMatcher matcher) {
-        super(DocumentName.builder().setName(name).setBaseName("").setDirSeparator("/").setCaseSensitive(true).build(), matcher);
+        super(DocumentName.builder().setName(name).setBaseName("").build(), matcher);
         this.reader = null;
         this.input = null;
     }
 
     public TestingDocument(Reader reader, String name) {
-        super(DocumentName.builder().setName(name).setBaseName("").setDirSeparator("/").setCaseSensitive(true).build(), DocumentNameMatcher.MATCHES_ALL);
+        super(DocumentName.builder().setName(name).setBaseName("").build(), DocumentNameMatcher.MATCHES_ALL);
         this.reader = reader;
         this.input = null;
     }
