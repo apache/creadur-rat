@@ -266,8 +266,8 @@ public class AnalyserFactoryTest {
 
         multiplexer.analyse(document);
         for (int i = 0; i < analysers.length; i++) {
-            assertThat(analysers[i].matches.size()).as("Matcher "+i).isEqualTo(1);
-            assertThat(analysers[i].matches.get(0)).as("Matcher "+i).isEqualTo(document);
+            assertThat(analysers[i].matches.size()).as("Matcher " + i).isEqualTo(1);
+            assertThat(analysers[i].matches.get(0)).as("Matcher " + i).isEqualTo(document);
         }
     }
 }

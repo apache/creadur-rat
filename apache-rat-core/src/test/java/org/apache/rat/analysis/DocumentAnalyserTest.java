@@ -43,6 +43,8 @@ import org.apache.rat.license.LicenseSetFactory.LicenseFilter;
 import org.apache.rat.testhelpers.TestingLicense;
 import org.apache.rat.testhelpers.TestingDocument;
 import org.apache.rat.testhelpers.TestingMatcher;
+import org.apache.rat.utils.DefaultLog;
+import org.apache.rat.utils.Log;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -80,6 +82,7 @@ public class DocumentAnalyserTest {
                              Map<LicenseFilter, Collection<ILicenseFamily>> licenseFamilies,
                              Map<LicenseFilter, Collection<ILicense>> licenses
     ) {
+        DefaultLog.getInstance().log(Log.Level.DEBUG, "Running " + name);
         LicenseSetFactory factory = configuration.getLicenseSetFactory();
 
         Collection<String> categories = asCategories(licenseFamilies.get(LicenseFilter.APPROVED));
@@ -103,6 +106,7 @@ public class DocumentAnalyserTest {
                              Map<LicenseFilter, Collection<ILicenseFamily>> licenseFamilies,
                              Map<LicenseFilter, Collection<ILicense>> licenses
     ) throws RatDocumentAnalysisException {
+        DefaultLog.getInstance().log(Log.Level.DEBUG, "Running " + name);
         DocumentAnalyser analyser = AnalyserFactory.createConfiguredAnalyser(configuration);
 
         // verify approved license families report approved.
@@ -184,7 +188,6 @@ public class DocumentAnalyserTest {
         config.setFrom(defaults);
 
         // default setup
-
         Map<LicenseFilter, Collection<ILicenseFamily>> licenseFamilies = new HashMap<>();
         licenseFamilies.put(LicenseFilter.APPROVED, defaultApprovedLicenseFamilies());
         licenseFamilies.put(LicenseFilter.ALL, defaultAllLicenseFamilies());
@@ -209,7 +212,6 @@ public class DocumentAnalyserTest {
         approvedLicenses.add(new TestingLicense("GPL", "GPL1"));
         licenses.put(LicenseFilter.APPROVED, approvedLicenses);
         licenses.put(LicenseFilter.ALL, defaultAllLicenses());
-
 
         lst.add(Arguments.of("GPL1 id added ", config, licenseFamilies, licenses));
 
