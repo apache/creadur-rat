@@ -344,7 +344,7 @@ public class LicenseSetFactory {
                 return result;
             case APPROVED:
                 approvedLicenseCategories.stream().filter(s -> !removedLicenseCategories.contains(s)).forEach(result::add);
-                licenses.stream().filter(approved).forEach(l -> result.add(l.getLicenseFamily().getFamilyCategory()));
+                //licenses.stream().filter(approved).forEach(l -> result.add(l.getLicenseFamily().getFamilyCategory()));
                 families.stream().filter(this::isApprovedCategory).forEach(f -> result.add(f.getFamilyCategory()));
                 return result;
             case NONE:
