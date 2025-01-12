@@ -249,10 +249,10 @@ public final class OptionCollection {
             DefaultLog.getInstance().error("Directory '" + documentName + "' does not exist.");
             return null;
         }
-        DocumentNameMatcher documentNameMatcher = config.getNameMatcher(documentName);
+        DocumentNameMatcher documentExcluder = config.getDocumentExcluder(documentName);
 
-        Document doc = new FileDocument(documentName, absBase, documentNameMatcher);
-        if (!documentNameMatcher.matches(doc.getName())) {
+        Document doc = new FileDocument(documentName, absBase, documentExcluder);
+        if (!documentExcluder.matches(doc.getName())) {
             DefaultLog.getInstance().error("Directory '" + documentName + "' is in excluded list.");
             return null;
         }

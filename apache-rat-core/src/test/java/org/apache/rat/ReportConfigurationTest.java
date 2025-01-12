@@ -44,7 +44,6 @@ import java.util.SortedSet;
 import java.util.function.Function;
 
 import org.apache.commons.io.filefilter.DirectoryFileFilter;
-import org.apache.commons.io.function.IOSupplier;
 import org.apache.rat.ReportConfiguration.NoCloseOutputStream;
 import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.config.AddLicenseHeaders;
@@ -91,11 +90,11 @@ public class ReportConfigurationTest {
     @Test
     public void testAddIncludedFilter() {
         underTest.addExcludedFilter(DirectoryFileFilter.INSTANCE);
-        DocumentNameMatcher matcher = underTest.getNameMatcher(DocumentName.builder(new File(File.separator)).build());
-        assertEquals("not(DirectoryFileFilter)", matcher.toString());
-        assertFalse(matcher.matches(DocumentName.builder(tempDir).build()));
+        DocumentNameMatcher exlcuder = underTest.getDocumentExcluder(DocumentName.builder(new File(File.separator)).build());
+        assertEquals("not(DirectoryFileFilter)", exlcuder.toString());
+        assertFalse(exlcuder.matches(DocumentName.builder(tempDir).build()));
         File f = new File(tempDir, "foo.txt");
-        assertTrue(matcher.matches(DocumentName.builder(f).build()));
+        assertTrue(exlcuder.matches(DocumentName.builder(f).build()));
     }
 
     @Test
@@ -367,27 +366,27 @@ public class ReportConfigurationTest {
     @Test
     public void exclusionTest() {
         DocumentName baseDir = DocumentName.builder(tempDir).build();
-        assertTrue(underTest.getNameMatcher(baseDir).matches(mkDocumentName(new File(tempDir,"foo"))));
-        assertTrue(underTest.getNameMatcher(baseDir).matches(mkDocumentName(new File("foo"))));
+        assertTrue(underTest.getDocumentExcluder(baseDir).matches(mkDocumentName(new File(tempDir,"foo"))));
+        assertTrue(underTest.getDocumentExcluder(baseDir).matches(mkDocumentName(new File("foo"))));
 
         underTest.setFrom(Defaults.builder().build());
 
         File f = new File(tempDir, ".hiddenDir");
         assertTrue(f.mkdir(), () -> "Could not create directory " + f);
 
-        assertFalse(underTest.getNameMatcher(baseDir).matches(mkDocumentName(new File(tempDir, ".hiddenDir"))));
+        assertFalse(underTest.getDocumentExcluder(baseDir).matches(mkDocumentName(new File(tempDir, ".hiddenDir"))));
 
         underTest.addIncludedCollection(StandardCollection.HIDDEN_DIR);
-        assertTrue(underTest.getNameMatcher(baseDir).matches(mkDocumentName(new File(tempDir, ".hiddenDir"))));
+        assertTrue(underTest.getDocumentExcluder(baseDir).matches(mkDocumentName(new File(tempDir, ".hiddenDir"))));
 
         underTest.addExcludedCollection(StandardCollection.HIDDEN_DIR);
-        assertTrue(underTest.getNameMatcher(baseDir).matches(mkDocumentName(new File(tempDir, ".hiddenDir"))));
+        assertTrue(underTest.getDocumentExcluder(baseDir).matches(mkDocumentName(new File(tempDir, ".hiddenDir"))));
 
         underTest.addExcludedFilter(DirectoryFileFilter.DIRECTORY);
 
         File file = new File(tempDir, "newDir");
         assertTrue(file.mkdirs(), () -> "Could not create directory " + file);
-        assertFalse(underTest.getNameMatcher(baseDir).matches(mkDocumentName(file)));
+        assertFalse(underTest.getDocumentExcluder(baseDir).matches(mkDocumentName(file)));
     }
 
     @Test

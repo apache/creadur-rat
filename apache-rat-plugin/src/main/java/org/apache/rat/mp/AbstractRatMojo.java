@@ -538,7 +538,7 @@ public abstract class AbstractRatMojo extends BaseRatMojo {
                     getLicenses().map(x -> x.build(families)).forEach(process);
                 }
                 DocumentName dirName = DocumentName.builder(basedir).build();
-                config.addSource(new DirectoryWalker(new FileDocument(dirName, basedir, config.getNameMatcher(dirName))));
+                config.addSource(new DirectoryWalker(new FileDocument(dirName, basedir, config.getDocumentExcluder(dirName))));
 
                 if (helpLicenses) {
                     new org.apache.rat.help.Licenses(config, new PrintWriter(log.asWriter())).printHelp();
