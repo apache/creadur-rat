@@ -31,8 +31,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class LicenseSetFactoryTest {
 
     /**
-     * This is the number of accepted licenses in the default license file :
-     * /org/apache/rat/default.xml
+     * This is the number of accepted licenses in the default license file:
+     * {@code /org/apache/rat/default.xml}
      */
     private static final int NUMBER_OF_DEFAULT_ACCEPTED_LICENSES = 7;
 
@@ -99,7 +99,6 @@ public class LicenseSetFactoryTest {
                 .as("Did not find unapproved family " + family)
                 .isFalse();
 
-
         assertThat(licenseSetFactory.getApprovedLicensePredicate().test(UnknownLicense.INSTANCE))
                 .as("Did not find UnknownLicense.INSTANCE")
                 .isFalse();
@@ -165,6 +164,5 @@ public class LicenseSetFactoryTest {
         assertThat(licenseSetFactory.getApprovedLicensePredicate().test(license))
                 .as("Found unapproved id " + licenseId)
                 .isFalse();
-
     }
 }
