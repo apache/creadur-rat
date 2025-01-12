@@ -33,8 +33,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class FileListWalkerTest {
 
@@ -117,15 +116,13 @@ public class FileListWalkerTest {
     
     @Test
     public void readFilesTest() throws RatException {
-        FileListWalker walker = new FileListWalker(new FileDocument(source, DocumentNameMatcher.MATCHES_ALL));
+        FileDocument fileDocument = new FileDocument(source, DocumentNameMatcher.MATCHES_ALL);
+        FileListWalker walker = new FileListWalker(fileDocument);
         List<String> scanned = new ArrayList<>();
         walker.run(new TestRatReport(scanned));
         String[] expected = {regularName.localized("/"), hiddenName.localized("/"),
         anotherName.localized("/")};
-        assertEquals(3, scanned.size());
-        for (String ex : expected) {
-            assertTrue(scanned.contains(ex), ()-> String.format("Missing %s from %s", ex, String.join(", ", scanned)));
-        }
+        assertThat(scanned).containsExactly(expected);
     }
 
     static class TestRatReport implements RatReport {
