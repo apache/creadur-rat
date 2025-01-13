@@ -255,10 +255,10 @@ public class ExclusionProcessor {
                     .addTo(new ArrayList<>());
 
             if (!incl.isEmpty()) {
-                inclMatchers.add(new DocumentNameMatcher("included patterns", MatchPatterns.from(incl), basedir));
+                inclMatchers.add(new DocumentNameMatcher("included patterns", MatchPatterns.from("/", incl), basedir));
             }
             if (!excl.isEmpty()) {
-                exclMatchers.add(new DocumentNameMatcher("excluded patterns", MatchPatterns.from(excl), basedir));
+                exclMatchers.add(new DocumentNameMatcher("excluded patterns", MatchPatterns.from("/", excl), basedir));
             }
 
             if (!includedPaths.isEmpty()) {
