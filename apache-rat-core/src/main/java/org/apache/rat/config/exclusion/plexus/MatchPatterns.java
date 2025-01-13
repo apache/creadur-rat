@@ -42,10 +42,7 @@ public final class MatchPatterns {
 
     @Override
     public String toString() {
-        return Arrays.stream(patterns)
-                .map(MatchPattern::toString)
-                .collect(Collectors.toList())
-                .toString();
+        return Arrays.stream(patterns).map(MatchPattern::toString).collect(Collectors.toList()).toString();
     }
 
     public String source() {
