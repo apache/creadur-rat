@@ -40,7 +40,7 @@ public class DefaultsTest {
 
         Set<String> names = new TreeSet<>();
         licenses.forEach(x -> names.add(x.getLicenseFamily().getFamilyCategory()));
-        assertThat(names.size()).isEqualTo(FAMILIES.length);
+        assertThat(names).hasSize(FAMILIES.length);
         names.removeAll(Arrays.asList(FAMILIES));
         assertThat(names).isEmpty();
     }

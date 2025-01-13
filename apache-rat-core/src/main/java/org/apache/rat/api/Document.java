@@ -52,7 +52,7 @@ public abstract class Document implements Comparable<Document> {
     }
 
     /** The path matcher used by this document */
-    protected final DocumentNameMatcher nameMatcher;
+    protected final DocumentNameMatcher nameExcluder;
     /** The metadata for this document */
     private final MetaData metaData;
     /** The fully qualified name of this document */
@@ -61,11 +61,11 @@ public abstract class Document implements Comparable<Document> {
     /**
      * Creates an instance.
      * @param name the native NameSet of the resource.
-     * @param nameMatcher the document name matcher to filter directories/files.
+     * @param nameExcluder the document name matcher to filter directories/files.
      */
-    protected Document(final DocumentName name, final DocumentNameMatcher nameMatcher) {
+    protected Document(final DocumentName name, final DocumentNameMatcher nameExcluder) {
         this.name = name;
-        this.nameMatcher = nameMatcher;
+        this.nameExcluder = nameExcluder;
         this.metaData = new MetaData();
     }
 
@@ -81,8 +81,8 @@ public abstract class Document implements Comparable<Document> {
      * Gets the file filter this document was created with.
      * @return the file filter this document was created with.
      */
-    public final DocumentNameMatcher getNameMatcher() {
-        return nameMatcher;
+    public final DocumentNameMatcher getNameExcluder() {
+        return nameExcluder;
     }
 
     @Override

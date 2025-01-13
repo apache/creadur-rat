@@ -52,7 +52,7 @@ class ResourceCollectionContainer implements IReportable {
             if (r.isFilesystemOnly()) {
                 FileResource fr = (FileResource) r;
                 DocumentName dirName = DocumentName.builder(fr.getFile()).setBaseName(fr.getProject().getBaseDir()).build();
-                FileDocument document = new FileDocument(dirName, fr.getFile(), configuration.getNameMatcher(dirName));
+                FileDocument document = new FileDocument(dirName, fr.getFile(), configuration.getDocumentExcluder(dirName));
                 report.report(document);
             }
         }
