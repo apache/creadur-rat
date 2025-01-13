@@ -352,7 +352,7 @@ public class Report extends BaseAntTask {
             boolean helpLicenses = !getValues(Arg.HELP_LICENSES).isEmpty();
             removeKey(Arg.HELP_LICENSES);
 
-            final ReportConfiguration configuration = OptionCollection.parseCommands(args().toArray(new String[0]),
+            final ReportConfiguration configuration = OptionCollection.parseCommands(new File("."), args().toArray(new String[0]),
                     o -> DefaultLog.getInstance().warn("Help option not supported"),
                     true);
             if (getValues(Arg.OUTPUT_FILE).isEmpty()) {

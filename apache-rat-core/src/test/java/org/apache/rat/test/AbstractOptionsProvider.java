@@ -266,11 +266,11 @@ public abstract class AbstractOptionsProvider implements ArgumentsProvider {
             DocumentNameMatcher excluder = config.getDocumentExcluder(baseName());
             for (String fname : notExcluded) {
                 DocumentName docName = mkDocName(fname);
-                assertThat(excluder.matches(docName)).as(() -> dump(option, fname, matcher, docName)).isTrue();
+                assertThat(excluder.matches(docName)).as(() -> dump(option, fname, excluder, docName)).isTrue();
             }
             for (String fname : excluded) {
                 DocumentName docName = mkDocName(fname);
-                assertThat(excluder.matches(docName)).as(() -> dump(option, fname, matcher, docName)).isFalse();
+                assertThat(excluder.matches(docName)).as(() -> dump(option, fname, excluder, docName)).isFalse();
             }
         } catch (IOException e) {
             fail(e.getMessage());
@@ -308,11 +308,11 @@ public abstract class AbstractOptionsProvider implements ArgumentsProvider {
             DocumentNameMatcher excluder = config.getDocumentExcluder(baseName());
             for (String fname : excluded) {
                 DocumentName docName = mkDocName(fname);
-                assertThat(excluder.matches(docName)).as(() -> dump(option, fname, matcher, docName)).isFalse();
+                assertThat(excluder.matches(docName)).as(() -> dump(option, fname, excluder, docName)).isFalse();
             }
             for (String fname : notExcluded) {
                 DocumentName docName = mkDocName(fname);
-                assertThat(excluder.matches(docName)).as(() -> dump(option, fname, matcher, docName)).isTrue();
+                assertThat(excluder.matches(docName)).as(() -> dump(option, fname, excluder, docName)).isTrue();
             }
         } catch (IOException e) {
             fail(e.getMessage());
@@ -372,11 +372,11 @@ public abstract class AbstractOptionsProvider implements ArgumentsProvider {
             DocumentNameMatcher excluder = config.getDocumentExcluder(baseName());
             for (String fname : excluded) {
                 DocumentName docName = mkDocName(fname);
-                assertThat(excluder.matches(docName)).as(() -> dump(option, fname, matcher, docName)).isFalse();
+                assertThat(excluder.matches(docName)).as(() -> dump(option, fname, excluder, docName)).isFalse();
             }
             for (String fname : notExcluded) {
                 DocumentName docName = mkDocName(fname);
-                assertThat(excluder.matches(docName)).as(() -> dump(option, fname, matcher, docName)).isTrue();
+                assertThat(excluder.matches(docName)).as(() -> dump(option, fname, excluder, docName)).isTrue();
             }
         } catch (IOException e) {
             fail(e.getMessage());
@@ -394,11 +394,11 @@ public abstract class AbstractOptionsProvider implements ArgumentsProvider {
             DocumentNameMatcher excluder = config.getDocumentExcluder(baseName());
             for (String fname : excluded) {
                 DocumentName docName = mkDocName(fname);
-                assertThat(excluder.matches(docName)).as(() -> dump(option, fname, matcher, docName)).isFalse();
+                assertThat(excluder.matches(docName)).as(() -> dump(option, fname, excluder, docName)).isFalse();
             }
             for (String fname : notExcluded) {
                 DocumentName docName = mkDocName(fname);
-                assertThat(excluder.matches(docName)).as(() -> dump(option, fname, matcher, docName)).isTrue();
+                assertThat(excluder.matches(docName)).as(() -> dump(option, fname, excluder, docName)).isTrue();
             }
         } catch (IOException e) {
             fail(e.getMessage());
@@ -438,11 +438,11 @@ public abstract class AbstractOptionsProvider implements ArgumentsProvider {
             DocumentNameMatcher excluder = config.getDocumentExcluder(baseName());
             for (String fname : excluded) {
                 DocumentName docName = mkDocName(fname);
-                assertThat(excluder.matches(docName)).as(() -> dump(option, fname, matcher, docName)).isFalse();
+                assertThat(excluder.matches(docName)).as(() -> dump(option, fname, excluder, docName)).isFalse();
             }
             for (String fname : notExcluded) {
                 DocumentName docName = mkDocName(fname);
-                assertThat(excluder.matches(docName)).as(() -> dump(option, fname, matcher, docName)).isTrue();
+                assertThat(excluder.matches(docName)).as(() -> dump(option, fname, excluder, docName)).isTrue();
             }
         } catch (IOException e) {
             fail(e.getMessage());
