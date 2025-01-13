@@ -196,7 +196,8 @@ public final class DocumentNameMatcher {
             return MATCHES_ALL;
         }
 
-        return new DocumentNameMatcher(format("not(%s)", nameMatcher), new NotPredicate(nameMatcher));
+        return new DocumentNameMatcher(format("not(%s)", nameMatcher),
+                (Predicate<DocumentName>) documentName -> !nameMatcher.matches(documentName));
     }
 
     /**
