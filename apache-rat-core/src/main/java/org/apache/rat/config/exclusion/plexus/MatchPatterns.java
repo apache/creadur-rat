@@ -22,8 +22,9 @@ package org.apache.rat.config.exclusion.plexus;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
-import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 @SuppressWarnings({"checkstyle:RegexpSingleLine", "checkstyle:JavadocVariable"})
 /**
@@ -41,15 +42,15 @@ public final class MatchPatterns {
 
     @Override
     public String toString() {
-        return source();
+        return Arrays.stream(patterns).map(MatchPattern::toString).collect(Collectors.toList()).toString();
     }
 
     public String source() {
-        List<String> sources = new ArrayList<>();
-        for (MatchPattern pattern : patterns) {
-            sources.add(pattern.source());
-        }
-        return "[" + String.join(", ", sources) + "]";
+        return Arrays.stream(patterns).map(MatchPattern::source).collect(Collectors.toList()).toString();
+    }
+
+    public Iterable<MatchPattern> patterns() {
+        return Arrays.asList(patterns);
     }
 
     /**
@@ -83,36 +84,23 @@ public final class MatchPatterns {
         return false;
     }
 
-    public Predicate<String> asPredicate(final boolean isCaseSensitive) {
-        return name -> matches(name, isCaseSensitive);
-    }
-
-    public boolean matchesPatternStart(final String name, final boolean isCaseSensitive) {
-        for (MatchPattern includesPattern : patterns) {
-            if (includesPattern.matchPatternStart(name, isCaseSensitive)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public static MatchPatterns from(final String... sources) {
+    public static MatchPatterns from(final String separator, final String... sources) {
         final int length = sources.length;
         MatchPattern[] result = new MatchPattern[length];
         for (int i = 0; i < length; i++) {
-            result[i] = MatchPattern.fromString(sources[i]);
+            result[i] = new MatchPattern(sources[i], separator);
         }
         return new MatchPatterns(result);
     }
 
-    public static MatchPatterns from(final Iterable<String> strings) {
-        return new MatchPatterns(getMatchPatterns(strings));
+    public static MatchPatterns from(final String separator, final Iterable<String> strings) {
+        return new MatchPatterns(getMatchPatterns(separator, strings));
     }
 
-    private static MatchPattern[] getMatchPatterns(final Iterable<String> items) {
+    private static MatchPattern[] getMatchPatterns(final String separator, final Iterable<String> items) {
         List<MatchPattern> result = new ArrayList<>();
         for (String string : items) {
-            result.add(MatchPattern.fromString(string));
+            result.add(new MatchPattern(string, separator));
         }
         return result.toArray(new MatchPattern[0]);
     }

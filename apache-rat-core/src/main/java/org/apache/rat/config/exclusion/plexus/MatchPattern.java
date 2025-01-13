@@ -19,6 +19,7 @@ package org.apache.rat.config.exclusion.plexus;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.StringTokenizer;
 
@@ -49,7 +50,7 @@ public final class MatchPattern {
 
     private final char[][] tokenizedChar;
 
-    private MatchPattern(final String source, final String separator) {
+    public MatchPattern(final String source, final String separator) {
         regexPattern = SelectorUtils.isRegexPrefixedPattern(source)
                 ? source.substring(
                 SelectorUtils.REGEX_HANDLER_PREFIX.length(),
@@ -83,7 +84,7 @@ public final class MatchPattern {
         } else {
             result = SelectorUtils.matchAntPathPattern(getTokenizedPathChars(), strDirs, isCaseSensitive);
         }
-        if (result && DefaultLog.getInstance().isEnabled(Log.Level.DEBUG)) {
+        if (DefaultLog.getInstance().isEnabled(Log.Level.DEBUG)) {
             DefaultLog.getInstance().debug(format("%s match %s -> %s", this, str, result));
         }
         return result;
@@ -116,7 +117,7 @@ public final class MatchPattern {
 
     @Override
     public String toString() {
-        return source;
+        return Arrays.asList(tokenized).toString();
     }
 
     public String source() {
@@ -141,7 +142,4 @@ public final class MatchPattern {
         return tokenizedNameChar;
     }
 
-    public static MatchPattern fromString(final     String source) {
-        return new MatchPattern(source, File.separator);
-    }
 }
