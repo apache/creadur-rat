@@ -88,13 +88,13 @@ public class ReportConfigurationTest {
     public void testAddIncludedFilter() {
         DocumentName dirName = DocumentName.builder(tempDir).build();
         underTest.addExcludedFilter(DirectoryFileFilter.INSTANCE);
-        DocumentNameMatcher matcher = underTest.getDocumentExcluder(dirName);
+        DocumentNameMatcher excluder = underTest.getDocumentExcluder(dirName);
 
-        assertThat(matcher.toString()).isEqualTo("not(DirectoryFileFilter)");
-        assertThat(matcher.matches(DocumentName.builder(tempDir).build())).isFalse();
+        assertThat(excluder.toString()).isEqualTo("not(DirectoryFileFilter)");
+        assertThat(excluder.matches(DocumentName.builder(tempDir).build())).isFalse();
 
         File f = new File(tempDir, "foo.txt");
-        assertThat(exlcuder.matches(DocumentName.builder(f).build())).isTrue();
+        assertThat(excluder.matches(DocumentName.builder(f).build())).isTrue();
     }
 
     @Test
