@@ -283,7 +283,7 @@ public abstract class AbstractOptionsProvider implements ArgumentsProvider {
         }
     }
 
-    private void excludeFileTest(Option option) {
+    private void excludeFileTest(final Option option) {
         File outputFile = writeFile("exclude.txt", Arrays.asList(EXCLUDE_ARGS));
         execExcludeTest(option, new String[]{outputFile.getAbsolutePath()});
     }
@@ -388,7 +388,7 @@ public abstract class AbstractOptionsProvider implements ArgumentsProvider {
     }
 
     // include tests
-    private void execIncludeTest(Option option, String[] args) {
+    private void execIncludeTest(final Option option, final String[] args) {
         Option excludeOption = Arg.EXCLUDE.option();
         String[] notExcluded = {"B.bar", "justbaz", "notbaz"};
         String[] excluded = {"some.foo"};
@@ -409,7 +409,7 @@ public abstract class AbstractOptionsProvider implements ArgumentsProvider {
         }
     }
 
-    private void includeFileTest(Option option) {
+    private void includeFileTest(final Option option) {
         File outputFile = writeFile("include.txt", Arrays.asList(INCLUDE_ARGS));
         execIncludeTest(option, new String[]{outputFile.getAbsolutePath()});
     }
@@ -464,7 +464,7 @@ public abstract class AbstractOptionsProvider implements ArgumentsProvider {
     }
 
     // LICENSE tests
-    protected void execLicensesApprovedTest(Option option, String[] args) {
+    protected void execLicensesApprovedTest(final Option option, String[] args) {
         Pair<Option, String[]> arg1 = ImmutablePair.of(option, args);
         try {
             ReportConfiguration config = generateConfig(arg1);
@@ -516,7 +516,7 @@ public abstract class AbstractOptionsProvider implements ArgumentsProvider {
                 new String[]{"one", "two"});
     }
 
-    private void execLicensesDeniedTest(Option option, String[] args) {
+    private void execLicensesDeniedTest(final Option option, final String[] args) {
         try {
             ReportConfiguration config = generateConfig(ImmutablePair.of(option, args));
             assertThat(config.getLicenseIds(LicenseSetFactory.LicenseFilter.ALL)).contains("ILLUMOS");
@@ -537,7 +537,7 @@ public abstract class AbstractOptionsProvider implements ArgumentsProvider {
                 new String[]{outputFile.getAbsolutePath()});
     }
 
-    private void execLicenseFamiliesApprovedTest(Option option, String[] args) {
+    private void execLicenseFamiliesApprovedTest(final Option option, final String[] args) {
         String catz = ILicenseFamily.makeCategory("catz");
         Pair<Option, String[]> arg1 = ImmutablePair.of(option, args);
         try {
@@ -569,7 +569,7 @@ public abstract class AbstractOptionsProvider implements ArgumentsProvider {
                 new String[]{"catz"});
     }
 
-    private void execLicenseFamiliesDeniedTest(Option option, String[] args) {
+    private void execLicenseFamiliesDeniedTest(final Option option, final String[] args) {
         String gpl = ILicenseFamily.makeCategory("GPL");
         try {
             ReportConfiguration config = generateConfig(ImmutablePair.of(option, args));
@@ -636,7 +636,7 @@ public abstract class AbstractOptionsProvider implements ArgumentsProvider {
         }
     }
 
-    private void configTest(Option option) {
+    private void configTest(final Option option) {
         String[] args = {"src/test/resources/OptionTools/One.xml", "src/test/resources/OptionTools/Two.xml"};
         Pair<Option, String[]> arg1 = ImmutablePair.of(option, args);
         try {
@@ -666,7 +666,7 @@ public abstract class AbstractOptionsProvider implements ArgumentsProvider {
         configTest(Arg.CONFIGURATION.find("config"));
     }
 
-    private void noDefaultsTest(Option arg) {
+    private void noDefaultsTest(final Option arg) {
         try {
             ReportConfiguration config = generateConfig(ImmutablePair.of(arg, null));
             assertThat(config.getLicenses(LicenseSetFactory.LicenseFilter.ALL)).isEmpty();
@@ -696,7 +696,7 @@ public abstract class AbstractOptionsProvider implements ArgumentsProvider {
         }
     }
 
-    private void editCopyrightTest(Option option) {
+    private void editCopyrightTest(final Option option) {
         try {
             Pair<Option, String[]> arg1 = ImmutablePair.of(option, new String[]{"MyCopyright"});
             ReportConfiguration config = generateConfig(arg1);
@@ -717,7 +717,7 @@ public abstract class AbstractOptionsProvider implements ArgumentsProvider {
         editCopyrightTest(Arg.EDIT_COPYRIGHT.find("edit-copyright"));
     }
 
-    private void editLicenseTest(Option option) {
+    private void editLicenseTest(final Option option) {
         try {
             ReportConfiguration config = generateConfig(ImmutablePair.of(option, null));
             assertThat(config.isAddingLicenses()).isTrue();
@@ -736,7 +736,7 @@ public abstract class AbstractOptionsProvider implements ArgumentsProvider {
         editLicenseTest(Arg.EDIT_ADD.find("edit-license"));
     }
 
-    private void overwriteTest(Option option) {
+    private void overwriteTest(final Option option) {
         Pair<Option, String[]> arg1 = ImmutablePair.of(option, null);
         try {
             ReportConfiguration config = generateConfig(arg1);
@@ -777,7 +777,7 @@ public abstract class AbstractOptionsProvider implements ArgumentsProvider {
         }
     }
 
-    private void archiveTest(Option option) {
+    private void archiveTest(final Option option) {
         String[] args = {null};
         try {
             for (ReportConfiguration.Processing proc : ReportConfiguration.Processing.values()) {
@@ -794,7 +794,7 @@ public abstract class AbstractOptionsProvider implements ArgumentsProvider {
         archiveTest(Arg.OUTPUT_ARCHIVE.find("output-archive"));
     }
 
-    private void listFamilies(Option option) {
+    private void listFamilies(final Option option) {
         String[] args = {null};
         for (LicenseSetFactory.LicenseFilter filter : LicenseSetFactory.LicenseFilter.values()) {
             try {
@@ -815,7 +815,7 @@ public abstract class AbstractOptionsProvider implements ArgumentsProvider {
         listFamilies(Arg.OUTPUT_FAMILIES.find("output-families"));
     }
 
-    private void outTest(Option option) {
+    private void outTest(final Option option) {
         File outFile = new File(baseDir, "outexample-" + option.getLongOpt());
         String[] args = new String[]{outFile.getAbsolutePath()};
         try {
@@ -843,7 +843,7 @@ public abstract class AbstractOptionsProvider implements ArgumentsProvider {
         outTest(Arg.OUTPUT_FILE.find("output-file"));
     }
 
-    private void listLicenses(Option option) {
+    private void listLicenses(final Option option) {
         String[] args = {null};
         for (LicenseSetFactory.LicenseFilter filter : LicenseSetFactory.LicenseFilter.values()) {
             try {
@@ -864,7 +864,7 @@ public abstract class AbstractOptionsProvider implements ArgumentsProvider {
         listLicenses(Arg.OUTPUT_LICENSES.find("output-licenses"));
     }
 
-    private void standardTest(Option option) {
+    private void standardTest(final Option option) {
         String[] args = {null};
         try {
             for (ReportConfiguration.Processing proc : ReportConfiguration.Processing.values()) {
@@ -881,7 +881,7 @@ public abstract class AbstractOptionsProvider implements ArgumentsProvider {
         standardTest(Arg.OUTPUT_STANDARD.find("output-standard"));
     }
 
-    private void styleSheetTest(Option option) {
+    private void styleSheetTest(final Option option) {
         // copy the dummy stylesheet so that we have a local file for users of the testing jar.
         File file = new File(baseDir, "stylesheet-" + option.getLongOpt());
         try (
@@ -938,7 +938,7 @@ public abstract class AbstractOptionsProvider implements ArgumentsProvider {
     }
 
     @Override
-    final public Stream<? extends Arguments> provideArguments(ExtensionContext context) {
+    final public Stream<? extends Arguments> provideArguments(final ExtensionContext context) {
         List<Arguments> lst = new ArrayList<>();
         List<String> missingTests = new ArrayList<>();
 
