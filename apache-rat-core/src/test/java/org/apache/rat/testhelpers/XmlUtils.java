@@ -175,13 +175,13 @@ public final class XmlUtils {
         Node node = XmlUtils.getNode(source, xPath, xpath);
         NamedNodeMap attr = node.getAttributes();
         node = attr.getNamedItem(attribute);
-        assertThat(node).as(attribute+" was not found").isNotNull();
+        assertThat(node).as(attribute + " was not found").isNotNull();
         return node.getNodeValue();
     }
 
     public static Map<String, String> mapOf(String... parts) {
         Map<String, String> map = new HashMap<>();
-        for (int i=0; i<parts.length; i+=2) {
+        for (int i = 0; i < parts.length; i += 2) {
             map.put(parts[i], parts[i+1]);
         }
         return map;
@@ -202,10 +202,10 @@ public final class XmlUtils {
     }
 
     public static void assertIsPresent(Object source, XPath xPath, String xpath) throws XPathExpressionException {
-        assertThat(isPresent(source, xPath, xpath)).as("Presence of "+xpath).isTrue();
+        assertThat(isPresent(source, xPath, xpath)).as("Presence of " + xpath).isTrue();
     }
 
     public static void assertIsNotPresent(Object source, XPath xPath, String xpath) throws XPathExpressionException {
-        assertThat(isPresent(source, xPath, xpath)).as("Non-presence of "+xpath).isFalse();
+        assertThat(isPresent(source, xPath, xpath)).as("Non-presence of " + xpath).isFalse();
     }
 }
