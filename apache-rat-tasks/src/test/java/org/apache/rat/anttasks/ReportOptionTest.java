@@ -59,6 +59,7 @@ public class ReportOptionTest  {
     @ParameterizedTest
     @ArgumentsSource(AntOptionsProvider.class)
     public void testOptionsUpdateConfig(String name, OptionCollectionTest.OptionTest test) {
+        DefaultLog.getInstance().info("Running " + name);
         test.test();
     }
 
@@ -80,7 +81,7 @@ public class ReportOptionTest  {
             super(BaseAntTask.unsupportedArgs(), testPath.toFile());
         }
 
-        protected final ReportConfiguration generateConfig(List<Pair<Option, String[]>> args) {
+        protected ReportConfiguration generateConfig(List<Pair<Option, String[]>> args) {
             BuildTask task = args.get(0).getKey() == null ? new BuildTask() : new BuildTask(args.get(0).getKey());
             task.setUp(args);
             task.buildRule.executeTarget(task.name);

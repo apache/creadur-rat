@@ -89,6 +89,5 @@ public class DocumentNameMatcherTest {
         DocumentNameMatcher matcher3 = DocumentNameMatcher.matcherSet(matcher1, matcher2);
         result = processDecompose(matcher3, testName);
         assertThat(result).contains("MatchPatternsTest: >>true<<").contains("  **/test1*: >>false<<").contains("  **/*Name: >>true<<");
-
     }
 }

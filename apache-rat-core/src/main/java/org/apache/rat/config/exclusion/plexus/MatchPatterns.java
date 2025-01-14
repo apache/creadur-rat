@@ -59,7 +59,7 @@ public final class MatchPatterns {
      * <p>Uses far less string tokenization than any of the alternatives.</p>
      *
      * @param name The name to look for
-     * @param isCaseSensitive If the comparison is case sensitive
+     * @param isCaseSensitive If the comparison is case-sensitive
      * @return true if any of the supplied patterns match
      */
     public boolean matches(final String name, final boolean isCaseSensitive) {

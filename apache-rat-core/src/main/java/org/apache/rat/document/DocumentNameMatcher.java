@@ -161,7 +161,7 @@ public final class DocumentNameMatcher {
 
     /**
      * Decomposes the matcher execution against the candidate.
-     * @param candidate the candiate to check.
+     * @param candidate the candidate to check.
      * @return a list of {@link DecomposeData} for each evaluation in the matcher.
      */
     public List<DecomposeData> decompose(final DocumentName candidate) {
@@ -398,7 +398,7 @@ public final class DocumentNameMatcher {
 
         /**
          * Constructs a collection predicate from the collection of matchers.
-         * @param matchers the colleciton of matchers to use.
+         * @param matchers the collection of matchers to use.
          */
         protected CollectionPredicateImpl(final Iterable<DocumentNameMatcher> matchers) {
             this.matchers = matchers;
@@ -479,10 +479,7 @@ public final class DocumentNameMatcher {
                 return true;
             }
             // excluded
-            if (iter.next().matches(documentName)) {
-                return false;
-            }
-            return true;
+            return !iter.next().matches(documentName);
         }
     }
 
