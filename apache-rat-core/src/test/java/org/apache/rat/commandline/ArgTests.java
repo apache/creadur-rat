@@ -18,6 +18,7 @@
  */
 package org.apache.rat.commandline;
 
+import java.io.IOException;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.Options;
@@ -25,13 +26,13 @@ import org.apache.commons.cli.ParseException;
 import org.apache.rat.DeprecationReporter;
 import org.apache.rat.OptionCollection;
 import org.apache.rat.ReportConfiguration;
+import org.apache.rat.document.DocumentName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
-
 import java.io.File;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class ArgTests {
 
@@ -41,9 +42,9 @@ public class ArgTests {
                 .setAllowPartialMatching(true).build().parse(opts, args);
     }
 
-    @ParameterizedTest
+    @ParameterizedTest(name = "{0}")
     @ValueSource(strings = { "rat.txt", "./rat.txt", "/rat.txt", "target/rat.test" })
-    public void outputFleNameNoDirectoryTest(String name) throws ParseException {
+    public void outputFleNameNoDirectoryTest(String name) throws ParseException, IOException {
         class OutputFileConfig extends ReportConfiguration  {
             private File actual = null;
             @Override
@@ -51,13 +52,13 @@ public class ArgTests {
                 actual = file;
             }
         }
+        String fileName = name.replace("/", DocumentName.FSInfo.getDefault().dirSeparator());
+        File expected = new File(fileName);
 
-        File expected = new File(name);
-
-        CommandLine commandLine = createCommandLine(new String[] {"--output-file", name});
+        CommandLine commandLine = createCommandLine(new String[] {"--output-file", fileName});
         OutputFileConfig configuration = new OutputFileConfig();
         ArgumentContext ctxt = new ArgumentContext(new File("."), configuration, commandLine);
         Arg.processArgs(ctxt);
-        assertEquals(expected.getAbsolutePath(), configuration.actual.getAbsolutePath());
+        assertThat(configuration.actual.getAbsolutePath()).isEqualTo(expected.getCanonicalPath());
     }
 }
