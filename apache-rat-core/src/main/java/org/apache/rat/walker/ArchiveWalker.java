@@ -35,6 +35,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.rat.api.Document;
 import org.apache.rat.api.RatException;
 import org.apache.rat.document.ArchiveEntryDocument;
+import org.apache.rat.document.ArchiveEntryName;
 import org.apache.rat.document.DocumentName;
 import org.apache.rat.report.RatReport;
 import org.apache.rat.utils.DefaultLog;
@@ -82,20 +83,18 @@ public class ArchiveWalker extends Walker {
      */
     public Collection<Document> getDocuments() throws RatException {
         List<Document> result = new ArrayList<>();
+        //DocumentName.FSInfo archiveInfo = new DocumentName.FSInfo(true, Arrays.asList("/"), "/");
         try (ArchiveInputStream<? extends ArchiveEntry> input = new ArchiveStreamFactory().createArchiveInputStream(createInputStream())) {
-            ArchiveEntry entry = null;
+            ArchiveEntry entry;
             while ((entry = input.getNextEntry()) != null) {
                 if (!entry.isDirectory() && input.canReadEntryData(entry)) {
-                    DocumentName innerName = DocumentName.builder().setDirSeparator("/").setName(entry.getName())
-                            .setBaseName(".").setCaseSensitive(true).build();
+                    DocumentName innerName = DocumentName.builder().setName(entry.getName())
+                            .setBaseName(".").build();
                     if (this.getDocument().getNameExcluder().matches(innerName)) {
                         ByteArrayOutputStream baos = new ByteArrayOutputStream();
                         IOUtils.copy(input, baos);
-                        DocumentName archiveName = getDocument().getName();
-                        String outerNameStr = format("%s#%s", archiveName.getName(), entry.getName());
-                        DocumentName outerName = DocumentName.builder(archiveName).setName(outerNameStr)
-                                .setCaseSensitive(true).build();
-                        result.add(new ArchiveEntryDocument(outerName, baos.toByteArray(), getDocument().getNameExcluder()));
+                        ArchiveEntryName entryName = new ArchiveEntryName(getDocument().getName(), entry.getName());
+                        result.add(new ArchiveEntryDocument(entryName, baos.toByteArray(), getDocument().getNameExcluder()));
                     }
                 }
             }

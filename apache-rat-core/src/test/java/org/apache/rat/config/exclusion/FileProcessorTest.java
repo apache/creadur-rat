@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 import org.apache.rat.document.DocumentName;
+import org.apache.rat.document.FSInfoTest;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -40,7 +41,7 @@ public class FileProcessorTest {
 
     public static Stream<Arguments> localizePatternData() {
         List<Arguments>  lst = new ArrayList<>();
-        DocumentName baseName = DocumentName.builder().setName("fileBeingRead").setBaseName("baseDir").setDirSeparator("/").build();
+        DocumentName baseName = DocumentName.builder(FSInfoTest.UNIX).setName("fileBeingRead").setBaseName("baseDir").build();
 
         lst.add(Arguments.of(baseName, "file", "/baseDir/file"));
         lst.add(Arguments.of(baseName, "!file", "!/baseDir/file"));

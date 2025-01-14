@@ -114,8 +114,8 @@ public class AnalyserFactoryTest {
     private static Stream<Arguments> archiveProcessingTestData() {
         List<Arguments> lst = new ArrayList<>();
         lst.add(Arguments.of(ReportConfiguration.Processing.NOTIFICATION, 0));
-        lst.add(Arguments.of(ReportConfiguration.Processing.PRESENCE, 2));
-        lst.add(Arguments.of(ReportConfiguration.Processing.ABSENCE, 3));
+        lst.add(Arguments.of(ReportConfiguration.Processing.PRESENCE, 1));
+        lst.add(Arguments.of(ReportConfiguration.Processing.ABSENCE, 2));
         return lst.stream();
     }
 

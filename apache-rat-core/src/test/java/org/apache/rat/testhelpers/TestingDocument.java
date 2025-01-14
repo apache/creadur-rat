@@ -29,6 +29,7 @@ import org.apache.commons.io.function.IOSupplier;
 import org.apache.rat.api.Document;
 import org.apache.rat.document.DocumentNameMatcher;
 import org.apache.rat.document.DocumentName;
+import org.apache.rat.document.FSInfoTest;
 
 public class TestingDocument extends Document {
 
@@ -50,19 +51,19 @@ public class TestingDocument extends Document {
     }
 
     public TestingDocument(String name, DocumentNameMatcher matcher) {
-        super(DocumentName.builder().setName(name).setBaseName("").setDirSeparator("/").setCaseSensitive(true).build(), matcher);
+        super(DocumentName.builder().setName(name).setBaseName("").build(), matcher);
         this.reader = null;
         this.input = null;
     }
 
     public TestingDocument(Reader reader, String name) {
-        super(DocumentName.builder().setName(name).setBaseName("").setDirSeparator("/").setCaseSensitive(true).build(), DocumentNameMatcher.MATCHES_ALL);
+        super(DocumentName.builder().setName(name).setBaseName("").build(), DocumentNameMatcher.MATCHES_ALL);
         this.reader = reader;
         this.input = null;
     }
 
     public TestingDocument(IOSupplier<InputStream> inputStream, String name) {
-        super(DocumentName.builder().setName(name).setBaseName("").setDirSeparator("/").setCaseSensitive(true).build(), DocumentNameMatcher.MATCHES_ALL);
+        super(DocumentName.builder(FSInfoTest.UNIX).setName(name).setBaseName("").build(), DocumentNameMatcher.MATCHES_ALL);
         this.input = inputStream;
         this.reader = null;
     }

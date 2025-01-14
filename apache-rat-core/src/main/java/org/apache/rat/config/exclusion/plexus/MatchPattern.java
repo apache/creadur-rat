@@ -84,7 +84,7 @@ public final class MatchPattern {
         } else {
             result = SelectorUtils.matchAntPathPattern(getTokenizedPathChars(), strDirs, isCaseSensitive);
         }
-        if (DefaultLog.getInstance().isEnabled(Log.Level.DEBUG)) {
+        if (result && DefaultLog.getInstance().isEnabled(Log.Level.DEBUG)) {
             DefaultLog.getInstance().debug(format("%s match %s -> %s", this, str, result));
         }
         return result;
