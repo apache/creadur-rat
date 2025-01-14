@@ -196,8 +196,7 @@ public final class DocumentNameMatcher {
             return MATCHES_ALL;
         }
 
-        return new DocumentNameMatcher(format("not(%s)", nameMatcher),
-                (Predicate<DocumentName>) documentName -> !nameMatcher.matches(documentName));
+        return new DocumentNameMatcher(format("not(%s)", nameMatcher), new NotPredicate(nameMatcher));
     }
 
     /**
@@ -403,9 +402,8 @@ public final class DocumentNameMatcher {
     interface CollectionPredicate extends Predicate<DocumentName> {
         Iterable<DocumentNameMatcher> getMatchers();
     }
-
     /**
-     * An implementation of CollectionPredicate.
+     * CollectionPredicate implementation.
      */
     abstract static class CollectionPredicateImpl implements CollectionPredicate {
         /** The collection for matchers that make up this predicate */
