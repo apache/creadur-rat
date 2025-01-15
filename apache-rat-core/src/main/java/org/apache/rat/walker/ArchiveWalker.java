@@ -90,11 +90,11 @@ public class ArchiveWalker extends Walker {
                 if (!entry.isDirectory() && input.canReadEntryData(entry)) {
                     DocumentName innerName = DocumentName.builder().setName(entry.getName())
                             .setBaseName(".").build();
-                    if (this.getDocument().getNameExcluder().matches(innerName)) {
+                    if (this.getDocument().getNameMatcher().matches(innerName)) {
                         ByteArrayOutputStream baos = new ByteArrayOutputStream();
                         IOUtils.copy(input, baos);
                         ArchiveEntryName entryName = new ArchiveEntryName(getDocument().getName(), entry.getName());
-                        result.add(new ArchiveEntryDocument(entryName, baos.toByteArray(), getDocument().getNameExcluder()));
+                        result.add(new ArchiveEntryDocument(entryName, baos.toByteArray(), getDocument().getNameMatcher()));
                     }
                 }
             }

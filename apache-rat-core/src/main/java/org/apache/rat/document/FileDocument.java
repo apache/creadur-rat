@@ -29,7 +29,6 @@ import java.util.TreeSet;
 
 import org.apache.rat.api.Document;
 import org.apache.rat.config.exclusion.ExclusionUtils;
-import org.apache.rat.utils.DefaultLog;
 
 /**
  * Document wrapping a File object.
@@ -43,10 +42,10 @@ public class FileDocument extends Document {
      * Creates a File document.
      * @param basedir the base directory for this document.
      * @param file the file to wrap.
-     * @param nameExcluder the path matcher to filter files/directories with.
+     * @param nameMatcher the path matcher to filter files/directories with.
      */
-    public FileDocument(final DocumentName basedir, final File file, final DocumentNameMatcher nameExcluder) {
-        super(DocumentName.builder(file).setBaseName(basedir.getBaseName()).build(), nameExcluder);
+    public FileDocument(final DocumentName basedir, final File file, final DocumentNameMatcher nameMatcher) {
+        super(DocumentName.builder(file).setBaseName(basedir.getBaseName()).build(), nameMatcher);
         this.file = file;
     }
 
@@ -58,9 +57,6 @@ public class FileDocument extends Document {
     public FileDocument(final File file, final DocumentNameMatcher nameMatcher) {
         super(DocumentName.builder(file).setBaseName(File.separator).build(), nameMatcher);
         this.file = file;
-        DefaultLog.getInstance().info("Created file document " + file.getAbsolutePath());
-        DefaultLog.getInstance().info("... as " + this.getName().getName());
-        DefaultLog.getInstance().info("... on root " + this.getName().getRoot());
     }
 
     @Override
@@ -74,12 +70,12 @@ public class FileDocument extends Document {
             SortedSet<Document> result = new TreeSet<>();
             File[] files = file.listFiles();
             if (files != null) {
-                FileFilter fileFilter = ExclusionUtils.asFileFilter(name, nameExcluder);
+                FileFilter fileFilter = ExclusionUtils.asFileFilter(name, nameMatcher);
                 for (File child : files) {
                     if (fileFilter.accept(child)) {
-                        result.add(new FileDocument(name, child, nameExcluder));
+                        result.add(new FileDocument(name, child, nameMatcher));
                     } else {
-                        result.add(new IgnoredDocument(name, child, nameExcluder));
+                        result.add(new IgnoredDocument(name, child, nameMatcher));
                     }
                 }
             }

@@ -49,6 +49,8 @@ public class FileListWalker implements IReportable {
      * @param source The file document that is the source from which this walker will read.
      */
     public FileListWalker(final FileDocument source) {
+        DefaultLog.getInstance().info("Created file list document on " + source.getName().getName());
+        DefaultLog.getInstance().info("... on root " + source.getName().getRoot());
         this.source = source;
         File baseDir = source.getFile().getParentFile().getAbsoluteFile();
         this.baseDoc = new FileDocument(baseDir, DocumentNameMatcher.MATCHES_ALL);
@@ -65,7 +67,8 @@ public class FileListWalker implements IReportable {
         String finalName = "/".equals(sourceName.getDirectorySeparator()) ? unixFileName :
             unixFileName.replace("/", sourceName.getDirectorySeparator());
         FileDocument documentBase = unixFileName.startsWith("/") ? rootDoc : baseDoc;
-        File documentFile = new File(documentBase.getFile(), finalName);
+        File documentFile = new File(documentBase.getFile(), finalName).getAbsoluteFile();
+        DefaultLog.getInstance().info("Created file document on " + documentFile);
         return new FileDocument(rootDoc.getName(), documentFile, DocumentNameMatcher.MATCHES_ALL);
     }
 
