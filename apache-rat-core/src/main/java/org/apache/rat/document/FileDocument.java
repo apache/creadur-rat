@@ -29,6 +29,7 @@ import java.util.TreeSet;
 
 import org.apache.rat.api.Document;
 import org.apache.rat.config.exclusion.ExclusionUtils;
+import org.apache.rat.utils.DefaultLog;
 
 /**
  * Document wrapping a File object.
@@ -52,11 +53,14 @@ public class FileDocument extends Document {
     /**
      * Creates a File document where the baseDir is the root directory.
      * @param file the file to wrap.
-     * @param nameExcluder the path matcher to filter files/directories with.
+     * @param nameMatcher the path matcher to filter files/directories with.
      */
-    public FileDocument(final File file, final DocumentNameMatcher nameExcluder) {
-        super(DocumentName.builder(file).setBaseName(File.separator).build(), nameExcluder);
+    public FileDocument(final File file, final DocumentNameMatcher nameMatcher) {
+        super(DocumentName.builder(file).setBaseName(File.separator).build(), nameMatcher);
         this.file = file;
+        DefaultLog.getInstance().info("Created file document " + file.getAbsolutePath());
+        DefaultLog.getInstance().info("... as " + this.getName().getName());
+        DefaultLog.getInstance().info("... on root " + this.getName().getRoot());
     }
 
     @Override
