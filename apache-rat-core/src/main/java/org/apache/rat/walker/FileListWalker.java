@@ -68,7 +68,7 @@ public class FileListWalker implements IReportable {
             unixFileName.replace("/", sourceName.getDirectorySeparator());
         FileDocument documentBase = unixFileName.startsWith("/") ? rootDoc : baseDoc;
         File documentFile = new File(documentBase.getFile(), finalName).getAbsoluteFile();
-        DefaultLog.getInstance().info("Created file document on " + documentFile);
+        DefaultLog.getInstance().info("Creating document from " + unixFileName);
         return new FileDocument(rootDoc.getName(), documentFile, DocumentNameMatcher.MATCHES_ALL);
     }
 
