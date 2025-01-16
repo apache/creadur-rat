@@ -29,7 +29,6 @@ import java.util.TreeSet;
 
 import org.apache.rat.api.Document;
 import org.apache.rat.config.exclusion.ExclusionUtils;
-import org.apache.rat.utils.DefaultLog;
 
 /**
  * Document wrapping a File object.
@@ -48,9 +47,6 @@ public class FileDocument extends Document {
     public FileDocument(final DocumentName basedir, final File file, final DocumentNameMatcher nameMatcher) {
         super(DocumentName.builder(file).setBaseName(basedir.getBaseName()).build(), nameMatcher);
         this.file = file;
-        DefaultLog.getInstance().info("Created file document on " + file);
-        DefaultLog.getInstance().info("... as " + getName().getName());
-        DefaultLog.getInstance().info("... on " + getName().getRoot());
     }
 
     /**
