@@ -629,7 +629,7 @@ public class DocumentName implements Comparable<DocumentName> {
         }
 
         /**
-         * Sets the properties from the file.  Will reset the baseName appropraitly.
+         * Sets the properties from the file.  Will reset the baseName appropriately.
          * @param file the file to set the properties from.
          * @return this.
          */

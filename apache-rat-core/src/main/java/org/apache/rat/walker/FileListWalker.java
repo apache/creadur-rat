@@ -25,6 +25,7 @@ import java.io.Reader;
 import org.apache.commons.io.IOUtils;
 import org.apache.rat.api.RatException;
 import org.apache.rat.commandline.Arg;
+import org.apache.rat.config.exclusion.ExclusionUtils;
 import org.apache.rat.document.DocumentName;
 import org.apache.rat.document.DocumentNameMatcher;
 import org.apache.rat.document.FileDocument;
@@ -40,36 +41,32 @@ public class FileListWalker implements IReportable {
     /** The source document name */
     private final FileDocument source;
     /** The root document name */
-    private final FileDocument rootDoc;
+    private final DocumentName rootDoc;
     /** the base directory for the source document */
-    private final FileDocument baseDoc;
+    private final DocumentName baseDoc;
 
     /**
      * Constructor.
      * @param source The file document that is the source from which this walker will read.
      */
     public FileListWalker(final FileDocument source) {
-        DefaultLog.getInstance().info("Created file list document on " + source.getName().getName());
-        DefaultLog.getInstance().info("... on root " + source.getName().getRoot());
         this.source = source;
         File baseDir = source.getFile().getParentFile().getAbsoluteFile();
-        this.baseDoc = new FileDocument(baseDir, DocumentNameMatcher.MATCHES_ALL);
+        this.baseDoc = DocumentName.builder(baseDir).build();
         File p = baseDir;
         while (p.getParentFile() != null) {
             p = p.getParentFile();
         }
-        File rootDir = p;
-        rootDoc = new FileDocument(rootDir, DocumentNameMatcher.MATCHES_ALL);
+        this.rootDoc = DocumentName.builder(p).build();
     }
 
     private FileDocument createDocument(final String unixFileName) {
         DocumentName sourceName = source.getName();
-        String finalName = "/".equals(sourceName.getDirectorySeparator()) ? unixFileName :
-            unixFileName.replace("/", sourceName.getDirectorySeparator());
-        FileDocument documentBase = unixFileName.startsWith("/") ? rootDoc : baseDoc;
-        File documentFile = new File(documentBase.getFile(), finalName).getAbsoluteFile();
-        DefaultLog.getInstance().info("Creating document from " + unixFileName);
-        return new FileDocument(rootDoc.getName(), documentFile, DocumentNameMatcher.MATCHES_ALL);
+        String finalName = ExclusionUtils.convertSeparator(unixFileName, "/", sourceName.getDirectorySeparator());
+        DocumentName documentBase = unixFileName.startsWith("/") ? rootDoc : baseDoc;
+        DocumentName documentName = documentBase.resolve(finalName);
+        File documentFile = documentName.asFile();
+        return new FileDocument(documentBase, documentFile, DocumentNameMatcher.MATCHES_ALL);
     }
 
     @Override

@@ -83,7 +83,7 @@ public class FileListWalkerTest {
 
 
         source = new File(working, "source.txt");
-        DocumentName sourceName = DocumentName.builder(source).setBaseName(working.getAbsolutePath()).build();
+        DocumentName sourceName = DocumentName.builder(source).build();
         File regular = new File(working, "regular");
         regular.mkdir();
         fileWriter(regular, "regularFile", "regular file");
@@ -110,14 +110,11 @@ public class FileListWalkerTest {
             writer.flush();
             System.out.flush();
         }
-
-        hiddenName = DocumentName.builder(hiddenFile).setBaseName(rootName.getBaseName()).build();
     }
     
     @Test
     public void readFilesTest() throws RatException {
-        FileDocument fileDocument = new FileDocument(source, DocumentNameMatcher.MATCHES_ALL);
-        FileListWalker walker = new FileListWalker(fileDocument);
+        FileListWalker walker = new FileListWalker(new FileDocument(source, DocumentNameMatcher.MATCHES_ALL));
         List<String> scanned = new ArrayList<>();
         walker.run(new TestRatReport(scanned));
         String[] expected = {regularName.localized("/"), hiddenName.localized("/"),
