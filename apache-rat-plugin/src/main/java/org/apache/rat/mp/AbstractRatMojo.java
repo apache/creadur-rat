@@ -78,7 +78,7 @@ public abstract class AbstractRatMojo extends BaseRatMojo {
      * Specifies the licenses to accept. By default, these are added to the default
      * licenses, unless you set &lt;addDefaultLicenseMatchers&gt; to false. Arguments should be
      * file name of &lt;Configs&gt; file structure.
-     * @deprecated Use &lt;config&gt;.
+     * @deprecated Use specific configuration under &lt;configuration&gt;.
      * @since 0.8
      */
     @Parameter
@@ -87,7 +87,7 @@ public abstract class AbstractRatMojo extends BaseRatMojo {
 
     /**
      * Specifies the additional licenses file.
-     * @deprecated Use &lt;config&gt;.
+     * @deprecated Use specific configuration under &lt;configuration&gt;.
      */
     @Parameter
     @Deprecated
@@ -105,21 +105,21 @@ public abstract class AbstractRatMojo extends BaseRatMojo {
 
     /**
      * Whether to add the default list of license matchers.
-     * @deprecated Use &lt;config&gt;.
+     * @deprecated @deprecated Use specific configuration under &lt;configuration&gt;.
      */
     @Deprecated
     @Parameter(property = "rat.addDefaultLicenseMatchers")
     private boolean addDefaultLicenseMatchers;
 
     /** The list of approved licenses
-     * @deprecated Use &lt;config&gt;.
+     * @deprecated @deprecated Use specific configuration under &lt;configuration&gt;.
      */
     @Deprecated
     @Parameter(required = false)
     private String[] approvedLicenses;
 
     /** The file of approved licenses
-     * @deprecated Use &lt;config&gt;.
+     * @deprecated @deprecated Use specific configuration under &lt;configuration&gt;.
      */
     @Deprecated
     @Parameter(property = "rat.approvedFile")
@@ -136,14 +136,14 @@ public abstract class AbstractRatMojo extends BaseRatMojo {
     private SimpleLicenseFamily[] licenseFamilies;
 
     /** The list of license definitions.
-     * @deprecated Deprecated for removal since 0.17: Use &lt;Config&gt; instead. See configuration file documentation.
+     * @deprecated Deprecated for removal since 0.17: Use specific configuration under &lt;configuration&gt;. See configuration file documentation.
      */
     @Deprecated
     @Parameter
     private Object[] licenses;
 
     /** The list of family definitions.
-     * @deprecated Use &lt;Configs&gt;.
+     * @deprecated Use specific configuration under &lt;configuration&gt;.
      */
     @Deprecated
     @Parameter
