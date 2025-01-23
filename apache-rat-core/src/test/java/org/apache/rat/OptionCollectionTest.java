@@ -18,7 +18,6 @@
  */
 package org.apache.rat;
 
-import java.nio.file.Path;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.Option;
@@ -53,7 +52,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import static java.lang.String.format;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.fail;
 
 public class OptionCollectionTest {

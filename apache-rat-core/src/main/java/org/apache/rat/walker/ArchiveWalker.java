@@ -43,7 +43,7 @@ import org.apache.rat.utils.DefaultLog;
 import static java.lang.String.format;
 
 /**
- * Walks various kinds of archives files
+ * Walks various kinds of archives files.
  */
 public class ArchiveWalker extends Walker {
 
@@ -69,7 +69,7 @@ public class ArchiveWalker extends Walker {
     }
 
     /**
-     * Creates an input stream from the Directory being walked.
+     * Creates an input stream from the directory being walked.
      * @return A buffered input stream reading the archive data.
      * @throws IOException on error
      */
@@ -83,7 +83,6 @@ public class ArchiveWalker extends Walker {
      */
     public Collection<Document> getDocuments() throws RatException {
         List<Document> result = new ArrayList<>();
-        //DocumentName.FSInfo archiveInfo = new DocumentName.FSInfo(true, Arrays.asList("/"), "/");
         try (ArchiveInputStream<? extends ArchiveEntry> input = new ArchiveStreamFactory().createArchiveInputStream(createInputStream())) {
             ArchiveEntry entry;
             while ((entry = input.getNextEntry()) != null) {

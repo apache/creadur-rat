@@ -43,11 +43,11 @@ import org.apache.commons.lang3.tuple.Pair;
  * The name for a document.  The {@code DocumentName} is an immutable structure that handles all the intricacies of file
  * naming on various operating systems. DocumentNames have several components:
  * <ul>
- *     <li>{@code root} - Where in the file system the name starts (e.g C: on windows). May be empty but not null.</li>
+ *     <li>{@code root} - where in the file system the name starts (e.g C: on windows). May be empty but not null.</li>
  *     <li>{@code dirSeparator} - the separator between name segments (e.g. "\\" on windows, "/" on linux). May not be
  *     empty or null.</li>
- *     <li>{@code name} - The name of the file relative to the {@code root}. May not be null. Does NOT begin with a {@code dirSeparator}</li>
- *     <li>{@code baseName} - The name of a directory or file from which this file is reported. A DocumentName with a
+ *     <li>{@code name} - the name of the file relative to the {@code root}. May not be null. Does NOT begin with a {@code dirSeparator}</li>
+ *     <li>{@code baseName} - the name of a directory or file from which this file is reported. A DocumentName with a
  *     {@code name} of "foo/bar/baz.txt" and a {@code baseName} of "foo" will be reported as "bar/baz.txt". May not be null.</li>
  *     <li>{@code isCaseSensitive} - identifies if the underlying file system is case-sensitive.</li>
  * </ul>
@@ -60,7 +60,6 @@ public class DocumentName implements Comparable<DocumentName> {
     /** The full name for the document. */
     private final String name;
     /** The name of the base directory for the document. */
-    //private final String baseName;
     private final DocumentName baseName;
     /** The file system info for this document. */
     private final FSInfo fsInfo;
@@ -133,7 +132,7 @@ public class DocumentName implements Comparable<DocumentName> {
     }
 
     /**
-     * Creates a builder from a File.  The {@link #baseName} is set to the file name if it is a directory otherwise
+     * Creates a builder from a File. The {@link #baseName} is set to the file name if it is a directory otherwise
      * it is set to the directory containing the file.
      * @param file The file to set defaults from.
      * @return the Builder.
@@ -172,15 +171,15 @@ public class DocumentName implements Comparable<DocumentName> {
 
     /**
      * Creates a path from the document name.
-     * @return an new Path object.
+     * @return a new Path object.
      */
     public Path asPath() {
         return Paths.get(name);
     }
 
     /**
-     * Creates a new DocumentName by adding the child to the current name.  Resulting documentName will
-     * have the same base name.
+     * Creates a new DocumentName by adding the child to the current name.
+     * Resulting documentName will have the same base name.
      * @param child the child to add (must use directory separator from this document name).
      * @return the new document name with the same {@link #baseName}, directory sensitivity and case sensitivity as
      * this one.
@@ -242,10 +241,10 @@ public class DocumentName implements Comparable<DocumentName> {
 
     /**
      * Determines if the candidate starts with the root or separator strings.
-     * @param candidate the candidate ot check. If blank method will return false.
+     * @param candidate the candidate ot check. If blank method will return {@code false}.
      * @param root the root to check. If blank the root check is skipped.
      * @param separator the separator to check. If blank the check is skipped.
-     * @return true if either the root or separator check returned true.
+     * @return true if either the root or separator check returned {@code true}.
      */
     boolean startsWithRootOrSeparator(final String candidate, final String root, final String separator) {
         if (StringUtils.isBlank(candidate)) {
@@ -338,16 +337,16 @@ public class DocumentName implements Comparable<DocumentName> {
     }
 
     /**
-     * The File system information needed to process document names.
+     * The file system information needed to process document names.
      */
     public static class FSInfo implements Comparable<FSInfo> {
-        /** The common name for the file system this Info represents */
+        /** The common name for the file system this Info represents. */
         private final String name;
-        /** The separator between directory names */
+        /** The separator between directory names. */
         private final String separator;
         /** The case-sensitivity flag. */
         private final boolean isCaseSensitive;
-        /** The list of roots for the file system */
+        /** The list of roots for the file system. */
         private final List<String> roots;
 
         public static FSInfo getDefault() {
@@ -384,8 +383,9 @@ public class DocumentName implements Comparable<DocumentName> {
         public String toString() {
             return name;
         }
+
         /**
-         * Constructor for virtual/abstract file systems for example the entry names within an an archive.
+         * Constructor for virtual/abstract file systems for example the entry names within an archive.
          * @param separator the separator string to use.
          * @param isCaseSensitive the case-sensitivity flag.
          * @param roots the roots for the file system.
@@ -429,7 +429,7 @@ public class DocumentName implements Comparable<DocumentName> {
 
         /**
          * Tokenizes the string based on the directory separator of this DocumentName.
-         * @param source the source to tokenize
+         * @param source the source to tokenize.
          * @return the array of tokenized strings.
          */
         public String[] tokenize(final String source) {
@@ -437,7 +437,7 @@ public class DocumentName implements Comparable<DocumentName> {
         }
 
         /**
-         * Removes "." and ".." from filenames names.
+         * Removes {@code .} and {@code ..} from filenames.
          * @param pattern the file name pattern
          * @return the normalized file name.
          */
@@ -450,7 +450,7 @@ public class DocumentName implements Comparable<DocumentName> {
                 String part = parts.get(i);
                 if (part.equals("..")) {
                     if (i == 0) {
-                        throw new IllegalStateException("can not creat path before root");
+                        throw new IllegalStateException("Unable to create path before root");
                     }
                     parts.set(i - 1, null);
                     parts.set(i, null);
@@ -481,15 +481,15 @@ public class DocumentName implements Comparable<DocumentName> {
      * The Builder for a DocumentName.
      */
     public static final class Builder {
-        /** The name for the document */
+        /** The name for the document. */
         private String name;
-        /** The base name for the document */
+        /** The base name for the document. */
         private DocumentName baseName;
-        /** The file system info */
+        /** The file system info. */
         private final FSInfo fsInfo;
-        /** The file system root */
+        /** The file system root. */
         private String root;
-        /** A flag for baseName same as this */
+        /** A flag for baseName same as this. */
         private boolean sameNameFlag;
 
         /**
@@ -517,9 +517,9 @@ public class DocumentName implements Comparable<DocumentName> {
         }
 
         /**
-         * Used in testing
+         * Used in testing.
          * @param fsInfo the FSInfo for the file.
-         * @param file the file to process
+         * @param file the file to process.
          */
         Builder(final FSInfo fsInfo, final File file) {
             this(fsInfo);
@@ -549,12 +549,12 @@ public class DocumentName implements Comparable<DocumentName> {
          * Verify that the builder will build a proper DocumentName.
          */
         private void verify() {
-            Objects.requireNonNull(name, "Name cannot be null");
+            Objects.requireNonNull(name, "Name must not be null");
             if (name.startsWith(fsInfo.dirSeparator())) {
                 name = name.substring(fsInfo.dirSeparator().length());
             }
             if (!sameNameFlag) {
-                Objects.requireNonNull(baseName, "Basename cannot be null");
+                Objects.requireNonNull(baseName, "Basename must not be null");
             }
         }
 
@@ -569,13 +569,13 @@ public class DocumentName implements Comparable<DocumentName> {
         }
 
         /**
-         * Sets the name for this DocumentName relative to the baseName.  If the {@code name} is null
-         * an empty string is used.
+         * Sets the name for this DocumentName relative to the baseName.
+         * If the {@code name} is {@code null} an empty string is used.
          * <p>
          *     To correctly parse the string it must use the directory separator specified by
          *     this Document.
          * </p>
-         * @param name the name for this Document name.  Will be made relative to the baseName
+         * @param name the name for this Document name. Will be made relative to the baseName.
          * @return this
          */
         public Builder setName(final String name) {
@@ -629,7 +629,7 @@ public class DocumentName implements Comparable<DocumentName> {
         }
 
         /**
-         * Sets the properties from the file.  Will reset the baseName appropriately.
+         * Sets the properties from the file. Will reset the baseName appropriately.
          * @param file the file to set the properties from.
          * @return this.
          */

@@ -244,7 +244,7 @@ public abstract class AbstractOptionsProvider implements ArgumentsProvider {
         return DocumentName.builder(new File(baseDir, name)).build();
     }
 
-    /* tests to be implemented */
+    /* Tests to be implemented */
     protected abstract void helpTest();
 
     /* Display the option and value under test */
