@@ -172,22 +172,6 @@ public class ExclusionProcessor {
     }
 
     /**
-     * Adds to lists of qualified file patterns. Non-matching patterns start with a {@code !}.
-     * @param matching the list to put matching file patterns into.
-     * @param notMatching the list to put non-matching files patterns into.
-     * @param patterns the patterns to match.
-     */
-    private void segregateList(final Set<String> matching, final Set<String> notMatching,
-                               final Iterable<String> patterns) {
-        if (patterns.iterator().hasNext()) {
-            ExtendedIterator.create(patterns.iterator()).filter(ExclusionUtils.MATCH_FILTER).forEachRemaining(matching::add);
-            ExtendedIterator.create(patterns.iterator()).filter(ExclusionUtils.NOT_MATCH_FILTER)
-                    .map(s -> s.substring(1))
-                    .forEachRemaining(notMatching::add);
-        }
-    }
-
-    /**
      * Creates a Document name matcher that will return {@code false} on any
      * document that is excluded.
      * @param basedir the base directory to make everything relative to.
