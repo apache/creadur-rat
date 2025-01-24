@@ -99,7 +99,7 @@ public class DescriptionBuilderTest {
 
     /** Class to build a list of documents that are class files. */
     private static class DocumentProcessor implements Consumer<Document> {
-        SortedSet<Document> documents = new TreeSet<>();
+        final SortedSet<Document> documents = new TreeSet<>();
         @Override
         public void accept(Document document) {
             if (document.isDirectory()) {
