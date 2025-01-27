@@ -18,6 +18,7 @@
  */
 package org.apache.rat;
 
+import java.nio.file.Path;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.Option;
