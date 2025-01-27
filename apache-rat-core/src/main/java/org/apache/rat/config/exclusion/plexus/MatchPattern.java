@@ -84,8 +84,8 @@ public final class MatchPattern {
         } else {
             result = SelectorUtils.matchAntPathPattern(getTokenizedPathChars(), strDirs, isCaseSensitive);
         }
-        if (DefaultLog.getInstance().isEnabled(Log.Level.DEBUG)) {
-            DefaultLog.getInstance().debug(format("%s match %s -> %s", this, str, result));
+        if (result && DefaultLog.getInstance().isEnabled(Log.Level.DEBUG)) {
+            DefaultLog.getInstance().debug(format("%s match %s -> true", this, str));
         }
         return result;
     }
@@ -117,7 +117,8 @@ public final class MatchPattern {
 
     @Override
     public String toString() {
-        return Arrays.asList(tokenized).toString();
+        return Arrays.asList(tokenized)
+                .toString();
     }
 
     public String source() {
@@ -141,5 +142,4 @@ public final class MatchPattern {
         }
         return tokenizedNameChar;
     }
-
 }

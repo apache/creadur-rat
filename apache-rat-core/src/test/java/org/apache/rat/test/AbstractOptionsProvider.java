@@ -244,7 +244,7 @@ public abstract class AbstractOptionsProvider implements ArgumentsProvider {
         return DocumentName.builder(new File(baseDir, name)).build();
     }
 
-    /* tests to be implemented */
+    /* Tests to be implemented */
     protected abstract void helpTest();
 
     /* Display the option and value under test */
@@ -344,6 +344,12 @@ public abstract class AbstractOptionsProvider implements ArgumentsProvider {
         try {
             ReportConfiguration config = generateConfig(ImmutablePair.of(option, args));
             DocumentNameMatcher excluder = config.getDocumentExcluder(baseName());
+            for (String fname : notExcluded) {
+                final DocumentName docName = mkDocName(fname);
+                assertThat(excluder.matches(docName))
+                        .as(() -> String.format("option: %s name: %s%n%s", option.getKey(), fname, excluder.decompose(docName)))
+                        .isTrue();
+            }
             for (String fname : excluded) {
                 DocumentName docName = mkDocName(fname);
                 assertThat(excluder.matches(docName)).as(() -> dump(option, fname, excluder, docName)).isFalse();
@@ -392,6 +398,12 @@ public abstract class AbstractOptionsProvider implements ArgumentsProvider {
             ReportConfiguration config = generateConfig(ImmutablePair.of(option, args),
                     ImmutablePair.of(excludeOption, EXCLUDE_ARGS));
             DocumentNameMatcher excluder = config.getDocumentExcluder(baseName());
+            for (String fname : notExcluded) {
+                final DocumentName docName = mkDocName(fname);
+                assertThat(excluder.matches(docName))
+                        .as(() -> String.format("option: %s name: %s%n%s", option.getKey(), fname, excluder.decompose(docName)))
+                        .isTrue();
+            }
             for (String fname : excluded) {
                 DocumentName docName = mkDocName(fname);
                 assertThat(excluder.matches(docName)).as(() -> dump(option, fname, excluder, docName)).isFalse();

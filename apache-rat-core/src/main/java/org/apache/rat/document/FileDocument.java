@@ -42,20 +42,20 @@ public class FileDocument extends Document {
      * Creates a File document.
      * @param basedir the base directory for this document.
      * @param file the file to wrap.
-     * @param nameExcluder the path matcher to filter files/directories with.
+     * @param nameMatcher the path matcher to filter files/directories with.
      */
-    public FileDocument(final DocumentName basedir, final File file, final DocumentNameMatcher nameExcluder) {
-        super(DocumentName.builder(file).setBaseName(basedir.getBaseName()).build(), nameExcluder);
+    public FileDocument(final DocumentName basedir, final File file, final DocumentNameMatcher nameMatcher) {
+        super(DocumentName.builder(file).setBaseName(basedir.getBaseName()).build(), nameMatcher);
         this.file = file;
     }
 
     /**
      * Creates a File document where the baseDir is the root directory.
      * @param file the file to wrap.
-     * @param nameExcluder the path matcher to filter files/directories with.
+     * @param nameMatcher the path matcher to filter files/directories with.
      */
-    public FileDocument(final File file, final DocumentNameMatcher nameExcluder) {
-        super(DocumentName.builder(file).setBaseName(File.separator).build(), nameExcluder);
+    public FileDocument(final File file, final DocumentNameMatcher nameMatcher) {
+        super(DocumentName.builder(file).setBaseName(File.separator).build(), nameMatcher);
         this.file = file;
     }
 
@@ -70,12 +70,12 @@ public class FileDocument extends Document {
             SortedSet<Document> result = new TreeSet<>();
             File[] files = file.listFiles();
             if (files != null) {
-                FileFilter fileFilter = ExclusionUtils.asFileFilter(name, nameExcluder);
+                FileFilter fileFilter = ExclusionUtils.asFileFilter(name, nameMatcher);
                 for (File child : files) {
                     if (fileFilter.accept(child)) {
-                        result.add(new FileDocument(name, child, nameExcluder));
+                        result.add(new FileDocument(name, child, nameMatcher));
                     } else {
-                        result.add(new IgnoredDocument(name, child, nameExcluder));
+                        result.add(new IgnoredDocument(name, child, nameMatcher));
                     }
                 }
             }
