@@ -23,7 +23,6 @@ import java.io.FileFilter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Optional;
@@ -161,7 +160,7 @@ public final class DocumentNameMatcher {
 
     /**
      * Decomposes the matcher execution against the candidate.
-     * @param candidate the candiate to check.
+     * @param candidate the candidate to check.
      * @return a list of {@link DecomposeData} for each evaluation in the matcher.
      */
     public List<DecomposeData> decompose(final DocumentName candidate) {
@@ -181,7 +180,7 @@ public final class DocumentNameMatcher {
      * @return true if the documentName matchers this DocumentNameMatcher.
      */
     public boolean matches(final DocumentName documentName) {
-        return predicate.test(documentName);
+            return predicate.test(documentName);
     }
 
     /**
@@ -303,7 +302,19 @@ public final class DocumentNameMatcher {
             return MATCHES_ALL;
         }
         List<DocumentNameMatcher> workingSet = Arrays.asList(includes, excludes);
-        return new DocumentNameMatcher(format("matcherSet(%s)", join(workingSet)), new MatcherPredicate(workingSet));
+        return new DocumentNameMatcher(format("matcherSet(%s)", join(workingSet)),
+                new CollectionPredicateImpl(Arrays.asList(includes, excludes)) {
+                    @Override
+                    public boolean test(final DocumentName documentName) {
+                        if (includes.matches(documentName)) {
+                            return true;
+                        }
+                        if (excludes.matches(documentName)) {
+                            return false;
+                        }
+                        return true;
+                    }
+                });
     }
 
     /**
@@ -321,7 +332,7 @@ public final class DocumentNameMatcher {
      * A DocumentName predicate that uses MatchPatterns.
      */
     public static final class MatchPatternsPredicate implements Predicate<DocumentName> {
-        /** The base diirectory for the pattern matches */
+        /** The base directory for the pattern matches */
         private final DocumentName basedir;
         /** The patter matchers */
         private final MatchPatterns patterns;
@@ -399,8 +410,8 @@ public final class DocumentNameMatcher {
         private final Iterable<DocumentNameMatcher> matchers;
 
         /**
-         * Constructs a collecton predicate from the collection of matchers
-         * @param matchers the colleciton of matchers to use.
+         * Constructs a collection predicate from the collection of matchers
+         * @param matchers the collection of matchers to use.
          */
         protected CollectionPredicateImpl(final Iterable<DocumentNameMatcher> matchers) {
             this.matchers = matchers;
@@ -460,30 +471,6 @@ public final class DocumentNameMatcher {
                 }
             }
             return false;
-        }
-    }
-
-    /**
-     * An implementation of "or" logic across a collection of DocumentNameMatchers.
-     */
-    // package private for testing access
-    static class MatcherPredicate extends CollectionPredicateImpl {
-        MatcherPredicate(final Iterable<DocumentNameMatcher> matchers) {
-            super(matchers);
-        }
-
-        @Override
-        public boolean test(final DocumentName documentName) {
-            Iterator<DocumentNameMatcher> iter = getMatchers().iterator();
-            // included
-            if (iter.next().matches(documentName)) {
-                return true;
-            }
-            // excluded
-            if (iter.next().matches(documentName)) {
-                return false;
-            }
-            return true;
         }
     }
 
