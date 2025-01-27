@@ -59,6 +59,7 @@ public class ReportOptionTest  {
     @ParameterizedTest
     @ArgumentsSource(AntOptionsProvider.class)
     public void testOptionsUpdateConfig(String name, OptionCollectionTest.OptionTest test) {
+        DefaultLog.getInstance().info("Running " + name);
         test.test();
     }
 

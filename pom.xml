@@ -198,7 +198,7 @@ agnostic home for software distribution comprehension and audit tools.
       <dependency>
         <groupId>org.assertj</groupId>
         <artifactId>assertj-core</artifactId>
-        <version>3.27.1</version>
+        <version>3.27.3</version>
         <scope>test</scope>
       </dependency>
       <dependency>
@@ -385,7 +385,7 @@ agnostic home for software distribution comprehension and audit tools.
           <artifactId>spotbugs-maven-plugin</artifactId>
           <version>4.8.6.6</version>
           <configuration>
-            <!-- RAT-369: JDK21 finds 94 errors, while older releases find fewer -->
+            <!-- RAT-369: JDK21 finds 98 errors, while older releases find fewer -->
             <maxAllowedViolations>98</maxAllowedViolations>
             <failOnError>true</failOnError>
             <!-- we only want to see our own problems in all subpackages -->
@@ -495,7 +495,7 @@ agnostic home for software distribution comprehension and audit tools.
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-remote-resources-plugin</artifactId>
-          <version>3.2.0</version>
+          <version>3.3.0</version>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>

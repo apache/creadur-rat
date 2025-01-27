@@ -72,6 +72,9 @@ The <action> type attribute can be one of:
     </release>
     -->
     <release version="0.17-SNAPSHOT" date="xxxx-yy-zz" description="Current SNAPSHOT - release to be done">
+      <action issue="RAT-471" type="add" dev="pottlinger" due-to="clayjohnson">
+        Integrate Creadur RAT into the updated develocity.apache.org instance.
+      </action>
       <action issue="RAT-469" type="add" dev="claudenw" due-to="pottlinger">
         Verify that projects that configure valid other licenses than the defaults, report correctly as well.
       </action>

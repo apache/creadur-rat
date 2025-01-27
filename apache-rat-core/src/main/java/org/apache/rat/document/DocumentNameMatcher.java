@@ -45,7 +45,7 @@ public final class DocumentNameMatcher {
     private final Predicate<DocumentName> predicate;
     /** The name of this matcher. */
     private final String name;
-    /** {@code true} this this matcher is a collection of matchers */
+    /** {@code true} if this matcher is a collection of matchers. */
     private final boolean isCollection;
 
     /**
@@ -90,8 +90,8 @@ public final class DocumentNameMatcher {
 
     /**
      * Tokenizes name for faster Matcher processing.
-     * @param name the name to tokenize
-     * @param dirSeparator the directory separator
+     * @param name the name to tokenize.
+     * @param dirSeparator the directory separator.
      * @return the tokenized name.
      */
     private static char[][] tokenize(final String name, final String dirSeparator) {
@@ -161,7 +161,7 @@ public final class DocumentNameMatcher {
 
     /**
      * Decomposes the matcher execution against the candidate.
-     * @param candidate the candiate to check.
+     * @param candidate the candidate to check.
      * @return a list of {@link DecomposeData} for each evaluation in the matcher.
      */
     public List<DecomposeData> decompose(final DocumentName candidate) {
@@ -315,15 +315,13 @@ public final class DocumentNameMatcher {
         return and(Arrays.asList(matchers));
     }
 
-
-
     /**
-     * A DocumentName predicate that uses MatchPatterns.
+     * A DocumentName predicate that uses {@link MatchPatterns}.
      */
     public static final class MatchPatternsPredicate implements Predicate<DocumentName> {
-        /** The base diirectory for the pattern matches */
+        /** The base directory for the pattern matches. */
         private final DocumentName basedir;
-        /** The patter matchers */
+        /** The pattern matchers. */
         private final MatchPatterns patterns;
 
         private MatchPatternsPredicate(final DocumentName basedir, final MatchPatterns patterns) {
@@ -345,7 +343,7 @@ public final class DocumentNameMatcher {
     }
 
     /**
-     * A DocumentName predicate reverses another DocumentNameMatcher
+     * A DocumentName predicate that reverses another DocumentNameMatcher.
      */
     public static final class NotPredicate implements Predicate<DocumentName> {
         /** The document name matcher to reverse */
@@ -367,10 +365,10 @@ public final class DocumentNameMatcher {
     }
 
     /**
-     * A DocumentName predicate that uses FileFilter.
+     * A DocumentName predicate that uses {@link FileFilter}.
      */
     public static final class FileFilterPredicate implements Predicate<DocumentName> {
-        /** The file filter */
+        /** The file filter. */
         private final FileFilter fileFilter;
 
         private FileFilterPredicate(final FileFilter fileFilter) {
@@ -388,19 +386,23 @@ public final class DocumentNameMatcher {
         }
     }
 
+    /**
+     * A marker interface to indicate this predicate contains a collection of matchers.
+     */
     interface CollectionPredicate extends Predicate<DocumentName> {
         Iterable<DocumentNameMatcher> getMatchers();
     }
+
     /**
-     * A marker interface to indicate this predicate contains a collection of matchers.
+     * A marker class to indicate this predicate contains a collection of matchers.
      */
     abstract static class CollectionPredicateImpl implements CollectionPredicate {
         /** The collection for matchers that make up this predicate */
         private final Iterable<DocumentNameMatcher> matchers;
 
         /**
-         * Constructs a collecton predicate from the collection of matchers
-         * @param matchers the colleciton of matchers to use.
+         * Constructs a collection predicate from the collection of matchers.
+         * @param matchers the collection of matchers to use.
          */
         protected CollectionPredicateImpl(final Iterable<DocumentNameMatcher> matchers) {
             this.matchers = matchers;
@@ -414,6 +416,7 @@ public final class DocumentNameMatcher {
             return matchers;
         }
 
+        @Override
         public String toString() {
             StringBuilder builder = new StringBuilder(this.getClass().getName()).append(": ").append(System.lineSeparator());
             for (DocumentNameMatcher matcher : matchers) {
@@ -480,10 +483,7 @@ public final class DocumentNameMatcher {
                 return true;
             }
             // excluded
-            if (iter.next().matches(documentName)) {
-                return false;
-            }
-            return true;
+            return !iter.next().matches(documentName);
         }
     }
 
@@ -491,13 +491,13 @@ public final class DocumentNameMatcher {
      * Data from a {@link DocumentNameMatcher#decompose(DocumentName)} call.
      */
     public static final class DecomposeData {
-        /** the level this data was generated at */
+        /** The level this data was generated at. */
         private final int level;
-        /** The name of the DocumentNameMatcher that created this result */
+        /** The name of the DocumentNameMatcher that created this result. */
         private final DocumentNameMatcher matcher;
         /** The result of the check. */
         private final boolean result;
-        /** The candidate */
+        /** The actual candidate. */
         private final DocumentName candidate;
 
         private DecomposeData(final int level, final DocumentNameMatcher matcher, final DocumentName candidate, final boolean result) {

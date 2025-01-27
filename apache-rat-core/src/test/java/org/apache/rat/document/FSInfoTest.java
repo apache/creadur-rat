@@ -23,9 +23,7 @@ import com.google.common.jimfs.Jimfs;
 import java.io.IOException;
 import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import java.util.stream.Stream;
 import org.junit.jupiter.params.provider.Arguments;
 
@@ -51,7 +49,7 @@ public class FSInfoTest {
     public static final DocumentName.FSInfo[] TEST_SUITE = {UNIX, WINDOWS, OSX};
 
     /**
-     * Provided arguments for parameterized tests that only require the fsInfo.
+     * Provides arguments for parameterized tests that only require the fsInfo.
      * @return a stream of TEST_SUITE based Arguments.
      */
     public static Stream<Arguments> fsInfoArgs() {

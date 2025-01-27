@@ -29,6 +29,7 @@ import org.apache.rat.test.AbstractOptionsProvider;
 import org.apache.rat.OptionCollectionTest;
 import org.apache.rat.ReportConfiguration;
 import org.apache.rat.plugin.BaseRatMojo;
+import org.apache.rat.utils.DefaultLog;
 import org.codehaus.plexus.component.configurator.ComponentConfigurationException;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
@@ -84,6 +85,7 @@ public class OptionMojoTest {
     @ParameterizedTest
     @ArgumentsSource(MojoOptionsProvider.class)
     void testOptionsUpdateConfig(String name, OptionCollectionTest.OptionTest test) {
+        DefaultLog.getInstance().info("Running " + name);
         test.test();
     }
 

@@ -38,11 +38,11 @@ import org.apache.rat.utils.DefaultLog;
  * internally.
  */
 public class FileListWalker implements IReportable {
-    /** The source document name */
+    /** The source document name. */
     private final FileDocument source;
-    /** The root document name */
+    /** The root document name. */
     private final DocumentName rootDoc;
-    /** the base directory for the source document */
+    /** The base directory for the source document. */
     private final DocumentName baseDoc;
 
     /**
