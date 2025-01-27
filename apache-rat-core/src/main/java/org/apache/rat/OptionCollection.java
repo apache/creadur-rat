@@ -132,25 +132,28 @@ public final class OptionCollection {
     /**
      * Parses the standard options to create a ReportConfiguration.
      *
+     * @param workingDirectory The directory to resolve relative file names against.
      * @param args the arguments to parse
      * @param helpCmd the help command to run when necessary.
      * @return a ReportConfiguration or null if Help was printed.
      * @throws IOException on error.
      */
-    public static ReportConfiguration parseCommands(final String[] args, final Consumer<Options> helpCmd) throws IOException {
-        return parseCommands(args, helpCmd, false);
+    public static ReportConfiguration parseCommands(final File workingDirectory, final String[] args, final Consumer<Options> helpCmd) throws IOException {
+        return parseCommands(workingDirectory, args, helpCmd, false);
     }
 
     /**
      * Parses the standard options to create a ReportConfiguration.
      *
+     * @param workingDirectory The directory to resolve relative file names against.
      * @param args the arguments to parse
      * @param helpCmd the help command to run when necessary.
      * @param noArgs If true then the commands do not need extra arguments
      * @return a ReportConfiguration or {@code null} if Help was printed.
      * @throws IOException on error.
      */
-    public static ReportConfiguration parseCommands(final String[] args, final Consumer<Options> helpCmd, final boolean noArgs) throws IOException {
+    public static ReportConfiguration parseCommands(final File workingDirectory, final String[] args,
+                                                    final Consumer<Options> helpCmd, final boolean noArgs) throws IOException {
         Options opts = buildOptions();
         CommandLine commandLine;
         try {
@@ -166,27 +169,23 @@ public final class OptionCollection {
 
         Arg.processLogLevel(commandLine);
 
+        ArgumentContext argumentContext = new ArgumentContext(workingDirectory, commandLine);
         if (commandLine.hasOption(HELP)) {
             helpCmd.accept(opts);
             return null;
         }
 
         if (commandLine.hasOption(HELP_LICENSES)) {
-            new Licenses(createConfiguration(commandLine), new PrintWriter(System.out)).printHelp();
-            return null;
-        }
-
-        if (commandLine.hasOption(HELP_LICENSES)) {
-            new Licenses(createConfiguration(commandLine), new PrintWriter(System.out)).printHelp();
+            new Licenses(createConfiguration(argumentContext), new PrintWriter(System.out)).printHelp();
             return null;
         }
 
         if (commandLine.hasOption(Arg.HELP_LICENSES.option())) {
-            new Licenses(createConfiguration(commandLine), new PrintWriter(System.out)).printHelp();
+            new Licenses(createConfiguration(argumentContext), new PrintWriter(System.out)).printHelp();
             return null;
         }
 
-        ReportConfiguration configuration = createConfiguration(commandLine);
+        ReportConfiguration configuration = createConfiguration(argumentContext);
         if (!noArgs && !configuration.hasSource()) {
             String msg = "No directories or files specified for scanning. Did you forget to close a multi-argument option?";
             DefaultLog.getInstance().error(msg);
@@ -201,14 +200,15 @@ public final class OptionCollection {
      * Create the report configuration.
      * Note: this method is package private for testing.
      * You probably want one of the {@code ParseCommands} methods.
-     * @param commandLine the parsed command line.
+     * @param argumentContext The context to execute in.
      * @return a ReportConfiguration
-     * @see #parseCommands(String[], Consumer)
-     * @see #parseCommands(String[], Consumer, boolean)
+     * @see #parseCommands(File, String[], Consumer)
+     * @see #parseCommands(File, String[], Consumer, boolean)
      */
-    static ReportConfiguration createConfiguration(final CommandLine commandLine) {
-        final ReportConfiguration configuration = new ReportConfiguration();
-        new ArgumentContext(configuration, commandLine).processArgs();
+    static ReportConfiguration createConfiguration(final ArgumentContext argumentContext) {
+        argumentContext.processArgs();
+        final ReportConfiguration configuration = argumentContext.getConfiguration();
+        final CommandLine commandLine = argumentContext.getCommandLine();
         if (Arg.DIR.isSelected()) {
             try {
                 configuration.addSource(getReportable(commandLine.getParsedOptionValue(Arg.DIR.getSelected()), configuration));

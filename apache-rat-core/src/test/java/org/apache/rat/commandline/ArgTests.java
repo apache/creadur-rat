@@ -28,7 +28,6 @@ import org.apache.rat.ReportConfiguration;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
-
 import java.io.File;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -56,7 +55,7 @@ public class ArgTests {
 
         CommandLine commandLine = createCommandLine(new String[] {"--output-file", name});
         OutputFileConfig configuration = new OutputFileConfig();
-        ArgumentContext ctxt = new ArgumentContext(configuration, commandLine);
+        ArgumentContext ctxt = new ArgumentContext(new File("."), configuration, commandLine);
         Arg.processArgs(ctxt);
         assertEquals(expected.getAbsolutePath(), configuration.actual.getAbsolutePath());
     }

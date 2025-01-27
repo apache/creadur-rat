@@ -18,7 +18,10 @@
  */
 package org.apache.rat.test;
 
+import java.nio.file.FileSystems;
+import java.nio.file.Path;
 import org.apache.commons.cli.Option;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
@@ -30,14 +33,15 @@ import org.apache.rat.commandline.StyleSheets;
 import org.apache.rat.config.exclusion.StandardCollection;
 import org.apache.rat.document.DocumentNameMatcher;
 import org.apache.rat.document.DocumentName;
+import org.apache.rat.document.DocumentNameMatcherTest;
 import org.apache.rat.license.ILicense;
 import org.apache.rat.license.ILicenseFamily;
 import org.apache.rat.license.LicenseSetFactory;
 import org.apache.rat.report.claim.ClaimStatistic;
+import org.apache.rat.test.utils.Resources;
 import org.apache.rat.testhelpers.TextUtils;
 import org.apache.rat.utils.DefaultLog;
 import org.apache.rat.utils.Log.Level;
-import org.apache.rat.utils.ExtendedIterator;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.params.provider.Arguments;
 
@@ -61,14 +65,11 @@ import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.stream.Stream;
+import org.junit.jupiter.params.provider.ArgumentsProvider;
 
 import static org.apache.rat.commandline.Arg.HELP_LICENSES;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.assertj.core.api.Fail.fail;
 
 /**
  * A list of methods that an OptionsProvider in a test case must support.
@@ -76,26 +77,60 @@ import static org.junit.jupiter.api.Assertions.fail;
  * tests an Option from OptionCollection that must be implemented in the UI.
  * Each method in this interface tests an Option in {@link org.apache.rat.OptionCollection}.
  */
-public abstract class AbstractOptionsProvider {
-    /** A map of test Options to tests */
+public abstract class AbstractOptionsProvider implements ArgumentsProvider {
+    /**
+     * A map of test Options to tests
+     */
     protected final Map<String, OptionCollectionTest.OptionTest> testMap = new TreeMap<>();
-
-    protected static final String[] EXCLUDE_ARGS = { "*.foo", "%regex[[A-Z]\\.bar]", "justbaz"};
-    protected static final String[] INCLUDE_ARGS = { "B.bar", "justbaz" };
+    /** The list of exclude args */
+    protected static final String[] EXCLUDE_ARGS = {"*.foo", "%regex[[A-Z]\\.bar]", "justbaz"};
+    /** the list of include args */
+    protected static final String[] INCLUDE_ARGS = {"B.bar", "justbaz"};
     /**
      * The directory to place test data in.
-     * We do not use temp file here as we want the evidence to survive failure.
      */
-    protected final File baseDir;
+    protected File baseDir;
 
+    /**
+     * Copy the runtime data to the "target" directory.
+     * @param baseDir the base directory to copy to.
+     * @param targetDir the directory relative to the base directory to copy to.
+     */
+    public static void preserveData(File baseDir, String targetDir) {
+        final Path recordPath = FileSystems.getDefault().getPath("target", targetDir);
+        recordPath.toFile().mkdirs();
+        try {
+            FileUtils.copyDirectory(baseDir, recordPath.toFile());
+        } catch (IOException e) {
+            System.err.format("Unable to copy data from %s to %s%n", baseDir, recordPath);
+        }
+    }
+
+    /**
+     * Gets the document name based on the baseDir.
+     * @return The document name based on the baseDir.
+     */
     protected DocumentName baseName() {
         return DocumentName.builder(baseDir).build();
     }
 
-    protected AbstractOptionsProvider(Collection<String> unsupportedArgs) {
-        baseDir = new File("target/optionTools");
-        baseDir.mkdirs();
+    /**
+     * Copies the test data to the specified directory.
+     * @param baseDir the directory to copy the /src/test/resources to.
+     * @return the {@code baseDir} argument.
+     */
+    public static File setup(File baseDir) {
+        try {
+            final File sourceDir = Resources.getResourceDirectory("OptionTools");
+            FileUtils.copyDirectory(sourceDir, new File(baseDir,"/src/test/resources/OptionTools"));
+        } catch (IOException e) {
+            DefaultLog.getInstance().error("Can not copy 'OptionTools' to " + baseDir, e);
+        }
+        return baseDir;
+    }
 
+    protected AbstractOptionsProvider(Collection<String> unsupportedArgs, File baseDir) {
+        this.baseDir = setup(baseDir);
         testMap.put("addLicense", this::addLicenseTest);
         testMap.put("config", this::configTest);
         testMap.put("configuration-no-defaults", this::configurationNoDefaultsTest);
@@ -179,21 +214,28 @@ public abstract class AbstractOptionsProvider {
         unsupportedArgs.forEach(testMap::remove);
     }
 
+    @SafeVarargs
+    protected final ReportConfiguration generateConfig(Pair<Option, String[]>... args) throws IOException {
+        List<Pair<Option, String[]>> options = Arrays.asList(args);
+        return generateConfig(options);
+    }
+
     /**
      * Create the report configuration from the argument pairs.
      * There must be at least one arg. It may be `ImmutablePair.nullPair()`.
+     *
      * @param args Pairs comprising the argument option and the values for the option.
      * @return The generated ReportConfiguration.
      * @throws IOException on error.
      */
-    protected abstract ReportConfiguration generateConfig(Pair<Option, String[]>... args) throws IOException;
+    protected abstract ReportConfiguration generateConfig(List<Pair<Option, String[]>> args) throws IOException;
 
     protected File writeFile(String name, Iterable<String> lines) {
         File file = new File(baseDir, name);
         try (PrintWriter writer = new PrintWriter(new FileWriter(file))) {
             lines.forEach(writer::println);
         } catch (IOException e) {
-            fail(e.getMessage(), e);
+            fail(e.getMessage());
         }
         return file;
     }
@@ -205,18 +247,30 @@ public abstract class AbstractOptionsProvider {
     /* tests to be implemented */
     protected abstract void helpTest();
 
+    /* Display the option and value under test */
+    private String displayArgAndName(Option option, String fname) {
+        return String.format("%s %s", option.getLongOpt(), fname);
+    }
+
+    private String dump(Option option, String fname, DocumentNameMatcher matcher, DocumentName name) {
+        return String.format("Argument and Name: %s%nMatcher decomposition:%n%s", displayArgAndName(option, fname),
+                DocumentNameMatcherTest.processDecompose(matcher, name));
+    }
+
     // exclude tests
     private void execExcludeTest(Option option, String[] args) {
-        String[] notExcluded = { "notbaz", "well._afile"  };
-        String[] excluded = { "some.foo", "B.bar", "justbaz"};
+        String[] notExcluded = {"notbaz", "well._afile"};
+        String[] excluded = {"some.foo", "B.bar", "justbaz"};
         try {
             ReportConfiguration config = generateConfig(ImmutablePair.of(option, args));
             DocumentNameMatcher excluder = config.getDocumentExcluder(baseName());
             for (String fname : notExcluded) {
-                assertTrue(excluder.matches(mkDocName(fname)), () -> option.getKey() + " " + fname);
+                DocumentName docName = mkDocName(fname);
+                assertThat(excluder.matches(docName)).as(() -> dump(option, fname, excluder, docName)).isTrue();
             }
             for (String fname : excluded) {
-                assertFalse(excluder.matches(mkDocName(fname)), () -> option.getKey() + " " + fname);
+                DocumentName docName = mkDocName(fname);
+                assertThat(excluder.matches(docName)).as(() -> dump(option, fname, excluder, docName)).isFalse();
             }
         } catch (IOException e) {
             fail(e.getMessage());
@@ -225,7 +279,7 @@ public abstract class AbstractOptionsProvider {
 
     private void excludeFileTest(Option option) {
         File outputFile = writeFile("exclude.txt", Arrays.asList(EXCLUDE_ARGS));
-        execExcludeTest(option, new String[] {outputFile.getPath()});
+        execExcludeTest(option, new String[]{outputFile.getAbsolutePath()});
     }
 
     protected void excludeFileTest() {
@@ -246,17 +300,19 @@ public abstract class AbstractOptionsProvider {
 
     protected void inputExcludeStdTest() {
         Option option = Arg.EXCLUDE_STD.find("input-exclude-std");
-        String[] args = { StandardCollection.MISC.name() };
-        String[] excluded = { "afile~", ".#afile", "%afile%", "._afile" };
-        String[] notExcluded = { "afile~more",   "what.#afile", "%afile%withMore", "well._afile" };
+        String[] args = {StandardCollection.MISC.name()};
+        String[] excluded = {"afile~", ".#afile", "%afile%", "._afile"};
+        String[] notExcluded = {"afile~more", "what.#afile", "%afile%withMore", "well._afile"};
         try {
             ReportConfiguration config = generateConfig(ImmutablePair.of(option, args));
             DocumentNameMatcher excluder = config.getDocumentExcluder(baseName());
             for (String fname : excluded) {
-                assertFalse(excluder.matches(mkDocName(fname)), () -> option.getKey() + " " + fname);
+                DocumentName docName = mkDocName(fname);
+                assertThat(excluder.matches(docName)).as(() -> dump(option, fname, excluder, docName)).isFalse();
             }
             for (String fname : notExcluded) {
-                assertTrue(excluder.matches(mkDocName(fname)), () -> option.getKey() + " " + fname);
+                DocumentName docName = mkDocName(fname);
+                assertThat(excluder.matches(docName)).as(() -> dump(option, fname, excluder, docName)).isTrue();
             }
         } catch (IOException e) {
             fail(e.getMessage());
@@ -265,7 +321,7 @@ public abstract class AbstractOptionsProvider {
 
     protected void inputExcludeParsedScmTest() {
         Option option = Arg.EXCLUDE_PARSE_SCM.find("input-exclude-parsed-scm");
-        String[] args = { "GIT" };
+        String[] args = {"GIT"};
         String[] lines = {
                 "# somethings",
                 "!thingone", "thing*", System.lineSeparator(),
@@ -273,22 +329,28 @@ public abstract class AbstractOptionsProvider {
                 "**/fish", "*_fish",
                 "# some colorful directories",
                 "red/", "blue/*/"};
-        String[] notExcluded = { "thingone", "dir/fish_two"};
-        String[] excluded = { "thingtwo", "dir/fish", "red/fish", "blue/fish" };
+
+        String[] notExcluded = {"thingone", "dir/fish_two", "some/thingone", "blue/fish/dory" };
+        String[] excluded = {"thingtwo", "some/things", "dir/fish", "red/fish", "blue/fish", "some/fish", "another/red_fish"};
 
         writeFile(".gitignore", Arrays.asList(lines));
+        File dir = new File(baseDir, "red");
+        dir.mkdirs();
+        dir = new File(baseDir, "blue");
+        dir = new File(dir, "fish");
+        dir.mkdirs();
 
-        List<String> expected = ExtendedIterator.create(Arrays.asList("thing*", "**/fish", "*_fish", "red/**", "blue/*/**").iterator())
-                .map(s -> new File(baseDir, s).getPath()).addTo(new ArrayList<>());
-        expected.add(0, "!" + new File(baseDir, "thingone").getPath());
+
         try {
             ReportConfiguration config = generateConfig(ImmutablePair.of(option, args));
             DocumentNameMatcher excluder = config.getDocumentExcluder(baseName());
             for (String fname : excluded) {
-                assertFalse(excluder.matches(mkDocName(fname)), () -> option.getKey() + " " + fname);
+                DocumentName docName = mkDocName(fname);
+                assertThat(excluder.matches(docName)).as(() -> dump(option, fname, excluder, docName)).isFalse();
             }
             for (String fname : notExcluded) {
-                assertTrue(excluder.matches(mkDocName(fname)), () -> option.getKey() + " " + fname);
+                DocumentName docName = mkDocName(fname);
+                assertThat(excluder.matches(docName)).as(() -> dump(option, fname, excluder, docName)).isTrue();
             }
         } catch (IOException e) {
             fail(e.getMessage());
@@ -297,22 +359,24 @@ public abstract class AbstractOptionsProvider {
 
     private void inputExcludeSizeTest() {
         Option option = Arg.EXCLUDE_SIZE.option();
-        String[] args = { "5" };
-        writeFile("Hi.txt", Arrays.asList("Hi"));
-        writeFile("Hello.txt", Arrays.asList("Hello"));
-        writeFile("HelloWorld.txt", Arrays.asList("HelloWorld"));
+        String[] args = {"5"};
+        writeFile("Hi.txt", Collections.singletonList("Hi"));
+        writeFile("Hello.txt", Collections.singletonList("Hello"));
+        writeFile("HelloWorld.txt", Collections.singletonList("HelloWorld"));
 
-        String[] notExcluded = { "Hello.txt", "HelloWorld.txt"};
-        String[] excluded = { "Hi.txt" };
+        String[] notExcluded = {"Hello.txt", "HelloWorld.txt"};
+        String[] excluded = {"Hi.txt"};
 
         try {
             ReportConfiguration config = generateConfig(ImmutablePair.of(option, args));
             DocumentNameMatcher excluder = config.getDocumentExcluder(baseName());
             for (String fname : excluded) {
-                assertFalse(excluder.matches(mkDocName(fname)), () -> option.getKey() + " " + fname);
+                DocumentName docName = mkDocName(fname);
+                assertThat(excluder.matches(docName)).as(() -> dump(option, fname, excluder, docName)).isFalse();
             }
             for (String fname : notExcluded) {
-                assertTrue(excluder.matches(mkDocName(fname)), () -> option.getKey() + " " + fname);
+                DocumentName docName = mkDocName(fname);
+                assertThat(excluder.matches(docName)).as(() -> dump(option, fname, excluder, docName)).isTrue();
             }
         } catch (IOException e) {
             fail(e.getMessage());
@@ -329,10 +393,12 @@ public abstract class AbstractOptionsProvider {
                     ImmutablePair.of(excludeOption, EXCLUDE_ARGS));
             DocumentNameMatcher excluder = config.getDocumentExcluder(baseName());
             for (String fname : excluded) {
-                assertFalse(excluder.matches(mkDocName(fname)), () -> option.getKey() + " " + fname);
+                DocumentName docName = mkDocName(fname);
+                assertThat(excluder.matches(docName)).as(() -> dump(option, fname, excluder, docName)).isFalse();
             }
             for (String fname : notExcluded) {
-                assertTrue(excluder.matches(mkDocName(fname)), () -> option.getKey() + " " + fname);
+                DocumentName docName = mkDocName(fname);
+                assertThat(excluder.matches(docName)).as(() -> dump(option, fname, excluder, docName)).isTrue();
             }
         } catch (IOException e) {
             fail(e.getMessage());
@@ -341,7 +407,7 @@ public abstract class AbstractOptionsProvider {
 
     private void includeFileTest(Option option) {
         File outputFile = writeFile("include.txt", Arrays.asList(INCLUDE_ARGS));
-        execIncludeTest(option, new String[] {outputFile.getPath()});
+        execIncludeTest(option, new String[]{outputFile.getAbsolutePath()});
     }
 
     protected void inputIncludeFileTest() {
@@ -362,19 +428,21 @@ public abstract class AbstractOptionsProvider {
 
     protected void inputIncludeStdTest() {
         ImmutablePair<Option, String[]> excludes = ImmutablePair.of(Arg.EXCLUDE.find("input-exclude"),
-                new String[] { "*~more", "*~" });
+                new String[]{"*~more", "*~"});
         Option option = Arg.INCLUDE_STD.find("input-include-std");
-        String[] args = { StandardCollection.MISC.name() };
-        String[] excluded = { "afile~more" };
-        String[] notExcluded = { "afile~", ".#afile", "%afile%", "._afile", "what.#afile", "%afile%withMore", "well._afile" };
+        String[] args = {StandardCollection.MISC.name()};
+        String[] excluded = {"afile~more"};
+        String[] notExcluded = {"afile~", ".#afile", "%afile%", "._afile", "what.#afile", "%afile%withMore", "well._afile"};
         try {
             ReportConfiguration config = generateConfig(excludes, ImmutablePair.of(option, args));
             DocumentNameMatcher excluder = config.getDocumentExcluder(baseName());
             for (String fname : excluded) {
-                assertFalse(excluder.matches(mkDocName(fname)), () -> option.getKey() + " " + fname);
+                DocumentName docName = mkDocName(fname);
+                assertThat(excluder.matches(docName)).as(() -> dump(option, fname, excluder, docName)).isFalse();
             }
             for (String fname : notExcluded) {
-                assertTrue(excluder.matches(mkDocName(fname)), () -> option.getKey() + " " + fname);
+                DocumentName docName = mkDocName(fname);
+                assertThat(excluder.matches(docName)).as(() -> dump(option, fname, excluder, docName)).isTrue();
             }
         } catch (IOException e) {
             fail(e.getMessage());
@@ -385,7 +453,7 @@ public abstract class AbstractOptionsProvider {
         Option option = Arg.SOURCE.find("input-source");
         try {
             ReportConfiguration config = generateConfig(ImmutablePair.of(option, new String[]{baseDir.getAbsolutePath()}));
-            assertTrue(config.hasSource());
+            assertThat(config.hasSource()).isTrue();
         } catch (IOException e) {
             fail(e.getMessage());
         }
@@ -393,7 +461,7 @@ public abstract class AbstractOptionsProvider {
 
     // LICENSE tests
     protected void execLicensesApprovedTest(Option option, String[] args) {
-        Pair<Option,String[]>  arg1 = ImmutablePair.of(option, args);
+        Pair<Option, String[]> arg1 = ImmutablePair.of(option, args);
         try {
             ReportConfiguration config = generateConfig(arg1);
             SortedSet<String> result = config.getLicenseIds(LicenseSetFactory.LicenseFilter.APPROVED);
@@ -402,13 +470,13 @@ public abstract class AbstractOptionsProvider {
             fail(e.getMessage());
         }
 
-        Pair<Option,String[]> arg2 = ImmutablePair.of(
+        Pair<Option, String[]> arg2 = ImmutablePair.of(
                 Arg.CONFIGURATION_NO_DEFAULTS.find("configuration-no-defaults"),
                 null
         );
 
         try {
-            ReportConfiguration config = generateConfig(arg1, arg2 );
+            ReportConfiguration config = generateConfig(arg1, arg2);
             SortedSet<String> result = config.getLicenseIds(LicenseSetFactory.LicenseFilter.APPROVED);
             assertThat(result).containsExactly("one", "two");
         } catch (IOException e) {
@@ -419,7 +487,7 @@ public abstract class AbstractOptionsProvider {
     protected void helpLicenses() {
         ByteArrayOutputStream output = new ByteArrayOutputStream();
         PrintStream origin = System.out;
-        try (PrintStream out = new PrintStream(output)){
+        try (PrintStream out = new PrintStream(output)) {
             System.setOut(out);
             generateConfig(ImmutablePair.of(HELP_LICENSES.option(), null));
         } catch (IOException e) {
@@ -436,12 +504,12 @@ public abstract class AbstractOptionsProvider {
     protected void licensesApprovedFileTest() {
         File outputFile = writeFile("licensesApproved.txt", Arrays.asList("one", "two"));
         execLicensesApprovedTest(Arg.LICENSES_APPROVED_FILE.find("licenses-approved-file"),
-                new String[] { outputFile.getPath()});
+                new String[]{outputFile.getAbsolutePath()});
     }
 
     protected void licensesApprovedTest() {
         execLicensesApprovedTest(Arg.LICENSES_APPROVED.find("licenses-approved"),
-                new String[] { "one", "two"});
+                new String[]{"one", "two"});
     }
 
     private void execLicensesDeniedTest(Option option, String[] args) {
@@ -456,12 +524,13 @@ public abstract class AbstractOptionsProvider {
     }
 
     protected void licensesDeniedTest() {
-        execLicensesDeniedTest(Arg.LICENSES_DENIED.find("licenses-denied"), new String[] {"ILLUMOS"});
+        execLicensesDeniedTest(Arg.LICENSES_DENIED.find("licenses-denied"), new String[]{"ILLUMOS"});
     }
 
     protected void licensesDeniedFileTest() {
         File outputFile = writeFile("licensesDenied.txt", Collections.singletonList("ILLUMOS"));
-        execLicensesDeniedTest(Arg.LICENSES_DENIED_FILE.find("licenses-denied-file"), new String[] {outputFile.getPath()});
+        execLicensesDeniedTest(Arg.LICENSES_DENIED_FILE.find("licenses-denied-file"),
+                new String[]{outputFile.getAbsolutePath()});
     }
 
     private void execLicenseFamiliesApprovedTest(Option option, String[] args) {
@@ -488,12 +557,12 @@ public abstract class AbstractOptionsProvider {
     protected void licenseFamiliesApprovedFileTest() {
         File outputFile = writeFile("familiesApproved.txt", Collections.singletonList("catz"));
         execLicenseFamiliesApprovedTest(Arg.FAMILIES_APPROVED_FILE.find("license-families-approved-file"),
-                new String[] { outputFile.getPath() });
+                new String[]{outputFile.getAbsolutePath()});
     }
 
     protected void licenseFamiliesApprovedTest() {
         execLicenseFamiliesApprovedTest(Arg.FAMILIES_APPROVED.find("license-families-approved"),
-                new String[] {"catz"});
+                new String[]{"catz"});
     }
 
     private void execLicenseFamiliesDeniedTest(Option option, String[] args) {
@@ -508,15 +577,15 @@ public abstract class AbstractOptionsProvider {
         }
     }
 
-   protected void licenseFamiliesDeniedFileTest() {
+    protected void licenseFamiliesDeniedFileTest() {
         File outputFile = writeFile("familiesDenied.txt", Collections.singletonList("GPL"));
         execLicenseFamiliesDeniedTest(Arg.FAMILIES_DENIED_FILE.find("license-families-denied-file"),
-                new String[] { outputFile.getPath() });
+                new String[]{outputFile.getAbsolutePath()});
     }
 
     protected void licenseFamiliesDeniedTest() {
         execLicenseFamiliesDeniedTest(Arg.FAMILIES_DENIED.find("license-families-denied"),
-                new String[] { "GPL" });
+                new String[]{"GPL"});
     }
 
     protected void counterMaxTest() {
@@ -525,17 +594,17 @@ public abstract class AbstractOptionsProvider {
 
         try {
             ReportConfiguration config = generateConfig(ImmutablePair.nullPair());
-            assertEquals(0, config.getClaimValidator().getMax(ClaimStatistic.Counter.UNAPPROVED));
+            assertThat(config.getClaimValidator().getMax(ClaimStatistic.Counter.UNAPPROVED)).isEqualTo(0);
             args[0] = "Unapproved:-1";
             args[1] = "ignored:1";
             config = generateConfig(ImmutablePair.of(option, args));
-            assertEquals(Integer.MAX_VALUE, config.getClaimValidator().getMax(ClaimStatistic.Counter.UNAPPROVED));
-            assertEquals(1, config.getClaimValidator().getMax(ClaimStatistic.Counter.IGNORED));
+            assertThat(config.getClaimValidator().getMax(ClaimStatistic.Counter.UNAPPROVED)).isEqualTo(Integer.MAX_VALUE);
+            assertThat(config.getClaimValidator().getMax(ClaimStatistic.Counter.IGNORED)).isEqualTo(1);
             args[1] = "unapproved:5";
             args[0] = "ignored:0";
             config = generateConfig(ImmutablePair.of(option, args));
-            assertEquals(5, config.getClaimValidator().getMax(ClaimStatistic.Counter.UNAPPROVED));
-            assertEquals(0, config.getClaimValidator().getMax(ClaimStatistic.Counter.IGNORED));
+            assertThat(config.getClaimValidator().getMax(ClaimStatistic.Counter.UNAPPROVED)).isEqualTo(5);
+            assertThat(config.getClaimValidator().getMax(ClaimStatistic.Counter.IGNORED)).isEqualTo(0);
         } catch (IOException e) {
             fail(e.getMessage());
         }
@@ -547,17 +616,17 @@ public abstract class AbstractOptionsProvider {
 
         try {
             ReportConfiguration config = generateConfig(ImmutablePair.nullPair());
-            assertEquals(0, config.getClaimValidator().getMin(ClaimStatistic.Counter.UNAPPROVED));
+            assertThat(config.getClaimValidator().getMin(ClaimStatistic.Counter.UNAPPROVED)).isEqualTo(0);
             args[0] = "Unapproved:1";
             args[1] = "ignored:1";
             config = generateConfig(ImmutablePair.of(option, args));
-            assertEquals(1, config.getClaimValidator().getMin(ClaimStatistic.Counter.UNAPPROVED));
-            assertEquals(1, config.getClaimValidator().getMin(ClaimStatistic.Counter.IGNORED));
+            assertThat(config.getClaimValidator().getMin(ClaimStatistic.Counter.UNAPPROVED)).isEqualTo(1);
+            assertThat(config.getClaimValidator().getMin(ClaimStatistic.Counter.IGNORED)).isEqualTo(1);
             args[1] = "unapproved:5";
             args[0] = "ignored:0";
             config = generateConfig(ImmutablePair.of(option, args));
-            assertEquals(5, config.getClaimValidator().getMin(ClaimStatistic.Counter.UNAPPROVED));
-            assertEquals(0, config.getClaimValidator().getMin(ClaimStatistic.Counter.IGNORED));
+            assertThat(config.getClaimValidator().getMin(ClaimStatistic.Counter.UNAPPROVED)).isEqualTo(5);
+            assertThat(config.getClaimValidator().getMin(ClaimStatistic.Counter.IGNORED)).isEqualTo(0);
         } catch (IOException e) {
             fail(e.getMessage());
         }
@@ -569,17 +638,17 @@ public abstract class AbstractOptionsProvider {
         try {
             ReportConfiguration config = generateConfig(arg1);
             SortedSet<ILicense> set = config.getLicenses(LicenseSetFactory.LicenseFilter.ALL);
-            assertTrue(set.size() > 2);
-            assertTrue(LicenseSetFactory.search("ONE", "ONE", set).isPresent());
-            assertTrue(LicenseSetFactory.search("TWO", "TWO", set).isPresent());
+            assertThat(set).hasSizeGreaterThan(2);
+            assertThat(LicenseSetFactory.search("ONE", "ONE", set)).isPresent();
+            assertThat(LicenseSetFactory.search("TWO", "TWO", set)).isPresent();
 
             Pair<Option, String[]> arg2 = ImmutablePair.of(Arg.CONFIGURATION_NO_DEFAULTS.find("configuration-no-defaults"), null);
 
             config = generateConfig(arg1, arg2);
             set = config.getLicenses(LicenseSetFactory.LicenseFilter.ALL);
-            assertEquals(2, set.size());
-            assertTrue(LicenseSetFactory.search("ONE", "ONE", set).isPresent());
-            assertTrue(LicenseSetFactory.search("TWO", "TWO", set).isPresent());
+            assertThat(set).hasSize(2);
+            assertThat(LicenseSetFactory.search("ONE", "ONE", set)).isPresent();
+            assertThat(LicenseSetFactory.search("TWO", "TWO", set)).isPresent();
         } catch (IOException e) {
             fail(e.getMessage());
         }
@@ -596,9 +665,9 @@ public abstract class AbstractOptionsProvider {
     private void noDefaultsTest(Option arg) {
         try {
             ReportConfiguration config = generateConfig(ImmutablePair.of(arg, null));
-            assertTrue(config.getLicenses(LicenseSetFactory.LicenseFilter.ALL).isEmpty());
+            assertThat(config.getLicenses(LicenseSetFactory.LicenseFilter.ALL)).isEmpty();
             config = generateConfig(ImmutablePair.nullPair());
-            assertFalse(config.getLicenses(LicenseSetFactory.LicenseFilter.ALL).isEmpty());
+            assertThat(config.getLicenses(LicenseSetFactory.LicenseFilter.ALL)).isNotEmpty();
         } catch (IOException e) {
             fail(e.getMessage());
         }
@@ -615,9 +684,9 @@ public abstract class AbstractOptionsProvider {
     protected void dryRunTest() {
         try {
             ReportConfiguration config = generateConfig(ImmutablePair.of(Arg.DRY_RUN.find("dry-run"), null));
-            assertTrue(config.isDryRun());
+            assertThat(config.isDryRun()).isTrue();
             config = generateConfig(ImmutablePair.nullPair());
-            assertFalse(config.isDryRun());
+            assertThat(config.isDryRun()).isFalse();
         } catch (IOException e) {
             fail(e.getMessage());
         }
@@ -627,10 +696,10 @@ public abstract class AbstractOptionsProvider {
         try {
             Pair<Option, String[]> arg1 = ImmutablePair.of(option, new String[]{"MyCopyright"});
             ReportConfiguration config = generateConfig(arg1);
-            assertNull(config.getCopyrightMessage(), "Copyright without --edit-license should not work");
+            assertThat(config.getCopyrightMessage()).as("Copyright without --edit-license should not work").isNull();
             Pair<Option, String[]> arg2 = ImmutablePair.of(Arg.EDIT_ADD.find("edit-license"), null);
             config = generateConfig(arg1, arg2);
-            assertEquals("MyCopyright", config.getCopyrightMessage());
+            assertThat(config.getCopyrightMessage()).isEqualTo("MyCopyright");
         } catch (IOException e) {
             fail(e.getMessage());
         }
@@ -647,9 +716,9 @@ public abstract class AbstractOptionsProvider {
     private void editLicenseTest(Option option) {
         try {
             ReportConfiguration config = generateConfig(ImmutablePair.of(option, null));
-            assertTrue(config.isAddingLicenses());
+            assertThat(config.isAddingLicenses()).isTrue();
             config = generateConfig(ImmutablePair.nullPair());
-            assertFalse(config.isAddingLicenses());
+            assertThat(config.isAddingLicenses()).isFalse();
         } catch (IOException e) {
             fail(e.getMessage());
         }
@@ -658,6 +727,7 @@ public abstract class AbstractOptionsProvider {
     protected void addLicenseTest() {
         editLicenseTest(Arg.EDIT_ADD.find("addLicense"));
     }
+
     protected void editLicensesTest() {
         editLicenseTest(Arg.EDIT_ADD.find("edit-license"));
     }
@@ -666,11 +736,11 @@ public abstract class AbstractOptionsProvider {
         Pair<Option, String[]> arg1 = ImmutablePair.of(option, null);
         try {
             ReportConfiguration config = generateConfig(arg1);
-            assertFalse(config.isAddingLicensesForced());
+            assertThat(config.isAddingLicensesForced()).isFalse();
             Pair<Option, String[]> arg2 = ImmutablePair.of(Arg.EDIT_ADD.find("edit-license"), null);
 
             config = generateConfig(arg1, arg2);
-            assertTrue(config.isAddingLicensesForced());
+            assertThat(config.isAddingLicensesForced()).isTrue();
         } catch (IOException e) {
             fail(e.getMessage());
         }
@@ -693,7 +763,7 @@ public abstract class AbstractOptionsProvider {
                 try {
                     args[0] = level.name();
                     generateConfig(ImmutablePair.of(option, args));
-                    assertEquals(level, DefaultLog.getInstance().getLevel());
+                    assertThat(DefaultLog.getInstance().getLevel()).isEqualTo(level);
                 } catch (IOException e) {
                     fail(e.getMessage());
                 }
@@ -709,7 +779,7 @@ public abstract class AbstractOptionsProvider {
             for (ReportConfiguration.Processing proc : ReportConfiguration.Processing.values()) {
                 args[0] = proc.name();
                 ReportConfiguration config = generateConfig(ImmutablePair.of(option, args));
-                assertEquals(proc, config.getArchiveProcessing());
+                assertThat(config.getArchiveProcessing()).isEqualTo(proc);
             }
         } catch (IOException e) {
             fail(e.getMessage());
@@ -726,7 +796,7 @@ public abstract class AbstractOptionsProvider {
             try {
                 args[0] = filter.name();
                 ReportConfiguration config = generateConfig(ImmutablePair.of(option, args));
-                assertEquals(filter, config.listFamilies());
+                assertThat(config.listFamilies()).isEqualTo(filter);
             } catch (IOException e) {
                 fail(e.getMessage());
             }
@@ -752,7 +822,7 @@ public abstract class AbstractOptionsProvider {
                 throw new RuntimeException(e);
             }
             try (BufferedReader reader = new BufferedReader(new InputStreamReader(Files.newInputStream(outFile.toPath())))) {
-                assertEquals("Hello world", reader.readLine());
+                assertThat(reader.readLine()).isEqualTo("Hello world");
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
@@ -775,7 +845,7 @@ public abstract class AbstractOptionsProvider {
             try {
                 args[0] = filter.name();
                 ReportConfiguration config = generateConfig(ImmutablePair.of(option, args));
-                assertEquals(filter, config.listLicenses());
+                assertThat(config.listLicenses()).isEqualTo(filter);
             } catch (IOException e) {
                 fail(e.getMessage());
             }
@@ -791,12 +861,12 @@ public abstract class AbstractOptionsProvider {
     }
 
     private void standardTest(Option option) {
-        String[] args = { null};
+        String[] args = {null};
         try {
             for (ReportConfiguration.Processing proc : ReportConfiguration.Processing.values()) {
                 args[0] = proc.name();
                 ReportConfiguration config = generateConfig(ImmutablePair.of(option, args));
-                assertEquals(proc, config.getStandardProcessing());
+                assertThat(config.getStandardProcessing()).isEqualTo(proc);
             }
         } catch (IOException e) {
             fail(e.getMessage());
@@ -815,7 +885,7 @@ public abstract class AbstractOptionsProvider {
                 OutputStream out = Files.newOutputStream(file.toPath())) {
             IOUtils.copy(in, out);
         } catch (IOException e) {
-            fail("Could not copy MatcherContainerResource.txt: "+e.getMessage());
+            fail("Could not copy MatcherContainerResource.txt: " + e.getMessage());
         }
         // run the test
         String[] args = {null};
@@ -825,11 +895,11 @@ public abstract class AbstractOptionsProvider {
                 ReportConfiguration config = generateConfig(ImmutablePair.of(option, args));
                 try (InputStream expected = StyleSheets.getStyleSheet(sheet).get();
                      InputStream actual = config.getStyleSheet().get()) {
-                    assertTrue(IOUtils.contentEquals(expected, actual), () -> String.format("'%s' does not match", sheet));
+                    assertThat(IOUtils.contentEquals(expected, actual)).as(() -> String.format("'%s' does not match", sheet)).isTrue();
                 }
             }
         } catch (IOException e) {
-            fail(e.getMessage(), e);
+            fail(e.getMessage());
         }
     }
 
@@ -845,7 +915,7 @@ public abstract class AbstractOptionsProvider {
         try {
             ReportConfiguration config = generateConfig(ImmutablePair.of(Arg.INCLUDE_STD.find("scan-hidden-directories"), null));
             DocumentNameMatcher excluder = config.getDocumentExcluder(baseName());
-            assertTrue(excluder.matches(mkDocName(".file")), ".file");
+            assertThat(excluder.matches(mkDocName(".file"))).as(".file").isTrue();
         } catch (IOException e) {
             fail(e.getMessage());
         }
@@ -856,28 +926,29 @@ public abstract class AbstractOptionsProvider {
             ReportConfiguration config = generateConfig(ImmutablePair.of(Arg.OUTPUT_STYLE.find("xml"), null));
             try (InputStream expected = StyleSheets.getStyleSheet("xml").get();
                  InputStream actual = config.getStyleSheet().get()) {
-                assertTrue(IOUtils.contentEquals(expected, actual), "'xml' does not match");
+                assertThat(IOUtils.contentEquals(expected, actual)).as("'xml' does not match").isTrue();
             }
         } catch (IOException e) {
             fail(e.getMessage());
         }
     }
 
-        final public Stream<? extends Arguments> provideArguments(ExtensionContext context) {
-                List<Arguments> lst = new ArrayList<>();
-                List<String> missingTests = new ArrayList<>();
+    @Override
+    final public Stream<? extends Arguments> provideArguments(ExtensionContext context) {
+        List<Arguments> lst = new ArrayList<>();
+        List<String> missingTests = new ArrayList<>();
 
-                        for (String key : OptionsList.getKeys()) {
-                        OptionCollectionTest.OptionTest test = testMap.get(key);
-                        if (test == null) {
-                                missingTests.add(key);
-                            } else {
-                                lst.add(Arguments.of(key, test));
-                            }
-                    }
-                if (!missingTests.isEmpty()) {
-                        System.out.println("The following tests are excluded: '" + String.join( "', '", missingTests ) + "'");
-                    }
-                return lst.stream();
+        for (String key : OptionsList.getKeys()) {
+            OptionCollectionTest.OptionTest test = testMap.get(key);
+            if (test == null) {
+                missingTests.add(key);
+            } else {
+                lst.add(Arguments.of(key, test));
             }
+        }
+        if (!missingTests.isEmpty()) {
+            System.out.println("The following tests are excluded: '" + String.join("', '", missingTests) + "'");
+        }
+        return lst.stream();
+    }
 }

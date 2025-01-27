@@ -18,21 +18,25 @@
  */
 package org.apache.rat;
 
+import java.nio.file.Path;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.rat.commandline.ArgumentContext;
 import org.apache.rat.license.LicenseSetFactory;
 import org.apache.rat.report.IReportable;
 import org.apache.rat.test.AbstractOptionsProvider;
 import org.apache.rat.testhelpers.TestingLog;
 import org.apache.rat.utils.DefaultLog;
 import org.apache.rat.utils.Log;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledOnOs;
 import org.junit.jupiter.api.condition.OS;
+import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ArgumentsProvider;
 import org.junit.jupiter.params.provider.ArgumentsSource;
@@ -47,13 +51,18 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import static java.lang.String.format;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
 public class OptionCollectionTest {
+
+    @TempDir
+    static Path testPath;
+
+    @AfterAll
+    static void preserveData() {
+        AbstractOptionsProvider.preserveData(testPath.toFile(), "optionTest");
+    }
 
     /**
      * The base directory for the test.
@@ -103,7 +112,7 @@ public class OptionCollectionTest {
         try {
             DefaultLog.setInstance(log);
             String[] args = {"--dir", "target", "-a"};
-            ReportConfiguration config = OptionCollection.parseCommands(args, o -> fail("Help printed"), true);
+            ReportConfiguration config = OptionCollection.parseCommands(testPath.toFile(), args, o -> fail("Help printed"), true);
             assertThat(config).isNotNull();
         } finally {
             DefaultLog.setInstance(null);
@@ -119,7 +128,7 @@ public class OptionCollectionTest {
         try {
             DefaultLog.setInstance(log);
             String[] args = {"--dir", baseDir.getAbsolutePath()};
-            config = OptionCollection.parseCommands(args, (o) -> {
+            config = OptionCollection.parseCommands(testPath.toFile(), args, (o) -> {
             }, true);
         } finally {
             DefaultLog.setInstance(null);
@@ -131,7 +140,7 @@ public class OptionCollectionTest {
     @Test
     public void testShortenedOptions() throws IOException {
         String[] args = {"--output-lic", "ALL"};
-        ReportConfiguration config = OptionCollection.parseCommands(args, (o) -> {
+        ReportConfiguration config = OptionCollection.parseCommands(testPath.toFile(), args, (o) -> {
         }, true);
         assertThat(config).isNotNull();
         assertThat(config.listLicenses()).isEqualTo(LicenseSetFactory.LicenseFilter.ALL);
@@ -141,7 +150,8 @@ public class OptionCollectionTest {
     public void testDefaultConfiguration() throws ParseException {
         String[] empty = {};
         CommandLine cl = new DefaultParser().parse(OptionCollection.buildOptions(), empty);
-        ReportConfiguration config = OptionCollection.createConfiguration(cl);
+        ArgumentContext context = new ArgumentContext(new File("."), cl);
+        ReportConfiguration config = OptionCollection.createConfiguration(context);
         ReportConfigurationTest.validateDefault(config);
     }
 
@@ -149,7 +159,7 @@ public class OptionCollectionTest {
     @ValueSource(strings = { ".", "./", "target", "./target" })
     public void getReportableTest(String fName) throws IOException {
         File expected = new File(fName);
-        ReportConfiguration config = OptionCollection.parseCommands(new String[]{fName}, o -> fail("Help called"), false);
+        ReportConfiguration config = OptionCollection.parseCommands(testPath.toFile(), new String[]{fName}, o -> fail("Help called"), false);
         IReportable reportable = OptionCollection.getReportable(expected, config);
         assertNotNull(reportable, () -> format("'%s' returned null", fName));
         assertThat(reportable.getName().getName()).isEqualTo(expected.getAbsolutePath());
@@ -160,8 +170,8 @@ public class OptionCollectionTest {
      * @param name The name of the test.
      * @param test the option test to execute.
      */
-    @ParameterizedTest
-    @ArgumentsSource(OptionsProvider.class)
+    @ParameterizedTest( name = "{index} {0}")
+    @ArgumentsSource(CliOptionsProvider.class)
     public void testOptionsUpdateConfig(String name, OptionTest test) {
         DefaultLog.getInstance().log(Log.Level.INFO, "Running test for: " + name);
         test.test();
@@ -170,7 +180,7 @@ public class OptionCollectionTest {
     /**
      * A class to provide the Options and tests to the testOptionsUpdateConfig.
      */
-    static class OptionsProvider extends AbstractOptionsProvider implements ArgumentsProvider {
+    static class CliOptionsProvider extends AbstractOptionsProvider implements ArgumentsProvider {
 
         /** A flag to determine if help was called */
         final AtomicBoolean helpCalled = new AtomicBoolean(false);
@@ -179,9 +189,9 @@ public class OptionCollectionTest {
         public void helpTest() {
             String[] args = {longOpt(OptionCollection.HELP)};
             try {
-                ReportConfiguration config = OptionCollection.parseCommands(args, o -> helpCalled.set(true), true);
-                assertNull(config, "Should not have config");
-                assertTrue(helpCalled.get(), "Help was not called");
+                ReportConfiguration config = OptionCollection.parseCommands(testPath.toFile(), args, o -> helpCalled.set(true), true);
+                assertThat(config).as("Should not have config").isNull();
+                assertThat(helpCalled.get()).as("Help was not called").isTrue();
             } catch (IOException e) {
                 fail(e.getMessage());
             }
@@ -190,8 +200,8 @@ public class OptionCollectionTest {
         /**
          * Constructor. Sets the baseDir and loads the testMap.
          */
-        public OptionsProvider() {
-            super(Collections.emptyList());
+        public CliOptionsProvider() {
+            super(Collections.emptyList(), testPath.toFile());
         }
 
         /**
@@ -201,7 +211,7 @@ public class OptionCollectionTest {
          * @return A ReportConfiguration
          * @throws IOException on critical error.
          */
-        protected ReportConfiguration generateConfig(Pair<Option, String[]>... args) throws IOException {
+        protected final ReportConfiguration generateConfig(List<Pair<Option, String[]>> args) throws IOException {
             helpCalled.set(false);
             List<String> sArgs = new ArrayList<>();
             for (Pair<Option, String[]> pair : args) {
@@ -213,8 +223,8 @@ public class OptionCollectionTest {
                     }
                 }
             }
-            ReportConfiguration config = OptionCollection.parseCommands(sArgs.toArray(new String[0]), o -> helpCalled.set(true), true);
-            assertFalse(helpCalled.get(), "Help was called");
+            ReportConfiguration config = OptionCollection.parseCommands(testPath.toFile(), sArgs.toArray(new String[0]), o -> helpCalled.set(true), true);
+            assertThat(helpCalled.get()).as("Help was called").isFalse();
             return config;
         }
     }
