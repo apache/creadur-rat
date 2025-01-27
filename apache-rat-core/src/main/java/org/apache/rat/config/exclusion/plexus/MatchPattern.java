@@ -117,7 +117,8 @@ public final class MatchPattern {
 
     @Override
     public String toString() {
-        return Arrays.asList(tokenized).toString();
+        return Arrays.asList(tokenized)
+                .toString();
     }
 
     public String source() {
