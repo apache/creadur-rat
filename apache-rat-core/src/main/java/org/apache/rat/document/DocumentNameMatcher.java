@@ -301,7 +301,19 @@ public final class DocumentNameMatcher {
             return MATCHES_ALL;
         }
         List<DocumentNameMatcher> workingSet = Arrays.asList(includes, excludes);
-        return new DocumentNameMatcher(format("matcherSet(%s)", join(workingSet)), new MatcherPredicate(workingSet));
+        return new DocumentNameMatcher(format("matcherSet(%s)", join(workingSet)),
+                new CollectionPredicateImpl(Arrays.asList(includes, excludes)) {
+                    @Override
+                    public boolean test(final DocumentName documentName) {
+                        if (includes.matches(documentName)) {
+                            return true;
+                        }
+                        if (excludes.matches(documentName)) {
+                            return false;
+                        }
+                        return true;
+                    }
+                });
     }
 
     /**
@@ -461,27 +473,6 @@ public final class DocumentNameMatcher {
                 }
             }
             return false;
-        }
-    }
-
-    /**
-     * An implementation of "or" logic across a collection of DocumentNameMatchers.
-     */
-    // package private for testing access
-    static class MatcherPredicate extends CollectionPredicateImpl {
-        MatcherPredicate(final Iterable<DocumentNameMatcher> matchers) {
-            super(matchers);
-        }
-
-        @Override
-        public boolean test(final DocumentName documentName) {
-            Iterator<DocumentNameMatcher> iter = getMatchers().iterator();
-            // included
-            if (iter.next().matches(documentName)) {
-                return true;
-            }
-            // excluded
-            return !iter.next().matches(documentName);
         }
     }
 
