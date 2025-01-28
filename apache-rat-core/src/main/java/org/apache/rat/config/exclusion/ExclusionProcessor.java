@@ -209,12 +209,15 @@ public class ExclusionProcessor {
     private List<MatcherSet> extractFileProcessors(final DocumentName basedir) {
         final List<MatcherSet> fileProcessorList = new ArrayList<>();
         for (StandardCollection sc : fileProcessors) {
-            ExtendedIterator<List<MatcherSet>> iter =  sc.fileProcessorBuilder().map(builder -> builder.build(basedir));
-            if (iter.hasNext()) {
-                iter.forEachRemaining(fileProcessorList::addAll);
-            } else {
-                DefaultLog.getInstance().debug(String.format("%s does not have a fileProcessor.", sc));
-            }
+            final Set<String> names = new HashSet<>();
+            sc.fileProcessor().map(fp -> fp.apply(basedir)).forEachRemaining(n -> n.forEach(names::add));
+            MatcherSet.Builder builder = new MatcherSet.Builder();
+            Set<String> matching = new HashSet<>();
+            Set<String> notMatching = new HashSet<>();
+            MatcherSet.Builder.segregateList(matching, notMatching, names);
+            builder.addIncluded(basedir.resolve(sc.name()), notMatching);
+            builder.addExcluded(basedir.resolve(sc.name()), matching);
+            fileProcessorList.add(builder.build());
         }
         return fileProcessorList;
     }

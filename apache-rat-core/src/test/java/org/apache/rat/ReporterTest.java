@@ -18,10 +18,8 @@
  */
 package org.apache.rat;
 
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Fail.fail;
-
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;

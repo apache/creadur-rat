@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 import org.apache.rat.document.DocumentName;
+import org.apache.rat.document.FSInfoTest;
 import org.apache.rat.testhelpers.TestingDocument;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -48,9 +49,9 @@ public class NoteGuesserTest {
     private static Stream<Arguments> nameData() throws IOException {
         List<Arguments> lst = new ArrayList<>();
 
+        final DocumentName linuxBaseName = DocumentName.builder(FSInfoTest.UNIX).setName("/").setBaseName("/").build();
+        final DocumentName windowsBaseName = DocumentName.builder(FSInfoTest.WINDOWS).setName("\\").setBaseName("\\").build();
         final DocumentName osxBaseName = DocumentName.builder(OSX).setName("/").setBaseName("/").build();
-        final DocumentName linuxBaseName = DocumentName.builder(UNIX).setName("/").setBaseName("/").build();
-        final DocumentName windowsBaseName = DocumentName.builder(WINDOWS).setName("\\").setBaseName("\\").build();
 
         lst.add(Arguments.of(linuxBaseName.resolve("DEPENDENCIES"), true));
         lst.add(Arguments.of(linuxBaseName.resolve("LICENSE"), true));

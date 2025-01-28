@@ -87,7 +87,7 @@ public class ArgumentContext {
 
     /**
      * Gets the directory name from which relative file names will be resolved.
-     * @return The directory name from which releative file names will be resolved.
+     * @return The directory name from which relative file names will be resolved.
      */
     public DocumentName getWorkingDirectory() {
         return workingDirectory;

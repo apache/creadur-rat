@@ -24,7 +24,7 @@ import java.nio.file.Paths;
 import java.util.Collections;
 
 public class ArchiveEntryName extends DocumentName {
-    /** Then name of the document that contains this entry */
+    /** The name of the document that contains this entry. */
     private final DocumentName archiveFileName;
 
     private static DocumentName.Builder prepareBuilder(final DocumentName archiveFileName, final String archiveEntryName) {

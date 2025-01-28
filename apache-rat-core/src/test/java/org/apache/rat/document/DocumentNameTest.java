@@ -56,7 +56,7 @@ import static org.mockito.ArgumentMatchers.any;
 
 public class DocumentNameTest {
 
-    public static DocumentName mkName(Path tempDir, FSInfo fsInfo) throws IOException {
+    public static DocumentName mkName(Path tempDir, FSInfo fsInfo) {
         File docFile = mkFile(tempDir.toFile(), fsInfo);
         DocumentName result = DocumentName.builder(fsInfo).setName(docFile).build();
         DocumentName mocked = Mockito.spy(result);
@@ -131,7 +131,6 @@ public class DocumentNameTest {
         return mocked;
     }
 
-
     @ParameterizedTest(name = "{index} {0} {2}")
     @MethodSource("resolveTestData")
     void resolveTest(String testName, DocumentName base, String toResolve, DocumentName expected) {
@@ -196,7 +195,6 @@ public class DocumentNameTest {
         lst.add(Arguments.of("osx", base, "..\\up\\and\\down", expected));
 
         return lst.stream();
-
     }
 
     @Test
@@ -283,7 +281,7 @@ public class DocumentNameTest {
     }
 
     @Test
-    void splitRootsTest() throws IOException {
+    void splitRootsTest() {
         Pair<String, String> result = DocumentName.builder(WINDOWS).splitRoot("C:\\My\\path\\to\\a\\file.txt");
         assertThat(result.getLeft()).isEqualTo("C:");
         assertThat(result.getRight()).isEqualTo("My\\path\\to\\a\\file.txt");
@@ -295,11 +293,10 @@ public class DocumentNameTest {
         result = DocumentName.builder(OSX).splitRoot("/My/path/to/a/file.txt");
         assertThat(result.getLeft()).isEqualTo("");
         assertThat(result.getRight()).isEqualTo("My/path/to/a/file.txt");
-
     }
 
     @Test
-    void archiveEntryNameTest() throws IOException {
+    void archiveEntryNameTest() {
         String entryName = "./anArchiveEntry.txt";
         DocumentName archiveName = DocumentName.builder(WINDOWS)
                 .setName("C:\\archives\\anArchive.zip").setBaseName("C:\\archives").build();
@@ -309,7 +306,6 @@ public class DocumentNameTest {
         assertThat(archiveName.getBaseName()).isEqualTo("C:\\archives");
         assertThat(archiveName.getName()).isEqualTo("C:\\archives\\anArchive.zip");
         assertThat(archiveName.localized()).isEqualTo("\\anArchive.zip");
-
 
         ArchiveEntryName archiveEntryName = new ArchiveEntryName(archiveName, entryName);
 
