@@ -18,10 +18,8 @@
  */ 
 package org.apache.rat.document.guesser;
 
-import com.google.common.jimfs.Configuration;
-import com.google.common.jimfs.Jimfs;
+
 import java.io.IOException;
-import java.nio.file.FileSystem;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
@@ -33,9 +31,6 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.apache.rat.document.FSInfoTest.OSX;
-import static org.apache.rat.document.FSInfoTest.UNIX;
-import static org.apache.rat.document.FSInfoTest.WINDOWS;
 
 public class NoteGuesserTest {
 
@@ -51,7 +46,7 @@ public class NoteGuesserTest {
 
         final DocumentName linuxBaseName = DocumentName.builder(FSInfoTest.UNIX).setName("/").setBaseName("/").build();
         final DocumentName windowsBaseName = DocumentName.builder(FSInfoTest.WINDOWS).setName("\\").setBaseName("\\").build();
-        final DocumentName osxBaseName = DocumentName.builder(OSX).setName("/").setBaseName("/").build();
+        final DocumentName osxBaseName = DocumentName.builder(FSInfoTest.OSX).setName("/").setBaseName("/").build();
 
         lst.add(Arguments.of(linuxBaseName.resolve("DEPENDENCIES"), true));
         lst.add(Arguments.of(linuxBaseName.resolve("LICENSE"), true));
