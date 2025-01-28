@@ -19,7 +19,6 @@
 package org.apache.rat.document.guesser;
 
 import java.io.IOException;
-import java.nio.file.FileSystem;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
