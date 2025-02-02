@@ -91,7 +91,7 @@ public enum StandardCollection {
      * The files and directories created by GIT source code control to support GIT, also processes files listed in '.gitignore'.
      */
     GIT("The files and directories created by GIT source code control to support GIT, also processes files listed in '.gitignore'.",
-            Arrays.asList("**/.git/**", "**/.gitignore"),
+            Arrays.asList("**/.git/**", "**/.gitignore", globalGitIgnore()),
             null,
             new GitFileProcessor()
     ),
@@ -309,5 +309,19 @@ public enum StandardCollection {
             }
         }
         return false;
+    }
+
+    /** The location of the global gitignore file to process */
+    private static String globalGitIgnore() {
+        String xdgConfigHome = System.getenv("XDG_CONFIG_HOME");
+        if (xdgConfigHome != null && !xdgConfigHome.isEmpty()) {
+            return xdgConfigHome + File.pathSeparator + "git" + File.pathSeparator + "ignore";
+        } else {
+            String home = System.getenv("HOME");
+            if (home == null) {
+                home = "";
+            }
+            return home + File.pathSeparator + ".config" + File.pathSeparator + "git" + File.pathSeparator + "ignore";
+        }
     }
 }
