@@ -95,13 +95,14 @@ public class AbstractIgnoreBuilderTest {
     }
 
     /**
-     * Asserts the correctness of the excluder. An excluder returns false if the document name is matched.
+     * Asserts the correctness of the matcher.
      * @param matcherSets the list of matchers to create the DocumentNameMatcher from.
      * @param baseDir the base directory for the excluder test.
-     * @param matching the matching strings.
-     * @param notMatching the non-matching strings.
+     * @param matching the matching strings (i.e. that should be ignored)
+     * @param notMatching the non-matching strings (i.e. that should be checked)
      */
     protected void assertCorrect(List<MatcherSet> matcherSets, DocumentName baseDir, Iterable<String> matching, Iterable<String> notMatching) {
+        // An excluder returns false if the document name is matched.
         DocumentNameMatcher excluder = MatcherSet.merge(matcherSets).createMatcher();
         for (String name : matching) {
             DocumentName docName = baseDir.resolve(SelectorUtils.extractPattern(name, baseDir.getDirectorySeparator()));
