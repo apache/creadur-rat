@@ -258,7 +258,7 @@ public class DocumentName implements Comparable<DocumentName> {
 
     /**
      * Determines if the candidate starts with the root or separator strings.
-     * @param candidate the candidate ot check. If blank method will return {@code false}.
+     * @param candidate the candidate to check. If blank method will return {@code false}.
      * @param root the root to check. If blank the root check is skipped.
      * @param separator the separator to check. If blank the check is skipped.
      * @return true if either the root or separator check returned {@code true}.
