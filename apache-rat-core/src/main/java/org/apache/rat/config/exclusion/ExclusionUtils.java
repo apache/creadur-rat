@@ -62,7 +62,7 @@ public final class ExclusionUtils {
      * Creates predicate that filters out comment and blank lines. Leading spaces are removed and
      * if the line then starts with a commentPrefix string it is considered a comment and will be removed
      *
-     * @param commentPrefixes the list of comment prefixes
+     * @param commentPrefixes the list of comment prefixes.
      * @return the Predicate that returns false for lines that start with commentPrefixes or are empty.
      */
     public static Predicate<String> commentFilter(final Iterable<String> commentPrefixes) {
@@ -108,7 +108,7 @@ public final class ExclusionUtils {
     /**
      * Create a FileFilter from a PathMatcher.
      * @param parent the document name for the parent of the file to be filtered.
-     * @param nameMatcher the path matcher to convert
+     * @param nameMatcher the path matcher to convert.
      * @return a FileFilter.
      */
     public static FileFilter asFileFilter(final DocumentName parent, final DocumentNameMatcher nameMatcher) {
@@ -119,7 +119,7 @@ public final class ExclusionUtils {
      * Creates an iterator of Strings from a file of patterns.
      * Removes comment lines.
      * @param patternFile the file to read.
-     * @param commentFilters A predicate return true for non-comment lines
+     * @param commentFilters A predicate returning {@code true} for non-comment lines.
      * @return the iterable of Strings from the file.
      */
     public static ExtendedIterator<String> asIterator(final File patternFile, final Predicate<String> commentFilters) {
@@ -147,7 +147,7 @@ public final class ExclusionUtils {
      * Creates an iterable of Strings from a file of patterns.
      * Removes comment lines.
      * @param patternFile the file to read.
-     * @param commentFilters A predicate returning true for non-comment lines
+     * @param commentFilters A predicate returning {@code true} for non-comment lines.
      * @return the iterable of Strings from the file.
      */
     public static Iterable<String> asIterable(final File patternFile, final Predicate<String> commentFilters)  {
@@ -171,9 +171,9 @@ public final class ExclusionUtils {
     }
 
     /**
-     * Returns {@code true} if the file name represents a hidden file
+     * Returns {@code true} if the file name represents a hidden file.
      * @param f the file to check.
-     * @return true if it is the name of a hidden file.
+     * @return {@code true} if it is the name of a hidden file.
      */
     public static boolean isHidden(final File f) {
         String s = f.getName();
@@ -184,5 +184,19 @@ public final class ExclusionUtils {
         if (file == null || !file.exists() || !file.isFile()) {
             throw new ConfigurationException(format("%s is not a valid file.", file));
         }
+    }
+
+    /**
+     * Tokenizes the string based on the directory separator.
+     * @param source the source to tokenize.
+     * @param from the directory separator for the source.
+     * @param to the directory separator for the result.
+     * @return the source string with the separators converted.
+     */
+    public static String convertSeparator(final String source, final String from, final String to) {
+        if (StringUtils.isEmpty(source) || from.equals(to)) {
+            return source;
+        }
+        return String.join(to, source.split("\\Q" + from + "\\E"));
     }
 }

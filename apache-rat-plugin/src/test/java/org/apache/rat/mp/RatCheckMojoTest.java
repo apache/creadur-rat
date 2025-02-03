@@ -27,6 +27,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.io.File;
 
 import java.io.FileInputStream;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -127,7 +128,7 @@ public class RatCheckMojoTest extends BetterAbstractMojoTestCase {
         data.put(ClaimStatistic.Counter.UNAPPROVED, "0");
         data.put(ClaimStatistic.Counter.UNKNOWN, "0");
 
-        org.w3c.dom.Document document = XmlUtils.toDom(new FileInputStream(ratTxtFile));
+        org.w3c.dom.Document document = XmlUtils.toDom(Files.newInputStream(ratTxtFile.toPath()));
         XPath xPath = XPathFactory.newInstance().newXPath();
 
         for (ClaimStatistic.Counter counter : ClaimStatistic.Counter.values()) {
@@ -252,7 +253,7 @@ public class RatCheckMojoTest extends BetterAbstractMojoTestCase {
         data.put(ClaimStatistic.Counter.UNAPPROVED, "4");
         data.put(ClaimStatistic.Counter.UNKNOWN, "0");
 
-        org.w3c.dom.Document document = XmlUtils.toDom(new FileInputStream(ratTxtFile));
+        org.w3c.dom.Document document = XmlUtils.toDom(Files.newInputStream(ratTxtFile.toPath()));
         XPath xPath = XPathFactory.newInstance().newXPath();
 
         for (ClaimStatistic.Counter counter : ClaimStatistic.Counter.values()) {
@@ -367,7 +368,7 @@ public class RatCheckMojoTest extends BetterAbstractMojoTestCase {
             data.put(ClaimStatistic.Counter.UNAPPROVED, "4");
             data.put(ClaimStatistic.Counter.UNKNOWN, "4");
 
-            org.w3c.dom.Document document = XmlUtils.toDom(new FileInputStream(ratTxtFile));
+            org.w3c.dom.Document document = XmlUtils.toDom(Files.newInputStream(ratTxtFile.toPath()));
             XPath xPath = XPathFactory.newInstance().newXPath();
 
             for (ClaimStatistic.Counter counter : ClaimStatistic.Counter.values()) {
