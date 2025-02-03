@@ -305,7 +305,7 @@ public final class DocumentNameMatcher {
         return new DocumentNameMatcher(format("matcherSet(%s)", join(workingSet)),
                 new CollectionPredicateImpl(workingSet) {
                     @Override
-                    public boolean test(DocumentName documentName) {
+                    public boolean test(final DocumentName documentName) {
                         if (includes.matches(documentName)) {
                             return true;
                         }
