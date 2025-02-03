@@ -863,7 +863,7 @@ public enum Arg {
 
         if (OUTPUT_STYLE.isSelected()) {
             String selected = OUTPUT_STYLE.getSelected().getKey();
-            if (selected.equals("x")) {
+            if ("x".equals(selected)) {
                 // display deprecated message.
                 context.getCommandLine().hasOption("x");
                 context.getConfiguration().setStyleSheet(StyleSheets.getStyleSheet("xml"));
