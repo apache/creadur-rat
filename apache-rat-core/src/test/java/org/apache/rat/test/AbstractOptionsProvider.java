@@ -247,7 +247,7 @@ public abstract class AbstractOptionsProvider implements ArgumentsProvider {
     /* Tests to be implemented */
     protected abstract void helpTest();
 
-    /* Display the option and value under test */
+    /** Display the option and value under test */
     private String displayArgAndName(Option option, String fname) {
         return String.format("%s %s", option.getLongOpt(), fname);
     }
