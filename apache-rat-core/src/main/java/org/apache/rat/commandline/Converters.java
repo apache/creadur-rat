@@ -30,7 +30,7 @@ import org.apache.rat.report.claim.ClaimStatistic;
 import static java.lang.String.format;
 
 /**
- * Customized converters for Arg processing
+ * Customized converters for Arg processing.
  */
 public final class Converters {
 
@@ -39,12 +39,12 @@ public final class Converters {
     }
 
     /**
-     * Creates a File with fully qualified name
+     * Creates a File with fully qualified name.
      */
     public static final FileConverter FILE_CONVERTER = new FileConverter();
 
     /**
-     * converts the Converter pattern into a Converter, count pair.
+     * Converts the Converter pattern into a Converter, count pair.
      */
     public static final Converter<Pair<ClaimStatistic.Counter, Integer>, ConfigurationException> COUNTER_CONVERTER = arg -> {
         String[] parts = arg.split(":");
@@ -63,7 +63,7 @@ public final class Converters {
      * A converter that can handle relative or absolute files.
      */
     public static final class FileConverter implements Converter<File, NullPointerException> {
-        /** The working directory to resolve relative files agains */
+        /** The working directory to resolve relative files against. */
         private DocumentName workingDirectory;
 
         /**
@@ -75,7 +75,7 @@ public final class Converters {
 
         /**
          * Sets the working directory for the conversion.
-         * @param workingDirectory
+         * @param workingDirectory current working directory
          */
         public void setWorkingDirectory(final DocumentName workingDirectory) {
             this.workingDirectory = workingDirectory;
