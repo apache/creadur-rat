@@ -55,10 +55,10 @@ public final class ExclusionUtils {
     /** Prefix used to negate the given pattern. */
     public static final String NEGATION_PREFIX = "!";
 
-    /** A predicate that filters out lines that do NOT start with "!" */
+    /** A predicate that filters out lines that do NOT start with {@link #NEGATION_PREFIX} */
     public static final Predicate<String> NOT_MATCH_FILTER = s -> s.startsWith(NEGATION_PREFIX);
 
-    /** A predicate that filters out lines that start with "!" */
+    /** A predicate that filters out lines that start with {@link #NEGATION_PREFIX} */
     public static final Predicate<String> MATCH_FILTER = NOT_MATCH_FILTER.negate();
 
     private ExclusionUtils() {
