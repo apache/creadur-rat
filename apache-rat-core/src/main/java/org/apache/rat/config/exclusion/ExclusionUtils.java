@@ -52,13 +52,13 @@ public final class ExclusionUtils {
     /** The list of comment prefixes that are used to filter comment lines.  */
     public static final List<String> COMMENT_PREFIXES = Arrays.asList("#", "##", "//", "/**", "/*");
 
-    /** Prefix used to negate the given pattern. */
+    /** Prefix used to negate a given pattern. */
     public static final String NEGATION_PREFIX = "!";
 
-    /** A predicate that filters out lines that do NOT start with "!" */
+    /** A predicate that filters out lines that do NOT start with {@link #NEGATION_PREFIX}. */
     public static final Predicate<String> NOT_MATCH_FILTER = s -> s.startsWith(NEGATION_PREFIX);
 
-    /** A predicate that filters out lines that start with "!" */
+    /** A predicate that filters out lines that start with {@link #NEGATION_PREFIX}. */
     public static final Predicate<String> MATCH_FILTER = NOT_MATCH_FILTER.negate();
 
     private ExclusionUtils() {
@@ -188,15 +188,6 @@ public final class ExclusionUtils {
         } catch (IOException e) {
             throw new ConfigurationException("Unable to read file " + patternFile, e);
         }
-    }
-
-    /**
-     * Returns {@code true} if the file name represents a hidden file.
-     * @param file the file to check.
-     * @return {@code true} if it is the name of a hidden file.
-     */
-    public static boolean isHidden(final File file) {
-        return isHidden(file.getName());
     }
 
     /**
