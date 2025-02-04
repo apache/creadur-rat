@@ -115,7 +115,7 @@ public abstract class AbstractRatMojo extends BaseRatMojo {
      * @deprecated Use specific configuration under &lt;configuration&gt;.
      */
     @Deprecated
-    @Parameter(required = false)
+    @Parameter
     private String[] approvedLicenses;
 
     /** The file of approved licenses

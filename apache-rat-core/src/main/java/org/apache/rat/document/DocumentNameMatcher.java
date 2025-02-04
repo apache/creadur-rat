@@ -302,16 +302,13 @@ public final class DocumentNameMatcher {
         }
         List<DocumentNameMatcher> workingSet = Arrays.asList(includes, excludes);
         return new DocumentNameMatcher(format("matcherSet(%s)", join(workingSet)),
-                new CollectionPredicateImpl(Arrays.asList(includes, excludes)) {
+                new CollectionPredicateImpl(workingSet) {
                     @Override
                     public boolean test(final DocumentName documentName) {
                         if (includes.matches(documentName)) {
                             return true;
                         }
-                        if (excludes.matches(documentName)) {
-                            return false;
-                        }
-                        return true;
+                        return !excludes.matches(documentName);
                     }
                 });
     }
