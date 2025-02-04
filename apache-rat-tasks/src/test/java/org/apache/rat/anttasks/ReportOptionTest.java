@@ -81,7 +81,7 @@ public class ReportOptionTest  {
             super(BaseAntTask.unsupportedArgs(), testPath.toFile());
         }
 
-        protected ReportConfiguration generateConfig(List<Pair<Option, String[]>> args) {
+        protected final ReportConfiguration generateConfig(final List<Pair<Option, String[]>> args) {
             BuildTask task = args.get(0).getKey() == null ? new BuildTask() : new BuildTask(args.get(0).getKey());
             task.setUp(args);
             task.buildRule.executeTarget(task.name);

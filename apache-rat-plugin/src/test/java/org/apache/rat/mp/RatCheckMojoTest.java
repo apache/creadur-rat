@@ -376,7 +376,6 @@ public class RatCheckMojoTest {
             data.put(ClaimStatistic.Counter.UNKNOWN, "4");
 
             org.w3c.dom.Document document = XmlUtils.toDom(Files.newInputStream(ratTxtFile.toPath()));
-            XPath xPath = XPathFactory.newInstance().newXPath();
 
             for (ClaimStatistic.Counter counter : ClaimStatistic.Counter.values()) {
                 String xpath = String.format("/rat-report/statistics/statistic[@name='%s']", counter.displayName());

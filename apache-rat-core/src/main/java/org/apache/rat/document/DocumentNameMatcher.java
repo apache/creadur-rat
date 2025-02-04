@@ -65,7 +65,7 @@ public final class DocumentNameMatcher {
     public DocumentNameMatcher(final String name, final Predicate<DocumentName> predicate) {
         this.name = name;
         this.predicate = predicate;
-        this.isCollection = predicate instanceof CollectionPredicateImpl;
+        this.isCollection = predicate instanceof CollectionPredicate;
     }
 
     /**
@@ -180,7 +180,7 @@ public final class DocumentNameMatcher {
      * @return true if the documentName matchers this DocumentNameMatcher.
      */
     public boolean matches(final DocumentName documentName) {
-            return predicate.test(documentName);
+        return predicate.test(documentName);
     }
 
     /**
@@ -210,8 +210,7 @@ public final class DocumentNameMatcher {
         return String.join(", ", children);
     }
 
-    private static Optional<DocumentNameMatcher> standardCollectionCheck(final Collection<DocumentNameMatcher> matchers,
-                                                                         final DocumentNameMatcher override) {
+    private static Optional<DocumentNameMatcher> standardCollectionCheck(final Collection<DocumentNameMatcher> matchers, final DocumentNameMatcher override) {
         if (matchers.isEmpty()) {
             throw new ConfigurationException("Empty matcher collection");
         }
@@ -303,13 +302,16 @@ public final class DocumentNameMatcher {
         }
         List<DocumentNameMatcher> workingSet = Arrays.asList(includes, excludes);
         return new DocumentNameMatcher(format("matcherSet(%s)", join(workingSet)),
-                new CollectionPredicateImpl(workingSet) {
+                new CollectionPredicateImpl(Arrays.asList(includes, excludes)) {
                     @Override
                     public boolean test(final DocumentName documentName) {
                         if (includes.matches(documentName)) {
                             return true;
                         }
-                        return !excludes.matches(documentName);
+                        if (excludes.matches(documentName)) {
+                            return false;
+                        }
+                        return true;
                     }
                 });
     }
@@ -400,9 +402,8 @@ public final class DocumentNameMatcher {
     interface CollectionPredicate extends Predicate<DocumentName> {
         Iterable<DocumentNameMatcher> getMatchers();
     }
-
     /**
-     * A marker class to indicate this predicate contains a collection of matchers.
+     * CollectionPredicate implementation.
      */
     abstract static class CollectionPredicateImpl implements CollectionPredicate {
         /** The collection for matchers that make up this predicate */
@@ -484,7 +485,7 @@ public final class DocumentNameMatcher {
         private final DocumentNameMatcher matcher;
         /** The result of the check. */
         private final boolean result;
-        /** The actual candidate. */
+        /** The candidate */
         private final DocumentName candidate;
 
         private DecomposeData(final int level, final DocumentNameMatcher matcher, final DocumentName candidate, final boolean result) {

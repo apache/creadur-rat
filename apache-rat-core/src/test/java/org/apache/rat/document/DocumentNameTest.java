@@ -18,13 +18,10 @@
  */
 package org.apache.rat.document;
 
-import com.google.common.jimfs.Configuration;
-import com.google.common.jimfs.Jimfs;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FilenameFilter;
 import java.io.IOException;
-import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -213,7 +210,6 @@ public class DocumentNameTest {
                 .setBaseName("/a").build();
         assertThat(documentName.localized()).isEqualTo("/b/c");
         assertThat(documentName.localized("-")).isEqualTo("-b-c");
-
     }
 
     @ParameterizedTest(name = "{index} {0}")
@@ -226,7 +222,7 @@ public class DocumentNameTest {
         assertThat(underTest.getBaseName()).as(testName).isEqualTo(root + dirSeparator + baseName);
     }
 
-    private static Stream<Arguments> validBuilderData() throws IOException {
+    private static Stream<Arguments> validBuilderData() {
         List<Arguments> lst = new ArrayList<>();
         File f = Files.newTemporaryFile();
 
