@@ -24,8 +24,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.stream.Collectors;
 
-import org.apache.rat.config.exclusion.plexus.MatchPatterns;
 import org.apache.rat.document.DocumentName;
 import org.apache.rat.document.DocumentNameMatcher;
 import org.apache.rat.utils.DefaultLog;
@@ -85,10 +85,8 @@ public class ExclusionProcessor {
      * @return this
      */
     public ExclusionProcessor addIncludedPatterns(final Iterable<String> patterns) {
-        List<String> lst = new ArrayList<>();
-        patterns.forEach(lst::add);
-        DefaultLog.getInstance().info(format("Including patterns: %s", String.join(", ", lst)));
-        includedPatterns.addAll(lst);
+        DefaultLog.getInstance().info(format("Including patterns: %s", String.join(", ", patterns)));
+        patterns.forEach(includedPatterns::add);
         resetLastMatcher();
         return this;
     }
@@ -140,10 +138,8 @@ public class ExclusionProcessor {
      * @return this
      */
     public ExclusionProcessor addExcludedPatterns(final Iterable<String> patterns) {
-        List<String> lst = new ArrayList<>();
-        patterns.forEach(lst::add);
-        DefaultLog.getInstance().info(format("Excluding patterns: %s", String.join(", ", lst)));
-        excludedPatterns.addAll(lst);
+        DefaultLog.getInstance().info(format("Excluding patterns: %s", String.join(", ", patterns)));
+        patterns.forEach(excludedPatterns::add);
         resetLastMatcher();
         return this;
     }
@@ -176,22 +172,6 @@ public class ExclusionProcessor {
     }
 
     /**
-     * Adds to lists of qualified file patterns. Non-matching patterns start with a {@code !}.
-     * @param matching the list to put matching file patterns into.
-     * @param notMatching the list to put non-matching files patterns into.
-     * @param patterns the patterns to match.
-     */
-    private void segregateList(final Set<String> matching, final Set<String> notMatching,
-                               final Iterable<String> patterns) {
-        if (patterns.iterator().hasNext()) {
-            ExtendedIterator.create(patterns.iterator()).filter(ExclusionUtils.MATCH_FILTER).forEachRemaining(matching::add);
-            ExtendedIterator.create(patterns.iterator()).filter(ExclusionUtils.NOT_MATCH_FILTER)
-                    .map(s -> s.substring(1))
-                    .forEachRemaining(notMatching::add);
-        }
-    }
-
-    /**
      * Creates a Document name matcher that will return {@code false} on any
      * document that is excluded.
      * @param basedir the base directory to make everything relative to.
@@ -204,84 +184,137 @@ public class ExclusionProcessor {
         if (lastMatcher == null || !basedir.equals(lastMatcherBaseDir)) {
             lastMatcherBaseDir = basedir;
 
-            final Set<String> incl = new TreeSet<>();
-            final Set<String> excl = new TreeSet<>();
-            final List<DocumentNameMatcher> inclMatchers = new ArrayList<>();
-
             // add the file processors
-            for (StandardCollection sc : fileProcessors) {
-                ExtendedIterator<FileProcessor> iter =  sc.fileProcessor();
-                if (iter.hasNext()) {
-                    iter.forEachRemaining(fp -> {
-                        segregateList(excl, incl, fp.apply(basedir));
-                        fp.customDocumentNameMatchers().forEach(inclMatchers::add);
-                    });
-                } else {
-                    DefaultLog.getInstance().info(String.format("%s does not have a fileProcessor.", sc));
-                }
-            }
+            final List<MatcherSet> matchers = extractFileProcessors(basedir);
+            final MatcherSet.Builder fromCommandLine = new MatcherSet.Builder();
+            DocumentName.Builder nameBuilder = DocumentName.builder(basedir).setBaseName(basedir);
+            extractPatterns(nameBuilder, fromCommandLine);
+            extractCollectionPatterns(nameBuilder, fromCommandLine);
+            extractCollectionMatchers(fromCommandLine);
+            extractPaths(fromCommandLine);
+            matchers.add(fromCommandLine.build());
 
-            // add the standard patterns
-            segregateList(incl, excl, new FileProcessor(includedPatterns).apply(basedir));
-            segregateList(excl, incl, new FileProcessor(excludedPatterns).apply(basedir));
-
-            // add the collection patterns
-            for (StandardCollection sc : includedCollections) {
-                Set<String> patterns = sc.patterns();
-                if (patterns.isEmpty()) {
-                    DefaultLog.getInstance().info(String.format("%s does not have a defined collection for inclusion.", sc));
-                } else {
-                    segregateList(incl, excl, new FileProcessor(sc.patterns()).apply(basedir));
-                }
-            }
-            for (StandardCollection sc : excludedCollections) {
-                Set<String> patterns = sc.patterns();
-                if (patterns.isEmpty()) {
-                    DefaultLog.getInstance().info(String.format("%s does not have a defined collection for exclusion.", sc));
-                } else {
-                    segregateList(excl, incl, new FileProcessor(sc.patterns()).apply(basedir));
-                }
-            }
-
-            // add the matchers
-            ExtendedIterator.create(includedCollections.iterator())
-                    .map(StandardCollection::staticDocumentNameMatcher)
-                    .filter(Objects::nonNull)
-                    .forEachRemaining(inclMatchers::add);
-
-            List<DocumentNameMatcher> exclMatchers = ExtendedIterator.create(excludedCollections.iterator())
-                    .map(StandardCollection::staticDocumentNameMatcher)
-                    .filter(Objects::nonNull)
-                    .addTo(new ArrayList<>());
-
-            if (!incl.isEmpty()) {
-                inclMatchers.add(new DocumentNameMatcher("included patterns", MatchPatterns.from(basedir.getDirectorySeparator(), incl), basedir));
-            }
-            if (!excl.isEmpty()) {
-                exclMatchers.add(new DocumentNameMatcher("excluded patterns", MatchPatterns.from(basedir.getDirectorySeparator(), excl), basedir));
-            }
-
-            if (!includedPaths.isEmpty()) {
-                for (DocumentNameMatcher matcher : includedPaths) {
-                    DefaultLog.getInstance().info(format("Including path matcher %s", matcher));
-                    inclMatchers.add(matcher);
-                }
-            }
-            if (!excludedPaths.isEmpty()) {
-                for (DocumentNameMatcher matcher : excludedPaths) {
-                    DefaultLog.getInstance().info(format("Excluding path matcher %s", matcher));
-                    exclMatchers.add(matcher);
-                }
-            }
-
-            lastMatcher = DocumentNameMatcher.MATCHES_ALL;
-            if (!exclMatchers.isEmpty()) {
-                lastMatcher = DocumentNameMatcher.not(DocumentNameMatcher.or(exclMatchers));
-                if (!inclMatchers.isEmpty()) {
-                    lastMatcher = DocumentNameMatcher.or(DocumentNameMatcher.or(inclMatchers), lastMatcher);
-                }
-            }
+            lastMatcher = MatcherSet.merge(matchers).createMatcher();
+            DefaultLog.getInstance().debug(format("Created matcher set for %s%n%s", basedir.getName(),
+                    lastMatcher));
         }
         return lastMatcher;
     }
+
+    /**
+     * Extracts the file processors from {@link #fileProcessors}.
+     * @param basedir The directory to base the file processors on.
+     * @return a list of MatcherSets that are created for each {@link #fileProcessors} entry.
+     */
+    private List<MatcherSet> extractFileProcessors(final DocumentName basedir) {
+        final List<MatcherSet> fileProcessorList = new ArrayList<>();
+        for (StandardCollection sc : fileProcessors) {
+            final Set<String> names = new HashSet<>();
+            sc.fileProcessor().map(fp -> fp.apply(basedir)).forEachRemaining(n -> n.forEach(names::add));
+            MatcherSet.Builder builder = new MatcherSet.Builder();
+            Set<String> matching = new HashSet<>();
+            Set<String> notMatching = new HashSet<>();
+            MatcherSet.Builder.segregateList(matching, notMatching, names);
+            builder.addIncluded(basedir.resolve(sc.name()), notMatching);
+            builder.addExcluded(basedir.resolve(sc.name()), matching);
+            fileProcessorList.add(builder.build());
+        }
+        return fileProcessorList;
+    }
+
+    /**
+     * Converts the pattern to use the directory separator specified by the document name and localises it for
+     * exclusion processing.
+     * @param documentName The document name to adjust the pattern against.
+     * @param pattern the pattern.
+     * @return the prepared pattern.
+     */
+    private String preparePattern(final DocumentName documentName, final String pattern) {
+        return ExclusionUtils.qualifyPattern(documentName,
+                        ExclusionUtils.convertSeparator(pattern, "/", documentName.getDirectorySeparator()));
+    }
+
+    /**
+     * Extracts {@link #includedPatterns} and {@link #excludedPatterns} into the specified matcherBuilder.
+     * @param nameBuilder The name builder for the pattern. File names are resolved against the generated name.
+     * @param matcherBuilder the MatcherSet.Builder to add the patterns to.
+     */
+    private void extractPatterns(final DocumentName.Builder nameBuilder, final MatcherSet.Builder matcherBuilder) {
+        DocumentName name = nameBuilder.setName("Patterns").build();
+        if (!excludedPatterns.isEmpty()) {
+            matcherBuilder.addExcluded(name, excludedPatterns.stream()
+                    .map(s -> preparePattern(name, s))
+                    .collect(Collectors.toSet()));
+        }
+        if (!includedPatterns.isEmpty()) {
+            matcherBuilder.addIncluded(name, includedPatterns.stream()
+                    .map(s -> preparePattern(name, s)).collect(Collectors.toSet()));
+        }
+    }
+
+    /**
+     * Extracts {@link #includedCollections} and {@link #excludedCollections} patterns into the specified matcherBuilder.
+     * @param nameBuilder the name builder for the pattern names.
+     * @param matcherBuilder the MatcherSet.Builder to add the collections to.
+     */
+    private void extractCollectionPatterns(final DocumentName.Builder nameBuilder, final MatcherSet.Builder matcherBuilder) {
+        final Set<String> incl = new TreeSet<>();
+        final Set<String> excl = new TreeSet<>();
+        for (StandardCollection sc : includedCollections) {
+            Set<String> patterns = sc.patterns();
+            if (patterns.isEmpty()) {
+                DefaultLog.getInstance().debug(String.format("%s does not have a defined collection for inclusion.", sc));
+            } else {
+                MatcherSet.Builder.segregateList(incl, excl, sc.patterns());
+            }
+        }
+        for (StandardCollection sc : excludedCollections) {
+            Set<String> patterns = sc.patterns();
+            if (patterns.isEmpty()) {
+                DefaultLog.getInstance().debug(String.format("%s does not have a defined collection for exclusion.", sc));
+            } else {
+                MatcherSet.Builder.segregateList(excl, incl, sc.patterns());
+            }
+        }
+        DocumentName name = nameBuilder.setName("Collections").build();
+        matcherBuilder
+                .addExcluded(name, excl.stream().map(s -> preparePattern(name.getBaseDocumentName(), s)).collect(Collectors.toSet()))
+                .addIncluded(name, incl.stream().map(s -> preparePattern(name.getBaseDocumentName(), s)).collect(Collectors.toSet()));
+    }
+
+    /**
+     * Extracts {@link #includedCollections} and {@link #excludedCollections} matchers into the specified matcherBuilder.
+     * @param matcherBuilder the MatcherSet.Builder to add the collections to.
+     */
+    private void extractCollectionMatchers(final MatcherSet.Builder matcherBuilder) {
+        ExtendedIterator.create(includedCollections.iterator())
+                .map(StandardCollection::staticDocumentNameMatcher)
+                .filter(Objects::nonNull)
+                .forEachRemaining(matcherBuilder::addIncluded);
+
+        ExtendedIterator.create(excludedCollections.iterator())
+                .map(StandardCollection::staticDocumentNameMatcher)
+                .filter(Objects::nonNull)
+                .forEachRemaining(matcherBuilder::addExcluded);
+    }
+
+    /**
+     * Extracts {@link #includedPaths} and {@link #excludedPaths} patterns into the specified matcherBuilder.
+     * @param matcherBuilder the MatcherSet.Builder to add the collections to.
+     */
+    private void extractPaths(final MatcherSet.Builder matcherBuilder) {
+        if (!includedPaths.isEmpty()) {
+            for (DocumentNameMatcher matcher : includedPaths) {
+                DefaultLog.getInstance().info(format("Including path matcher %s", matcher));
+                matcherBuilder.addIncluded(matcher);
+            }
+        }
+        if (!excludedPaths.isEmpty()) {
+            for (DocumentNameMatcher matcher : excludedPaths) {
+                DefaultLog.getInstance().info(format("Excluding path matcher %s", matcher));
+                matcherBuilder.addExcluded(matcher);
+            }
+        }
+    }
+
 }

@@ -34,9 +34,13 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.LineIterator;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.rat.ConfigurationException;
+import org.apache.rat.config.exclusion.plexus.MatchPattern;
+import org.apache.rat.config.exclusion.plexus.SelectorUtils;
 import org.apache.rat.document.DocumentName;
 import org.apache.rat.document.DocumentNameMatcher;
+import org.apache.rat.utils.DefaultLog;
 import org.apache.rat.utils.ExtendedIterator;
+import org.apache.rat.utils.Log;
 
 import static java.lang.String.format;
 
@@ -48,11 +52,14 @@ public final class ExclusionUtils {
     /** The list of comment prefixes that are used to filter comment lines.  */
     public static final List<String> COMMENT_PREFIXES = Arrays.asList("#", "##", "//", "/**", "/*");
 
-    /** A predicate that filters out lines that do NOT start with "!" */
-    public static final Predicate<String> NOT_MATCH_FILTER = s -> s.startsWith("!");
+    /** Prefix used to negate a given pattern. */
+    public static final String NEGATION_PREFIX = "!";
 
-    /** A predicate that filters out lines that start with "!" */
-    public static final Predicate<String> MATCH_FILTER = s -> !s.startsWith("!");
+    /** A predicate that filters out lines that do NOT start with {@link #NEGATION_PREFIX}. */
+    public static final Predicate<String> NOT_MATCH_FILTER = s -> s.startsWith(NEGATION_PREFIX);
+
+    /** A predicate that filters out lines that start with {@link #NEGATION_PREFIX}. */
+    public static final Predicate<String> MATCH_FILTER = NOT_MATCH_FILTER.negate();
 
     private ExclusionUtils() {
         // do not instantiate
@@ -112,7 +119,20 @@ public final class ExclusionUtils {
      * @return a FileFilter.
      */
     public static FileFilter asFileFilter(final DocumentName parent, final DocumentNameMatcher nameMatcher) {
-        return file -> nameMatcher.matches(DocumentName.builder(file).setBaseName(parent.getBaseName()).build());
+        return file -> {
+            DocumentName candidate = DocumentName.builder(file).setBaseName(parent.getBaseName()).build();
+            boolean result = nameMatcher.matches(candidate);
+            Log log = DefaultLog.getInstance();
+            if (log.isEnabled(Log.Level.DEBUG)) {
+                log.debug(format("FILTER TEST for %s -> %s", file, result));
+                if (!result) {
+                    List< DocumentNameMatcher.DecomposeData> data = nameMatcher.decompose(candidate);
+                    log.debug("Decomposition for " + candidate);
+                    data.forEach(log::debug);
+                }
+            }
+            return result;
+        };
     }
 
     /**
@@ -171,19 +191,43 @@ public final class ExclusionUtils {
     }
 
     /**
-     * Returns {@code true} if the file name represents a hidden file.
-     * @param f the file to check.
-     * @return {@code true} if it is the name of a hidden file.
+     * Returns {@code true} if the filename represents a hidden file
+     * @param fileName the file to check.
+     * @return true if it is the name of a hidden file.
      */
-    public static boolean isHidden(final File f) {
-        String s = f.getName();
-        return s.startsWith(".") && !(s.equals(".") || s.equals(".."));
+    public static boolean isHidden(final String fileName) {
+        return fileName.startsWith(".") && !(fileName.equals(".") || fileName.equals(".."));
     }
 
     private static void verifyFile(final File file) {
         if (file == null || !file.exists() || !file.isFile()) {
             throw new ConfigurationException(format("%s is not a valid file.", file));
         }
+    }
+
+    /**
+     * Modifies the {@link MatchPattern} formatted {@code pattern} argument by expanding the pattern and
+     * by adjusting the pattern to include the basename from the {@code documentName} argument.
+     * @param documentName the name of the file being read.
+     * @param pattern the pattern to format.
+     * @return the completely formatted pattern
+     */
+    public static String qualifyPattern(final DocumentName documentName, final String pattern) {
+        boolean prefix = pattern.startsWith(NEGATION_PREFIX);
+        String workingPattern = prefix ? pattern.substring(1) : pattern;
+        String normalizedPattern = SelectorUtils.extractPattern(workingPattern, documentName.getDirectorySeparator());
+
+        StringBuilder sb = new StringBuilder(prefix ? NEGATION_PREFIX : "");
+        if (SelectorUtils.isRegexPrefixedPattern(workingPattern)) {
+            sb.append(SelectorUtils.REGEX_HANDLER_PREFIX)
+                    .append("\\Q").append(documentName.getBaseName())
+                    .append(documentName.getDirectorySeparator())
+                    .append("\\E").append(normalizedPattern)
+                    .append(SelectorUtils.PATTERN_HANDLER_SUFFIX);
+        } else {
+            sb.append(documentName.getBaseDocumentName().resolve(normalizedPattern).getName());
+        }
+        return sb.toString();
     }
 
     /**
