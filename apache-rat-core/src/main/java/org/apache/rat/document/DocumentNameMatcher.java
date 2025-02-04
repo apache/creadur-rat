@@ -23,7 +23,6 @@ import java.io.FileFilter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Optional;
@@ -303,7 +302,16 @@ public final class DocumentNameMatcher {
             return MATCHES_ALL;
         }
         List<DocumentNameMatcher> workingSet = Arrays.asList(includes, excludes);
-        return new DocumentNameMatcher(format("matcherSet(%s)", join(workingSet)), new MatcherPredicate(workingSet));
+        return new DocumentNameMatcher(format("matcherSet(%s)", join(workingSet)),
+                new CollectionPredicateImpl(workingSet) {
+                    @Override
+                    public boolean test(final DocumentName documentName) {
+                        if (includes.matches(documentName)) {
+                            return true;
+                        }
+                        return !excludes.matches(documentName);
+                    }
+                });
     }
 
     /**
@@ -464,27 +472,6 @@ public final class DocumentNameMatcher {
                 }
             }
             return false;
-        }
-    }
-
-    /**
-     * An implementation of "or" logic across a collection of DocumentNameMatchers.
-     */
-    // package private for testing access
-    static class MatcherPredicate extends CollectionPredicateImpl {
-        MatcherPredicate(final Iterable<DocumentNameMatcher> matchers) {
-            super(matchers);
-        }
-
-        @Override
-        public boolean test(final DocumentName documentName) {
-            Iterator<DocumentNameMatcher> iter = getMatchers().iterator();
-            // included
-            if (iter.next().matches(documentName)) {
-                return true;
-            }
-            // excluded
-            return !iter.next().matches(documentName);
         }
     }
 

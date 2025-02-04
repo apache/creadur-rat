@@ -119,10 +119,14 @@ public enum Arg {
     CONFIGURATION(new OptionGroup()
             .addOption(Option.builder().longOpt("config").hasArgs().argName("File")
                     .desc("File names for system configuration.")
+                    .converter(Converters.FILE_CONVERTER)
+                    .type(File.class)
                     .build())
             .addOption(Option.builder().longOpt("licenses").hasArgs().argName("File")
                     .desc("File names for system configuration.")
                     .deprecated(DeprecatedAttributes.builder().setSince("0.17").setForRemoval(true).setDescription(StdMsgs.useMsg("--config")).get())
+                    .converter(Converters.FILE_CONVERTER)
+                    .type(File.class)
                     .build())),
 
     /**
@@ -186,7 +190,6 @@ public enum Arg {
             .hasArg().argName("File").type(File.class)
             .converter(Converters.FILE_CONVERTER)
             .desc("Name of file containing the denied license IDs.")
-            .converter(Converters.FILE_CONVERTER)
             .build())),
 
     /**
@@ -234,6 +237,7 @@ public enum Arg {
                             "File names must use linux directory separator ('/') or none at all. " +
                             "File names that do not start with '/' are relative to the directory where the " +
                             "argument is located.")
+                    .converter(Converters.FILE_CONVERTER)
                     .type(File.class)
                     .build())),
 
@@ -585,8 +589,9 @@ public enum Arg {
         try {
             Defaults.Builder defaultBuilder = Defaults.builder();
             if (CONFIGURATION.isSelected()) {
-                for (String fn : context.getCommandLine().getOptionValues(CONFIGURATION.getSelected())) {
-                    defaultBuilder.add(fn);
+                File[] files = CONFIGURATION.getParsedOptionValues(context.getCommandLine());
+                for (File file : files) {
+                    defaultBuilder.add(file);
                 }
             }
             if (CONFIGURATION_NO_DEFAULTS.isSelected()) {
@@ -607,7 +612,7 @@ public enum Arg {
                     try (InputStream in = Files.newInputStream(f.toPath())) {
                         context.getConfiguration().addApprovedLicenseCategories(IOUtils.readLines(in, StandardCharsets.UTF_8));
                     }
-                } catch (IOException | ParseException e) {
+                } catch (IOException e) {
                     throw new ConfigurationException(e);
                 }
             }
@@ -622,7 +627,7 @@ public enum Arg {
                     try (InputStream in = Files.newInputStream(f.toPath())) {
                         context.getConfiguration().removeApprovedLicenseCategories(IOUtils.readLines(in, StandardCharsets.UTF_8));
                     }
-                } catch (IOException | ParseException e) {
+                } catch (IOException e) {
                     throw new ConfigurationException(e);
                 }
             }
@@ -634,11 +639,11 @@ public enum Arg {
             }
             if (LICENSES_APPROVED_FILE.isSelected()) {
                 try {
-                    File f = context.getCommandLine().getParsedOptionValue(LICENSES_APPROVED_FILE.getSelected());
-                    try (InputStream in = Files.newInputStream(f.toPath())) {
+                    File file = context.getCommandLine().getParsedOptionValue(LICENSES_APPROVED_FILE.getSelected());
+                    try (InputStream in = Files.newInputStream(file.toPath())) {
                         context.getConfiguration().addApprovedLicenseIds(IOUtils.readLines(in, StandardCharsets.UTF_8));
                     }
-                } catch (IOException | ParseException e) {
+                } catch (IOException e) {
                     throw new ConfigurationException(e);
                 }
             }
@@ -649,11 +654,11 @@ public enum Arg {
             }
             if (LICENSES_DENIED_FILE.isSelected()) {
                 try {
-                    File f = context.getCommandLine().getParsedOptionValue(LICENSES_DENIED_FILE.getSelected());
-                    try (InputStream in = Files.newInputStream(f.toPath())) {
+                    File file = context.getCommandLine().getParsedOptionValue(LICENSES_DENIED_FILE.getSelected());
+                    try (InputStream in = Files.newInputStream(file.toPath())) {
                         context.getConfiguration().removeApprovedLicenseIds(IOUtils.readLines(in, StandardCharsets.UTF_8));
                     }
-                } catch (IOException | ParseException e) {
+                } catch (IOException e) {
                     throw new ConfigurationException(e);
                 }
             }
@@ -795,6 +800,7 @@ public enum Arg {
      * @throws ConfigurationException on error
      */
     public static void processArgs(final ArgumentContext context) throws ConfigurationException {
+        Converters.FILE_CONVERTER.setWorkingDirectory(context.getWorkingDirectory());
         processOutputArgs(context);
         processEditArgs(context);
         processInputArgs(context);
@@ -843,12 +849,12 @@ public enum Arg {
 
         if (OUTPUT_FILE.isSelected()) {
             try {
-                File f = context.getCommandLine().getParsedOptionValue(OUTPUT_FILE.getSelected());
-                File parent = f.getParentFile();
+                File file = context.getCommandLine().getParsedOptionValue(OUTPUT_FILE.getSelected());
+                File parent = file.getParentFile();
                 if (!parent.mkdirs() && !parent.isDirectory()) {
-                    DefaultLog.getInstance().error("Could not create report parent directory " + f);
+                    DefaultLog.getInstance().error("Could not create report parent directory " + file);
                 }
-                context.getConfiguration().setOut(f);
+                context.getConfiguration().setOut(file);
             } catch (ParseException e) {
                 context.logParseException(e, OUTPUT_FILE.getSelected(), "System.out");
                 context.getConfiguration().setOut((IOSupplier<OutputStream>) null);
@@ -857,7 +863,7 @@ public enum Arg {
 
         if (OUTPUT_STYLE.isSelected()) {
             String selected = OUTPUT_STYLE.getSelected().getKey();
-            if (selected.equals("x")) {
+            if ("x".equals(selected)) {
                 // display deprecated message.
                 context.getCommandLine().hasOption("x");
                 context.getConfiguration().setStyleSheet(StyleSheets.getStyleSheet("xml"));

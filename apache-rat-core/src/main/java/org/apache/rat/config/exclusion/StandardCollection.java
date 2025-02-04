@@ -96,24 +96,38 @@ public enum StandardCollection {
             new GitFileProcessor()
     ),
     /**
-     * The hidden directories. Directories with names that start with '.'
+     * The hidden directories. Directories with names that start with {@code .}
      */
     HIDDEN_DIR("The hidden directories. Directories with names that start with '.'",
             null,
-            new DocumentNameMatcher("HIDDEN_DIR", (Predicate<DocumentName>) documentName -> {
-                        File f = new File(documentName.getName());
-                        return f.isDirectory() && ExclusionUtils.isHidden(f);
-                }), null
+            new DocumentNameMatcher("HIDDEN_DIR", new Predicate<DocumentName>() {
+                @Override
+                public boolean test(final DocumentName documentName) {
+                    File file = documentName.asFile();
+                    return file.isDirectory() && ExclusionUtils.isHidden(documentName.getShortName());
+                }
+                @Override
+                public String toString() {
+                    return "HIDDEN_DIR";
+                }
+            }), null
     ),
     /**
-     * The hidden files. Directories with names that start with '.'
+     * The hidden files. Directories with names that start with {@code .}
      */
     HIDDEN_FILE("The hidden files. Directories with names that start with '.'",
             null,
-            new DocumentNameMatcher("HIDDEN_FILE", (Predicate<DocumentName>) documentName -> {
-                    File f = new File(documentName.getName());
-                    return f.isFile() && ExclusionUtils.isHidden(f);
-                }), null
+            new DocumentNameMatcher("HIDDEN_FILE", new Predicate<DocumentName>() {
+                @Override
+                public boolean test(final DocumentName documentName) {
+                    File file = documentName.asFile();
+                    return file.isFile() && ExclusionUtils.isHidden(documentName.getShortName());
+                }
+                @Override
+                public String toString() {
+                    return "HIDDEN_FILE";
+                }
+            }), null
     ),
     /**
      * The files and directories created by an IDEA IDE based tool.
@@ -121,9 +135,9 @@ public enum StandardCollection {
     IDEA("The files and directories created by an IDEA IDE based tool.",
             Arrays.asList("**/*.iml", "**/*.ipr", "**/*.iws", "**/.idea/**"), null, null),
     /**
-     * The .DS_Store files MAC computer.
+     * The .DS_Store files on Mac computers.
      */
-    MAC("The .DS_Store files MAC computer.",
+    MAC("The .DS_Store files Mac computers.",
             Collections.singletonList("**/.DS_Store"), null, null),
     /**
      * The files and directories created by Maven build system based project.
