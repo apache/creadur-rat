@@ -105,21 +105,21 @@ public abstract class AbstractRatMojo extends BaseRatMojo {
 
     /**
      * Whether to add the default list of license matchers.
-     * @deprecated @deprecated Use specific configuration under &lt;configuration&gt;.
+     * @deprecated Use specific configuration under &lt;configuration&gt;.
      */
     @Deprecated
     @Parameter(property = "rat.addDefaultLicenseMatchers")
     private boolean addDefaultLicenseMatchers;
 
     /** The list of approved licenses
-     * @deprecated @deprecated Use specific configuration under &lt;configuration&gt;.
+     * @deprecated Use specific configuration under &lt;configuration&gt;.
      */
     @Deprecated
-    @Parameter(required = false)
+    @Parameter
     private String[] approvedLicenses;
 
     /** The file of approved licenses
-     * @deprecated @deprecated Use specific configuration under &lt;configuration&gt;.
+     * @deprecated Use specific configuration under &lt;configuration&gt;.
      */
     @Deprecated
     @Parameter(property = "rat.approvedFile")
