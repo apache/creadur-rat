@@ -589,7 +589,7 @@ public enum Arg {
         try {
             Defaults.Builder defaultBuilder = Defaults.builder();
             if (CONFIGURATION.isSelected()) {
-                File[] files =  CONFIGURATION.getParsedOptionValues(context.getCommandLine());
+                File[] files = CONFIGURATION.getParsedOptionValues(context.getCommandLine());
                 for (File file : files) {
                     defaultBuilder.add(file);
                 }
@@ -863,7 +863,7 @@ public enum Arg {
 
         if (OUTPUT_STYLE.isSelected()) {
             String selected = OUTPUT_STYLE.getSelected().getKey();
-            if (selected.equals("x")) {
+            if ("x".equals(selected)) {
                 // display deprecated message.
                 context.getCommandLine().hasOption("x");
                 context.getConfiguration().setStyleSheet(StyleSheets.getStyleSheet("xml"));
