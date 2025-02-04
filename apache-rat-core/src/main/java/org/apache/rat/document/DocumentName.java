@@ -199,9 +199,9 @@ public class DocumentName implements Comparable<DocumentName> {
         return new Builder(this).setName(normalize(pattern)).build();
     }
 
-    private String normalize(String pattern) {
+    private String normalize(final String pattern) {
         List<String> parts = new ArrayList<>(Arrays.asList(tokenize(pattern)));
-        for (int i=0; i<parts.size(); i++) {
+        for (int i = 0; i < parts.size(); i++) {
             String part = parts.get(i);
             if (part.equals("..")) {
                 if (i == 0) {
