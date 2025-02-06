@@ -21,7 +21,6 @@ package org.apache.rat.configuration;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
-import java.io.StringWriter;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URI;
@@ -133,13 +132,13 @@ public final class XMLConfigurationReader implements LicenseReader, MatcherReade
      * @return The textual representation of the node for display.
      */
     private String nodeText(final Node node) {
-        StringWriter stringWriter = new StringWriter().append("<").append(node.getNodeName());
+        StringBuilder stringBuilder = new StringBuilder().append("<").append(node.getNodeName());
         NamedNodeMap attr = node.getAttributes();
         for (int i = 0; i < attr.getLength(); i++) {
             Node n = attr.item(i);
-            stringWriter.append(String.format(" %s='%s'", n.getNodeName(), n.getNodeValue()));
+            stringBuilder.append(String.format(" %s='%s'", n.getNodeName(), n.getNodeValue()));
         }
-        return stringWriter.append(">").toString();
+        return stringBuilder.append(">").toString();
     }
 
     @Override
