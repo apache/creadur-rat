@@ -543,10 +543,12 @@ public class ReportConfigurationTest {
             config.setOut(() -> osi);
             assertThat(osi.closeCount).isEqualTo(0);
             try (OutputStream os = config.getOutput().get()) {
+                assertThat(os).isNotNull();
                 assertThat(osi.closeCount).isEqualTo(0);
             }
             assertThat(osi.closeCount).isEqualTo(1);
             try (OutputStream os = config.getOutput().get()) {
+                assertThat(os).isNotNull();
                 assertThat(osi.closeCount).isEqualTo(1);
             }
             assertThat(osi.closeCount).isEqualTo(2);
