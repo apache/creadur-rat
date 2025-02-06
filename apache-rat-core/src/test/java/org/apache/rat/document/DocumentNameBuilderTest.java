@@ -19,7 +19,6 @@
 package org.apache.rat.document;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
@@ -31,7 +30,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.apache.rat.document.FSInfoTest.WINDOWS;
-
 
 public class DocumentNameBuilderTest {
 
@@ -54,8 +52,7 @@ public class DocumentNameBuilderTest {
         assertThat(documentName.localized(sep)).as(() -> String.format("Invalid localized('%s')", sep)).isEqualTo(localizedArg);
     }
 
-
-    static Stream<Arguments> buildTestData() throws IOException {
+    static Stream<Arguments> buildTestData() {
         List<Arguments> lst = new ArrayList<>();
 
             //

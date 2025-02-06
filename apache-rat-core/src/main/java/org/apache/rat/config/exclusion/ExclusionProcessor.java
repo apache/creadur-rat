@@ -209,6 +209,7 @@ public class ExclusionProcessor {
     private List<MatcherSet> extractFileProcessors(final DocumentName basedir) {
         final List<MatcherSet> fileProcessorList = new ArrayList<>();
         for (StandardCollection sc : fileProcessors) {
+
             ExtendedIterator<List<MatcherSet>> iter =  sc.fileProcessorBuilder().map(builder -> builder.build(basedir));
             if (iter.hasNext()) {
                 iter.forEachRemaining(fileProcessorList::addAll);
@@ -230,6 +231,7 @@ public class ExclusionProcessor {
         return ExclusionUtils.qualifyPattern(documentName,
                         ExclusionUtils.convertSeparator(pattern, "/", documentName.getDirectorySeparator()));
     }
+
     /**
      * Extracts {@link #includedPatterns} and {@link #excludedPatterns} into the specified matcherBuilder.
      * @param nameBuilder The name builder for the pattern. File names are resolved against the generated name.
@@ -312,4 +314,5 @@ public class ExclusionProcessor {
             }
         }
     }
+
 }

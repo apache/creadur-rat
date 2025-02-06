@@ -97,7 +97,7 @@ public enum StandardCollection {
             new GitIgnoreBuilder()
     ),
     /**
-     * The hidden directories. Directories with names that start with '.'
+     * The hidden directories. Directories with names that start with {@code .}
      */
     HIDDEN_DIR("The hidden directories. Directories with names that start with '.'",
             null,
@@ -114,7 +114,7 @@ public enum StandardCollection {
             }), null
     ),
     /**
-     * The hidden files. Directories with names that start with '.'
+     * The hidden files. Directories with names that start with {@code .}
      */
     HIDDEN_FILE("The hidden files. Directories with names that start with '.'",
             null,
@@ -136,9 +136,9 @@ public enum StandardCollection {
     IDEA("The files and directories created by an IDEA IDE based tool.",
             Arrays.asList("**/*.iml", "**/*.ipr", "**/*.iws", "**/.idea/**"), null, null),
     /**
-     * The .DS_Store files MAC computer.
+     * The .DS_Store files on Mac computers.
      */
-    MAC("The .DS_Store files MAC computer.",
+    MAC("The .DS_Store files Mac computers.",
             Collections.singletonList("**/.DS_Store"), null, null),
     /**
      * The files and directories created by Maven build system based project.

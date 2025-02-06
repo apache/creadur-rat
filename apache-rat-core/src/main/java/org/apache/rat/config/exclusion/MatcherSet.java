@@ -69,9 +69,9 @@ public interface MatcherSet {
     class Builder {
 
         /**
-         * Adds to lists of qualified file patterns. Non-matching patterns start with a {@code !}.
+         * Adds to lists of qualified file patterns. Non-matching patterns start with a {@link ExclusionUtils#NEGATION_PREFIX}.
          * @param matching the list to put matching file patterns into.
-         * @param notMatching the list to put non-matching files patterns into.
+         * @param notMatching the list to put non-matching file patterns into.
          * @param patterns the patterns to match.
          */
         public static void segregateList(final Set<String> matching, final Set<String> notMatching,
@@ -96,21 +96,22 @@ public interface MatcherSet {
         /**
          * Converts a collection names into DocumentNameMatchers that use the {@code fromDocument} directory separator.
          * @param dest the consumer to accept the DocumentNameMatcher.
-         * @param nameFmt the format for the matcher names.  Requires '%s' for the {@code fromDocument} localized name.
+         * @param nameFormat the format for the matcher names. Requires '%s' for the {@code fromDocument} localised name.
          * @param fromDocument the document that the patterns are associated with.
          * @param names the list of patterns. If empty no action is taken.
          */
-        private void processNames(final Consumer<DocumentNameMatcher> dest, final String nameFmt, final DocumentName fromDocument, final Set<String> names) {
+        private void processNames(final Consumer<DocumentNameMatcher> dest, final String nameFormat, final DocumentName fromDocument, final Set<String> names) {
             if (!names.isEmpty()) {
-                String name = String.format(nameFmt, fromDocument.localized("/").substring(1));
+                String name = String.format(nameFormat, fromDocument.localized("/").substring(1));
                 dest.accept(new DocumentNameMatcher(name, MatchPatterns.from(fromDocument.getDirectorySeparator(), names), fromDocument.getBaseDocumentName()));
             }
         }
+
         /**
          * Adds included file names from the specified document. File names are resolved relative to the directory
          * of the {@code fromDocument}.
          * @param fromDocument the document the names were read from.
-         * @param names the names that were read from the document. Must be use the separator specified by {@code fromDocument}.
+         * @param names the names that were read from the document. Must use the separator specified by {@code fromDocument}.
          * @return this
          */
         public Builder addIncluded(final DocumentName fromDocument, final Set<String> names) {
@@ -122,7 +123,7 @@ public interface MatcherSet {
          * Adds excluded file names from the specified document. File names are resolved relative to the directory
          * of the {@code fromDocument}.
          * @param fromDocument the document the names were read from.
-         * @param names the names that were read from the document. Must be use the separator specified by {@code fromDocument}.
+         * @param names the names that were read from the document. Must use the separator specified by {@code fromDocument}.
          * @return this
          */
         public Builder addExcluded(final DocumentName fromDocument, final Set<String> names) {
