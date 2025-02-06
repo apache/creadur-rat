@@ -71,7 +71,7 @@ public class AnalyserFactoryTest {
 
     @Test
     public void standardTypeAnalyser() throws Exception {
-        final Document document = new FileDocument(
+        final Document document = new FileDocument(basedir,
                 Resources.getExampleResource("exampleData/Text.txt"), DocumentNameMatcher.MATCHES_ALL);
         analyser.analyse(document);
         assertThat(document.getMetaData().getDocumentType()).isEqualTo(Document.Type.STANDARD);
@@ -137,7 +137,7 @@ public class AnalyserFactoryTest {
 
     @Test
     public void missingFileTest() {
-        final Document document = new FileDocument(
+        final Document document = new FileDocument(basedir,
                 new File(Resources.getExampleResource("exampleData"), "not_a_real_file"), DocumentNameMatcher.MATCHES_ALL);
         Defaults defaults = Defaults.builder().build();
         ReportConfiguration config = new ReportConfiguration();
