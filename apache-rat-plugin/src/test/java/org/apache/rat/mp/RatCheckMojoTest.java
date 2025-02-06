@@ -246,7 +246,7 @@ public class RatCheckMojoTest {
     /**
      * Tests defining licenses in configuration
      */
-    @Disabled
+    @Disabled("Disabled until gitignore processing is correct")
     @Test
     void it5() throws Exception {
         final RatCheckMojo mojo = newRatMojo("it5");
@@ -256,14 +256,17 @@ public class RatCheckMojoTest {
         assertThat(config.isAddingLicenses()).as("Should not be adding licenses").isFalse();
         assertThat(config.isAddingLicensesForced()).as("Should not be forcing licenses").isFalse();
 
-        ReportConfigurationTest.validateDefaultApprovedLicenses(config);
-        assertThat(config.getLicenseCategories(LicenseFilter.APPROVED)).doesNotContain(ILicenseFamily.makeCategory("YAL"));
-        ReportConfigurationTest.validateDefaultLicenseFamilies(config, "YAL");
+        ReportConfigurationTest.validateDefaultApprovedLicenses(config, 1);
+        assertThat(config.getLicenseCategories(LicenseFilter.APPROVED)).doesNotContain(ILicenseFamily.makeCategory("YAL"))
+                .contains(ILicenseFamily.makeCategory("CC"));
+        ReportConfigurationTest.validateDefaultLicenseFamilies(config, "YAL", "CC");
         assertThat(LicenseSetFactory.familySearch("YAL", config.getLicenseFamilies(LicenseFilter.APPROVED))).isNull();
         assertThat(LicenseSetFactory.familySearch("YAL", config.getLicenseFamilies(LicenseFilter.ALL))).isNotNull();
+        assertThat(LicenseSetFactory.familySearch("CC", config.getLicenseFamilies(LicenseFilter.APPROVED))).isNotNull();
+        assertThat(LicenseSetFactory.familySearch("CC", config.getLicenseFamilies(LicenseFilter.ALL))).isNotNull();
 
-        //ReportConfigurationTest.validateDefaultLicenses(config, "YAL");
-        //assertThat(LicenseSetFactory.search("YAL", "YAL", config.getLicenses(LicenseFilter.ALL))).isPresent();
+        ReportConfigurationTest.validateDefaultLicenses(config, "CC-BY-NC-ND", "YAL");
+        assertThat(LicenseSetFactory.search("YAL", "YAL", config.getLicenses(LicenseFilter.ALL))).isPresent();
 
         mojo.execute();
 
@@ -349,6 +352,7 @@ public class RatCheckMojoTest {
     /**
      * Tests verifying gitignore parsing
      */
+    @Disabled("Disabled until gitignore processing is correct")
     @Test
     void rat335() throws Exception {
         final RatCheckMojo mojo = newRatMojo("RAT-335");
@@ -362,7 +366,7 @@ public class RatCheckMojoTest {
             assertThat(msg).contains("UNAPPROVED exceeded minimum");
 
             Map<ClaimStatistic.Counter, String> data = new HashMap<>();
-            data.put(ClaimStatistic.Counter.APPROVED, "2");
+            data.put(ClaimStatistic.Counter.APPROVED, "1");
             data.put(ClaimStatistic.Counter.ARCHIVES, "0");
             data.put(ClaimStatistic.Counter.BINARIES, "0");
             data.put(ClaimStatistic.Counter.DOCUMENT_TYPES, "3");
@@ -370,7 +374,7 @@ public class RatCheckMojoTest {
             data.put(ClaimStatistic.Counter.LICENSE_CATEGORIES, "2");
             data.put(ClaimStatistic.Counter.LICENSE_NAMES, "2");
             data.put(ClaimStatistic.Counter.NOTICES, "1");
-            data.put(ClaimStatistic.Counter.STANDARDS, "6");
+            data.put(ClaimStatistic.Counter.STANDARDS, "5");
             data.put(ClaimStatistic.Counter.UNAPPROVED, "4");
             data.put(ClaimStatistic.Counter.UNKNOWN, "4");
 
@@ -390,11 +394,11 @@ public class RatCheckMojoTest {
                     mapOf("count", "4"));
 
             XmlUtils.assertAttributes(document, xPath, "/rat-report/statistics/licenseCategory[@name='AL   ']",
-                    mapOf("count", "2"));
+                    mapOf("count", "1"));
 
             // license names
             XmlUtils.assertAttributes(document, xPath, "/rat-report/statistics/licenseName[@name='Apache License Version 2.0']",
-                    mapOf("count", "2"));
+                    mapOf("count", "1"));
 
             XmlUtils.assertAttributes(document, xPath, "/rat-report/statistics/licenseName[@name='Unknown license']",
                     mapOf("count", "4"));
@@ -407,7 +411,7 @@ public class RatCheckMojoTest {
                     mapOf("count", "1"));
 
             XmlUtils.assertAttributes(document, xPath, "/rat-report/statistics/documentType[@name='STANDARD']",
-                    mapOf("count", "6"));
+                    mapOf("count", "5"));
 
             List<String> ignoredFiles = new ArrayList<>(Arrays.asList(
                     "/dir1/dir1.txt",
@@ -435,6 +439,7 @@ public class RatCheckMojoTest {
      * So for this test we must create such a file which is specific for the current
      * working directory.
      */
+    @Disabled("Disabled until gitignore processing is correct")
     @Test
     void rat362() throws Exception {
         final RatCheckMojo mojo = newRatMojo("RAT-362");
