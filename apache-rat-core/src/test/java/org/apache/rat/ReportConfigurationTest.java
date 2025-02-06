@@ -19,10 +19,7 @@
 package org.apache.rat;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -89,12 +86,15 @@ public class ReportConfigurationTest {
 
     @Test
     public void testAddIncludedFilter() {
+        DocumentName dirName = DocumentName.builder(tempDir).build();
         underTest.addExcludedFilter(DirectoryFileFilter.INSTANCE);
-        DocumentNameMatcher exlcuder = underTest.getDocumentExcluder(DocumentName.builder(new File(File.separator)).build());
-        assertEquals("not(DirectoryFileFilter)", exlcuder.toString());
-        assertFalse(exlcuder.matches(DocumentName.builder(tempDir).build()));
+        DocumentNameMatcher excluder = underTest.getDocumentExcluder(dirName);
+
+        assertThat(excluder.toString()).isEqualTo("not(DirectoryFileFilter)");
+        assertThat(excluder.matches(DocumentName.builder(tempDir).build())).isFalse();
+
         File f = new File(tempDir, "foo.txt");
-        assertTrue(exlcuder.matches(DocumentName.builder(f).build()));
+        assertThat(excluder.matches(DocumentName.builder(f).build())).isTrue();
     }
 
     @Test
@@ -103,17 +103,16 @@ public class ReportConfigurationTest {
         ILicenseFamily fam2 = ILicenseFamily.builder().setLicenseFamilyCategory("BAR").setLicenseFamilyName("big and round").build();
         underTest.addFamilies(Arrays.asList(fam1, fam2));
         SortedSet<String> result = underTest.getLicenseIds(LicenseFilter.ALL);
-        assertTrue(result.contains(ILicenseFamily.makeCategory("FOO")), "Missing FOO");
-        assertTrue(result.contains(ILicenseFamily.makeCategory("BAR")), "Missing BAR");
-        assertEquals(2, result.size());
+        assertThat(result).contains(ILicenseFamily.makeCategory("FOO"));
+        assertThat(result).contains(ILicenseFamily.makeCategory("BAR"));
+        assertThat(result).hasSize(2);
     }
 
     @Test
     public void testAddApprovedLicenseId() {
         underTest.addApprovedLicenseId("FOO");
         SortedSet<String> result = underTest.getLicenseIds(LicenseFilter.APPROVED);
-        assertTrue(result.contains("FOO"));
-        assertEquals(1, result.size());
+        assertThat(result).hasSize(1).contains("FOO");
     }
     @Test
     public void testAddAndRemoveApproveLicenseCategories() {
@@ -366,27 +365,28 @@ public class ReportConfigurationTest {
     @Test
     public void exclusionTest() {
         DocumentName baseDir = DocumentName.builder(tempDir).build();
-        assertTrue(underTest.getDocumentExcluder(baseDir).matches(mkDocumentName(new File(tempDir,"foo"))));
-        assertTrue(underTest.getDocumentExcluder(baseDir).matches(mkDocumentName(new File("foo"))));
+        DocumentName foo = mkDocumentName(new File(tempDir,"foo"));
+        assertThat(underTest.getDocumentExcluder(baseDir).matches(foo)).isTrue();
 
         underTest.setFrom(Defaults.builder().build());
 
         File f = new File(tempDir, ".hiddenDir");
-        assertTrue(f.mkdir(), () -> "Could not create directory " + f);
-
-        assertFalse(underTest.getDocumentExcluder(baseDir).matches(mkDocumentName(new File(tempDir, ".hiddenDir"))));
+        assertThat(f.mkdir()).as(() -> "Could not create directory " + f).isTrue();
+        DocumentName hiddenDir = mkDocumentName(new File(tempDir, ".hiddenDir"));
+        DocumentNameMatcher excluder = underTest.getDocumentExcluder(baseDir);
+        assertThat(excluder.matches(hiddenDir)).isFalse();
 
         underTest.addIncludedCollection(StandardCollection.HIDDEN_DIR);
-        assertTrue(underTest.getDocumentExcluder(baseDir).matches(mkDocumentName(new File(tempDir, ".hiddenDir"))));
+        assertThat(underTest.getDocumentExcluder(baseDir).matches(hiddenDir)).isTrue();
 
         underTest.addExcludedCollection(StandardCollection.HIDDEN_DIR);
-        assertTrue(underTest.getDocumentExcluder(baseDir).matches(mkDocumentName(new File(tempDir, ".hiddenDir"))));
+        assertThat(underTest.getDocumentExcluder(baseDir).matches(hiddenDir)).isTrue();
 
         underTest.addExcludedFilter(DirectoryFileFilter.DIRECTORY);
 
         File file = new File(tempDir, "newDir");
-        assertTrue(file.mkdirs(), () -> "Could not create directory " + file);
-        assertFalse(underTest.getDocumentExcluder(baseDir).matches(mkDocumentName(file)));
+        assertThat(file.mkdirs()).as(() -> "Could not create directory " + file).isTrue();
+        assertThat(underTest.getDocumentExcluder(baseDir).matches(mkDocumentName(file))).isFalse();
     }
 
     @Test
@@ -471,8 +471,8 @@ public class ReportConfigurationTest {
         IReportable reportable = mock(IReportable.class);
         underTest.addSource(reportable);
         assertThat(underTest.hasSource()).isTrue();
-        Exception thrown = assertThrows(ConfigurationException.class, () -> underTest.addSource((IReportable)null));
-        assertThat(thrown.getMessage()).contains("Reportable may not be null.");
+        assertThatThrownBy(() -> underTest.addSource((IReportable)null)).isExactlyInstanceOf(ConfigurationException.class)
+                .hasMessageContaining("Reportable may not be null.");
     }
 
     @Test
@@ -517,18 +517,17 @@ public class ReportConfigurationTest {
     public void testValidate() {
         final StringBuilder sb = new StringBuilder();
         String msg = "At least one source must be specified";
-        Exception thrown = assertThrows(ConfigurationException.class,
-                () -> underTest.validate(sb::append));
-        assertThat(thrown.getMessage()).isEqualTo(msg);
+        assertThatThrownBy(() -> underTest.validate(sb::append)).isExactlyInstanceOf(ConfigurationException.class)
+                .hasMessageContaining(msg);
         assertThat(sb.toString()).isEqualTo(msg);
 
 
         sb.setLength(0);
         msg = "You must specify at least one license";
         underTest.addSource(mock(IReportable.class));
-        thrown = assertThrows(ConfigurationException.class,
-                () -> underTest.validate(sb::append));
-        assertThat(thrown.getMessage()).isEqualTo(msg);
+
+        assertThatThrownBy(() -> underTest.validate(sb::append)).isExactlyInstanceOf(ConfigurationException.class)
+                .hasMessageContaining(msg);
         assertThat(sb.toString()).isEqualTo(msg);
 
         sb.setLength(0);
@@ -558,45 +557,48 @@ public class ReportConfigurationTest {
     public void logFamilyCollisionTest() {
         // setup
         underTest.addFamily(ILicenseFamily.builder().setLicenseFamilyCategory("CAT").setLicenseFamilyName("name"));
-        assertFalse(log.getCaptured().contains("CAT"));
+        assertThat(log.getCaptured()).doesNotContain("CAT");
        
         // verify default collision logs WARNING
         underTest.addFamily(ILicenseFamily.builder().setLicenseFamilyCategory("CAT").setLicenseFamilyName("name2"));
-        assertTrue(log.getCaptured().contains("WARN"), "default value not WARN");
-        assertTrue(log.getCaptured().contains("CAT"), "'CAT' not found");
+        assertThat(log.getCaptured().contains("WARN")).as("default value not WARN").isTrue();
+        assertThat(log.getCaptured().contains("CAT")).as("'CAT' not found").isTrue();
         
         // verify level setting works.
         for (Level l : Level.values()) {
           log.clear();
           underTest.logFamilyCollisions(l);
           underTest.addFamily(ILicenseFamily.builder().setLicenseFamilyCategory("CAT").setLicenseFamilyName("name2"));
-          assertTrue(log.getCaptured().contains("CAT"), "'CAT' not found");
-          assertTrue(log.getCaptured().contains(l.name()), "logging not set to "+l);
+          assertThat(log.getCaptured().contains("CAT")).as("'CAT' not found").isTrue();
+          assertThat(log.getCaptured().contains(l.name())).as("logging not set to "+l).isTrue();
         }
     }
     
     @Test
     public void familyDuplicateOptionsTest() {
         underTest.addFamily(ILicenseFamily.builder().setLicenseFamilyCategory("CAT").setLicenseFamilyName("name"));
-        assertFalse(log.getCaptured().contains("CAT"));
+        assertThat(log.getCaptured()).doesNotContain("CAT");
         
         // verify default second setting ignores change
         underTest.addFamily(ILicenseFamily.builder().setLicenseFamilyCategory("CAT").setLicenseFamilyName("name2"));
-        assertTrue(log.getCaptured().contains("CAT"));
-        assertEquals("name", underTest.getLicenseFamilies(LicenseFilter.ALL).stream()
-                .filter(s -> s.getFamilyCategory().equals("CAT  ")).map(ILicenseFamily::getFamilyName).findFirst().get());
+        assertThat(log.getCaptured()).contains("CAT");
+        assertThat(underTest.getLicenseFamilies(LicenseFilter.ALL).stream()
+                .filter(s -> s.getFamilyCategory().equals("CAT  ")).map(ILicenseFamily::getFamilyName).findFirst())
+                .contains("name");
         
         underTest.familyDuplicateOption(Options.OVERWRITE);
         // verify second setting ignores change
         underTest.addFamily(ILicenseFamily.builder().setLicenseFamilyCategory("CAT").setLicenseFamilyName("name2"));
-        assertTrue(log.getCaptured().contains("CAT"));
-        assertEquals("name2", underTest.getLicenseFamilies(LicenseFilter.ALL).stream()
-                .filter(s -> s.getFamilyCategory().equals("CAT  ")).map(ILicenseFamily::getFamilyName).findFirst().get());
+        assertThat(log.getCaptured()).contains("CAT");
+        assertThat(underTest.getLicenseFamilies(LicenseFilter.ALL).stream()
+                .filter(s -> s.getFamilyCategory().equals("CAT  ")).map(ILicenseFamily::getFamilyName).findFirst())
+                .contains("name2");
 
         // verify fail throws exception
         underTest.familyDuplicateOption(Options.FAIL);
-        assertThrows( IllegalArgumentException.class, ()->underTest.addFamily(ILicenseFamily.builder().setLicenseFamilyCategory("CAT").setLicenseFamilyName("name2")));
-  
+        assertThatThrownBy(()->underTest.addFamily(ILicenseFamily.builder().setLicenseFamilyCategory("CAT").setLicenseFamilyName("name2")))
+                .isExactlyInstanceOf(IllegalArgumentException.class);
+
         underTest.familyDuplicateOption(Options.IGNORE);
     }
 
@@ -616,7 +618,7 @@ public class ReportConfigurationTest {
         underTest.addLicense(ILicense.builder().setId("ID").setName("license name2").setFamily(family.getFamilyCategory())
                 .setMatcher( matcher ).setLicenseFamilies(underTest.getLicenseFamilies(LicenseFilter.ALL))
                 .build());
-        assertTrue(log.getCaptured().contains("WARN"));
+        assertThat(log.getCaptured()).contains("WARN");
         
         log.clear();
         underTest.logLicenseCollisions(Level.ERROR);
@@ -625,7 +627,7 @@ public class ReportConfigurationTest {
         underTest.addLicense(ILicense.builder().setId("ID").setName("license name2").setFamily(family.getFamilyCategory())
                 .setMatcher( matcher ).setLicenseFamilies(underTest.getLicenseFamilies(LicenseFilter.ALL))
                 .build());
-        assertTrue(log.getCaptured().contains("ERROR"));
+        assertThat(log.getCaptured()).contains("ERROR");
     }
     
     @Test
@@ -643,18 +645,19 @@ public class ReportConfigurationTest {
         
         // verify default second setting ignores change
         underTest.addLicense(makeLicense.apply("license name2"));
-        assertTrue(log.getCaptured().contains("WARN"));
-        assertEquals("license name",
-                underTest.getLicenses(LicenseFilter.ALL).stream().map(ILicense::getName).findFirst().get());
+        assertThat(log.getCaptured()).contains("WARN");
+        assertThat(underTest.getLicenses(LicenseFilter.ALL).stream().map(ILicense::getName).findFirst())
+                .contains("license name");
         
         underTest.licenseDuplicateOption(Options.OVERWRITE);
         underTest.addLicense(makeLicense.apply("license name2"));
-        assertEquals("license name2",
-                underTest.getLicenses(LicenseFilter.ALL).stream().map(ILicense::getName).findFirst().get());
+        assertThat(underTest.getLicenses(LicenseFilter.ALL).stream().map(ILicense::getName).findFirst())
+                .contains("license name2");
 
         // verify fail throws exception
         underTest.licenseDuplicateOption(Options.FAIL);
-        assertThrows( IllegalArgumentException.class, ()-> underTest.addLicense(makeLicense.apply("another name")));
+        assertThatThrownBy(()-> underTest.addLicense(makeLicense.apply("another name")))
+                .isExactlyInstanceOf(IllegalArgumentException.class);
     }
 
     /**
