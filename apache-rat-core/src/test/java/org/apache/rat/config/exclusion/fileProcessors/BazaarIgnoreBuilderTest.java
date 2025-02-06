@@ -18,32 +18,30 @@
  */
 package org.apache.rat.config.exclusion.fileProcessors;
 
-import java.util.ArrayList;
-
-import org.apache.rat.utils.ExtendedIterator;
+import org.apache.rat.document.DocumentName;
+import org.apache.rat.document.DocumentNameMatcher;
 import org.junit.jupiter.api.Test;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 
-public class CVSFileProcessorTest extends AbstractIgnoreProcessorTest {
+public class BazaarIgnoreBuilderTest extends AbstractIgnoreBuilderTest {
 
     @Test
     public void processExampleFileTest() throws IOException {
         String[] lines = {
-                "thingone thingtwo", System.lineSeparator(), "one_fish", "two_fish", "", "red_* blue_*"};
+                "# a comment", "*.elc", "*.pyc", "*~", System.lineSeparator(),
+                "# switch to regexp syntax.",  "RE:^\\.pc" };
 
-        List<String> expected = ExtendedIterator.create(Arrays.asList("thingone", "thingtwo", "one_fish", "two_fish", "red_*", "blue_*").iterator())
-                .map(s -> new File(baseDir, s).getPath()).addTo(new ArrayList<>());
+        List<String> matching = Arrays.asList("test.elc", "test.pyc", "test.thing~", ".pc");
+        List<String> notMatching = Arrays.asList("test.foo", ".pc/stuff", "subidr/test.elc");
 
-        writeFile(".cvsignore", Arrays.asList(lines));
+        writeFile(".bzrignore", Arrays.asList(lines));
 
-        CVSFileProcessor processor = new CVSFileProcessor();
-        List<String> actual = processor.apply(baseName);
-        assertEquals(expected, actual);
+        assertCorrect(new BazaarIgnoreBuilder(), matching, notMatching);
     }
+
 }

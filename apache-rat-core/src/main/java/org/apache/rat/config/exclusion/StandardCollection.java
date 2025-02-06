@@ -28,10 +28,11 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.Predicate;
 
-import org.apache.rat.config.exclusion.fileProcessors.BazaarIgnoreProcessor;
-import org.apache.rat.config.exclusion.fileProcessors.CVSFileProcessor;
-import org.apache.rat.config.exclusion.fileProcessors.GitFileProcessor;
-import org.apache.rat.config.exclusion.fileProcessors.HgIgnoreProcessor;
+import org.apache.rat.config.exclusion.fileProcessors.AbstractFileProcessorBuilder;
+import org.apache.rat.config.exclusion.fileProcessors.BazaarIgnoreBuilder;
+import org.apache.rat.config.exclusion.fileProcessors.CVSIgnoreBuilder;
+import org.apache.rat.config.exclusion.fileProcessors.GitIgnoreBuilder;
+import org.apache.rat.config.exclusion.fileProcessors.HgIgnoreBuilder;
 import org.apache.rat.document.DocumentName;
 import org.apache.rat.document.DocumentNameMatcher;
 import org.apache.rat.utils.ExtendedIterator;
@@ -55,7 +56,7 @@ public enum StandardCollection {
      * The files and directories created by a Bazaar source code control based tool.
      */
     BAZAAR("The files and directories created by a Bazaar source code control based tool.",
-            Arrays.asList("**/.bzr/**", "**/.bzrignore"), null, new BazaarIgnoreProcessor()),
+            Arrays.asList("**/.bzr/**", "**/.bzrignore"), null, new BazaarIgnoreBuilder()),
     /**
      * The files and directories created by a Bitkeeper source code control based tool.
      */
@@ -74,7 +75,7 @@ public enum StandardCollection {
                     "**/*.orig", "**/*.rej", "**/.del-*",
                     "**/*.a", "**/*.old", "**/*.o", "**/*.obj", "**/*.so", "**/*.exe",
                     "**/*.Z", "**/*.elc", "**/*.ln", "**/core"),
-            null, new CVSFileProcessor()),
+            null, new CVSIgnoreBuilder()),
     /**
      * The files and directories created by a DARCS source code control based tool.
      */
@@ -93,7 +94,7 @@ public enum StandardCollection {
     GIT("The files and directories created by GIT source code control to support GIT, also processes files listed in '.gitignore'.",
             Arrays.asList("**/.git/**", "**/.gitignore"),
             null,
-            new GitFileProcessor()
+            new GitIgnoreBuilder()
     ),
     /**
      * The hidden directories. Directories with names that start with {@code .}
@@ -156,7 +157,7 @@ public enum StandardCollection {
      * The files and directories created by a Mercurial source code control based tool.
      */
     MERCURIAL("The files and directories created by a Mercurial source code control based tool.",
-            Arrays.asList("**/.hg/**", "**/.hgignore"), null, new HgIgnoreProcessor()),
+            Arrays.asList("**/.hg/**", "**/.hgignore"), null, new HgIgnoreBuilder()),
     /**
      * The set of miscellaneous files generally left by editors and the like.
      */
@@ -213,17 +214,17 @@ public enum StandardCollection {
     private final Collection<String> patterns;
     /** A document name matcher supplier to create a document name matcher. May be null */
     private final DocumentNameMatcher staticDocumentNameMatcher;
-    /** The FileProcessor to process the exclude file associated with this exclusion. May be null. */
-    private final FileProcessor fileProcessor;
+    /** The AbstractFileProcessorBuilder to process the exclude file associated with this exclusion. May be null. */
+    private final AbstractFileProcessorBuilder fileProcessorBuilder;
     /** The description of this collection */
     private final String desc;
 
     StandardCollection(final String desc, final Collection<String> patterns, final DocumentNameMatcher documentNameMatcher,
-                       final FileProcessor fileProcessor) {
+                       final AbstractFileProcessorBuilder fileProcessorBuilder) {
         this.desc = desc;
         this.patterns = patterns == null ? Collections.emptyList() : new HashSet<>(patterns);
         this.staticDocumentNameMatcher = documentNameMatcher;
-        this.fileProcessor = fileProcessor;
+        this.fileProcessorBuilder = fileProcessorBuilder;
     }
 
     /**
@@ -277,11 +278,11 @@ public enum StandardCollection {
      *
      * @return the fileProcessor if it exists, {@code null} otherwise.
      */
-    public ExtendedIterator<FileProcessor> fileProcessor() {
-        List<FileProcessor> lst = new ArrayList<>();
+    public ExtendedIterator<AbstractFileProcessorBuilder> fileProcessorBuilder() {
+        List<AbstractFileProcessorBuilder> lst = new ArrayList<>();
         for (StandardCollection sc : getCollections()) {
-            if (sc.fileProcessor != null) {
-                lst.add(sc.fileProcessor);
+            if (sc.fileProcessorBuilder != null) {
+                lst.add(sc.fileProcessorBuilder);
             }
         }
         return ExtendedIterator.create(lst.iterator());

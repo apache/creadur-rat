@@ -19,6 +19,9 @@
 package org.apache.rat.config.exclusion.fileProcessors;
 
 import java.util.ArrayList;
+import org.apache.rat.config.exclusion.MatcherSet;
+import org.apache.rat.document.DocumentName;
+import org.apache.rat.document.DocumentNameMatcher;
 import org.apache.rat.utils.ExtendedIterator;
 import org.junit.jupiter.api.Test;
 
@@ -28,39 +31,34 @@ import java.util.Arrays;
 import java.util.List;
 
 import static java.lang.String.format;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class HgIgnoreProcessorTest extends AbstractIgnoreProcessorTest {
+public class HgIgnoreBuilderTest extends AbstractIgnoreBuilderTest {
 
     @Test
     public void processExampleFileTest() throws IOException {
         String[] lines = {
-        "# use glob syntax.", "syntax: glob", "*.elc", "*.pyc", "*~", System.lineSeparator(),
-            "# switch to regexp syntax.", "syntax: regexp", "^\\.pc/" };
+        "# use glob syntax.", "syntax: glob", "*.elc", "*.pyc", "*~", "*.c", System.lineSeparator(),
+            "# switch to regexp syntax.", "syntax: regexp", "^\\.pc" };
 
-        List<String> expected = ExtendedIterator.create(Arrays.asList("*.elc", "*.pyc", "*~").iterator())
-                .map(s -> new File(baseDir, s).getPath()).addTo(new ArrayList<>());
-        expected.add(format("%%regex[\\Q%s%s\\E%s]", baseDir.getPath(), File.separatorChar, "\\.pc/"));
+        List<String> matching = Arrays.asList("test.elc", "test.pyc", "subdir/test.pyc", "test.thing~", ".pc", "foo.c", "/subdir/foo.c" );
+        List<String> notMatching = Arrays.asList("test.foo", "test.thing~/subdir", ".pc/subdir");
 
         writeFile(".hgignore", Arrays.asList(lines));
 
-        HgIgnoreProcessor processor = new HgIgnoreProcessor();
-        List<String> actual = processor.apply(baseName);
-        assertEquals(expected, actual);
+        assertCorrect(new HgIgnoreBuilder(), matching, notMatching);
     }
 
     @Test
     public void processDefaultFileTest() throws IOException {
-        String[] lines = {"^[A-Z]*\\.txt", "[0-9]*\\.txt"};
+        String[] lines = {"^[A-Z]*\\.txt", "[0-9]+\\.txt"};
 
-        List<String> expected = ExtendedIterator.create(Arrays.asList("[A-Z]*\\.txt", ".*[0-9]*\\.txt").iterator())
-                .map(s -> format("%%regex[\\Q%s%s\\E%s]", baseDir.getPath(), File.separatorChar, s))
-                .addTo(new ArrayList<>());
+        List<String> matching = Arrays.asList("ABIGNAME.txt", "endsIn9.txt");
+        List<String> notMatching = Arrays.asList("asmallName.txt", "endsin.doc");
 
         writeFile(".hgignore", Arrays.asList(lines));
 
-        HgIgnoreProcessor processor = new HgIgnoreProcessor();
-        List<String> actual = processor.apply(baseName);
-        assertEquals(expected, actual);
+        assertCorrect(new HgIgnoreBuilder(), matching, notMatching);
     }
 }
