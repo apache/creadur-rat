@@ -18,7 +18,6 @@
  */
 package org.apache.rat.utils;
 
-import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
@@ -222,7 +221,7 @@ public interface Log {
             }
 
             @Override
-            public void close() throws IOException {
+            public void close() {
                 flush();
             }
         };
