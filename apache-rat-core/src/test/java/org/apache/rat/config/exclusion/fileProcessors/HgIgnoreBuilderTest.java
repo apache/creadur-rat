@@ -18,21 +18,11 @@
  */
 package org.apache.rat.config.exclusion.fileProcessors;
 
-import java.util.ArrayList;
-import org.apache.rat.config.exclusion.MatcherSet;
-import org.apache.rat.document.DocumentName;
-import org.apache.rat.document.DocumentNameMatcher;
-import org.apache.rat.utils.ExtendedIterator;
 import org.junit.jupiter.api.Test;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
-
-import static java.lang.String.format;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class HgIgnoreBuilderTest extends AbstractIgnoreBuilderTest {
 

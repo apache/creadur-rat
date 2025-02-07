@@ -56,10 +56,6 @@ public class AbstractIgnoreBuilderTest {
         baseName = DocumentName.builder(tmpPath.toFile()).build();
     }
 
-    protected static Stream<Arguments> fsInfoArgs() {
-        return FSInfoTest.fsInfoArgs();
-    }
-
     @AfterEach
     @EnabledOnOs(OS.WINDOWS)
     void reset() {
@@ -92,7 +88,7 @@ public class AbstractIgnoreBuilderTest {
     }
 
     /**
-     * Asserts the correctness of the exlcuder.  An excluder returns false if the document name is matched.
+     * Asserts the correctness of the excluder. An excluder returns false if the document name is matched.
      * @param builder An FileProcessorBuilder that will create the excluder.
      * @param matching the matching strings.
      * @param notMatching the non-matching strings.
@@ -102,7 +98,7 @@ public class AbstractIgnoreBuilderTest {
     }
 
     /**
-     * Asserts the correctness of the excluder.  An excluder returns false if the document name is matched.
+     * Asserts the correctness of the excluder. An excluder returns false if the document name is matched.
      * @param matcherSets the list of matchers to create the DocumentNameMatcher from.
      * @param baseDir the base directory for the excluder test.
      * @param matching the matching strings.

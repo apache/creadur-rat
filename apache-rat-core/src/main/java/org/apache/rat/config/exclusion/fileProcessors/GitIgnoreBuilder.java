@@ -31,7 +31,7 @@ import org.apache.rat.document.DocumentNameMatcher;
 import static org.apache.rat.config.exclusion.ExclusionUtils.NEGATION_PREFIX;
 
 /**
- * Processes the .gitignore file.
+ * Processes the {@code .gitignore} file.
  * @see <a href='https://git-scm.com/docs/gitignore'>.gitignore documentation</a>
  */
 public class GitIgnoreBuilder extends AbstractFileProcessorBuilder {
@@ -47,7 +47,7 @@ public class GitIgnoreBuilder extends AbstractFileProcessorBuilder {
     private static final String SLASH = "/";
 
     /**
-     * Constructs a file processor that processes a .gitignore file and ignores any lines starting with "#".
+     * Constructs a file processor that processes a {@code .gitignore} file and ignores any lines starting with {@value #COMMENT_PREFIX}.
      */
     public GitIgnoreBuilder() {
         super(IGNORE_FILE, COMMENT_PREFIX, true);
@@ -57,7 +57,7 @@ public class GitIgnoreBuilder extends AbstractFileProcessorBuilder {
      * Convert the string entry.
      * If the string ends with a slash an {@link DocumentNameMatcher#and} is constructed from a directory check and the file
      * name matcher.  In this case an empty Optional is returned.
-     * If the string starts with {@link ExclusionUtils#NEGATION_PREFIX} then the entry is placed in the include list, otherwise
+     * If the string starts with {@value ExclusionUtils#NEGATION_PREFIX} then the entry is placed in the include list, otherwise
      * the entry is placed in the exclude list and the name of the check returned.
      * @param documentName The name of the document being processed.
      * @param entry The entry from the document

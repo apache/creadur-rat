@@ -209,7 +209,6 @@ public class ExclusionProcessor {
     private List<MatcherSet> extractFileProcessors(final DocumentName basedir) {
         final List<MatcherSet> fileProcessorList = new ArrayList<>();
         for (StandardCollection sc : fileProcessors) {
-
             ExtendedIterator<List<MatcherSet>> iter =  sc.fileProcessorBuilder().map(builder -> builder.build(basedir));
             if (iter.hasNext()) {
                 iter.forEachRemaining(fileProcessorList::addAll);

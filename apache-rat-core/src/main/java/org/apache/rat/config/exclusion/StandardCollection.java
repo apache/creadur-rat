@@ -136,9 +136,9 @@ public enum StandardCollection {
     IDEA("The files and directories created by an IDEA IDE based tool.",
             Arrays.asList("**/*.iml", "**/*.ipr", "**/*.iws", "**/.idea/**"), null, null),
     /**
-     * The .DS_Store files on Mac computers.
+     * The {@code .DS_Store} files on Mac computers.
      */
-    MAC("The .DS_Store files Mac computers.",
+    MAC("The .DS_Store files on Mac computers.",
             Collections.singletonList("**/.DS_Store"), null, null),
     /**
      * The files and directories created by Maven build system based project.
@@ -214,7 +214,7 @@ public enum StandardCollection {
     private final Collection<String> patterns;
     /** A document name matcher supplier to create a document name matcher. May be null */
     private final DocumentNameMatcher staticDocumentNameMatcher;
-    /** The AbstractFileProcessorBuilder to process the exclude file associated with this exclusion. May be null. */
+    /** The AbstractFileProcessorBuilder to process the exclude file associated with this exclusion. May be {@code null}. */
     private final AbstractFileProcessorBuilder fileProcessorBuilder;
     /** The description of this collection */
     private final String desc;

@@ -18,15 +18,11 @@
  */
 package org.apache.rat.config.exclusion.fileProcessors;
 
-import org.apache.rat.document.DocumentName;
-import org.apache.rat.document.DocumentNameMatcher;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 public class BazaarIgnoreBuilderTest extends AbstractIgnoreBuilderTest {
 
