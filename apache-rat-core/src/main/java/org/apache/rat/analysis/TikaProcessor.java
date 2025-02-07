@@ -129,9 +129,9 @@ public final class TikaProcessor {
      * @throws RatDocumentAnalysisException on error.
      */
     public static String process(final Document document) throws RatDocumentAnalysisException {
-        Metadata metadata = new Metadata();
         try (InputStream stream = markSupportedInputStream(document.inputStream())) {
-            metadata.set(TikaCoreProperties.RESOURCE_NAME_KEY, document.getName().getName());
+            Metadata metadata = new Metadata();
+            metadata.set(TikaCoreProperties.RESOURCE_NAME_KEY, document.getName().getShortName());
             String result = TIKA.detect(stream, metadata);
             String[] parts = result.split("/");
             MediaType mediaType = new MediaType(parts[0], parts[1]);
@@ -146,7 +146,6 @@ public final class TikaProcessor {
                     document.getMetaData().setDocumentType(Document.Type.NOTICE);
                 }
             }
-
             return result;
         } catch (IOException e) {
             throw new RatDocumentAnalysisException(e);
