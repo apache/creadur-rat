@@ -18,32 +18,29 @@
  */
 package org.apache.rat.config.exclusion.fileProcessors;
 
-import java.util.ArrayList;
-
-import org.apache.rat.utils.ExtendedIterator;
+import org.apache.rat.config.exclusion.MatcherSet;
+import org.apache.rat.document.DocumentNameMatcher;
 import org.junit.jupiter.api.Test;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
-public class CVSFileProcessorTest extends AbstractIgnoreProcessorTest {
+public class CVSIgnoreBuilderTest extends AbstractIgnoreBuilderTest {
 
     @Test
     public void processExampleFileTest() throws IOException {
         String[] lines = {
                 "thingone thingtwo", System.lineSeparator(), "one_fish", "two_fish", "", "red_* blue_*"};
 
-        List<String> expected = ExtendedIterator.create(Arrays.asList("thingone", "thingtwo", "one_fish", "two_fish", "red_*", "blue_*").iterator())
-                .map(s -> new File(baseDir, s).getPath()).addTo(new ArrayList<>());
+        List<String> matching = Arrays.asList("thingone", "thingtwo", "one_fish", "two_fish", "red_fish", "blue_fish");
+        List<String> notMatching = Arrays.asList("thing", "two", "fish_red", "subdir/two_fish", "subdir/red_fish", "subdir/blue_fish");
 
         writeFile(".cvsignore", Arrays.asList(lines));
 
-        CVSFileProcessor processor = new CVSFileProcessor();
-        List<String> actual = processor.apply(baseName);
-        assertEquals(expected, actual);
+        CVSIgnoreBuilder processor = new CVSIgnoreBuilder();
+        DocumentNameMatcher matcher = MatcherSet.merge(processor.build(baseName)).createMatcher();
+
+        assertCorrect(new CVSIgnoreBuilder(), matching, notMatching);
     }
 }

@@ -18,19 +18,23 @@
  */
 package org.apache.rat.config.exclusion.fileProcessors;
 
-import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
+import java.util.function.Consumer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.rat.config.exclusion.MatcherSet;
 import org.apache.rat.document.DocumentName;
 
 import static java.lang.String.format;
 
 /**
  * A processor for the {@code .hgignore} files.
+ * @see <a href="https://wiki.mercurial-scm.org/.hgignore">Mecurial how to ignore files</a>
+ * @see <a href="https://www.selenic.com/mercurial/hgignore.5.html">syntax for Mercurial ignore files</a>
  */
-public final class HgIgnoreProcessor extends DescendingFileProcessor {
+public final class  HgIgnoreBuilder extends AbstractFileProcessorBuilder {
     /**
      * The state enumeration for the processor. When processing the file the processor changes
      * syntax state depending on the input.
@@ -48,30 +52,38 @@ public final class HgIgnoreProcessor extends DescendingFileProcessor {
     private Syntax state;
 
     /**
-     * Constructs the .hgignore processor.
+     * Constructs the {@code .hgignore} processor.
      */
-    public HgIgnoreProcessor() {
-        super(".hgignore", "#");
+    public HgIgnoreBuilder() {
+        super(".hgignore", "#", true);
         state = Syntax.REGEXP;
     }
 
     @Override
-    protected List<String> process(final DocumentName baseName) {
+    protected MatcherSet process(final Consumer<MatcherSet> matcherSetConsumer, final DocumentName root, final DocumentName documentName) {
         state = Syntax.REGEXP;
-        return super.process(baseName);
+        return super.process(matcherSetConsumer, root, documentName);
     }
 
     @Override
-    public String modifyEntry(final DocumentName baseName, final String entry) {
+    public Optional<String> modifyEntry(final Consumer<MatcherSet> matcherSetConsumer, final DocumentName documentName, final String entry) {
         Matcher m = SYNTAX_CHECK.matcher(entry.toLowerCase(Locale.ROOT));
         if (m.matches()) {
             state = Syntax.valueOf(m.group(1).toUpperCase());
-            return null;
+            return Optional.empty();
         }
+        /*
+         Neither glob nor regexp patterns are rooted. A glob-syntax pattern of the form *.c will match a file ending in .c
+         in any directory, and a regexp pattern of the form \.c$ will do the same. To root a regexp pattern, start it with ^.
+         */
         if (state == Syntax.REGEXP) {
             String pattern = entry.startsWith("^") ? entry.substring(1) : ".*" + entry;
-            return format(REGEX_FMT, pattern);
+            return Optional.of(format(REGEX_FMT, pattern));
+        } else {
+            if (entry.startsWith("*")) {
+                return Optional.of("**/" + entry);
+            }
         }
-        return entry;
+        return Optional.of(entry);
     }
 }
