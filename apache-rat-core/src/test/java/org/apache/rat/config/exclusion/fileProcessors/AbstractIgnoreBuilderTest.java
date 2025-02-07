@@ -56,10 +56,6 @@ public class AbstractIgnoreBuilderTest {
         baseName = DocumentName.builder(tmpPath.toFile()).build();
     }
 
-    protected static Stream<Arguments> fsInfoArgs() {
-        return FSInfoTest.fsInfoArgs();
-    }
-
     @AfterEach
     @EnabledOnOs(OS.WINDOWS)
     void reset() {
