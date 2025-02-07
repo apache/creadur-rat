@@ -22,7 +22,6 @@ import java.nio.file.Path;
 import org.apache.commons.io.FileUtils;
 import org.apache.rat.api.Document;
 import org.apache.rat.test.utils.Resources;
-import org.assertj.core.util.Files;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -35,7 +34,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class FileDocumentTest {
     private Document document;
-    private File file;
 
     @TempDir
     private static Path tempDir;
@@ -46,8 +44,9 @@ public class FileDocumentTest {
         File basedir = new File(tempDir.toFile(), Resources.SRC_TEST_RESOURCES);
         basedir.mkdirs();
         File sourceData = Resources.getExampleResource("exampleData/Source.java");
-        file = new File(basedir, "Source.java");
+        File file = new File(basedir, "Source.java");
         FileUtils.copyFile(sourceData, file);
+        assertThat(file).exists();
 
         DocumentName docName = DocumentName.builder(basedir).build();
         document = new FileDocument(docName, file, DocumentNameMatcher.MATCHES_ALL);
