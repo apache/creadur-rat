@@ -83,7 +83,6 @@ public class ArchiveWalker extends Walker {
      */
     public Collection<Document> getDocuments() throws RatException {
         List<Document> result = new ArrayList<>();
-        //DocumentName.FSInfo archiveInfo = new DocumentName.FSInfo(true, Arrays.asList("/"), "/");
         try (ArchiveInputStream<? extends ArchiveEntry> input = new ArchiveStreamFactory().createArchiveInputStream(createInputStream())) {
             ArchiveEntry entry;
             while ((entry = input.getNextEntry()) != null) {
