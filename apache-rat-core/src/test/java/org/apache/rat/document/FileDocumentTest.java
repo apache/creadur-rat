@@ -18,41 +18,50 @@
  */ 
 package org.apache.rat.document;
 
+import java.nio.file.Path;
+import org.apache.commons.io.FileUtils;
 import org.apache.rat.api.Document;
 import org.apache.rat.test.utils.Resources;
-import org.assertj.core.util.Files;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.Reader;
+import org.junit.jupiter.api.io.TempDir;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class FileDocumentTest {
     private Document document;
-    private File file;
-    
+
+    @TempDir
+    private static Path tempDir;
+
     @BeforeEach
     public void setUp() throws Exception {
-        File basedir = new File(Files.currentFolder(), Resources.SRC_TEST_RESOURCES);
-        file = Resources.getExampleResource("exampleData/Source.java");
-        document = new FileDocument(DocumentName.builder(basedir).build(), file, DocumentNameMatcher.MATCHES_ALL);
+
+        File basedir = new File(tempDir.toFile(), Resources.SRC_TEST_RESOURCES);
+        basedir.mkdirs();
+        File sourceData = Resources.getExampleResource("exampleData/Source.java");
+        File file = new File(basedir, "Source.java");
+        FileUtils.copyFile(sourceData, file);
+        assertThat(file).exists();
+
+        DocumentName docName = DocumentName.builder(basedir).build();
+        document = new FileDocument(docName, file, DocumentNameMatcher.MATCHES_ALL);
     }
 
     @Test
     public void reader() throws Exception {
         Reader reader = document.reader();
-        assertNotNull(reader, "Reader should be returned");
-        assertEquals("package elements;", 
-                 new BufferedReader(reader).readLine(), "First file line expected");
+        assertThat(reader).isNotNull();
+        assertThat(new BufferedReader(reader).readLine()).isEqualTo("package elements;");
     }
 
     @Test
     public void getName() {
         final DocumentName name = document.getName();
-        assertNotNull(name, "Name is set");
+        assertThat(name).isNotNull();
     }
 }
