@@ -52,7 +52,7 @@ public final class  HgIgnoreBuilder extends AbstractFileProcessorBuilder {
     private Syntax state;
 
     /**
-     * Constructs the .hgignore processor.
+     * Constructs the {@code .hgignore} processor.
      */
     public HgIgnoreBuilder() {
         super(".hgignore", "#", true);

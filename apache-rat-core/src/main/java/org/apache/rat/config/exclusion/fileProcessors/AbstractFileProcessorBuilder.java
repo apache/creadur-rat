@@ -49,13 +49,13 @@ import org.apache.rat.document.DocumentNameMatcher;
  *     By default this processor:
  * </p>
  * <ul>
- *     <li>Creates a list of levels that correspond the depth of the directories where the specific include/exclude file is located.
+ *     <li>Creates a list of levels that correspond to the depth of the directories where the specific include/exclude file is located.
  *     Directory depth is relative to the initially discovered include/exclude file.</li>
  *     <li>A MatcherSet is created for each include/exclude file located, and the MatcherSet is added to the proper level.</li>
  *     <li>During the build:
  *     <ul>
  *         <li>Each level creates a MatcherSet for the level.</li>
- *         <li>The MatcherSet for each level is returned in reverse order (deepest first).  This ensures that most include/exclude
+ *         <li>The MatcherSet for each level is returned in reverse order (deepest first). This ensures that most include/exclude
  *         files will be properly handled.</li>
  *     </ul></li>
  *  </ul>
@@ -69,7 +69,7 @@ public abstract class AbstractFileProcessorBuilder {
     protected final Predicate<String> commentFilter;
     /** the collection of level builders */
     private final SortedMap<Integer, LevelBuilder> levelBuilders;
-    /** if {@code true} then the processor file name will be included in the list of files to ignore */
+    /** If {@code true} then the processor file name will be included in the list of files to ignore */
     private final boolean includeProcessorFile;
 
     /**

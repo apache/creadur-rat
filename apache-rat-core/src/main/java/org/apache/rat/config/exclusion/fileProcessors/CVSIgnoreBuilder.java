@@ -33,7 +33,7 @@ import org.apache.rat.document.DocumentName;
  * A file processor for the {@code .csvignore} file.
  * @see <a href="https://www.gnu.org/software/trans-coord/manual/cvs/html_node/cvsignore.html#cvsignore">Ignoring files via cvsignore</a>
  * <p>
- *     The patterns found in .cvsignore are only valid for the directory that contains them, not for any sub-directories.
+ *     The patterns found in {@code .csvignore} are only valid for the directory that contains them, not for any subdirectories.
  * </p>
  */
 public class CVSIgnoreBuilder extends AbstractFileProcessorBuilder {
