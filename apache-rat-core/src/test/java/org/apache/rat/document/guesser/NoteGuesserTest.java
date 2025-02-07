@@ -18,17 +18,20 @@
  */ 
 package org.apache.rat.document.guesser;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 import org.apache.rat.document.DocumentName;
-import org.apache.rat.document.FSInfoTest;
 import org.apache.rat.testhelpers.TestingDocument;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.apache.rat.document.FSInfoTest.OSX;
+import static org.apache.rat.document.FSInfoTest.UNIX;
+import static org.apache.rat.document.FSInfoTest.WINDOWS;
 
 public class NoteGuesserTest {
 
@@ -39,11 +42,12 @@ public class NoteGuesserTest {
         assertEquals(expected, actual, testingName::getName);
     }
 
-    private static Stream<Arguments> nameData() {
+    private static Stream<Arguments> nameData() throws IOException {
         List<Arguments> lst = new ArrayList<>();
 
-        final DocumentName linuxBaseName = DocumentName.builder(FSInfoTest.UNIX).setName("/").setBaseName("/").build();
-        final DocumentName windowsBaseName = DocumentName.builder(FSInfoTest.WINDOWS).setName("\\").setBaseName("\\").build();
+        final DocumentName osxBaseName = DocumentName.builder(OSX).setName("/").setBaseName("/").build();
+        final DocumentName linuxBaseName = DocumentName.builder(UNIX).setName("/").setBaseName("/").build();
+        final DocumentName windowsBaseName = DocumentName.builder(WINDOWS).setName("\\").setBaseName("\\").build();
 
         lst.add(Arguments.of(linuxBaseName.resolve("DEPENDENCIES"), true));
         lst.add(Arguments.of(linuxBaseName.resolve("LICENSE"), true));
@@ -76,6 +80,22 @@ public class NoteGuesserTest {
         lst.add(Arguments.of(windowsBaseName.resolve("src\\test\\README"), true));
         lst.add(Arguments.of(windowsBaseName.resolve("src\\test\\README.txt"), true));
         lst.add(Arguments.of(windowsBaseName.resolve("src\\test\\README.shouldFail"), false));
+
+        lst.add(Arguments.of(osxBaseName.resolve("DEPENDENCIES"), true));
+        lst.add(Arguments.of(osxBaseName.resolve("LICENSE"), true));
+        lst.add(Arguments.of(osxBaseName.resolve("LICENSE.txt"), true));
+        lst.add(Arguments.of(osxBaseName.resolve("NOTICE"), true));
+        lst.add(Arguments.of(osxBaseName.resolve("NOTICE.txt"), true));
+        lst.add(Arguments.of(osxBaseName.resolve("README"), true));
+        lst.add(Arguments.of(osxBaseName.resolve("README.txt"), true));
+        lst.add(Arguments.of(osxBaseName.resolve("src/test/DEPENDENCIES"), true));
+        lst.add(Arguments.of(osxBaseName.resolve("src/test/LICENSE"), true));
+        lst.add(Arguments.of(osxBaseName.resolve("src/test/LICENSE.txt"), true));
+        lst.add(Arguments.of(osxBaseName.resolve("src/test/NOTICE"), true));
+        lst.add(Arguments.of(osxBaseName.resolve("src/test/NOTICE.txt"), true));
+        lst.add(Arguments.of(osxBaseName.resolve("src/test/README"), true));
+        lst.add(Arguments.of(osxBaseName.resolve("src/test/README.txt"), true));
+        lst.add(Arguments.of(osxBaseName.resolve("src/test/README.shouldFail"), false));
 
         return lst.stream();
     }
