@@ -65,7 +65,7 @@ public final class DocumentNameMatcher {
     public DocumentNameMatcher(final String name, final Predicate<DocumentName> predicate) {
         this.name = name;
         this.predicate = predicate;
-        this.isCollection = predicate instanceof CollectionPredicateImpl;
+        this.isCollection = predicate instanceof CollectionPredicate;
     }
 
     /**
@@ -210,8 +210,7 @@ public final class DocumentNameMatcher {
         return String.join(", ", children);
     }
 
-    private static Optional<DocumentNameMatcher> standardCollectionCheck(final Collection<DocumentNameMatcher> matchers,
-                                                                         final DocumentNameMatcher override) {
+    private static Optional<DocumentNameMatcher> standardCollectionCheck(final Collection<DocumentNameMatcher> matchers, final DocumentNameMatcher override) {
         if (matchers.isEmpty()) {
             throw new ConfigurationException("Empty matcher collection");
         }
@@ -303,7 +302,7 @@ public final class DocumentNameMatcher {
         }
         List<DocumentNameMatcher> workingSet = Arrays.asList(includes, excludes);
         return new DocumentNameMatcher(format("matcherSet(%s)", join(workingSet)),
-                new CollectionPredicateImpl(workingSet) {
+                new DefaultCollectionPredicate(workingSet) {
                     @Override
                     public boolean test(final DocumentName documentName) {
                         if (includes.matches(documentName)) {
@@ -400,11 +399,10 @@ public final class DocumentNameMatcher {
     interface CollectionPredicate extends Predicate<DocumentName> {
         Iterable<DocumentNameMatcher> getMatchers();
     }
-
     /**
-     * A marker class to indicate this predicate contains a collection of matchers.
+     * A {@link CollectionPredicate} implementation.
      */
-    abstract static class CollectionPredicateImpl implements CollectionPredicate {
+    abstract static class DefaultCollectionPredicate implements CollectionPredicate {
         /** The collection for matchers that make up this predicate */
         private final Iterable<DocumentNameMatcher> matchers;
 
@@ -412,7 +410,7 @@ public final class DocumentNameMatcher {
          * Constructs a collection predicate from the collection of matchers.
          * @param matchers the collection of matchers to use.
          */
-        protected CollectionPredicateImpl(final Iterable<DocumentNameMatcher> matchers) {
+        protected DefaultCollectionPredicate(final Iterable<DocumentNameMatcher> matchers) {
             this.matchers = matchers;
         }
 
@@ -438,7 +436,7 @@ public final class DocumentNameMatcher {
      * An implementation of "and" logic across a collection of DocumentNameMatchers.
      */
     // package private for testing access
-    static class And extends CollectionPredicateImpl {
+    static class And extends DefaultCollectionPredicate {
         And(final Iterable<DocumentNameMatcher> matchers) {
             super(matchers);
         }
@@ -458,7 +456,7 @@ public final class DocumentNameMatcher {
      * An implementation of "or" logic across a collection of DocumentNameMatchers.
      */
     // package private for testing access
-    static class Or extends CollectionPredicateImpl {
+    static class Or extends DefaultCollectionPredicate {
         Or(final Iterable<DocumentNameMatcher> matchers) {
             super(matchers);
         }
@@ -484,7 +482,7 @@ public final class DocumentNameMatcher {
         private final DocumentNameMatcher matcher;
         /** The result of the check. */
         private final boolean result;
-        /** The actual candidate. */
+        /** The candidate */
         private final DocumentName candidate;
 
         private DecomposeData(final int level, final DocumentNameMatcher matcher, final DocumentName candidate, final boolean result) {
