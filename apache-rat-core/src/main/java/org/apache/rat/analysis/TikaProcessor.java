@@ -39,11 +39,11 @@ import org.apache.tika.parser.txt.CharsetDetector;
 import org.apache.tika.parser.txt.CharsetMatch;
 
 /**
- * A wrapping around the tika processor.
+ * A wrapping around the Tika processor.
  */
 public final class TikaProcessor {
 
-    /** the Tika parser */
+    /** The Tika parser */
     private static final Tika TIKA = new Tika();
     /** A map of mime type string to non-BINARY types.
      * "text" types are already handled somewhere else
