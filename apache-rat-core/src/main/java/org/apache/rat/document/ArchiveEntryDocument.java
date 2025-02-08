@@ -36,12 +36,12 @@ public class ArchiveEntryDocument extends Document {
 
     /**
      * Creates an Archive entry.
-     * @param outerName the name of this entry from outside the archive.
+     * @param entryName the name of this entry from outside the archive.
      * @param contents the contents of the entry.
      * @param nameMatcher the name matcher to filter contents with.
      */
-    public ArchiveEntryDocument(final DocumentName outerName, final byte[] contents, final DocumentNameMatcher nameMatcher) {
-        super(outerName, nameMatcher);
+    public ArchiveEntryDocument(final ArchiveEntryName entryName, final byte[] contents, final DocumentNameMatcher nameMatcher) {
+        super(entryName, nameMatcher);
         this.contents = contents;
     }
 
