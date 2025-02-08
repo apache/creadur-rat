@@ -18,22 +18,14 @@
  */
 package org.apache.rat.config.exclusion;
 
-import com.google.common.jimfs.Configuration;
-import com.google.common.jimfs.Jimfs;
-import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 import org.apache.commons.io.FileUtils;
-import org.apache.rat.config.exclusion.plexus.SelectorUtils;
 import org.apache.rat.document.DocumentNameMatcher;
 import org.apache.rat.document.DocumentName;
-import org.apache.rat.document.FSInfoTest;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
 import java.io.File;
@@ -49,11 +41,9 @@ import org.mockito.Mockito;
 
 import static java.lang.String.format;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Fail.fail;
 import static org.apache.rat.document.FSInfoTest.OSX;
 import static org.apache.rat.document.FSInfoTest.UNIX;
 import static org.apache.rat.document.FSInfoTest.WINDOWS;
-
 
 public class ExclusionProcessorTest {
 
@@ -62,7 +52,6 @@ public class ExclusionProcessorTest {
 
     @TempDir
     private static Path tempDir;
-
 
     private void testParseExclusion(DocumentName basedir, DocumentNameMatcher nameMatcher, DocumentName name, boolean expected) {
         assertThat(nameMatcher.matches(name)).as(() -> format("Failed on [%s %s]%n%s", basedir, name, dump(nameMatcher, name))).isEqualTo(expected);
@@ -285,7 +274,7 @@ public class ExclusionProcessorTest {
         assertThat(DocumentNameMatcher.not(FALSE).matches(basedir)).isTrue();
     }
 
-    private static Stream<Arguments> getDocumentNames() throws IOException {
+    private static Stream<Arguments> getDocumentNames() {
         List<Arguments> lst = new ArrayList<>();
 
         DocumentName.Builder builder = DocumentName.builder().setName("default");
@@ -299,7 +288,6 @@ public class ExclusionProcessorTest {
 
         builder = DocumentName.builder(OSX).setName("osx");
         lst.add(Arguments.of(builder.setBaseName(builder.directorySeparator()).build()));
-
 
         return lst.stream();
     }

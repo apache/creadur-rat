@@ -116,7 +116,7 @@ public abstract class AbstractOptionsProvider implements ArgumentsProvider {
 
     /**
      * Copies the test data to the specified directory.
-     * @param baseDir the directory to copy the /src/test/resources to.
+     * @param baseDir the directory to copy the {@code /src/test/resources} to.
      * @return the {@code baseDir} argument.
      */
     public static File setup(final File baseDir) {
@@ -222,7 +222,7 @@ public abstract class AbstractOptionsProvider implements ArgumentsProvider {
 
     /**
      * Create the report configuration from the argument pairs.
-     * There must be at least one arg. It may be `ImmutablePair.nullPair()`.
+     * There must be at least one arg. It may be {@code ImmutablePair.nullPair()}.
      *
      * @param args Pairs comprising the argument option and the values for the option.
      * @return The generated ReportConfiguration.

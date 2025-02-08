@@ -18,7 +18,6 @@
  */ 
 package org.apache.rat.document.guesser;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
@@ -42,7 +41,7 @@ public class NoteGuesserTest {
         assertEquals(expected, actual, testingName::getName);
     }
 
-    private static Stream<Arguments> nameData() throws IOException {
+    private static Stream<Arguments> nameData() {
         List<Arguments> lst = new ArrayList<>();
 
         final DocumentName osxBaseName = DocumentName.builder(OSX).setName("/").setBaseName("/").build();
