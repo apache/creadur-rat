@@ -64,7 +64,7 @@ public interface MatcherSet {
 
     /**
      * A MatcherSet that assumes the files contain the already formatted strings and just need to be
-     * localized for the fileName. When {@link #build()} is called the builder is reset to the initial state.
+     * localised for the fileName. When {@link #build()} is called the builder is reset to the initial state.
      */
     class Builder {
 
@@ -85,7 +85,7 @@ public interface MatcherSet {
             });
         }
 
-        /** the DocumentNameMatcher that specifies included files */
+        /** The DocumentNameMatcher that specifies included files */
         protected DocumentNameMatcher included;
         /** The DocumentNameMatcher that specifies excluded files */
         protected DocumentNameMatcher excluded;
