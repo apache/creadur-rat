@@ -400,7 +400,7 @@ public final class DocumentNameMatcher {
         Iterable<DocumentNameMatcher> getMatchers();
     }
     /**
-     * CollectionPredicate implementation.
+     * A {@link CollectionPredicate} implementation.
      */
     abstract static class DefaultCollectionPredicate implements CollectionPredicate {
         /** The collection for matchers that make up this predicate */
