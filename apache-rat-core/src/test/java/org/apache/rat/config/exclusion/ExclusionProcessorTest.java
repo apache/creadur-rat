@@ -24,7 +24,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 import org.apache.commons.io.FileUtils;
-import org.apache.rat.config.exclusion.plexus.SelectorUtils;
 import org.apache.rat.document.DocumentNameMatcher;
 import org.apache.rat.document.DocumentName;
 import org.junit.jupiter.api.io.TempDir;
@@ -288,7 +287,8 @@ public class ExclusionProcessorTest {
         lst.add(Arguments.of(builder.setBaseName(builder.directorySeparator()).build()));
 
         builder = DocumentName.builder(OSX).setName("osx");
-        lst.add(Arguments.of(builder.setBaseName(builder.directorySeparator()).build()))
+        lst.add(Arguments.of(builder.setBaseName(builder.directorySeparator()).build()));
+
         return lst.stream();
     }
 }
