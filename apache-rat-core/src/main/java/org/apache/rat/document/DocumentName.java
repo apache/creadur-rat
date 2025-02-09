@@ -67,8 +67,8 @@ public class DocumentName implements Comparable<DocumentName> {
     private final String root;
 
     /**
-     * Creates a Builder with the default File system info.
-     * @return the Builder.
+     * Creates a Builder with the default file system info.
+     * @return the builder.
      * @see FSInfo
      */
     public static Builder builder() {
@@ -86,7 +86,7 @@ public class DocumentName implements Comparable<DocumentName> {
 
     /**
      * Creates a builder for the specified file system.
-     * @param fileSystem the file system to create ethe builder on.
+     * @param fileSystem the file system to create the builder on.
      * @return a new builder.
      */
     public static Builder builder(final FileSystem fileSystem) {
@@ -94,19 +94,19 @@ public class DocumentName implements Comparable<DocumentName> {
     }
 
     /**
-     * Creates a builder from a File.  The {@link #baseName} is set to the file name if it is a directory otherwise
+     * Creates a builder from a File. The {@link #baseName} is set to the file name if it is a directory otherwise
      * it is set to the directory containing the file.
      * @param file The file to set defaults from.
-     * @return the Builder.
+     * @return the builder.
      */
     public static Builder builder(final File file) {
         return new Builder(file);
     }
 
     /**
-     * Creates a Builder from a document name. The Builder will be configured to create a clone of the DocumentName.
+     * Creates a builder from a document name. The builder will be configured to create a clone of the DocumentName.
      * @param documentName the document name to set the defaults from.
-     * @return the Builder.
+     * @return the builder.
      */
     public static Builder builder(final DocumentName documentName) {
         return new Builder(documentName);
@@ -339,7 +339,7 @@ public class DocumentName implements Comparable<DocumentName> {
 
         /**
          * Determines if the file system is case-sensitive.
-         * @param fileSystem the file system to check
+         * @param fileSystem the file system to check.
          * @return {@code true} if the file system is case-sensitive.
          */
         private static boolean isCaseSensitive(final FileSystem fileSystem) {
