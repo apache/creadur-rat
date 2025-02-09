@@ -67,44 +67,6 @@ public class DocumentName implements Comparable<DocumentName> {
     private final String root;
 
     /**
-     * Determines if the file system is case-sensitive.
-     * @param fileSystem the file system to check
-     * @return {@code true} if the file system is case-sensitive.
-     */
-    private static boolean isCaseSensitive(final FileSystem fileSystem) {
-        boolean isCaseSensitive = false;
-        Path nameSet = null;
-        Path filea = null;
-        Path fileA = null;
-        try {
-            try {
-                Path root = fileSystem.getPath("");
-                nameSet = Files.createTempDirectory(root, "NameSet");
-                filea = nameSet.resolve("a");
-                fileA = nameSet.resolve("A");
-                Files.createFile(filea);
-                Files.createFile(fileA);
-                isCaseSensitive = true;
-            } catch (IOException e) {
-                // do nothing
-            } finally {
-                if (filea != null) {
-                    Files.deleteIfExists(filea);
-                }
-                if (fileA != null) {
-                    Files.deleteIfExists(fileA);
-                }
-                if (nameSet != null) {
-                    Files.deleteIfExists(nameSet);
-                }
-            }
-        } catch (IOException e) {
-            // do nothing.
-        }
-        return isCaseSensitive;
-    }
-
-    /**
      * Creates a Builder with the default File system info.
      * @return the Builder.
      * @see FSInfo
@@ -196,24 +158,7 @@ public class DocumentName implements Comparable<DocumentName> {
              pattern = name + separator + pattern;
         }
 
-        return new Builder(this).setName(normalize(pattern)).build();
-    }
-
-    private String normalize(final String pattern) {
-        List<String> parts = new ArrayList<>(Arrays.asList(tokenize(pattern)));
-        for (int i = 0; i < parts.size(); i++) {
-            String part = parts.get(i);
-            if (part.equals("..")) {
-                if (i == 0) {
-                    throw new IllegalStateException("can not creat path before root");
-                }
-                parts.set(i - 1, null);
-                parts.set(i, null);
-            } else if (part.equals(".")) {
-                parts.set(i, null);
-            }
-        }
-        return parts.stream().filter(Objects::nonNull).collect(Collectors.joining(getDirectorySeparator()));
+        return new Builder(this).setName(fsInfo.normalize(pattern)).build();
     }
 
     /**
@@ -313,15 +258,6 @@ public class DocumentName implements Comparable<DocumentName> {
     }
 
     /**
-     * Tokenizes the string based on the directory separator of this DocumentName.
-     * @param source the source to tokenize
-     * @return the array of tokenized strings.
-     */
-    public String[] tokenize(final String source) {
-        return source.split("\\Q" + fsInfo.dirSeparator() + "\\E");
-    }
-
-    /**
      * Gets the last segment of the name. This is the part after the last directory separator.
      * @return the last segment of the name.
      */
@@ -396,9 +332,47 @@ public class DocumentName implements Comparable<DocumentName> {
         public FSInfo(final String name, final FileSystem fileSystem) {
             this.name = name;
             this.separator = fileSystem.getSeparator();
-            this.isCaseSensitive = DocumentName.isCaseSensitive(fileSystem);
+            this.isCaseSensitive = isCaseSensitive(fileSystem);
             roots = new ArrayList<>();
             fileSystem.getRootDirectories().forEach(r -> roots.add(r.toString()));
+        }
+
+        /**
+         * Determines if the file system is case-sensitive.
+         * @param fileSystem the file system to check
+         * @return {@code true} if the file system is case-sensitive.
+         */
+        private static boolean isCaseSensitive(final FileSystem fileSystem) {
+            boolean isCaseSensitive = false;
+            Path nameSet = null;
+            Path filea = null;
+            Path fileA = null;
+            try {
+                try {
+                    Path root = fileSystem.getPath("");
+                    nameSet = Files.createTempDirectory(root, "NameSet");
+                    filea = nameSet.resolve("a");
+                    fileA = nameSet.resolve("A");
+                    Files.createFile(filea);
+                    Files.createFile(fileA);
+                    isCaseSensitive = true;
+                } catch (IOException e) {
+                    // do nothing
+                } finally {
+                    if (filea != null) {
+                        Files.deleteIfExists(filea);
+                    }
+                    if (fileA != null) {
+                        Files.deleteIfExists(fileA);
+                    }
+                    if (nameSet != null) {
+                        Files.deleteIfExists(nameSet);
+                    }
+                }
+            } catch (IOException e) {
+                // do nothing.
+            }
+            return isCaseSensitive;
         }
 
         /**
