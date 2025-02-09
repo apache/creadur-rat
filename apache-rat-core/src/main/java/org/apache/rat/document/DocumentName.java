@@ -67,44 +67,6 @@ public class DocumentName implements Comparable<DocumentName> {
     private final String root;
 
     /**
-     * Determines if the file system is case-sensitive.
-     * @param fileSystem the file system to check
-     * @return {@code true} if the file system is case-sensitive.
-     */
-    private static boolean isCaseSensitive(final FileSystem fileSystem) {
-        boolean isCaseSensitive = false;
-        Path nameSet = null;
-        Path filea = null;
-        Path fileA = null;
-        try {
-            try {
-                Path root = fileSystem.getPath("");
-                nameSet = Files.createTempDirectory(root, "NameSet");
-                filea = nameSet.resolve("a");
-                fileA = nameSet.resolve("A");
-                Files.createFile(filea);
-                Files.createFile(fileA);
-                isCaseSensitive = true;
-            } catch (IOException e) {
-                // do nothing
-            } finally {
-                if (filea != null) {
-                    Files.deleteIfExists(filea);
-                }
-                if (fileA != null) {
-                    Files.deleteIfExists(fileA);
-                }
-                if (nameSet != null) {
-                    Files.deleteIfExists(nameSet);
-                }
-            }
-        } catch (IOException e) {
-            // do nothing.
-        }
-        return isCaseSensitive;
-    }
-
-    /**
      * Creates a Builder with the default File system info.
      * @return the Builder.
      * @see FSInfo
@@ -132,7 +94,7 @@ public class DocumentName implements Comparable<DocumentName> {
     }
 
     /**
-     * Creates a builder from a File. The {@link #baseName} is set to the file name if it is a directory otherwise
+     * Creates a builder from a File.  The {@link #baseName} is set to the file name if it is a directory otherwise
      * it is set to the directory containing the file.
      * @param file The file to set defaults from.
      * @return the Builder.
@@ -188,7 +150,7 @@ public class DocumentName implements Comparable<DocumentName> {
         if (StringUtils.isBlank(child)) {
             return this;
         }
-        String separator = fsInfo.dirSeparator();
+        String separator = getDirectorySeparator();
         String pattern = separator.equals("/") ? child.replace('\\', '/') :
                 child.replace('/', '\\');
 
@@ -196,7 +158,7 @@ public class DocumentName implements Comparable<DocumentName> {
              pattern = name + separator + pattern;
         }
 
-        return new Builder(this).setName(pattern).build();
+        return new Builder(this).setName(fsInfo.normalize(pattern)).build();
     }
 
     /**
@@ -241,7 +203,7 @@ public class DocumentName implements Comparable<DocumentName> {
 
     /**
      * Determines if the candidate starts with the root or separator strings.
-     * @param candidate the candidate ot check. If blank method will return {@code false}.
+     * @param candidate the candidate to check. If blank method will return {@code false}.
      * @param root the root to check. If blank the root check is skipped.
      * @param separator the separator to check. If blank the check is skipped.
      * @return true if either the root or separator check returned {@code true}.
@@ -370,9 +332,47 @@ public class DocumentName implements Comparable<DocumentName> {
         public FSInfo(final String name, final FileSystem fileSystem) {
             this.name = name;
             this.separator = fileSystem.getSeparator();
-            this.isCaseSensitive = DocumentName.isCaseSensitive(fileSystem);
+            this.isCaseSensitive = isCaseSensitive(fileSystem);
             roots = new ArrayList<>();
             fileSystem.getRootDirectories().forEach(r -> roots.add(r.toString()));
+        }
+
+        /**
+         * Determines if the file system is case-sensitive.
+         * @param fileSystem the file system to check
+         * @return {@code true} if the file system is case-sensitive.
+         */
+        private static boolean isCaseSensitive(final FileSystem fileSystem) {
+            boolean isCaseSensitive = false;
+            Path nameSet = null;
+            Path filea = null;
+            Path fileA = null;
+            try {
+                try {
+                    Path root = fileSystem.getPath("");
+                    nameSet = Files.createTempDirectory(root, "NameSet");
+                    filea = nameSet.resolve("a");
+                    fileA = nameSet.resolve("A");
+                    Files.createFile(filea);
+                    Files.createFile(fileA);
+                    isCaseSensitive = true;
+                } catch (IOException e) {
+                    // do nothing
+                } finally {
+                    if (filea != null) {
+                        Files.deleteIfExists(filea);
+                    }
+                    if (fileA != null) {
+                        Files.deleteIfExists(fileA);
+                    }
+                    if (nameSet != null) {
+                        Files.deleteIfExists(nameSet);
+                    }
+                }
+            } catch (IOException e) {
+                // do nothing.
+            }
+            return isCaseSensitive;
         }
 
         /**
