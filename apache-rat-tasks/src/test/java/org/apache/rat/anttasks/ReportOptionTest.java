@@ -16,6 +16,8 @@
  */
 package org.apache.rat.anttasks;
 
+import java.io.PrintStream;
+import java.io.Writer;
 import java.nio.file.Path;
 import java.util.List;
 import org.apache.commons.cli.Option;
@@ -27,6 +29,11 @@ import org.apache.rat.ReportConfiguration;
 import org.apache.rat.testhelpers.TestingLog;
 import org.apache.rat.utils.DefaultLog;
 import org.apache.rat.utils.Log;
+import org.apache.tools.ant.BuildEvent;
+import org.apache.tools.ant.BuildListener;
+import org.apache.tools.ant.BuildLogger;
+import org.apache.tools.ant.DefaultLogger;
+import org.apache.tools.ant.Project;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -81,10 +88,21 @@ public class ReportOptionTest  {
             super(BaseAntTask.unsupportedArgs(), testPath.toFile());
         }
 
-        protected ReportConfiguration generateConfig(final List<Pair<Option, String[]>> args) {
+        protected ReportConfiguration generateConfig(final List<Pair<Option, String[]>> args) throws IOException {
             BuildTask task = args.get(0).getKey() == null ? new BuildTask() : new BuildTask(args.get(0).getKey());
             task.setUp(args);
-            task.buildRule.executeTarget(task.name);
+            Log log = DefaultLog.getInstance();
+            Log.Level oldLevel = log.getLevel();
+            log.setLevel(Log.Level.DEBUG);
+            try {
+                task.buildRule.getProject().addBuildListener(new TestingAntListener(log));
+                DefaultLog.setInstance(new Report.Logger(task.buildRule.getProject()));
+                task.buildRule.executeTarget(task.name);
+            } finally {
+                log.setLevel(oldLevel);
+                DefaultLog.setInstance(log);
+                System.out.append(task.buildRule.getOutput());
+            }
             return reportConfiguration;
         }
 
@@ -189,4 +207,78 @@ public class ReportOptionTest  {
             "\t</target>\n" +
             "\n" +
             "</project>";
+}
+
+class TestingAntListener implements BuildListener {
+    Log log;
+    TestingAntListener(Log log) {
+        this.log = log;
+    }
+
+    @Override
+    public void buildStarted(BuildEvent event) {
+
+    }
+
+    @Override
+    public void buildFinished(BuildEvent event) {
+
+    }
+
+    @Override
+    public void targetStarted(BuildEvent event) {
+
+    }
+
+    @Override
+    public void targetFinished(BuildEvent event) {
+
+    }
+
+    @Override
+    public void taskStarted(BuildEvent event) {
+
+    }
+
+    @Override
+    public void taskFinished(BuildEvent event) {
+
+    }
+
+    @Override
+    public void messageLogged(BuildEvent event) {
+        if (event.getException() != null) {
+            switch (event.getPriority()) {
+                case Project.MSG_DEBUG:
+                case Project.MSG_VERBOSE:
+                    log.debug(event.getMessage(), event.getException());
+                    break;
+                case Project.MSG_INFO:
+                    log.info(event.getMessage(), event.getException());
+                    break;
+                case Project.MSG_WARN:
+                    log.warn(event.getMessage(), event.getException());
+                    break;
+                case Project.MSG_ERR:
+                    log.error(event.getMessage(), event.getException());
+                    break;
+            }
+        } else {
+            switch (event.getPriority()) {
+                case Project.MSG_DEBUG:
+                case Project.MSG_VERBOSE:
+                    log.debug(event.getMessage());
+                    break;
+                case Project.MSG_INFO:
+                    log.info(event.getMessage());
+                    break;
+                case Project.MSG_WARN:
+                    log.warn(event.getMessage());
+                    break;
+                case Project.MSG_ERR:
+                    log.error(event.getMessage());
+                    break;
+            }
+        }
+    }
 }

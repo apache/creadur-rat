@@ -81,6 +81,10 @@ public final class MavenGenerator {
     private MavenGenerator() {
     }
 
+    private static String argsKey(final Option option) {
+        return StringUtils.defaultIfEmpty(option.getLongOpt(), option.getOpt());
+    }
+
     /**
      * Creates the Maven MojoClass
      * Requires 3 arguments:
@@ -122,7 +126,13 @@ public final class MavenGenerator {
                             writer.append(format("        xlateName.put(\"%s\", \"%s\");%n", entry.getKey(), entry.getValue()));
                         }
                         for (Option option : MAVEN_FILTER_LIST) {
-                            writer.append(format("        unsupportedArgs.add(\"%s\");%n", StringUtils.defaultIfEmpty(option.getLongOpt(), option.getOpt())));
+                            writer.append(format("        unsupportedArgs.add(\"%s\");%n", argsKey(option)));
+                        }
+                        for (MavenOption option : options) {
+                            if (option.isDeprecated()) {
+                                writer.append(format("        deprecatedArgs.put(\"%s\", \"%s\");%n", argsKey(option.option),
+                                        format("Use of deprecated option '%s'. %s", option.getName(), option.getDeprecated())));
+                            }
                         }
                         break;
                     case "${methods}":
@@ -132,7 +142,9 @@ public final class MavenGenerator {
                         writer.append(format("package %s;%n", packageName));
                         break;
                     case "${constructor}":
-                        writer.append(format("    protected %s() {}%n", className));
+                        writer.append(format("    protected %s() {\n" +
+                                "        setDeprecationReporter();\n" +
+                                "    }%n", className));
                         break;
                     case "${class}":
                         writer.append(format("public abstract class %s extends AbstractMojo {%n", className));
@@ -163,10 +175,10 @@ public final class MavenGenerator {
         }
         String arg;
         if (option.hasArg()) {
-            arg = desc.substring(desc.indexOf(" "), desc.indexOf(".") + 1);
+            arg = desc.substring(desc.indexOf(" ") + 1, desc.indexOf(".") + 1);
             arg = WordUtils.capitalize(arg.substring(0, 1)) + arg.substring(1);
         } else {
-            arg = "the state";
+            arg = "The state";
         }
         if (option.hasArg() && option.getArgName() != null) {
             Supplier<String> sup = OptionCollection.getArgumentTypes().get(option.getArgName());

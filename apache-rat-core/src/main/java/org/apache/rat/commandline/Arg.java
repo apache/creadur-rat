@@ -86,11 +86,11 @@ public enum Arg {
             .addOption(Option.builder("f").longOpt("force")
                     .deprecated(DeprecatedAttributes.builder().setForRemoval(true).setSince("0.17")
                             .setDescription(StdMsgs.useMsg("--edit-overwrite")).get())
-                    .desc("Forces any changes in files to be written directly to the source files (i.e. new files are not created).")
+                    .desc("Forces any changes in files to be written directly to the source files so that new files are not created.")
                     .build())
             .addOption(Option.builder().longOpt("edit-overwrite")
-                    .desc("Forces any changes in files to be written directly to the source files (i.e. new files are not created). "
-                            + "Only valid with --edit-license")
+                    .desc("Forces any changes in files to be written directly to the source files so that new files are not created. "
+                            + "Only valid with --edit-license.")
                     .build())),
 
     /**

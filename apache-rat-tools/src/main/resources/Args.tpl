@@ -1,6 +1,24 @@
     ///////////////////////// Start common Arg manipulation code
 
     /**
+     * Sets the deprecation report method.
+     */
+    private static void setDeprecationReporter() {
+        DeprecationReporter.setLogReporter(opt -> {
+            String msg = deprecatedArgs.get(argsKey(opt));
+            if (msg == null) {
+                DeprecationReporter.getDefault().accept(opt);
+            } else {
+                DefaultLog.getInstance().warn(msg);
+            }
+        });
+    }
+
+    private static String argsKey(Option opt) {
+        return StringUtils.defaultIfEmpty(opt.getLongOpt(), opt.getKey());
+    }
+
+    /**
      * A map of CLI based arguments to values.
      */
     protected final Map<String, List<String>> args = new HashMap<>();
@@ -16,10 +34,6 @@
             result.addAll(entry.getValue().stream().filter(Objects::nonNull).collect(Collectors.toList()));
         }
         return result;
-    }
-
-    private String argsKey(Option opt) {
-        return StringUtils.defaultIfEmpty(opt.getLongOpt(), opt.getKey());
     }
 
     private boolean validateSet(String key) {

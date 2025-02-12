@@ -18,9 +18,12 @@
  */
 package org.apache.rat.tools;
 
+import java.util.function.Supplier;
+
 import org.apache.commons.cli.Option;
 import org.apache.commons.text.StringEscapeUtils;
 import org.apache.commons.text.WordUtils;
+import org.apache.rat.OptionCollection;
 
 import static java.lang.String.format;
 
@@ -33,7 +36,7 @@ public class AntOption extends AbstractOption {
      * Constructor.
      * @param option the option to wrap.
      */
-    AntOption(final Option option) {
+    public AntOption(final Option option) {
         super(option, AntGenerator.createName(option));
     }
 
@@ -67,16 +70,41 @@ public class AntOption extends AbstractOption {
      * @return the Comment block for the function.
      */
     public String getComment(final boolean addParam) {
-        StringBuilder sb = new StringBuilder()
-                .append(format("    /**%n     * %s%n", StringEscapeUtils.escapeHtml4(getDescription())));
-        if (option.isDeprecated()) {
-            sb.append(format("     * %s%n     * @deprecated%n", option.getDeprecated()));
+        StringBuilder sb = new StringBuilder();
+        String desc = getDescription();
+        if (desc == null) {
+            throw new IllegalStateException(format("Description for %s may not be null", getName()));
         }
-        if (addParam && option.hasArg()) {
-            sb.append(format("     * @param %s The value to set%n", name));
+        if (!desc.contains(".")) {
+            throw new IllegalStateException(format("First sentence of description for %s must end with a '.'", getName()));
+        }
+        if (addParam) {
+            String arg;
+            if (option.hasArg()) {
+                arg = desc.substring(desc.indexOf(" ") + 1, desc.indexOf(".") + 1);
+                arg = WordUtils.capitalize(arg.substring(0, 1)) + arg.substring(1);
+            } else {
+                arg = "The state";
+            }
+            if (option.getArgName() != null) {
+                Supplier<String> sup = OptionCollection.getArgumentTypes().get(option.getArgName());
+                if (sup == null) {
+                    throw new IllegalStateException(format("Argument type %s must be in OptionCollection.ARGUMENT_TYPES", option.getArgName()));
+                }
+                desc = format("%s Argument%s should be %s%s. (See Argument Types for clarification)", desc, option.hasArgs() ? "s" : "",
+                        option.hasArgs() ? "" : "a ", option.getArgName());
+            }
+            sb.append(format("    /**%n     * %s%n     * @param %s %s%n", StringEscapeUtils.escapeHtml4(desc), getName(),
+             StringEscapeUtils.escapeHtml4(arg)));
+        } else {
+            sb.append(format("    /**%n     * %s%n", StringEscapeUtils.escapeHtml4(desc)));
+        }
+        if (option.isDeprecated()) {
+            sb.append(format("     * @deprecated %s%n", StringEscapeUtils.escapeHtml4(getDeprecated())));
         }
         return sb.append(format("     */%n")).toString();
     }
+
 
     /**
      * Get the signature of the attribute function.

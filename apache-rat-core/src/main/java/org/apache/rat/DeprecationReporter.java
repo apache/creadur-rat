@@ -42,10 +42,15 @@ public final class DeprecationReporter {
     }
 
     /**
-     * Creates the consumer that will log usage of deprecated operations to the default log.
-     * @return The consumer that will log usage of deprecated operations to the default log.
+     * The consumer that is used for deprecation reporting.
      */
-    public static Consumer<Option> getLogReporter() {
+    private static Consumer<Option> consumer = getDefault();
+
+    /**
+     * Get the default reporter.
+     * @return The default reporter.
+     */
+    public static Consumer<Option> getDefault() {
         return  o -> {
             StringBuilder buff = new StringBuilder();
             if (o.getOpt() != null) {
@@ -58,6 +63,29 @@ public final class DeprecationReporter {
             }
             DefaultLog.getInstance().warn(format("Option [%s] used. %s", buff, o.getDeprecated().toString()));
         };
+    }
+
+    /**
+     * Creates the consumer that will log usage of deprecated operations to the default log.
+     * @return The consumer that will log usage of deprecated operations to the default log.
+     */
+    public static Consumer<Option> getLogReporter() {
+        return consumer;
+    }
+
+    /**
+     * Sets the consumer that will do the reporting.
+     * @param consumer The consumer that will do the reporting.
+     */
+    public static void setLogReporter(final Consumer<Option> consumer) {
+        DeprecationReporter.consumer = consumer;
+    }
+
+    /**
+     * Rests the consumer to the default consumer.
+     */
+    public static void resetLogReporter() {
+        DeprecationReporter.consumer = getDefault();
     }
 
     /**

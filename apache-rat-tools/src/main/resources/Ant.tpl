@@ -22,6 +22,7 @@ ${package}
 import org.apache.commons.cli.Option;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.rat.commandline.Arg;
+import org.apache.rat.DeprecationReporter;
 import org.apache.rat.utils.CasedString;
 import org.apache.rat.utils.DefaultLog;
 import org.apache.rat.utils.Log;
@@ -47,6 +48,8 @@ ${class}
     private final static Map<String,String> xlateName = new HashMap<>();
 
     private final static List<String> unsupportedArgs = new ArrayList<>();
+
+    private final static Map<String, String> deprecatedArgs = new HashMap<>();
 
     static {
 ${static}

@@ -84,6 +84,11 @@ public final class AntGenerator {
     public static Predicate<Option> getFilter() {
         return ANT_FILTER;
     }
+
+    private static String argsKey(final Option option) {
+        return StringUtils.defaultIfEmpty(option.getLongOpt(), option.getOpt());
+    }
+
     /**
      * Creates a base class for an Ant task.
      * Requires 3 arguments:
@@ -127,7 +132,13 @@ public final class AntGenerator {
                             writer.append(format("        xlateName.put(\"%s\", \"%s\");%n", entry.getKey(), entry.getValue()));
                         }
                         for (Option option : ANT_FILTER_LIST) {
-                            writer.append(format("        unsupportedArgs.add(\"%s\");%n", StringUtils.defaultIfEmpty(option.getLongOpt(), option.getOpt())));
+                            writer.append(format("        unsupportedArgs.add(\"%s\");%n", argsKey(option)));
+                        }
+                        for (AntOption option : options) {
+                            if (option.isDeprecated()) {
+                                writer.append(format("        deprecatedArgs.put(\"%s\", \"%s\");%n", argsKey(option.option),
+                                        format("Use of deprecated option '%s'. %s", option.getName(), option.getDeprecated())));
+                            }
                         }
                         break;
                     case "${methods}":
@@ -137,7 +148,9 @@ public final class AntGenerator {
                         writer.append(format("package %s;%n", packageName));
                         break;
                     case "${constructor}":
-                        writer.append(format("    protected %s() {}%n", className));
+                        writer.append(format("    protected %s() {\n" +
+                                "        setDeprecationReporter();\n" +
+                                "    }%n", className));
                         break;
                     case "${class}":
                         writer.append(format("public abstract class %s extends Task {%n", className));

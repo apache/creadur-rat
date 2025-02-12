@@ -41,7 +41,6 @@ import org.apache.rat.document.DocumentName;
 import org.apache.rat.license.LicenseSetFactory;
 import org.apache.rat.utils.DefaultLog;
 import org.apache.rat.utils.Log;
-import org.apache.tools.ant.BuildEvent;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.taskdefs.LogOutputStream;
@@ -71,8 +70,10 @@ import org.apache.tools.ant.types.resources.Union;
  */
 public class Report extends BaseAntTask {
     /** The list of licenses */
+    @Deprecated
     private final List<License> licenses = new ArrayList<>();
     /** The list of license families */
+    @Deprecated
     private final List<Family> families = new ArrayList<>();
     /** the options that are deprecated.  TODO remove this. */
     private final DeprecatedConfig deprecatedConfig = new DeprecatedConfig();
@@ -99,7 +100,7 @@ public class Report extends BaseAntTask {
     public Report() {
         // replace the logger only if it has not already been set.
         if (DefaultLog.getInstance() instanceof DefaultLog) {
-            DefaultLog.setInstance(new Logger());
+            DefaultLog.setInstance(new Logger(this.getProject()));
         }
     }
 
@@ -136,7 +137,9 @@ public class Report extends BaseAntTask {
     /**
      * Adds an inline License definition to the system.
      * @param license the license to add.
+     * @deprecated Create a custom configuration file and use the config option.
      */
+    @Deprecated
     public void addLicense(final License license) {
         licenses.add(license);
     }
@@ -409,8 +412,8 @@ public class Report extends BaseAntTask {
     }
 
     /**
-     * Type for the addLicenseHeaders attribute.
-     * @deprecated No longer required, use stylesheet or xml attributes.
+     * Add headers to files that do not have them.
+     * @deprecated use &lt;editCopyright&gt; amd &lt;editOverwrite&gt; instead.
      */
     @Deprecated
     public static class AddLicenseHeaders extends EnumeratedAttribute {
@@ -439,7 +442,7 @@ public class Report extends BaseAntTask {
     }
 
     /**
-     * Type for the addLicenseHeaders attribute.
+     * Specify the licenses that are approved.
      * @deprecated use listLicenses or listFamilies attributes.
      */
     @Deprecated
@@ -466,25 +469,18 @@ public class Report extends BaseAntTask {
     /**
      * A facade for the Logger provided by Ant.
      */
-    private class Logger implements Log {
-        /** the actual logger */
-        private final org.apache.tools.ant.DefaultLogger delegate = new org.apache.tools.ant.DefaultLogger();
+    public static class Logger implements Log {
+        /** The project we are logging on */
+        private Project project;
+
+        Logger(final Project project) {
+            this.project = project;
+        }
+
 
         @Override
         public Level getLevel() {
-            switch (delegate.getMessageOutputLevel()) {
-                case Project.MSG_ERR:
-                    return Level.ERROR;
-                case Project.MSG_WARN:
-                    return Level.WARN;
-                case Project.MSG_INFO:
-                    return Level.INFO;
-                case Project.MSG_VERBOSE:
-                case Project.MSG_DEBUG:
-                    return Level.DEBUG;
-                default:
-                    return Level.OFF;
-            }
+            return Level.DEBUG;
         }
 
         @Override
@@ -494,28 +490,23 @@ public class Report extends BaseAntTask {
 
         @Override
         public void log(final Level level, final String message, final Throwable throwable) {
-            BuildEvent event = new BuildEvent(Report.this);
             switch (level) {
                 case DEBUG:
-                    event.setMessage(message, Project.MSG_DEBUG);
+                    project.log(message, throwable, Project.MSG_DEBUG);
                     break;
                 case INFO:
-                    event.setMessage(message, Project.MSG_INFO);
+                    project.log(message, throwable, Project.MSG_INFO);
                     break;
                 case WARN:
-                    event.setMessage(message, Project.MSG_WARN);
+                    project.log(message, throwable, Project.MSG_WARN);
                     break;
                 case ERROR:
-                    event.setMessage(message, Project.MSG_ERR);
+                    project.log(message, throwable, Project.MSG_ERR);
                     break;
                 case OFF:
                 default:
-                    return;
+                    // do nothing
             }
-            if (throwable != null) {
-                event.setException(throwable);
-            }
-            delegate.messageLogged(event);
         }
     }
 }
