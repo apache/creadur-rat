@@ -75,7 +75,7 @@ public class XmlReportFactoryTest {
         configuration.setFrom(Defaults.builder().build());
         DocumentName documentName = DocumentName.builder(elementsDir).build();
         DirectoryWalker directory = new DirectoryWalker(new FileDocument(documentName, elementsDir,
-                configuration.getNameMatcher(documentName)));
+                configuration.getDocumentExcluder(documentName)));
         final ClaimStatistic statistic = new ClaimStatistic();
 
         configuration.addLicense(testingLicense);

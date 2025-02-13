@@ -36,48 +36,11 @@ private static Map<String, String> mapOf(String... parts) {
 output = new File(args[0])
 content = output.text
 
-//Map<ClaimStatistic.Counter, String> data = new HashMap<>()
-//data.put(ClaimStatistic.Counter.APPROVED, "2")
-//data.put(ClaimStatistic.Counter.ARCHIVES, "0")
-//data.put(ClaimStatistic.Counter.BINARIES, "0")
-//data.put(ClaimStatistic.Counter.DOCUMENT_TYPES, "3")
-//data.put(ClaimStatistic.Counter.IGNORED, "6")
-//data.put(ClaimStatistic.Counter.LICENSE_CATEGORIES, "2")
-//data.put(ClaimStatistic.Counter.LICENSE_NAMES, "2")
-//data.put(ClaimStatistic.Counter.NOTICES, "1")
-//data.put(ClaimStatistic.Counter.STANDARDS, "6")
-//data.put(ClaimStatistic.Counter.UNAPPROVED, "4")
-//data.put(ClaimStatistic.Counter.UNKNOWN, "4")
-
 Document document = XmlUtils.toDom(new FileInputStream(args[0]))
 XPath xPath = XPathFactory.newInstance().newXPath()
 
-//for (ClaimStatistic.Counter counter : ClaimStatistic.Counter.values()) {
-//    String xpath = String.format("/rat-report/statistics/statistic[@name='%s']", counter.displayName())
-//    Map<String, String> map = mapOf("approval",
-//            counter == ClaimStatistic.Counter.UNAPPROVED ? "false" : "true",
-//            "count", data.get(counter),
-//            "description", counter.getDescription())
-//    XmlUtils.assertAttributes(document, xPath, xpath, map)
-//}
-
-//// license categories
-//XmlUtils.assertAttributes(document, xPath, "/rat-report/statistics/licenseCategory[@name='?????']",
-//        mapOf("count", "4" ))
-//
-//XmlUtils.assertAttributes(document, xPath, "/rat-report/statistics/licenseCategory[@name='AL   ']",
-//        mapOf("count", "2" ))
-//
-//// license names
-//XmlUtils.assertAttributes(document, xPath, "/rat-report/statistics/licenseName[@name='Apache License Version 2.0']",
-//        mapOf("count", "2" ))
-//
-//XmlUtils.assertAttributes(document, xPath, "/rat-report/statistics/licenseName[@name='Unknown license']",
-//        mapOf("count", "4" ))
-
 List<String> ignoredFiles = new ArrayList<>(Arrays.asList(
         "/dir1/dir1.txt",
-        "/dir1/file1.log",
         "/dir1/.gitignore",
         "/dir2/dir2.md",
         "/dir3/dir3.log",
@@ -102,24 +65,4 @@ XmlUtils.assertAttributes(document, xPath, "/rat-report/statistics/documentType[
         mapOf("count", "1" ))
 
 XmlUtils.assertAttributes(document, xPath, "/rat-report/statistics/documentType[@name='STANDARD']",
-        mapOf("count", "6" ))
-
-/*
-TextUtils.assertPatternInTarget("^  Approved:\\s+8 ", content)
-TextUtils.assertPatternInTarget("^  Archives:\\s+1 ", content)
-TextUtils.assertPatternInTarget("^  Binaries:\\s+2 ", content)
-TextUtils.assertPatternInTarget("^  Document types:\\s+5 ", content)
-TextUtils.assertPatternInTarget("^  Ignored:\\s+1 ", content)
-TextUtils.assertPatternInTarget("^  License categories:\\s+4 ", content)
-TextUtils.assertPatternInTarget("^  License names:\\s+5", content)
-TextUtils.assertPatternInTarget("^  Notices:\\s+2 ", content)
-TextUtils.assertPatternInTarget("^  Standards:\\s+8 ", content)
-TextUtils.assertPatternInTarget("^  Unapproved:\\s+2 ", content)
-TextUtils.assertPatternInTarget("^  Unknown:\\s+2 ", content)
-
-logOutput = new File(args[1])
-log = logOutput.text
-
-TextUtils.assertPatternNotInTarget("^ERROR:", log)
-TextUtils.assertPatternNotInTarget("^WARN:", log)
-*/
+        mapOf("count", "4" ))

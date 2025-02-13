@@ -29,6 +29,7 @@
         <configuration>
           <numUnapprovedLicenses>1</numUnapprovedLicenses>
           <addLicenseHeaders>true</addLicenseHeaders>
+          <outputStyle>xml</outputStyle>
         </configuration>
       </plugin>
     </plugins>

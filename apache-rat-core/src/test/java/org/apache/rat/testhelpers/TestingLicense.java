@@ -75,6 +75,7 @@ public class TestingLicense implements ILicense {
         this.matcher = matcher;
         this.note = null;
         this.id = id;
+        this.name = id;
     }
 
     /**
@@ -140,5 +141,10 @@ public class TestingLicense implements ILicense {
     @Override
     public int hashCode() {
         return ILicense.hash(this);
+    }
+
+    @Override
+    public String toString() {
+        return String.format("%s[id='%s', family='%s']", name, id, family);
     }
 }

@@ -414,11 +414,11 @@ public class ReportConfiguration {
     }
 
     /**
-     * Get the DocumentNameMatcher based on the directory.
+     * Get the DocumentNameMatcher that excludes files found in the directory tree..
      * @param baseDir the DocumentName for the base directory.
      * @return the DocumentNameMatcher for the base directory.
      */
-    public DocumentNameMatcher getNameMatcher(final DocumentName baseDir) {
+    public DocumentNameMatcher getDocumentExcluder(final DocumentName baseDir) {
         return exclusionProcessor.getNameMatcher(baseDir);
     }
 
@@ -452,7 +452,6 @@ public class ReportConfiguration {
         if (getStyleSheet() == null) {
             setStyleSheet(StyleSheets.PLAIN.getStyleSheet());
         }
-
         defaults.getStandardExclusion().forEach(this::addExcludedCollection);
     }
 
@@ -612,7 +611,7 @@ public class ReportConfiguration {
      * @param familyCategory the category to add.
      */
     public void addApprovedLicenseCategory(final String familyCategory) {
-        licenseSetFactory.addLicenseCategory(familyCategory);
+        licenseSetFactory.approveLicenseCategory(familyCategory);
     }
 
     /**
@@ -686,7 +685,7 @@ public class ReportConfiguration {
      * @param licenseId the license id to add.
      */
     public void addApprovedLicenseId(final String licenseId) {
-        licenseSetFactory.addLicenseId(licenseId);
+        licenseSetFactory.approveLicenseId(licenseId);
     }
 
     /**
@@ -803,6 +802,14 @@ public class ReportConfiguration {
      */
     public ClaimValidator getClaimValidator() {
         return claimValidator;
+    }
+
+    /**
+     * Gets the enclosed LicenseSetFactory.
+     * @return the license set factory.
+     */
+    public LicenseSetFactory getLicenseSetFactory() {
+        return licenseSetFactory;
     }
 
     /**

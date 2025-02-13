@@ -94,11 +94,17 @@
             <configuration>
               <includeArtifactIds>apache-rat-core</includeArtifactIds>
               <excludeClassifiers>tests</excludeClassifiers>
-              <include>META-INF/RELEASE_NOTES.txt</include>
               <outputDirectory>${project.build.outputDirectory}</outputDirectory>
             </configuration>
           </execution>
         </executions>
+      </plugin>
+      <plugin>
+        <groupId>com.github.spotbugs</groupId>
+        <artifactId>spotbugs-maven-plugin</artifactId>
+        <configuration>
+          <excludeFilterFile>spotbugs-ignore.xml</excludeFilterFile>
+        </configuration>
       </plugin>
     </plugins>
   </build>

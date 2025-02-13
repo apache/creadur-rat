@@ -44,7 +44,7 @@ public interface RatReport {
      * @throws RatException on error.
      */
     default void report(Document document) throws RatException {
-    };
+    }
 
     /**
      * Signals the end of execution for the report. Will be called after the {@code report()} method

@@ -60,7 +60,7 @@ public class DirectoryWalkerTest {
 
     public Document toWalk() {
         DocumentName documentName = DocumentName.builder(tempDir).build();
-        return new FileDocument(documentName, tempDir, reportConfiguration.getNameMatcher(documentName));
+        return new FileDocument(documentName, tempDir, reportConfiguration.getDocumentExcluder(documentName));
     }
 
     @BeforeAll

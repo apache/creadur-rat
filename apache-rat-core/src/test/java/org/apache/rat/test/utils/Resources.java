@@ -47,12 +47,26 @@ public class Resources {
     private static final File RESOURCE_BASE_PATH = new File(SRC_MAIN_RESOURCES);
 
     /**
-     * Locates a test resource file in the class path.
+     * Locates a test resource file in the classpath.
      */
     public static File getResourceFile(String pResource) throws IOException {
-        return getResourceFromBase(TEST_RESOURCE_BASE_PATH, pResource);
+        File f = getResourceFromBase(TEST_RESOURCE_BASE_PATH, pResource);
+        if (!f.isFile()) {
+            throw new FileNotFoundException("Unable to locate resource file: " + pResource);
+        }
+        return f;
     }
 
+    /**
+     * Locates a test resource directory in the classpath.
+     */
+    public static File getResourceDirectory(String pResource) throws IOException {
+        File f = getResourceFromBase(TEST_RESOURCE_BASE_PATH, pResource);
+        if (!f.isDirectory()) {
+            throw new FileNotFoundException("Unable to locate resource directory: " + pResource);
+        }
+        return f;
+    }
 
     /**
      * Locates a file in the unpacked example data archive.
@@ -66,14 +80,11 @@ public class Resources {
     }
 
     /**
-     * Try to load the given file from baseDir, in case of errors try to add
+     * Try to load the given file from baseDir. In case of errors try to add
      * module names to fix behaviour from within IntelliJ.
      */
     private static File getResourceFromBase(File baseDir, String pResource) throws IOException {
         File f = new File(baseDir, pResource);
-        if (!f.isFile()) {
-            throw new FileNotFoundException("Unable to locate resource file: " + pResource);
-        }
         return f.getCanonicalFile();
     }
 
@@ -91,21 +102,21 @@ public class Resources {
     }
 
     /**
-     * Locates a resource file in the class path and returns an {@link InputStream}.
+     * Locates a resource file in the classpath and returns an {@link InputStream}.
      */
     public static InputStream getResourceStream(String pResource) throws IOException {
         return Files.newInputStream(getResourceFile(pResource).toPath());
     }
 
     /**
-     * Locates a resource file in the class path and returns a {@link Reader}.
+     * Locates a resource file in the classpath and returns a {@link Reader}.
      */
     public static Reader getResourceReader(String pResource) throws IOException {
         return new InputStreamReader(getResourceStream(pResource), StandardCharsets.UTF_8);
     }
 
     /**
-     * Locates a resource file in the class path and returns a
+     * Locates a resource file in the classpath and returns a
      * {@link BufferedReader}.
      */
     public static BufferedReader getBufferedReader(File file) throws IOException {

@@ -136,6 +136,22 @@ public interface ILicenseFamily extends Comparable<ILicenseFamily> {
                 public String getFamilyCategory() {
                     return cat;
                 }
+
+                @Override
+                public boolean equals(final Object other) {
+                    if (other == this) {
+                        return true;
+                    }
+                    if (other instanceof ILicenseFamily) {
+                        return this.getFamilyCategory().equals(((ILicenseFamily) other).getFamilyCategory());
+                    }
+                    return false;
+                }
+
+                @Override
+                public int hashCode() {
+                    return getFamilyCategory().hashCode();
+                }
             };
         }
     }

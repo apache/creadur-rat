@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.Writer;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Deque;
@@ -150,7 +151,7 @@ public final class Naming {
             };
         }
 
-        try (Writer underWriter = cl.getArgs().length != 0 ? new FileWriter(cl.getArgs()[0]) : new OutputStreamWriter(System.out)) {
+        try (Writer underWriter = cl.getArgs().length != 0 ? new FileWriter(cl.getArgs()[0]) : new OutputStreamWriter(System.out, StandardCharsets.UTF_8)) {
             if (cl.hasOption(CSV)) {
                 printCSV(columns, filter, cl.hasOption(CLI), mavenFilter, antFilter, descriptionFunction, underWriter);
             }

@@ -27,31 +27,13 @@
         <artifactId>apache-rat-plugin</artifactId>
         <version>@pom.version@</version>
         <configuration>
-          <addDefaultLicenses>false</addDefaultLicenses>
-          <families>
-            <family>
-              <id>CC</id>
-              <name>Creative Commons</name>
-            </family>
-          </families>
-          <licenses>
-            <license>
-              <family>CC</family>
-              <id>CC-BY-NC-ND</id>
-              <notes/>
-              <name>Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International</name>
-              <any>
-                <text>Attribution-NonCommercial-NoDerivatives</text>
-              </any>
-            </license>
-          </licenses>
-          <approvedLicenses>
-            <approvedLicense>CC</approvedLicense>
-          </approvedLicenses>
-          <excludes>
+          <outputStyle>xml</outputStyle>
+          <config>.rat/customConfig.xml</config>
+          <inputExcludes>
+            <exclude>.rat/**</exclude>
             <exclude>pom.xml</exclude>
             <exclude>invoker.properties</exclude>
-          </excludes>
+          </inputExcludes>
         </configuration>
       </plugin>
     </plugins>

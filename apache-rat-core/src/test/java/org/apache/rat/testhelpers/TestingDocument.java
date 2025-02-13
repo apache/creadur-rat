@@ -18,45 +18,59 @@
  */
 package org.apache.rat.testhelpers;
 
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.Collections;
 import java.util.SortedSet;
 
+import org.apache.commons.io.function.IOSupplier;
 import org.apache.rat.api.Document;
 import org.apache.rat.document.DocumentNameMatcher;
 import org.apache.rat.document.DocumentName;
+import org.apache.rat.document.FSInfoTest;
 
 public class TestingDocument extends Document {
 
     private final Reader reader;
+    private final IOSupplier<InputStream> input;
 
     public TestingDocument() {
-        this(null, "name");
+        this("name");
     }
 
     public TestingDocument(String name) {
-        this(null, name);
+        this(name, null);
     }
 
     public TestingDocument(DocumentName documentName) {
         super(documentName, DocumentNameMatcher.MATCHES_ALL);
         this.reader = null;
+        this.input = null;
     }
 
     public TestingDocument(String name, DocumentNameMatcher matcher) {
-        super(DocumentName.builder().setName(name).setBaseName("").setDirSeparator("/").setCaseSensitive(true).build(), matcher);
+        super(DocumentName.builder().setName(name).setBaseName("").build(), matcher);
         this.reader = null;
+        this.input = null;
     }
 
     public TestingDocument(Reader reader, String name) {
-        super(DocumentName.builder().setName(name).setBaseName("").setDirSeparator("/").setCaseSensitive(true).build(), DocumentNameMatcher.MATCHES_ALL);
+        super(DocumentName.builder().setName(name).setBaseName("").build(), DocumentNameMatcher.MATCHES_ALL);
         this.reader = reader;
+        this.input = null;
+    }
+
+    public TestingDocument(IOSupplier<InputStream> inputStream, String name) {
+        super(DocumentName.builder(FSInfoTest.UNIX).setName(name).setBaseName("").build(), DocumentNameMatcher.MATCHES_ALL);
+        this.input = inputStream;
+        this.reader = null;
     }
 
     @Override
-    public Reader reader() {
-        return reader;
+    public Reader reader() throws IOException {
+            return reader == null ? new InputStreamReader(input.get()) : reader;
     }
 
     @Override
@@ -70,7 +84,10 @@ public class TestingDocument extends Document {
     }
 
     @Override
-    public InputStream inputStream() {
+    public InputStream inputStream() throws IOException {
+        if (input != null) {
+            return input.get();
+        }
         throw new UnsupportedOperationException();
     }
 }
