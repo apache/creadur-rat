@@ -40,7 +40,7 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 
 /**
- * The name for a document.  The {@code DocumentName} is an immutable structure that handles all the intricacies of file
+ * The name for a document. The {@code DocumentName} is an immutable structure that handles all the intricacies of file
  * naming on various operating systems. DocumentNames have several components:
  * <ul>
  *     <li>{@code root} - where in the file system the name starts (e.g C: on windows). May be empty but not null.</li>
@@ -94,7 +94,7 @@ public class DocumentName implements Comparable<DocumentName> {
     }
 
     /**
-     * Creates a builder from a File.  The {@link #baseName} is set to the file name if it is a directory otherwise
+     * Creates a builder from a File. The {@link #baseName} is set to the file name if it is a directory otherwise
      * it is set to the directory containing the file.
      * @param file The file to set defaults from.
      * @return the builder.
