@@ -106,14 +106,13 @@ public class Help extends BaseAntTask {
      */
     @Override
     public void execute() {
-        //org.apache.rat.help.Help helpObj = new org.apache.rat.help.Help(DefaultLog.getInstance().asWriter()) {
         org.apache.rat.help.Help helpObj = new org.apache.rat.help.Help(System.out) {
             /**
              * Print the usage to the specific PrintWriter.
              * @param opts The defined options.
              */
             public void printUsage(final Options opts) {
-                String syntax = "ant rat:help";
+                String syntax = "ant {target executing task <rat:help/>}";
                 AntHelpFormatter helpFormatter = new AntHelpFormatter();
                 helpFormatter.setOptPrefix("<");
 
