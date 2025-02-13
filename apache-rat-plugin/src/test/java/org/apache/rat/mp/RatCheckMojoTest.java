@@ -50,7 +50,6 @@ import org.apache.rat.testhelpers.TextUtils;
 import org.apache.rat.testhelpers.XmlUtils;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledOnOs;
 import org.junit.jupiter.api.condition.OS;
@@ -246,7 +245,6 @@ public class RatCheckMojoTest {
     /**
      * Tests defining licenses in configuration
      */
-    @Disabled("Disabled until gitignore processing is correct")
     @Test
     void it5() throws Exception {
         final RatCheckMojo mojo = newRatMojo("it5");
@@ -352,7 +350,6 @@ public class RatCheckMojoTest {
     /**
      * Tests verifying gitignore parsing
      */
-    @Disabled("Disabled until gitignore processing is correct")
     @Test
     void rat335() throws Exception {
         final RatCheckMojo mojo = newRatMojo("RAT-335");
@@ -439,7 +436,6 @@ public class RatCheckMojoTest {
      * So for this test we must create such a file which is specific for the current
      * working directory.
      */
-    @Disabled("Disabled until gitignore processing is correct")
     @Test
     void rat362() throws Exception {
         final RatCheckMojo mojo = newRatMojo("RAT-362");
