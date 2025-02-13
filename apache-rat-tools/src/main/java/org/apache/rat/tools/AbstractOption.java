@@ -60,11 +60,18 @@ public abstract class AbstractOption {
     protected abstract String cleanupName(Option option);
 
     /**
+     * Gets this option's cleaned up name.
+     * @return This option's cleaned up name.
+     */
+    public String cleanupName() {
+        return cleanupName(option);
+    }
+    /**
      * Replaces CLI pattern options with Maven pattern options.
      * @param str the string to clean.
      * @return the string with CLI names replaced with Maven names.
      */
-    protected String cleanup(final String str) {
+    public String cleanup(final String str) {
         String workingStr = str;
         if (StringUtils.isNotBlank(workingStr)) {
             Map<String, String> maps = new HashMap<>();

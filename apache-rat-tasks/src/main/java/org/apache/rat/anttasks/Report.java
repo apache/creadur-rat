@@ -69,13 +69,19 @@ import org.apache.tools.ant.types.resources.Union;
  * </ul>
  */
 public class Report extends BaseAntTask {
-    /** The list of licenses */
+    /**
+     * The list of licenses
+     */
     @Deprecated
     private final List<License> licenses = new ArrayList<>();
-    /** The list of license families */
+    /**
+     * The list of license families
+     */
     @Deprecated
     private final List<Family> families = new ArrayList<>();
-    /** the options that are deprecated.  TODO remove this. */
+    /**
+     * the options that are deprecated.  TODO remove this.
+     */
     private final DeprecatedConfig deprecatedConfig = new DeprecatedConfig();
     /**
      * will hold any nested resource collection
@@ -86,11 +92,17 @@ public class Report extends BaseAntTask {
      * Collection of objects that support Ant specific deprecated options
      */
     private static class DeprecatedConfig {
-        /** The input file filter */
+        /**
+         * The input file filter
+         */
         private IOFileFilter inputFileFilter;
-        /** the set of approved licence categories */
+        /**
+         * the set of approved licence categories
+         */
         private final Set<String> approvedLicenseCategories = new HashSet<>();
-        /** the set of removed (unapproved) license categories */
+        /**
+         * the set of removed (unapproved) license categories
+         */
         private final Set<String> removedLicenseCategories = new HashSet<>();
     }
 
@@ -99,13 +111,16 @@ public class Report extends BaseAntTask {
      */
     public Report() {
         // replace the logger only if it has not already been set.
-        if (DefaultLog.getInstance() instanceof DefaultLog) {
-            DefaultLog.setInstance(new Logger(this.getProject()));
+        Log oldLog = DefaultLog.getInstance();
+        if (oldLog instanceof DefaultLog) {
+            DefaultLog.setInstance(new Logger());
+            DefaultLog.getInstance().setLevel(oldLog.getLevel());
         }
     }
 
     /**
      * Adds resources that will be checked.
+     *
      * @param rc resource to check.
      */
     public void add(final ResourceCollection rc) {
@@ -117,6 +132,7 @@ public class Report extends BaseAntTask {
 
     /**
      * Adds an input file filter.
+     *
      * @param inputFileFilter The input file filter to add.
      */
     @Deprecated
@@ -126,16 +142,18 @@ public class Report extends BaseAntTask {
 
     /**
      * Sets the report file.
+     *
      * @param reportFile the report file.
-     * @deprecated use {@link #setOut(String)}
+     * @deprecated use {@link #setOutputFile(String)}
      */
     @Deprecated
     public void setReportFile(final File reportFile) {
-        setOut(reportFile.getAbsolutePath());
+        setOutputFile(reportFile.getAbsolutePath());
     }
 
     /**
      * Adds an inline License definition to the system.
+     *
      * @param license the license to add.
      * @deprecated Create a custom configuration file and use the config option.
      */
@@ -146,14 +164,18 @@ public class Report extends BaseAntTask {
 
     /**
      * Add an inline license family definition to the system.
+     *
      * @param family the license family to add.
+     * @deprecated Create a custom configuration file and use the config option.
      */
+    @Deprecated
     public void addFamily(final Family family) {
         families.add(family);
     }
 
     /**
      * Adds a style sheet to the system.
+     *
      * @param styleSheet
      * @deprecated use {@link #setStylesheet(String)}
      */
@@ -164,6 +186,7 @@ public class Report extends BaseAntTask {
 
     /**
      * Adds a given style sheet to the report.
+     *
      * @param styleSheet style sheet to use in this report.
      * @deprecated use {@link #setStylesheet(String)}
      */
@@ -173,30 +196,38 @@ public class Report extends BaseAntTask {
     }
 
     /**
-     * Sets a stylesheet for the report.
-     * @param styleReport
-     * @deprecated use {@link #setXml(boolean)}.  Note reversal of boolean value
+     * Styles the report or deliver xml document.
+     *
+     * @param styleReport true to use the plain-rat style
+     * @deprecated use {@link #setOutputStyle(String)} and pass "xml" or "plain-rat".
      */
     @Deprecated
     public void setStyleReport(final boolean styleReport) {
-        setXml(!styleReport);
+        setOutputStyle(styleReport ? "xml" : "plain-rat");
     }
 
     /**
      * Determines if the output should be styled.
-     * @param style
-     * @deprecated use {@link #setStylesheet(String)} or {@link #setXml(boolean)}
+     *
+     * @param style the name of the style sheet ot use, or "styled" for plain-rat style
+     * @deprecated use {@link #setStylesheet(String)}
      */
     @Deprecated
     public void setFormat(final String style) {
-        setStyleReport("styled".equalsIgnoreCase(style));
+        if ("styled".equalsIgnoreCase(style)) {
+            setOutputStyle("plain-rat");
+        } else {
+            setOutputStyle(style);
+        }
     }
 
     /**
      * Adds as a file containing the definitions of licenses to the system.
+     *
      * @param fileName the file to add.
-     * @deprecated use licenses child element.
+     * @deprecated create a configuration file and use the &lt;config&gt; child element.
      */
+    @Deprecated
     public void setLicenses(final File fileName) {
         try {
             createLicenses().addText(fileName.getCanonicalPath());
@@ -207,8 +238,9 @@ public class Report extends BaseAntTask {
 
     /**
      * Specifies whether to add the default list of license matchers.
+     *
      * @param useDefaultLicenses if {@code true} use the default licenses.
-     * @deprecated  use noDefaultLicenses attribute
+     * @deprecated use noDefaultLicenses attribute
      */
     @Deprecated
     public void setUseDefaultLicenses(final boolean useDefaultLicenses) {
@@ -217,8 +249,9 @@ public class Report extends BaseAntTask {
 
     /**
      * Adds a family category to the list of approved licenses.
+     *
      * @param familyCategory the category to add.
-     * @deprecated use addApprovedLicense child element.
+     * @deprecated use licensesApproved child element.
      */
     @Deprecated
     public void setAddApprovedLicense(final String familyCategory) {
@@ -227,16 +260,20 @@ public class Report extends BaseAntTask {
 
     /**
      * Adds a family category to the list of approved licenses.
+     *
      * @param familyCategory the category to add
+     * @deprecated use licensesFamiliesApproved child element
      */
+    @Deprecated
     public void addAddApprovedLicense(final String familyCategory) {
         deprecatedConfig.approvedLicenseCategories.add(familyCategory);
     }
 
     /**
      * Removes a family category to the list of approved licenses.
+     *
      * @param familyCategory the category to add.
-     * @deprecated use removeApprovedLicense child element
+     * @deprecated use licensesDenied child element
      */
     @Deprecated
     public void setRemoveApprovedLicense(final String familyCategory) {
@@ -245,16 +282,20 @@ public class Report extends BaseAntTask {
 
     /**
      * Removes a family category to the list of approved licenses.
+     *
      * @param familyCategory the category to add.
+     * @deprecated use licensesDenied child element
      */
+    @Deprecated
     public void addRemoveApprovedLicense(final String familyCategory) {
         deprecatedConfig.removedLicenseCategories.add(familyCategory);
     }
 
     /**
      * Removes a family category to the list of approved licenses.
-     * @param familyCategory the category to add.
-     * @deprecated use removeApprovedLicense element
+     *
+     * @param familyCategory the category to remove
+     * @deprecated use licenseFamilyDenied element
      */
     @Deprecated
     public void setRemoveApprovedLicense(final String[] familyCategory) {
@@ -263,25 +304,31 @@ public class Report extends BaseAntTask {
 
     /**
      * Removes a family category to the list of approved licenses.
-     * @param familyCategory the category to add.
+     *
+     * @param familyCategory the category to remove.
+     * @deprecated use licenseFamilyDenied element
      */
+    @Deprecated
     public void addRemoveApprovedLicense(final String[] familyCategory) {
         deprecatedConfig.removedLicenseCategories.addAll(Arrays.asList(familyCategory));
     }
+
     /**
      * Sets the copyright message
+     *
      * @param copyrightMessage the copyright message
      * @deprecated use copyright attribute
      */
     @Deprecated
     public void setCopyrightMessage(final String copyrightMessage) {
-       setCopyright(copyrightMessage);
+        setCopyright(copyrightMessage);
     }
 
     /**
      * Determines if license headers should be added.
+     *
      * @param setting the setting.
-     * @deprecated use addLicense and force attributes
+     * @deprecated use editLicense and editOverwrite attributes
      */
     @Deprecated
     public void setAddLicenseHeaders(final AddLicenseHeaders setting) {
@@ -301,8 +348,9 @@ public class Report extends BaseAntTask {
 
     /**
      * Adds definition information
+     *
      * @param fileName the file to add
-     * @deprecated Use {@link #addLicense}
+     * @deprecated Use Config child element
      */
     @Deprecated
     public void setAddDefaultDefinitions(final File fileName) {
@@ -335,6 +383,7 @@ public class Report extends BaseAntTask {
 
     /**
      * Removes the values for the arg.
+     *
      * @param arg the arg to remove the values for.
      */
     protected void removeKey(final Arg arg) {
@@ -345,9 +394,9 @@ public class Report extends BaseAntTask {
         }
     }
 
-
     /**
      * Creates the ReportConfiguration from the ant options.
+     *
      * @return the ReportConfiguration.
      */
     public ReportConfiguration getConfiguration() {
@@ -413,15 +462,22 @@ public class Report extends BaseAntTask {
 
     /**
      * Add headers to files that do not have them.
+     *
      * @deprecated use &lt;editCopyright&gt; amd &lt;editOverwrite&gt; instead.
      */
     @Deprecated
     public static class AddLicenseHeaders extends EnumeratedAttribute {
-        /** add license headers and create *.new file */
+        /**
+         * add license headers and create *.new file
+         */
         static final String TRUE = "true";
-        /** do not add license headers */
+        /**
+         * do not add license headers
+         */
         static final String FALSE = "false";
-        /** add license headers and overwrite existing files */
+        /**
+         * add license headers and overwrite existing files
+         */
         static final String FORCED = "forced";
 
         public AddLicenseHeaders() {
@@ -433,7 +489,7 @@ public class Report extends BaseAntTask {
 
         @Override
         public String[] getValues() {
-            return new String[] { TRUE, FALSE, FORCED };
+            return new String[]{TRUE, FALSE, FORCED};
         }
 
         public org.apache.rat.config.AddLicenseHeaders getNative() {
@@ -443,6 +499,7 @@ public class Report extends BaseAntTask {
 
     /**
      * Specify the licenses that are approved.
+     *
      * @deprecated use listLicenses or listFamilies attributes.
      */
     @Deprecated
@@ -466,47 +523,83 @@ public class Report extends BaseAntTask {
         }
     }
 
+    @Override
+    public void log(final String msg, final int msgLevel) {
+        if (getProject() != null) {
+            getProject().log(msg, msgLevel);
+        } else {
+            DefaultLog.createDefault().log(fromProjectLevel(msgLevel), msg);
+        }
+    }
+
+    @Override
+    public void log(final String msg, final Throwable t, final int msgLevel) {
+        if (getProject() == null) {
+            log(Log.formatLogEntry(msg, t), msgLevel);
+        } else {
+            getProject().log(this, msg, t, msgLevel);
+        }
+    }
+
+    /**
+     * Converts to RAT log level from Ant Project log level.
+     * @param level the Ant Project log level to convert.
+     * @return the equivalent RAT log level.
+     */
+    static Log.Level fromProjectLevel(final int level) {
+        switch (level) {
+            case Project.MSG_DEBUG:
+            case Project.MSG_VERBOSE:
+                return Log.Level.DEBUG;
+            case Project.MSG_INFO:
+                return Log.Level.INFO;
+            case Project.MSG_WARN:
+                return Log.Level.WARN;
+            case Project.MSG_ERR:
+                return Log.Level.ERROR;
+            default:
+                return Log.Level.OFF;
+        }
+    }
+
+    /**
+     * Converts RAT log level to Ant Project log level.
+     * @param level the RAT log level to convert.
+     * @return the equivalent Ant Project log level.
+     */
+    static int toProjectLevel(final Log.Level level) {
+        switch (level) {
+            case DEBUG:
+                return Project.MSG_DEBUG;
+            case INFO:
+                return Project.MSG_INFO;
+            case WARN:
+                return Project.MSG_WARN;
+            case ERROR:
+                return Project.MSG_ERR;
+            case OFF:
+            default:
+                return -1;
+        }
+    }
+
     /**
      * A facade for the Logger provided by Ant.
      */
-    public static class Logger implements Log {
-        /** The project we are logging on */
-        private Project project;
-
-        Logger(final Project project) {
-            this.project = project;
-        }
-
-
+    private class Logger implements Log {
         @Override
         public Level getLevel() {
             return Level.DEBUG;
         }
 
         @Override
-        public void log(final Level level, final String msg) {
-            log(level, msg, null);
+        public void log(final Log.Level level, final String message, final Throwable throwable) {
+            log(level, Log.formatLogEntry(message, throwable));
         }
 
         @Override
-        public void log(final Level level, final String message, final Throwable throwable) {
-            switch (level) {
-                case DEBUG:
-                    project.log(message, throwable, Project.MSG_DEBUG);
-                    break;
-                case INFO:
-                    project.log(message, throwable, Project.MSG_INFO);
-                    break;
-                case WARN:
-                    project.log(message, throwable, Project.MSG_WARN);
-                    break;
-                case ERROR:
-                    project.log(message, throwable, Project.MSG_ERR);
-                    break;
-                case OFF:
-                default:
-                    // do nothing
-            }
+        public void log(final Level level, final String msg) {
+            Report.this.log(msg, toProjectLevel(level));
         }
     }
 }

@@ -22,6 +22,7 @@
 
 <antlib>
   <taskdef name="report" classname="org.apache.rat.anttasks.Report"/>
+  <taskdef name="help" classname="org.apache.rat.anttasks.Help"/>
     <typedef name="all" classname="org.apache.rat.anttasks.All"/>
     <typedef name="any" classname="org.apache.rat.anttasks.Any"/>
     <typedef name="copyright" classname="org.apache.rat.anttasks.Copyright"/>
