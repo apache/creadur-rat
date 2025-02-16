@@ -28,14 +28,17 @@ import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
+import java.util.stream.Collectors;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.rat.ReportConfiguration;
 import org.apache.rat.ReportConfigurationTest;
+import org.apache.rat.commandline.Arg;
 import org.apache.rat.document.DocumentName;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.MagicNames;
@@ -46,6 +49,8 @@ import org.junit.Assume;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.w3c.dom.Document;
 
 public class ReportTest extends AbstractRatAntTaskTest {
@@ -275,4 +280,5 @@ public class ReportTest extends AbstractRatAntTaskTest {
         }
         assertTrue("Report file could not be parsed as XML", documentParsed);
     }
+
 }

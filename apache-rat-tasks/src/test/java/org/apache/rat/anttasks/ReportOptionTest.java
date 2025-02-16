@@ -27,6 +27,7 @@ import org.apache.rat.test.AbstractOptionsProvider;
 import org.apache.rat.OptionCollectionTest;
 import org.apache.rat.ReportConfiguration;
 import org.apache.rat.testhelpers.TestingLog;
+import org.apache.rat.tools.AntOption;
 import org.apache.rat.utils.DefaultLog;
 import org.apache.rat.utils.Log;
 import org.apache.tools.ant.BuildEvent;
@@ -130,7 +131,7 @@ public class ReportOptionTest  {
             final String name;
 
             BuildTask(Option option) {
-                this(new AntOption(option).name);
+                this(new AntOption(option).getName());
             }
 
             BuildTask() {
@@ -150,10 +151,10 @@ public class ReportOptionTest  {
 
                         if (argOption.isAttribute()) {
                             String value = pair.getValue() == null ? "true" : pair.getValue()[0];
-                            attributes.append(format(" %s='%s'", argOption.name, value));
+                            attributes.append(format(" %s='%s'", argOption.getName(), value));
                         } else {
                             for (String value : pair.getValue()) {
-                                childElements.append(format("\t\t\t\t<%1$s>%2$s</%1$s>%n", argOption.name, value));
+                                childElements.append(format("\t\t\t\t<%1$s>%2$s</%1$s>%n", argOption.getName(), value));
                             }
                         }
                     }

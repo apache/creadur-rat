@@ -45,7 +45,7 @@ public class AntOption extends AbstractOption {
      * @return {@code true} if the option should be an attribute of the &lt;rat:report&gt; element.
      */
     public boolean isAttribute() {
-        return !option.hasArgs();
+        return !isElement();
     }
 
     /**
@@ -54,7 +54,7 @@ public class AntOption extends AbstractOption {
      * @return {@code true} if the option should be a child element of the &lt;rat:report&gt; element.
      */
     public boolean isElement() {
-        return !isAttribute() || option.getType() != String.class;
+        return option.getArgs() > 1 || option.getArgs() == Option.UNLIMITED_VALUES || option.getType() != String.class;
     }
 
     protected String cleanupName(final Option option) {

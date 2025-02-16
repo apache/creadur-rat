@@ -157,6 +157,14 @@ public abstract class AbstractOption {
     }
 
     /**
+     * Returns the number of arguments.
+     * @return The number of arguments.
+     */
+    public final int argCount() {
+        return option.getArgs();
+    }
+
+    /**
      * The key value for the option.
      * @return the key value for the CLI argument map.
      */

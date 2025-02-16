@@ -28,6 +28,7 @@ import org.apache.rat.utils.DefaultLog;
 import org.apache.rat.utils.Log;
 import org.apache.tools.ant.Task;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;

@@ -199,8 +199,24 @@ public final class AntGenerator {
     }
 
     private static String getElementClass(final AntOption option) {
-        return format("    public class %1$s extends Child { %1$s() {super(%2$s);}}%n%n", WordUtils.capitalize(option.getName()),
-                option.keyValue());
+        String elementConstructor = "" +
+                "        %s() {\n" +
+                "            super(%s);\n" +
+                "        }\n\n";
+        String funcName = WordUtils.capitalize(option.getName());
+        StringBuilder result = new StringBuilder(format("    public class %1$s extends Child {\n", funcName))
+                .append(format(elementConstructor, funcName, option.keyValue()));
+        if (option.hasArg() && option.getType() == File.class) {
+            String varName = new CasedString(CasedString.StringCase.SNAKE, option.getArgName()).toCase(CasedString.StringCase.CAMEL);
+            String typeMethod = "" +
+                    "         public void set%1$s(%s %s) {\n" +
+                    "            addText(%s);\n" +
+                    "        }\n\n";
+            result.append(format(typeMethod, option.getType().getSimpleName(), varName, varName + ".getAbsolutePath()"));
+        }
+        result.append(format("    }%n"));
+
+        return result.toString();
     }
 
     static String createName(final Option option) {

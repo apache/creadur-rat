@@ -94,31 +94,49 @@ public final class DeprecationReporter {
      */
     public static void logDeprecated(final Class<?> clazz) {
         if (clazz.getAnnotation(Deprecated.class) != null) {
-            StringBuilder sb = new StringBuilder(format("Deprecated class used: %s ", clazz));
+            String name = format("Deprecated class used: %s ", clazz);
             Info info = clazz.getAnnotation(Info.class);
-            if (info != null) {
-                if (info.forRemoval()) {
-                    sb.append("  Scheduled for removal");
-                    if (!info.since().isEmpty()) {
-                        sb.append(" since ").append(info.since());
-                    }
-                    sb.append(".");
-                } else if (!info.since().isEmpty()) {
-                    sb.append(" Deprecated since ").append(info.since()).append(".");
-                }
-                if (!info.use().isEmpty()) {
-                    sb.append(" Use ").append(info.use()).append(" instead.");
-                }
+            if (info == null) {
+                DefaultLog.getInstance().warn(formatEntry(name, "", false, ""));
+            } else {
+                DefaultLog.getInstance().warn(formatEntry(format(name, clazz), info.since(), info.forRemoval(), info.use()));
             }
-            DefaultLog.getInstance().warn(sb.toString());
         }
+    }
+
+    private static String formatEntry(final String prefix, final String since, final boolean forRemoval, final String use) {
+        StringBuilder sb = new StringBuilder("Deprecated " + prefix);
+        if (forRemoval) {
+            sb.append("  Scheduled for removal");
+            if (!since.isEmpty()) {
+                sb.append(" since ").append(since);
+            }
+            sb.append(".");
+        } else if (!since.isEmpty()) {
+            sb.append(" Deprecated since ").append(since).append(".");
+        }
+        if (!use.isEmpty()) {
+            sb.append(" Use ").append(use).append(" instead.");
+        }
+        return sb.toString();
+    }
+
+    /**
+     * Log Deprecated class use.
+     * @param name The name of the deprecated tag
+     * @param since The version where the deprecation was declared.
+     * @param forRemoval If {@code true} then tag is scheduled for removal.
+     * @param use What to use instead.
+     */
+    public static void logDeprecated(final String name, final String since, final boolean forRemoval, final String use) {
+        DefaultLog.getInstance().warn(formatEntry(name, since, forRemoval, use));
     }
 
     /**
      * Annotation to provide deprecation information for Java8.
      * TODO remove this when Java 8 no longer supported.
      */
-    @Target(ElementType.TYPE)
+    @Target({ElementType.TYPE})
     @Retention(RetentionPolicy.RUNTIME)
     public @interface Info {
         /**

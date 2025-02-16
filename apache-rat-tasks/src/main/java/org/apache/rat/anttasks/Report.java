@@ -31,6 +31,7 @@ import java.util.stream.Collectors;
 import org.apache.commons.cli.Option;
 import org.apache.commons.io.filefilter.IOFileFilter;
 import org.apache.rat.ConfigurationException;
+import org.apache.rat.DeprecationReporter;
 import org.apache.rat.ImplementationException;
 import org.apache.rat.OptionCollection;
 import org.apache.rat.ReportConfiguration;
@@ -110,6 +111,7 @@ public class Report extends BaseAntTask {
      * Constructor.
      */
     public Report() {
+        super();
         // replace the logger only if it has not already been set.
         Log oldLog = DefaultLog.getInstance();
         if (oldLog instanceof DefaultLog) {
@@ -137,6 +139,7 @@ public class Report extends BaseAntTask {
      */
     @Deprecated
     public void setInputFileFilter(final IOFileFilter inputFileFilter) {
+        DeprecationReporter.logDeprecated("element inputFileFilter", "0.17", true, "outputFile element");
         deprecatedConfig.inputFileFilter = inputFileFilter;
     }
 
@@ -148,6 +151,7 @@ public class Report extends BaseAntTask {
      */
     @Deprecated
     public void setReportFile(final File reportFile) {
+        DeprecationReporter.logDeprecated("element reportFile", "0.17", true, "outputFile element");
         setOutputFile(reportFile.getAbsolutePath());
     }
 
@@ -181,6 +185,7 @@ public class Report extends BaseAntTask {
      */
     @Deprecated
     public void addStylesheet(final Resource styleSheet) {
+        DeprecationReporter.logDeprecated("element stylesheet", "0.17", true, "<outputStyle> element");
         setStylesheet(styleSheet.getName());
     }
 
@@ -188,11 +193,12 @@ public class Report extends BaseAntTask {
      * Adds a given style sheet to the report.
      *
      * @param styleSheet style sheet to use in this report.
-     * @deprecated use {@link #setStylesheet(String)}
+     * @deprecated use {@link #setOutputStyle(String)}
      */
     @Deprecated
     public void addStyleSheet(final Resource styleSheet) {
-        setStylesheet(styleSheet.getName());
+        DeprecationReporter.logDeprecated("attribute styleSheet", "0.17", true, "<outputStyle> element");
+        setOutputStyle(styleSheet.getName());
     }
 
     /**
@@ -214,6 +220,7 @@ public class Report extends BaseAntTask {
      */
     @Deprecated
     public void setFormat(final String style) {
+        DeprecationReporter.logDeprecated("attribute format", "0.17", true, "outputStyle element");
         if ("styled".equalsIgnoreCase(style)) {
             setOutputStyle("plain-rat");
         } else {
@@ -229,6 +236,7 @@ public class Report extends BaseAntTask {
      */
     @Deprecated
     public void setLicenses(final File fileName) {
+        DeprecationReporter.logDeprecated("attribute licenses", "0.17", true, "<licences> element");
         try {
             createLicenses().addText(fileName.getCanonicalPath());
         } catch (IOException e) {
@@ -244,6 +252,7 @@ public class Report extends BaseAntTask {
      */
     @Deprecated
     public void setUseDefaultLicenses(final boolean useDefaultLicenses) {
+        DeprecationReporter.logDeprecated("attribute useDefaultLicenses", "0.17", true, "noDefaultLicenses attribute");
         setNoDefaultLicenses(!useDefaultLicenses);
     }
 
@@ -255,6 +264,7 @@ public class Report extends BaseAntTask {
      */
     @Deprecated
     public void setAddApprovedLicense(final String familyCategory) {
+        DeprecationReporter.logDeprecated("attribute addApprovedLicense", "0.17", true, "<licensesApproved> element");
         deprecatedConfig.approvedLicenseCategories.add(familyCategory);
     }
 
@@ -266,6 +276,7 @@ public class Report extends BaseAntTask {
      */
     @Deprecated
     public void addAddApprovedLicense(final String familyCategory) {
+        DeprecationReporter.logDeprecated("element <addApprovedLicense>", "0.17", true, "<licenseFamiliesApproved> element");
         deprecatedConfig.approvedLicenseCategories.add(familyCategory);
     }
 
@@ -273,10 +284,11 @@ public class Report extends BaseAntTask {
      * Removes a family category to the list of approved licenses.
      *
      * @param familyCategory the category to add.
-     * @deprecated use licensesDenied child element
+     * @deprecated use licensesFamiliesDenied child element
      */
     @Deprecated
     public void setRemoveApprovedLicense(final String familyCategory) {
+        DeprecationReporter.logDeprecated("attribute addApprovedLicense", "0.17", true, "<licenseFamiliesApproved> element");
         deprecatedConfig.removedLicenseCategories.add(familyCategory);
     }
 
@@ -284,10 +296,11 @@ public class Report extends BaseAntTask {
      * Removes a family category to the list of approved licenses.
      *
      * @param familyCategory the category to add.
-     * @deprecated use licensesDenied child element
+     * @deprecated use licensesFamiliesDenied child element
      */
     @Deprecated
     public void addRemoveApprovedLicense(final String familyCategory) {
+        DeprecationReporter.logDeprecated("element <removeApprovedLicense>", "0.17", true, "<licenseFamiliesDenied> element");
         deprecatedConfig.removedLicenseCategories.add(familyCategory);
     }
 
@@ -295,10 +308,11 @@ public class Report extends BaseAntTask {
      * Removes a family category to the list of approved licenses.
      *
      * @param familyCategory the category to remove
-     * @deprecated use licenseFamilyDenied element
+     * @deprecated use licenseFamiliesDenied element
      */
     @Deprecated
     public void setRemoveApprovedLicense(final String[] familyCategory) {
+        DeprecationReporter.logDeprecated("attribute removeApprovedLicense", "0.17", true, "<licenseFamiliesDenied> element");
         deprecatedConfig.removedLicenseCategories.addAll(Arrays.asList(familyCategory));
     }
 
@@ -310,6 +324,7 @@ public class Report extends BaseAntTask {
      */
     @Deprecated
     public void addRemoveApprovedLicense(final String[] familyCategory) {
+        DeprecationReporter.logDeprecated("element <removeApprovedLicense>", "0.17", true, "<licenseFamiliesDenied> element");
         deprecatedConfig.removedLicenseCategories.addAll(Arrays.asList(familyCategory));
     }
 
@@ -332,16 +347,17 @@ public class Report extends BaseAntTask {
      */
     @Deprecated
     public void setAddLicenseHeaders(final AddLicenseHeaders setting) {
+        DeprecationReporter.logDeprecated("attribute addLicenseHeaders", "0.17", true, "editLicense and editOverwrite attributes");
         switch (setting.getNative()) {
             case TRUE:
-                setAddLicense(true);
+                setEditLicense(true);
                 break;
             case FALSE:
-                setAddLicense(false);
+                setEditLicense(false);
                 break;
             case FORCED:
-                setAddLicense(true);
-                setForce(true);
+                setEditLicense(true);
+                setEditOverwrite(true);
                 break;
         }
     }
@@ -354,6 +370,7 @@ public class Report extends BaseAntTask {
      */
     @Deprecated
     public void setAddDefaultDefinitions(final File fileName) {
+        DeprecationReporter.logDeprecated("element <addDefaultDefinitions>", "0.17", true, "<config> element");
         try {
             Licenses lic = createLicenses();
             lic.addText(fileName.getCanonicalPath());
@@ -546,7 +563,7 @@ public class Report extends BaseAntTask {
      * @param level the Ant Project log level to convert.
      * @return the equivalent RAT log level.
      */
-    static Log.Level fromProjectLevel(final int level) {
+    public static Log.Level fromProjectLevel(final int level) {
         switch (level) {
             case Project.MSG_DEBUG:
             case Project.MSG_VERBOSE:

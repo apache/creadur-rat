@@ -18,6 +18,7 @@
  */
 package org.apache.rat.anttasks;
 
+import org.apache.rat.DeprecationReporter;
 import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.configuration.builders.TextBuilder;
 
@@ -26,6 +27,7 @@ import org.apache.rat.configuration.builders.TextBuilder;
  * @deprecated use configuration file.
  */
 @Deprecated // since 0.17
+@DeprecationReporter.Info(since = "0.17", forRemoval = true, use = "Configuration file and <config> element")// since 0.17
 public class Text implements IHeaderMatcher.Builder {
     
     private final TextBuilder builder = new TextBuilder();

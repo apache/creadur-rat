@@ -69,7 +69,7 @@
         if (validateSet(key)) {
             List<String> values = new ArrayList<>();
             if (DefaultLog.getInstance().isEnabled(Log.Level.DEBUG)) {
-                DefaultLog.getInstance().debug(String.format("Adding [%s] to %s", String.join(", ", values), key));
+                DefaultLog.getInstance().debug(String.format("Setting %s to '%s'", key, value));
             }
             values.add(value);
             args.put(key, values);

@@ -513,7 +513,7 @@ public abstract class AbstractOptionsProvider implements ArgumentsProvider {
 
     protected void licensesApprovedTest() {
         execLicensesApprovedTest(Arg.LICENSES_APPROVED.find("licenses-approved"),
-                new String[]{"one", "two"});
+                new String[]{"one, two"});
     }
 
     private void execLicensesDeniedTest(final Option option, final String[] args) {
