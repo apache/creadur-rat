@@ -20,13 +20,11 @@ package org.apache.rat.config.exclusion.fileProcessors;
 
 import java.nio.file.Path;
 import java.util.List;
-import java.util.stream.Stream;
 import org.apache.rat.config.exclusion.MatcherSet;
 import org.apache.rat.config.exclusion.plexus.SelectorUtils;
 import org.apache.rat.document.DocumentName;
 import org.apache.rat.document.DocumentNameMatcher;
 import org.apache.rat.document.DocumentNameMatcherTest;
-import org.apache.rat.document.FSInfoTest;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.condition.EnabledOnOs;
@@ -37,7 +35,6 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
-import org.junit.jupiter.params.provider.Arguments;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

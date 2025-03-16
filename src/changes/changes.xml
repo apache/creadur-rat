@@ -72,6 +72,9 @@ The <action> type attribute can be one of:
     </release>
     -->
     <release version="0.17-SNAPSHOT" date="xxxx-yy-zz" description="Current SNAPSHOT - release to be done">
+      <action issue="RAT-98" type="add" dev="claudenw">
+        Report skipped/excluded files and integrate testing of inclusion-exclusion and DocumentNames to work under Unix, Windows and Mac.
+      </action>
       <action issue="RAT-471" type="add" dev="pottlinger" due-to="clayjohnson">
         Integrate Creadur RAT into the updated develocity.apache.org instance.
       </action>
