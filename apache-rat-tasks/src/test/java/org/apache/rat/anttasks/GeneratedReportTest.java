@@ -31,12 +31,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.WordUtils;
+import org.apache.rat.OptionCollection;
+import org.apache.rat.ReportConfiguration;
 import org.apache.rat.commandline.Arg;
+import org.apache.rat.commandline.StyleSheets;
 import org.apache.rat.document.DocumentName;
-import org.apache.rat.tools.AntGenerator;
+import org.apache.rat.license.LicenseSetFactory;
 import org.apache.rat.tools.AntOption;
-import org.apache.rat.utils.CasedString;
+import org.apache.rat.utils.DefaultLog;
 import org.apache.tools.ant.BuildEvent;
 import org.apache.tools.ant.BuildListener;
 import org.apache.tools.ant.MagicNames;
@@ -57,41 +61,105 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 
 public class GeneratedReportTest  {
-
-    private StringBuilder logBuffer;
-    private StringBuilder fullLogBuffer;
-    private StringBuilder outputBuffer;
-    private StringBuilder errorBuffer;
-    private Project project;
-
     @TempDir
     static Path tempDir;
 
-    static Map<String, String> requiredAttributes = new HashMap<>();
-    static Map<String, String> requiredElements = new HashMap<>();
-    static Map<String, String> dataValues = new HashMap<>();
+    private static final Map<String, String> REQUIRED_ATTRIBUTES = new HashMap<>();
+    private static final Map<String, String> REQUIRED_ELEMENTS = new HashMap<>();
+    private static final Map<OptionCollection.ArgumentType, BuildType> ARG_TYPE_MAP = new HashMap<>();
 
+    static {
+        BuildType buildType = null;
+        for (OptionCollection.ArgumentType argType : OptionCollection.ArgumentType.values()) {
+            switch (argType) {
+                case FILE:
+                case DIRORARCHIVE:
+                    buildType = new BuildType(argType, "") {
+                        @Override
+                        protected String getMethodFormat(final AntOption antOption) {
+                            return "<fileset file='%s' />";
+                        }
+                    };
+                    break;
+                case NONE:
+                    buildType = new BuildType(argType, "") {
+                        @Override
+                        protected String getMethodFormat(final AntOption antOption) {
+                            return "";
+                        }
+                    };
+                    break;
+                case STANDARDCOLLECTION:
+                    buildType = new BuildType(argType, "std");
+                    break;
+                case EXPRESSION:
+                    buildType = new BuildType(argType, "expr");
+                    break;
+                case COUNTERPATTERN:
+                    buildType = new BuildType(argType, "cntr");
+                    break;
+                case LICENSEID:
+                case FAMILYID:
+                    buildType = new BuildType(argType, "lst");
+                    break;
+                default:
+                    buildType = new BuildType(argType, "") {
+                        @Override
+                        protected String getMethodFormat(final AntOption antOption) {
+                            return format("<%1$s>%%s</%1$s>", tag);
+                        }
+                    };
+            }
+            ARG_TYPE_MAP.put(argType, buildType);
+        }
+    }
 
-    private static void writeFile(String name, String contents) throws IOException {
+    /**
+     * The prefix for the and build.xml file.
+     */
+    private static final String BUILD_XML_PREFIX =
+            "<project default=\"all\"\n" +
+                "  xmlns:au=\"antlib:org.apache.ant.antunit\"\n" +
+                "  xmlns:rat=\"antlib:org.apache.rat.anttasks\">\n" +
+                "\n" +
+                "  <taskdef uri=\"antlib:org.apache.ant.antunit\"\n" +
+                "  \tresource=\"org/apache/ant/antunit/antlib.xml\"\n" +
+                "  \tclasspath=\"${test.classpath}\" />\n" +
+                "\n" +
+                "  <taskdef uri=\"antlib:org.apache.rat.anttasks\"\n" +
+                "  \tresource=\"org/apache/rat/anttasks/antlib.xml\"\n" +
+                "  \tclasspath=\"${test.classpath}\" />\n" +
+                "\n" +
+                "  <property name=\"File\" value='test.file' />\n" +
+                "  <property name=\"Integer\" value=\"5\" />\n" +
+                "  <property name=\"String\" value=\"hello\" />\n" +
+                "  <property name=\"ConfigFile\" location=\"configData.xml\" />\n\n";
+
+    private static File writeFile(String name, String contents) throws IOException {
         final File testFile = new File(tempDir.toFile(), name);
         try (Writer writer = new OutputStreamWriter(Files.newOutputStream(testFile.toPath()))) {
             writer.write(contents);
         }
+        return testFile;
     }
 
     @BeforeAll
     static void setupStatics() {
-        requiredAttributes.put("copyright", "editLicense='true'");
-        requiredAttributes.put("editCopyright", "editLicense='true'");
-        requiredAttributes.put("force", "editLicense='true'");
-        requiredAttributes.put("editOverwrite", "editLicense='true'");
-        requiredElements.put("configurationNoDefaults", "<config file='noDefaultsConfig.xml'/>");
-        requiredElements.put("noDefaultLicenses", "<config file='noDefaultLicensesConfig.xml'/>");
+        REQUIRED_ATTRIBUTES.put("copyright", "editLicense='true'");
+        REQUIRED_ATTRIBUTES.put("editCopyright", "editLicense='true'");
+        REQUIRED_ATTRIBUTES.put("force", "editLicense='true'");
+        REQUIRED_ATTRIBUTES.put("editOverwrite", "editLicense='true'");
+        REQUIRED_ELEMENTS.put("configurationNoDefaults", configFile("noDefaultsConfig.xml"));
+        REQUIRED_ELEMENTS.put("noDefaultLicenses", configFile("noDefaultLicensesConfig.xml"));
     }
 
     @BeforeEach
     public void setup() throws IOException {
         writeFile("test.file", "// test file");
+    }
+
+    private static String configFile(String fileName) {
+        return format("<config><fileset file=\"%s\" /></config>", fileName);
     }
 
     @ParameterizedTest(name = "{index} {0}")
@@ -103,31 +171,29 @@ public class GeneratedReportTest  {
         }
         DocumentName documentName = DocumentName.builder(antFile).setBaseName(antFile.getParentFile()).build();
         System.setProperty(MagicNames.PROJECT_BASEDIR, documentName.getBaseName());
-        logBuffer = new StringBuilder();
-        fullLogBuffer = new StringBuilder();
-
-        project = new Project();
+        StringBuilder fullLogBuffer = new StringBuilder();
+        StringBuilder outputBuffer = new StringBuilder();
+        StringBuilder errorBuffer = new StringBuilder();
+        DefaultLog.setInstance(null);
+        Project project = new Project();
         if (Boolean.getBoolean(MagicTestNames.TEST_BASEDIR_IGNORE)) {
             System.clearProperty(MagicNames.PROJECT_BASEDIR);
         }
         project.init();
-
         project.setProperty(MagicTestNames.TEST_PROCESS_ID, ProcessUtil.getProcessId("<Process>"));
         project.setProperty(MagicTestNames.TEST_THREAD_NAME, Thread.currentThread().getName());
         project.setUserProperty(MagicNames.ANT_FILE, antFile.getAbsolutePath());
-        project.addBuildListener(new AntTestListener(logBuffer, fullLogBuffer, Project.MSG_DEBUG));
+        AntTestListener listener = new AntTestListener(option.getName(), fullLogBuffer, Project.MSG_DEBUG);
+        project.addBuildListener(listener);
         ProjectHelper.configureProject(project, antFile);
-
-        executeTarget(targetName(option));
+        executeTarget(outputBuffer, errorBuffer, project, targetName(option));
         if (option.isDeprecated()) {
-            assertThat(logBuffer).contains(option.getDeprecated());
+            assertThat(listener.logBuffer).contains(option.getDeprecated());
         }
     }
 
-    public void executeTarget(String targetName) {
-        outputBuffer = new StringBuilder();
+    private void executeTarget(StringBuilder outputBuffer, StringBuilder errorBuffer, Project project, String targetName) {
         PrintStream out = new PrintStream(new AntOutputStream(outputBuffer));
-        errorBuffer = new StringBuilder();
         PrintStream err = new PrintStream(new AntOutputStream(errorBuffer));
 
         /* we synchronize to protect our custom output streams from being overridden
@@ -154,152 +220,216 @@ public class GeneratedReportTest  {
     }
 
     static String targetName(AntOption option) {
-        return option.getName() + (option.isAttribute() ? "Attribute" :"Element");
+        AntOption actualOption = option.getActualAntOption();
+        return actualOption.getName() + (actualOption.isAttribute() ? "Attribute" :"Element");
     }
 
+    /**
+     * Generate the data fro the tests.
+     * @return the arguments for the tests.
+     * @throws IOException on error
+     */
     static Stream<Arguments> generatedData() throws IOException {
+
         List<org.apache.rat.tools.AntOption> options = Arg.getOptions().getOptions().stream()
-                .filter(AntGenerator.getFilter()).map(AntOption::new)
+                .filter(o -> !AntOption.getFilteredOptions().contains(o)).map(AntOption::new)
                 .collect(Collectors.toList());
 
         List<Arguments> lst = new ArrayList<>();
 
         for (AntOption option : options) {
-            StringBuilder xml = new StringBuilder(prefix());
-            xml.append(format("  <target name='%s'>%n", targetName(option)));
-            if (option.isAttribute()) {
-                xml.append(format("    <rat:report %s=\"%s\"", option.getName(), getData(option)));
-                String additionalAttributes = requiredAttributes.get(option.getName());
-                if (additionalAttributes != null) {
-                    xml.append(format(" %s", additionalAttributes));
-                }
-                xml.append(format(" >%n"));
-            }
-
-            if (option.isElement()) {
-                xml.append(format("    <rat:report>%n"));
-                if (option.argCount() == 1) {
-                    xml.append(format("      <%s %s=\"%s\" />%n", option.getName(), createAttribute(option), getData(option)));
-                } else {
-                    xml.append(format("      <%1s>%n", option.getName()));
-                    if (option.getType() == String.class) {
-                        xml.append(format("       %s%n", getData(option)));
-                    } else {
-                        xml.append(format("        <%1$s>%2$s</%1$s>%n", createAttribute(option), getData(option)));
-                    }
-                    xml.append(format("      </%s>%n", option.getName()));
-                }
-            }
-
-            String additionalElements = requiredElements.get(option.getName());
-            if (additionalElements != null) {
-                xml.append(format("      %s%n", additionalElements));
-            }
-            xml.append(format("      <file file='test.file' />%n"));
-            xml.append(format("    </rat:report>%n"));
-            xml.append(format("  </target>%n%n</project>%n"));
-
-            lst.add(Arguments.of(option.getName(), xml.toString(), option));
+            lst.add(createTest(option));
+            option.convertedFrom().forEach(o -> lst.add(createTest(new AntOption(o))));
+        }
+        for (Arguments arguments : lst) {
+            Object[] objects = arguments.get();
+            System.out.format("%s -> %s%n", objects[0], objects[1]);
         }
         return lst.stream();
     }
 
-    private static String createAttribute(final AntOption option) {
-        return WordUtils.capitalize(option.getArgName().substring(0, 1)) + option.getArgName().substring(1);
+    private static Arguments createTest(AntOption option) {
+        AntOption actualOption = option.getActualAntOption();
+        BuildType buildType = ARG_TYPE_MAP.get(option.getArgType());
+        String xml = buildXml(actualOption, option, buildType.getXml(option));
+        return Arguments.of(buildType.testName(option), xml, option);
     }
 
-    private static String getData(final AntOption option) throws IOException {
+    private static String buildXml(AntOption actualOption, AntOption option, String body) {
+        StringBuilder xml = new StringBuilder(BUILD_XML_PREFIX);
+        xml.append(format("<!-- %s -->%n", option.getName()));
+        xml.append(format("  <target name='%s'>%n", targetName(option)));
+        if (actualOption.isAttribute()) {
+            xml.append(format("    <rat:report %s=\"%s\"", actualOption.getName(), getData(option)));
+            String additionalAttributes = REQUIRED_ATTRIBUTES.get(actualOption.getName());
+            if (additionalAttributes != null) {
+                xml.append(format(" %s", additionalAttributes));
+            }
+            xml.append(format(" >%n"));
+        } else {
+            xml.append("    <rat:report");
+            String additionalAttributes = REQUIRED_ATTRIBUTES.get(actualOption.getName());
+            if (additionalAttributes != null) {
+                xml.append(format(" %s", additionalAttributes));
+            }
+            xml.append(">\n");
+            if (body == null) {
+                xml.append(format("      <%1$s>%2$s</%1$s>%n", actualOption.getName(), getData(option)));
+            } else {
+//                if (actualOption.argCount() == 1) {
+//                    xml.append(format("      <%s %s=\"%s\" />%n", actualOption.getName(), createAttribute(option), getData(option)));
+//                } else {
+                    xml.append(format("      <%1$s>%2$s</%1$s>%n", actualOption.getName(), body));
+//                }
+            }
+        }
 
-        switch (option.getName()) {
-            case "config":
-                writeFile("configData.xml", "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<rat-config/>");
-                return "configData.xml";
-            case "licenses":
-                writeFile("licensesData.xml", "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<rat-config/>");
-                return "licensesData.xml";
-            case "licensesApproved" :
-                return "AL, CC";
-            case "configurationNoDefaults":
-                writeFile("noDefaultsConfig.xml", "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
-                        "<rat-config>\n" +
-                        "\t<families>\n" +
-                        "\t\t<family id=\"DUMMY\" name=\"A Dummy license\" />\n" +
-                        "\t</families>\n" +
-                        "\t<licenses>\n" +
-                        "\t\t<license family=\"DUMMY\">\n" +
-                        "\t\t\t<text>Any old text</text>\n" +
-                        "\t\t</license>\n" +
-                        "\t</licenses>\n" +
-                        "\t<approved>\n" +
-                        "\t\t<family license_ref='DUMMY' />\n" +
-                        "\t</approved>\n" +
-                        "\t<matchers>\n" +
-                        "\t\t<matcher class=\"org.apache.rat.configuration.builders.AllBuilder\" />\n" +
-                        "\t\t<matcher class=\"org.apache.rat.configuration.builders.AnyBuilder\" />\n" +
-                        "\t\t<matcher class=\"org.apache.rat.configuration.builders.CopyrightBuilder\" />\n" +
-                        "\t\t<matcher class=\"org.apache.rat.configuration.builders.MatcherRefBuilder\" />\n" +
-                        "\t\t<matcher class=\"org.apache.rat.configuration.builders.NotBuilder\" />\n" +
-                        "\t\t<matcher class=\"org.apache.rat.configuration.builders.RegexBuilder\" />\n" +
-                        "\t\t<matcher class=\"org.apache.rat.configuration.builders.SpdxBuilder\" />\n" +
-                        "\t\t<matcher class=\"org.apache.rat.configuration.builders.TextBuilder\" />\n" +
-                        "\t</matchers>\n" +
-                        "</rat-config>\n");
+        String additionalElements = REQUIRED_ELEMENTS.get(option.getName());
+        if (additionalElements != null) {
+            xml.append(format("      %s%n", additionalElements));
+        }
+        xml.append(format("      <file file='test.file' />%n"));
+        xml.append(format("    </rat:report>%n"));
+        xml.append(format("  </target>%n%n</project>%n"));
+        return xml.toString();
+    }
+
+    private static String createAttribute(final AntOption option) {
+        return WordUtils.uncapitalize(option.getArgName().substring(0, 1)) + option.getArgName().substring(1);
+    }
+
+    private static String getData(AntOption option) {
+        String value = getData(option.getName());
+        if (value == null) {
+            if (!option.hasArg()) {
                 return "true";
-            case "noDefaultLicenses":
-                writeFile("noDefaultLicensesConfig.xml", "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
-                        "<rat-config>\n" +
-                        "\t<families>\n" +
-                        "\t\t<family id=\"DUMMY\" name=\"A Dummy license\" />\n" +
-                        "\t</families>\n" +
-                        "\t<licenses>\n" +
-                        "\t\t<license family=\"DUMMY\">\n" +
-                        "\t\t\t<text>Any old text</text>\n" +
-                        "\t\t</license>\n" +
-                        "\t</licenses>\n" +
-                        "</rat-config>\n");
-                return "true";
-            case "out":
-            case "outputFile":
-                return option.getName() + ".txt";
-            default:
-                if (!option.hasArg()) {
+            } else {
+                throw new IllegalStateException("Missing " + option.getName());
+            }
+        }
+        return value;
+    }
+    private static String getData(String name) {
+        try {
+            switch (name) {
+                case "copyright":
+                case "editCopyright":
+                    return "My Copyright info";
+                case "config":
+                    writeFile("configData.xml", "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<rat-config/>");
+                    return "${ConfigFile}";
+                case "licenses":
+                    return writeFile("licensesData.xml", "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<rat-config/>").getName();
+                case "licenseFamiliesApproved":
+                case "licenseFamiliesDenied":
+                    return "AL, CC";
+                case "licenseFamiliesApprovedFile":
+                    return writeFile("licenseFamiliesApprovedFile.txt", getData("licenseFamiliesApproved")).getName();
+                case "licenseFamiliesDeniedFile":
+                    return writeFile("licenseFamiliesDeniedFile.txt", getData("licenseFamiliesDenied")).getName();
+                case "licensesApproved":
+                case "licensesDenied":
+                    return "AL, CC";
+                case "licensesApprovedFile":
+                    return writeFile("licensesApprovedFile.txt", getData("licensesApproved")).getName();
+                case "licensesDeniedFile":
+                    return writeFile("licensesDeniedFile.txt", getData("licensesDenied")).getName();
+                case "configurationNoDefaults":
+                    writeFile("noDefaultsConfig.xml", "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
+                            "<rat-config>\n" +
+                            "\t<families>\n" +
+                            "\t\t<family id=\"DUMMY\" name=\"A Dummy license\" />\n" +
+                            "\t</families>\n" +
+                            "\t<licenses>\n" +
+                            "\t\t<license family=\"DUMMY\">\n" +
+                            "\t\t\t<text>Any old text</text>\n" +
+                            "\t\t</license>\n" +
+                            "\t</licenses>\n" +
+                            "\t<approved>\n" +
+                            "\t\t<family license_ref='DUMMY' />\n" +
+                            "\t</approved>\n" +
+                            "\t<matchers>\n" +
+                            "\t\t<matcher class=\"org.apache.rat.configuration.builders.AllBuilder\" />\n" +
+                            "\t\t<matcher class=\"org.apache.rat.configuration.builders.AnyBuilder\" />\n" +
+                            "\t\t<matcher class=\"org.apache.rat.configuration.builders.CopyrightBuilder\" />\n" +
+                            "\t\t<matcher class=\"org.apache.rat.configuration.builders.MatcherRefBuilder\" />\n" +
+                            "\t\t<matcher class=\"org.apache.rat.configuration.builders.NotBuilder\" />\n" +
+                            "\t\t<matcher class=\"org.apache.rat.configuration.builders.RegexBuilder\" />\n" +
+                            "\t\t<matcher class=\"org.apache.rat.configuration.builders.SpdxBuilder\" />\n" +
+                            "\t\t<matcher class=\"org.apache.rat.configuration.builders.TextBuilder\" />\n" +
+                            "\t</matchers>\n" +
+                            "</rat-config>\n");
                     return "true";
-                } else {
-                    return format("${%s}", option.getType().getSimpleName());
-                }
+                case "noDefaultLicenses":
+                    writeFile("noDefaultLicensesConfig.xml", "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
+                            "<rat-config>\n" +
+                            "\t<families>\n" +
+                            "\t\t<family id=\"DUMMY\" name=\"A Dummy license\" />\n" +
+                            "\t</families>\n" +
+                            "\t<licenses>\n" +
+                            "\t\t<license family=\"DUMMY\">\n" +
+                            "\t\t\t<text>Any old text</text>\n" +
+                            "\t\t</license>\n" +
+                            "\t</licenses>\n" +
+                            "</rat-config>\n");
+                    return "true";
+                case "out":
+                case "outputFile":
+                    return tempDir.resolve(name + ".txt").toString();
+                case "xml":
+                    return "true";
+                case "stylesheet":
+                case "outputStyle":
+                    return StyleSheets.PLAIN.arg();
+                case "inputInclude":
+                case "inputExclude":
+                case "exclude":
+                case "include":
+                    return "a/**file/stuff";
+                case "excludeFile" :
+                    return writeFile("excludeFile.txt", getData("exclude")).getAbsolutePath();
+                case "includesFile" :
+                    return writeFile("includeFile.txt", getData("include")).getAbsolutePath();
+                case "inputIncludeFile" :
+                    return writeFile("inputIncludeFile.txt", getData("inputInclude")).getName();
+                case "inputExcludeFile" :
+                    return writeFile("inputExcludeFile.txt", getData("inputExclude")).getName();
+                case "inputExcludeSize":
+                    return "500";
+                case "inputIncludeStd":
+                case "inputExcludeStd":
+                    return "GIT";
+                case "counterMin":
+                case "counterMax":
+                    return "BINARIES:3";
+                case "inputExcludeParsedScm":
+                    return "IDEA";
+                case "outputLicenses":
+                case "outputFamilies":
+                case "listLicenses":
+                case "listFamilies":
+                    return LicenseSetFactory.LicenseFilter.ALL.name();
+                case "outputArchive":
+                case "outputStandard":
+                    return ReportConfiguration.Processing.ABSENCE.name();
+                default:
+                    return null;
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 
-    private static String prefix() {
-        return "<project default=\"all\"\n" +
-                "  xmlns:au=\"antlib:org.apache.ant.antunit\"\n" +
-                "  xmlns:rat=\"antlib:org.apache.rat.anttasks\">\n" +
-                "\n" +
-                "  <taskdef uri=\"antlib:org.apache.ant.antunit\"\n" +
-                "  \tresource=\"org/apache/ant/antunit/antlib.xml\"\n" +
-                "  \tclasspath=\"${test.classpath}\" />\n" +
-                "\n" +
-                "  <taskdef uri=\"antlib:org.apache.rat.anttasks\"\n" +
-                "  \tresource=\"org/apache/rat/anttasks/antlib.xml\"\n" +
-                "  \tclasspath=\"${test.classpath}\" />\n" +
-                "\n" +
-                "  <property name=\"File\" value='test.file' />\n" +
-                "  <property name=\"Integer\" value=\"5\" />\n" +
-                "  <property name=\"String\" value=\"hello\" />\n" +
-                "  <property name=\"StandardCollection\" value=\"GIT\" />\n\n";
-    }
-
-
     private static class AntTestListener implements BuildListener {
         private int logLevel;
-        private StringBuilder logBuffer;
+        private final StringBuilder logBuffer;
         private StringBuilder fullLogBuffer;
         /**
          * Constructs a test listener which will ignore log events
          * above the given level.
          */
-        public AntTestListener(StringBuilder logBuffer, StringBuilder fullLogBuffer, int logLevel) {
-            this.logBuffer = logBuffer;
+        public AntTestListener(String name, StringBuilder fullLogBuffer, int logLevel) {
+            this.logBuffer = new StringBuilder();
             this.fullLogBuffer = fullLogBuffer;
             this.logLevel = logLevel;
         }
@@ -364,11 +494,8 @@ public class GeneratedReportTest  {
                 // ignore event
                 return;
             }
-
-            if (event.getPriority() == Project.MSG_INFO
-                    || event.getPriority() == Project.MSG_WARN
-                    || event.getPriority() == Project.MSG_ERR) {
-                logBuffer.append(event.getMessage());
+            if (event.getPriority() <= Project.MSG_INFO) {
+                logBuffer.append(format("[%s] %s%n", Report.fromProjectLevel(event.getPriority()), event.getMessage()));
             }
             fullLogBuffer.append(format("[%s] %s%n", Report.fromProjectLevel(event.getPriority()), event.getMessage()));
         }
@@ -384,6 +511,45 @@ public class GeneratedReportTest  {
         public void write(int b) {
             buffer.append((char) b);
         }
+    }
 
+    public static class BuildType {
+        /** The argument type associated with theis build type */
+        private final OptionCollection.ArgumentType type;
+        /** The configuration tag for this build type */
+        protected final String tag;
+        /** If True adds the tag as the test extension */
+        private final boolean addExt;
+
+        BuildType(final OptionCollection.ArgumentType type, final String tag) {
+            this(type, tag, StringUtils.isNotEmpty(tag));
+        }
+
+        BuildType(final OptionCollection.ArgumentType type, final String tag, boolean addExt) {
+            this.type = type;
+            this.tag = tag;
+            this.addExt = addExt;
+        }
+
+        protected String getMultipleFormat(final AntOption antOption) {
+            return String.format("  <%1$s>%%s</%1$s>\n", tag);
+        }
+
+        protected String getMethodFormat(final AntOption antOption) {
+            return antOption.hasArgs() ? getMultipleFormat(antOption) : String.format("  <%1$s>%%s</%1$s>\n", tag);
+        }
+
+        public String testName(final AntOption antOption) {
+            return addExt ? format("%s_%s", antOption.getName(), antOption.getArgName()) : antOption.getName();
+        }
+
+        public String getXml(final AntOption antOption) {
+            AntOption delegateOption = antOption.getActualAntOption();
+            if (delegateOption.isAttribute()) {
+                return "";
+            } else {
+                return format(getMethodFormat(antOption), getData(antOption));
+            }
+        }
     }
 }

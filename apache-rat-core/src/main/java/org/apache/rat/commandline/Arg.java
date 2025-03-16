@@ -184,7 +184,7 @@ public enum Arg {
     /**
      * Option to remove licenses from the approved list
      */
-    LICENSES_DENIED(new OptionGroup().addOption(Option.builder().longOpt("licenses-denied").hasArgs().argName("LicenseID")
+    LICENSES_DENIED(new OptionGroup().addOption(Option.builder().longOpt("licenses-denied").hasArg().argName("LicenseID")
             .desc("A comma separated list of denied License IDs. " +
                     "These licenses will be removed from the list of approved licenses. " +
                     "Once licenses are removed they can not be added back.")
@@ -294,6 +294,7 @@ public enum Arg {
             .addOption(Option.builder().longOpt("input-exclude-std").argName("StandardCollection")
                     .hasArgs().converter(s -> StandardCollection.valueOf(s.toUpperCase()))
                     .desc("Excludes files defined in standard collections based on commonly occurring groups.")
+                    .type(StandardCollection.class)
                     .build())
     ),
 
@@ -345,6 +346,7 @@ public enum Arg {
                     .hasArgs().converter(s -> StandardCollection.valueOf(s.toUpperCase()))
                     .desc("Includes files defined in standard collections based on commonly occurring groups. " +
                             "Will override excluded files.")
+                    .type(StandardCollection.class)
                     .build())
             .addOption(Option.builder().longOpt("scan-hidden-directories")
                     .desc("Scans hidden directories.")
@@ -632,7 +634,7 @@ public enum Arg {
             }
             if (CONFIGURATION_NO_DEFAULTS.isSelected()) {
                 // display deprecation log if needed.
-                context.getCommandLine().hasOption(CONFIGURATION.getSelected());
+                context.getCommandLine().hasOption(CONFIGURATION_NO_DEFAULTS.getSelected());
                 defaultBuilder.noDefault();
             }
             context.getConfiguration().setFrom(defaultBuilder.build());
@@ -751,7 +753,8 @@ public enum Arg {
             }
             if (INCLUDE_STD.isSelected()) {
                 Option selected = INCLUDE_STD.getSelected();
-                if ("scan-hidden-directories".equals(selected.getLongOpt())) {
+                // display deprecation log if needed.
+                if (context.getCommandLine().hasOption("scan-hidden-directories")) {
                     context.getConfiguration().addIncludedCollection(StandardCollection.HIDDEN_DIR);
                 } else {
                     for (String s : context.getCommandLine().getOptionValues(selected)) {
@@ -945,7 +948,7 @@ public enum Arg {
     private <T> T[] getParsedOptionValues(final CommandLine commandLine)  {
         Option option = getSelected();
         Class<? extends T> clazz = (Class<? extends T>) option.getType();
-        String[] values = getOptionValues(commandLine);
+        String[] values = commandLine.getOptionValues(option);
         T[] result = (T[]) Array.newInstance(clazz, values.length);
         try {
             for (int i = 0; i < values.length; i++) {
@@ -954,7 +957,7 @@ public enum Arg {
             return result;
         } catch (Throwable t) {
             throw new ConfigurationException(format("'%s' converter for %s '%s' does not produce a class of type %s", this,
-                    option.getKey(), option.getConverter().getClass().getName(), option.getType()));
+                    option.getKey(), option.getConverter().getClass().getName(), option.getType()), t);
         }
     }
 

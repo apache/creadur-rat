@@ -66,13 +66,15 @@
      * @param value the value to set.
      */
     protected void setArg(String key, String value) {
-        if (validateSet(key)) {
-            List<String> values = new ArrayList<>();
-            if (DefaultLog.getInstance().isEnabled(Log.Level.DEBUG)) {
-                DefaultLog.getInstance().debug(String.format("Setting %s to '%s'", key, value));
+        if (value == null || StringUtils.isNotBlank(value)) {
+            if (validateSet(key)) {
+                List<String> values = new ArrayList<>();
+                if (DefaultLog.getInstance().isEnabled(Log.Level.DEBUG)) {
+                    DefaultLog.getInstance().debug(String.format("Setting %s to '%s'", key, value));
+                }
+                values.add(value);
+                args.put(key, values);
             }
-            values.add(value);
-            args.put(key, values);
         }
     }
 
@@ -101,7 +103,11 @@
                 values = new ArrayList<>();
                 args.put(key, values);
             }
-            values.addAll(Arrays.asList(value));
+            for (String v : values) {
+                if (StringUtils.isNotBlank(v)) {
+                    values.add(v);
+                }
+            }
         }
     }
 
@@ -112,16 +118,18 @@
      * @param value the value to set.
      */
     protected void addArg(String key, String value) {
-        if (validateSet(key)) {
-            List<String> values = args.get(key);
-            if (DefaultLog.getInstance().isEnabled(Log.Level.DEBUG)) {
-                DefaultLog.getInstance().debug(String.format("Adding [%s] to %s", String.join(", ", Arrays.asList(value)), key));
+        if (StringUtils.isNotBlank(value)) {
+            if (validateSet(key)) {
+                List<String> values = args.get(key);
+                if (DefaultLog.getInstance().isEnabled(Log.Level.DEBUG)) {
+                    DefaultLog.getInstance().debug(String.format("Adding [%s] to %s", String.join(", ", Arrays.asList(value)), key));
+                }
+                if (values == null) {
+                    values = new ArrayList<>();
+                    args.put(key, values);
+                }
+                values.add(value);
             }
-            if (values == null) {
-                values = new ArrayList<>();
-                args.put(key, values);
-            }
-            values.add(value);
         }
     }
 

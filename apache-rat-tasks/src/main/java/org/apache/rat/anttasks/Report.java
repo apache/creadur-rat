@@ -147,12 +147,12 @@ public class Report extends BaseAntTask {
      * Sets the report file.
      *
      * @param reportFile the report file.
-     * @deprecated use {@link #setOutputFile(String)}
+     * @deprecated use outputFile element
      */
     @Deprecated
     public void setReportFile(final File reportFile) {
         DeprecationReporter.logDeprecated("element reportFile", "0.17", true, "outputFile element");
-        setOutputFile(reportFile.getAbsolutePath());
+        addArg("output-file", reportFile.getAbsolutePath());
     }
 
     /**
@@ -180,7 +180,7 @@ public class Report extends BaseAntTask {
     /**
      * Adds a style sheet to the system.
      *
-     * @param styleSheet
+     * @param styleSheet The style sheet to use for formatting.
      * @deprecated use {@link #setStylesheet(String)}
      */
     @Deprecated
@@ -237,11 +237,7 @@ public class Report extends BaseAntTask {
     @Deprecated
     public void setLicenses(final File fileName) {
         DeprecationReporter.logDeprecated("attribute licenses", "0.17", true, "<licences> element");
-        try {
-            createLicenses().addText(fileName.getCanonicalPath());
-        } catch (IOException e) {
-            throw new BuildException("Unable to read license file " + fileName, e);
-        }
+        setArg(Arg.CONFIGURATION.option().getLongOpt(), fileName.getAbsolutePath());
     }
 
     /**
@@ -371,12 +367,7 @@ public class Report extends BaseAntTask {
     @Deprecated
     public void setAddDefaultDefinitions(final File fileName) {
         DeprecationReporter.logDeprecated("element <addDefaultDefinitions>", "0.17", true, "<config> element");
-        try {
-            Licenses lic = createLicenses();
-            lic.addText(fileName.getCanonicalPath());
-        } catch (IOException e) {
-            throw new BuildException("Unable to read license file " + fileName, e);
-        }
+        setArg(Arg.CONFIGURATION.option().getLongOpt(), fileName.getAbsolutePath());
     }
 
     /**

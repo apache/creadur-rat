@@ -19,6 +19,7 @@
 package org.apache.rat.tools;
 
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.regex.Matcher;
@@ -26,6 +27,7 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.cli.Option;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.rat.OptionCollection;
 import org.apache.rat.commandline.Arg;
 
 import static java.lang.String.format;
@@ -37,6 +39,8 @@ public abstract class AbstractOption {
     protected final Option option;
     /** The Maven name for the option */
     protected final String name;
+    /** The argument type for this option */
+    protected final OptionCollection.ArgumentType argumentType;
 
     /**
      * Constructor.
@@ -46,6 +50,10 @@ public abstract class AbstractOption {
     AbstractOption(final Option option, final String name) {
         this.option = option;
         this.name = name;
+        argumentType = option.hasArg() ?
+                option.getArgName() == null ? OptionCollection.ArgumentType.ARG :
+                OptionCollection.ArgumentType.valueOf(option.getArgName().toUpperCase(Locale.ROOT)) :
+                OptionCollection.ArgumentType.NONE;
     }
 
     /**
@@ -58,6 +66,12 @@ public abstract class AbstractOption {
     }
 
     protected abstract String cleanupName(Option option);
+
+    /**
+     * Gets an example of how to use this option in the native UI.
+     * @return An example of how to use this option in the native UI.
+     */
+    public abstract String getExample();
 
     /**
      * Gets this option's cleaned up name.
@@ -121,7 +135,15 @@ public abstract class AbstractOption {
      * @return the Argument name
      */
     public final String getArgName() {
-        return option.getArgName();
+        return argumentType.getDisplayName();
+    }
+
+    /**
+     * Gets the argument type if there is one.
+     * @return the Argument name
+     */
+    public final OptionCollection.ArgumentType getArgType() {
+        return argumentType;
     }
 
     /**

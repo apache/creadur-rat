@@ -19,7 +19,11 @@ package org.apache.rat.anttasks;
 import java.io.PrintStream;
 import java.io.Writer;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 import org.apache.commons.cli.Option;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
@@ -143,24 +147,27 @@ public class ReportOptionTest  {
             }
 
             public final void setUp(List<Pair<Option, String[]>> args) {
-                StringBuilder childElements = new StringBuilder();
-                StringBuilder attributes = new StringBuilder();
+                List<String> childElements = new ArrayList<>();
+                Map<String, String> attributes = new HashMap<>();
                 if (args.get(0).getKey() != null) {
                     for (Pair<Option, String[]> pair : args) {
                         AntOption argOption = new AntOption(pair.getKey());
-
                         if (argOption.isAttribute()) {
                             String value = pair.getValue() == null ? "true" : pair.getValue()[0];
-                            attributes.append(format(" %s='%s'", argOption.getName(), value));
+                            attributes.put(argOption.getName(), value);
                         } else {
+                            AntOption.ExampleGenerator exampleGenerator = argOption.new ExampleGenerator();
                             for (String value : pair.getValue()) {
-                                childElements.append(format("\t\t\t\t<%1$s>%2$s</%1$s>%n", argOption.getName(), value));
+                                childElements.add(exampleGenerator.getChildElements(value, null));
                             }
                         }
                     }
                 }
+                String attrStr = attributes.entrySet().stream().map(e -> String.format("%s='%s'", e.getKey(), e.getValue()))
+                        .collect(Collectors.joining(" "));
+                String elements = String.join("\n", childElements);
                 try (FileWriter writer = new FileWriter(antFile)) {
-                    writer.append(format(ANT_FILE, this.name, attributes, childElements, antFile.getAbsolutePath(), OptionTest.class.getName()));
+                    writer.append(format(ANT_FILE, this.name, attrStr, elements, antFile.getAbsolutePath(), OptionTest.class.getName()));
                     writer.flush();
                 } catch (IOException e) {
                     throw new RuntimeException(e);
@@ -199,7 +206,7 @@ public class ReportOptionTest  {
             "\t\tclasspath=\"${test.classpath}\" />\n" +
             "\n" +
             "\t<target name=\"%1$s\">\n" +
-            "\t\t<optionTest%2$s>\n" +
+            "\t\t<optionTest %2$s>\n" +
             "%3$s" +
             "\t\t\t<file file=\"%4$s\" />\n" +
             "\t\t</optionTest>\n" +
