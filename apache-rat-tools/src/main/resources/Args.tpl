@@ -89,28 +89,28 @@
 
     /**
      * Add values to the key in the argument list.
+     * empty values are ignored.  If no non-empty values are present no change is made.
      * If the key does not exist, adds it.
      * @param key the key for the map.
-     * @param value the value to set.
+     * @param value the array of values to set.
      */
     protected void addArg(String key, String[] value) {
-        if (validateSet(key)) {
-            if (DefaultLog.getInstance().isEnabled(Log.Level.DEBUG)) {
-                DefaultLog.getInstance().debug(String.format("Adding [%s] to %s", String.join(", ", Arrays.asList(value)), key));
-            }
-            List<String> values = args.get(key);
-            if (values == null) {
-                values = new ArrayList<>();
-                args.put(key, values);
-            }
-            for (String v : values) {
-                if (StringUtils.isNotBlank(v)) {
-                    values.add(v);
+        List<String> newValues = Arrays.stream(value).filter(StringUtils::isNotBlank).collect(Collectors.toList());
+        if (!newValues.isEmpty()) {
+            if (validateSet(key)) {
+                if (DefaultLog.getInstance().isEnabled(Log.Level.DEBUG)) {
+                    DefaultLog.getInstance().debug(String.format("Adding [%s] to %s", String.join(", ", Arrays.asList(value)), key));
                 }
+                List<String> values = args.get(key);
+                if (values == null) {
+                    values = new ArrayList<>();
+                    args.put(key, values);
+                }
+                values.addAll(newValues);
             }
         }
     }
-
+    
     /**
      * Add a value to the key in the argument list.
      * If the key does not exist, adds it.
