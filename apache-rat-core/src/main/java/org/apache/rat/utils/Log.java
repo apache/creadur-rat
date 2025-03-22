@@ -43,6 +43,14 @@ public interface Log {
         /** Log nothing. */
         OFF }
 
+    static String formatLogEntry(final String message, final Throwable throwable) {
+        StringWriter writer = new StringWriter();
+        PrintWriter pWriter = new PrintWriter(writer);
+        pWriter.print(message);
+        pWriter.print(System.lineSeparator());
+        throwable.printStackTrace(pWriter);
+        return writer.toString();
+    }
     /**
      * Gets the log level that is enabled. If encapsulated logger does not report level
      * implementations should return DEBUG.
@@ -124,12 +132,7 @@ public interface Log {
      * @param throwable the throwable
      */
     default void log(Level level, String message, Throwable throwable) {
-        StringWriter writer = new StringWriter(500);
-        PrintWriter pWriter = new PrintWriter(writer);
-        pWriter.print(message);
-        pWriter.print(System.lineSeparator());
-        throwable.printStackTrace(pWriter);
-        log(level, writer.toString());
+        log(level, formatLogEntry(message, throwable));
     }
 
     /**

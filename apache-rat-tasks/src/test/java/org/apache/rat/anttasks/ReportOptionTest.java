@@ -16,8 +16,14 @@
  */
 package org.apache.rat.anttasks;
 
+import java.io.PrintStream;
+import java.io.Writer;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 import org.apache.commons.cli.Option;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
@@ -25,8 +31,15 @@ import org.apache.rat.test.AbstractOptionsProvider;
 import org.apache.rat.OptionCollectionTest;
 import org.apache.rat.ReportConfiguration;
 import org.apache.rat.testhelpers.TestingLog;
+import org.apache.rat.tools.AntOption;
 import org.apache.rat.utils.DefaultLog;
 import org.apache.rat.utils.Log;
+import org.apache.tools.ant.BuildEvent;
+import org.apache.tools.ant.BuildListener;
+import org.apache.tools.ant.BuildLogger;
+import org.apache.tools.ant.DefaultLogger;
+import org.apache.tools.ant.Project;
+import org.apache.tools.ant.listener.AnsiColorLogger;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -81,10 +94,18 @@ public class ReportOptionTest  {
             super(BaseAntTask.unsupportedArgs(), testPath.toFile());
         }
 
-        protected ReportConfiguration generateConfig(final List<Pair<Option, String[]>> args) {
+        protected ReportConfiguration generateConfig(final List<Pair<Option, String[]>> args) throws IOException {
             BuildTask task = args.get(0).getKey() == null ? new BuildTask() : new BuildTask(args.get(0).getKey());
             task.setUp(args);
-            task.buildRule.executeTarget(task.name);
+            Log log = DefaultLog.getInstance();
+            Log.Level oldLevel = log.getLevel();
+            log.setLevel(Log.Level.DEBUG);
+            try {
+                task.buildRule.executeTarget(task.name);
+            } finally {
+                log.setLevel(oldLevel);
+                DefaultLog.setInstance(log);
+            }
             return reportConfiguration;
         }
 
@@ -114,7 +135,7 @@ public class ReportOptionTest  {
             final String name;
 
             BuildTask(Option option) {
-                this(new AntOption(option).name);
+                this(new AntOption(option).getName());
             }
 
             BuildTask() {
@@ -126,24 +147,27 @@ public class ReportOptionTest  {
             }
 
             public final void setUp(List<Pair<Option, String[]>> args) {
-                StringBuilder childElements = new StringBuilder();
-                StringBuilder attributes = new StringBuilder();
+                List<String> childElements = new ArrayList<>();
+                Map<String, String> attributes = new HashMap<>();
                 if (args.get(0).getKey() != null) {
                     for (Pair<Option, String[]> pair : args) {
                         AntOption argOption = new AntOption(pair.getKey());
-
                         if (argOption.isAttribute()) {
                             String value = pair.getValue() == null ? "true" : pair.getValue()[0];
-                            attributes.append(format(" %s='%s'", argOption.name, value));
+                            attributes.put(argOption.getName(), value);
                         } else {
+                            AntOption.ExampleGenerator exampleGenerator = argOption.new ExampleGenerator();
                             for (String value : pair.getValue()) {
-                                childElements.append(format("\t\t\t\t<%1$s>%2$s</%1$s>%n", argOption.name, value));
+                                childElements.add(exampleGenerator.getChildElements(value, null));
                             }
                         }
                     }
                 }
+                String attrStr = attributes.entrySet().stream().map(e -> String.format("%s='%s'", e.getKey(), e.getValue()))
+                        .collect(Collectors.joining(" "));
+                String elements = String.join("\n", childElements);
                 try (FileWriter writer = new FileWriter(antFile)) {
-                    writer.append(format(ANT_FILE, this.name, attributes, childElements, antFile.getAbsolutePath(), OptionTest.class.getName()));
+                    writer.append(format(ANT_FILE, this.name, attrStr, elements, antFile.getAbsolutePath(), OptionTest.class.getName()));
                     writer.flush();
                 } catch (IOException e) {
                     throw new RuntimeException(e);
@@ -182,7 +206,7 @@ public class ReportOptionTest  {
             "\t\tclasspath=\"${test.classpath}\" />\n" +
             "\n" +
             "\t<target name=\"%1$s\">\n" +
-            "\t\t<optionTest%2$s>\n" +
+            "\t\t<optionTest %2$s>\n" +
             "%3$s" +
             "\t\t\t<file file=\"%4$s\" />\n" +
             "\t\t</optionTest>\n" +

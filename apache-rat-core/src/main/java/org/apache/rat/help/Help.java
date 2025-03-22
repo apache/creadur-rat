@@ -33,12 +33,12 @@ import static java.lang.String.format;
 /**
  * The help output for the command line client.
  */
-public final class Help extends AbstractHelp {
+public class Help extends AbstractHelp {
 
     /**
      * An array of notes to go at the bottom of the help output
      */
-    private static final String[] NOTES = {
+    protected static final String[] NOTES = {
             "Rat highlights possible issues.",
             "Rat reports require interpretation.",
             "Rat often requires some tuning before it runs well against a project.",
@@ -46,7 +46,7 @@ public final class Help extends AbstractHelp {
     };
 
     /** The writer this instance writes to */
-    private final PrintWriter writer;
+    protected final PrintWriter writer;
 
     /**
      * Creates a Help instance to write to the specified writer.

@@ -1,0 +1,90 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.apache.rat.anttasks;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
+import java.util.Optional;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import org.apache.commons.io.IOUtils;
+import org.apache.rat.ReportConfiguration;
+import org.apache.rat.ReportConfigurationTest;
+import org.apache.rat.document.DocumentName;
+import org.apache.tools.ant.BuildException;
+import org.apache.tools.ant.MagicNames;
+import org.apache.tools.ant.Target;
+import org.apache.tools.ant.Task;
+import org.apache.tools.ant.UnknownElement;
+import org.junit.Assume;
+import org.junit.Before;
+import org.junit.Ignore;
+import org.junit.Test;
+import org.w3c.dom.Document;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
+public class HelpTest extends AbstractRatAntTaskTest {
+    private final String baseNameStr = String.join(File.separator, new String[]{"src","test","resources","helpTest"});
+    private final File antFile = new File(new File(baseNameStr), "build.xml").getAbsoluteFile();
+    private DocumentName documentName;
+
+    @Before
+    public void setUp()  {
+        File baseFile = antFile.getParentFile();
+        for (int i = 0; i < 4; i++) {
+            baseFile = baseFile.getParentFile();
+        }
+        documentName = DocumentName.builder(antFile).setBaseName(baseFile).build();
+        System.setProperty(MagicNames.PROJECT_BASEDIR, documentName.getBaseName());
+        super.setUp();
+    }
+    @Override
+    protected File getAntFile() {
+        return antFile;
+    }
+
+    private String logLine(String id) {
+        return logLine(true, documentName.localized("/"), id);
+    }
+    
+    private String logLine(String fileText, String id) {
+        return logLine(true, fileText, id);
+    }
+    
+    private String logLine(boolean approved, String fileText, String id) {
+        return String.format( "%s \\Q%s\\E\\s+S .*\\s+\\Q%s\\E ", approved?" ":"!", fileText, id);
+    }
+    
+    @Test
+    public void testExecHelp() {
+        buildRule.executeTarget("execHelp");
+        System.out.println(buildRule.getOutput());
+        assertThat(buildRule.getOutput()).contains("<rat:report addLicense='value'> ");
+        assertThat(buildRule.getOutput()).contains("<inputSource>File</inputSource>");
+        assertThat(buildRule.getOutput()).contains("Deprecated for removal since 0.17: Use outputFamilies attribute instead.");
+    }
+}

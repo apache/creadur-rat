@@ -56,6 +56,14 @@ public final class DefaultLog implements Log {
         return result;
     }
 
+    /**
+     * Creates a new instance of the default log.
+     * @return A new instance of the default log.
+     */
+    public static Log createDefault() {
+        return new DefaultLog();
+    }
+
     /** The level at which we will write messages */
     private Level level;
 
