@@ -80,13 +80,11 @@ public class ReportOptionTest  {
 
     final static class AntOptionsProvider extends AbstractOptionsProvider implements ArgumentsProvider {
 
-        final AtomicBoolean helpCalled = new AtomicBoolean(false);
-
         public AntOptionsProvider() {
             super(BaseAntTask.unsupportedArgs(), testPath.toFile());
         }
 
-        protected ReportConfiguration generateConfig(final List<Pair<Option, String[]>> args) throws IOException {
+        protected ReportConfiguration generateConfig(final List<Pair<Option, String[]>> args) {
             BuildTask task = args.get(0).getKey() == null ? new BuildTask() : new BuildTask(args.get(0).getKey());
             task.setUp(args);
             Log log = DefaultLog.getInstance();
