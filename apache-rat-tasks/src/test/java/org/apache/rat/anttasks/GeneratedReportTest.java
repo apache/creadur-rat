@@ -225,11 +225,10 @@ public class GeneratedReportTest  {
     }
 
     /**
-     * Generate the data fro the tests.
+     * Generate the data for the tests.
      * @return the arguments for the tests.
-     * @throws IOException on error
      */
-    static Stream<Arguments> generatedData() throws IOException {
+    static Stream<Arguments> generatedData() {
 
         List<org.apache.rat.tools.AntOption> options = Arg.getOptions().getOptions().stream()
                 .filter(o -> !AntOption.getFilteredOptions().contains(o)).map(AntOption::new)
@@ -476,7 +475,7 @@ public class GeneratedReportTest  {
 
         /**
          * Fired when a task has finished. This event will still
-         * be throw if an error occurred during the build.
+         * be thrown if an error occurred during the build.
          *
          * @see BuildEvent#getException()
          */
@@ -514,7 +513,7 @@ public class GeneratedReportTest  {
     }
 
     public static class BuildType {
-        /** The argument type associated with theis build type */
+        /** The argument type associated with the build type */
         private final OptionCollection.ArgumentType type;
         /** The configuration tag for this build type */
         protected final String tag;

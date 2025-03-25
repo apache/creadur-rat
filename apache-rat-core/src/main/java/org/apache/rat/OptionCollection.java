@@ -110,7 +110,7 @@ public final class OptionCollection {
      * @param workingDirectory The directory to resolve relative file names against.
      * @param args the arguments to parse
      * @param helpCmd the help command to run when necessary.
-     * @return a ReportConfiguration or null if Help was printed.
+     * @return a ReportConfiguration or {@code null} if Help was printed.
      * @throws IOException on error.
      */
     public static ReportConfiguration parseCommands(final File workingDirectory, final String[] args, final Consumer<Options> helpCmd) throws IOException {
@@ -270,57 +270,57 @@ public final class OptionCollection {
 
     public enum ArgumentType {
         /**
-         * A file
+         * A plain file.
          */
         FILE("File", () -> "A file name."),
         /**
-         * An Integer
+         * An Integer.
          */
         INTEGER("Integer", () -> "An integer value."),
         /**
-         * A directory or archived
+         * A directory or archive.
          */
         DIRORARCHIVE("DirOrArchive", () -> "A directory or archive file to scan."),
         /**
-         * A matching experssion
+         * A matching expression.
          */
         EXPRESSION("Expression", () -> "A file matching pattern usually of the form used in Ant build files and " +
                 "'.gitignore' files (see https://ant.apache.org/manual/dirtasks.html#patterns for examples). " +
                 "Regular expression patterns may be specified by surrounding the pattern with '%regex[' and ']'. " +
                 "For example '%regex[[A-Z].*]' would match files and directories that start with uppercase latin letters."),
         /**
-         * A license filter
+         * A license filter.
          */
         LICENSEFILTER("LicenseFilter", () -> format("A defined filter for the licenses to include. Valid values: %s.",
                 asString(LicenseSetFactory.LicenseFilter.values()))),
         /**
-         * A log level
+         * A log level.
          */
         LOGLEVEL("LogLevel", () -> format("The log level to use. Valid values %s.", asString(Level.values()))),
         /**
-         * A processing type
+         * A processing type.
          */
         PROCESSINGTYPE("ProcessingType", () -> format("Specifies how to process file types. Valid values are: %s%n",
                 Arrays.stream(ReportConfiguration.Processing.values())
                         .map(v -> format("\t%s: %s", v.name(), v.desc()))
                         .collect(Collectors.joining(System.lineSeparator())))),
         /**
-         * A style sheet
+         * A style sheet.
          */
         STYLESHEET("StyleSheet", () -> format("Either an external xsl file or one of the internal named sheets. Internal sheets are: %s",
                 Arrays.stream(StyleSheets.values())
                         .map(v -> format("\t%s: %s", v.arg(), v.desc()))
                         .collect(Collectors.joining(System.lineSeparator())))),
         /**
-         * A license id
+         * A license id.
          */
         LICENSEID("LicenseID", () -> "The ID for a license."),
         /**
-         * A family id
+         * A license family id.
          */
         FAMILYID("FamilyID", () -> "The ID for a license family."),
         /**
-         * A standard collection name
+         * A standard collection name.
          */
         STANDARDCOLLECTION("StandardCollection", () -> format("Defines standard expression patterns (see above). Valid values are: %s%n",
                 Arrays.stream(StandardCollection.values())
@@ -337,11 +337,11 @@ public final class OptionCollection {
                                 v.getDefaultMaxValue() == -1 ? "unlimited" : v.getDefaultMaxValue()))
                         .collect(Collectors.joining(System.lineSeparator())))),
         /**
-         * A generic argument
+         * A generic argument.
          */
         ARG("Arg", () -> "A string"),
         /**
-         * No argument
+         * No argument.
          */
         NONE("", () -> "");
 

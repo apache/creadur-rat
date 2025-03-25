@@ -41,10 +41,10 @@ import org.junit.jupiter.params.provider.ArgumentsSource;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import static java.lang.String.format;
 import static org.apache.rat.commandline.Arg.HELP_LICENSES;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.fail;
 
 /**
@@ -110,6 +110,7 @@ public class ReportOptionTest  {
             Log oldLog = DefaultLog.setInstance(testLog);
             try {
                 ReportConfiguration config = generateConfig(ImmutablePair.of(HELP_LICENSES.option(), null));
+                assertThat(config).isNotNull();
             } catch (IOException e) {
                 throw new RuntimeException(e);
             } finally {

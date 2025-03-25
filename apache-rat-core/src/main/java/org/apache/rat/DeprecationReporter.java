@@ -107,7 +107,7 @@ public final class DeprecationReporter {
     private static String formatEntry(final String prefix, final String since, final boolean forRemoval, final String use) {
         StringBuilder sb = new StringBuilder("Deprecated " + prefix);
         if (forRemoval) {
-            sb.append("  Scheduled for removal");
+            sb.append(" Scheduled for removal");
             if (!since.isEmpty()) {
                 sb.append(" since ").append(since);
             }

@@ -39,10 +39,10 @@ public class Help extends AbstractHelp {
      * An array of notes to go at the bottom of the help output
      */
     protected static final String[] NOTES = {
-            "Rat highlights possible issues.",
-            "Rat reports require interpretation.",
-            "Rat often requires some tuning before it runs well against a project.",
-            "Rat relies on heuristics: it may miss issues"
+            "RAT highlights possible issues.",
+            "RAT reports require interpretation.",
+            "RAT often requires some tuning before it runs well against a project.",
+            "RAT relies on heuristics: it may miss issues"
     };
 
     /** The writer this instance writes to */

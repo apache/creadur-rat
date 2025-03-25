@@ -18,53 +18,22 @@
 */
 package org.apache.rat.anttasks;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.Writer;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-import org.apache.commons.cli.DeprecatedAttributes;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
-import org.apache.commons.io.filefilter.IOFileFilter;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.rat.ConfigurationException;
-import org.apache.rat.ImplementationException;
-import org.apache.rat.OptionCollection;
-import org.apache.rat.ReportConfiguration;
-import org.apache.rat.Reporter;
 import org.apache.rat.commandline.Arg;
-import org.apache.rat.commandline.StyleSheets;
 import org.apache.rat.config.exclusion.StandardCollection;
-import org.apache.rat.document.DocumentName;
 import org.apache.rat.help.AbstractHelp;
-import org.apache.rat.license.LicenseSetFactory;
+import org.apache.rat.tools.AbstractOption;
 import org.apache.rat.tools.AntOption;
-import org.apache.rat.utils.CasedString;
 import org.apache.rat.utils.DefaultLog;
 import org.apache.rat.utils.Log;
-import org.apache.tools.ant.BuildException;
-import org.apache.tools.ant.Project;
-import org.apache.tools.ant.taskdefs.LogOutputStream;
-import org.apache.tools.ant.types.EnumeratedAttribute;
-import org.apache.tools.ant.types.Resource;
-import org.apache.tools.ant.types.ResourceCollection;
-import org.apache.tools.ant.types.resources.Union;
 
 import static java.lang.String.format;
 
@@ -193,7 +162,7 @@ public class Help extends BaseAntTask {
         }
         @Override
         public Comparator<Option> getOptionComparator() {
-            return (a, b) -> a.getLongOpt().compareTo(b.getLongOpt());
+            return Comparator.comparing(Option::getLongOpt);
         }
 
         @Override
@@ -212,7 +181,7 @@ public class Help extends BaseAntTask {
             final List<AntOption> optList = options.getOptions().stream().filter(Option::hasLongOpt)
                     .map(AntOption::new).collect(Collectors.toList());
             if (getOptionComparator() != null) {
-                optList.sort((a, b) -> a.getName().compareTo(b.getName()));
+                optList.sort(Comparator.comparing(AbstractOption::getName));
             }
             List<String> exampleList = new ArrayList<>();
             for (final AntOption option : optList) {

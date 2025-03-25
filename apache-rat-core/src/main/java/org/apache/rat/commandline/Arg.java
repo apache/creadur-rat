@@ -167,7 +167,7 @@ public enum Arg {
      * Option that specifies approved license families
      */
     FAMILIES_APPROVED(new OptionGroup().addOption(Option.builder().longOpt("license-families-approved").hasArg().argName("FamilyID")
-            .desc("A comma separated list of approved License Family IDs. These licenses families will be added to the list of approved licenses families.")
+            .desc("A comma separated list of approved license family IDs. These license families will be added to the list of approved license families.")
             .converter(Converters.TEXT_LIST_CONVERTER)
             .type(String[].class)
             .build())),

@@ -185,7 +185,7 @@ public final class Naming {
     private static void printCSV(final List<String> columns, final Predicate<Option> filter, final boolean addCLI, final boolean showMaven,
                                  final boolean showAnt, final Function<Option, String> descriptionFunction,
                                  final Writer underWriter) throws IOException {
-        try (CSVPrinter printer = new CSVPrinter(underWriter, CSVFormat.DEFAULT.builder().setQuoteMode(QuoteMode.ALL).build())) {
+        try (CSVPrinter printer = new CSVPrinter(underWriter, CSVFormat.DEFAULT.builder().setQuoteMode(QuoteMode.ALL).get())) {
             printer.printRecord(columns);
             for (Option option : OptionCollection.buildOptions().getOptions()) {
                 if (filter.test(option)) {

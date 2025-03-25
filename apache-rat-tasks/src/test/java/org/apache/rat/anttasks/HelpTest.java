@@ -16,36 +16,13 @@
  */
 package org.apache.rat.anttasks;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
-import java.util.Optional;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import org.apache.commons.io.IOUtils;
-import org.apache.rat.ReportConfiguration;
-import org.apache.rat.ReportConfigurationTest;
 import org.apache.rat.document.DocumentName;
-import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.MagicNames;
-import org.apache.tools.ant.Target;
-import org.apache.tools.ant.Task;
-import org.apache.tools.ant.UnknownElement;
-import org.junit.Assume;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
-import org.w3c.dom.Document;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 public class HelpTest extends AbstractRatAntTaskTest {
     private final String baseNameStr = String.join(File.separator, new String[]{"src","test","resources","helpTest"});

@@ -62,10 +62,10 @@ import org.apache.tools.ant.types.resources.Union;
  * The attribute <code>format</code> defines the output format and can take the
  * values
  * <ul>
- * <li>xml - Rat's native XML output.</li>
+ * <li>xml - RAT's native XML output.</li>
  * <li>styled - transforms the XML output using the given stylesheet. The
  * stylesheet attribute must be set as well if this attribute is used.</li>
- * <li>plain - plain text using Rat's built-in stylesheet. This is the
+ * <li>plain - plain text using RAT's built-in stylesheet. This is the
  * default.</li>
  * </ul>
  */

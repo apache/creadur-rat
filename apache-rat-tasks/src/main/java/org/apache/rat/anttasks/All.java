@@ -28,7 +28,7 @@ import org.apache.rat.configuration.builders.AllBuilder;
  * @deprecated use configuration file.
  */
 @Deprecated // since 0.17
-@DeprecationReporter.Info(since = "0.17", forRemoval = true, use = "Configuration file and <config> element")// since 0.17
+@DeprecationReporter.Info(since = "0.17", forRemoval = true, use = "Configuration file and <configuration> element")// since 0.17
 public class All implements IHeaderMatcher.Builder {
 
     private final AllBuilder builder = Builder.all();

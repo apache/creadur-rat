@@ -63,11 +63,11 @@ public final class AntGenerator {
      */
     private static final Predicate<Option> ANT_FILTER = option -> !(ANT_FILTER_LIST.contains(option) || option.getLongOpt() == null);
 
-    /** A mapping of external name to internal name if not standard */
+    /** A mapping of external name to internal name if not standard. */
     private static final Map<String, String> RENAME_MAP = new HashMap<>();
 
     /**
-     * A map of types patterns for that type.
+     * A map of type patterns for that type.
      */
     private static final Map<OptionCollection.ArgumentType, GenerateType> GENERATE_TYPE_MAP = new HashMap<>();
 
@@ -80,7 +80,7 @@ public final class AntGenerator {
             switch (type) {
                 case FILE:
                 case DIRORARCHIVE:
-                    generateType = new GenerateType(type, "fileset") {
+                    generateType = new GenerateType("fileset") {
                         protected String getMethodFormat(final AntOption antOption) {
                             return "        public void addConfiguredFileset(@NotNull FileSet fileSet) {\n" +
                                     "            for (Resource resource : fileSet) {\n" +
@@ -93,27 +93,27 @@ public final class AntGenerator {
                     };
                     break;
                 case NONE:
-                    generateType = new GenerateType(type, "") {
+                    generateType = new GenerateType("") {
                         protected String getMethodFormat(final AntOption antOption) {
                             return "";
                         }
                     };
                     break;
                 case STANDARDCOLLECTION:
-                    generateType = new GenerateType(type, "Std");
+                    generateType = new GenerateType("Std");
                     break;
                 case EXPRESSION:
-                    generateType = new GenerateType(type, "Expr");
+                    generateType = new GenerateType("Expr");
                     break;
                 case COUNTERPATTERN:
-                    generateType = new GenerateType(type, "Cntr");
+                    generateType = new GenerateType("Cntr");
                     break;
                 case LICENSEID:
                 case FAMILYID:
-                    generateType = new GenerateType(type, "Lst");
+                    generateType = new GenerateType("Lst");
                     break;
                 default:
-                    generateType = new GenerateType(type, type.getDisplayName()) {
+                    generateType = new GenerateType(type.getDisplayName()) {
 
                         protected String getMethodFormat(final AntOption antOption) {
                             return String.format(defaultFmt, innerClass, WordUtils.uncapitalize(antOption.getArgName()));
@@ -276,13 +276,10 @@ public final class AntGenerator {
     }
 
     public static class GenerateType {
-        /** The argument type this type is associated with */
-        private final OptionCollection.ArgumentType type;
         /** the inner class name text */
         protected final String innerClass;
 
-        GenerateType(final OptionCollection.ArgumentType type, final String innerClass) {
-            this.type = type;
+        GenerateType(final String innerClass) {
             this.innerClass = innerClass;
         }
 

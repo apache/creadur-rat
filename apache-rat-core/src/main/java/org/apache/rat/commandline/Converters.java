@@ -61,7 +61,7 @@ public final class Converters {
     };
 
     /**
-     * Converts a comma separated list into a n array of strings.
+     * Converts a comma separated list into an array of strings.
      */
     public static final Converter<String[], ConfigurationException> TEXT_LIST_CONVERTER = arg -> {
         if (arg == null) {

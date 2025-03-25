@@ -41,7 +41,8 @@ public interface Log {
         /** Log error only. */
         ERROR,
         /** Log nothing. */
-        OFF }
+        OFF
+    }
 
     static String formatLogEntry(final String message, final Throwable throwable) {
         StringWriter writer = new StringWriter();
@@ -51,6 +52,7 @@ public interface Log {
         throwable.printStackTrace(pWriter);
         return writer.toString();
     }
+
     /**
      * Gets the log level that is enabled. If encapsulated logger does not report level
      * implementations should return DEBUG.
@@ -60,12 +62,12 @@ public interface Log {
 
     /**
      * Sets the log level.
-     * Implementations may elect not to set the level dynamically.  However, if the option is supported
+     * Implementations may elect not to set the level dynamically. However, if the option is supported
      * this method should be overridden.
      * @param level the level to set.
      */
     default void setLevel(Level level) {
-        warn(String.format("This logger does not support dynamically setting the log level.  Setting to %s ignored.", level));
+        warn(String.format("This logger does not support dynamically setting the log level. Setting to %s ignored.", level));
     }
 
     /**
