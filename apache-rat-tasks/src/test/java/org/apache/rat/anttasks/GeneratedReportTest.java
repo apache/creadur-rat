@@ -319,14 +319,13 @@ public class GeneratedReportTest  {
                     return "${ConfigFile}";
                 case "licenses":
                     return writeFile("licensesData.xml", "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<rat-config/>").getName();
-                case "licenseFamiliesApproved":
-                case "licenseFamiliesDenied":
-                    return "AL, CC";
                 case "licenseFamiliesApprovedFile":
                     return writeFile("licenseFamiliesApprovedFile.txt", getData("licenseFamiliesApproved")).getName();
                 case "licenseFamiliesDeniedFile":
                     return writeFile("licenseFamiliesDeniedFile.txt", getData("licenseFamiliesDenied")).getName();
                 case "licensesApproved":
+                case "licenseFamiliesApproved":
+                case "licenseFamiliesDenied":
                 case "licensesDenied":
                     return "AL, CC";
                 case "licensesApprovedFile":
