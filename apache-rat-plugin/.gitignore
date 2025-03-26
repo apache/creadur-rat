@@ -2,3 +2,4 @@
 /invoker_target/
 /src/site/apt/argument_types.txt
 /invoker_target/
+/src/main/java/org/apache/rat/plugin/BaseRatMojo.java

@@ -173,7 +173,7 @@ public class OptionCollectionTest {
 
         @Override
         public void helpTest() {
-            String[] args = {longOpt(OptionCollection.HELP)};
+            String[] args = { longOpt(OptionCollection.HELP) };
             try {
                 ReportConfiguration config = OptionCollection.parseCommands(testPath.toFile(), args, o -> helpCalled.set(true), true);
                 assertThat(config).as("Should not have config").isNull();

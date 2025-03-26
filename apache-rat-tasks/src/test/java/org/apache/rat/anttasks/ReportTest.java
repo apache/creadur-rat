@@ -143,7 +143,7 @@ public class ReportTest extends AbstractRatAntTaskTest {
     public void testNoResources() {
         try {
             buildRule.executeTarget("testNoResources");
-            fail("Expected Exceptoin");
+            fail("Expected Exception");
         } catch (BuildException e) {
             final String expect = "You must specify at least one file";
             assertTrue("Expected " + expect + ", got " + e.getMessage(), e.getMessage().contains(expect));
@@ -275,4 +275,5 @@ public class ReportTest extends AbstractRatAntTaskTest {
         }
         assertTrue("Report file could not be parsed as XML", documentParsed);
     }
+
 }
