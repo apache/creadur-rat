@@ -28,7 +28,6 @@ import org.junit.jupiter.api.BeforeEach;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-
 public abstract class AbstractRatAntTaskTest {
     private static final File tempDir = new File("target/anttasks");
 

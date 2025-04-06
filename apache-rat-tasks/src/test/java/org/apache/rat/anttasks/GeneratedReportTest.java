@@ -55,10 +55,8 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
-
 import static java.lang.String.format;
 import static org.assertj.core.api.Assertions.assertThat;
-
 
 public class GeneratedReportTest  {
     @TempDir
@@ -115,7 +113,7 @@ public class GeneratedReportTest  {
     }
 
     /**
-     * The prefix for the and build.xml file.
+     * The prefix for the ant build.xml file.
      */
     private static final String BUILD_XML_PREFIX =
             "<project default=\"all\"\n" +

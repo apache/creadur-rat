@@ -22,7 +22,6 @@ import org.apache.tools.ant.MagicNames;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class HelpTest extends AbstractRatAntTaskTest {
@@ -45,18 +44,6 @@ public class HelpTest extends AbstractRatAntTaskTest {
         return antFile;
     }
 
-    private String logLine(String id) {
-        return logLine(true, documentName.localized("/"), id);
-    }
-    
-    private String logLine(String fileText, String id) {
-        return logLine(true, fileText, id);
-    }
-    
-    private String logLine(boolean approved, String fileText, String id) {
-        return String.format( "%s \\Q%s\\E\\s+S .*\\s+\\Q%s\\E ", approved?" ":"!", fileText, id);
-    }
-    
     @Test
     public void testExecHelp() {
         buildRule.executeTarget("execHelp");
