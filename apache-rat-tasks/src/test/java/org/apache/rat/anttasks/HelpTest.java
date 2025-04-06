@@ -19,8 +19,9 @@ package org.apache.rat.anttasks;
 import java.io.File;
 import org.apache.rat.document.DocumentName;
 import org.apache.tools.ant.MagicNames;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -29,7 +30,7 @@ public class HelpTest extends AbstractRatAntTaskTest {
     private final File antFile = new File(new File(baseNameStr), "build.xml").getAbsoluteFile();
     private DocumentName documentName;
 
-    @Before
+    @BeforeEach
     public void setUp()  {
         File baseFile = antFile.getParentFile();
         for (int i = 0; i < 4; i++) {

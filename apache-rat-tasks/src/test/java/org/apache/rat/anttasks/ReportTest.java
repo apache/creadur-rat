@@ -16,9 +16,9 @@
  */
 package org.apache.rat.anttasks;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Fail.fail;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -42,10 +42,10 @@ import org.apache.tools.ant.MagicNames;
 import org.apache.tools.ant.Target;
 import org.apache.tools.ant.Task;
 import org.apache.tools.ant.UnknownElement;
-import org.junit.Assume;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.w3c.dom.Document;
 
 public class ReportTest extends AbstractRatAntTaskTest {
@@ -53,9 +53,8 @@ public class ReportTest extends AbstractRatAntTaskTest {
     private final File antFile = new File(new File(baseNameStr), "report-junit.xml").getAbsoluteFile();
     private DocumentName documentName;
 
-    @Before
+    @BeforeEach
     public void setUp()  {
-        String antFileName = antFile.getAbsolutePath();
         File baseFile = antFile.getParentFile();
         for (int i = 0; i < 4; i++) {
             baseFile = baseFile.getParentFile();
@@ -100,7 +99,7 @@ public class ReportTest extends AbstractRatAntTaskTest {
         }
         buildRule.executeTarget("testWithReportSentToFile");
         assertLogDoesNotMatch(alLine);
-        assertTrue("Expected report file " + reportFile, reportFile.isFile());
+        assertThat(reportFile).describedAs("Expected report file " + reportFile).isFile();
         assertFileMatches(reportFile, alLine);
     }
 
@@ -146,7 +145,7 @@ public class ReportTest extends AbstractRatAntTaskTest {
             fail("Expected Exception");
         } catch (BuildException e) {
             final String expect = "You must specify at least one file";
-            assertTrue("Expected " + expect + ", got " + e.getMessage(), e.getMessage().contains(expect));
+            assertThat(e.getMessage()).describedAs("Expected " + expect).contains(expect);
         }
     }
 
@@ -158,7 +157,7 @@ public class ReportTest extends AbstractRatAntTaskTest {
             assertLogDoesNotMatch(logLine("/index.apt","AL"));
         } catch (BuildException e) {
             final String expect = "You must specify at least one file";
-            assertTrue("Expected " + expect + ", got " + e.getMessage(), e.getMessage().contains(expect));
+            assertThat(e.getMessage()).describedAs("Expected " + expect).contains(expect);
         }
     }
 
@@ -166,7 +165,7 @@ public class ReportTest extends AbstractRatAntTaskTest {
         Target testDefault = buildRule.getProject().getTargets().get(target);
         Optional<Task> optT = Arrays.stream(testDefault.getTasks()).filter(t -> t.getTaskName().equals("rat:report"))
                 .findFirst();
-        assertTrue(optT.isPresent());
+        assertThat(optT).isPresent();
         optT.get().maybeConfigure();
         return (Report) ((UnknownElement) optT.get()).getRealThing();
     }
@@ -185,7 +184,7 @@ public class ReportTest extends AbstractRatAntTaskTest {
             fail("Expected Exception");
         } catch (BuildException e) {
             final String expect = "at least one license";
-            assertTrue("Expected " + expect + ", got " + e.getMessage(), e.getMessage().contains(expect));
+            assertThat(e.getMessage()).describedAs("Expected " + expect).contains(expect);
         }
     }
 
@@ -217,19 +216,19 @@ public class ReportTest extends AbstractRatAntTaskTest {
 
         final File origFile = new File("target/anttasks/it-sources/index.apt");
         final String origFirstLine = getFirstLine(origFile);
-        assertTrue(origFirstLine.contains("--"));
-        assertFalse(origFirstLine.contains("~~"));
+        assertThat(origFirstLine).contains("--");
+        assertThat(origFirstLine).doesNotContain("~~");
         final File modifiedFile = new File("target/anttasks/it-sources/index.apt.new");
         final String modifiedFirstLine = getFirstLine(modifiedFile);
-        assertFalse(modifiedFirstLine.contains("--"));
-        assertTrue(modifiedFirstLine.contains("~~"));
+        assertThat(modifiedFirstLine).doesNotContain("--");
+        assertThat(modifiedFirstLine).contains("~~");
     }
 
     /**
      * Test correct generation of string result if non-UTF8 file.encoding is set.
      */
     @Test
-    @Ignore
+    @Disabled
     public void testISO88591() {
         // In previous versions of the JDK, it used to be possible to
         // change the value of file.encoding at runtime. As of Java 16,
@@ -237,18 +236,16 @@ public class ReportTest extends AbstractRatAntTaskTest {
         // that file.encoding is actually ISO-8859-1. (Within Maven, this
         // is enforced by the configuration of the surefire plugin.) If not,
         // we skip this test.
-        Assume.assumeTrue("Expected file.encoding=ISO-8859-1",
-                "ISO-8859-1".equals(System.getProperty("file.encoding")));
+        assumeTrue("ISO-8859-1".equals(System.getProperty("file.encoding")), "Expected file.encoding=ISO-8859-1");
         buildRule.executeTarget("testISO88591");
-        assertTrue("Log should contain the test umlauts",
-                buildRule.getLog().contains("\u00E4\u00F6\u00FC\u00C4\u00D6\u00DC\u00DF"));
+        assertThat(buildRule.getLog()).describedAs("Log should contain the test umlauts").contains("\u00E4\u00F6\u00FC\u00C4\u00D6\u00DC\u00DF");
     }
 
     /**
      * Test correct generation of XML file if non-UTF8 file.encoding is set.
      */
     @Test
-    @Ignore
+    @Disabled
     public void testISO88591WithFile() throws Exception {
         // In previous versions of the JDK, it used to be possible to
         // change the value of file.encoding at runtime. As of Java 16,
@@ -256,8 +253,7 @@ public class ReportTest extends AbstractRatAntTaskTest {
         // that file.encoding is actually ISO-8859-1. (Within Maven, this
         // is enforced by the configuration of the surefire plugin.) If not,
         // we skip this test.
-        Assume.assumeTrue("Expected file.encoding=ISO-8859-1",
-                "ISO-8859-1".equals(System.getProperty("file.encoding")));
+        assumeTrue("ISO-8859-1".equals(System.getProperty("file.encoding")), "Expected file.encoding=ISO-8859-1");
         Charset.defaultCharset();
         String outputDir = System.getProperty("output.dir", "target/anttasks");
         String selftestOutput = System.getProperty("report.file", outputDir + "/selftest.report");
@@ -268,12 +264,14 @@ public class ReportTest extends AbstractRatAntTaskTest {
             Document doc = db.parse(fis);
             boolean byteSequencePresent = doc.getElementsByTagName("header-sample").item(0).getTextContent()
                     .contains("\u00E4\u00F6\u00FC\u00C4\u00D6\u00DC\u00DF");
-            assertTrue("Report should contain test umlauts", byteSequencePresent);
+            assertThat(doc.getElementsByTagName("header-sample").item(0).getTextContent())
+                    .describedAs("Report should contain test umlauts")
+                    .contains("\u00E4\u00F6\u00FC\u00C4\u00D6\u00DC\u00DF");
             documentParsed = true;
         } catch (Exception ex) {
             documentParsed = false;
         }
-        assertTrue("Report file could not be parsed as XML", documentParsed);
+        assertThat(documentParsed).describedAs("Report file could not be parsed as XML").isTrue();
     }
 
 }
