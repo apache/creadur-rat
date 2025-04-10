@@ -32,7 +32,6 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.text.WordUtils;
 import org.apache.rat.OptionCollection;
 import org.apache.rat.ReportConfiguration;
 import org.apache.rat.commandline.Arg;
@@ -72,7 +71,7 @@ public class GeneratedReportTest  {
             switch (argType) {
                 case FILE:
                 case DIRORARCHIVE:
-                    buildType = new BuildType(argType, "") {
+                    buildType = new BuildType("") {
                         @Override
                         protected String getMethodFormat(final AntOption antOption) {
                             return "<fileset file='%s' />";
@@ -80,7 +79,7 @@ public class GeneratedReportTest  {
                     };
                     break;
                 case NONE:
-                    buildType = new BuildType(argType, "") {
+                    buildType = new BuildType("") {
                         @Override
                         protected String getMethodFormat(final AntOption antOption) {
                             return "";
@@ -88,20 +87,20 @@ public class GeneratedReportTest  {
                     };
                     break;
                 case STANDARDCOLLECTION:
-                    buildType = new BuildType(argType, "std");
+                    buildType = new BuildType("std");
                     break;
                 case EXPRESSION:
-                    buildType = new BuildType(argType, "expr");
+                    buildType = new BuildType("expr");
                     break;
                 case COUNTERPATTERN:
-                    buildType = new BuildType(argType, "cntr");
+                    buildType = new BuildType("cntr");
                     break;
                 case LICENSEID:
                 case FAMILYID:
-                    buildType = new BuildType(argType, "lst");
+                    buildType = new BuildType("lst");
                     break;
                 default:
-                    buildType = new BuildType(argType, "") {
+                    buildType = new BuildType("") {
                         @Override
                         protected String getMethodFormat(final AntOption antOption) {
                             return format("<%1$s>%%s</%1$s>", tag);
@@ -163,6 +162,7 @@ public class GeneratedReportTest  {
     @ParameterizedTest(name = "{index} {0}")
     @MethodSource("generatedData")
     void argumentTests(String name, String buildXml, AntOption option) throws IOException {
+        DefaultLog.getInstance().debug("Running " + name);
         final File antFile = new File(tempDir.toFile(), targetName(option) + ".xml").getAbsoluteFile();
         try (Writer writer = new OutputStreamWriter(Files.newOutputStream(antFile.toPath()))) {
             writer.write(buildXml);
@@ -506,19 +506,16 @@ public class GeneratedReportTest  {
     }
 
     public static class BuildType {
-        /** The argument type associated with the build type */
-        private final OptionCollection.ArgumentType type;
         /** The configuration tag for this build type */
         protected final String tag;
         /** If True adds the tag as the test extension */
         private final boolean addExt;
 
-        BuildType(final OptionCollection.ArgumentType type, final String tag) {
-            this(type, tag, StringUtils.isNotEmpty(tag));
+        BuildType(final String tag) {
+            this(tag, StringUtils.isNotEmpty(tag));
         }
 
-        BuildType(final OptionCollection.ArgumentType type, final String tag, boolean addExt) {
-            this.type = type;
+        BuildType(final String tag, boolean addExt) {
             this.tag = tag;
             this.addExt = addExt;
         }
