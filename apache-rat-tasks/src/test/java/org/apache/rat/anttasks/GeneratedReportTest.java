@@ -291,10 +291,6 @@ public class GeneratedReportTest  {
         return xml.toString();
     }
 
-    private static String createAttribute(final AntOption option) {
-        return WordUtils.uncapitalize(option.getArgName().substring(0, 1)) + option.getArgName().substring(1);
-    }
-
     private static String getData(AntOption option) {
         String value = getData(option.getName());
         if (value == null) {
@@ -417,9 +413,9 @@ public class GeneratedReportTest  {
     }
 
     private static class AntTestListener implements BuildListener {
-        private int logLevel;
+        private final int logLevel;
         private final StringBuilder logBuffer;
-        private StringBuilder fullLogBuffer;
+        private final StringBuilder fullLogBuffer;
         /**
          * Constructs a test listener which will ignore log events
          * above the given level.
@@ -498,7 +494,7 @@ public class GeneratedReportTest  {
     }
 
     protected static class AntOutputStream extends OutputStream {
-        private StringBuilder buffer;
+        private final StringBuilder buffer;
 
         public AntOutputStream(StringBuilder buffer) {
             this.buffer = buffer;

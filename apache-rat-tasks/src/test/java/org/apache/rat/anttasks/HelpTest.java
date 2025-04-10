@@ -27,7 +27,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class HelpTest extends AbstractRatAntTaskTest {
     private final String baseNameStr = String.join(File.separator, new String[]{"src","test","resources","helpTest"});
     private final File antFile = new File(new File(baseNameStr), "build.xml").getAbsoluteFile();
-    private DocumentName documentName;
 
     @BeforeEach
     public void setUp()  {
@@ -35,7 +34,7 @@ public class HelpTest extends AbstractRatAntTaskTest {
         for (int i = 0; i < 4; i++) {
             baseFile = baseFile.getParentFile();
         }
-        documentName = DocumentName.builder(antFile).setBaseName(baseFile).build();
+        DocumentName documentName = DocumentName.builder(antFile).setBaseName(baseFile).build();
         System.setProperty(MagicNames.PROJECT_BASEDIR, documentName.getBaseName());
         super.setUp();
     }
