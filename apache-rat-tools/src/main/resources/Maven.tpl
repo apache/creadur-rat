@@ -24,6 +24,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.rat.commandline.Arg;
+import org.apache.rat.DeprecationReporter;
 import org.apache.rat.utils.CasedString;
 import org.apache.rat.utils.DefaultLog;
 import org.apache.rat.utils.Log;
@@ -47,6 +48,8 @@ ${class}
     private final static Map<String,String> xlateName = new HashMap<>();
 
     private final static List<String> unsupportedArgs = new ArrayList<>();
+
+    private final static Map<String, String> deprecatedArgs = new HashMap<>();
 
     static {
 ${static}
@@ -79,7 +82,7 @@ ${static}
     public static List<String> unsupportedArgs() {
         return Collections.unmodifiableList(unsupportedArgs);
     }
-
+    
 ${commonArgs}
 
 ${constructor}

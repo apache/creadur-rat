@@ -21,11 +21,11 @@ package org.apache.rat.utils;
 import org.apache.commons.lang3.StringUtils;
 
 /**
- * A default implementation of Log that writes to System.out and System.err
+ * A default implementation of Log that writes to {@code System.out} and {@code System.err}.
  */
 public final class DefaultLog implements Log {
     /**
-     * The environment variable to set the default log level that Rat should log at.
+     * The environment variable to set the default log level that RAT should log at.
      * If not specified INFO is used.
      * @see #setLevel(Level)
      */
@@ -54,6 +54,14 @@ public final class DefaultLog implements Log {
         Log result = instance;
         instance = newInstance == null ? new DefaultLog() : newInstance;
         return result;
+    }
+
+    /**
+     * Creates a new instance of the default log.
+     * @return A new instance of the default log.
+     */
+    public static Log createDefault() {
+        return new DefaultLog();
     }
 
     /** The level at which we will write messages */

@@ -53,4 +53,12 @@
 
   <!-- Suppress checks for RELEASE NOTES -->
   <suppress checks="LineLength" files="RELEASE_NOTES.txt" />
+
+  <!-- Suppress checks for generated source -->
+  <suppress checks="[a-zA-Z0-9]*"
+            files="src[/\\]main[/\\]java[/\\]org[/\\]apache[/\\]rat[/\\]plugin[/\\]*" />
+
+  <suppress checks="[a-zA-Z0-9]*"
+            files="src[/\\]main[/\\]java[/\\]org[/\\]apache[/\\]rat[/\\]anttasks[/\\]BaseAntTask.java" />
+
 </suppressions>

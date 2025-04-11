@@ -19,7 +19,6 @@
 package org.apache.rat;
 
 import java.io.File;
-import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -185,9 +184,8 @@ public final class Defaults {
          * Adds the name of a configuration file to be read.
          * @param fileName the name of the file to add.
          * @return this Builder for chaining
-         * @throws MalformedURLException in case the fileName cannot be found.
          */
-        public Builder add(final String fileName) throws MalformedURLException {
+        public Builder add(final String fileName) {
             return add(new File(fileName));
         }
 
@@ -214,9 +212,8 @@ public final class Defaults {
          * Removes a file name from the list of configuration files to process.
          * @param fileName the fileName of the file to remove.
          * @return this Builder for chaining
-         * @throws MalformedURLException in case the fileName cannot be found.
          */
-        public Builder remove(final String fileName) throws MalformedURLException {
+        public Builder remove(final String fileName) {
             return remove(new File(fileName));
         }
 

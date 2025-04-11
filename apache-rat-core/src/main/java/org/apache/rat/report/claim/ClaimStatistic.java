@@ -151,8 +151,8 @@ public class ClaimStatistic {
     }
 
     /**
-     * Gets the set of Document.Types seen in the run.
-     * @return the set of Document.Types seen in the run.
+     * Gets the list of Document.Types seen in the run.
+     * @return the list of Document.Types seen in the run.
      */
     public List<Document.Type> getDocumentTypes() {
         List<Document.Type> result = new ArrayList<>(documentTypeMap.keySet());
