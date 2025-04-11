@@ -56,7 +56,7 @@ public final class IReportableListWalker implements IReportable {
     }
 
     @Override
-    public void run(final RatReport report) throws RatException {
+    public void run(final RatReport report) {
         for (IReportable reportable : reportables) {
             try {
                 reportable.run(report);

@@ -212,7 +212,7 @@ public class ReportTest {
             }
         }
 
-        public void close() throws IOException {
+        public void close() {
             logFile.close();
         }
     }
