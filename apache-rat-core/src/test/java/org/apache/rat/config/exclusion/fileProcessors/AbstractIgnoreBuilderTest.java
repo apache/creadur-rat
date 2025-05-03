@@ -49,7 +49,7 @@ public class AbstractIgnoreBuilderTest {
     protected DocumentName baseName;
 
     @BeforeEach
-    protected void setup() throws IOException {
+    protected void setup() {
         baseName = DocumentName.builder(tmpPath.toFile()).build();
     }
 

@@ -89,7 +89,7 @@ public abstract class AbstractOptionsProvider implements ArgumentsProvider {
     /**
      * The directory to place test data in.
      */
-    protected File baseDir;
+    protected final File baseDir;
 
     /**
      * Copy the runtime data to the "target" directory.

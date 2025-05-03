@@ -58,9 +58,8 @@ public final class AntDocumentation {
      *     <li>the directory in which to write the documentation files.</li>
      * </ol>
      * @param args the arguments.
-     * @throws IOException on error
      */
-    public static void main(final String[] args) throws IOException {
+    public static void main(final String[] args) {
 
         if (args.length == 0) {
             System.err.println("Output directory must be specified");

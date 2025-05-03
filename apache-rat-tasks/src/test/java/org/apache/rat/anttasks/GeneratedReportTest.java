@@ -32,7 +32,6 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.text.WordUtils;
 import org.apache.rat.OptionCollection;
 import org.apache.rat.ReportConfiguration;
 import org.apache.rat.commandline.Arg;
@@ -55,10 +54,8 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
-
 import static java.lang.String.format;
 import static org.assertj.core.api.Assertions.assertThat;
-
 
 public class GeneratedReportTest  {
     @TempDir
@@ -74,7 +71,7 @@ public class GeneratedReportTest  {
             switch (argType) {
                 case FILE:
                 case DIRORARCHIVE:
-                    buildType = new BuildType(argType, "") {
+                    buildType = new BuildType("") {
                         @Override
                         protected String getMethodFormat(final AntOption antOption) {
                             return "<fileset file='%s' />";
@@ -82,7 +79,7 @@ public class GeneratedReportTest  {
                     };
                     break;
                 case NONE:
-                    buildType = new BuildType(argType, "") {
+                    buildType = new BuildType("") {
                         @Override
                         protected String getMethodFormat(final AntOption antOption) {
                             return "";
@@ -90,20 +87,20 @@ public class GeneratedReportTest  {
                     };
                     break;
                 case STANDARDCOLLECTION:
-                    buildType = new BuildType(argType, "std");
+                    buildType = new BuildType("std");
                     break;
                 case EXPRESSION:
-                    buildType = new BuildType(argType, "expr");
+                    buildType = new BuildType("expr");
                     break;
                 case COUNTERPATTERN:
-                    buildType = new BuildType(argType, "cntr");
+                    buildType = new BuildType("cntr");
                     break;
                 case LICENSEID:
                 case FAMILYID:
-                    buildType = new BuildType(argType, "lst");
+                    buildType = new BuildType("lst");
                     break;
                 default:
-                    buildType = new BuildType(argType, "") {
+                    buildType = new BuildType("") {
                         @Override
                         protected String getMethodFormat(final AntOption antOption) {
                             return format("<%1$s>%%s</%1$s>", tag);
@@ -115,7 +112,7 @@ public class GeneratedReportTest  {
     }
 
     /**
-     * The prefix for the and build.xml file.
+     * The prefix for the ant build.xml file.
      */
     private static final String BUILD_XML_PREFIX =
             "<project default=\"all\"\n" +
@@ -165,6 +162,7 @@ public class GeneratedReportTest  {
     @ParameterizedTest(name = "{index} {0}")
     @MethodSource("generatedData")
     void argumentTests(String name, String buildXml, AntOption option) throws IOException {
+        DefaultLog.getInstance().debug("Running " + name);
         final File antFile = new File(tempDir.toFile(), targetName(option) + ".xml").getAbsoluteFile();
         try (Writer writer = new OutputStreamWriter(Files.newOutputStream(antFile.toPath()))) {
             writer.write(buildXml);
@@ -293,10 +291,6 @@ public class GeneratedReportTest  {
         return xml.toString();
     }
 
-    private static String createAttribute(final AntOption option) {
-        return WordUtils.uncapitalize(option.getArgName().substring(0, 1)) + option.getArgName().substring(1);
-    }
-
     private static String getData(AntOption option) {
         String value = getData(option.getName());
         if (value == null) {
@@ -419,9 +413,9 @@ public class GeneratedReportTest  {
     }
 
     private static class AntTestListener implements BuildListener {
-        private int logLevel;
+        private final int logLevel;
         private final StringBuilder logBuffer;
-        private StringBuilder fullLogBuffer;
+        private final StringBuilder fullLogBuffer;
         /**
          * Constructs a test listener which will ignore log events
          * above the given level.
@@ -500,7 +494,7 @@ public class GeneratedReportTest  {
     }
 
     protected static class AntOutputStream extends OutputStream {
-        private StringBuilder buffer;
+        private final StringBuilder buffer;
 
         public AntOutputStream(StringBuilder buffer) {
             this.buffer = buffer;
@@ -512,19 +506,16 @@ public class GeneratedReportTest  {
     }
 
     public static class BuildType {
-        /** The argument type associated with the build type */
-        private final OptionCollection.ArgumentType type;
         /** The configuration tag for this build type */
         protected final String tag;
         /** If True adds the tag as the test extension */
         private final boolean addExt;
 
-        BuildType(final OptionCollection.ArgumentType type, final String tag) {
-            this(type, tag, StringUtils.isNotEmpty(tag));
+        BuildType(final String tag) {
+            this(tag, StringUtils.isNotEmpty(tag));
         }
 
-        BuildType(final OptionCollection.ArgumentType type, final String tag, boolean addExt) {
-            this.type = type;
+        BuildType(final String tag, boolean addExt) {
             this.tag = tag;
             this.addExt = addExt;
         }

@@ -188,10 +188,6 @@ public class ReportTest extends AbstractRatAntTaskTest {
         }
     }
 
-    private String getAntFileName() {
-        return "/src/test/resources/antunit/"+getAntFile().getName();
-    }
-
     private String getFirstLine(File pFile) throws IOException {
         FileInputStream fis = null;
         InputStreamReader reader = null;
@@ -225,7 +221,7 @@ public class ReportTest extends AbstractRatAntTaskTest {
     }
 
     /**
-     * Test correct generation of string result if non-UTF8 file.encoding is set.
+     * Test correct generation of string result if non-UTF8 {@code file.encoding} is set.
      */
     @Test
     @Disabled
@@ -242,7 +238,7 @@ public class ReportTest extends AbstractRatAntTaskTest {
     }
 
     /**
-     * Test correct generation of XML file if non-UTF8 file.encoding is set.
+     * Test correct generation of XML file if non-UTF8 {@code file.encoding} is set.
      */
     @Test
     @Disabled
@@ -259,11 +255,9 @@ public class ReportTest extends AbstractRatAntTaskTest {
         String selftestOutput = System.getProperty("report.file", outputDir + "/selftest.report");
         buildRule.executeTarget("testISO88591WithReportFile");
         DocumentBuilder db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-        boolean documentParsed = false;
+        boolean documentParsed;
         try (FileInputStream fis = new FileInputStream(selftestOutput)) {
             Document doc = db.parse(fis);
-            boolean byteSequencePresent = doc.getElementsByTagName("header-sample").item(0).getTextContent()
-                    .contains("\u00E4\u00F6\u00FC\u00C4\u00D6\u00DC\u00DF");
             assertThat(doc.getElementsByTagName("header-sample").item(0).getTextContent())
                     .describedAs("Report should contain test umlauts")
                     .contains("\u00E4\u00F6\u00FC\u00C4\u00D6\u00DC\u00DF");

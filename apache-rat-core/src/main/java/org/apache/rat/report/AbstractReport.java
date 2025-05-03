@@ -19,8 +19,6 @@
 package org.apache.rat.report;
 
 import org.apache.rat.api.Document;
-import org.apache.rat.api.RatException;
-
 
 /**
  * Abstract base class for deriving implementations of {@link RatReport}.
@@ -31,7 +29,7 @@ public abstract class AbstractReport implements RatReport {
     /**
      * Empty default implementation.
      */
-    public void startReport() throws RatException {
+    public void startReport() {
         // Does nothing
     }
 
@@ -39,14 +37,14 @@ public abstract class AbstractReport implements RatReport {
      * Empty default implementation.
      * @param document the actual document
      */
-    public void report(final Document document) throws RatException {
+    public void report(final Document document) {
         // Does nothing
     }
 
     /**
      * Empty default implementation.
      */
-    public void endReport() throws RatException {
+    public void endReport() {
         // Does nothing
     }
 }
