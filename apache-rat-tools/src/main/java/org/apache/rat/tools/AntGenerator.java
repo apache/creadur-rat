@@ -82,7 +82,7 @@ public final class AntGenerator {
                 case DIRORARCHIVE:
                     generateType = new GenerateType("fileset") {
                         protected String getMethodFormat(final AntOption antOption) {
-                            return "        public void addConfiguredFileset(@NotNull FileSet fileSet) {\n" +
+                            return "        public void addConfiguredFileset(FileSet fileSet) {\n" +
                                     "            for (Resource resource : fileSet) {\n" +
                                     "                if (resource.isFilesystemOnly()) {\n" +
                                     "                    addArg(%1$s, ((FileResource) resource).getFile().getAbsolutePath());\n" +
