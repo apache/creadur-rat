@@ -168,7 +168,7 @@ public final class AntDocumentation {
     /**
      * A class to write APT formatted text.
      */
-    private static class AptFormat  {
+    private static final class AptFormat  {
 
         /**
          * Copy the "license.apt" from the resources to the writer.

@@ -242,7 +242,7 @@ public final class OptionCollection {
     /**
      * This class implements the {@code Comparator} interface for comparing Options.
      */
-    private static class OptionComparator implements Comparator<Option>, Serializable {
+    private static final class OptionComparator implements Comparator<Option>, Serializable {
         /** The serial version UID.  */
         private static final long serialVersionUID = 5305467873966684014L;
 

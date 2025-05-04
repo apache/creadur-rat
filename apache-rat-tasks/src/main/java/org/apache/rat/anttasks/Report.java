@@ -92,7 +92,7 @@ public class Report extends BaseAntTask {
     /**
      * Collection of objects that support Ant specific deprecated options
      */
-    private static class DeprecatedConfig {
+    private static final class DeprecatedConfig {
         /**
          * The input file filter
          */
@@ -594,7 +594,7 @@ public class Report extends BaseAntTask {
     /**
      * A facade for the Logger provided by Ant.
      */
-    private class Logger implements Log {
+    private final class Logger implements Log {
         @Override
         public Level getLevel() {
             return Level.DEBUG;
