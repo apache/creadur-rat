@@ -19,6 +19,7 @@
 package org.apache.rat.tools;
 
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.regex.Matcher;
@@ -26,6 +27,7 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.cli.Option;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.rat.OptionCollection;
 import org.apache.rat.commandline.Arg;
 
 import static java.lang.String.format;
@@ -37,6 +39,8 @@ public abstract class AbstractOption {
     protected final Option option;
     /** The Maven name for the option */
     protected final String name;
+    /** The argument type for this option */
+    protected final OptionCollection.ArgumentType argumentType;
 
     /**
      * Constructor.
@@ -46,6 +50,10 @@ public abstract class AbstractOption {
     AbstractOption(final Option option, final String name) {
         this.option = option;
         this.name = name;
+        argumentType = option.hasArg() ?
+                option.getArgName() == null ? OptionCollection.ArgumentType.ARG :
+                OptionCollection.ArgumentType.valueOf(option.getArgName().toUpperCase(Locale.ROOT)) :
+                OptionCollection.ArgumentType.NONE;
     }
 
     /**
@@ -60,11 +68,24 @@ public abstract class AbstractOption {
     protected abstract String cleanupName(Option option);
 
     /**
+     * Gets an example of how to use this option in the native UI.
+     * @return An example of how to use this option in the native UI.
+     */
+    public abstract String getExample();
+
+    /**
+     * Gets this option's cleaned up name.
+     * @return This option's cleaned up name.
+     */
+    public String cleanupName() {
+        return cleanupName(option);
+    }
+    /**
      * Replaces CLI pattern options with Maven pattern options.
      * @param str the string to clean.
      * @return the string with CLI names replaced with Maven names.
      */
-    protected String cleanup(final String str) {
+    public String cleanup(final String str) {
         String workingStr = str;
         if (StringUtils.isNotBlank(workingStr)) {
             Map<String, String> maps = new HashMap<>();
@@ -114,7 +135,15 @@ public abstract class AbstractOption {
      * @return the Argument name
      */
     public final String getArgName() {
-        return option.getArgName();
+        return argumentType.getDisplayName();
+    }
+
+    /**
+     * Gets the argument type if there is one.
+     * @return the Argument name
+     */
+    public final OptionCollection.ArgumentType getArgType() {
+        return argumentType;
     }
 
     /**
@@ -147,6 +176,14 @@ public abstract class AbstractOption {
      */
     public final boolean hasArgs() {
         return option.hasArgs();
+    }
+
+    /**
+     * Returns the number of arguments.
+     * @return The number of arguments.
+     */
+    public final int argCount() {
+        return option.getArgs();
     }
 
     /**

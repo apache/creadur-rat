@@ -89,7 +89,7 @@ public abstract class AbstractOptionsProvider implements ArgumentsProvider {
     /**
      * The directory to place test data in.
      */
-    protected File baseDir;
+    protected final File baseDir;
 
     /**
      * Copy the runtime data to the "target" directory.
@@ -513,7 +513,7 @@ public abstract class AbstractOptionsProvider implements ArgumentsProvider {
 
     protected void licensesApprovedTest() {
         execLicensesApprovedTest(Arg.LICENSES_APPROVED.find("licenses-approved"),
-                new String[]{"one", "two"});
+                new String[]{"one, two"});
     }
 
     private void execLicensesDeniedTest(final Option option, final String[] args) {
@@ -705,6 +705,10 @@ public abstract class AbstractOptionsProvider implements ArgumentsProvider {
             config = generateConfig(arg1, arg2);
             assertThat(config.getCopyrightMessage()).isEqualTo("MyCopyright");
         } catch (IOException e) {
+            e.printStackTrace();
+            if (e.getCause() != null) {
+                fail(e.getMessage() + ": " + e.getCause().getMessage());
+            }
             fail(e.getMessage());
         }
     }
@@ -938,7 +942,7 @@ public abstract class AbstractOptionsProvider implements ArgumentsProvider {
     }
 
     @Override
-    final public Stream<? extends Arguments> provideArguments(final ExtensionContext context) {
+    public Stream<? extends Arguments> provideArguments(final ExtensionContext context) {
         List<Arguments> lst = new ArrayList<>();
         List<String> missingTests = new ArrayList<>();
 

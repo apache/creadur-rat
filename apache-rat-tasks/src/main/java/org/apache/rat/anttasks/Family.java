@@ -18,13 +18,15 @@
  */
 package org.apache.rat.anttasks;
 
+import org.apache.rat.DeprecationReporter;
 import org.apache.rat.license.ILicenseFamily;
 
 /**
  * Creates a License Family
  * @deprecated use configuration file.
  */
-@Deprecated // since 0.17
+@Deprecated
+@DeprecationReporter.Info(since = "0.17", forRemoval = true, use = "Configuration file and <config> element")// since 0.17
 public class Family {
 
     private final ILicenseFamily.Builder builder = ILicenseFamily.builder();

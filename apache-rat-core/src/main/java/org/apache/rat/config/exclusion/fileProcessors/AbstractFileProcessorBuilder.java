@@ -206,7 +206,7 @@ public abstract class AbstractFileProcessorBuilder {
     /**
      * Manages the merging of {@link MatcherSet}s for the specified level.
      */
-    private static class LevelBuilder {
+    private static final class LevelBuilder {
         /**
          * The list of MatcherSets that this builder produced.
          */

@@ -20,6 +20,7 @@ package org.apache.rat.commandline;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 
 import org.apache.commons.cli.Converter;
 import org.apache.commons.lang3.tuple.Pair;
@@ -57,6 +58,16 @@ public final class Converters {
         } catch (IllegalArgumentException e) {
             throw new ConfigurationException(format("'%s' is not a valid Counter", parts[0]), e);
         }
+    };
+
+    /**
+     * Converts a comma separated list into an array of strings.
+     */
+    public static final Converter<String[], ConfigurationException> TEXT_LIST_CONVERTER = arg -> {
+        if (arg == null) {
+            return null;
+        }
+        return Arrays.stream(arg.split(",")).map(String::trim).toArray(String[]::new);
     };
 
     /**

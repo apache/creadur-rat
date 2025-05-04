@@ -19,11 +19,14 @@
 package org.apache.rat.tools;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.cli.Option;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.WordUtils;
+import org.apache.rat.OptionCollection;
 import org.apache.rat.commandline.Arg;
 
 import static java.lang.String.format;
@@ -32,11 +35,20 @@ import static java.lang.String.format;
  * A representation of a CLI option as a Maven option
  */
 public class MavenOption extends AbstractOption {
-    /** Default values for CLI options */
+    /**
+     * Default values for CLI options
+     */
     private static final Map<Arg, String> DEFAULT_VALUES = new HashMap<>();
+    /**
+     * List of CLI Options that are not supported by Maven.
+     */
+    private static final Set<Option> UNSUPPORTED_LIST = new HashSet<>();
 
     static {
         DEFAULT_VALUES.put(Arg.OUTPUT_FILE, "${project.build.directory}/rat.txt");
+        UNSUPPORTED_LIST.addAll(Arg.DIR.group().getOptions());
+        UNSUPPORTED_LIST.addAll(Arg.LOG_LEVEL.group().getOptions());
+        UNSUPPORTED_LIST.add(OptionCollection.HELP);
     }
 
     /**
@@ -46,6 +58,15 @@ public class MavenOption extends AbstractOption {
      */
     MavenOption(final Option option) {
         super(option, MavenGenerator.createName(option));
+    }
+
+    /**
+     * Gets the set of options that are not supported by Ant.
+     *
+     * @return The set of options that are not supported by Ant.
+     */
+    public static Set<Option> getFilteredOptions() {
+        return UNSUPPORTED_LIST;
     }
 
     @Override
@@ -97,5 +118,17 @@ public class MavenOption extends AbstractOption {
         return sb.append(format("%1$s%5$s%n%1$spublic void set%3$s(%4$s %2$s)",
                         indent, name, fname, args, getPropertyAnnotation(fname)))
                 .toString();
+    }
+
+    @Override
+    public String getExample() {
+        if (UNSUPPORTED_LIST.contains(option)) {
+            return "-- not supported --";
+        }
+        if (hasArg()) {
+            return format("<%1$s>%2$s</%1$s>", getName(), getArgName());
+        } else {
+            return format("<%s />", getName());
+        }
     }
 }

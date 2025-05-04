@@ -22,10 +22,14 @@ ${package}
 import org.apache.commons.cli.Option;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.rat.commandline.Arg;
+import org.apache.rat.DeprecationReporter;
 import org.apache.rat.utils.CasedString;
 import org.apache.rat.utils.DefaultLog;
 import org.apache.rat.utils.Log;
 import org.apache.tools.ant.Task;
+import org.apache.tools.ant.types.FileSet;
+import org.apache.tools.ant.types.Resource;
+import org.apache.tools.ant.types.resources.FileResource;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -36,7 +40,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
-
 /**
  * Generated class to provide Ant support for standard RAT command line options.
  *
@@ -47,6 +50,8 @@ ${class}
     private final static Map<String,String> xlateName = new HashMap<>();
 
     private final static List<String> unsupportedArgs = new ArrayList<>();
+
+    private final static Map<String, String> deprecatedArgs = new HashMap<>();
 
     static {
 ${static}
@@ -65,29 +70,6 @@ ${commonArgs}
 
 ${constructor}
 
-    /**
-     * A child element.
-     */
-    protected class Child {
-        final String key;
-
-        /**
-         * Constructor.
-         * @param key The key for this child in the CLI map.
-         */
-        protected Child(String key) {
-            this.key = key;
-        }
-
-        /**
-         * Sets the text enclosed in the child element.
-         * @param arg The text enclosed in the child element.
-         */
-        public void addText(String arg) {
-            addArg(key, arg);
-        }
-    }
-
     /*  GENERATED METHODS */
 
 ${methods}
@@ -97,4 +79,35 @@ ${methods}
 
 ${classes}
 
+    /* TYPE CLASSES */
+
+    protected static class TxtValue {
+        protected TxtValue() { }
+
+        public String value;
+
+        public void addText(String text) {
+            value = text.trim();
+        }
+    }
+
+    public static class Std extends TxtValue {
+        public Std() { }
+    }
+
+    public static class Expr extends TxtValue {
+        public Expr() { }
+    }
+
+    public static class Cntr extends TxtValue {
+        public Cntr() { }
+    }
+
+    public static class Filename extends TxtValue {
+        public Filename() { }
+    }
+
+    public static class Lst extends TxtValue {
+        public Lst() { }
+    }
 }

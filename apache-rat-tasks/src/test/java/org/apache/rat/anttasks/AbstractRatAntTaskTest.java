@@ -16,20 +16,21 @@
 */
 package org.apache.rat.anttasks;
 
+import java.util.regex.Matcher;
 import org.apache.commons.io.IOUtils;
 import org.apache.tools.ant.BuildFileRule;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Rule;
 
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.regex.Pattern;
+import org.junit.jupiter.api.BeforeEach;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 public abstract class AbstractRatAntTaskTest {
     private static final File tempDir = new File("target/anttasks");
-    @Rule
+
     public final BuildFileRule buildRule = new BuildFileRule();
 
     protected abstract File getAntFile();
@@ -38,7 +39,7 @@ public abstract class AbstractRatAntTaskTest {
         return tempDir;
     }
 
-    @Before
+    @BeforeEach
     public void setUp() {
         buildRule.configureProject(getAntFile().getPath());
         buildRule.getProject().setProperty("output.dir", tempDir.getAbsolutePath());
@@ -47,18 +48,15 @@ public abstract class AbstractRatAntTaskTest {
 
     protected void assertLogDoesNotMatch(String pPattern) {
         final String log = buildRule.getLog();
-        Assert.assertFalse("Log matches the pattern: " + pPattern + ", got " + log,
-                isMatching(pPattern, log));
+        final Matcher matcher = Pattern.compile(pPattern).matcher(log);
+
+        assertThat(matcher.find()).describedAs("Log matches the pattern: {}",pPattern).isFalse();
     }
 
     protected void assertLogMatches(String pPattern) {
         final String log = buildRule.getLog();
-        Assert.assertTrue("Log doesn't match string: " + pPattern + ", got " + log,
-                isMatching(pPattern, log));
-    }
-
-    private boolean isMatching(final String pPattern, final String pValue) {
-        return Pattern.compile(pPattern).matcher(pValue).find();
+        final Matcher matcher = Pattern.compile(pPattern).matcher(log);
+        assertThat(matcher.find()).describedAs("Log does not the pattern: {}",pPattern).isTrue();
     }
 
     private String load(File pFile) throws IOException {
@@ -85,9 +83,7 @@ public abstract class AbstractRatAntTaskTest {
     protected void assertFileMatches(File pFile, String pPattern)
             throws IOException {
         final String content = load(pFile);
-        Assert.assertTrue("File " + pFile
-                + " doesn't match the pattern " + pPattern
-                + ", got " + content,
-                isMatching(pPattern, content));
+        final Matcher matcher = Pattern.compile(pPattern).matcher(content);
+        assertThat(matcher.find()).describedAs("File {} doesn't match the pattern:{} ", pFile, pPattern).isTrue();
     }
 }
