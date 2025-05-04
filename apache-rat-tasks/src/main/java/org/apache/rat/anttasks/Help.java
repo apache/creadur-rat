@@ -23,6 +23,7 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
+
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
@@ -201,7 +202,7 @@ public class Help extends BaseAntTask {
                     .append(getNewLine());
 
             int x = 0;
-            for (final Iterator<AntOption> it = optList.iterator(); it.hasNext(); ) {
+            for (final Iterator<AntOption> it = optList.iterator(); it.hasNext();) {
                 final AntOption option = it.next();
                 String name = option.cleanupName();
                 String example = exampleList.get(x++);

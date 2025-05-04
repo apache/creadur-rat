@@ -49,14 +49,13 @@ class FilteringSequenceFactory {
     public CharSequence filter(LineNumberReader reader) throws IOException {
         buffer.clear();
         boolean eof = false;
-        while(!eof) {
+        while (!eof) {
             final int next = reader.read();
             if (next == -1 || !buffer.hasRemaining()) {
                 eof = true;
             } else {
                 final char character = (char) next;
-                if (!filter.isFilteredOut(character))
-                {
+                if (!filter.isFilteredOut(character)) {
                     buffer.put(character); 
                 }
             }

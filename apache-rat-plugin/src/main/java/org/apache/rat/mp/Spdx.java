@@ -27,7 +27,7 @@ import org.apache.rat.configuration.builders.SpdxBuilder;
 @Deprecated
 public class Spdx extends SpdxBuilder {
     
-    @Parameter(name="name")
+    @Parameter(name = "name")
     public void set(String name) {
         super.setName(name);
     }

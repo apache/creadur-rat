@@ -19,7 +19,7 @@
     }
 
     /**
-     * A map of CLI based arguments to values.
+     * A map of CLI-based arguments to values.
      */
     protected final Map<String, List<String>> args = new HashMap<>();
 
@@ -89,7 +89,7 @@
 
     /**
      * Add values to the key in the argument list.
-     * empty values are ignored.  If no non-empty values are present no change is made.
+     * empty values are ignored. If no non-empty values are present no change is made.
      * If the key does not exist, adds it.
      * @param key the key for the map.
      * @param value the array of values to set.

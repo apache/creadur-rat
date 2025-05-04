@@ -47,11 +47,11 @@ import java.util.stream.Collectors;
  */
 ${class}
 
-    private final static Map<String,String> xlateName = new HashMap<>();
+    private static final Map<String, String> xlateName = new HashMap<>();
 
-    private final static List<String> unsupportedArgs = new ArrayList<>();
+    private static final List<String> unsupportedArgs = new ArrayList<>();
 
-    private final static Map<String, String> deprecatedArgs = new HashMap<>();
+    private static final Map<String, String> deprecatedArgs = new HashMap<>();
 
     static {
 ${static}

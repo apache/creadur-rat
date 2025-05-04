@@ -36,8 +36,7 @@ public class HeaderMatcherSpecification {
      * 
      * @return Class name of the license matcher.
      */
-    public String getClassName()
-    {
+    public String getClassName() {
         return className;
     }
 
@@ -47,8 +46,7 @@ public class HeaderMatcherSpecification {
      * @param pClassName
      *            Class name of the license matcher.
      */
-    public void setClassName( String pClassName )
-    {
+    public void setClassName(String pClassName) {
         className = pClassName;
     }
 }
