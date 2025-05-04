@@ -281,7 +281,7 @@ public class AntOption extends AbstractOption {
      * A mapping of data type of XML format.
      */
     private static class BuildType {
-        /** The argument type associated with theis build type */
+        /** The argument type associated with their build type */
         private final OptionCollection.ArgumentType type;
         /** The configuration tag for this build type */
         private final String tag;
