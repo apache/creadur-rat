@@ -101,11 +101,7 @@
                 if (DefaultLog.getInstance().isEnabled(Log.Level.DEBUG)) {
                     DefaultLog.getInstance().debug(String.format("Adding [%s] to %s", String.join(", ", Arrays.asList(value)), key));
                 }
-                List<String> values = args.get(key);
-                if (values == null) {
-                    values = new ArrayList<>();
-                    args.put(key, values);
-                }
+                List<String> values = args.computeIfAbsent(key, k -> new ArrayList<>());
                 values.addAll(newValues);
             }
         }
