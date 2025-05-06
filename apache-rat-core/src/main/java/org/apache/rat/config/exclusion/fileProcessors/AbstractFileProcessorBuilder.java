@@ -119,6 +119,8 @@ public abstract class AbstractFileProcessorBuilder {
      * @return the List of MatcherSet that represent this file processor.
      */
     public final List<MatcherSet> build(final DocumentName root) {
+        initializeBuilder(root);
+
         if (includeProcessorFile) {
             String name = String.format("**/%s", fileName);
             String pattern = ExclusionUtils.qualifyPattern(root, name);
@@ -129,12 +131,20 @@ public abstract class AbstractFileProcessorBuilder {
             levelBuilder.add(matcherSet);
         }
 
-        checkDirectory(0, root, root, new NameFileFilter(fileName));
+        checkDirectory(0, root, new NameFileFilter(fileName));
 
         List<MatcherSet> result = levelBuilders.size() == 1 ? Collections.singletonList(levelBuilders.get(0).asMatcherSet())
             : createMatcherSetList();
         levelBuilders.clear();
         return result;
+    }
+
+    /**
+     * Allow builders to add initializations, like adding levelBuilders.
+     * @param root the directory against which name resolution should be made.
+     */
+    void initializeBuilder(final DocumentName root) {
+
     }
 
     /**
@@ -151,7 +161,7 @@ public abstract class AbstractFileProcessorBuilder {
         ExclusionUtils.asIterator(documentName.asFile(), commentFilter)
                 .map(entry -> modifyEntry(matcherSetConsumer, documentName, entry).orElse(null))
                 .filter(Objects::nonNull)
-                .map(entry -> ExclusionUtils.qualifyPattern(documentName, entry))
+                .map(entry -> ExclusionUtils.qualifyPattern(root, entry))
                 .forEachRemaining(iterable::add);
 
         Set<String> included = new HashSet<>();
@@ -166,18 +176,17 @@ public abstract class AbstractFileProcessorBuilder {
     /**
      * Process the directory tree looking for files that match the filter. Call {@link #process} on any matching file.
      * @param level the level being precessed
-     * @param root the directory against which names should be resolved.
      * @param directory The name of the directory to process.
      * @param fileFilter the filter to detect processable files with.
      */
-    private void checkDirectory(final int level, final DocumentName root, final DocumentName directory, final FileFilter fileFilter) {
+    private void checkDirectory(final int level, final DocumentName directory, final FileFilter fileFilter) {
         File dirFile = directory.asFile();
         for (File file : listFiles(dirFile, fileFilter)) {
             LevelBuilder levelBuilder = levelBuilders.computeIfAbsent(level, k -> new LevelBuilder());
-            levelBuilder.add(process(levelBuilder::add, root, DocumentName.builder(file).build()));
+            levelBuilder.add(process(levelBuilder::add, DocumentName.builder(file).build(), DocumentName.builder(file).build()));
         }
         for (File dir : listFiles(dirFile, DirectoryFileFilter.DIRECTORY)) {
-            checkDirectory(level + 1, root, DocumentName.builder(dir).setBaseName(directory.getBaseName()).build(), fileFilter);
+            checkDirectory(level + 1, DocumentName.builder(dir).setBaseName(directory.getBaseName()).build(), fileFilter);
         }
     }
 
@@ -203,10 +212,14 @@ public abstract class AbstractFileProcessorBuilder {
         return result == null ? new File[0] : result;
     }
 
+    protected LevelBuilder getLevelBuilder(final int level) {
+        return levelBuilders.computeIfAbsent(level, k -> new LevelBuilder());
+    }
+
     /**
      * Manages the merging of {@link MatcherSet}s for the specified level.
      */
-    private static final class LevelBuilder {
+    protected static final class LevelBuilder {
         /**
          * The list of MatcherSets that this builder produced.
          */

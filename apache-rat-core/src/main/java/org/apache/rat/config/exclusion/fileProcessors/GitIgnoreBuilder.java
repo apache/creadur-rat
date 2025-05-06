@@ -53,6 +53,16 @@ public class GitIgnoreBuilder extends AbstractFileProcessorBuilder {
         super(IGNORE_FILE, COMMENT_PREFIX, true);
     }
 
+    @Override
+    void initializeBuilder(final DocumentName root) {
+        Optional<File> globalGitIgnore = globalGitIgnore();
+        if (globalGitIgnore.isPresent()) {
+            LevelBuilder levelBuilder = getLevelBuilder(-1);
+            DocumentName documentName = DocumentName.builder(globalGitIgnore.get()).build();
+            levelBuilder.add(process(levelBuilder::add, root, documentName));
+        }
+    }
+
     /**
      * Convert the string entry.
      * If the string ends with a slash an {@link DocumentNameMatcher#and} is constructed from a directory check and the file
@@ -102,4 +112,30 @@ public class GitIgnoreBuilder extends AbstractFileProcessorBuilder {
         }
         return Optional.of(prefix ? NEGATION_PREFIX + pattern : pattern);
     }
+
+    /** The location of the global gitignore file to process */
+    protected Optional<File> globalGitIgnore() {
+        if (System.getenv("RAT_NO_GIT_GLOBAL_IGNORE") != null) {
+            return Optional.empty();
+        }
+
+        String xdgConfigHome = System.getenv("XDG_CONFIG_HOME");
+        String filename;
+        if (xdgConfigHome != null && !xdgConfigHome.isEmpty()) {
+            filename = xdgConfigHome + File.separator + "git" + File.separator + "ignore";
+        } else {
+            String home = System.getenv("HOME");
+            if (home == null) {
+                home = "";
+            }
+            filename = home + File.separator + ".config" + File.separator + "git" + File.separator + "ignore";
+        }
+        File file = new File(filename);
+        if (file.exists()) {
+            return Optional.of(file);
+        } else {
+            return Optional.empty();
+        }
+    }
+
 }
