@@ -56,7 +56,12 @@ public class GitIgnoreBuilderTest extends AbstractIgnoreBuilderTest {
 
             writeFile(".gitignore", Arrays.asList(lines));
 
-            assertCorrect(new GitIgnoreBuilder(), matches, notMatches);
+            assertCorrect(new GitIgnoreBuilder() {
+                @Override
+                protected Optional<File> globalGitIgnore() {
+                    return Optional.empty();
+                }
+            }, matches, notMatches);
         } finally {
             System.getProperties().remove("FSInfo");
         }
@@ -106,7 +111,7 @@ public class GitIgnoreBuilderTest extends AbstractIgnoreBuilderTest {
             DocumentName name = documentName.resolve(test);
             assertThat(matcher.matches(name)).as(test).isTrue();
         }
-        for (String test: notMatching) {
+        for (String test : notMatching) {
             DocumentName name = documentName.resolve(test);
             assertThat(matcher.matches(name)).as(test).isFalse();
         }
@@ -114,7 +119,12 @@ public class GitIgnoreBuilderTest extends AbstractIgnoreBuilderTest {
 
     @Test
     public void test_RAT_335() {
-        GitIgnoreBuilder underTest = new GitIgnoreBuilder();
+        GitIgnoreBuilder underTest = new GitIgnoreBuilder() {
+            @Override
+            protected Optional<File> globalGitIgnore() {
+                return Optional.empty();
+            }
+        };
         URL url = GitIgnoreBuilderTest.class.getClassLoader().getResource("GitIgnoreBuilderTest/src/");
         File file = new File(url.getFile());
 
@@ -122,16 +132,49 @@ public class GitIgnoreBuilderTest extends AbstractIgnoreBuilderTest {
         List<MatcherSet> matcherSets = underTest.build(documentName);
         DocumentNameMatcher matcher = MatcherSet.merge(matcherSets).createMatcher();
 
-        DocumentName candidate = DocumentName.builder()
-                .setName("/home/claude/apache/creadur-rat/apache-rat-core/target/test-classes/GitIgnoreBuilderTest/src/dir1/file1.log")
-                .setBaseName("home/claude/apache/creadur-rat/apache-rat-core/target/test-classes/GitIgnoreBuilderTest/src/").build();
-        System.out.println("Decomposition for "+candidate);
-
         assertThat(matcher.toString()).isEqualTo("matcherSet(or('included dir1/.gitignore', 'included .gitignore'), or('excluded dir1/.gitignore', **/.gitignore, 'excluded .gitignore'))");
 
-        List<String> notMatching = Arrays.asList("README.txt", "dir1/dir1.md", "dir2/dir2.txt", "dir3/file3.log", "dir1/file1.log");
+        // files that should be checked:
+        List<String> notMatching = Arrays.asList("README.txt", "dir1/dir1.md", "dir2/dir2.txt", "dir3/file3.log", "dir1/file1.log", "local-should-precede-global.xml");
 
-        List<String> matching = Arrays.asList(".gitignore", "root.md", "dir1/.gitignore", "dir1/dir1.txt",  "dir2/dir2.md", "dir3/dir3.log");
+        // files that should be ignored:
+        List<String> matching = Arrays.asList(".gitignore", "root.md", "dir1/.gitignore", "dir1/dir1.txt",  "dir2/dir2.md", "dir3/dir3.log", "local-should-precede-global.md");
+
+        assertCorrect(matcherSets, documentName.getBaseDocumentName(), matching, notMatching);
+    }
+
+    /**
+     * Test that exclusions from a global gitignore are also applied
+     *
+     * https://issues.apache.org/jira/browse/RAT-473
+     */
+    @Test
+    public void test_global_gitignore() {
+        GitIgnoreBuilder underTest = new GitIgnoreBuilder() {
+            @Override
+            protected Optional<File> globalGitIgnore() {
+                URL globalGitIgnoreUrl = GitIgnoreBuilderTest.class.getClassLoader().getResource("GitIgnoreBuilderTest/global-gitignore");
+                String globalGitIgnore = globalGitIgnoreUrl.getFile();
+
+                return Optional.of(new File(globalGitIgnore));
+            }
+        };
+        URL url = GitIgnoreBuilderTest.class.getClassLoader().getResource("GitIgnoreBuilderTest/src/");
+        File file = new File(url.getFile());
+
+        DocumentName documentName = DocumentName.builder(file).build();
+        List<MatcherSet> matcherSets = underTest.build(documentName);
+        DocumentNameMatcher matcher = MatcherSet.merge(matcherSets).createMatcher();
+
+        assertThat(matcher.toString()).isEqualTo("matcherSet(or('included dir1/.gitignore', 'included .gitignore', 'included global gitignore'), or('excluded dir1/.gitignore', **/.gitignore, 'excluded .gitignore', 'excluded global gitignore'))");
+
+        // files that should be checked:
+        // "local-should-precede-global.md" should be 'matching'
+        // here, but that is a future improvement (RAT-476)
+        List<String> notMatching = Arrays.asList("dir1/dir1.md", "dir2/dir2.txt", "dir3/file3.log", "dir1/file1.log", "local-should-precede-global.md", "local-should-precede-global.xml");
+
+        // files that should be ignored:
+        List<String> matching = Arrays.asList(".gitignore", "README.txt", "root.md", "dir1/.gitignore", "dir1/dir1.txt", "dir2/dir2.md", "dir3/dir3.log");
 
         assertCorrect(matcherSets, documentName.getBaseDocumentName(), matching, notMatching);
     }

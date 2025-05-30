@@ -203,10 +203,14 @@ public abstract class AbstractFileProcessorBuilder {
         return result == null ? new File[0] : result;
     }
 
+    protected LevelBuilder getLevelBuilder(final int level) {
+        return levelBuilders.computeIfAbsent(level, k -> new LevelBuilder());
+    }
+
     /**
      * Manages the merging of {@link MatcherSet}s for the specified level.
      */
-    private static final class LevelBuilder {
+    protected static final class LevelBuilder {
         /**
          * The list of MatcherSets that this builder produced.
          */

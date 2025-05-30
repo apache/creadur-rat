@@ -89,9 +89,11 @@ public enum StandardCollection {
                     "**/.project", "**/.settings/**", "**/.externalToolBuilders"),
             null, null),
     /**
-     * The files and directories created by GIT source code control to support GIT, also processes files listed in '.gitignore'.
+     * The files and directories created by GIT source code control to support GIT, also processes files listed in '.gitignore'
+     * and (unless RAT_NO_GIT_GLOBAL_IGNORE is specified) the global gitignore.
      */
-    GIT("The files and directories created by GIT source code control to support GIT, also processes files listed in '.gitignore'.",
+    GIT("The files and directories created by GIT source code control to support GIT, also processes files listed in '.gitignore' " +
+        "and (unless RAT_NO_GIT_GLOBAL_IGNORE is specified) the global gitignore.",
             Arrays.asList("**/.git/**", "**/.gitignore"),
             null,
             new GitIgnoreBuilder()
