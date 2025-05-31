@@ -37,6 +37,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledOnOs;
 import org.junit.jupiter.api.condition.OS;
+import org.junit.jupiter.api.function.Executable;
 import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ArgumentsProvider;
@@ -64,13 +65,6 @@ public class OptionCollectionTest {
         AbstractOptionsProvider.preserveData(testPath.toFile(), "optionTest");
     }
 
-    /**
-     * Defines the test method that is stored in a map.
-     */
-    @FunctionalInterface
-    public interface OptionTest {
-        void test();
-    }
 
     /**
      * This method is a known workaround for
@@ -158,15 +152,15 @@ public class OptionCollectionTest {
      */
     @ParameterizedTest( name = "{index} {0}")
     @ArgumentsSource(CliOptionsProvider.class)
-    public void testOptionsUpdateConfig(String name, OptionTest test) {
+    public void testOptionsUpdateConfig(String name, Executable test) throws Throwable {
         DefaultLog.getInstance().log(Log.Level.INFO, "Running test for: " + name);
-        test.test();
+        test.execute();
     }
 
     /**
      * A class to provide the Options and tests to the testOptionsUpdateConfig.
      */
-    static class CliOptionsProvider extends AbstractOptionsProvider implements ArgumentsProvider {
+    static class CliOptionsProvider extends AbstractOptionsProvider {
 
         /** A flag to determine if help was called */
         final AtomicBoolean helpCalled = new AtomicBoolean(false);

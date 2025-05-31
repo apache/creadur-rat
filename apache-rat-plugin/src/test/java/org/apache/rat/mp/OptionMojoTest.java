@@ -26,10 +26,10 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.ProjectBuilder;
 import org.apache.maven.project.ProjectBuildingRequest;
 import org.apache.rat.test.AbstractOptionsProvider;
-import org.apache.rat.OptionCollectionTest;
 import org.apache.rat.ReportConfiguration;
 import org.apache.rat.plugin.BaseRatMojo;
 import org.apache.rat.utils.DefaultLog;
+import org.apache.rat.utils.Log;
 import org.codehaus.plexus.component.configurator.ComponentConfigurationException;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
@@ -37,6 +37,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.condition.EnabledOnOs;
 import org.junit.jupiter.api.condition.OS;
+import org.junit.jupiter.api.function.Executable;
 import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ArgumentsProvider;
@@ -84,9 +85,9 @@ public class OptionMojoTest {
 
     @ParameterizedTest
     @ArgumentsSource(MojoOptionsProvider.class)
-    void testOptionsUpdateConfig(String name, OptionCollectionTest.OptionTest test) {
-        DefaultLog.getInstance().info("Running " + name);
-        test.test();
+    public void testOptionsUpdateConfig(String name, Executable test) throws Throwable {
+        DefaultLog.getInstance().log(Log.Level.INFO, "Running test for: " + name);
+        test.execute();
     }
 
     static class MojoOptionsProvider extends AbstractOptionsProvider implements ArgumentsProvider  {

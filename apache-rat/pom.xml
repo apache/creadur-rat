@@ -40,11 +40,6 @@
       <groupId>org.apache.rat</groupId>
       <artifactId>apache-rat-tasks</artifactId>
     </dependency>
-    <dependency>
-      <groupId>org.apache.rat</groupId>
-      <artifactId>apache-rat-testdata</artifactId>
-      <scope>test</scope>
-    </dependency>
   </dependencies>
   <build>
     <plugins>
