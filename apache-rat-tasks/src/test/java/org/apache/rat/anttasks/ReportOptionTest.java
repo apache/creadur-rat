@@ -26,16 +26,15 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.rat.test.AbstractOptionsProvider;
-import org.apache.rat.OptionCollectionTest;
 import org.apache.rat.ReportConfiguration;
 import org.apache.rat.testhelpers.TestingLog;
 import org.apache.rat.tools.AntOption;
 import org.apache.rat.utils.DefaultLog;
 import org.apache.rat.utils.Log;
 import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.function.Executable;
 import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ArgumentsProvider;
 import org.junit.jupiter.params.provider.ArgumentsSource;
 
 import java.io.File;
@@ -63,9 +62,9 @@ public class ReportOptionTest  {
 
     @ParameterizedTest
     @ArgumentsSource(AntOptionsProvider.class)
-    public void testOptionsUpdateConfig(String name, OptionCollectionTest.OptionTest test) {
-        DefaultLog.getInstance().info("Running " + name);
-        test.test();
+    public void testOptionsUpdateConfig(String name, Executable test) throws Throwable {
+        DefaultLog.getInstance().log(Log.Level.INFO, "Running test for: " + name);
+        test.execute();
     }
 
     public static class OptionTest extends Report {
@@ -78,7 +77,7 @@ public class ReportOptionTest  {
         }
     }
 
-    final static class AntOptionsProvider extends AbstractOptionsProvider implements ArgumentsProvider {
+    final static class AntOptionsProvider extends AbstractOptionsProvider {
 
         public AntOptionsProvider() {
             super(BaseAntTask.unsupportedArgs(), testPath.toFile());
