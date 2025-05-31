@@ -18,7 +18,7 @@
 name: Testing GitHub CI
 
 on:
-  #push:
+  push:
 #    branches-ignore:
 #      - dependabot/**
   #pull_request:
