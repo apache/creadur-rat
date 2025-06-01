@@ -65,7 +65,7 @@ public final class DocumentNameMatcher {
     public DocumentNameMatcher(final String name, final Predicate<DocumentName> predicate) {
         this.name = name;
         this.predicate = predicate;
-        this.isCollection = predicate instanceof CollectionPredicate;
+        this.isCollection = predicate instanceof CompoundPredicate;
     }
 
     /**
@@ -103,17 +103,24 @@ public final class DocumentNameMatcher {
     }
 
     /**
-     * Constructs a DocumentNameMatcher from a name and a DocumentName predicate.
+     * Constructs a DocumentNameMatcher from a name and a MatcherPatterns object.
      * @param name the name of the matcher.
      * @param matchers fully specified matchers.
      */
     public DocumentNameMatcher(final String name, final MatchPatterns matchers) {
-        this(name, new CollectionPredicate() {
+        this(name, new CompoundPredicate() {
             @Override
             public Iterable<DocumentNameMatcher> getMatchers() {
                 final List<DocumentNameMatcher> result = new ArrayList<>();
                 matchers.patterns().forEach(p -> result.add(new DocumentNameMatcher(p.source(),
-                        (Predicate<DocumentName>) x -> MatchPatterns.from("/", p.source()).matches(x.getName(), x.isCaseSensitive()))));
+                        new Predicate<DocumentName>() {
+                            private final MatchPatterns patterns = MatchPatterns.from("/", p.source());
+
+                            @Override
+                            public boolean test(DocumentName documentName) {
+                                return patterns.matches(documentName.getName(), documentName.isCaseSensitive());
+                            }
+                        })));
                 return result;
             }
 
@@ -302,7 +309,7 @@ public final class DocumentNameMatcher {
         }
         List<DocumentNameMatcher> workingSet = Arrays.asList(includes, excludes);
         return new DocumentNameMatcher(format("matcherSet(%s)", join(workingSet)),
-                new DefaultCollectionPredicate(workingSet) {
+                new DefaultCompoundPredicate(workingSet) {
                     @Override
                     public boolean test(final DocumentName documentName) {
                         if (includes.matches(documentName)) {
@@ -396,13 +403,13 @@ public final class DocumentNameMatcher {
     /**
      * A marker interface to indicate this predicate contains a collection of matchers.
      */
-    interface CollectionPredicate extends Predicate<DocumentName> {
+    interface CompoundPredicate extends Predicate<DocumentName> {
         Iterable<DocumentNameMatcher> getMatchers();
     }
     /**
-     * A {@link CollectionPredicate} implementation.
+     * A {@link CompoundPredicate} implementation.
      */
-    abstract static class DefaultCollectionPredicate implements CollectionPredicate {
+    abstract static class DefaultCompoundPredicate implements CompoundPredicate {
         /** The collection for matchers that make up this predicate */
         private final Iterable<DocumentNameMatcher> matchers;
 
@@ -410,7 +417,7 @@ public final class DocumentNameMatcher {
          * Constructs a collection predicate from the collection of matchers.
          * @param matchers the collection of matchers to use.
          */
-        protected DefaultCollectionPredicate(final Iterable<DocumentNameMatcher> matchers) {
+        protected DefaultCompoundPredicate(final Iterable<DocumentNameMatcher> matchers) {
             this.matchers = matchers;
         }
 
@@ -436,7 +443,7 @@ public final class DocumentNameMatcher {
      * An implementation of "and" logic across a collection of DocumentNameMatchers.
      */
     // package private for testing access
-    static class And extends DefaultCollectionPredicate {
+    static class And extends DefaultCompoundPredicate {
         And(final Iterable<DocumentNameMatcher> matchers) {
             super(matchers);
         }
@@ -456,7 +463,7 @@ public final class DocumentNameMatcher {
      * An implementation of "or" logic across a collection of DocumentNameMatchers.
      */
     // package private for testing access
-    static class Or extends DefaultCollectionPredicate {
+    static class Or extends DefaultCompoundPredicate {
         Or(final Iterable<DocumentNameMatcher> matchers) {
             super(matchers);
         }
@@ -498,8 +505,8 @@ public final class DocumentNameMatcher {
             return format("%s%s: >>%s<< %s%n%s",
                     fill, matcher.toString(), result,
                     level == 0 ? candidate.getName() : "",
-                    matcher.predicate instanceof CollectionPredicate ?
-                            decompose(level + 1, (CollectionPredicate) matcher.predicate, candidate) :
+                    matcher.predicate instanceof CompoundPredicate ?
+                            decompose(level + 1, (CompoundPredicate) matcher.predicate, candidate) :
                     String.format("%s%s >>%s<<", createFill(level + 1), matcher.predicate.toString(), matcher.predicate.test(candidate)));
         }
 
@@ -509,7 +516,7 @@ public final class DocumentNameMatcher {
             return new String(chars);
         }
 
-        private String decompose(final int level, final CollectionPredicate predicate, final DocumentName candidate) {
+        private String decompose(final int level, final CompoundPredicate predicate, final DocumentName candidate) {
             List<DecomposeData> result = new ArrayList<>();
 
             for (DocumentNameMatcher nameMatcher : predicate.getMatchers()) {
