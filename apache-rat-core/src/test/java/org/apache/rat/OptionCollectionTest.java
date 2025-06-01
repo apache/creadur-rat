@@ -40,7 +40,6 @@ import org.junit.jupiter.api.condition.OS;
 import org.junit.jupiter.api.function.Executable;
 import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ArgumentsProvider;
 import org.junit.jupiter.params.provider.ArgumentsSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
@@ -64,7 +63,6 @@ public class OptionCollectionTest {
     static void preserveData() {
         AbstractOptionsProvider.preserveData(testPath.toFile(), "optionTest");
     }
-
 
     /**
      * This method is a known workaround for

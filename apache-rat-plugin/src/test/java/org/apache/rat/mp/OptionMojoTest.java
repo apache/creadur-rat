@@ -55,7 +55,6 @@ import java.util.List;
 import static java.lang.String.format;
 import static org.junit.jupiter.api.Assertions.fail;
 
-
 public class OptionMojoTest {
 
     @TempDir
@@ -91,8 +90,6 @@ public class OptionMojoTest {
     }
 
     static class MojoOptionsProvider extends AbstractOptionsProvider implements ArgumentsProvider  {
-
-        private RatCheckMojo mojo = null;
 
         public MojoOptionsProvider() {
             super(BaseRatMojo.unsupportedArgs(), testPath.toFile());
@@ -139,8 +136,8 @@ public class OptionMojoTest {
         @Override
         protected final ReportConfiguration generateConfig(List<Pair<Option, String[]>> args) throws IOException {
             try {
-                this.mojo = generateMojo(args);
-                AbstractOptionsProvider.setup(this.mojo.getProject().getBasedir());
+                RatCheckMojo mojo = generateMojo(args);
+                AbstractOptionsProvider.setup(mojo.getProject().getBasedir());
                 return mojo.getConfiguration();
             } catch (MojoExecutionException e) {
                 throw new IOException(e.getMessage(), e);
@@ -163,7 +160,7 @@ public class OptionMojoTest {
                 return (RatCheckMojo) lookupConfiguredMojo(project, "check");
             } catch (ComponentConfigurationException e) {
                 for (Method m : RatCheckMojo.class.getMethods()) {
-                    System.out.println( m );
+                    DefaultLog.getInstance().log(Log.Level.INFO, m);
                 }
                 throw e;
             }
