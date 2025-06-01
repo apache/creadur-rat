@@ -117,7 +117,7 @@ public final class DocumentNameMatcher {
                             private final MatchPatterns patterns = MatchPatterns.from("/", p.source());
 
                             @Override
-                            public boolean test(DocumentName documentName) {
+                            public boolean test(final DocumentName documentName) {
                                 return patterns.matches(documentName.getName(), documentName.isCaseSensitive());
                             }
                         })));
