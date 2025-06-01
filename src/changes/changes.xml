@@ -72,6 +72,9 @@ The <action> type attribute can be one of:
     </release>
     -->
     <release version="0.17-SNAPSHOT" date="xxxx-yy-zz" description="Current SNAPSHOT - release to be done">
+      <action issue="RAT-475" type="fix" dev="claudenw">
+        Remove unused packages and replace OptionTest interface with JUnit5 Executable to stabilize GitHubAction builds.
+      </action>
       <action issue="RAT-398" type="add" dev="claudenw">
         Deprecated certain Ant report functionality in favour of new CLI functionality. Deprecation information is printed to indicate how the new options can be configured.
       </action>
