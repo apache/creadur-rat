@@ -5,3 +5,6 @@
 
 # This makes it "unignore" dir3/file3.log
 !file*.log
+
+# Don't ignore xml files
+!*.xml

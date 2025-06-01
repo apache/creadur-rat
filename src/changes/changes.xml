@@ -75,6 +75,9 @@ The <action> type attribute can be one of:
       <action issue="RAT-475" type="fix" dev="claudenw">
         Remove unused packages and replace OptionTest interface with JUnit5 Executable to stabilize GitHubAction builds.
       </action>
+      <action issue="RAT-473" type="add" dev="engelen">
+        Take global gitignore into account when determining which files to audit and which to skip.
+      </action>
       <action issue="RAT-398" type="add" dev="claudenw">
         Deprecated certain Ant report functionality in favour of new CLI functionality. Deprecation information is printed to indicate how the new options can be configured.
       </action>
