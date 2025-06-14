@@ -36,7 +36,29 @@
         <filtering>true</filtering>
         <directory>src/main/filtered-resources</directory>
       </resource>
+      <resource>
+        <directory>${project.basedir}/../apache-rat-testdata/src/main/resources</directory>
+        <targetPath>${project.basedir}/target/test-classes</targetPath>
+      </resource>
+      <!-- copy the release notes -->
+      <resource>
+        <directory>${project.basedir}/..</directory>
+        <targetPath>${project.build.outputDirectory}/META-INF</targetPath>
+        <includes>
+          <include>RELEASE_NOTES.txt</include>
+        </includes>
+      </resource>
     </resources>
+    <testResources>
+      <!-- shared test resources -->
+      <testResource>
+          <directory>${project.basedir}/../apache-rat-testdata/src/test/resources</directory>
+      </testResource>
+      <testResource>
+        <directory>${project.basedir}/src/test/resources</directory>
+      </testResource>
+    </testResources>
+<!--    <testSourceDirectory>src/testFixtures/java</testSourceDirectory>-->
     <pluginManagement>
       <plugins>
         <plugin>
@@ -56,60 +78,60 @@
           </configuration>
         </plugin>
         <!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
-        <plugin>
-          <groupId>org.eclipse.m2e</groupId>
-          <artifactId>lifecycle-mapping</artifactId>
-          <version>1.0.0</version>
-          <configuration>
-            <lifecycleMappingMetadata>
-              <pluginExecutions>
-                <pluginExecution>
-                  <pluginExecutionFilter>
-                    <groupId>
-        							com.github.jochenw.jmp
-        						</groupId>
-                    <artifactId>
-        							jwigrv-maven-plugin
-        						</artifactId>
-                    <versionRange>[0.2,)</versionRange>
-                    <goals>
-                      <goal>run</goal>
-                    </goals>
-                  </pluginExecutionFilter>
-                  <action>
-                    <ignore/>
-                  </action>
-                </pluginExecution>
-              </pluginExecutions>
-            </lifecycleMappingMetadata>
-          </configuration>
-        </plugin>
+<!--        <plugin>-->
+<!--          <groupId>org.eclipse.m2e</groupId>-->
+<!--          <artifactId>lifecycle-mapping</artifactId>-->
+<!--          <version>1.0.0</version>-->
+<!--          <configuration>-->
+<!--            <lifecycleMappingMetadata>-->
+<!--              <pluginExecutions>-->
+<!--                <pluginExecution>-->
+<!--                  <pluginExecutionFilter>-->
+<!--                    <groupId>-->
+<!--        							com.github.jochenw.jmp-->
+<!--        						</groupId>-->
+<!--                    <artifactId>-->
+<!--        							jwigrv-maven-plugin-->
+<!--        						</artifactId>-->
+<!--                    <versionRange>[0.2,)</versionRange>-->
+<!--                    <goals>-->
+<!--                      <goal>run</goal>-->
+<!--                    </goals>-->
+<!--                  </pluginExecutionFilter>-->
+<!--                  <action>-->
+<!--                    <ignore/>-->
+<!--                  </action>-->
+<!--                </pluginExecution>-->
+<!--              </pluginExecutions>-->
+<!--            </lifecycleMappingMetadata>-->
+<!--          </configuration>-->
+<!--        </plugin>-->
       </plugins>
     </pluginManagement>
     <plugins>
-      <plugin>
-        <groupId>com.github.jochenw.jmp</groupId>
-        <artifactId>jwigrv-maven-plugin</artifactId>
-        <version>0.2</version>
-        <executions>
-          <!-- Run Groovy script, which copies resource files from the parent project. -->
-          <execution>
-            <phase>generate-resources</phase>
-            <goals>
-              <goal>run</goal>
-            </goals>
-            <configuration>
-              <scriptFile>src/main/build-grv/copyResourcesFromParentProject.groovy</scriptFile>
-              <scriptProperties>
-                <!-- Where -->
-                <sourceDir>${project.basedir}/..</sourceDir>
-                <targetDir>${project.build.outputDirectory}/META-INF</targetDir>
-                <filesToCopy>RELEASE_NOTES.txt</filesToCopy>
-              </scriptProperties>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
+<!--      <plugin>-->
+<!--        <groupId>com.github.jochenw.jmp</groupId>-->
+<!--        <artifactId>jwigrv-maven-plugin</artifactId>-->
+<!--        <version>0.2</version>-->
+<!--        <executions>-->
+<!--          &lt;!&ndash; Run Groovy script, which copies resource files from the parent project. &ndash;&gt;-->
+<!--          <execution>-->
+<!--            <phase>generate-resources</phase>-->
+<!--            <goals>-->
+<!--              <goal>run</goal>-->
+<!--            </goals>-->
+<!--            <configuration>-->
+<!--              <scriptFile>src/main/build-grv/copyResourcesFromParentProject.groovy</scriptFile>-->
+<!--              <scriptProperties>-->
+<!--                &lt;!&ndash; Where &ndash;&gt;-->
+<!--                <sourceDir>${project.basedir}/..</sourceDir>-->
+<!--                <targetDir>${project.build.outputDirectory}/META-INF</targetDir>-->
+<!--                <filesToCopy>RELEASE_NOTES.txt</filesToCopy>-->
+<!--              </scriptProperties>-->
+<!--            </configuration>-->
+<!--          </execution>-->
+<!--        </executions>-->
+<!--      </plugin>-->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>
@@ -184,21 +206,39 @@
           </execution>
         </executions>
       </plugin>
+<!--      <plugin>-->
+<!--        <groupId>org.apache.maven.plugins</groupId>-->
+<!--        <artifactId>maven-dependency-plugin</artifactId>-->
+<!--        <executions>-->
+<!--          <execution>-->
+<!--            <id>unpack testdata</id>-->
+<!--            <phase>generate-test-resources</phase>-->
+<!--            <goals>-->
+<!--              <goal>unpack</goal>-->
+<!--            </goals>-->
+<!--            <configuration>-->
+<!--              <artifact>org.apache.rat:apache-rat-testdata:${project.parent.version}</artifact>-->
+<!--              <outputDirectory>${project.build.testOutputDirectory}</outputDirectory>-->
+<!--              <overWriteIfNewer>true</overWriteIfNewer>-->
+<!--              <excludes>META-INF/**</excludes>-->
+<!--            </configuration>-->
+<!--          </execution>-->
+<!--        </executions>-->
+<!--      </plugin>-->
       <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-dependency-plugin</artifactId>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>build-helper-maven-plugin</artifactId>
         <executions>
           <execution>
-            <id>unpack testdata</id>
-            <phase>generate-test-resources</phase>
+            <id>add-test-source</id>
+            <phase>generate-test-sources</phase>
             <goals>
-              <goal>unpack</goal>
+              <goal>add-test-source</goal>
             </goals>
             <configuration>
-              <artifact>org.apache.rat:apache-rat-testdata:${project.parent.version}</artifact>
-              <outputDirectory>${project.build.testOutputDirectory}</outputDirectory>
-              <overWriteIfNewer>true</overWriteIfNewer>
-              <excludes>META-INF/**</excludes>
+              <sources>
+                <source>${project.basedir}/src/testFixtures/java</source>
+              </sources>
             </configuration>
           </execution>
         </executions>
@@ -206,11 +246,11 @@
     </plugins>
   </build>
   <dependencies>
-    <dependency>
-      <groupId>org.apache.rat</groupId>
-      <artifactId>apache-rat-testdata</artifactId>
-      <scope>test</scope>
-    </dependency>
+<!--    <dependency>-->
+<!--      <groupId>org.apache.rat</groupId>-->
+<!--      <artifactId>apache-rat-testdata</artifactId>-->
+<!--      <scope>test</scope>-->
+<!--    </dependency>-->
     <dependency>
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-collections4</artifactId>

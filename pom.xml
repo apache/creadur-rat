@@ -43,6 +43,7 @@ agnostic home for software distribution comprehension and audit tools.
   </description>
   <inceptionYear>2006</inceptionYear>
   <properties>
+    <shared.testdata>${project.basedir}/apache-rat-testdata/src/main/resources</shared.testdata>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <!-- taken from https://maven.apache.org/guides/mini/guide-reproducible-builds.html -->
     <!-- MSITE-1018, RAT-397: nil out timestamp in order to get current build timestamp -->
@@ -85,11 +86,11 @@ agnostic home for software distribution comprehension and audit tools.
         <artifactId>apache-rat-core</artifactId>
         <version>${project.version}</version>
       </dependency>
-      <dependency>
-        <groupId>org.apache.rat</groupId>
-        <artifactId>apache-rat-testdata</artifactId>
-        <version>${project.version}</version>
-      </dependency>
+<!--      <dependency>-->
+<!--        <groupId>org.apache.rat</groupId>-->
+<!--        <artifactId>apache-rat-testdata</artifactId>-->
+<!--        <version>${project.version}</version>-->
+<!--      </dependency>-->
       <dependency>
         <groupId>org.apache.rat</groupId>
         <artifactId>apache-rat-core</artifactId>
@@ -496,6 +497,7 @@ agnostic home for software distribution comprehension and audit tools.
               <exclude>**/src/site/javadocFont/**</exclude>
               <exclude>apache-rat/src/site/examples/**</exclude>
               <exclude>apache-rat-plugin/src/site/apt/plugin_help.txt</exclude>
+              <exclude>apache-rat-testdata/src/test/resources/**</exclude>
             </excludes>
           </configuration>
         </plugin>
@@ -856,7 +858,7 @@ agnostic home for software distribution comprehension and audit tools.
     <module>apache-rat-tasks</module>
     <module>apache-rat</module>
     <module>apache-rat-tools</module>
-    <module>apache-rat-testdata</module>
+<!--    <module>apache-rat-testdata</module>-->
   </modules>
   <licenses>
     <license>

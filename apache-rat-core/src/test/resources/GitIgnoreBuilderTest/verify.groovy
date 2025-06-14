@@ -1,6 +1,6 @@
 package RAT_355
 
-import org.apache.rat.report.claim.ClaimStatistic
+
 import org.apache.rat.testhelpers.XmlUtils
 import org.w3c.dom.Document
 import org.w3c.dom.NamedNodeMap

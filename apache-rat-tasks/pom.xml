@@ -31,6 +31,11 @@
   </description>
   <dependencies>
     <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-core</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
       <groupId>org.apache.rat</groupId>
       <artifactId>apache-rat-core</artifactId>
       <version>${project.version}</version>
@@ -39,13 +44,13 @@
       <groupId>org.apache.rat</groupId>
       <artifactId>apache-rat-tools</artifactId>
     </dependency>
-    <dependency>
-      <groupId>org.apache.rat</groupId>
-      <artifactId>apache-rat-core</artifactId>
-      <type>test-jar</type>
-      <classifier>tests</classifier>
-      <scope>test</scope>
-    </dependency>
+<!--    <dependency>-->
+<!--      <groupId>org.apache.rat</groupId>-->
+<!--      <artifactId>apache-rat-core</artifactId>-->
+<!--      <type>test-jar</type>-->
+<!--      <classifier>tests</classifier>-->
+<!--      <scope>test</scope>-->
+<!--    </dependency>-->
     <dependency>
       <groupId>org.assertj</groupId>
       <artifactId>assertj-core</artifactId>
@@ -80,6 +85,11 @@
       <artifactId>junit-jupiter-params</artifactId>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>com.google.jimfs</groupId>
+      <artifactId>jimfs</artifactId>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
   <build>
     <resources>
@@ -91,7 +101,24 @@
         <filtering>true</filtering>
         <directory>src/main/filtered-resources</directory>
       </resource>
+      <!-- copy the release notes -->
+      <resource>
+        <directory>${project.basedir}/..</directory>
+        <targetPath>${project.build.outputDirectory}/META-INF</targetPath>
+        <includes>
+          <include>RELEASE_NOTES.txt</include>
+        </includes>
+      </resource>
     </resources>
+    <testResources>
+      <!-- shared test resources -->
+      <testResource>
+        <directory>${project.basedir}/../apache-rat-testdata/src/test/resources</directory>
+      </testResource>
+      <testResource>
+        <directory>${project.basedir}/src/test/resources</directory>
+      </testResource>
+    </testResources>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -108,18 +135,36 @@
               <outputDirectory>${project.build.directory}/dependencies</outputDirectory>
             </configuration>
           </execution>
-          <!-- Copy resource files from the apache-rat-core project. -->
+<!--          &lt;!&ndash; Copy resource files from the apache-rat-core project. &ndash;&gt;-->
+<!--          <execution>-->
+<!--            <id>copy-release-notes-from-core</id>-->
+<!--            <goals>-->
+<!--              <goal>unpack-dependencies</goal>-->
+<!--            </goals>-->
+<!--            <phase>generate-resources</phase>-->
+<!--            <configuration>-->
+<!--              <includeArtifactIds>apache-rat-core</includeArtifactIds>-->
+<!--              <excludeClassifiers>tests</excludeClassifiers>-->
+<!--              <includes>META-INF/RELEASE_NOTES.txt</includes>-->
+<!--              <outputDirectory>${project.build.outputDirectory}</outputDirectory>-->
+<!--            </configuration>-->
+<!--          </execution>-->
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>build-helper-maven-plugin</artifactId>
+        <executions>
           <execution>
-            <id>copy-release-notes-from-core</id>
+            <id>add-test-source</id>
+            <phase>generate-test-sources</phase>
             <goals>
-              <goal>unpack-dependencies</goal>
+              <goal>add-test-source</goal>
             </goals>
-            <phase>generate-resources</phase>
             <configuration>
-              <includeArtifactIds>apache-rat-core</includeArtifactIds>
-              <excludeClassifiers>tests</excludeClassifiers>
-              <includes>META-INF/RELEASE_NOTES.txt</includes>
-              <outputDirectory>${project.build.outputDirectory}</outputDirectory>
+              <sources>
+                <source>${project.basedir}/../apache-rat-core/src/testFixtures/java</source>
+              </sources>
             </configuration>
           </execution>
         </executions>
