@@ -162,26 +162,6 @@
       </plugins>
     </pluginManagement>
     <plugins>
-<!--      <plugin>-->
-<!--        <groupId>org.apache.maven.plugins</groupId>-->
-<!--        <artifactId>maven-dependency-plugin</artifactId>-->
-<!--        <executions>-->
-<!--          &lt;!&ndash; Copy resource files from the apache-rat-core project. &ndash;&gt;-->
-<!--          <execution>-->
-<!--            <id>copy-release-notes-from-core</id>-->
-<!--            <goals>-->
-<!--              <goal>unpack-dependencies</goal>-->
-<!--            </goals>-->
-<!--            <phase>generate-resources</phase>-->
-<!--            <configuration>-->
-<!--              <includeArtifactIds>apache-rat-core</includeArtifactIds>-->
-<!--              <excludeClassifiers>tests</excludeClassifiers>-->
-<!--              <includes>META-INF/RELEASE_NOTES.txt</includes>-->
-<!--              <outputDirectory>${project.build.outputDirectory}</outputDirectory>-->
-<!--            </configuration>-->
-<!--          </execution>-->
-<!--        </executions>-->
-<!--      </plugin>-->
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>build-helper-maven-plugin</artifactId>
@@ -341,13 +321,6 @@
       <artifactId>apache-rat-tools</artifactId>
       <scope>test</scope>
     </dependency>
-<!--    <dependency>-->
-<!--      <groupId>org.apache.rat</groupId>-->
-<!--      <artifactId>apache-rat-core</artifactId>-->
-<!--      <type>test-jar</type>-->
-<!--      <classifier>tests</classifier>-->
-<!--      <scope>test</scope>-->
-<!--    </dependency>-->
     <dependency>
       <groupId>org.mockito</groupId>
       <artifactId>mockito-core</artifactId>
@@ -541,25 +514,4 @@
       <email>jukka@apache.org</email>
     </contributor>
   </contributors>
-  <!--
-  <profiles>
-    <profile>
-      <id>apache-release</id>
-      <build>
-        <plugins>
-          <plugin>
-            <artifactId>maven-docck-plugin</artifactId>
-              <executions>
-                <execution>
-                  <goals>
-                    <goal>check</goal>
-                  </goals>
-                </execution>
-              </executions>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-  </profiles>
--->
 </project>

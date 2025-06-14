@@ -44,13 +44,6 @@
       <groupId>org.apache.rat</groupId>
       <artifactId>apache-rat-tools</artifactId>
     </dependency>
-<!--    <dependency>-->
-<!--      <groupId>org.apache.rat</groupId>-->
-<!--      <artifactId>apache-rat-core</artifactId>-->
-<!--      <type>test-jar</type>-->
-<!--      <classifier>tests</classifier>-->
-<!--      <scope>test</scope>-->
-<!--    </dependency>-->
     <dependency>
       <groupId>org.assertj</groupId>
       <artifactId>assertj-core</artifactId>
@@ -135,20 +128,6 @@
               <outputDirectory>${project.build.directory}/dependencies</outputDirectory>
             </configuration>
           </execution>
-<!--          &lt;!&ndash; Copy resource files from the apache-rat-core project. &ndash;&gt;-->
-<!--          <execution>-->
-<!--            <id>copy-release-notes-from-core</id>-->
-<!--            <goals>-->
-<!--              <goal>unpack-dependencies</goal>-->
-<!--            </goals>-->
-<!--            <phase>generate-resources</phase>-->
-<!--            <configuration>-->
-<!--              <includeArtifactIds>apache-rat-core</includeArtifactIds>-->
-<!--              <excludeClassifiers>tests</excludeClassifiers>-->
-<!--              <includes>META-INF/RELEASE_NOTES.txt</includes>-->
-<!--              <outputDirectory>${project.build.outputDirectory}</outputDirectory>-->
-<!--            </configuration>-->
-<!--          </execution>-->
         </executions>
       </plugin>
       <plugin>
