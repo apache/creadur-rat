@@ -36,6 +36,14 @@
         <filtering>true</filtering>
         <directory>src/main/filtered-resources</directory>
       </resource>
+        <!-- copy the release notes -->
+      <resource>
+        <directory>${project.basedir}/..</directory>
+        <targetPath>${project.build.outputDirectory}/META-INF</targetPath>
+        <includes>
+          <include>RELEASE_NOTES.txt</include>
+        </includes>
+      </resource>
     </resources>
     <pluginManagement>
       <plugins>
@@ -63,23 +71,6 @@
           <configuration>
             <lifecycleMappingMetadata>
               <pluginExecutions>
-                <pluginExecution>
-                  <pluginExecutionFilter>
-                    <groupId>
-        							com.github.jochenw.jmp
-        						</groupId>
-                    <artifactId>
-        							jwigrv-maven-plugin
-        						</artifactId>
-                    <versionRange>[0.2,)</versionRange>
-                    <goals>
-                      <goal>run</goal>
-                    </goals>
-                  </pluginExecutionFilter>
-                  <action>
-                    <ignore/>
-                  </action>
-                </pluginExecution>
               </pluginExecutions>
             </lifecycleMappingMetadata>
           </configuration>
@@ -87,29 +78,6 @@
       </plugins>
     </pluginManagement>
     <plugins>
-      <plugin>
-        <groupId>com.github.jochenw.jmp</groupId>
-        <artifactId>jwigrv-maven-plugin</artifactId>
-        <version>0.2</version>
-        <executions>
-          <!-- Run Groovy script, which copies resource files from the parent project. -->
-          <execution>
-            <phase>generate-resources</phase>
-            <goals>
-              <goal>run</goal>
-            </goals>
-            <configuration>
-              <scriptFile>src/main/build-grv/copyResourcesFromParentProject.groovy</scriptFile>
-              <scriptProperties>
-                <!-- Where -->
-                <sourceDir>${project.basedir}/..</sourceDir>
-                <targetDir>${project.build.outputDirectory}/META-INF</targetDir>
-                <filesToCopy>RELEASE_NOTES.txt</filesToCopy>
-              </scriptProperties>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>

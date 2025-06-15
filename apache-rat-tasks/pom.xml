@@ -91,6 +91,13 @@
         <filtering>true</filtering>
         <directory>src/main/filtered-resources</directory>
       </resource>
+      <resource>
+        <directory>${project.basedir}/..</directory>
+        <targetPath>${project.build.outputDirectory}/META-INF</targetPath>
+        <includes>
+          <include>RELEASE_NOTES.txt</include>
+        </includes>
+      </resource>
     </resources>
     <plugins>
       <plugin>
@@ -106,20 +113,6 @@
               <stripVersion>true</stripVersion>
               <includeArtifactIds>ant-antunit</includeArtifactIds>
               <outputDirectory>${project.build.directory}/dependencies</outputDirectory>
-            </configuration>
-          </execution>
-          <!-- Copy resource files from the apache-rat-core project. -->
-          <execution>
-            <id>copy-release-notes-from-core</id>
-            <goals>
-              <goal>unpack-dependencies</goal>
-            </goals>
-            <phase>generate-resources</phase>
-            <configuration>
-              <includeArtifactIds>apache-rat-core</includeArtifactIds>
-              <excludeClassifiers>tests</excludeClassifiers>
-              <includes>META-INF/RELEASE_NOTES.txt</includes>
-              <outputDirectory>${project.build.outputDirectory}</outputDirectory>
             </configuration>
           </execution>
         </executions>
