@@ -29,6 +29,7 @@ import org.apache.rat.test.AbstractOptionsProvider;
 import org.apache.rat.ReportConfiguration;
 import org.apache.rat.plugin.BaseRatMojo;
 import org.apache.rat.utils.DefaultLog;
+import org.apache.rat.utils.Log;
 import org.codehaus.plexus.component.configurator.ComponentConfigurationException;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
@@ -85,7 +86,7 @@ public class OptionMojoTest {
     @ParameterizedTest
     @ArgumentsSource(MojoOptionsProvider.class)
     void testOptionsUpdateConfig(String name, Executable test) throws Throwable {
-        DefaultLog.getInstance().info("Running " + name);
+        DefaultLog.getInstance().log(Log.Level.INFO, "Running test for: " + name);
         test.execute();
     }
 
@@ -138,8 +139,8 @@ public class OptionMojoTest {
         @Override
         protected final ReportConfiguration generateConfig(List<Pair<Option, String[]>> args) throws IOException {
             try {
-                this.mojo = generateMojo(args);
-                AbstractOptionsProvider.setup(this.mojo.getProject().getBasedir());
+                RatCheckMojo mojo = generateMojo(args);
+                AbstractOptionsProvider.setup(mojo.getProject().getBasedir());
                 return mojo.getConfiguration();
             } catch (MojoExecutionException e) {
                 throw new IOException(e.getMessage(), e);
@@ -161,8 +162,8 @@ public class OptionMojoTest {
             try {
                 return (RatCheckMojo) lookupConfiguredMojo(project, "check");
             } catch (ComponentConfigurationException e) {
-                for (Method m : RatCheckMojo.class.getMethods()) {
-                    System.out.println( m );
+                for (Method method : RatCheckMojo.class.getMethods()) {
+                    DefaultLog.getInstance().log(Log.Level.INFO, method);
                 }
                 throw e;
             }

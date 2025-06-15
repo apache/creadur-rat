@@ -35,7 +35,6 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.function.Executable;
 import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ArgumentsProvider;
 import org.junit.jupiter.params.provider.ArgumentsSource;
 
 import java.io.File;
@@ -79,7 +78,7 @@ public class ReportOptionTest  {
         }
     }
 
-    final static class AntOptionsProvider extends AbstractOptionsProvider implements ArgumentsProvider {
+    final static class AntOptionsProvider extends AbstractOptionsProvider {
 
         public AntOptionsProvider() {
             super(BaseAntTask.unsupportedArgs(), testPath.toFile());

@@ -705,7 +705,7 @@ public abstract class AbstractOptionsProvider implements ArgumentsProvider {
             config = generateConfig(arg1, arg2);
             assertThat(config.getCopyrightMessage()).isEqualTo("MyCopyright");
         } catch (IOException e) {
-            e.printStackTrace();
+            DefaultLog.getInstance().error(e.getStackTrace());
             if (e.getCause() != null) {
                 fail(e.getMessage() + ": " + e.getCause().getMessage());
             }

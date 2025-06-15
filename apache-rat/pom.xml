@@ -40,11 +40,6 @@
       <groupId>org.apache.rat</groupId>
       <artifactId>apache-rat-tasks</artifactId>
     </dependency>
-<!--    <dependency>-->
-<!--      <groupId>org.apache.rat</groupId>-->
-<!--      <artifactId>apache-rat-testdata</artifactId>-->
-<!--      <scope>test</scope>-->
-<!--    </dependency>-->
   </dependencies>
   <build>
     <resources>
@@ -71,20 +66,6 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-dependency-plugin</artifactId>
         <executions>
-<!--          &lt;!&ndash; Copy resource files from the apache-rat-core project. &ndash;&gt;-->
-<!--          <execution>-->
-<!--            <id>copy-release-notes-from-core</id>-->
-<!--            <goals>-->
-<!--              <goal>unpack-dependencies</goal>-->
-<!--            </goals>-->
-<!--            <phase>generate-resources</phase>-->
-<!--            <configuration>-->
-<!--              <includeArtifactIds>apache-rat-core</includeArtifactIds>-->
-<!--              <excludeClassifiers>tests</excludeClassifiers>-->
-<!--              <include>META-INF/RELEASE_NOTES.txt</include>-->
-<!--              <outputDirectory>${project.build.outputDirectory}</outputDirectory>-->
-<!--            </configuration>-->
-<!--          </execution>-->
           <execution>
             <id>unpack dependencies</id>
             <phase>prepare-package</phase>
@@ -98,19 +79,6 @@
               <excludes>META-INF/**</excludes>
             </configuration>
           </execution>
-<!--          <execution>-->
-<!--            <id>unpack testdata</id>-->
-<!--            <phase>prepare-package</phase>-->
-<!--            <goals>-->
-<!--              <goal>unpack</goal>-->
-<!--            </goals>-->
-<!--            <configuration>-->
-<!--              <artifact>org.apache.rat:apache-rat-testdata:${project.parent.version}</artifact>-->
-<!--              <outputDirectory>${project.build.testOutputDirectory}</outputDirectory>-->
-<!--              <overWriteIfNewer>true</overWriteIfNewer>-->
-<!--              <excludes>META-INF/**</excludes>-->
-<!--            </configuration>-->
-<!--          </execution>-->
         </executions>
       </plugin>
       <plugin>

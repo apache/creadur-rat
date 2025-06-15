@@ -36,10 +36,6 @@
         <filtering>true</filtering>
         <directory>src/main/filtered-resources</directory>
       </resource>
-      <resource>
-        <directory>${project.basedir}/../apache-rat-testdata/src/main/resources</directory>
-        <targetPath>${project.basedir}/target/test-classes</targetPath>
-      </resource>
       <!-- copy the release notes -->
       <resource>
         <directory>${project.basedir}/..</directory>
@@ -205,11 +201,6 @@
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter-api</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.junit.vintage</groupId>
-      <artifactId>junit-vintage-engine</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>
