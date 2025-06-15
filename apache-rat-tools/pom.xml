@@ -37,6 +37,15 @@
         <directory>src/main/filtered-resources</directory>
       </resource>
     </resources>
+    <testResources>
+      <!-- shared test resources -->
+      <testResource>
+        <directory>${project.basedir}/../apache-rat-testdata/src/test/resources</directory>
+      </testResource>
+      <testResource>
+        <directory>${project.basedir}/src/test/resources</directory>
+      </testResource>
+    </testResources>
     <pluginManagement>
       <plugins>
         <plugin>

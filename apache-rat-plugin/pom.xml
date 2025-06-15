@@ -52,6 +52,9 @@
         <directory>src/test/filtered-resources</directory>
         <filtering>true</filtering>
       </testResource>
+      <testResource>
+        <directory>${project.basedir}/src/test/resources</directory>
+      </testResource>
     </testResources>
     <pluginManagement>
       <plugins>

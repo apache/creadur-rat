@@ -40,13 +40,17 @@
       <groupId>org.apache.rat</groupId>
       <artifactId>apache-rat-tasks</artifactId>
     </dependency>
-    <dependency>
-      <groupId>org.apache.rat</groupId>
-      <artifactId>apache-rat-testdata</artifactId>
-      <scope>test</scope>
-    </dependency>
   </dependencies>
   <build>
+    <testResources>
+      <!-- shared test resources -->
+      <testResource>
+        <directory>${project.basedir}/../apache-rat-testdata/src/test/resources</directory>
+      </testResource>
+      <testResource>
+        <directory>${project.basedir}/src/test/resources</directory>
+      </testResource>
+    </testResources>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -84,19 +88,6 @@
             <configuration>
               <includeScope>runtime</includeScope>
               <outputDirectory>${project.build.outputDirectory}</outputDirectory>
-              <overWriteIfNewer>true</overWriteIfNewer>
-              <excludes>META-INF/**</excludes>
-            </configuration>
-          </execution>
-          <execution>
-            <id>unpack testdata</id>
-            <phase>prepare-package</phase>
-            <goals>
-              <goal>unpack</goal>
-            </goals>
-            <configuration>
-              <artifact>org.apache.rat:apache-rat-testdata:${project.parent.version}</artifact>
-              <outputDirectory>${project.build.testOutputDirectory}</outputDirectory>
               <overWriteIfNewer>true</overWriteIfNewer>
               <excludes>META-INF/**</excludes>
             </configuration>
