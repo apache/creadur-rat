@@ -52,6 +52,12 @@
         </includes>
       </resource>
     </resources>
+    <testResources>
+      <!-- shared test resources -->
+      <testResource>
+        <directory>${project.basedir}/../apache-rat-testdata/src/test/resources</directory>
+      </testResource>
+    </testResources>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
