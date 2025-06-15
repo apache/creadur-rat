@@ -37,6 +37,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledOnOs;
 import org.junit.jupiter.api.condition.OS;
+import org.junit.jupiter.api.function.Executable;
 import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ArgumentsProvider;
@@ -158,9 +159,9 @@ public class OptionCollectionTest {
      */
     @ParameterizedTest( name = "{index} {0}")
     @ArgumentsSource(CliOptionsProvider.class)
-    public void testOptionsUpdateConfig(String name, OptionTest test) {
+    public void testOptionsUpdateConfig(String name, Executable test) throws Throwable {
         DefaultLog.getInstance().log(Log.Level.INFO, "Running test for: " + name);
-        test.test();
+        test.execute();
     }
 
     /**

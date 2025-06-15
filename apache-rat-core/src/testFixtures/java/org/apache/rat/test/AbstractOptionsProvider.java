@@ -25,7 +25,6 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
-import org.apache.rat.OptionCollectionTest;
 import org.apache.rat.ReportConfiguration;
 import org.apache.rat.ReporterTest;
 import org.apache.rat.commandline.Arg;
@@ -42,6 +41,7 @@ import org.apache.rat.test.utils.Resources;
 import org.apache.rat.testhelpers.TextUtils;
 import org.apache.rat.utils.DefaultLog;
 import org.apache.rat.utils.Log.Level;
+import org.junit.jupiter.api.function.Executable;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.params.provider.Arguments;
 
@@ -81,7 +81,7 @@ public abstract class AbstractOptionsProvider implements ArgumentsProvider {
     /**
      * A map of test Options to tests.
      */
-    protected final Map<String, OptionCollectionTest.OptionTest> testMap = new TreeMap<>();
+    protected final Map<String, Executable> testMap = new TreeMap<>();
     /** The list of exclude args */
     protected static final String[] EXCLUDE_ARGS = {"*.foo", "%regex[[A-Z]\\.bar]", "justbaz"};
     /** the list of include args */
@@ -947,7 +947,7 @@ public abstract class AbstractOptionsProvider implements ArgumentsProvider {
         List<String> missingTests = new ArrayList<>();
 
         for (String key : OptionsList.getKeys()) {
-            OptionCollectionTest.OptionTest test = testMap.get(key);
+            Executable test = testMap.get(key);
             if (test == null) {
                 missingTests.add(key);
             } else {
