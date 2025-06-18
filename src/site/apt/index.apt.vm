@@ -173,3 +173,17 @@ mvn clean install
 cd creadur-rat
 ./mvnw
 +------------------------------------------+
+
+*** Hints and Tips
+
+ The project creates several jars that are used later in the build process.  This means that the jars for the version being build should be accessible or a error concerning a missing jar will be displayed. There are several ways to avoid this problem.
+ 
+ 1. Include the Apache snapshot repository (https://repository.apache.org/content/repositories/snapshots<url>https://repository.apache.org/content/repositories/snapshots) in your Maven build.
+ 
+ 2. Execute the maven install noted above.  This will place the current jars in your local repository.
+ 
+ 3. Run "mvn package" and use the resulting jar in the apache-rat sub-module for testing.
+ 
+  If you modify code in one sub-module you need to run "mvn install" in that module to get it into your repository so that you can use it in later repository builds.  Alternatively, you can run "mvn package", or "mvn install" on the entire project.
+  
+  
