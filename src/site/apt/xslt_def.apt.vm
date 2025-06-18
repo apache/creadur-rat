@@ -43,23 +43,36 @@ unapproved-licenses.xsl}}: A report that lists files with unapproved licenses.
 
 ** <<<rat-report>>> Element
 
- The XML document starts with a <<<rat-report>>> element that has a <<<timestamp>>> attribute that contains the date and time the Rat report was
- created.  The <<<rat-report>>> only contains <<<resource>>> elements.
+ The XML document starts with a <<<rat-report>>> element that has a <<<timestamp>>> attribute that contains the date and time the Rat report was created.  The <<<rat-report>>> contains one <<<verions>>>, one or more <<<resource>>>, and one <<<statistics>>> elements.
+
+** <<<version>>> Element
+
+ The version element contains 3 attributes.
+
+  * <<<product>>>: The name of the product as described in the jar metadata.
+
+  * <<<vendor>>>: The vendor of the product as described in the jar metadata.
+
+  * <<<version>>>: The version of the product as described in the jar metadata.
+
 
 ** <<<resource>>> Element
 
- There is one <<<resource>>> element for every file that was processed.  The <<<resource>>> may contain <<<license>>> and <<<sample>>> child elements.
- It has two attributes:
+ There is one <<<resource>>> element for every file that was processed.  The <<<resource>>> may contain <<<license>>>  child elements. It has four attributes:
 
  * <<<name>>>: The name of the file.
 
- * <<<type>>>: The document type.  This is one of the <<<Document.Type>>> enum values.  The value is always in lower case.  For a complete
- list see the {{{https://gitbox.apache.org/repos/asf/creadur-rat/blob/master/apache-rat/src/main/java/org/apache/rat/api/Document.java}Document.java}}
- file for a complete list of document types.
+ * <<<type>>>: The document type.  This is one of the <<<Document.Type>>> enum values.  The value is always in lower case.  See the {{{https://gitbox.apache.org/repos/asf/creadur-rat/blob/master/apache-rat/src/main/java/org/apache/rat/api/Document.java}Document.java}}  file for a complete list of document types.
+
+ * <<<mediaType>>>: The media type of the file.
+
+ * <<<encoding>>>: The encoding of the data in the file.
+
+ * <<<isDirectory>>>: A flag with the value of 'true' if the resource is a directory.
 
 ** <<<license>>> Element
 
- The <<<license>>> element is only found as a child of a <<<resource>>> element and may have a <<<notes>>> child element.  The <<<license>>> element has four elements:
+ The <<<license>>> element is only found as a child of a <<<resource>>> element and may have a <<<notes>>> child element.  The <<<license>>> element has four attributes:
 
  * <<<approval>>>: Specifies whether the license is approved.  Values are restricted to 'true' and 'false'.
 
@@ -70,17 +83,10 @@ unapproved-licenses.xsl}}: A report that lists files with unapproved licenses.
 
  * <<<name>>>: The name of the license.  This is the human-readable name that was provided when the license was defined.
 
-** <<<sample>>> Element
-
- The  <<<sample>>> element contains a <<<CDATA>>> block comprising the text that was processed when the <<<resource>>> was processed.
-
 ** <<<notes>>> Element
 
  The <<<notes>>> element contains a <<<CDATA>>> block comprising the text of any notes about the license that were provided when the license was defined.
 
 * How to use the report
 
- Once an XSLT stylesheet has been developed it can be tested by running Rat and providing the full path to the XSLT stylesheet as the stylesheet
- argument for the client being used.  See Running Rat from the {{{./apache-rat/index.html}Command line}},
- {{{./apache-rat-plugin/index.html}Maven}}, or
- {{{./apache-rat-tasks/index.html}Ant}} for details.
+ Once an XSLT stylesheet has been developed it can be tested by running Rat and providing the full path to the XSLT stylesheet as the stylesheet  argument for the client being used.  See Running Rat from the {{{./apache-rat/index.html}Command line}},  {{{./apache-rat-plugin/index.html}Maven}}, or  {{{./apache-rat-tasks/index.html}Ant}} for details.
