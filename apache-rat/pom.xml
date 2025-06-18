@@ -278,6 +278,25 @@
         </configuration>
       </plugin>
       <plugin>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <version>3.0.0</version>
+        <executions>
+          <execution>
+            <phase>pre-site</phase>
+            <configuration>
+              <target>
+                <copy todir="${basedir}/src/site/apt">
+                  <fileset dir="${project.build.outputDirectory}/classes/org/apache/rat" includes="generation-keywords.txt" />
+                </copy>
+              </target>
+            </configuration>
+            <goals>
+              <goal>run</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
         <artifactId>maven-clean-plugin</artifactId>
         <configuration>
           <filesets>

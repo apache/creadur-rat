@@ -72,6 +72,7 @@
       <item name="Defining New Licenses" href="license_def.html"/>
       <item name="Configuration XSD" href="apache-rat/xsd.html"/>
       <item name="Default Configuration" href="https://gitbox.apache.org/repos/asf/creadur-rat/blob/master/apache-rat-core/src/main/resources/org/apache/rat/default.xml"/>
+      <item name="Detecting Generated Files" href="apache-rat/detecting_generated_files.html"/>
     </menu>
     <menu name="RAT Output" inherit="bottom">
       <item name="Standard Output Example" href="apache-rat/output/example.html"/>
