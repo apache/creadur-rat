@@ -21,8 +21,8 @@
 
 How RAT Detects Generated Files
 
- RAT uses a static list of defined phrases.  If a document includes one or more of the phrases it is considered to be generated.
- Generated documents are not checked for licenses.  The list of phrases is:
+ RAT uses a static list of defined phrases. If a document includes one or more of the phrases it is considered to be generated.
+ Generated documents are not checked for licenses. The list of phrases is:
 
 +------------------------------------------+
 #include( "generation-keywords.txt" )
