@@ -88,3 +88,5 @@ java -jar apache-rat/target/apache-rat-${project.version}.jar
   * {{{https://gitbox.apache.org/repos/asf/creadur-rat/blob/master/apache-rat-core/src/main/resources/org/apache/rat/missing-headers.xsl}missing-headers}} - List only files that are missing headers.
 
  These stylesheets can be specified using options in the command line, Maven or Ant clients.
+
+ To develop your own stylesheets see the Rat Output section of the menu on the left.
