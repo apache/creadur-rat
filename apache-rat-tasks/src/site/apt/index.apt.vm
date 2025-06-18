@@ -55,7 +55,7 @@ Installation
 -------
 
       With this you can use the report task like plain Ant tasks,
-      they'll live in the default namespace.  I.e. if you can run
+      they'll live in the default namespace.  For example if you can run
       <<<exec>>> without any namespace prefix, you can do so for
       <<<report>>> as well.
 
