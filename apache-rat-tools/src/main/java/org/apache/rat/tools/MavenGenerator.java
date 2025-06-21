@@ -24,9 +24,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
@@ -39,6 +37,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
 import org.apache.commons.text.WordUtils;
 import org.apache.rat.OptionCollection;
+import org.apache.rat.documentation.options.MavenOption;
 import org.apache.rat.utils.CasedString;
 import org.apache.rat.utils.CasedString.StringCase;
 
@@ -48,13 +47,6 @@ import static java.lang.String.format;
  * A simple tool to convert CLI options to Maven Mojo base class
  */
 public final class MavenGenerator {
-
-    /** A mapping of external name to internal name if not standard */
-    private static final Map<String, String> RENAME_MAP = new HashMap<>();
-
-    static {
-        RENAME_MAP.put("addLicense", "add-license");
-    }
 
     /**
      * Filter to remove Options not supported by Maven.
@@ -113,7 +105,7 @@ public final class MavenGenerator {
                 String line = iter.next();
                 switch (line.trim()) {
                     case "${static}":
-                        for (Map.Entry<String, String> entry : RENAME_MAP.entrySet()) {
+                        for (Map.Entry<String, String> entry : MavenOption.getRenameMap().entrySet()) {
                             writer.append(format("        xlateName.put(\"%s\", \"%s\");%n", entry.getKey(), entry.getValue()));
                         }
                         for (Option option : MavenOption.getFilteredOptions()) {
@@ -121,7 +113,7 @@ public final class MavenGenerator {
                         }
                         for (MavenOption option : options) {
                             if (option.isDeprecated()) {
-                                writer.append(format("        deprecatedArgs.put(\"%s\", \"%s\");%n", argsKey(option.option),
+                                writer.append(format("        deprecatedArgs.put(\"%s\", \"%s\");%n", argsKey(option.getOption()),
                                         format("Use of deprecated option '%s'. %s", option.getName(), option.getDeprecated())));
                             }
                         }
@@ -214,14 +206,4 @@ public final class MavenGenerator {
         }
     }
 
-    /**
-     * Creates the Maven element name for the specified option.
-     * @param option The option to process.
-     * @return the Maven based name in camel-case syntax.
-     */
-    static String createName(final Option option) {
-        String name = StringUtils.defaultIfEmpty(option.getLongOpt(), option.getOpt());
-        name = StringUtils.defaultIfEmpty(RENAME_MAP.get(name), name).toLowerCase(Locale.ROOT);
-        return new CasedString(StringCase.KEBAB, name).toCase(StringCase.CAMEL);
-    }
 }

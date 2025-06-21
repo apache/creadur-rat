@@ -21,8 +21,6 @@ package org.apache.rat.help;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.Writer;
-import java.util.Map;
-import java.util.function.Supplier;
 
 import org.apache.commons.cli.Options;
 import org.apache.rat.OptionCollection;

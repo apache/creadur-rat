@@ -29,7 +29,7 @@ import org.apache.rat.config.parameters.ConfigComponent;
  * A matcher that performs a logical {@code AND} across all the contained
  * matchers.
  */
-@ConfigComponent(type = ComponentType.MATCHER, name = "all", desc = "Returns true if all enclosed matchers return true.")
+@ConfigComponent(type = ComponentType.MATCHER, name = "all", desc = "A collection of matchers that will report true if any enclosed matcher is true.")
 public class AndMatcher extends AbstractMatcherContainer {
 
     /**

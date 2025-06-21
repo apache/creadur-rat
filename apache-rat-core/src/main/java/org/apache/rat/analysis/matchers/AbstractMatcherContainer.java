@@ -38,7 +38,7 @@ public abstract class AbstractMatcherContainer extends AbstractHeaderMatcher {
     private final Collection<IHeaderMatcher> enclosed;
 
     /** The resource the headers were read from.  May be null */
-    @ConfigComponent(desc = "Resource to read matcher definitions from.", type = ComponentType.PARAMETER)
+    @ConfigComponent(desc = "Resource (URL or file) to read enclosed text matcher definitions from.", type = ComponentType.PARAMETER)
     private final String resource;
 
     /**

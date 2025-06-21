@@ -31,8 +31,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.rat.commandline.Arg;
 import org.apache.rat.config.exclusion.StandardCollection;
 import org.apache.rat.help.AbstractHelp;
-import org.apache.rat.tools.AbstractOption;
-import org.apache.rat.tools.AntOption;
+import org.apache.rat.documentation.options.AbstractOption;
+import org.apache.rat.documentation.options.AntOption;
 import org.apache.rat.utils.DefaultLog;
 import org.apache.rat.utils.Log;
 

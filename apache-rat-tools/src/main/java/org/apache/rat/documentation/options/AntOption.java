@@ -16,13 +16,15 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.rat.tools;
+package org.apache.rat.documentation.options;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -30,10 +32,12 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import org.apache.commons.cli.Option;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
 import org.apache.commons.text.WordUtils;
 import org.apache.rat.OptionCollection;
 import org.apache.rat.commandline.Arg;
+import org.apache.rat.utils.CasedString;
 
 import static java.lang.String.format;
 
@@ -59,6 +63,8 @@ public class AntOption extends AbstractOption {
 
     /** The list of attribute Types */
     private static final List<Class<?>> ATTRIBUTE_TYPES = new ArrayList<>();
+    /** A mapping of external name to internal name if not standard. */
+    private static final Map<String, String> RENAME_MAP = new HashMap<>();
 
     /**
      * Adds a mapping from the specified Arg to the Arg to be used for generation.
@@ -75,6 +81,7 @@ public class AntOption extends AbstractOption {
     }
 
     static {
+        RENAME_MAP.put("addLicense", "add-license");
         ATTRIBUTE_TYPES.add(String.class);
         ATTRIBUTE_TYPES.add(String[].class);
         ATTRIBUTE_TYPES.add(Integer.class);
@@ -147,7 +154,7 @@ public class AntOption extends AbstractOption {
      * @return The list of unsupported options.
      */
     public static List<Option> getUnsupportedOptions() {
-        return UNSUPPORTED_LIST;
+        return Collections.unmodifiableList(UNSUPPORTED_LIST);
     }
 
     /**
@@ -161,13 +168,23 @@ public class AntOption extends AbstractOption {
         return filteredOptions;
     }
 
+    public static Map<String, String> getRenameMap() {
+        return Collections.unmodifiableMap(RENAME_MAP);
+    }
+
     /**
      * Constructor.
      *
      * @param option the option to wrap.
      */
     public AntOption(final Option option) {
-        super(option, AntGenerator.createName(option));
+        super(option, createName(option));
+    }
+
+    public static String createName(final Option option) {
+        String name = option.getLongOpt();
+        name = StringUtils.defaultIfEmpty(RENAME_MAP.get(name), name).toLowerCase(Locale.ROOT);
+        return new CasedString(CasedString.StringCase.KEBAB, name).toCase(CasedString.StringCase.CAMEL);
     }
 
     /**
@@ -213,7 +230,7 @@ public class AntOption extends AbstractOption {
     protected String cleanupName(final Option option) {
         AntOption antOption = new AntOption(option);
         String fmt = antOption.isAttribute() ? "%s attribute" : "<%s>";
-        return format(fmt, AntGenerator.createName(option));
+        return format(fmt, createName(option));
     }
 
     /**

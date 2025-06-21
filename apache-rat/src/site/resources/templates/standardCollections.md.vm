@@ -1,0 +1,16 @@
+#set($header = "\##")
+${esc.hash} Argument Types
+
+The RAT help documentation lists a number of argument types.  This is the list of types and what they mean
+
+#set($doublespace = ${newline}+${newline})
+#foreach ($type in $ArgumentTypes)
+    #set( $desc = $stringUtils.replace(${type.description.get}, ${newline}, ${doublespace}))
+    #set($desc = $stringUtils.replace($desc, ${tab}, " - "))
+${esc.hash}${esc.hash}${type.displayName}
+
+${desc}
+
+
+
+#end

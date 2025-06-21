@@ -1,0 +1,142 @@
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~   Licensed to the Apache Software Foundation (ASF) under one or more
+~~   contributor license agreements.  See the NOTICE file distributed with
+~~   this work for additional information regarding copyright ownership.
+~~   The ASF licenses this file to You under the Apache License, Version 2.0
+~~   (the "License"); you may not use this file except in compliance with
+~~   the License.  You may obtain a copy of the License at
+~~
+~~       http://www.apache.org/licenses/LICENSE-2.0
+~~
+~~   Unless required by applicable law or agreed to in writing, software
+~~   distributed under the License is distributed on an "AS IS" BASIS,
+~~   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+~~   See the License for the specific language governing permissions and
+~~   limitations under the License.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#set($version = ${rat.version.version})
+#set($stringUtils = ${rat.stringUtils})
+#set($newTab = ${rat.doubleLine}+" * ")
+
+                   --------------------------
+                   Command Line Support
+                   --------------------------
+
+About Apache RAT&#8482;
+
+ RAT audits software distributions, with a special interest in headers.
+ If this isn't quite what you're looking for then take a look at the
+ other products developed by {{{https://creadur.apache.org}Apache Creadur}}&#8482;,
+ including {{{https://creadur.apache.org/whisker}Apache Whisker}}&#8482; which audits
+ and generates legal (for example <<<LICENSE>>>) documents for
+ complex software distributions.
+
+* Running from the Command Line
+
+ Run from the command line with:
+
++------------------------------------------+
+java -jar apache-rat/target/apache-rat-${version}.jar --help
++------------------------------------------+
+
+ This will output a help message detailing the command line
+ options available to you.
+
+* Adding license headers
+
+ RAT can be used to automatically add license headers to
+ files that do not currently have them. Only files that
+ are not excluded by the RAT configurations will be affected.
+
+ To add license headers use a command such as:
+
++------------------------------------------+
+java -jar apache-rat/target/apache-rat-${version}.jar --addlicense
+  --copyright "Copyright 2008 Foo" --force
+  /path/to/project
++------------------------------------------+
+
+ This command will add the license header directly to the
+ source files. If you prefer to see which files will be
+ changed and how then remove the "--force" option.
+
+* Using multiple excludes from a file
+
+  It is common to use the RAT with the Maven or Ant plugins and specify
+  a series of files to exclude (such as a README or version control
+  files).  If you are using the RAT application instead of a plugin you
+  can specify a series of regex excludes in a file and specify that with
+  the --exclude-file option.
+
++------------------------------------------+
+java -jar apache-rat/target/apache-rat-${version}.jar
+ --exclude-file /path/to/project/.rat-excludes
+  /path/to/project
++------------------------------------------+
+
+* Command Line Options
+
+#set($descEnd = ${rat.doubleLine} + " ")
+#foreach ($option in $rat.cliOptions)
+#set($desc = $rat.aptEscape(${option.option.description}))
+#set($desc = $stringUtils.replace($desc, ${esc.N}, ${descEnd}))
+#set($desc = $stringUtils.replace($desc, ${rat.tab}, " * "))
+
+** #if(${option.option.longOpt})\-\-${option.option.longOpt}#if(${option.option.opt}) or \-${option.option.opt}#end#else\-${option.option.opt}#end
+
+  #if(${option.deprecated}) <<$rat.aptEscape(${option.deprecated.toString})>> #end ${desc}
+
+  * Required: ${option.required}
+
+#if(${option.hasArg})
+  * Argument Type: \<${option.argName}\>
+
+  * Argument Count: #if(${option.option.args} == -2)Unlimited.  Unlimited arguments must end with `--` or another option starting with `--`.#else ${option.option.args}#end
+#end
+
+  * Example: $rat.aptEscape(${option.example})
+
+#end
+
+** Argument Types
+
+#set($descEnd = ${rat.doubleLine} + " ")
+#foreach ($type in $rat.argumentTypes)
+#set($desc = $rat.aptEscape(${type.description.get}))
+#set($desc = $stringUtils.replace($desc, ${esc.N}, ${descEnd}))
+#set($desc = $stringUtils.replace($desc, ${rat.tab}, " * "))
+*** \<${type.displayName}\>
+
+ ${desc}
+#if(${type.displayName} == "StandardCollection")
+
+ A complete description of each of the {{{./standard_collections.html}standard collection}} types is available.
+#end
+
+#end
+
+** Styling output
+
+ RAT allows you to style the output as you see fit.  Three stylesheets are included in the RAT package.
+
+#foreach ($style in ${rat.styleSheets})
+ * {{{https://gitbox.apache.org/repos/asf/creadur-rat/blob/master/apache-rat-core/src/main/resources/org/apache/rat/${style.arg}.xsl}${style.arg}}} - ${style.desc}
+
+#end
+
+ These stylesheets can be specified using options in the command line, Maven or Ant clients.
+
+ To develop your own stylesheets see the RAT Output section of the menu on the left.
+
+** Notes
+
+
+====== Notes ======
+
+ [[1]] RAT highlights possible issues.
+
+ [[2]] RAT reports require interpretation.
+
+ [[3]] RAT often requires some tuning before it runs well against a project.
+ 
+ [[4]] RAT relies on heuristics: it may miss issues
