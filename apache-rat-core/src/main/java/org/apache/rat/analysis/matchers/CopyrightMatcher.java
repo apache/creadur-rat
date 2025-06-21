@@ -52,7 +52,12 @@ import org.apache.rat.config.parameters.ConfigComponent;
  * to) the "Copyright" or "copyright" keyword
  * </p>
  */
-@ConfigComponent(type = ComponentType.MATCHER, name = "copyright", desc = "Matches copyright statements.")
+@ConfigComponent(type = ComponentType.MATCHER, name = "copyright",
+        desc = "A matcher that matches Copyright text. " +
+                "Uses regular expressions and so should only be used when looking for copyrights with specific " +
+                "patterns that are not caught by a standard text matcher. This matcher will match \"(C)\", \"copyright\", " +
+                "or \"©\". (text is not case sensitive). It will also match things like Copyright (c) joe 1995 as well " +
+                "as Copyright (C) 1995 joe and Copyright (C) joe 1995.")
 public class CopyrightMatcher extends AbstractHeaderMatcher {
     /** String to build a pattern to match the various recognized copyright symbols */
     private static final String COPYRIGHT_SYMBOL_DEFN = "\\([Cc]\\)|©|\\&[Cc][Oo][Pp][Yy]\\;";
@@ -73,10 +78,10 @@ public class CopyrightMatcher extends AbstractHeaderMatcher {
     /** The built pattern for matching "Copyright owner date" */
     private final Pattern ownerDatePattern;
     /** The start date of the copyright. May be null. */
-    @ConfigComponent(type = ComponentType.PARAMETER, desc = "The initial date of the copyright")
+    @ConfigComponent(type = ComponentType.PARAMETER, desc = "The initial year of the copyright if any")
     private final String start;
     /** The end date of the copyright. May be null. */
-    @ConfigComponent(type = ComponentType.PARAMETER, desc = "The last date the copyright was modifed")
+    @ConfigComponent(type = ComponentType.PARAMETER, desc = "The last year the copyright.  Only valid with 'start'")
     private final String end;
     /** The owner of the copyright. May be null */
     @ConfigComponent(type = ComponentType.PARAMETER, desc = "The owner of the copyright")

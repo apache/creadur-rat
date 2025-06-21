@@ -1,0 +1,37 @@
+#set($doublespace = ${esc.newLine}+${esc.newline})
+${esc.hash} Command Line Options
+
+The RAT has a number of command line options
+
+${esc.hash} Options List
+
+#foreach ($option in $rat.options)
+    #set($desc = $markdown.escape($stringUtils.replace(${option.description}, ${newline}, ${doublespace})))
+    #set($desc = $stringUtils.replace($desc, ${tab}, " - "))
+
+${esc.hash}${esc.hash} #if(${option.longOpt})--${option.longOpt}#end #if(${option.opt})-${option.opt}#end
+
+#if(${option.deprecated})**$markdown.escape(${option.deprecated.toString})** #end ${desc}
+
+  - Required: ${option.required}
+    #if(${option.hasArg})
+  - Argument Type: ${option.argName}
+  - Argument Count: #if(${option.args} == -2)Unlimited.  Unlimited arguments must end with `--` or another option starting with `--`.#else ${option.args}#end
+    #end
+#end
+
+
+
+${esc.hash} Arguments Definitions
+
+The above list references a number of argument types.  This is the definition of those types.
+
+
+#foreach ($type in $ArgumentTypes)
+    #set( $desc = $stringUtils.replace(${type.description.get}, ${newline}, ${doublespace}))
+    #set($desc = $stringUtils.replace($desc, ${tab}, " - "))
+${esc.hash}${esc.hash} \<${type.displayName}\>
+
+${desc}
+
+#end

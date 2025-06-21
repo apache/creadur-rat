@@ -71,7 +71,6 @@
             <configuration>
               <includeArtifactIds>apache-rat-core</includeArtifactIds>
               <excludeClassifiers>tests</excludeClassifiers>
-              <include>META-INF/RELEASE_NOTES.txt</include>
               <outputDirectory>${project.build.outputDirectory}</outputDirectory>
             </configuration>
           </execution>
@@ -273,6 +272,23 @@
                 <argument>-cp</argument>
                 <argument>target/apache-rat-${project.version}.jar</argument>
                 <argument>org.apache.rat.tools.xsd.XsdGenerator</argument>
+              </arguments>
+            </configuration>
+          </execution>
+          <execution>
+            <id>Options generation</id>
+            <phase>pre-site</phase>
+            <goals>
+              <goal>exec</goal>
+            </goals>
+            <configuration>
+              <executable>java</executable>
+              <arguments>
+                <argument>-cp</argument>
+                <argument>target/apache-rat-${project.version}.jar</argument>
+                <argument>org.apache.rat.documentation.Exporter</argument>
+                <argument>src/templates/</argument>
+                <argument>src/site/</argument>
               </arguments>
             </configuration>
           </execution>

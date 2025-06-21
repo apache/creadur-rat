@@ -24,6 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.StringWriter;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 import javax.xml.xpath.XPath;
@@ -71,7 +72,7 @@ public class ConfigurationReportTest {
         assertTrue(XmlUtils.isWellFormedXml(result), "Is well formed");
 
         XPath xPath = XPathFactory.newInstance().newXPath();
-        Document doc = XmlUtils.toDom(new ByteArrayInputStream(result.getBytes()));
+        Document doc = XmlUtils.toDom(new ByteArrayInputStream(result.getBytes(StandardCharsets.UTF_8)));
 
         // verify that all the families are there
         for (String familyId : FAMILY_IDS) {

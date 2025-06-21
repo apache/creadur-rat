@@ -28,7 +28,9 @@ import org.apache.rat.config.parameters.ConfigComponent;
 /**
  * An IHeaderMatcher that reverses the result of an enclosed matcher.
  */
-@ConfigComponent(type = ComponentType.MATCHER, name = "not", desc = "Negates the enclosed matcher.")
+@ConfigComponent(type = ComponentType.MATCHER, name = "not",
+        desc = "A matcher that wraps one matcher and negates its value. Not matchers require that the entire " +
+                "header be read before it can report true or false. This may significantly slow processing.")
 public class NotMatcher extends AbstractHeaderMatcher {
     /**
      * The enclosed matcher to negate.

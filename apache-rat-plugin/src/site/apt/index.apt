@@ -30,8 +30,7 @@ The Rat Maven Plugin
 
   The following goals are available:
 
-  * {{{./check-mojo.html}apache-rat:check}} Runs Rat and creates a report, which is written
-    to a plain text file.
+  * {{{./check-mojo.html}apache-rat:check}} Runs Rat and creates a report.
 
   * {{{./rat-mojo.html}apache-rat:rat}} Runs Rat and creates a report, which will be added
     to the generated site.

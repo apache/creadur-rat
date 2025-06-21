@@ -137,7 +137,10 @@ public final class SPDXMatcherFactory {
     /**
      * Matches an SPDX identifier.
      */
-    @ConfigComponent(type = ComponentType.MATCHER, name = "spdx", desc = "Matches SPDX enclosed license identifier.")
+    @ConfigComponent(type = ComponentType.MATCHER, name = "spdx",
+            desc = "A matcher that matches SPDX tags. SPDX tags have the form: \"SPDX-License-Identifier: short-name\", " +
+                    "where short-name matches the regex pattern \"[A-Za-z0-9\\.-]+\". " +
+                    "The spdx matcher takes the short name as an argument.")
     public class Match extends AbstractHeaderMatcher {
         /**
          * The SPDX identifier.

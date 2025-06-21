@@ -125,7 +125,11 @@ public class XMLConfigurationReaderTest {
         assertEquals(ComponentType.MATCHER, desc.getType());
         assertFalse(desc.isCollection());
         assertNull(desc.getChildType());
-        assertEquals("Matches copyright statements.", desc.getDescription());
+        assertEquals("A matcher that matches Copyright text. Uses regular expressions and so should only " +
+                "be used when looking for copyrights with specific patterns that are not caught by a standard text " +
+                "matcher. This matcher will match \"(C)\", \"copyright\", or \"©\". (text is not case sensitive). " +
+                "It will also match things like Copyright (c) joe 1995 as well as Copyright (C) 1995 joe and " +
+                "Copyright (C) joe 1995.", desc.getDescription());
         assertEquals(4, desc.getChildren().size());
         assertTrue(desc.getChildren().containsKey("end"));
         assertTrue(desc.getChildren().containsKey("start"));

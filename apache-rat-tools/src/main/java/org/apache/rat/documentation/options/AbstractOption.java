@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.rat.tools;
+package org.apache.rat.documentation.options;
 
 import java.util.HashMap;
 import java.util.Locale;
@@ -37,7 +37,7 @@ public abstract class AbstractOption {
     protected static final Pattern PATTERN = Pattern.compile("-(-[a-z0-9]+)+");
     /** The CLI that the Maven option is wrapping */
     protected final Option option;
-    /** The Maven name for the option */
+    /** The name for the option */
     protected final String name;
     /** The argument type for this option */
     protected final OptionCollection.ArgumentType argumentType;
@@ -46,6 +46,7 @@ public abstract class AbstractOption {
      * Constructor.
      *
      * @param option The CLI option
+     * @param name the name for the option.
      */
     AbstractOption(final Option option, final String name) {
         this.option = option;
@@ -54,6 +55,14 @@ public abstract class AbstractOption {
                 option.getArgName() == null ? OptionCollection.ArgumentType.ARG :
                 OptionCollection.ArgumentType.valueOf(option.getArgName().toUpperCase(Locale.ROOT)) :
                 OptionCollection.ArgumentType.NONE;
+    }
+
+    /**
+     * Gets the option this abstract option is wrapping.
+     * @return the original Option.
+     */
+    public Option getOption() {
+        return option;
     }
 
     /**
