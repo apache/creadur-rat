@@ -1,0 +1,488 @@
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~   Licensed to the Apache Software Foundation (ASF) under one or more
+~~   contributor license agreements.  See the NOTICE file distributed with
+~~   this work for additional information regarding copyright ownership.
+~~   The ASF licenses this file to You under the Apache License, Version 2.0
+~~   (the "License"); you may not use this file except in compliance with
+~~   the License.  You may obtain a copy of the License at
+~~
+~~       http://www.apache.org/licenses/LICENSE-2.0
+~~
+~~   Unless required by applicable law or agreed to in writing, software
+~~   distributed under the License is distributed on an "AS IS" BASIS,
+~~   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+~~   See the License for the specific language governing permissions and
+~~   limitations under the License.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+                   ------------------------------
+                   Default Licenses and Matchers
+                   ------------------------------
+
+The following lists the Licenses, and Matchers that are available by default.
+
+* License Properties
+
+ * <<family>>: The license family category for this license.
+
+ * <<id>>: The ID for this license.
+
+ * <<matcher>>: The matcher for this license.
+
+ * <<name>>: The name of this license.
+
+ * <<note>>: The notes about this license.
+
+
+* Default Licenses
+
+
+** Apache License Version 2.0
+
+ * Family: Apache License Version 2.0
+
+ * Id: AL
+
+
+ * Matcher:
+
+    * <<all>> 
+
+        * <<any>> (<id>=ALStandard )
+
+            * <<text>> 
+
+                Licensed under the Apache License, Version 2.0 (the "License")
+
+            * <<text>> 
+
+                Licensed to the Apache Software Foundation (ASF) under one or more contributor license agreements; and to You under the Apache License, Version 2.0.
+
+            * <<text>> 
+
+                http://www.apache.org/licenses/LICENSE\-2.0
+
+            * <<text>> 
+
+                https://www.apache.org/licenses/LICENSE\-2.0
+
+            * <<text>> 
+
+                http://www.apache.org/licenses/LICENSE\-2.0.html
+
+            * <<text>> 
+
+                https://www.apache.org/licenses/LICENSE\-2.0.html
+
+            * <<text>> 
+
+                http://www.apache.org/licenses/LICENSE\-2.0.txt
+
+            * <<text>> 
+
+                https://www.apache.org/licenses/LICENSE\-2.0.txt
+
+            * <<spdx>> (<id>=SPDX:Apache\-2.0 <name>=Apache\-2.0 )
+
+        * <<not>> 
+
+            * <<copyright>> 
+
+
+** Applied Apache License Version 2.0
+
+ * Family: Apache License Version 2.0
+
+ * Id: ASL
+
+
+ * Matcher:
+
+    * <<all>> 
+
+        * <<any>> (<id>=ALStandard )
+
+            * <<text>> 
+
+                Licensed under the Apache License, Version 2.0 (the "License")
+
+            * <<text>> 
+
+                Licensed to the Apache Software Foundation (ASF) under one or more contributor license agreements; and to You under the Apache License, Version 2.0.
+
+            * <<text>> 
+
+                http://www.apache.org/licenses/LICENSE\-2.0
+
+            * <<text>> 
+
+                https://www.apache.org/licenses/LICENSE\-2.0
+
+            * <<text>> 
+
+                http://www.apache.org/licenses/LICENSE\-2.0.html
+
+            * <<text>> 
+
+                https://www.apache.org/licenses/LICENSE\-2.0.html
+
+            * <<text>> 
+
+                http://www.apache.org/licenses/LICENSE\-2.0.txt
+
+            * <<text>> 
+
+                https://www.apache.org/licenses/LICENSE\-2.0.txt
+
+            * <<spdx>> (<id>=SPDX:Apache\-2.0 <name>=Apache\-2.0 )
+
+        * <<copyright>> 
+
+
+** BSD 3 clause
+
+ * Family: BSD 3 clause
+
+ * Id: BSD-3
+
+
+ * Matcher:
+
+    * <<any>> 
+
+        * <<all>> 
+
+            * <<copyright>> 
+
+            * <<text>> (<id>=BSD\-3\-txt )
+
+                Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met: 1. Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer. 2. Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution. 3. Neither the name of the copyright holder nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission. THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS “AS IS” AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+        * <<spdx>> (<id>=SPDX:BSD\-3\-Clause <name>=BSD\-3\-Clause )
+
+
+** DOJO License
+
+ * Family: BSD 3 clause
+
+ * Id: DOJO
+
+
+ * Matcher:
+
+    * <<text>> 
+
+        http://dojotoolkit.org/community/licensing.shtml
+
+
+** The Telemanagement Forum License
+
+ * Family: BSD 3 clause
+
+ * Id: TMF
+
+
+ * Matcher:
+
+    * <<all>> 
+
+        * <<text>> 
+
+            TMF854 Version 1.0
+
+        * <<copyright>> (<owner>=TeleManagement Forum )
+
+        * <<any>> 
+
+            * <<matcherRef>> (<refId>=BSD\-3\-txt )
+
+            * <<spdx>> (<id>=SPDX:BSD\-3\-Clause <name>=BSD\-3\-Clause )
+
+
+** COMMON DEVELOPMENT AND DISTRIBUTION LICENSE Version 1.0
+
+ * Family: COMMON DEVELOPMENT AND DISTRIBUTION LICENSE Version 1.0
+
+ * Id: CDDL1
+
+
+ * Matcher:
+
+    * <<any>> 
+
+        * <<text>> 
+
+            The contents of this file are subject to the terms of the Common Development and Distribution License("CDDL") (the "License"). You may not use this file except in compliance with the License.
+
+        * <<spdx>> (<id>=SPDX:CDDL\-1.0 <name>=CDDL\-1.0 )
+
+
+** ILLUMOS CDDL1 Derived license
+
+ * Family: COMMON DEVELOPMENT AND DISTRIBUTION LICENSE Version 1.0
+
+ * Id: ILLUMOS
+
+
+ * Note: Modified CDDL1 license
+
+ * Matcher:
+
+    * <<text>> 
+
+        The contents of this file are subject to the terms of the Common Development and Distribution License (the "License") You may not use this file except in compliance with the License.
+
+
+** GNU General Public License V1.0
+
+ * Family: GNU General Public License family
+
+ * Id: GPL1
+
+
+ * Matcher:
+
+    * <<any>> 
+
+        * <<text>> 
+
+            This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 1, or (at your option) any later version.
+
+        * <<spdx>> (<id>=SPDX:GPL\-1.0\-only <name>=GPL\-1.0\-only )
+
+
+** GNU General Public License V2.0
+
+ * Family: GNU General Public License family
+
+ * Id: GPL2
+
+
+ * Matcher:
+
+    * <<any>> 
+
+        * <<text>> 
+
+            This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
+
+        * <<spdx>> (<id>=SPDX:GPL\-2.0\-only <name>=GPL\-2.0\-only )
+
+
+** GNU General Public License V3.0
+
+ * Family: GNU General Public License family
+
+ * Id: GPL3
+
+
+ * Matcher:
+
+    * <<any>> 
+
+        * <<text>> 
+
+            This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+
+        * <<spdx>> (<id>=SPDX:GPL\-3.0\-only <name>=GPL\-3.0\-only )
+
+
+** The MIT License
+
+ * Family: The MIT License
+
+ * Id: MIT
+
+
+ * Matcher:
+
+    * <<any>> 
+
+        * <<text>> 
+
+            Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the \\"Software\\"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions: The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software. THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+        * <<spdx>> (<id>=SPDX:MIT <name>=MIT )
+
+
+** OASIS Open License
+
+ * Family: OASIS Open License
+
+ * Id: OASIS
+
+
+ * Note: No modifications allowed
+
+ * Matcher:
+
+    * <<all>> 
+
+        * <<text>> 
+
+            This document and translations of it may be copied and furnished to others and derivative works that comment on or otherwise explain it or assist in its implementation may be prepared copied published and distributed
+
+        * <<copyright>> (<owner>=OASIS Open )
+
+
+** W3C Software Copyright
+
+ * Family: W3C Software Copyright
+
+ * Id: W3C
+
+
+ * Note: Note that W3C requires a NOTICE. All modifications require notes. See http://www.w3.org/Consortium/Legal/2002/copyright\-software\-20021231.
+
+ * Matcher:
+
+    * <<any>> 
+
+        * <<text>> 
+
+            http://www.w3.org/Consortium/Legal/2002/copyright\-software\-20021231
+
+        * <<spdx>> (<id>=SPDX:W3C <name>=W3C )
+
+
+** W3C Document Copyright
+
+ * Family: W3C Document Copyright
+
+ * Id: W3CD
+
+
+ * Note: Note that W3CD does not allow modifications. See http://www.w3.org/Consortium/Legal/2002/copyright\-documents\-20021231.
+
+ * Matcher:
+
+    * <<text>> 
+
+        http://www.w3.org/Consortium/Legal/2002/copyright\-documents\-20021231
+
+
+* Matcher definitions
+
+** all
+
+ A collection of matchers that will report true if any enclosed matcher is true.
+
+  * Encloses one or more IHeaderMatcher object\(s\). (required)
+
+  * <<Attributes>>
+
+    * <<id>> (optional) The id of the matcher.
+
+      * type: String
+
+    * <<resource>> (optional) Resource (URL or file) to read enclosed text matcher definitions from.
+
+      * type: String
+
+
+** any
+
+ A collection of matchers in which all enclosed matchers have to be true for the matcher to report true.
+
+  * Encloses one or more IHeaderMatcher object\(s\). (required)
+
+  * <<Attributes>>
+
+    * <<id>> (optional) The id of the matcher.
+
+      * type: String
+
+    * <<resource>> (optional) Resource (URL or file) to read enclosed text matcher definitions from.
+
+      * type: String
+
+
+** copyright
+
+ A matcher that matches Copyright text. Uses regular expressions and so should only be used when looking for copyrights with specific patterns that are not caught by a standard text matcher. This matcher will match "(C)", "copyright", or "©". (text is not case sensitive). It will also match things like Copyright (c) joe 1995 as well as Copyright (C) 1995 joe and Copyright (C) joe 1995.
+
+  * <<Attributes>>
+
+    * <<end>> (optional) The last year the copyright.  Only valid with 'start'
+
+      * type: String
+
+    * <<id>> (optional) The id of the matcher.
+
+      * type: String
+
+    * <<owner>> (optional) The owner of the copyright
+
+      * type: String
+
+    * <<start>> (optional) The initial year of the copyright if any
+
+      * type: String
+
+
+** matcherRef
+
+ A pointer to another Matcher
+
+  * <<Attributes>>
+
+    * <<refId>> (required) Reference to an existing matcher
+
+      * type: String
+
+
+** not
+
+ A matcher that wraps one matcher and negates its value. Not matchers require that the entire header be read before it can report true or false. This may significantly slow processing.
+
+  * Encloses one IHeaderMatcher object\(s\). (required)
+
+  * <<Attributes>>
+
+    * <<id>> (optional) The id of the matcher.
+
+      * type: String
+
+
+** regex
+
+ Performs a regular expression match using the enclosed the text.  This is a relatively slow matcher.
+
+  * <<Attributes>>
+
+    * <<expression>> (optional) The pattern to match
+
+      * type: String
+
+    * <<id>> (optional) The id of the matcher.
+
+      * type: String
+
+
+** spdx
+
+ A matcher that matches SPDX tags. SPDX tags have the form: "SPDX\-License\-Identifier: short\-name", where short\-name matches the regex pattern "\[A\-Za\-z0\-9\\.\-\]\+". The spdx matcher takes the short name as an argument.
+
+  * <<Attributes>>
+
+    * <<id>> (optional) The id of the matcher.
+
+      * type: String
+
+    * <<name>> (optional) The SPDX identifier string
+
+      * type: String
+
+
+** text
+
+ Matches the enclosed text
+
+  * Encloses one String object\(s\). (required)
+
+  * <<Attributes>>
+
+    * <<id>> (optional) The id of the matcher.
+
+      * type: String
+

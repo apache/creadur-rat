@@ -96,6 +96,12 @@ public class MavenOption extends AbstractOption {
     }
 
     @Override
+    public String getText() {
+        return cleanupName(option);
+    }
+
+
+    @Override
     public String getDefaultValue() {
         Arg arg = Arg.findArg(option);
         String result = DEFAULT_VALUES.get(arg);

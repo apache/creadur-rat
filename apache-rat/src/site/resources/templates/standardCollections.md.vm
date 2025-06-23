@@ -1,16 +1,35 @@
-#set($header = "\##")
+
 ${esc.hash} Argument Types
+#set($doublespace = ${esc.newLine}+${esc.newline})
 
-The RAT help documentation lists a number of argument types.  This is the list of types and what they mean
+There are a number of standard collections that are defined to use for include and exclude arguments.
 
-#set($doublespace = ${newline}+${newline})
-#foreach ($type in $ArgumentTypes)
-    #set( $desc = $stringUtils.replace(${type.description.get}, ${newline}, ${doublespace}))
+${esc.hash}${esc.hash} Type list
+
+#foreach ($stdCol in $StandardCollections)
+    #set($desc = $markdown.escape($stringUtils.replace(${stdCol.desc}, ${newline}, ${doublespace})))
     #set($desc = $stringUtils.replace($desc, ${tab}, " - "))
-${esc.hash}${esc.hash}${type.displayName}
+
+${esc.hash}${esc.hash}${esc.hash} ${stdCol.name}
 
 ${desc}
 
-
+    #if (!${stdCol.patterns.empty})
+  - Patterns:
+        #foreach( $pattern in ${stdCol.patterns} )
+`${markdown.escape(${pattern})`#if( $foreach.count < ${stdCol.patterns.size} ), #end
+        #end
+    #end
+    #if (${stdCol.fileProcessorBuilder.hasNext})
+  - Provides a file processor.
+    #end
+    #if (${stdCol.hasStaticDocumentNameMatcher})
+  - Provides path matcher.
+    #end
 
 #end
+
+${esc.hash}${esc.hash} Notes
+
+ - A file processor will process the associated \"ignore\" file for include and exclude directives
+ - A path matcher will match specific information about the file.

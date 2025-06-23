@@ -90,9 +90,9 @@ public abstract class AbstractOption {
         return cleanupName(option);
     }
     /**
-     * Replaces CLI pattern options with Maven pattern options.
+     * Replaces CLI pattern options with implementation specific pattern options.
      * @param str the string to clean.
-     * @return the string with CLI names replaced with Maven names.
+     * @return the string with CLI names replaced with implementatin specific names.
      */
     public String cleanup(final String str) {
         String workingStr = str;
@@ -114,15 +114,23 @@ public abstract class AbstractOption {
     }
 
     /**
-     * Gets the Maven name for the CLI option.
-     * @return The Maven name for the CLI option.
+     * Gets the implementation specific name for the CLI option.
+     * @return The implementation specific name for the CLI option.
      */
     public final String getName() {
         return name;
     }
 
     /**
-     * Gets the description escaped for XML format.
+     * return a string showing long and short options if they are available.  Will return
+     * a string.
+     * @return A string showing long and short options if they are available.  Never {@code null}.
+     */
+    public abstract String getText();
+
+
+    /**
+     * Gets the description in implementation specific format.
      *
      * @return the description or an empty string.
      */

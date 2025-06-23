@@ -14,9 +14,6 @@
 ~~   See the License for the specific language governing permissions and
 ~~   limitations under the License.
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-#set($version = ${rat.version.version})
-#set($stringUtils = ${rat.stringUtils})
-#set($newTab = ${rat.doubleLine}+" * ")
 
                    --------------------------
                    Command Line Support
@@ -47,7 +44,7 @@ About Apache RAT&#8482;
  is to run the help command:
 
 +------------------------------------------+
-java -jar apache-rat/target/apache-rat-${version}.jar --help
+java -jar apache-rat/target/apache-rat-0.17-SNAPSHOT.jar --help
 +------------------------------------------+
 
  This will output a help message similar to the {{{apache-rat/cli_options.html}command line options}} document as well as
@@ -63,7 +60,7 @@ java -jar apache-rat/target/apache-rat-${version}.jar --help
  To add license headers use a command such as:
 
 +------------------------------------------+
-java -jar apache-rat/target/apache-rat-${version}.jar --edit-license \
+java -jar apache-rat/target/apache-rat-0.17-SNAPSHOT.jar --edit-license \
   --edit-copyright "Copyright 2008 Foo" \
   --edit-overwrite \
   /path/to/project
@@ -87,7 +84,7 @@ java -jar apache-rat/target/apache-rat-${version}.jar --edit-license \
  The following command will exclude all files with a "foo" extension as wll as all files in the junk folder at the root of the project.
 
 +------------------------------------------+
-java -jar apache-rat/target/apache-rat-${version}.jar \
+java -jar apache-rat/target/apache-rat-0.17-SNAPSHOT.jar \
  --input-exclude **/*.foo junk/** -- \
   /path/to/project
 +------------------------------------------+
@@ -101,7 +98,7 @@ java -jar apache-rat/target/apache-rat-${version}.jar \
  how to do that.
 
 +------------------------------------------+
-java -jar apache-rat/target/apache-rat-${version}.jar \
+java -jar apache-rat/target/apache-rat-0.17-SNAPSHOT.jar \
  --input-exclude-file /path/to/project/.rat-excludes \
   /path/to/project
 +------------------------------------------+
@@ -113,7 +110,7 @@ java -jar apache-rat/target/apache-rat-${version}.jar \
  the following command could be used.
 
 +------------------------------------------+
-java -jar apache-rat/target/apache-rat-${version}.jar \
+java -jar apache-rat/target/apache-rat-0.17-SNAPSHOT.jar \
  --input-exclude-std GIT -- \
   /path/to/project
 +------------------------------------------+
@@ -122,7 +119,7 @@ java -jar apache-rat/target/apache-rat-${version}.jar \
   To exclude the hidden files and directories and the git excluded resources the following command could be used:
 
 +------------------------------------------+
-java -jar apache-rat/target/apache-rat-${version}.jar \
+java -jar apache-rat/target/apache-rat-0.17-SNAPSHOT.jar \
  --input-exclude-std GIT HIDDEN_DIR HIDDEN_FILE -- \
   /path/to/project
 +------------------------------------------+
@@ -133,7 +130,7 @@ java -jar apache-rat/target/apache-rat-${version}.jar \
   takes the the file size in bytes as an argument.  The following will exclude files of 10 bytes or less.
 
 +------------------------------------------+
-java -jar apache-rat/target/apache-rat-${version}.jar \
+java -jar apache-rat/target/apache-rat-0.17-SNAPSHOT.jar \
  --input-exclude-size 10 -- \
   /path/to/project
 +------------------------------------------+
@@ -146,7 +143,7 @@ java -jar apache-rat/target/apache-rat-${version}.jar \
  command will ensure that it is processed.
 
 +------------------------------------------+
-java -jar apache-rat/target/apache-rat-${version}.jar \
+java -jar apache-rat/target/apache-rat-0.17-SNAPSHOT.jar \
  --input-exclude **/*.foo junk/** \
  --input-include master/kung.foo -- \
   /path/to/project
@@ -160,16 +157,20 @@ java -jar apache-rat/target/apache-rat-${version}.jar \
 
  RAT allows you to style the output as you see fit.  Several stylesheets are included in the RAT package.
 
-#foreach ($style in ${rat.styleSheets})
- * {{{https://gitbox.apache.org/repos/asf/creadur-rat/blob/master/apache-rat-core/src/main/resources/org/apache/rat/${style.arg}.xsl}${style.arg}}} - ${style.desc}
+ * {{{https://gitbox.apache.org/repos/asf/creadur-rat/blob/master/apache-rat-core/src/main/resources/org/apache/rat/missing-headers.xsl}missing-headers}} - Produces a report of files that are missing headers.
 
-#end
+ * {{{https://gitbox.apache.org/repos/asf/creadur-rat/blob/master/apache-rat-core/src/main/resources/org/apache/rat/plain-rat.xsl}plain-rat}} - The default style.
+
+ * {{{https://gitbox.apache.org/repos/asf/creadur-rat/blob/master/apache-rat-core/src/main/resources/org/apache/rat/unapproved-licenses.xsl}unapproved-licenses}} - Produces a report of the files with unapproved licenses.
+
+ * {{{https://gitbox.apache.org/repos/asf/creadur-rat/blob/master/apache-rat-core/src/main/resources/org/apache/rat/xml.xsl}xml}} - Produces output in pretty-printed XML.
+
 
  These stylesheets can be specified using the "--output-style" option.  The following example create a pretty printed xml
  report output.
 
 +------------------------------------------+
-java -jar apache-rat/target/apache-rat-${version}.jar \
+java -jar apache-rat/target/apache-rat-0.17-SNAPSHOT.jar \
  --output-style xml \
   /path/to/project
 +------------------------------------------+

@@ -227,6 +227,11 @@ public class AntOption extends AbstractOption {
                 .collect(Collectors.toSet());
     }
 
+    @Override
+    public String getText() {
+        return cleanupName(option);
+    }
+
     protected String cleanupName(final Option option) {
         AntOption antOption = new AntOption(option);
         String fmt = antOption.isAttribute() ? "%s attribute" : "<%s>";

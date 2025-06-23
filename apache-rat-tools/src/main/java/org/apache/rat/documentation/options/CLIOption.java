@@ -31,6 +31,19 @@ public class CLIOption extends AbstractOption {
         super(option, createName(option));
     }
 
+    @Override
+    public String getText() {
+        StringBuilder result = new StringBuilder();
+        if (option.getLongOpt() != null) {
+            result.append("--").append(option.getLongOpt());
+            if (option.getOpt() != null) {
+                result.append(" or -").append(option.getArgs());
+            }
+        } else {
+            result.append("-").append(option.getArgs());
+        }
+        return result.toString();
+    }
 
     @Override
     protected String cleanupName(final Option option) {
