@@ -17,7 +17,7 @@
     specific language governing permissions and limitations
     under the License.
     -->
-    <toolbox>
+    <toolbox scope="application">
         <tool class="org.apache.rat.documentation.velocity.RatTool"/>
     </toolbox>
 </tools>

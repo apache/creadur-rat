@@ -1,0 +1,88 @@
+#set($stringUtils = ${rat.stringUtils})
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~   Licensed to the Apache Software Foundation (ASF) under one or more
+~~   contributor license agreements.  See the NOTICE file distributed with
+~~   this work for additional information regarding copyright ownership.
+~~   The ASF licenses this file to You under the Apache License, Version 2.0
+~~   (the "License"); you may not use this file except in compliance with
+~~   the License.  You may obtain a copy of the License at
+~~
+~~       http://www.apache.org/licenses/LICENSE-2.0
+~~
+~~   Unless required by applicable law or agreed to in writing, software
+~~   distributed under the License is distributed on an "AS IS" BASIS,
+~~   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+~~   See the License for the specific language governing permissions and
+~~   limitations under the License.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+                   ------------------------------
+                   Default Licenses and Matchers
+                   ------------------------------
+
+The following lists the Licenses, and Matchers that are available by default.
+
+* License Properties
+
+#foreach ($description in ${rat.licenseProperties})
+ * <<${description.commonName}>>: $rat.aptEscape(${description.description})
+
+#end
+
+* Default Licenses
+
+#set($descEnd = ${rat.doubleLine} + " ")
+#foreach ($license in ${rat.licenses})
+
+** $rat.aptEscape(${license.name})
+
+ * Family: $rat.aptEscape(${license.family})
+
+ #if(${license.id})
+ * Id: ${license.id}
+
+ #end
+
+#if (${license.note})
+  #set($note = ${rat.aptEscape(${license.note})})
+  #set($note = $stringUtils.replace(${note}, ${esc.N}, ${descEnd}))
+ * Note: ${note}
+
+ #end
+ * Matcher:
+
+ #set($tree = $license.matcherTree)
+ #foreach($node in $tree.traverse)
+   #set($padWidth = ${node.level} * 4)
+   #set($pad = "   " + $rat.pad(${padWidth}))
+${pad} * <<${node.name}>> #if(!$node.attributes.empty)(#foreach($attribute in ${node.attributes})<${attribute.name}>=$rat.aptEscape($attribute.value) #end)#end
+
+   #if(${node.enclosed})
+${pad}     $rat.aptEscape($node.enclosed.value)
+
+   #end
+   #end
+#end
+
+* Matcher definitions
+#foreach ($matcher in $rat.matchers)
+
+** ${matcher.name}
+
+ $rat.aptEscape(${matcher.description})
+
+  #if ($matcher.enclosed)
+  * Encloses one ${matcher.enclosed.collection}${matcher.enclosed.type} object\(s\). ($matcher.enclosed.required)
+
+  #end
+  #if ($matcher.attributes)
+  * <<Attributes>>
+
+    #foreach ($attribute in $matcher.attributes)
+    * <<${attribute.name}>> (${attribute.required}) ${rat.aptEscape(${attribute.description})}
+
+      * type: ${attribute.type}
+
+    #end
+  #end
+#end

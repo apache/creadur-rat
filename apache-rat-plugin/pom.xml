@@ -197,31 +197,17 @@
             </configuration>
           </execution>
           <execution>
-            <id>Maven argument types generation</id>
+            <id>Initial site generation</id>
             <phase>pre-site</phase>
             <goals>
               <goal>java</goal>
             </goals>
             <configuration>
-              <mainClass>org.apache.rat.tools.ArgumentTypes</mainClass>
+              <mainClass>org.apache.rat.documentation.Exporter</mainClass>
               <classpathScope>test</classpathScope>
               <arguments>
-                <argument>${project.basedir}/src/site/apt/argument_types.txt</argument>
-              </arguments>
-            </configuration>
-          </execution>
-          <execution>
-            <id>Maven options generation</id>
-            <phase>pre-site</phase>
-            <goals>
-              <goal>java</goal>
-            </goals>
-            <configuration>
-              <mainClass>org.apache.rat.tools.Naming</mainClass>
-              <classpathScope>test</classpathScope>
-              <arguments>
-                <argument>--maven</argument>
-                <argument>${project.basedir}/src/site/apt/options.txt</argument>
+                <argument>${project.basedir}/src/templates</argument>
+                <argument>${project.basedir}/src/site</argument>
               </arguments>
             </configuration>
           </execution>

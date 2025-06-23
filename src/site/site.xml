@@ -43,27 +43,32 @@
     <breadcrumbs>
       <item name="Apache" href="https://www.apache.org/"/>
       <item name="Creadur" href="https://creadur.apache.org/"/>
-      <item name="Rat" href="https://creadur.apache.org/rat/"/>
+      <item name="RAT" href="https://creadur.apache.org/rat/"/>
     </breadcrumbs>
     <menu name="Apache Rat&#x2122;" inherit="bottom">
-      <item name="Introducing Rat" href="/index.html"/>
+      <item name="Introducing RAT" href="/index.html"/>
       <item name="Downloads" href="/download_rat.cgi"/>
       <item name="Changes" href="/changes.html"/>
     </menu>
-    <menu name="Rat from the Command Line" inherit="bottom">
+    <menu name="RAT from the Command Line" inherit="bottom">
       <item name="Command Line Introduction" href="apache-rat/index.html"/>
+      <item name="Command Line Options" href="apache-rat/cli_options.html"/>
       <item name="Exclusion Expressions" href="apache-rat-core/exclusion_expression.html"/>
+      <item name="Standard Collections" href="apache-rat/standard_collections.html"/>
     </menu>
-    <menu name="Rat from Ant" inherit="bottom">
+    <menu name="RAT from Ant" inherit="bottom">
       <item name="Ant Task Introduction" href="apache-rat-tasks/index.html"/>
     </menu>
-    <menu name="Rat from Maven" inherit="bottom">
+    <menu name="RAT from Maven" inherit="bottom">
       <item name="Maven Plugin Introduction" href="apache-rat-plugin/index.html"/>
+      <item name="Maven Options" href="apache-rat-plugin/mvn_options.html"/>
+      <item name="Maven Examples" href="apache-rat-plugin/examples/index.html"/>
     </menu>
     <menu name="Configuring Rat" inherit="bottom">
-      <item name="Defining New Licenses" href="license_def.html"/>
       <item name="Option Name Cross Reference" href="apache-rat/name_xref.html"/>
-      <item name="Default Licenses, etc" href="apache-rat/default_licenses.html"/>
+      <item name="Default Licenses" href="apache-rat/default_licenses.html"/>
+      <item name="Default Matchers" href="apache-rat/default_matchers.html" />
+      <item name="Defining New Licenses" href="license_def.html"/>
       <item name="Configuration XSD" href="apache-rat/xsd.html"/>
       <item name="Default Configuration" href="https://gitbox.apache.org/repos/asf/creadur-rat/blob/master/apache-rat-core/src/main/resources/org/apache/rat/default.xml"/>
     </menu>

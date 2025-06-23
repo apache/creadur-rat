@@ -20,12 +20,15 @@ package org.apache.rat.documentation;
 
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileFilter;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 
-
+import org.apache.commons.io.filefilter.DirectoryFileFilter;
+import org.apache.commons.io.filefilter.OrFileFilter;
+import org.apache.commons.io.filefilter.SuffixFileFilter;
 import org.apache.rat.api.Document;
 import org.apache.rat.api.RatException;
 import org.apache.rat.document.DocumentName;
@@ -42,7 +45,7 @@ import org.apache.velocity.runtime.resource.loader.FileResourceLoader;
 import org.apache.velocity.tools.generic.EscapeTool;
 
 /**
- * Uses Apache Velocity to write a configuration document.
+ * Uses Apache Velocity to write a document containing RAT configuration information..
  *
  * @see <a href="https://velocity.apache.org/">Apache Velocity</a>
  */
@@ -57,9 +60,10 @@ public class Exporter {
      * Executes the generation of documentation from a configuration definition.
      * Arguments are
      * <ol>
-     * <li>Template - The file name of the Velocity template</li>
-     * <li>Output - THe file name for the generated document</li>
-     * <li>Providers - zero or more providers to add to the context</li>
+     * <li>Template directory - the top level directory in a tree of  Velocity templates.  The process scans the directory
+     * tree looking for files ending in {@code .vm} and processes them.</li>
+     * <li>Output directory - The top level directory to writhe the processed files to.  The process removes the {@code .vm}
+     * from the input file name and writes the resulting file to an equivalent directory entry in the output directory.</li>
      * </ol>
      *
      * @param args
@@ -76,26 +80,47 @@ public class Exporter {
      *             if the class can not be instantiated.
      * @throws IllegalAccessException
      *             if there are access restrictions on the class.
+     * @throws RatException on rat processing error.
      */
     public static void main(final String[] args) throws IOException, ClassNotFoundException, NoSuchMethodException,
             InvocationTargetException, InstantiationException, IllegalAccessException, RatException {
         final String templateDir = args[0];
         final String outputDir = args[1];
+
+        // crate a DirectoryWalker to walk the template tree.
         File sourceDir = new File(templateDir);
         DocumentName sourceName = DocumentName.builder(sourceDir).build();
-        Document document = new FileDocument(sourceName, sourceDir, DocumentNameMatcher.MATCHES_ALL);
+        FileFilter fileFilter = new OrFileFilter(new SuffixFileFilter(".vm"), DirectoryFileFilter.INSTANCE);
+        Document document = new FileDocument(sourceName, sourceDir, new DocumentNameMatcher(fileFilter));
         DirectoryWalker walker = new DirectoryWalker(document);
+
+        // create a rewriter that writes to the target directory.
         DocumentName targetDir = DocumentName.builder(new File(outputDir)).build();
         Rewriter rewriter = new Rewriter(targetDir);
+
+        // have the walker process the rewrite.
         walker.run(rewriter);
     }
 
+    /**
+     * A RatReport implementation that processes the {@code .vm} files in the tempalte tree and writes the
+     * results to the output tree.
+     */
     private static class Rewriter implements RatReport {
-       private DocumentName targetDir;
-       private final DocumentName rootDir;
-       private final VelocityEngine velocityEngine;
-       private final VelocityContext context;
-        public Rewriter(DocumentName targetDir) {
+        /** The base directory we are targeting for output */
+        private final DocumentName targetDir;
+        /** The name of the root dir we are reading from */
+        private final DocumentName rootDir;
+        /** The configured velocity engine */
+        private final VelocityEngine velocityEngine;
+        /** The context for Velocity */
+        private final VelocityContext context;
+
+        /**
+         * Create a rewriter.
+         * @param targetDir the root of the output directory tree.
+         */
+        Rewriter(final DocumentName targetDir) {
             this.targetDir = targetDir;
             this.rootDir = DocumentName.builder(new File(".")).build();
             velocityEngine = new VelocityEngine();
@@ -107,9 +132,14 @@ public class Exporter {
             context.put("rat", new RatTool());
         }
 
+        /**
+         * Processes the input document and creates an output document at an equivalent place in the output tree.
+         * @param document the input document.
+         */
         @Override
-        public void report(Document document) {
-            DocumentName outputFile = targetDir.resolve(document.getName().localized());
+        public void report(final Document document) {
+            String localized = document.getName().localized();
+            DocumentName outputFile = targetDir.resolve(localized.substring(0, localized.length() - 3));
             DocumentName relativeFile = DocumentName.builder(document.getName()).setBaseName(rootDir).build();
             try {
                 final File file = outputFile.asFile();
@@ -121,7 +151,6 @@ public class Exporter {
                 try (BufferedWriter writer = Files.newBufferedWriter(file.toPath(), StandardCharsets.UTF_8)) {
                     template.merge(context, writer);
                 }
-                //Exporter.execute(relativeFile, outputFile);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }

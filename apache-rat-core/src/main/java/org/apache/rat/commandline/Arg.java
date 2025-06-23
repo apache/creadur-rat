@@ -106,10 +106,10 @@ public enum Arg {
             .addOption(Option.builder("A").longOpt("addLicense")
                     .deprecated(DeprecatedAttributes.builder().setForRemoval(true).setSince("0.17")
                             .setDescription(StdMsgs.useMsg("--edit-license")).get())
-                    .desc("Add the default license header to any file with an unknown license that is not in the exclusion list.")
+                    .desc("Add the Apache V2 license header to any file with an unknown license that is not in the exclusion list.")
                     .build())
             .addOption(Option.builder().longOpt("edit-license").desc(
-                    "Add the default license header to any file with an unknown license that is not in the exclusion list. "
+                    "Add the Apache V2 license header to any file with an unknown license that is not in the exclusion list. "
                             + "By default new files will be created with the license header, "
                             + "to force the modification of existing files use the --edit-overwrite option.").build()
             )),
@@ -304,7 +304,7 @@ public enum Arg {
     EXCLUDE_SIZE(new OptionGroup()
             .addOption(Option.builder().longOpt("input-exclude-size").argName("Integer")
                     .hasArg().type(Integer.class)
-                    .desc("Excludes files with sizes less than the given argument.")
+                    .desc("Excludes files with sizes less than the number of bytes specified.")
                     .build())
     ),
     /**

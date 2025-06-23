@@ -1,0 +1,876 @@
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~   Licensed to the Apache Software Foundation (ASF) under one or more
+~~   contributor license agreements.  See the NOTICE file distributed with
+~~   this work for additional information regarding copyright ownership.
+~~   The ASF licenses this file to You under the Apache License, Version 2.0
+~~   (the "License"); you may not use this file except in compliance with
+~~   the License.  You may obtain a copy of the License at
+~~
+~~       http://www.apache.org/licenses/LICENSE-2.0
+~~
+~~   Unless required by applicable law or agreed to in writing, software
+~~   distributed under the License is distributed on an "AS IS" BASIS,
+~~   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+~~   See the License for the specific language governing permissions and
+~~   limitations under the License.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+                   --------------------------
+                   Maven Options
+                   --------------------------
+
+Maven Options
+
+ The RAT Maven plugin has many of the same options as the command line as well as a few that are specific to the Maven
+  environment. The argument types specified in the list below are defined in section following.
+
+* The Options
+
+
+** \<a\>
+
+ <<Deprecated for removal since 0.17: Use \<editLicense\> instead.>>  
+
+  * Required: false
+
+
+  * Example: \<a /\>
+
+
+** \<addLicense\>
+
+ <<Deprecated for removal since 0.17: Use \<editLicense\> instead.>>  Add the Apache V2 license header to any file with an unknown license that is not in the exclusion list.
+
+  * Required: false
+
+
+  * Example: \<addLicense /\>
+
+
+** \<config\>
+
+ File names for system configuration.
+
+  * Required: false
+
+  * Argument Type: \<File\>
+
+  * Argument Count: Unlimited.
+
+  * Example: \<config\>File\</config\>
+
+
+** \<configurationNoDefaults\>
+
+ Ignore default configuration.
+
+  * Required: false
+
+
+  * Example: \<configurationNoDefaults /\>
+
+
+** \<copyright\>
+
+ <<Deprecated for removal since 0.17: Use \<editCopyright\> instead.>>  The copyright message to use in the license headers.
+
+  * Required: false
+
+  * Argument Type: \<Arg\>
+
+  * Argument Count:  1
+
+  * Example: \<copyright\>Arg\</copyright\>
+
+
+** \<counterMax\>
+
+ The acceptable maximum number for the specified counter. A value of '\-1' specifies an unlimited number.
+
+  * Required: false
+
+  * Argument Type: \<CounterPattern\>
+
+  * Argument Count: Unlimited.
+
+  * Example: \<counterMax\>CounterPattern\</counterMax\>
+
+
+** \<counterMin\>
+
+ The minimum number for the specified counter.
+
+  * Required: false
+
+  * Argument Type: \<CounterPattern\>
+
+  * Argument Count: Unlimited.
+
+  * Example: \<counterMin\>CounterPattern\</counterMin\>
+
+
+** \<dir\>
+
+ <<Deprecated for removal since 0.17: Use the standard '\-\-' to signal the end of arguments.>>  Used to indicate end of list when using options that take multiple arguments.
+
+  * Required: false
+
+  * Argument Type: \<DirOrArchive\>
+
+  * Argument Count:  1
+
+  * Example: \-\- not supported \-\-
+
+
+** \<dryRun\>
+
+ If set do not update the files but generate the reports.
+
+  * Required: false
+
+
+  * Example: \<dryRun /\>
+
+
+** \<editCopyright\>
+
+ The copyright message to use in the license headers. Usually in the form of "Copyright 2008 Foo".  Only valid with \-\-edit\-license
+
+  * Required: false
+
+  * Argument Type: \<Arg\>
+
+  * Argument Count:  1
+
+  * Example: \<editCopyright\>Arg\</editCopyright\>
+
+
+** \<editLicense\>
+
+ Add the Apache V2 license header to any file with an unknown license that is not in the exclusion list. By default new files will be created with the license header, to force the modification of existing files use the \-\-edit\-overwrite option.
+
+  * Required: false
+
+
+  * Example: \<editLicense /\>
+
+
+** \<editOverwrite\>
+
+ Forces any changes in files to be written directly to the source files so that new files are not created. Only valid with \-\-edit\-license.
+
+  * Required: false
+
+
+  * Example: \<editOverwrite /\>
+
+
+** \<exclude\>
+
+ <<Deprecated for removal since 0.17: Use \<inputExclude\> instead.>>  Excludes files matching \<Expression\>.
+
+  * Required: false
+
+  * Argument Type: \<Expression\>
+
+  * Argument Count: Unlimited.
+
+  * Example: \<exclude\>Expression\</exclude\>
+
+
+** \<excludeFile\>
+
+ <<Deprecated for removal since 0.17: Use \<inputExcludeFile\> instead.>>  Reads \<Expression\> entries from a file. Entries will be excluded from processing.
+
+  * Required: false
+
+  * Argument Type: \<File\>
+
+  * Argument Count:  1
+
+  * Example: \<excludeFile\>File\</excludeFile\>
+
+
+** \<force\>
+
+ <<Deprecated for removal since 0.17: Use \<editOverwrite\> instead.>>  Forces any changes in files to be written directly to the source files so that new files are not created.
+
+  * Required: false
+
+
+  * Example: \<force /\>
+
+
+** \<help\>
+
+ Print help for the RAT command line interface and exit.
+
+  * Required: false
+
+
+  * Example: \-\- not supported \-\-
+
+
+** \<helpLicenses\>
+
+ Print information about registered licenses.
+
+  * Required: false
+
+
+  * Example: \<helpLicenses /\>
+
+
+** \<include\>
+
+ <<Deprecated for removal since 0.17: Use \<inputInclude\> instead.>>  Includes files matching \<Expression\>. Will override excluded files.
+
+  * Required: false
+
+  * Argument Type: \<Expression\>
+
+  * Argument Count: Unlimited.
+
+  * Example: \<include\>Expression\</include\>
+
+
+** \<includesFile\>
+
+ <<Deprecated for removal since 0.17: Use \<inputIncludeFile\> instead.>>  Reads \<Expression\> entries from a file. Entries will be excluded from processing.
+
+  * Required: false
+
+  * Argument Type: \<File\>
+
+  * Argument Count:  1
+
+  * Example: \<includesFile\>File\</includesFile\>
+
+
+** \<inputExclude\>
+
+ Excludes files matching \<Expression\>.
+
+  * Required: false
+
+  * Argument Type: \<Expression\>
+
+  * Argument Count: Unlimited.
+
+  * Example: \<inputExclude\>Expression\</inputExclude\>
+
+
+** \<inputExcludeFile\>
+
+ Reads \<Expression\> entries from a file. Entries will be excluded from processing.
+
+  * Required: false
+
+  * Argument Type: \<File\>
+
+  * Argument Count:  1
+
+  * Example: \<inputExcludeFile\>File\</inputExcludeFile\>
+
+
+** \<inputExcludeParsedScm\>
+
+ Parse SCM based exclusion files to exclude specified files and directories.
+
+  * Required: false
+
+  * Argument Type: \<StandardCollection\>
+
+  * Argument Count: Unlimited.
+
+  * Example: \<inputExcludeParsedScm\>StandardCollection\</inputExcludeParsedScm\>
+
+
+** \<inputExcludeSize\>
+
+ Excludes files with sizes less than the number of bytes specified.
+
+  * Required: false
+
+  * Argument Type: \<Integer\>
+
+  * Argument Count:  1
+
+  * Example: \<inputExcludeSize\>Integer\</inputExcludeSize\>
+
+
+** \<inputExcludeStd\>
+
+ Excludes files defined in standard collections based on commonly occurring groups.
+
+  * Required: false
+
+  * Argument Type: \<StandardCollection\>
+
+  * Argument Count: Unlimited.
+
+  * Example: \<inputExcludeStd\>StandardCollection\</inputExcludeStd\>
+
+
+** \<inputInclude\>
+
+ Includes files matching \<Expression\>. Will override excluded files.
+
+  * Required: false
+
+  * Argument Type: \<Expression\>
+
+  * Argument Count: Unlimited.
+
+  * Example: \<inputInclude\>Expression\</inputInclude\>
+
+
+** \<inputIncludeFile\>
+
+ Reads \<Expression\> entries from a file. Entries will override excluded files.
+
+  * Required: false
+
+  * Argument Type: \<File\>
+
+  * Argument Count:  1
+
+  * Example: \<inputIncludeFile\>File\</inputIncludeFile\>
+
+
+** \<inputIncludeStd\>
+
+ Includes files defined in standard collections based on commonly occurring groups. Will override excluded files.
+
+  * Required: false
+
+  * Argument Type: \<StandardCollection\>
+
+  * Argument Count: Unlimited.
+
+  * Example: \<inputIncludeStd\>StandardCollection\</inputIncludeStd\>
+
+
+** \<inputSource\>
+
+ A file containing file names to process. File names must use linux directory separator ('/') or none at all. File names that do not start with '/' are relative to the directory where the argument is located.
+
+  * Required: false
+
+  * Argument Type: \<File\>
+
+  * Argument Count: Unlimited.
+
+  * Example: \<inputSource\>File\</inputSource\>
+
+
+** \<licenseFamiliesApproved\>
+
+ A comma separated list of approved license family IDs. These license families will be added to the list of approved license families.
+
+  * Required: false
+
+  * Argument Type: \<FamilyID\>
+
+  * Argument Count:  1
+
+  * Example: \<licenseFamiliesApproved\>FamilyID\</licenseFamiliesApproved\>
+
+
+** \<licenseFamiliesApprovedFile\>
+
+ Name of file containing comma separated lists of approved family IDs.
+
+  * Required: false
+
+  * Argument Type: \<File\>
+
+  * Argument Count:  1
+
+  * Example: \<licenseFamiliesApprovedFile\>File\</licenseFamiliesApprovedFile\>
+
+
+** \<licenseFamiliesDenied\>
+
+ A comma separated list of denied License family IDs. These license families will be removed from the list of approved licenses. Once license families are removed they can not be added back.
+
+  * Required: false
+
+  * Argument Type: \<FamilyID\>
+
+  * Argument Count:  1
+
+  * Example: \<licenseFamiliesDenied\>FamilyID\</licenseFamiliesDenied\>
+
+
+** \<licenseFamiliesDeniedFile\>
+
+ Name of file containing comma separated lists of denied license IDs. These license families will be removed from the list of approved licenses. Once license families are removed they can not be added back.
+
+  * Required: false
+
+  * Argument Type: \<File\>
+
+  * Argument Count:  1
+
+  * Example: \<licenseFamiliesDeniedFile\>File\</licenseFamiliesDeniedFile\>
+
+
+** \<licenses\>
+
+ <<Deprecated for removal since 0.17: Use \<config\> instead.>>  File names for system configuration.
+
+  * Required: false
+
+  * Argument Type: \<File\>
+
+  * Argument Count: Unlimited.
+
+  * Example: \<licenses\>File\</licenses\>
+
+
+** \<licensesApproved\>
+
+ A comma separated list of approved License IDs. These licenses will be added to the list of approved licenses.
+
+  * Required: false
+
+  * Argument Type: \<LicenseID\>
+
+  * Argument Count:  1
+
+  * Example: \<licensesApproved\>LicenseID\</licensesApproved\>
+
+
+** \<licensesApprovedFile\>
+
+ Name of file containing comma separated lists of approved License IDs.
+
+  * Required: false
+
+  * Argument Type: \<File\>
+
+  * Argument Count:  1
+
+  * Example: \<licensesApprovedFile\>File\</licensesApprovedFile\>
+
+
+** \<licensesDenied\>
+
+ A comma separated list of denied License IDs. These licenses will be removed from the list of approved licenses. Once licenses are removed they can not be added back.
+
+  * Required: false
+
+  * Argument Type: \<LicenseID\>
+
+  * Argument Count:  1
+
+  * Example: \<licensesDenied\>LicenseID\</licensesDenied\>
+
+
+** \<licensesDeniedFile\>
+
+ Name of file containing comma separated lists of the denied license IDs. These licenses will be removed from the list of approved licenses. Once licenses are removed they can not be added back.
+
+  * Required: false
+
+  * Argument Type: \<File\>
+
+  * Argument Count:  1
+
+  * Example: \<licensesDeniedFile\>File\</licensesDeniedFile\>
+
+
+** \<listFamilies\>
+
+ <<Deprecated for removal since 0.17: Use \<outputFamilies\> instead.>>  List the defined license families.
+
+  * Required: false
+
+  * Argument Type: \<LicenseFilter\>
+
+  * Argument Count:  1
+
+  * Example: \<listFamilies\>LicenseFilter\</listFamilies\>
+
+
+** \<listLicenses\>
+
+ <<Deprecated for removal since 0.17: Use \<outputLicenses\> instead.>>  List the defined licenses.
+
+  * Required: false
+
+  * Argument Type: \<LicenseFilter\>
+
+  * Argument Count:  1
+
+  * Example: \<listLicenses\>LicenseFilter\</listLicenses\>
+
+
+** \<logLevel\>
+
+ Sets the log level.
+
+  * Required: false
+
+  * Argument Type: \<LogLevel\>
+
+  * Argument Count:  1
+
+  * Example: \-\- not supported \-\-
+
+
+** \<noDefaultLicenses\>
+
+ <<Deprecated for removal since 0.17: Use \<configurationNoDefaults\> instead.>>  Ignore default configuration.
+
+  * Required: false
+
+
+  * Example: \<noDefaultLicenses /\>
+
+
+** \<out\>
+
+ <<Deprecated for removal since 0.17: Use \<outputFile\> instead.>>  Define the output file where to write a report to.
+
+  * Required: false
+
+  * Argument Type: \<File\>
+
+  * Argument Count:  1
+
+  * Example: \<out\>File\</out\>
+
+
+** \<outputArchive\>
+
+ Specifies the level of detail in ARCHIVE file reporting.
+
+  * Required: false
+
+  * Argument Type: \<ProcessingType\>
+
+  * Argument Count:  1
+
+  * Example: \<outputArchive\>ProcessingType\</outputArchive\>
+
+
+** \<outputFamilies\>
+
+ List the defined license families.
+
+  * Required: false
+
+  * Argument Type: \<LicenseFilter\>
+
+  * Argument Count:  1
+
+  * Example: \<outputFamilies\>LicenseFilter\</outputFamilies\>
+
+
+** \<outputFile\>
+
+ Define the output file where to write a report to.
+
+  * Required: false
+
+  * Argument Type: \<File\>
+
+  * Argument Count:  1
+
+  * Example: \<outputFile\>File\</outputFile\>
+
+
+** \<outputLicenses\>
+
+ List the defined licenses.
+
+  * Required: false
+
+  * Argument Type: \<LicenseFilter\>
+
+  * Argument Count:  1
+
+  * Example: \<outputLicenses\>LicenseFilter\</outputLicenses\>
+
+
+** \<outputStandard\>
+
+ Specifies the level of detail in STANDARD file reporting.
+
+  * Required: false
+
+  * Argument Type: \<ProcessingType\>
+
+  * Argument Count:  1
+
+  * Example: \<outputStandard\>ProcessingType\</outputStandard\>
+
+
+** \<outputStyle\>
+
+ XSLT stylesheet to use when creating the report. Either an external xsl file may be specified or one of the internal named sheets.
+
+  * Required: false
+
+  * Argument Type: \<StyleSheet\>
+
+  * Argument Count:  1
+
+  * Example: \<outputStyle\>StyleSheet\</outputStyle\>
+
+
+** \<scanHiddenDirectories\>
+
+ <<Deprecated for removal since 0.17: Use \<inputIncludeStd\> with 'HIDDEN_DIR' argument instead.>>  Scans hidden directories.
+
+  * Required: false
+
+
+  * Example: \<scanHiddenDirectories /\>
+
+
+** \<stylesheet\>
+
+ <<Deprecated for removal since 0.17: Use \<outputStyle\> instead.>>  XSLT stylesheet to use when creating the report.
+
+  * Required: false
+
+  * Argument Type: \<StyleSheet\>
+
+  * Argument Count:  1
+
+  * Example: \<stylesheet\>StyleSheet\</stylesheet\>
+
+
+** \<xml\>
+
+ <<Deprecated for removal since 0.17: Use \<outputStyle\> with the 'xml' argument instead.>>  forces XML output rather than the textual report.
+
+  * Required: false
+
+
+  * Example: \<xml /\>
+
+
+** Argument Types
+
+*** Arg
+
+ A string
+
+*** CounterPattern
+
+ A pattern comprising one of the following prefixes followed by a colon and a count (e.g. UNAPPROVED:5).  Prefixes are 
+
+  * APPROVED: A count of approved licenses. Default range \[0, unlimited\]
+
+ 
+
+  * ARCHIVES: A count of archive files. Default range \[0, unlimited\]
+
+ 
+
+  * BINARIES: A count of binary files. Default range \[0, unlimited\]
+
+ 
+
+  * DOCUMENT_TYPES: A count of distinct document types. Default range \[1, unlimited\]
+
+ 
+
+  * IGNORED: A count of ignored files. Default range \[0, unlimited\]
+
+ 
+
+  * LICENSE_CATEGORIES: A count of distinct license categories. Default range \[1, unlimited\]
+
+ 
+
+  * LICENSE_NAMES: A count of distinct license names. Default range \[1, unlimited\]
+
+ 
+
+  * NOTICES: A count of notice files. Default range \[0, unlimited\]
+
+ 
+
+  * STANDARDS: A count of standard files. Default range \[1, unlimited\]
+
+ 
+
+  * UNAPPROVED: A count of unapproved licenses. Default range \[0, 0\]
+
+ 
+
+  * UNKNOWN: A count of unknown file types. Default range \[0, unlimited\]
+
+ .
+
+*** DirOrArchive
+
+ A directory or archive file to scan.
+
+*** Expression
+
+ A file matching pattern usually of the form used in Ant build files and '.gitignore' files (see https://ant.apache.org/manual/dirtasks.html#patterns for examples). Regular expression patterns may be specified by surrounding the pattern with '%regex\[' and '\]'. For example '%regex\[\[A\-Z\].\*\]' would match files and directories that start with uppercase latin letters.
+
+*** FamilyID
+
+ The ID for a license family.
+
+*** File
+
+ A file name.
+
+*** Integer
+
+ An integer value.
+
+*** LicenseFilter
+
+ A defined filter for the licenses to include. Valid values: ALL, APPROVED, NONE.
+
+*** LicenseID
+
+ The ID for a license.
+
+*** LogLevel
+
+ The log level to use. Valid values DEBUG, INFO, WARN, ERROR, OFF.
+
+*** ProcessingType
+
+ Specifies how to process file types. Valid values are:  * NOTIFICATION: List file as present
+
+  * PRESENCE: List any licenses found
+
+  * ABSENCE: List licenses found and any unknown licences
+
+ 
+
+*** StandardCollection
+
+ Defines standard expression patterns (see above). Valid values are: 
+
+  * ALL: All of the Standard Excludes combined.
+
+ 
+
+  * ARCH: The files and directories created by an ARCH source code control based tool.
+
+ 
+
+  * BAZAAR: The files and directories created by a Bazaar source code control based tool.
+
+ 
+
+  * BITKEEPER: The files and directories created by a Bitkeeper source code control based tool.
+
+ 
+
+  * CVS: The files and directories created by a CVS source code control based tool.
+
+ 
+
+  * DARCS: The files and directories created by a DARCS source code control based tool.
+
+ 
+
+  * ECLIPSE: The files and directories created by an Eclipse IDE based tool.
+
+ 
+
+  * GIT: The files and directories created by GIT source code control to support GIT, also processes files listed in '.gitignore' and (unless RAT_NO_GIT_GLOBAL_IGNORE is specified) the global gitignore.
+
+ 
+
+  * HIDDEN_DIR: The hidden directories. Directories with names that start with '.'
+
+ 
+
+  * HIDDEN_FILE: The hidden files. Directories with names that start with '.'
+
+ 
+
+  * IDEA: The files and directories created by an IDEA IDE based tool.
+
+ 
+
+  * MAC: The .DS_Store files on Mac computers.
+
+ 
+
+  * MAVEN: The files and directories created by Maven build system based project.
+
+ 
+
+  * MERCURIAL: The files and directories created by a Mercurial source code control based tool.
+
+ 
+
+  * MISC: The set of miscellaneous files generally left by editors and the like.
+
+ 
+
+  * MKS: The files and directories created by an MKS source code control based tool.
+
+ 
+
+  * RCS: The files and directories created by a RCS source code control based tool.
+
+ 
+
+  * SCCS: The files and directories created by a SCCS source code control based tool.
+
+ 
+
+  * SERENA_DIMENSIONS_10: The files and directories created by a Serena Dimensions V10 change control system based tool.
+
+ 
+
+  * STANDARD_PATTERNS: A standard collection of generally accepted patterns to ignore.
+
+ 
+
+  * STANDARD_SCMS: A standard collection of SCMs
+
+ 
+
+  * SUBVERSION: The files and directories created by a Subversion source code control based tool.
+
+ 
+
+  * SURROUND_SCM: The files and directories created by a Surround SCM source code control based tool.
+
+ 
+
+  * VSS: The files and directories created by a Visual Source Safe source code control based tool.
+
+ 
+
+ 
+
+ A complete description of each of the {{{./standard_collections.html}standard collection}} types is available.
+
+*** StyleSheet
+
+ Either an external xsl file or one of the internal named sheets. Internal sheets are: 
+
+  * plain\-rat: The default style.
+
+ 
+
+  * missing\-headers: Produces a report of files that are missing headers.
+
+ 
+
+  * unapproved\-licenses: Produces a report of the files with unapproved licenses.
+
+ 
+
+  * xml: Produces output in pretty\-printed XML.
+
+ 
+
