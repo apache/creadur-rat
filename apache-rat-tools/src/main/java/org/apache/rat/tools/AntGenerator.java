@@ -32,8 +32,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 import org.apache.commons.cli.Option;
 import org.apache.commons.io.IOUtils;
@@ -41,7 +39,6 @@ import org.apache.commons.io.LineIterator;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.WordUtils;
 import org.apache.rat.OptionCollection;
-import org.apache.rat.commandline.Arg;
 import org.apache.rat.documentation.options.AntOption;
 import org.apache.rat.utils.CasedString;
 import org.apache.rat.utils.CasedString.StringCase;
@@ -52,16 +49,6 @@ import static java.lang.String.format;
  * A simple tool to convert CLI options into an Ant report base class.
  */
 public final class AntGenerator {
-
-    /**
-     * The list of Options that are not supported by Ant.
-     */
-    private static final Set<Option> ANT_FILTER_LIST = AntOption.getFilteredOptions();
-
-    /**
-     * the filter to filter out CLI options that Ant does not support.
-     */
-    private static final Predicate<Option> ANT_FILTER = option -> !(ANT_FILTER_LIST.contains(option) || option.getLongOpt() == null);
 
     /**
      * A map of type patterns for that type.
@@ -123,13 +110,6 @@ public final class AntGenerator {
 
     private AntGenerator() { }
 
-    /**
-     * Gets the Option predicate that removes unsupported CLI options.
-     * @return The Option predicate that removes unsupported CLI options.
-     */
-    public static Predicate<Option> getFilter() {
-        return ANT_FILTER;
-    }
 
     /**
      * Gets the key for the Args array.
@@ -161,8 +141,7 @@ public final class AntGenerator {
         String className = args[1];
         String destDir = args[2];
 
-        List<AntOption> options = Arg.getOptions().getOptions().stream().filter(ANT_FILTER).map(AntOption::new)
-                .collect(Collectors.toList());
+        List<AntOption> options = AntOption.getAntOptions();
 
         String pkgName = String.join(File.separator, new CasedString(StringCase.DOT, packageName).getSegments());
         File file = new File(new File(new File(destDir), pkgName), className + ".java");
@@ -182,7 +161,7 @@ public final class AntGenerator {
                         for (Map.Entry<String, String> entry : AntOption.getRenameMap().entrySet()) {
                             writer.append(format("        xlateName.put(\"%s\", \"%s\");%n", entry.getKey(), entry.getValue()));
                         }
-                        for (Option option : ANT_FILTER_LIST) {
+                        for (Option option : AntOption.getFilteredOptions()) {
                             writer.append(format("        unsupportedArgs.add(\"%s\");%n", argsKey(option)));
                         }
                         for (AntOption option : options) {

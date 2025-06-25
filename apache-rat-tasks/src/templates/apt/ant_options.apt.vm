@@ -18,21 +18,42 @@
 #set($newTab = ${rat.doubleLine}+" * ")
 
                    --------------------------
-                   Maven Options
+                   Ant Options
                    --------------------------
 
-Maven Options
+Ant Options
 
- The RAT Maven plugin has many of the same options as the command line as well as a few that are specific to the Maven
-  environment. The argument types specified in the list below are defined in section following.
+ The RAT Ant Task Library has many of the same options as the command line as well as a few that are specific to the Ant
+  environment. The Ant UI implements the RAT options as attributes or child nodes.
 
-* The Options
+* Root Node
+
+ The <<<report>>> is the root node for the rat report.  All child nodes must be enclosed within it and all attributes listed
+ below are attributes applied to the <<<report>>> node.  The report node must have a fileSet to specify the files to process.
+
++------------------------------------------+
+<project
+    xmlns:rat="antlib:org.apache.rat.anttasks"
+    xmlns="antlib:org.apache.tools.ant">
+    ...
+    <rat:report>
+        <fileset dir="path/to/source"/>
+    </rat:report>
+    ...
+</project>
++------------------------------------------+
+
+
+* The Child Nodes
+
+ The argument types specified in the list below are defined in a section following.
 
 #set($descEnd = ${rat.doubleLine} + " ")
-#foreach ($option in $rat.mvnOptions)
-#set($desc = $rat.aptEscape(${option.option.description}))
-#set($desc = $stringUtils.replace($desc, ${esc.N}, ${descEnd}))
-#set($desc = $stringUtils.replace($desc, ${rat.tab}, " * "))
+#foreach ($option in $rat.antOptions)
+#if ($rat.antOption.element)
+  #set($desc = $rat.aptEscape(${option.option.description}))
+  #set($desc = $stringUtils.replace($desc, ${esc.N}, ${descEnd}))
+  #set($desc = $stringUtils.replace($desc, ${rat.tab}, " * "))
 
 ** ${rat.aptEscape($option.text)}
 
@@ -40,15 +61,39 @@ Maven Options
 
   * Required: ${option.required}
 
-#if(${option.hasArg})
+  #if(${option.hasArg})
   * Argument Type: \<${option.argName}\>
 
   * Argument Count: #if(${option.option.args} == -2)Unlimited.#else ${option.option.args}#end
+  #end
+
+  * Example: $rat.aptEscape(${option.example})
+
+  #end
 #end
+
+* The Attributes
+
+ The attributes apply to the <<<report>>> element.
+
+#set($descEnd = ${rat.doubleLine} + " ")
+#foreach ($option in $rat.antOptions)
+#if ($rat.antOption.attribute)
+#set($desc = $rat.aptEscape(${option.option.description}))
+#set($desc = $stringUtils.replace($desc, ${esc.N}, ${descEnd}))
+#set($desc = $stringUtils.replace($desc, ${rat.tab}, " * "))
+
+** ${rat.aptEscape($option.text)}
+
+#if(${option.deprecated}) <<$rat.aptEscape(${option.deprecated.toString})>> #end ${desc}
+
+  * Required: ${option.required}
 
   * Example: $rat.aptEscape(${option.example})
 
 #end
+#end
+
 
 ** Argument Types
 

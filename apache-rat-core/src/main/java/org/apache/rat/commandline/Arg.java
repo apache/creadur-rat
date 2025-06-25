@@ -293,7 +293,8 @@ public enum Arg {
     EXCLUDE_STD(new OptionGroup()
             .addOption(Option.builder().longOpt("input-exclude-std").argName("StandardCollection")
                     .hasArgs().converter(s -> StandardCollection.valueOf(s.toUpperCase()))
-                    .desc("Excludes files defined in standard collections based on commonly occurring groups.")
+                    .desc("Excludes files defined in standard collections based on commonly occurring groups. " +
+                            "Excludes any path matcher actions but DOES NOT exclude any file processor actions.")
                     .type(StandardCollection.class)
                     .build())
     ),
@@ -345,7 +346,7 @@ public enum Arg {
             .addOption(Option.builder().longOpt("input-include-std").argName("StandardCollection")
                     .hasArgs().converter(s -> StandardCollection.valueOf(s.toUpperCase()))
                     .desc("Includes files defined in standard collections based on commonly occurring groups. " +
-                            "Will override excluded files.")
+                            "Includes any path matcher actions but DOES NOT include any file processor actions.")
                     .type(StandardCollection.class)
                     .build())
             .addOption(Option.builder().longOpt("scan-hidden-directories")
@@ -362,7 +363,8 @@ public enum Arg {
             .addOption(Option.builder().longOpt("input-exclude-parsed-scm")
                     .argName("StandardCollection")
                     .hasArgs().converter(s -> StandardCollection.valueOf(s.toUpperCase()))
-                    .desc("Parse SCM based exclusion files to exclude specified files and directories.")
+                    .desc("Parse SCM based exclusion files to exclude specified files and directories. " +
+                            "This action can apply to any standard collection that implements file processor.")
                     .type(StandardCollection.class)
                     .build())
     ),

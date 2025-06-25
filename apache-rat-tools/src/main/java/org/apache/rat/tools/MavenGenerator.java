@@ -26,9 +26,7 @@ import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Predicate;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 
 import org.apache.commons.cli.Option;
 import org.apache.commons.io.IOUtils;
@@ -48,18 +46,6 @@ import static java.lang.String.format;
  */
 public final class MavenGenerator {
 
-    /**
-     * Filter to remove Options not supported by Maven.
-     */
-    private static final Predicate<Option> MAVEN_FILTER = option -> !(MavenOption.getFilteredOptions().contains(option) || option.getLongOpt() == null);
-
-    /**
-     * Returns the Option predicate that removes all unsupported Options for the Maven UI.
-     * @return the Option predicate that removes all unsupported Options for the Maven UI.
-     */
-    public static Predicate<Option> getFilter() {
-        return MAVEN_FILTER;
-    }
 
     private MavenGenerator() {
     }
@@ -89,8 +75,7 @@ public final class MavenGenerator {
         String packageName = args[0];
         String className = args[1];
         String destDir = args[2];
-        List<MavenOption> options = OptionCollection.buildOptions().getOptions().stream().filter(MAVEN_FILTER)
-                .map(MavenOption::new).collect(Collectors.toList());
+        List<MavenOption> options = MavenOption.getMavenOptions();
         String pkgName = String.join(File.separator, new CasedString(StringCase.DOT, packageName).getSegments());
         File file = new File(new File(new File(destDir), pkgName), className + ".java");
         System.out.println("Creating " + file);

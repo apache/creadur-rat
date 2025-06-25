@@ -154,19 +154,17 @@
         <artifactId>exec-maven-plugin</artifactId>
         <executions>
           <execution>
-            <id>CLI help generation</id>
+            <id>Initial site generation</id>
             <phase>pre-site</phase>
             <goals>
-              <goal>exec</goal>
+              <goal>java</goal>
             </goals>
             <configuration>
-              <executable>java</executable>
-              <outputFile>${project.basedir}/src/site/apt/cli_help.txt</outputFile>
+              <mainClass>org.apache.rat.documentation.Exporter</mainClass>
+              <classpathScope>test</classpathScope>
               <arguments>
-                <argument>-cp</argument>
-                <argument>target/apache-rat-${project.version}.jar</argument>
-                <argument>org.apache.rat.Report</argument>
-                <argument>--help</argument>
+                <argument>${project.basedir}/src/templates</argument>
+                <argument>${project.basedir}/src/site</argument>
               </arguments>
             </configuration>
           </execution>
@@ -186,23 +184,6 @@
                 <argument>--maven</argument>
                 <argument>--ant</argument>
                 <argument>--cli</argument>
-              </arguments>
-            </configuration>
-          </execution>
-          <execution>
-            <id>License help generation</id>
-            <phase>pre-site</phase>
-            <goals>
-              <goal>exec</goal>
-            </goals>
-            <configuration>
-              <executable>java</executable>
-              <outputFile>${project.basedir}/src/site/apt/default_licenses.txt</outputFile>
-              <arguments>
-                <argument>-cp</argument>
-                <argument>target/apache-rat-${project.version}.jar</argument>
-                <argument>org.apache.rat.Report</argument>
-                <argument>--help-licenses</argument>
               </arguments>
             </configuration>
           </execution>
@@ -283,23 +264,6 @@
                 <argument>-cp</argument>
                 <argument>target/apache-rat-${project.version}.jar</argument>
                 <argument>org.apache.rat.tools.xsd.XsdGenerator</argument>
-              </arguments>
-            </configuration>
-          </execution>
-          <execution>
-            <id>Options generation</id>
-            <phase>pre-site</phase>
-            <goals>
-              <goal>exec</goal>
-            </goals>
-            <configuration>
-              <executable>java</executable>
-              <arguments>
-                <argument>-cp</argument>
-                <argument>target/apache-rat-${project.version}.jar</argument>
-                <argument>org.apache.rat.documentation.Exporter</argument>
-                <argument>src/templates/</argument>
-                <argument>src/site/</argument>
               </arguments>
             </configuration>
           </execution>

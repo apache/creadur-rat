@@ -33,7 +33,6 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.rat.Defaults;
 import org.apache.rat.OptionCollection;
-import org.apache.rat.VersionInfo;
 import org.apache.rat.commandline.StyleSheets;
 import org.apache.rat.config.exclusion.StandardCollection;
 import org.apache.rat.config.parameters.ComponentType;
@@ -101,8 +100,8 @@ public class RatTool {
      */
     public Map<String, AntOption> antOptions() {
         Map<String, AntOption> result = new TreeMap<>();
-        for (Option option : OptionCollection.buildOptions().getOptions()) {
-            result.put(CLIOption.createName(option), new AntOption(option));
+        for (AntOption antOption : AntOption.getAntOptions()) {
+            result.put(CLIOption.createName(antOption.getOption()), antOption);
         }
         return result;
     }
@@ -124,11 +123,10 @@ public class RatTool {
      * Gets a map client option name to Maven Option.
      * @return a map client option name to Maven Option.
      */
-
     public Map<String, MavenOption> mvnOptions() {
         Map<String, MavenOption> result = new TreeMap<>();
-        for (Option option : OptionCollection.buildOptions().getOptions()) {
-            result.put(CLIOption.createName(option), new MavenOption(option));
+        for (MavenOption mavenOption : MavenOption.getMavenOptions()) {
+            result.put(CLIOption.createName(mavenOption.getOption()), mavenOption);
         }
         return result;
     }
@@ -219,14 +217,6 @@ public class RatTool {
      */
     public StringUtils stringUtils() {
         return new StringUtils();
-    }
-
-    /**
-     * Gets the version info for this run.
-     * @return the version info for this run.
-     */
-    public VersionInfo version() {
-        return new VersionInfo();
     }
 
     /**

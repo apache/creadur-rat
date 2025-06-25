@@ -66,26 +66,19 @@ public class Exporter {
      * from the input file name and writes the resulting file to an equivalent directory entry in the output directory.</li>
      * </ol>
      *
-     * @param args
-     *            the arguments
-     * @throws IOException
-     *             on IO error.
-     * @throws ClassNotFoundException
-     *             if the configuration is not found.
-     * @throws NoSuchMethodException
-     *             if the method name is not found.
-     * @throws InvocationTargetException
-     *             if the method can not be invoked.
-     * @throws InstantiationException
-     *             if the class can not be instantiated.
-     * @throws IllegalAccessException
-     *             if there are access restrictions on the class.
+     * @param args the arguments
+     * @throws IOException on IO error.
+     * @throws ClassNotFoundException if the configuration is not found.
+     * @throws NoSuchMethodException if the method name is not found.
+     * @throws InvocationTargetException if the method can not be invoked.
+     * @throws InstantiationException if the class can not be instantiated.
+     * @throws IllegalAccessException if there are access restrictions on the class.
      * @throws RatException on rat processing error.
      */
     public static void main(final String[] args) throws IOException, ClassNotFoundException, NoSuchMethodException,
             InvocationTargetException, InstantiationException, IllegalAccessException, RatException {
-        final String templateDir = args[0];
-        final String outputDir = args[1];
+        String templateDir = args[0];
+        String outputDir = args[1];
 
         // crate a DirectoryWalker to walk the template tree.
         File sourceDir = new File(templateDir);
@@ -96,10 +89,10 @@ public class Exporter {
 
         // create a rewriter that writes to the target directory.
         DocumentName targetDir = DocumentName.builder(new File(outputDir)).build();
-        Rewriter rewriter = new Rewriter(targetDir);
 
-        // have the walker process the rewrite.
-        walker.run(rewriter);
+        // have the walker process clean and then the rewrite.
+        walker.run(new Cleaner(targetDir));
+        walker.run(new Rewriter(targetDir));
     }
 
     /**
@@ -107,17 +100,26 @@ public class Exporter {
      * results to the output tree.
      */
     private static class Rewriter implements RatReport {
-        /** The base directory we are targeting for output */
+        /**
+         * The base directory we are targeting for output
+         */
         private final DocumentName targetDir;
-        /** The name of the root dir we are reading from */
+        /**
+         * The name of the root dir we are reading from
+         */
         private final DocumentName rootDir;
-        /** The configured velocity engine */
+        /**
+         * The configured velocity engine
+         */
         private final VelocityEngine velocityEngine;
-        /** The context for Velocity */
+        /**
+         * The context for Velocity
+         */
         private final VelocityContext context;
 
         /**
          * Create a rewriter.
+         *
          * @param targetDir the root of the output directory tree.
          */
         Rewriter(final DocumentName targetDir) {
@@ -134,6 +136,7 @@ public class Exporter {
 
         /**
          * Processes the input document and creates an output document at an equivalent place in the output tree.
+         *
          * @param document the input document.
          */
         @Override
@@ -150,6 +153,46 @@ public class Exporter {
 
                 try (BufferedWriter writer = Files.newBufferedWriter(file.toPath(), StandardCharsets.UTF_8)) {
                     template.merge(context, writer);
+                }
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
+
+    /**
+     * A RatReport implementation that processes the {@code .vm} files in the tempalte tree and writes the
+     * results to the output tree.
+     */
+    private static class Cleaner implements RatReport {
+        /**
+         * The base directory we are targeting for output
+         */
+        private final DocumentName targetDir;
+
+
+        /**
+         * Create a rewriter.
+         *
+         * @param targetDir the root of the output directory tree.
+         */
+        Cleaner(final DocumentName targetDir) {
+            this.targetDir = targetDir;
+        }
+
+        /**
+         * Processes the input document and creates an output document at an equivalent place in the output tree.
+         *
+         * @param document the input document.
+         */
+        @Override
+        public void report(final Document document) {
+            String localized = document.getName().localized();
+            DocumentName outputFile = targetDir.resolve(localized.substring(0, localized.length() - 3));
+            try {
+                final File file = outputFile.asFile();
+                if (file.exists()) {
+                    Files.delete(file.toPath());
                 }
             } catch (IOException e) {
                 throw new RuntimeException(e);

@@ -27,16 +27,6 @@ Maven Options
 * The Options
 
 
-** \<a\>
-
- <<Deprecated for removal since 0.17: Use \<editLicense\> instead.>>  
-
-  * Required: false
-
-
-  * Example: \<a /\>
-
-
 ** \<addLicense\>
 
  <<Deprecated for removal since 0.17: Use \<editLicense\> instead.>>  Add the Apache V2 license header to any file with an unknown license that is not in the exclusion list.
@@ -107,19 +97,6 @@ Maven Options
   * Argument Count: Unlimited.
 
   * Example: \<counterMin\>CounterPattern\</counterMin\>
-
-
-** \<dir\>
-
- <<Deprecated for removal since 0.17: Use the standard '\-\-' to signal the end of arguments.>>  Used to indicate end of list when using options that take multiple arguments.
-
-  * Required: false
-
-  * Argument Type: \<DirOrArchive\>
-
-  * Argument Count:  1
-
-  * Example: \-\- not supported \-\-
 
 
 ** \<dryRun\>
@@ -201,16 +178,6 @@ Maven Options
   * Example: \<force /\>
 
 
-** \<help\>
-
- Print help for the RAT command line interface and exit.
-
-  * Required: false
-
-
-  * Example: \-\- not supported \-\-
-
-
 ** \<helpLicenses\>
 
  Print information about registered licenses.
@@ -275,7 +242,7 @@ Maven Options
 
 ** \<inputExcludeParsedScm\>
 
- Parse SCM based exclusion files to exclude specified files and directories.
+ Parse SCM based exclusion files to exclude specified files and directories. This action can apply to any standard collection that implements file processor.
 
   * Required: false
 
@@ -301,7 +268,7 @@ Maven Options
 
 ** \<inputExcludeStd\>
 
- Excludes files defined in standard collections based on commonly occurring groups.
+ Excludes files defined in standard collections based on commonly occurring groups. Excludes any path matcher actions but DOES NOT exclude any file processor actions.
 
   * Required: false
 
@@ -340,7 +307,7 @@ Maven Options
 
 ** \<inputIncludeStd\>
 
- Includes files defined in standard collections based on commonly occurring groups. Will override excluded files.
+ Includes files defined in standard collections based on commonly occurring groups. Includes any path matcher actions but DOES NOT include any file processor actions.
 
   * Required: false
 
@@ -505,19 +472,6 @@ Maven Options
   * Argument Count:  1
 
   * Example: \<listLicenses\>LicenseFilter\</listLicenses\>
-
-
-** \<logLevel\>
-
- Sets the log level.
-
-  * Required: false
-
-  * Argument Type: \<LogLevel\>
-
-  * Argument Count:  1
-
-  * Example: \-\- not supported \-\-
 
 
 ** \<noDefaultLicenses\>
