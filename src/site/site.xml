@@ -45,7 +45,7 @@
       <item name="Creadur" href="https://creadur.apache.org/"/>
       <item name="RAT" href="https://creadur.apache.org/rat/"/>
     </breadcrumbs>
-    <menu name="Apache Rat&#x2122;" inherit="bottom">
+    <menu name="Apache RAT&#x2122;" inherit="bottom">
       <item name="Introducing RAT" href="/index.html"/>
       <item name="Downloads" href="/download_rat.cgi"/>
       <item name="Changes" href="/changes.html"/>
@@ -58,13 +58,14 @@
     </menu>
     <menu name="RAT from Ant" inherit="bottom">
       <item name="Ant Task Introduction" href="apache-rat-tasks/index.html"/>
+      <item name="Ant Elements and Attributes" href="apache-rat-tasks/ant_options.html"/>
     </menu>
     <menu name="RAT from Maven" inherit="bottom">
       <item name="Maven Plugin Introduction" href="apache-rat-plugin/index.html"/>
       <item name="Maven Options" href="apache-rat-plugin/mvn_options.html"/>
       <item name="Maven Examples" href="apache-rat-plugin/examples/index.html"/>
     </menu>
-    <menu name="Configuring Rat" inherit="bottom">
+    <menu name="Configuring RAT" inherit="bottom">
       <item name="Option Name Cross Reference" href="apache-rat/name_xref.html"/>
       <item name="Default Licenses" href="apache-rat/default_licenses.html"/>
       <item name="Default Matchers" href="apache-rat/default_matchers.html" />
@@ -72,14 +73,14 @@
       <item name="Configuration XSD" href="apache-rat/xsd.html"/>
       <item name="Default Configuration" href="https://gitbox.apache.org/repos/asf/creadur-rat/blob/master/apache-rat-core/src/main/resources/org/apache/rat/default.xml"/>
     </menu>
-    <menu name="Rat Output" inherit="bottom">
+    <menu name="RAT Output" inherit="bottom">
       <item name="Standard Output Example" href="apache-rat/output/example.html"/>
       <item name="Output XSD" href="https://gitbox.apache.org/repos/asf/creadur-rat/blob/master/apache-rat-core/src/main/resources/org/apache/rat/rat-report.xsd"/>
       <item name="XSLT - Plain text" href="https://gitbox.apache.org/repos/asf/creadur-rat/blob/master/apache-rat-core/src/main/resources/org/apache/rat/plain-rat.xsl"/>
       <item name="XSLT - Missing headers list" href="https://gitbox.apache.org/repos/asf/creadur-rat/blob/master/apache-rat-core/src/main/resources/org/apache/rat/missing-headers.xsl"/>
       <item name="XSLT - Unapproved licenses list" href="https://gitbox.apache.org/repos/asf/creadur-rat/blob/master/apache-rat-core/src/main/resources/org/apache/rat/unapproved-licenses.xsl"/>
     </menu>
-    <menu name="Developing Rat" inherit="bottom">
+    <menu name="Developing RAT" inherit="bottom">
       <item name="Architecture" href="architecture.html"/>
       <item name="Javadocs" href="/apidocs/index.html"/>
       <item name="Document Name concept" href="apache-rat-core/development/document_name.html"/>
@@ -119,7 +120,7 @@
     <menu ref="modules"/>
     <menu ref="reports"/>
     <footer>Copyright &amp;copy; 2016-2025 The Apache Software Foundation, Licensed under the Apache License, Version 2.0.
-      Apache Creadur, Creadur, Apache Rat, Apache Tentacles, Apache Whisker, Apache and the Apache feather logo are trademarks
+      Apache Creadur, Creadur, Apache RAT, Apache Tentacles, Apache Whisker, Apache and the Apache feather logo are trademarks
       of The Apache Software Foundation.
       Oracle and Java are registered trademarks of Oracle and/or its affiliates.
       All other marks mentioned may be trademarks or registered trademarks of their respective owners.</footer>

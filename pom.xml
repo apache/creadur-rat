@@ -550,7 +550,6 @@ agnostic home for software distribution comprehension and audit tools.
           <!-- Do not use property values here as this causes problems during release -->
           <version>0.16.1</version>
           <configuration>
-            <skip>true</skip>
             <excludes>
               <exclude>.asf.yaml</exclude>
               <exclude>BUILD.txt</exclude>

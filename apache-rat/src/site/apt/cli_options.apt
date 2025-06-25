@@ -277,7 +277,7 @@ Command Line Options
 
 ** \-\-input-exclude-parsed-scm
 
- Parse SCM based exclusion files to exclude specified files and directories.
+ Parse SCM based exclusion files to exclude specified files and directories. This action can apply to any standard collection that implements file processor.
 
   * Required: false
 
@@ -303,7 +303,7 @@ Command Line Options
 
 ** \-\-input-exclude-std
 
- Excludes files defined in standard collections based on commonly occurring groups.
+ Excludes files defined in standard collections based on commonly occurring groups. Excludes any path matcher actions but DOES NOT exclude any file processor actions.
 
   * Required: false
 
@@ -342,7 +342,7 @@ Command Line Options
 
 ** \-\-input-include-std
 
- Includes files defined in standard collections based on commonly occurring groups. Will override excluded files.
+ Includes files defined in standard collections based on commonly occurring groups. Includes any path matcher actions but DOES NOT include any file processor actions.
 
   * Required: false
 
