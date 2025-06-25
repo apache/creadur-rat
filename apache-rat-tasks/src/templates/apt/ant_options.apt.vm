@@ -18,10 +18,10 @@
 #set($newTab = ${rat.doubleLine}+" * ")
 
                    --------------------------
-                   Ant Options
+                   Ant Elements and Attributes
                    --------------------------
 
-Ant Options
+Ant Elements and Attributes
 
  The RAT Ant Task Library has many of the same options as the command line as well as a few that are specific to the Ant
   environment. The Ant UI implements the RAT options as attributes or child nodes.

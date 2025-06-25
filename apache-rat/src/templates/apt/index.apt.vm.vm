@@ -21,7 +21,7 @@
                    Command Line Support
                    --------------------------
 
-About Apache RAT&#8482;
+Apache RAT&#8482; Overview
 
  RAT audits software distributions, with a special interest in headers.
  If this isn't quite what you're looking for then take a look at the
@@ -40,7 +40,7 @@ About Apache RAT&#8482;
 
  [[4]] RAT relies on heuristics: it may miss issues
 
-* Running from the Command Line
+Running from the Command Line
 
  RAT has a number of {{{apache-rat/cli_options.html}command line options}}.  The simplest way to retrieve the list of options
  is to run the help command:
@@ -53,7 +53,7 @@ java -jar apache-rat/target/apache-rat-${project.version}.jar --help
  information from the {{{apache-rat/standard_collections.html}standard collections documentation}}.
  options available to you.
 
-* Adding license headers
+Adding license headers
 
  RAT can be used to automatically add Apache V2 license headers to
  files that do not currently have them. Only files that
@@ -72,7 +72,7 @@ java -jar apache-rat/target/apache-rat-${project.version}.jar --edit-license \
  source files along with the copyright notice.. If you prefer to see which files will be
  changed and how then remove the "--edit-overwrite " option.
 
-* Excluding files from consideration
+Excluding files from consideration
 
  By default RAT command line includes all the files in the specified directories.  This is not necessarily
  the case for the Maven, Ant, or other plugins.  To exclude specific files use the one or more of the exclusion
@@ -81,7 +81,7 @@ java -jar apache-rat/target/apache-rat-${project.version}.jar --edit-license \
  RAT supports exclusion and inclusion.  By default all files are processed.  Using the exclude command files can be excluded from
  processing.  In addition file may be explicitly included.  <<Files that are explicitly included can not be excluded.>>
 
-** Exclusion by glob pattern
+* Exclusion by glob pattern
 
  The following command will exclude all files with a "foo" extension as wll as all files in the junk folder at the root of the project.
 
@@ -94,7 +94,7 @@ java -jar apache-rat/target/apache-rat-${project.version}.jar \
  Note that the command ends with a double dash (--).  This signals the end of the list of patterns and is standard for all options
  that accept multiple arguments.
 
-** Exclusion by glob pattern file
+* Exclusion by glob pattern file
 
  It is often more efficient to place the exclusion patterns in a file and read that from disk.  The following is an example of
  how to do that.
@@ -105,7 +105,7 @@ java -jar apache-rat/target/apache-rat-${project.version}.jar \
   /path/to/project
 +------------------------------------------+
 
-** Using standard exclusions
+* Using standard exclusions
 
  RAT defines a number of {{{apache-rat/standard_collections}standard collections}} that can be used to exclude files based on
  a standard pattern.  For example to exclude all the files associated with the git SCM the following could be used.
@@ -140,7 +140,7 @@ java -jar apache-rat/target/apache-rat-${project.version}.jar \
   /path/to/project
 +------------------------------------------+
 
-** Excluding files by size
+* Excluding files by size
 
   RAT will exclude files below a specified size if desired.  This is done with the --input-exclude-size option.  This option
   takes the the file size in bytes as an argument.  The following will exclude files of 10 bytes or less.
@@ -151,7 +151,7 @@ java -jar apache-rat/target/apache-rat-${project.version}.jar \
   /path/to/project
 +------------------------------------------+
 
- ** Including excluded files
+ * Including excluded files
 
  The "--input-exclude", "--input-exclude-file" and "--input-exclude-std" have include counterparts "--input-include",
  "--input-include-file", "--input-include-std".  The include options will add files back to the processing list.  For example,
@@ -169,7 +169,7 @@ java -jar apache-rat/target/apache-rat-${project.version}.jar \
  that the double dash (--) of the "--input-include" options terminates the "--input-exclude" option.  In fact, adding a "--" before
  the "--input-include" would result in an error.
 
-* Styling output
+Styling output
 
  RAT allows you to style the output as you see fit.  Several stylesheets are included in the RAT package.
 

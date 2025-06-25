@@ -39,7 +39,7 @@ Apache RAT Overview
 
  [[4]] RAT relies on heuristics: it may miss issues
 
-* Apache RAT Ant Task Library
+Apache RAT Ant Task Library
 
  The RAT Ant Task Library provides a single Ant task and supporting
  Ant types and properties to run RAT from inside {{{https://ant.apache.org/}Apache Ant}}.
@@ -47,7 +47,7 @@ Apache RAT Overview
  Using Ant's resource abstraction the task can be used to check files
  on disk as well as tarballs or even URLs directly.
 
-** Requirements
+* Requirements
 
  The RAT Ant Task Library requires Apache Ant 1.7.1 or higher (it
  works well with 1.8.x), Apache RAT core and transitively all
@@ -58,7 +58,7 @@ Apache RAT Overview
 
  Java 8 is required for RAT 0.14 and above.
 
-** Installation
+* Installation
 
     There are several ways to use the Antlib:
 
@@ -122,7 +122,7 @@ Apache RAT Overview
       and all tasks of this library will automatically be available in
       the <<<rat>>> namespace without any <<<taskdef>>>.
 
-* Adding license headers
+Adding license headers
 
  RAT can be used to automatically add Apache V2 license headers to
  files that do not currently have them. Only files that
@@ -146,7 +146,7 @@ Apache RAT Overview
  source files along with the copyright notice.. If you prefer to see which files will be
  changed and how then remove the "editOverwrite " attribute.
 
-* Excluding files from consideration
+Excluding files from consideration
 
  By default RAT Ant task includes all the files listed in an enclosed <<<fileset>>>.  To exclude specific files within the set use
  one or more of the exclusion options.  RAT uses a {{{../apache-rat/exclusion_expression.html}modified glob exclusion}} similar to Ant or Git.
@@ -154,7 +154,7 @@ Apache RAT Overview
  RAT supports exclusion and inclusion.  By default all files are processed.  Using the exclude command files can be excluded from
  processing.  In addition file may be explicitly included.  <<Files that are explicitly included can not be excluded.>>
 
-** Exclusion by glob pattern
+* Exclusion by glob pattern
 
  The following command will exclude all files with a "foo" extension as wll as all files in the junk folder at the root of the project.
 
@@ -174,7 +174,7 @@ Apache RAT Overview
 </project>
 +------------------------------------------+
 
-** Exclusion by glob pattern file
+* Exclusion by glob pattern file
 
  It is often more efficient to place the exclusion patterns in a file and read that from disk.  The following is an example of
  how to do that.
@@ -194,7 +194,7 @@ Apache RAT Overview
 </project>
 +------------------------------------------+
 
-** Using standard exclusions
+* Using standard exclusions
 
  RAT defines a number of {{{../apache-rat/standard_collections}standard collections}} that can be used to exclude files based on
  a standard pattern.  For example to exclude all the files associated with the git SCM
@@ -257,7 +257,7 @@ Apache RAT Overview
 </project>
 +------------------------------------------+
 
-** Excluding files by size
+* Excluding files by size
 
   RAT will exclude files below a specified size if desired.  This is done with the <<<inputExcludeSize>>> attribute.  This attribute
   takes the the file size in bytes as an argument.  The following will exclude files of 10 bytes or less.
@@ -274,7 +274,7 @@ Apache RAT Overview
 </project>
 +------------------------------------------+
 
- ** Including excluded files
+* Including excluded files
 
  The <<<inputExclude>>>, <<<inputExcludeFile>>> and <<<inputExcludeStd> have include counterparts <<<inputInclude>>>,
  <<inputIncludeFile>>>, <<<inputIncludeStd>>>.  The include options will add files back to the processing list.  For example,
@@ -302,7 +302,7 @@ Apache RAT Overview
 
  The order of the arguments is not important, the <<inputInclude>>> could have come before the <<<inputExclude>>>.
 
-* Styling output
+Styling output
 
  RAT allows you to style the output as you see fit.  Several stylesheets are included in the RAT package.
 
