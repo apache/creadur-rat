@@ -14,11 +14,12 @@
 ~~   See the License for the specific language governing permissions and
 ~~   limitations under the License.
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#set($stringUtils = ${rat.stringUtils})
+#set($newTab = ${rat.doubleLine}+" * ")
 
                        -----
                         Apache RAT Ant Task Library
                         -----
-
 Apache RAT Overview
 
  RAT audits software distributions, with a special interest in headers.
@@ -148,7 +149,7 @@ Apache RAT Overview
 * Excluding files from consideration
 
  By default RAT Ant task includes all the files listed in an enclosed <<<fileset>>>.  To exclude specific files within the set use
- one or more of the exclusion options.  RAT uses a {{{apache-rat/exclusion_expression.html}modified glob exclusion}} similar to Ant or Git.
+ one or more of the exclusion options.  RAT uses a {{{../apache-rat/exclusion_expression.html}modified glob exclusion}} similar to Ant or Git.
 
  RAT supports exclusion and inclusion.  By default all files are processed.  Using the exclude command files can be excluded from
  processing.  In addition file may be explicitly included.  <<Files that are explicitly included can not be excluded.>>
@@ -195,7 +196,7 @@ Apache RAT Overview
 
 ** Using standard exclusions
 
- RAT defines a number of {{{apache-rat/standard_collections}standard collections}} that can be used to exclude files based on
+ RAT defines a number of {{{../apache-rat/standard_collections}standard collections}} that can be used to exclude files based on
  a standard pattern.  For example to exclude all the files associated with the git SCM
 
 +------------------------------------------+
@@ -305,14 +306,10 @@ Apache RAT Overview
 
  RAT allows you to style the output as you see fit.  Several stylesheets are included in the RAT package.
 
- * {{{https://gitbox.apache.org/repos/asf/creadur-rat/blob/master/apache-rat-core/src/main/resources/org/apache/rat/missing-headers.xsl}missing-headers}} - Produces a report of files that are missing headers.
+#foreach ($style in ${rat.styleSheets})
+ * {{{https://gitbox.apache.org/repos/asf/creadur-rat/blob/master/apache-rat-core/src/main/resources/org/apache/rat/${style.arg}.xsl}${style.arg}}} - ${style.desc}
 
- * {{{https://gitbox.apache.org/repos/asf/creadur-rat/blob/master/apache-rat-core/src/main/resources/org/apache/rat/plain-rat.xsl}plain-rat}} - The default style.
-
- * {{{https://gitbox.apache.org/repos/asf/creadur-rat/blob/master/apache-rat-core/src/main/resources/org/apache/rat/unapproved-licenses.xsl}unapproved-licenses}} - Produces a report of the files with unapproved licenses.
-
- * {{{https://gitbox.apache.org/repos/asf/creadur-rat/blob/master/apache-rat-core/src/main/resources/org/apache/rat/xml.xsl}xml}} - Produces output in pretty-printed XML.
-
+#end
 
  These stylesheets can be specified using the <<<outputStyle>>> attribute.  The following example create a pretty printed xml
  report output.

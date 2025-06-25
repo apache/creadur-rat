@@ -28,6 +28,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
@@ -45,6 +46,13 @@ import static java.lang.String.format;
  * A class that wraps the CLI option and provides Ant specific values.
  */
 public class AntOption extends AbstractOption {
+
+
+    /**
+     * the filter to filter out CLI options that Ant does not support.
+     */
+    private static final Predicate<Option> ANT_FILTER;
+
 
     /**
      * The list of Options that are not supported by Ant.
@@ -65,6 +73,11 @@ public class AntOption extends AbstractOption {
     private static final List<Class<?>> ATTRIBUTE_TYPES = new ArrayList<>();
     /** A mapping of external name to internal name if not standard. */
     private static final Map<String, String> RENAME_MAP = new HashMap<>();
+
+
+    /** Attributes that are required for example data */
+    private static final Map<String, Map<String, String>> REQUIRED_ATTRIBUTES = new HashMap<>();
+
 
     /**
      * Adds a mapping from the specified Arg to the Arg to be used for generation.
@@ -115,7 +128,7 @@ public class AntOption extends AbstractOption {
                             return "  <fileset file='%s' />\n";
                         }
                     };
-                  BUILD_TYPE_MAP.put(type, buildType);
+                    BUILD_TYPE_MAP.put(type, buildType);
                     break;
                 case NONE:
                     buildType = new BuildType(type, "");
@@ -147,8 +160,22 @@ public class AntOption extends AbstractOption {
                     BUILD_TYPE_MAP.put(type, buildType);
             }
         }
+        Set<Option> filteredOptions = getFilteredOptions();
+        ANT_FILTER = option -> !(filteredOptions.contains(option) || option.getLongOpt() == null);
+
+        Map<String, String> attributes = new HashMap<>();
+        attributes.put("editLicense", "true");
+        REQUIRED_ATTRIBUTES.put("copyright", attributes);
+        REQUIRED_ATTRIBUTES.put("editCopyright", attributes);
+        REQUIRED_ATTRIBUTES.put("force", attributes);
+        REQUIRED_ATTRIBUTES.put("editOverwrite", attributes);
+
     }
 
+    public static List<AntOption> getAntOptions() {
+        return Arg.getOptions().getOptions().stream().filter(ANT_FILTER).map(AntOption::new)
+                .collect(Collectors.toList());
+    }
     /**
      * Gets the list of unsupported options.
      * @return The list of unsupported options.
@@ -349,18 +376,6 @@ public class AntOption extends AbstractOption {
             String inner = format(fmt, value);
             return format("<%1$s>%2$s</%1$s>%n", delegateOption.getName(), inner);
         }
-    }
-
-    /** Attributes that are required for example data */
-    private static final Map<String, Map<String, String>> REQUIRED_ATTRIBUTES = new HashMap<>();
-
-    static {
-        Map<String, String> attributes = new HashMap<>();
-        attributes.put("editLicense", "true");
-        REQUIRED_ATTRIBUTES.put("copyright", attributes);
-        REQUIRED_ATTRIBUTES.put("editCopyright", attributes);
-        REQUIRED_ATTRIBUTES.put("force", attributes);
-        REQUIRED_ATTRIBUTES.put("editOverwrite", attributes);
     }
 
     /**

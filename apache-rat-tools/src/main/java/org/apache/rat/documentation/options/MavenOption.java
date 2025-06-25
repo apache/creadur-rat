@@ -21,9 +21,12 @@ package org.apache.rat.documentation.options;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import org.apache.commons.cli.Option;
 import org.apache.commons.lang3.StringUtils;
@@ -49,12 +52,26 @@ public class MavenOption extends AbstractOption {
     /** A mapping of external name to internal name if not standard */
     private static final Map<String, String> RENAME_MAP = new HashMap<>();
 
+    /**
+     * Filter to remove Options not supported by Maven.
+     */
+    private static final Predicate<Option> MAVEN_FILTER;
+
+
     static {
         RENAME_MAP.put("addLicense", "add-license");
         DEFAULT_VALUES.put(Arg.OUTPUT_FILE, "${project.build.directory}/rat.txt");
         UNSUPPORTED_LIST.addAll(Arg.DIR.group().getOptions());
         UNSUPPORTED_LIST.addAll(Arg.LOG_LEVEL.group().getOptions());
         UNSUPPORTED_LIST.add(OptionCollection.HELP);
+
+        Set<Option> filteredOptions = getFilteredOptions();
+        MAVEN_FILTER =  option -> !(filteredOptions.contains(option) || option.getLongOpt() == null);
+    }
+
+    public static List<MavenOption> getMavenOptions() {
+        return OptionCollection.buildOptions().getOptions().stream().filter(MAVEN_FILTER)
+                .map(MavenOption::new).collect(Collectors.toList());
     }
 
     /**

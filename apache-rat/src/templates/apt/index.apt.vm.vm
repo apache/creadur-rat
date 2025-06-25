@@ -14,7 +14,6 @@
 ~~   See the License for the specific language governing permissions and
 ~~   limitations under the License.
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-#set($version = ${rat.version.version})
 #set($stringUtils = ${rat.stringUtils})
 #set($newTab = ${rat.doubleLine}+" * ")
 
@@ -47,7 +46,7 @@ About Apache RAT&#8482;
  is to run the help command:
 
 +------------------------------------------+
-java -jar apache-rat/target/apache-rat-${version}.jar --help
+java -jar apache-rat/target/apache-rat-${project.version}.jar --help
 +------------------------------------------+
 
  This will output a help message similar to the {{{apache-rat/cli_options.html}command line options}} document as well as
@@ -63,7 +62,7 @@ java -jar apache-rat/target/apache-rat-${version}.jar --help
  To add license headers use a command such as:
 
 +------------------------------------------+
-java -jar apache-rat/target/apache-rat-${version}.jar --edit-license \
+java -jar apache-rat/target/apache-rat-${project.version}.jar --edit-license \
   --edit-copyright "Copyright 2008 Foo" \
   --edit-overwrite \
   /path/to/project
@@ -87,7 +86,7 @@ java -jar apache-rat/target/apache-rat-${version}.jar --edit-license \
  The following command will exclude all files with a "foo" extension as wll as all files in the junk folder at the root of the project.
 
 +------------------------------------------+
-java -jar apache-rat/target/apache-rat-${version}.jar \
+java -jar apache-rat/target/apache-rat-${project.version}.jar \
  --input-exclude **/*.foo junk/** -- \
   /path/to/project
 +------------------------------------------+
@@ -101,7 +100,7 @@ java -jar apache-rat/target/apache-rat-${version}.jar \
  how to do that.
 
 +------------------------------------------+
-java -jar apache-rat/target/apache-rat-${version}.jar \
+java -jar apache-rat/target/apache-rat-${project.version}.jar \
  --input-exclude-file /path/to/project/.rat-excludes \
   /path/to/project
 +------------------------------------------+
@@ -109,21 +108,35 @@ java -jar apache-rat/target/apache-rat-${version}.jar \
 ** Using standard exclusions
 
  RAT defines a number of {{{apache-rat/standard_collections}standard collections}} that can be used to exclude files based on
- a standard pattern.  For example to exclude all the files associated with the git SCM as well as process the .gitignore files
- the following command could be used.
+ a standard pattern.  For example to exclude all the files associated with the git SCM the following could be used.
 
 +------------------------------------------+
-java -jar apache-rat/target/apache-rat-${version}.jar \
+java -jar apache-rat/target/apache-rat-${project.version}.jar \
  --input-exclude-std GIT -- \
   /path/to/project
 +------------------------------------------+
 
-  Again notice the double dash (--) to signal the end of the list.  RAT will by default include all the files in hidden directories.
-  To exclude the hidden files and directories and the git excluded resources the following command could be used:
+  Again notice the double dash (--) to signal the end of the list.
+  To exclude the files associated with the <<<.gitignore>>> file the
+  --input-exclude-parsed-scm option is used.
 
 +------------------------------------------+
-java -jar apache-rat/target/apache-rat-${version}.jar \
- --input-exclude-std GIT HIDDEN_DIR HIDDEN_FILE -- \
+java -jar apache-rat/target/apache-rat-${project.version}.jar \
+ --input-exclude-std GIT \
+ --input-exclude-parsed-scm GIT -- \
+  /path/to/project
++------------------------------------------+
+
+   Notice that the double dash (--) of the --input-exclude-parsed-scm stops the multiple input of the --input-excludes-std.
+   Adding an additional double dash before the --input-exclude-parsed-scm option will result in an error.
+
+   RAT will by default include all the files in hidden directories.  To exclude the hidden files and directories and the git
+   excluded resources the following command could be used:
+
++------------------------------------------+
+java -jar apache-rat/target/apache-rat-${project.version}.jar \
+ --input-exclude-std GIT HIDDEN_DIR HIDDEN_FILE
+ --input-exclude-parsed-scm GIT -- \
   /path/to/project
 +------------------------------------------+
 
@@ -133,7 +146,7 @@ java -jar apache-rat/target/apache-rat-${version}.jar \
   takes the the file size in bytes as an argument.  The following will exclude files of 10 bytes or less.
 
 +------------------------------------------+
-java -jar apache-rat/target/apache-rat-${version}.jar \
+java -jar apache-rat/target/apache-rat-${project.version}.jar \
  --input-exclude-size 10 -- \
   /path/to/project
 +------------------------------------------+
@@ -146,7 +159,7 @@ java -jar apache-rat/target/apache-rat-${version}.jar \
  command will ensure that it is processed.
 
 +------------------------------------------+
-java -jar apache-rat/target/apache-rat-${version}.jar \
+java -jar apache-rat/target/apache-rat-${project.version}.jar \
  --input-exclude **/*.foo junk/** \
  --input-include master/kung.foo -- \
   /path/to/project
@@ -169,7 +182,7 @@ java -jar apache-rat/target/apache-rat-${version}.jar \
  report output.
 
 +------------------------------------------+
-java -jar apache-rat/target/apache-rat-${version}.jar \
+java -jar apache-rat/target/apache-rat-${project.version}.jar \
  --output-style xml \
   /path/to/project
 +------------------------------------------+
