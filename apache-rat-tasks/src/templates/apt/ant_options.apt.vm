@@ -50,7 +50,7 @@ Ant Elements and Attributes
 
 #set($descEnd = ${rat.doubleLine} + " ")
 #foreach ($option in $rat.antOptions)
-#if ($rat.antOption.element)
+#if (${option.isElement})
   #set($desc = $rat.aptEscape(${option.option.description}))
   #set($desc = $stringUtils.replace($desc, ${esc.N}, ${descEnd}))
   #set($desc = $stringUtils.replace($desc, ${rat.tab}, " * "))
@@ -78,7 +78,7 @@ Ant Elements and Attributes
 
 #set($descEnd = ${rat.doubleLine} + " ")
 #foreach ($option in $rat.antOptions)
-#if ($rat.antOption.attribute)
+#if (${option.isAttribute})
 #set($desc = $rat.aptEscape(${option.option.description}))
 #set($desc = $stringUtils.replace($desc, ${esc.N}, ${descEnd}))
 #set($desc = $stringUtils.replace($desc, ${rat.tab}, " * "))
