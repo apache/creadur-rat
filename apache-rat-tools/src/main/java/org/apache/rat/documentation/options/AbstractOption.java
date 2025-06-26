@@ -32,6 +32,9 @@ import org.apache.rat.commandline.Arg;
 
 import static java.lang.String.format;
 
+/**
+ * Abstract class that wraps the RAT options.
+ */
 public abstract class AbstractOption {
     /** The pattern to match CLI options in text */
     protected static final Pattern PATTERN = Pattern.compile("-(-[a-z0-9]+)+");
@@ -74,6 +77,11 @@ public abstract class AbstractOption {
         return arg == null ? null : arg.defaultValue();
     }
 
+    /**
+     * Provide means to wrap the given option depending on the direct option implementation.
+     * @param option The CLI option
+     * @return the cleaned up option name.
+     */
     protected abstract String cleanupName(Option option);
 
     /**
@@ -89,6 +97,7 @@ public abstract class AbstractOption {
     public String cleanupName() {
         return cleanupName(option);
     }
+
     /**
      * Replaces CLI pattern options with implementation specific pattern options.
      * @param str the string to clean.
@@ -122,12 +131,11 @@ public abstract class AbstractOption {
     }
 
     /**
-     * return a string showing long and short options if they are available.  Will return
+     * return a string showing long and short options if they are available. Will return
      * a string.
-     * @return A string showing long and short options if they are available.  Never {@code null}.
+     * @return A string showing long and short options if they are available. Never {@code null}.
      */
     public abstract String getText();
-
 
     /**
      * Gets the description in implementation specific format.
