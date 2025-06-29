@@ -33,7 +33,10 @@ import org.apache.rat.commandline.Arg;
 import static java.lang.String.format;
 
 /**
- * Abstract class that wraps the RAT options.
+ * Abstract class that provides the framework for UI-specific RAT options.
+ * In this context UI option means an option expressed in the specific UI, such as:
+ * @see AntOption
+ * @see MavenOption
  */
 public abstract class AbstractOption {
     /** The pattern to match CLI options in text */
