@@ -81,7 +81,7 @@ public abstract class AbstractOption {
     }
 
     /**
-     * Provide means to wrap the given option depending on the direct option implementation.
+     * Provide means to wrap the given option depending on the UI-specific option implementation.
      * @param option The CLI option
      * @return the cleaned up option name.
      */
