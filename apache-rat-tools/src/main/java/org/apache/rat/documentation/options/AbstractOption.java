@@ -41,7 +41,7 @@ import static java.lang.String.format;
 public abstract class AbstractOption {
     /** The pattern to match CLI options in text */
     protected static final Pattern PATTERN = Pattern.compile("-(-[a-z0-9]+)+");
-    /** The CLI that the Maven option is wrapping */
+    /** The actual UI-specific name for the option */
     protected final Option option;
     /** The name for the option */
     protected final String name;
@@ -52,7 +52,7 @@ public abstract class AbstractOption {
      * Constructor.
      *
      * @param option The CLI option
-     * @param name the name for the option.
+     * @param name the UI-specific name for the option.
      */
     AbstractOption(final Option option, final String name) {
         this.option = option;
@@ -104,7 +104,7 @@ public abstract class AbstractOption {
     /**
      * Replaces CLI pattern options with implementation specific pattern options.
      * @param str the string to clean.
-     * @return the string with CLI names replaced with implementatin specific names.
+     * @return the string with CLI names replaced with implementation specific names.
      */
     public String cleanup(final String str) {
         String workingStr = str;
