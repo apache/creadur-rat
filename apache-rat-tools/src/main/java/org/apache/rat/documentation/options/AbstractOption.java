@@ -37,6 +37,7 @@ import static java.lang.String.format;
  * In this context UI option means an option expressed in the specific UI, such as:
  * @see AntOption
  * @see MavenOption
+ * @see CLIOption
  */
 public abstract class AbstractOption {
     /** The pattern to match CLI options in text */
