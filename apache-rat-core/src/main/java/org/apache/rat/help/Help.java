@@ -21,8 +21,6 @@ package org.apache.rat.help;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.Writer;
-import java.util.Map;
-import java.util.function.Supplier;
 
 import org.apache.commons.cli.Options;
 import org.apache.rat.OptionCollection;
@@ -105,10 +103,12 @@ public class Help extends AbstractHelp {
      */
     public String printArgumentTypes() {
         String argumentPadding = createPadding(helpFormatter.getLeftPadding() + HELP_PADDING);
-        for (Map.Entry<String, Supplier<String>> argInfo : OptionCollection.getArgumentTypes().entrySet()) {
-            writer.format("%n<%s>%n", argInfo.getKey());
-            helpFormatter.printWrapped(writer, helpFormatter.getWidth(), helpFormatter.getLeftPadding() + HELP_PADDING + HELP_PADDING,
-                    argumentPadding + argInfo.getValue().get());
+        for (OptionCollection.ArgumentType argType : OptionCollection.ArgumentType.values()) {
+            if (argType != OptionCollection.ArgumentType.NONE) {
+                writer.format("%n<%s>%n", argType.getDisplayName());
+                helpFormatter.printWrapped(writer, helpFormatter.getWidth(), helpFormatter.getLeftPadding() + HELP_PADDING + HELP_PADDING,
+                        argumentPadding + argType.description().get());
+            }
         }
         return argumentPadding;
     }

@@ -14,13 +14,35 @@
 ~~   See the License for the specific language governing permissions and
 ~~   limitations under the License.
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#set($stringUtils = ${rat.stringUtils})
 
                    ------------------------------
-                   Default Licenses and Matchers
+                   Default Matcher Definitions
                    ------------------------------
 
- The following lists the Licenses, and Matchers that are available by default.
+Default Matcher Definitions
 
-+------------------------------------------+
-#include( "default_licenses.txt" )
-+------------------------------------------+
+ RAT provides a number of matcher definitions.  These definitions are sufficient to define most licences.  Additional
+ matchers can be created and installed in the system.  The listing below is the set of standard matchers.
+
+#foreach ($matcher in $rat.matchers)
+
+* ${matcher.name}
+
+  $rat.aptEscape(${matcher.description})
+
+  #if ($matcher.enclosed)
+  * Encloses one ${matcher.enclosed.collection}${matcher.enclosed.type} object\(s\). ($matcher.enclosed.required)
+
+  #end
+  #if ($matcher.attributes)
+  * <<Attributes>>
+
+    #foreach ($attribute in $matcher.attributes)
+    * <<${attribute.name}>> (${attribute.required}) ${rat.aptEscape(${attribute.description})}
+
+      * type: ${attribute.type}
+
+    #end
+  #end
+#end

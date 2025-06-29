@@ -1,0 +1,68 @@
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~   Licensed to the Apache Software Foundation (ASF) under one or more
+~~   contributor license agreements.  See the NOTICE file distributed with
+~~   this work for additional information regarding copyright ownership.
+~~   The ASF licenses this file to You under the Apache License, Version 2.0
+~~   (the "License"); you may not use this file except in compliance with
+~~   the License.  You may obtain a copy of the License at
+~~
+~~       http://www.apache.org/licenses/LICENSE-2.0
+~~
+~~   Unless required by applicable law or agreed to in writing, software
+~~   distributed under the License is distributed on an "AS IS" BASIS,
+~~   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+~~   See the License for the specific language governing permissions and
+~~   limitations under the License.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#set($stringUtils = ${rat.stringUtils})
+#set($newTab = ${rat.doubleLine}+" * ")
+
+                   --------------------------
+                   Maven Options
+                   --------------------------
+
+Maven Options
+
+ The RAT Maven plugin has many of the same options as the command line as well as a few that are specific to the Maven
+  environment. The argument types specified in the list below are defined in section following.
+
+* The Options
+
+#set($descEnd = ${rat.doubleLine} + " ")
+#foreach ($option in $rat.mvnOptions)
+#set($desc = $rat.aptEscape(${option.option.description}))
+#set($desc = $stringUtils.replace($desc, ${esc.N}, ${descEnd}))
+#set($desc = $stringUtils.replace($desc, ${rat.tab}, " * "))
+
+** ${rat.aptEscape($option.text)}
+
+  #if(${option.deprecated}) <<$rat.aptEscape(${option.deprecated.toString})>> #end ${desc}
+
+  * Required: ${option.required}
+
+#if(${option.hasArg})
+  * Argument Type: \<${option.argName}\>
+
+  * Argument Count: #if(${option.option.args} == -2)Unlimited.#else ${option.option.args}#end
+#end
+
+  * Example: $rat.aptEscape(${option.example})
+
+#end
+
+** Argument Types
+
+#set($descEnd = ${rat.doubleLine} + " ")
+#foreach ($type in $rat.argumentTypes)
+#set($desc = $rat.aptEscape(${type.description.get}))
+#set($desc = $stringUtils.replace($desc, ${esc.N}, ${descEnd}))
+#set($desc = $stringUtils.replace($desc, ${rat.tab}, " * "))
+*** ${type.displayName}
+
+ ${desc}
+#if(${type.displayName} == "StandardCollection")
+
+ A complete description of each of the {{{./standard_collections.html}standard collection}} types is available.
+#end
+
+#end

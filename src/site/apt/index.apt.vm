@@ -19,26 +19,46 @@
                    A Release Audit Tool
                    --------------------------
 
-Apache Rat&#8482;
+A Release Audit Tool (RAT)
+
+ Apache RAT&#8482; audits software distributions, with a special interest in headers.
+ If this isn't quite what you're looking for then take a look at the
+ other products developed by {{{https://creadur.apache.org}Apache Creadur}}&#8482;,
+ including {{{https://creadur.apache.org/whisker}Apache Whisker}}&#8482; which audits
+ and generates legal (for example <<<LICENSE>>>) documents for
+ complex software distributions.
+
+ There are several things to keep in mind when running RAT
+
+ [[1]] RAT highlights possible issues.
+
+ [[2]] RAT reports require interpretation.
+
+ [[3]] RAT often requires some tuning before it runs well against a project.
+
+ [[4]] RAT relies on heuristics: it may miss issues
+
+
+Apache RAT&#8482;
 
  In a hurry? Jump to {{{Quick_Start:_Running_Rat}quick start}}
 
 %{toc|fromDepth=2|toDepth=3}
 
-* About Rat
+* About RAT
 
-** What Is Rat?
+** What Is RAT?
 
- Apache Rat is a release audit tool, focused on licenses.
+ Apache RAT is a release audit tool, focused on licenses.
 
- Use Rat to improve accuracy and efficiency
+ Use RAT to improve accuracy and efficiency
  when checking releases for licenses.
 
  Reviewing releases in the {{{https://incubator.apache.org/}Apache Incubator}}
  by hand was error-prone and time-consuming.
- Rat arises from the Apache style, but is used more widely.
+ RAT arises from the Apache style, but is used more widely.
 
- Apache Rat is part of the {{{https://creadur.apache.org}Apache Creadur}}
+ Apache RAT is part of the {{{https://creadur.apache.org}Apache Creadur}}
  language- and build-agnostic suite of tools for auditing and comprehending
  software distributions. Our community develops
  {{{https://opensource.org/} open source software}} the
@@ -52,28 +72,28 @@ Apache Rat&#8482;
  {{{./mailing-lists.html}talk to us}}.
  All welcome :-)
 
-** How Do I Use Rat?
+** How Do I Use RAT?
 
- Apache Rat ${project.version} ships with tooling for
+ Apache RAT ${project.version} ships with
 
-   * {{{https://ant.apache.org/}Apache Ant}},
+   * A {{{./apache-rat/index.html}command line}} client.
 
-   * {{{https://maven.apache.org}Apache Maven}} and
+   * An Apache {{{./apache-rat-task/index.html}Ant task library}} ,
 
-   * the {{{./apache-rat/index.html}command line}}.
+   * An Apache {{{./apache-rat-plugin/index.html}Maven plugin}}.
 
- Rat is extensible. If your build tool isn't supported, please contribute a
+ RAT is extensible. If your build tool isn't supported, please contribute a
  {{{./issue-management.html}patch}} or
  {{{./mailing-lists.html}talk to us}}.
 
- Rat aspires to be self documenting. Please contribute a
+ RAT aspires to be self documenting. Please contribute a
  {{{./issue-management.html}patch}} or
  {{{./mailing-lists.html}talk to us}}
- whenever Rat falls short.
+ whenever RAT falls short.
 
-** How do I extend Rat
+** How do I extend RAT
 
- There are several standard ways to extend Rat.
+ There are several standard ways to extend RAT.
 
    * Add a {{{./license_def.html}license definition}} via an XML file.
 
@@ -85,70 +105,18 @@ Apache Rat&#8482;
 
    * Write a new {{{./ui_def.html}user interface}}.  Requires Java expertise, but there are tools to help.
 
-* Quick Start: Running Rat
+* Quick Start: Running RAT
 
-  There are three user interfaces for Rat: from the command line, from Ant, and from Maven.
-  All three of the interfaces {{{./apache-rat/name_xref.html}support standard options}}.
+  There are three user interfaces for RAT: from the {{{./apache-rat/index.html}command line}},
+  from {{{./apache-rat-task/index.html}Ant}}, and from {{{./apache-rat-plugin/index.html}Maven}}.
 
-** Command Line
+  Please see the specific documentation in one of the links above.
 
- To run from the command line enter the following command:
-
-+------------------------------------------+
-java -jar apache-rat-${project.version}.jar [options] [Directory or Archive]
-+------------------------------------------+
-
- Where "[options]" are one or more of the options listed in the table above (for CLI), and "[Directory or Archive]" is the directory or archive you want to process.
- There is more detailed information in the {{{./apache-rat/index.html}CLI documentation}}.
-
-** Apache Ant
-
- Ant support is provided via a task library. This requires {{{https://ant.apache.org/}Apache Ant 1.7}} or later.  The {{{./apache-rat-tasks/index.html}Ant library documentation}}
- provides detailed information concerning how to load the library and how to use the custom elements and properties for the Rat tasks.
-
-** Apache Maven
-
- Within the Maven ecosystem the Rat Maven plugin can be used. The plugin supports {{{https://maven.apache.org}Apache Maven}} ${mavenVersion} or later.
-
- <<ATTENTION!>> Maven4 is based on Java 17 and thus cannot be used with RAT, that relies on Java 8.
-
- To use the plugin add the following information to your pom file.
-
-+------------------------------------------+
-  <plugin>
-    <groupId>org.apache.rat</groupId>
-    <artifactId>apache-rat-plugin</artifactId>
-    <version>${project.version}</version>
-  </plugin>
-+------------------------------------------+
-
- Detailed information about the {{{./apache-rat-plugin/index.html} Maven plugin}} is available.
-
-** Styling output
-
- RAT allows you to style the output as you see fit.  Three stylesheets are included in the "rat" package.
-
-  * {{{https://gitbox.apache.org/repos/asf/creadur-rat/blob/master/apache-rat-core/src/main/resources/org/apache/rat/plain-rat.xsl}plain-rat}} - The default stylesheet.
-
-  * {{{https://gitbox.apache.org/repos/asf/creadur-rat/blob/master/apache-rat-core/src/main/resources/org/apache/rat/unapproved-licenses.xsl}unapproved-licenses}} - Lists only the files with unapproved licenses.
-
-  * {{{https://gitbox.apache.org/repos/asf/creadur-rat/blob/master/apache-rat-core/src/main/resources/org/apache/rat/missing-headers.xsl}missing-headers}} - List only files that are missing headers.
-
- These stylesheets can be specified using options in the command line, Maven or Ant clients.
-
- In addition, new {{{/xslt_def.html}stylesheets may be developed}} and applied to create new reports.
-
-** Standard license and matcher definitions.
-
-  Rat ships with a number of licenses, license families, and matcher definitions.  Additional definitions/implementations
-  of these objects may be added to the system as noted in {{{./license_def.html}the license definition document}}.
-  A {{{./apache-rat/default_licenses.html}list of default licenses}} is also available.
-
-* Building Rat from source
+* Building RAT from source
 
 ** Checkout the code
 
-  Rat uses a Git repository.  You can clone it using:
+  RAT uses a Git repository.  You can clone it using:
 
 +------------------------------------------+
 git clone https://gitbox.apache.org/repos/asf/creadur-rat.git

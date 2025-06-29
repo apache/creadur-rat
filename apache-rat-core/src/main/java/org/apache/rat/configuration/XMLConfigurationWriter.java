@@ -181,7 +181,7 @@ public class XMLConfigurationWriter {
 
     private void writeComment(final IXmlWriter writer, final Description description) throws IOException {
         if (StringUtils.isNotBlank(description.getDescription())) {
-            writer.comment(description.getDescription());
+            writer.comment(description.getDescription().replace("-->", "-&ndash;>"));
         }
     }
 

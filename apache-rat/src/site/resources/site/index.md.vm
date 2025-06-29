@@ -1,0 +1,112 @@
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~   Licensed to the Apache Software Foundation (ASF) under one or more
+~~   contributor license agreements.  See the NOTICE file distributed with
+~~   this work for additional information regarding copyright ownership.
+~~   The ASF licenses this file to You under the Apache License, Version 2.0
+~~   (the "License"); you may not use this file except in compliance with
+~~   the License.  You may obtain a copy of the License at
+~~
+~~       http://www.apache.org/licenses/LICENSE-2.0
+~~
+~~   Unless required by applicable law or agreed to in writing, software
+~~   distributed under the License is distributed on an "AS IS" BASIS,
+~~   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+~~   See the License for the specific language governing permissions and
+~~   limitations under the License.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+${esc.hash} Command Line Support
+#set($doublespace = ${esc.newLine}+${esc.newline})
+
+  ${esc.hash}${esc.hash} About Apache Rat&#8482;
+
+Rat audits software distributions, with a special interest in headers.
+If this isn't quite what you're looking for then take a look at the
+other products developed by [Apache Creadur](https://creadur.apache.org)&#8482;,
+including [Apache Whisker](https://creadur.apache.org/whisker)&#8482; which audits
+and generates legal (for example `LICENSE`) documents for
+complex software distributions.
+
+${esc.hash}${esc.hash} Running from the Command Line
+
+Run from the command line with:
+
+```
+java -jar apache-rat/target/apache-rat-${project.version}.jar --help
+```
+
+This will output a help message detailing the command line
+options available to you.
+
+${esc.hash}${esc.hash} Adding license headers
+
+Rat can be used to automatically add license headers to
+files that do not currently have them. Only files that
+are not excluded by the Rat configurations will be affected.
+
+To add license headers use a command such as:
+
+```
+java -jar apache-rat/target/apache-rat-${project.version}.jar --addlicense --copyright "Copyright 2008 Foo" --force /path/to/project
+```
+
+This command will add the license header directly to the
+source files. If you prefer to see which files will be
+changed and how then remove the "--force" option.
+
+${esc.hash}${esc.hash} Using multiple excludes from a file
+
+It is common to use the Rat with the Maven or Ant plugins and specify
+a series of files to exclude (such as a README or version control
+files).  If you are using the Rat application instead of a plugin you
+can specify a series of regex excludes in a file and specify that with
+the `--exclude-file` option.
+
+```
+java -jar apache-rat/target/apache-rat-${project.version}.jar --exclude-file /path/to/project/.rat-excludes /path/to/project
+```
+
+${esc.hash}${esc.hash} Command Line Options
+
+#foreach ($option in $Options)
+  #set($desc = $markdown.escape($stringUtils.replace(${option.description}, ${newline}, ${doublespace})))
+  #set($desc = $stringUtils.replace($desc, ${tab}, " - "))
+
+  ${esc.hash}${esc.hash}${esc.hash} #if(${option.longOpt})--${option.longOpt}#if(${option.opt}) or -${option.opt}#end#else-${option.opt}#end
+
+  #if(${option.deprecated})**$markdown.escape(${option.deprecated.toString})** #end ${desc}
+
+- Required: ${option.required}
+  #if(${option.hasArg})
+- Argument Type: ${option.argName}
+- Argument Count: #if(${option.args} == -2)Unlimited.  Unlimited arguments must end with `--` or another option starting with `--`.#else ${option.args}#end
+  #end
+#end
+
+${esc.hash}${esc.hash}${esc.hash} Arguments Definitions
+
+The above list references a number of argument types.  This is the definition of those types.
+
+
+#foreach ($type in $ArgumentTypes)
+  #set($desc = $markdown.escape($stringUtils.replace(${type.description.get}, ${newline}, ${doublespace})))
+  #set($desc = $stringUtils.replace($desc, ${tab}, " - "))
+
+${esc.hash}${esc.hash} \<${type.displayName}\>
+
+  ${desc}
+
+#end
+
+${esc.hash}${esc.hash} Styling output
+
+RAT allows you to style the output as you see fit.  Three stylesheets are included in the "rat" package.
+
+* The [default stylesheet](https://gitbox.apache.org/repos/asf/creadur-rat/blob/master/apache-rat-core/src/main/resources/org/apache/rat/plain-rat.xsl}plain-rat).
+
+* Lists only the files with [unapproved licenses]()https://gitbox.apache.org/repos/asf/creadur-rat/blob/master/apache-rat-core/src/main/resources/org/apache/rat/unapproved-licenses.xsl}unapproved-licenses).
+
+* List only files that are [missing headers](https://gitbox.apache.org/repos/asf/creadur-rat/blob/master/apache-rat-core/src/main/resources/org/apache/rat/missing-headers.xsl}missing-headers).
+
+These stylesheets can be specified using options in the command line, Maven or Ant clients.
+
+To develop your own stylesheets see the Rat Output section of the menu on the left.

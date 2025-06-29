@@ -1,0 +1,120 @@
+~~   Licensed to the Apache Software Foundation (ASF) under one or more
+~~   contributor license agreements.  See the NOTICE file distributed with
+~~   this work for additional information regarding copyright ownership.
+~~   The ASF licenses this file to You under the Apache License, Version 2.0
+~~   (the "License"); you may not use this file except in compliance with
+~~   the License.  You may obtain a copy of the License at
+~~  
+~~        http://www.apache.org/licenses/LICENSE-2.0
+~~  
+~~   Unless required by applicable law or agreed to in writing, software
+~~   distributed under the License is distributed on an "AS IS" BASIS,
+~~   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+~~   See the License for the specific language governing permissions and
+~~   limitations under the License.
+
+ ------
+ The RAT Meven Plugin
+ ------
+
+Apache RAT&#8482; Overview
+
+ RAT audits software distributions, with a special interest in headers.
+ If this isn't quite what you're looking for then take a look at the
+ other products developed by {{{https://creadur.apache.org}Apache Creadur}}&#8482;,
+ including {{{https://creadur.apache.org/whisker}Apache Whisker}}&#8482; which audits
+ and generates legal (for example <<<LICENSE>>>) documents for
+ complex software distributions.
+
+ The <<<apache-rat-plugin>>> is used to run RAT in the Maven environment. It
+ executes RAT report while providing standard Maven configuration options.
+
+ There are several things to keep in mind when running RAT
+
+ [[1]] RAT highlights possible issues.
+
+ [[2]] RAT reports require interpretation.
+
+ [[3]] RAT often requires some tuning before it runs well against a project.
+
+ [[4]] RAT relies on heuristics: it may miss issues
+
+Usage
+
+  The RAT Maven plugin has two basic features.
+
+  <<<apache-rat:check>>> will generate a report as a simple text file, called <<<target/rat.txt>>>.  This report contains
+  the report as specified by the options specified.
+
+  <<<apache-rat:report>>> will add the report to the generated site.
+
+* Writing the report to a text file
+
+  The <<<apache-rat:check>>> goal creates a text file with the report.
+  This is done by adding a section like the following to the <<<pom.xml>>>:
+
+------------------------------------------------------------------
+  <build>
+    <plugins>
+      ...
+      <plugin>
+        <groupId>org.apache.rat</groupId>
+        <artifactId>apache-rat-plugin</artifactId>
+        <version>${project.version}</version>
+      </plugin>
+      ...
+    </plugins>
+  </build>
+------------------------------------------------------------------
+
+  Once the plugin is specified the report can be generated from the command
+  line by simply typing:
+
+------------------------------------------------------------------
+  mvn apache-rat:check
+------------------------------------------------------------------
+
+  We have provided an example of {{{./examples/verify.html}running the plugin automatically}}.
+
+* Adding the report to the generated site
+
+  A section like the following must be added to the <<<pom.xml>>> will automatically generated the report when you
+  run the <<<site>>> target.
+
+------------------------------------------------------------------
+  <reporting>
+    <plugins>
+      ...
+      <plugin>
+        <groupId>org.apache.rat</groupId>
+        <artifactId>apache-rat-plugin</artifactId>
+        <version>${project.version}</version>
+      </plugin>
+      ...
+    </plugins>
+  </reporting>
+------------------------------------------------------------------
+
+  Run the <<<site>>> target.
+
+------------------------------------------------------------------
+  mvn site
+------------------------------------------------------------------
+
+Configuration Options
+
+  There are a number of {{{./mvn_options.html}configuration options}} available to configure RAT.  These options
+  are derived from the command line version of RAT and function the same way.
+
+* Examples
+
+  The following examples should provide a better understanding of some usages of the RAT Maven Plugin.
+
+  * {{{./examples/basic.html}Basic use}} of the <<apache-rat:check>> goal.
+
+  * {{{./examples/verify.html}Automatically running}} the <<apache-rat:check>> goal
+    when the project is built.
+
+  * Adding the report to the {{{./examples/site.html}generated site}}.
+
+  * Applying a {{{./examples/custom-license.html}custom license}}.

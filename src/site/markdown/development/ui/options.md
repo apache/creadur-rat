@@ -25,9 +25,9 @@ In this section we will explore how the Rat core module exposes the information 
 
 Rat core uses the Apache Commons CLI library to process command line options.  All the options are recorded in the `org.apache.rat.commandline.Arg` enumeration.  Internally the Arg enumeration contains logical option groups that represent a single option.  The use of option groups provides us a way to deprecate options and create replacements.  Only one option in an option group may be used in a single Rat invocation.
 
-Each UI will have a representation of the individual Options specified within the Arg enumeration.  To simplify the code each UI implementation should have an implementation of the `org.apache.rat.tools.AbstractOption` class.  This class will map the information contained in the `org.apache.commons.cli.Option` into methods that make sense with respect to the UI being implemented.
+Each UI will have a representation of the individual Options specified within the Arg enumeration.  To simplify the code each UI implementation should have an implementation of the `org.apache.rat.documentation.options.AbstractOption` class.  This class will map the information contained in the `org.apache.commons.cli.Option` into methods that make sense with respect to the UI being implemented.
 
-As an example we will look at the `org.apache.rat.tools.MavenOption`.
+As an example we will look at the `org.apache.rat.documentation.options.MavenOption`.
 
 ## MavenOption
 
@@ -57,7 +57,7 @@ The cleanup name method is called by the AbstractOption to convert the `org.apac
 
 The default value method will return the default value specified in the `org.apache.commons.cli.Option` unless it is overridden.
 
-Maven allows the definition of default values for its options.  The class `org.apache.rat.tools.MavenOption` defines the default values for the CLI options that have default values in Maven.  For example, the Maven environment expects the output of the tool to be written to a file and not displayed on standard out so this value is set as the default.
+Maven allows the definition of default values for its options.  The class `org.apache.rat.documentation.options.MavenOption` defines the default values for the CLI options that have default values in Maven.  For example, the Maven environment expects the output of the tool to be written to a file and not displayed on standard out so this value is set as the default.
 
 ### Generating the method signature
 

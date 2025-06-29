@@ -31,9 +31,32 @@ Custom License Matchers
   Unlike earlier version (before 0.16) no custom implementations are required to define
   custom licenses.
 
-  There is a file that defines all of the standard licenses: {{{https://gitbox.apache.org/repos/asf/creadur-rat/blob/master/apache-rat-core/src/main/resources/org/apache/rat/default.xml}default.xml}}
+  There is a file that defines all of the standard licenses: {{{https://gitbox.apache.org/repos/asf/creadur-rat/blob/master/apache-rat-core/src/main/resources/org/apache/rat/default.xml}default.xml}}.  The pom.xml implementations vary slightly from the configuration because the pom does not allow attributes on the configuraiton entries.  For a full mapping of the command line options to the Maven options see the {{{/apache-rat/name_xref.html}Option Name Cross Reference}}
 
   Please be aware that custom licenses need to have <<unique names>>, otherwise a warning is issued and your custom definitions are ignored in favour of the standard license definitions.
+
+  The easiest solution for defining custom licenses is to use the <<<config>>> option.  For this option write your custom configuration like you would for the command line and then include it.  In the example below the custome configuration is called <<<myConfig.xml>>>
+
+  ------------------------------------------------------------------
+  <build>
+    <plugins>
+      ...
+      <plugin>
+        <groupId>org.apache.rat</groupId>
+        <artifactId>apache-rat-plugin</artifactId>
+        <version>${currentVersion}</version>
+        <configuration>
+          <configs>
+            <config>myConfig.xml</config>
+          </configs>
+        </configuration>
+      </plugin>
+      ...
+    </plugins>
+  </build>
+------------------------------------------------------------------
+
+ However it is possible to define licenses directly in the pom file.  Assume that the header below is an acceptable license.
 
 ------------------------------------------------------------------
   /**
@@ -45,7 +68,7 @@ Custom License Matchers
 
   A very easy way to search for such headers would be to scan
   for the string "Yet Another Software License, 1.0". And here's
-  how you would do that in your POM:
+  how to do that in the POM:
 
 ------------------------------------------------------------------
   <build>
@@ -234,5 +257,7 @@ Overview of configuration options
     </not>
 </all>
 ------------------------------------------------------------------
+
+  Back to {{{./index.html}examples}}
 
 ~~ https://maven.apache.org/doxia/references/apt-format.html

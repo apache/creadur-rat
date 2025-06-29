@@ -29,7 +29,7 @@ import org.apache.rat.test.AbstractOptionsProvider;
 import org.apache.rat.OptionCollectionTest;
 import org.apache.rat.ReportConfiguration;
 import org.apache.rat.testhelpers.TestingLog;
-import org.apache.rat.tools.AntOption;
+import org.apache.rat.documentation.options.AntOption;
 import org.apache.rat.utils.DefaultLog;
 import org.apache.rat.utils.Log;
 import org.junit.jupiter.api.AfterAll;

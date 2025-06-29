@@ -1,0 +1,330 @@
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~   Licensed to the Apache Software Foundation (ASF) under one or more
+~~   contributor license agreements.  See the NOTICE file distributed with
+~~   this work for additional information regarding copyright ownership.
+~~   The ASF licenses this file to You under the Apache License, Version 2.0
+~~   (the "License"); you may not use this file except in compliance with
+~~   the License.  You may obtain a copy of the License at
+~~
+~~       http://www.apache.org/licenses/LICENSE-2.0
+~~
+~~   Unless required by applicable law or agreed to in writing, software
+~~   distributed under the License is distributed on an "AS IS" BASIS,
+~~   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+~~   See the License for the specific language governing permissions and
+~~   limitations under the License.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#set($stringUtils = ${rat.stringUtils})
+#set($newTab = ${rat.doubleLine}+" * ")
+
+                       -----
+                        Apache RAT Ant Task Library
+                        -----
+Apache RAT Overview
+
+ RAT audits software distributions, with a special interest in headers.
+ If this isn't quite what you're looking for then take a look at the
+ other products developed by {{{https://creadur.apache.org}Apache Creadur}}&#8482;,
+ including {{{https://creadur.apache.org/whisker}Apache Whisker}}&#8482; which audits
+ and generates legal (for example <<<LICENSE>>>) documents for
+ complex software distributions.
+
+ There are several things to keep in mind when running RAT
+
+ [[1]] RAT highlights possible issues.
+
+ [[2]] RAT reports require interpretation.
+
+ [[3]] RAT often requires some tuning before it runs well against a project.
+
+ [[4]] RAT relies on heuristics: it may miss issues
+
+Apache RAT Ant Task Library
+
+ The RAT Ant Task Library provides a single Ant task and supporting
+ Ant types and properties to run RAT from inside {{{https://ant.apache.org/}Apache Ant}}.
+
+ Using Ant's resource abstraction the task can be used to check files
+ on disk as well as tarballs or even URLs directly.
+
+* Requirements
+
+ The RAT Ant Task Library requires Apache Ant 1.7.1 or higher (it
+ works well with 1.8.x), Apache RAT core and transitively all
+ dependencies of Apache RAT core.
+
+ In order to use the tasks Java 5 is required as of RAT 0.9 - Rat 0.8
+ and earlier require Java 1.4.
+
+ Java 8 is required for RAT 0.14 and above.
+
+* Installation
+
+    There are several ways to use the Antlib:
+
+    * The traditional way:
+
++------------------------------------------+
+<taskdef
+    resource="org/apache/rat/anttasks/antlib.xml">
+    <classpath>
+        <pathelement location="YOUR-PATH-TO/apache-rat-${project.version}.jar"/>
+    </classpath>
+</taskdef>
++------------------------------------------+
+
+      With this you can use the report task like plain Ant tasks,
+      they'll live in the default namespace.  For example if you can run
+      <<<exec>>> without any namespace prefix, you can do so for
+      <<<report>>> as well.
+
+    * Similar, but assigning a namespace URI
+
++------------------------------------------+
+<taskdef
+    uri="antlib:org.apache.rat.anttasks"
+    resource="org/apache/rat/anttasks/antlib.xml">
+    <classpath>
+        <pathelement location="YOUR-PATH-TO/apache-rat-${project.version}.jar"/>
+    </classpath>
+</taskdef>
++------------------------------------------+
+
+      This puts your task into a separate namespace than Ant's
+      namespace.  You would use the tasks like
+
++------------------------------------------+
+<project
+    xmlns:rat="antlib:org.apache.rat.anttasks"
+    xmlns="antlib:org.apache.tools.ant">
+    ...
+    <rat:report>
+        <fileset dir="src"/>
+    </rat:report>
+    ...
+</project>
++------------------------------------------+
+
+      or a variation thereof.
+
+    * Using Ant's autodiscovery.  Place <<<apache-rat-tasks.jar>>> and
+      all dependencies into a directory and use <<<ant -lib
+      DIR-CONTAINING-THE-JAR>>> or copy it into <<<ANT_HOME/lib>>> -
+      and then in your build file, simply declare the namespace on the
+      <<<project>>> tag:
+
++------------------------------------------+
+<project
+    xmlns:rat="antlib:org.apache.rat.anttasks"
+    xmlns="antlib:org.apache.tools.ant">
++------------------------------------------+
+
+      and all tasks of this library will automatically be available in
+      the <<<rat>>> namespace without any <<<taskdef>>>.
+
+Adding license headers
+
+ RAT can be used to automatically add Apache V2 license headers to
+ files that do not currently have them. Only files that
+ are not excluded by the RAT configurations will be affected.
+
+ To add license headers use a command such as:
+
++------------------------------------------+
+<project
+    xmlns:rat="antlib:org.apache.rat.anttasks"
+    xmlns="antlib:org.apache.tools.ant">
+    ...
+    <rat:report editLicense="y" editCopyright="Copyright 2008 Foo" editOverwrite="Y">
+        <fileset dir="path/to/source"/>
+    </rat:report>
+    ...
+</project>
++------------------------------------------+
+
+ This command will add the license header directly to the
+ source files along with the copyright notice.. If you prefer to see which files will be
+ changed and how then remove the "editOverwrite " attribute.
+
+Excluding files from consideration
+
+ By default RAT Ant task includes all the files listed in an enclosed <<<fileset>>>.  To exclude specific files within the set use
+ one or more of the exclusion options.  RAT uses a {{{../apache-rat/exclusion_expression.html}modified glob exclusion}} similar to Ant or Git.
+
+ RAT supports exclusion and inclusion.  By default all files are processed.  Using the exclude command files can be excluded from
+ processing.  In addition file may be explicitly included.  <<Files that are explicitly included can not be excluded.>>
+
+* Exclusion by glob pattern
+
+ The following command will exclude all files with a "foo" extension as wll as all files in the junk folder at the root of the project.
+
++------------------------------------------+
+<project
+    xmlns:rat="antlib:org.apache.rat.anttasks"
+    xmlns="antlib:org.apache.tools.ant">
+    ...
+    <rat:report>
+        <inputExclude>
+            <expr>**/*.foo</expr>
+            <expr>junk/**</expr>
+        </inputExclude>
+        <fileset dir="path/to/source"/>
+    </rat:report>
+    ...
+</project>
++------------------------------------------+
+
+* Exclusion by glob pattern file
+
+ It is often more efficient to place the exclusion patterns in a file and read that from disk.  The following is an example of
+ how to do that.
+
++------------------------------------------+
+<project
+    xmlns:rat="antlib:org.apache.rat.anttasks"
+    xmlns="antlib:org.apache.tools.ant">
+    ...
+    <rat:report>
+        <inputExcludeFile>
+            <file file="/tmp/junit-5065932240072873529/excludeFile.xml" />
+        </inputExclude>
+        <fileset dir="path/to/source"/>
+    </rat:report>
+    ...
+</project>
++------------------------------------------+
+
+* Using standard exclusions
+
+ RAT defines a number of {{{../apache-rat/standard_collections}standard collections}} that can be used to exclude files based on
+ a standard pattern.  For example to exclude all the files associated with the git SCM
+
++------------------------------------------+
+<project
+    xmlns:rat="antlib:org.apache.rat.anttasks"
+    xmlns="antlib:org.apache.tools.ant">
+    ...
+    <rat:report>
+        <inputExcludeStd>
+            <std>GIT</std>
+        </inputExcludeStd>
+        <fileset dir="path/to/source"/>
+    </rat:report>
+    ...
+</project>
++------------------------------------------+
+
+  To exclude the files specified in the <<<.gitignore>>> files the <<<inputExcludeParsedScm>>> element is used.
+
++------------------------------------------+
+<project
+    xmlns:rat="antlib:org.apache.rat.anttasks"
+    xmlns="antlib:org.apache.tools.ant">
+    ...
+    <rat:report>
+        <inputExcludeStd>
+            <std>GIT</std>
+        </inputExcludeStd>
+        <inputExcludeParsedScm>
+            <std>GIT</std>
+        </inputExcludeParsedScm>
+        <fileset dir="path/to/source"/>
+    </rat:report>
+    ...
+</project>
++------------------------------------------+
+
+  RAT will by default include all the files in hidden directories.
+  To exclude the hidden files and directories and the git excluded resources the following command could be used:
+
++------------------------------------------+
+<project
+    xmlns:rat="antlib:org.apache.rat.anttasks"
+    xmlns="antlib:org.apache.tools.ant">
+    ...
+    <rat:report>
+        <inputExcludeStd>
+            <std>GIT</std>
+            <std>HIDDEN_FILE</std>
+            <std>HIDDEN_DIR</std>
+        </inputExcludeStd>
+        <inputExcludeParsedScm>
+            <std>GIT</std>
+        </inputExcludeParsedScm>
+        <fileset dir="path/to/source"/>
+    </rat:report>
+    ...
+</project>
++------------------------------------------+
+
+* Excluding files by size
+
+  RAT will exclude files below a specified size if desired.  This is done with the <<<inputExcludeSize>>> attribute.  This attribute
+  takes the the file size in bytes as an argument.  The following will exclude files of 10 bytes or less.
+
++------------------------------------------+
+<project
+    xmlns:rat="antlib:org.apache.rat.anttasks"
+    xmlns="antlib:org.apache.tools.ant">
+    ...
+    <rat:report inputExcludeSize="10">
+        <fileset dir="path/to/source"/>
+    </rat:report>
+    ...
+</project>
++------------------------------------------+
+
+* Including excluded files
+
+ The <<<inputExclude>>>, <<<inputExcludeFile>>> and <<<inputExcludeStd> have include counterparts <<<inputInclude>>>,
+ <<inputIncludeFile>>>, <<<inputIncludeStd>>>.  The include options will add files back to the processing list.  For example,
+ taking the earlier "<inputExclude> example, if there was a file named "master/kung.foo" that should not be excluded the following
+ command will ensure that it is processed.
+
++------------------------------------------+
+<project
+    xmlns:rat="antlib:org.apache.rat.anttasks"
+    xmlns="antlib:org.apache.tools.ant">
+    ...
+    <rat:report>
+        <inputExclude>
+            <expr>**/*.foo</expr>
+            <expr>junk/**</expr>
+        </inputExclude>
+        <inputInclude>
+            <expr>master/kung.foo</expr>
+        </inputInclude>
+        <fileset dir="path/to/source"/>
+    </rat:report>
+    ...
+</project>
++------------------------------------------+
+
+ The order of the arguments is not important, the <<inputInclude>>> could have come before the <<<inputExclude>>>.
+
+Styling output
+
+ RAT allows you to style the output as you see fit.  Several stylesheets are included in the RAT package.
+
+#foreach ($style in ${rat.styleSheets})
+ * {{{https://gitbox.apache.org/repos/asf/creadur-rat/blob/master/apache-rat-core/src/main/resources/org/apache/rat/${style.arg}.xsl}${style.arg}}} - ${style.desc}
+
+#end
+
+ These stylesheets can be specified using the <<<outputStyle>>> attribute.  The following example create a pretty printed xml
+ report output.
+
++------------------------------------------+
+<project
+    xmlns:rat="antlib:org.apache.rat.anttasks"
+    xmlns="antlib:org.apache.tools.ant">
+    ...
+    <rat:report outputStyle="xml">
+        <fileset dir="path/to/source"/>
+    </rat:report>
+    ...
+</project>
++------------------------------------------+
+
+
+ To develop your own stylesheets see the RAT Output section of the menu on the left.

@@ -44,6 +44,8 @@ import org.apache.commons.csv.CSVPrinter;
 import org.apache.commons.csv.QuoteMode;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.rat.OptionCollection;
+import org.apache.rat.documentation.options.AntOption;
+import org.apache.rat.documentation.options.MavenOption;
 import org.apache.rat.help.AbstractHelp;
 
 /**
