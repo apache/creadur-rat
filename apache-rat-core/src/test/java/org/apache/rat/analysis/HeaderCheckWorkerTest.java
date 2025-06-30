@@ -39,7 +39,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 public class HeaderCheckWorkerTest {
 
     @Test
-    public void emptyInputIsUnknownTest() throws Exception {
+    public void emptyInputIsUnknownTest() throws RatHeaderAnalysisException {
         final Document subject = new TestingDocument("subject");
         subject.getMetaData().setApprovalPredicate(Defaults.builder().build().getLicenseSetFactory().getApprovedLicensePredicate());
         ILicense matcher = new TestingLicense("test", "test");

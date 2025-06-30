@@ -30,12 +30,12 @@ abstract class EnclosingMatcher {
     protected abstract void setMatcher(IHeaderMatcher.Builder builder);
 
     @Parameter(required = false)
-    public void setAll(All all) {
+    public void setAll(final All all) {
         setMatcher(all);
     }
 
     @Parameter(required = false)
-    public void setAny(Any any) {
+    public void setAny(final Any any) {
         setMatcher(any);
     }
 

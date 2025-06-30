@@ -46,11 +46,11 @@ import org.apache.rat.document.DocumentNameMatcher;
 /**
  * Creates a List of {@link MatcherSet}s that represent the inclusions and exclusions of this file processor.
  * <p>
- *     By default this processor:
+ *     By default, this processor:
  * </p>
  * <ul>
  *     <li>Creates a list of levels that correspond to the depth of the directories where the specific include/exclude file is located.
- *     Directory depth is relative to the initially discovered include/exclude file.</li>
+ *     Directory depth is normally relative to the initially discovered include/exclude file.</li>
  *     <li>A MatcherSet is created for each include/exclude file located, and the MatcherSet is added to the proper level.</li>
  *     <li>During the build:
  *     <ul>
@@ -203,10 +203,14 @@ public abstract class AbstractFileProcessorBuilder {
         return result == null ? new File[0] : result;
     }
 
+    protected LevelBuilder getLevelBuilder(final int level) {
+        return levelBuilders.computeIfAbsent(level, k -> new LevelBuilder());
+    }
+
     /**
      * Manages the merging of {@link MatcherSet}s for the specified level.
      */
-    private static class LevelBuilder {
+    protected static final class LevelBuilder {
         /**
          * The list of MatcherSets that this builder produced.
          */

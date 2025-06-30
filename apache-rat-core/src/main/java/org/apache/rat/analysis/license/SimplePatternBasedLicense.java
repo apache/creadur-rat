@@ -36,12 +36,10 @@ import org.apache.rat.license.ILicense;
 public class SimplePatternBasedLicense  extends BaseLicense {
     private String[] patterns;
 
-
     public SimplePatternBasedLicense() {
         DeprecationReporter.logDeprecated(SimplePatternBasedLicense.class);
     }
 
-    
     public String[] getPatterns() {
         return patterns;
     }
@@ -65,7 +63,7 @@ public class SimplePatternBasedLicense  extends BaseLicense {
         return ILicense.builder()
         .setFamily(getLicenseFamilyCategory())
         .setName(getLicenseFamilyName())
-        .setMatcher( getMatcher() )
+        .setMatcher(getMatcher())
         .setNote(getNotes());
     }
 }

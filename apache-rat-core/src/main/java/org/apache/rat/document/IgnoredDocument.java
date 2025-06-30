@@ -20,7 +20,6 @@ package org.apache.rat.document;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collections;
 import java.util.SortedSet;
@@ -55,7 +54,7 @@ public class IgnoredDocument extends Document {
     }
 
     @Override
-    public InputStream inputStream() throws IOException {
+    public InputStream inputStream() {
         return new ByteArrayInputStream(new byte[0]);
     }
 }

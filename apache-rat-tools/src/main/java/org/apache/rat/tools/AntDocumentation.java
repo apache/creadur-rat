@@ -58,9 +58,8 @@ public final class AntDocumentation {
      *     <li>the directory in which to write the documentation files.</li>
      * </ol>
      * @param args the arguments.
-     * @throws IOException on error
      */
-    public static void main(final String[] args) throws IOException {
+    public static void main(final String[] args) {
 
         if (args.length == 0) {
             System.err.println("Output directory must be specified");
@@ -169,7 +168,7 @@ public final class AntDocumentation {
     /**
      * A class to write APT formatted text.
      */
-    private static class AptFormat  {
+    private static final class AptFormat  {
 
         /**
          * Copy the "license.apt" from the resources to the writer.

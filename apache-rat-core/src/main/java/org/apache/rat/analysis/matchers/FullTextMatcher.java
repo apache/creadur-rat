@@ -27,13 +27,13 @@ import org.apache.rat.analysis.IHeaders;
  * it to the full text of a given license (after reducing it to letters and
  * numbers as well).
  * <p>
- * The text comparison is case insensitive but assumes only characters in the
+ * The text comparison is case-insensitive but assumes only characters in the
  * US-ASCII charset are being matched.
  * </p>
  */
 public class FullTextMatcher extends SimpleTextMatcher {
     /**
-     * The text that we are searching for.  This text has been pruned and converted to lower case.
+     * The text that we are searching for. This text has been pruned and converted to lower case.
      */
     private final String prunedText;
 

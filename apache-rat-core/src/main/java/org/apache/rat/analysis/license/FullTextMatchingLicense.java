@@ -27,7 +27,7 @@ import org.apache.rat.license.ILicense;
  * compares it to the full text of a given license (after reducing it
  * to letters and numbers as well).
  *
- * <p>The text comparison is case insensitive but assumes only
+ * <p>The text comparison is case-insensitive but assumes only
  * characters in the US-ASCII charset are being matched.</p>
  *
  * @deprecated Use new configuration options
@@ -56,7 +56,7 @@ public class FullTextMatchingLicense extends BaseLicense {
         return ILicense.builder()
         .setFamily(getLicenseFamilyCategory())
         .setName(getLicenseFamilyName())
-        .setMatcher( new TextBuilder().setSimpleText(text) )
+        .setMatcher(new TextBuilder().setSimpleText(text))
         .setNote(getNotes());
     }
 }

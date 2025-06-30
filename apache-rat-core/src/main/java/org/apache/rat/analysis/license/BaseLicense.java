@@ -57,7 +57,7 @@ public abstract class BaseLicense implements DeprecatedConfig {
     }
     
     @Override
-    final public ILicenseFamily getLicenseFamily() {
+    public final ILicenseFamily getLicenseFamily() {
         return ILicenseFamily.builder()
         .setLicenseFamilyCategory(licenseFamilyCategory)
         .setLicenseFamilyName(licenseFamilyName)

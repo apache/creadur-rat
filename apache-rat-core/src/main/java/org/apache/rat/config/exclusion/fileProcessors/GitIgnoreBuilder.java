@@ -19,7 +19,12 @@
 package org.apache.rat.config.exclusion.fileProcessors;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.function.Consumer;
 
 import org.apache.rat.config.exclusion.ExclusionUtils;
@@ -51,6 +56,41 @@ public class GitIgnoreBuilder extends AbstractFileProcessorBuilder {
      */
     public GitIgnoreBuilder() {
         super(IGNORE_FILE, COMMENT_PREFIX, true);
+    }
+
+    private MatcherSet processGlobalIgnore(final Consumer<MatcherSet> matcherSetConsumer, final DocumentName root, final DocumentName globalGitIgnore) {
+        final MatcherSet.Builder matcherSetBuilder = new MatcherSet.Builder();
+        final List<String> iterable = new ArrayList<>();
+        ExclusionUtils.asIterator(globalGitIgnore.asFile(), commentFilter)
+                .map(entry -> modifyEntry(matcherSetConsumer, globalGitIgnore, entry).orElse(null))
+                .filter(Objects::nonNull)
+                .map(entry -> ExclusionUtils.qualifyPattern(root, entry))
+                .forEachRemaining(iterable::add);
+
+        Set<String> included = new HashSet<>();
+        Set<String> excluded = new HashSet<>();
+        MatcherSet.Builder.segregateList(excluded, included, iterable);
+        DocumentName displayName = DocumentName.builder(root).setName("global gitignore").build();
+        matcherSetBuilder.addExcluded(displayName, excluded);
+        matcherSetBuilder.addIncluded(displayName, included);
+        return matcherSetBuilder.build();
+    }
+
+    @Override
+    protected MatcherSet process(final Consumer<MatcherSet> matcherSetConsumer, final DocumentName root, final DocumentName documentName) {
+      if (root.equals(documentName.getBaseDocumentName())) {
+          Optional<File> globalGitIgnore = globalGitIgnore();
+          List<MatcherSet> matcherSets = new ArrayList<MatcherSet>();
+          matcherSets.add(super.process(matcherSetConsumer, root, documentName));
+          if (globalGitIgnore.isPresent()) {
+              LevelBuilder levelBuilder = getLevelBuilder(Integer.MAX_VALUE);
+              DocumentName ignore = DocumentName.builder(globalGitIgnore.get()).build();
+              matcherSets.add(processGlobalIgnore(levelBuilder::add, root, ignore));
+          }
+          return MatcherSet.merge(matcherSets);
+      } else {
+          return super.process(matcherSetConsumer, root, documentName);
+      }
     }
 
     /**
@@ -102,4 +142,34 @@ public class GitIgnoreBuilder extends AbstractFileProcessorBuilder {
         }
         return Optional.of(prefix ? NEGATION_PREFIX + pattern : pattern);
     }
+
+    /**
+     * The global gitignore file to process, based on the
+     * RAT_NO_GIT_GLOBAL_IGNORE, XDG_CONFIG_HOME, and HOME environment
+     * variables.
+     */
+    protected Optional<File> globalGitIgnore() {
+        if (System.getenv("RAT_NO_GIT_GLOBAL_IGNORE") != null) {
+            return Optional.empty();
+        }
+
+        String xdgConfigHome = System.getenv("XDG_CONFIG_HOME");
+        String filename;
+        if (xdgConfigHome != null && !xdgConfigHome.isEmpty()) {
+            filename = xdgConfigHome + File.separator + "git" + File.separator + "ignore";
+        } else {
+            String home = System.getenv("HOME");
+            if (home == null) {
+                home = "";
+            }
+            filename = home + File.separator + ".config" + File.separator + "git" + File.separator + "ignore";
+        }
+        File file = new File(filename);
+        if (file.exists()) {
+            return Optional.of(file);
+        } else {
+            return Optional.empty();
+        }
+    }
+
 }

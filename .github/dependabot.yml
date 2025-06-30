@@ -20,9 +20,14 @@ updates:
     schedule:
       interval: "daily"
     ignore:
+# as we run on JDK8 we must not update tika-core that runs on >= JDK11
+      - dependency-name: "org.apache.tika:tika-core"
+        versions: ["3.x"]
 # as we run on JDK8 we must not update mockito as it dropped JDK8 beginning from v4.x
       - dependency-name: "org.mockito:mockito-core"
         versions: ["4.x", "5.x"]
+      - dependency-name: "com.github.spotbugs:spotbugs-maven-plugin"
+        versions: ["4.9.x"]
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
