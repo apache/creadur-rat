@@ -13,7 +13,6 @@ github:
     - RAT
     - WHISKER
     - TENTACLES
-  del_branch_on_merge: true
 
 notifications:
   commits:      commits@creadur.apache.org
