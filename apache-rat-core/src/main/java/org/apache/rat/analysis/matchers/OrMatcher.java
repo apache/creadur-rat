@@ -28,8 +28,8 @@ import org.apache.rat.config.parameters.ConfigComponent;
 /**
  * A matcher that performs a logical {@code OR} across all the contained matchers.
  */
-@ConfigComponent(type = ComponentType.MATCHER, name = "any", desc = "A collection of matchers in which all enclosed " +
-        "matchers have to be true for the matcher to report true.")
+@ConfigComponent(type = ComponentType.MATCHER, name = "any", desc = "A collection of matchers where one or more enclosed " +
+        "matcher being true will cause the matcher to report true.")
 public class OrMatcher extends AbstractMatcherContainer {
 
     /**
