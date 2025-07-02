@@ -16,11 +16,10 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.rat.tools;
+package org.apache.rat.documentation.options;
 
 import org.apache.commons.cli.Option;
 import org.apache.rat.commandline.Arg;
-import org.apache.rat.documentation.options.MavenOption;
 import org.apache.rat.testhelpers.TextUtils;
 
 import org.junit.jupiter.api.Test;

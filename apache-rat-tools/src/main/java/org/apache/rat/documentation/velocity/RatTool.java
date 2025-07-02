@@ -212,8 +212,8 @@ public class RatTool {
 
     /**
      * Gets the {@link StringUtils} object.
-     * @return the apache.commons.land3 StringUtils object.
-     * @link StringUtils
+     * @return the org.apache.commons.lang3 StringUtils object.
+     * @see org.apache.commons.lang3.StringUtils
      */
     public StringUtils stringUtils() {
         return new StringUtils();

@@ -32,10 +32,17 @@ import org.apache.rat.commandline.Arg;
 
 import static java.lang.String.format;
 
+/**
+ * Abstract class that provides the framework for UI-specific RAT options.
+ * In this context UI option means an option expressed in the specific UI, such as:
+ * @see AntOption
+ * @see MavenOption
+ * @see CLIOption
+ */
 public abstract class AbstractOption {
     /** The pattern to match CLI options in text */
     protected static final Pattern PATTERN = Pattern.compile("-(-[a-z0-9]+)+");
-    /** The CLI that the Maven option is wrapping */
+    /** The actual UI-specific name for the option */
     protected final Option option;
     /** The name for the option */
     protected final String name;
@@ -46,7 +53,7 @@ public abstract class AbstractOption {
      * Constructor.
      *
      * @param option The CLI option
-     * @param name the name for the option.
+     * @param name the UI-specific name for the option.
      */
     AbstractOption(final Option option, final String name) {
         this.option = option;
@@ -74,6 +81,11 @@ public abstract class AbstractOption {
         return arg == null ? null : arg.defaultValue();
     }
 
+    /**
+     * Provide means to wrap the given option depending on the UI-specific option implementation.
+     * @param option The CLI option
+     * @return the cleaned up option name.
+     */
     protected abstract String cleanupName(Option option);
 
     /**
@@ -89,10 +101,11 @@ public abstract class AbstractOption {
     public String cleanupName() {
         return cleanupName(option);
     }
+
     /**
      * Replaces CLI pattern options with implementation specific pattern options.
      * @param str the string to clean.
-     * @return the string with CLI names replaced with implementatin specific names.
+     * @return the string with CLI names replaced with implementation specific names.
      */
     public String cleanup(final String str) {
         String workingStr = str;
@@ -122,12 +135,11 @@ public abstract class AbstractOption {
     }
 
     /**
-     * return a string showing long and short options if they are available.  Will return
+     * return a string showing long and short options if they are available. Will return
      * a string.
-     * @return A string showing long and short options if they are available.  Never {@code null}.
+     * @return A string showing long and short options if they are available. Never {@code null}.
      */
     public abstract String getText();
-
 
     /**
      * Gets the description in implementation specific format.
