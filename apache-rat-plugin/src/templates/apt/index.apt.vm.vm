@@ -14,7 +14,7 @@
 ~~   limitations under the License.
 
  ------
- The RAT Meven Plugin
+ The RAT Maven Plugin
  ------
 
 Apache RAT&#8482; Overview
@@ -43,7 +43,7 @@ Usage
 
   The RAT Maven plugin has two basic features.
 
-  <<<apache-rat:check>>> will generate a report as a simple text file, called <<<target/rat.txt>>>.  This report contains
+  <<<apache-rat:check>>> will generate a report as a simple text file, called <<<target/rat.txt>>>. This report contains
   the report as specified by the options specified.
 
   <<<apache-rat:report>>> will add the report to the generated site.
@@ -78,7 +78,7 @@ Usage
 
 * Adding the report to the generated site
 
-  A section like the following must be added to the <<<pom.xml>>> will automatically generated the report when you
+  A section like the following must be added to the <<<pom.xml>>> to automatically generate the report when you
   run the <<<site>>> target.
 
 ------------------------------------------------------------------
@@ -103,7 +103,7 @@ Usage
 
 Configuration Options
 
-  There are a number of {{{./mvn_options.html}configuration options}} available to configure RAT.  These options
+  There are a number of {{{./mvn_options.html}configuration options}} available to configure RAT. These options
   are derived from the command line version of RAT and function the same way.
 
 * Examples

@@ -28,8 +28,8 @@ Ant Elements and Attributes
 
 * Root Node
 
- The <<<report>>> is the root node for the rat report.  All child nodes must be enclosed within it and all attributes listed
- below are attributes applied to the <<<report>>> node.  The report node must have a fileSet to specify the files to process.
+ The <<<report>>> is the root node for the RAT report. All child nodes must be enclosed within it. All attributes listed
+ below are attributes applied to the <<<report>>> node. The report node must have a fileSet to specify the files to process.
 
 +------------------------------------------+
 <project
@@ -107,7 +107,7 @@ Ant Elements and Attributes
  ${desc}
 #if(${type.displayName} == "StandardCollection")
 
- A complete description of each of the {{{./standard_collections.html}standard collection}} types is available.
+ A complete description of each of the {{{./standard_collections.html}standard collection types}} is available.
 #end
 
 #end
