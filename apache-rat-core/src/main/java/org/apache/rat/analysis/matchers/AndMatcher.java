@@ -45,7 +45,7 @@ public class AndMatcher extends AbstractMatcherContainer {
     }
 
     /**
-     * Constructs the AndMatcher with an unique random id and the enclosed
+     * Constructs the AndMatcher with a unique random id and the enclosed
      * collection.
      *
      * @param enclosed the enclosed collection.
