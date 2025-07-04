@@ -103,6 +103,7 @@ public class Help extends AbstractHelp {
      */
     public String printArgumentTypes() {
         String argumentPadding = createPadding(helpFormatter.getLeftPadding() + HELP_PADDING);
+
         for (OptionCollection.ArgumentType argType : OptionCollection.ArgumentType.values()) {
             if (argType != OptionCollection.ArgumentType.NONE) {
                 writer.format("%n<%s>%n", argType.getDisplayName());
