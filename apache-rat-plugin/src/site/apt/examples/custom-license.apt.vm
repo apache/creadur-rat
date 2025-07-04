@@ -19,7 +19,7 @@
 
 Custom License Matchers
 
-  Rat comes with a set of predefined license matchers, that can be used
+  RAT comes with a set of predefined license matchers, that can be used
   on typical licenses. However, they will not always be sufficient.
   In such cases, you may configure a custom license matcher.
 
@@ -28,14 +28,14 @@ Custom License Matchers
   option.
 
   The second option is to define the custom license directly in the POM.
-  Unlike earlier version (before 0.16) no custom implementations are required to define
+  Unlike earlier versions (before 0.16) no custom implementations are required to define
   custom licenses.
 
-  There is a file that defines all of the standard licenses: {{{https://gitbox.apache.org/repos/asf/creadur-rat/blob/master/apache-rat-core/src/main/resources/org/apache/rat/default.xml}default.xml}}.  The pom.xml implementations vary slightly from the configuration because the pom does not allow attributes on the configuraiton entries.  For a full mapping of the command line options to the Maven options see the {{{/apache-rat/name_xref.html}Option Name Cross Reference}}
+  There is a file that defines all the standard licenses: {{{https://gitbox.apache.org/repos/asf/creadur-rat/blob/master/apache-rat-core/src/main/resources/org/apache/rat/default.xml}default.xml}}. The pom.xml implementations vary slightly from the configuration because the pom does not allow attributes on the configuration entries. For a full mapping of the command line options to the Maven options see the {{{/apache-rat/name_xref.html}Option Name Cross-Reference}}
 
   Please be aware that custom licenses need to have <<unique names>>, otherwise a warning is issued and your custom definitions are ignored in favour of the standard license definitions.
 
-  The easiest solution for defining custom licenses is to use the <<<config>>> option.  For this option write your custom configuration like you would for the command line and then include it.  In the example below the custome configuration is called <<<myConfig.xml>>>
+  The easiest solution for defining custom licenses is to use the <<<config>>> option. For this option write your custom configuration like you would for the command line and then include it. In the example below the custom configuration is called <<<myConfig.xml>>>
 
   ------------------------------------------------------------------
   <build>
@@ -56,13 +56,13 @@ Custom License Matchers
   </build>
 ------------------------------------------------------------------
 
- However it is possible to define licenses directly in the pom file.  Assume that the header below is an acceptable license.
+ However it is possible to define licenses directly in the pom file. Assume that the header below is an acceptable license.
 
 ------------------------------------------------------------------
   /**
    * Yet Another Software License, 1.0
    *
-   * Lots of text, specifying the users rights, and whatever ...
+   * Lots of text, specifying the user's rights, and whatever ...
    */
 ------------------------------------------------------------------
 
@@ -105,8 +105,8 @@ Custom License Matchers
 Approved License Families
 
   By default all POM defined licenses are considered approved, this is a
-  change from pre 0.16 versions.  If there are families that are defined in
-  the pom but that should not be considered approved then a list of approved
+  change from pre 0.16 versions. If there are families that are defined in
+  the pom but that should not be considered approved, then a list of approved
   license families must be provided.
 
   In the following example, we define YASL1 and BAD1 and then indicate that
@@ -152,7 +152,7 @@ Overview of configuration options
 
   When defining custom licenses, remember the following architecture constraints:
 
-  * Each license is associated with a family.  Multiple licenses can be associated with a family.
+  * Each license is associated with a family. Multiple licenses can be associated with a family.
 
   * Each license may have a notes element.
 
@@ -180,13 +180,13 @@ Overview of configuration options
 
     <<copyright>> - A matcher that matches Copyright text.
     This uses regular expressions and so should only be used when looking for copyrights with specific patterns that are not caught by a standard text matcher.
-    This matcher will match <<<"(C)">>>, <<<"copyright">>>, or <<<"©">>>. (text is not case sensitive).
+    This matcher will match <<<"(C)">>>, <<<"copyright">>>, or <<<"©">>>. (text is not case-sensitive).
     It will also match things like <<<Copyright (c) joe 1995>>> as well as <<<Copyright (C) 1995 joe>>> and <<<Copyright (C) joe 1995>>>.
     Copyright has 3 child elements:
 
       * <<start>> - the starting date of the copyright or the only date.
 
-      * <<end>> - the ending date of the copyright.  Only valid if the starting date is provided.
+      * <<end>> - the ending date of the copyright. Only valid if the starting date is provided.
 
       * <<owner>> - the copyright owner.
 
@@ -203,16 +203,16 @@ Overview of configuration options
    <owner>joe</owner>
 </copyright>
 
-<copyright> <!-- this will match (c) nnnn joe, or (c) joe nnnn, where nnnn is a 4 digit year -->
+<copyright> <!-- this will match (c) nnnn joe, or (c) joe nnnn, where nnnn is a 4-digit year -->
    <owner>joe</owner>
 </copyright>
 
-<copyright> <!-- this will match (c) nnnn, where nnnn is a 4 digit year -->
+<copyright> <!-- this will match (c) nnnn, where nnnn is a 4-digit year -->
 </copyright>
 
 ------------------------------------------------------------------
 
-    <<not>> - A matcher that wraps one matcher and negates its value.  Not matchers require that the entire header be read before it can report true or false.  This may significantly slow processing.
+    <<not>> - A matcher that wraps one matcher and negates its value. Not matchers require that the entire header be read before it can report true or false. This may significantly slow processing.
 
 ------------------------------------------------------------------
 <not>
@@ -227,7 +227,7 @@ Overview of configuration options
 ------------------------------------------------------------------
 
 
-    <<spdx>> - A matcher that matches SPDX tags.  SPDX tags have the form: <<<SPDX-License-Identifier: short-name>>>, where short-name matches the regex pattern <<<"[A-Za-z0-9\.\-]+".>>>  spdx takes the short name as an argument.
+    <<spdx>> - A matcher that matches SPDX tags. SPDX tags have the form: <<<SPDX-License-Identifier: short-name>>>, where short-name matches the regex pattern <<<"[A-Za-z0-9\.\-]+".>>> spdx takes the short name as an argument.
 
 ------------------------------------------------------------------
 <spdx>Apache-2.0</spdx>
@@ -259,5 +259,3 @@ Overview of configuration options
 ------------------------------------------------------------------
 
   Back to {{{./index.html}examples}}
-
-~~ https://maven.apache.org/doxia/references/apt-format.html
