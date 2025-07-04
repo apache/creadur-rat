@@ -123,7 +123,7 @@ public final class OptionCollection {
      * @param workingDirectory The directory to resolve relative file names against.
      * @param args the arguments to parse
      * @param helpCmd the help command to run when necessary.
-     * @param noArgs If true then the commands do not need extra arguments
+     * @param noArgs If {@code true} then the commands do not need extra arguments.
      * @return a ReportConfiguration or {@code null} if Help was printed.
      * @throws IOException on error.
      */

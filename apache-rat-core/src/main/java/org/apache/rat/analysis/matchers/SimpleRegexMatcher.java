@@ -28,7 +28,7 @@ import org.apache.rat.config.parameters.ConfigComponent;
  * A simple regular expression matching IHeaderMatcher
  */
 @ConfigComponent(type = ComponentType.MATCHER, name = "regex",
-        desc = "Performs a regular expression match using the enclosed the text.  " +
+        desc = "Performs a regular expression match using the enclosed text. " +
                 "This is a relatively slow matcher.")
 public class SimpleRegexMatcher extends AbstractHeaderMatcher {
     /**
@@ -41,8 +41,8 @@ public class SimpleRegexMatcher extends AbstractHeaderMatcher {
      * Constructs a regex pattern matcher with a unique random id and the specified
      * Regex pattern.
      *
-     * @param id the id for this matcher, may be null
-     * @param pattern the pattern to match. Pattern will only match a single line
+     * @param id the id for this matcher, may be null.
+     * @param pattern the pattern to match. This pattern will only match a single line
      * from the input stream.
      */
     public SimpleRegexMatcher(final String id, final Pattern pattern) {

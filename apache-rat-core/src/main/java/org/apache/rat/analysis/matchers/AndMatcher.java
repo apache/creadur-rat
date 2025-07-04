@@ -35,7 +35,7 @@ public class AndMatcher extends AbstractMatcherContainer {
     /**
      * Constructs the AndMatcher with the specified id and enclosed collection.
      *
-     * @param id the to use. If null or an empty string a unique random id will be
+     * @param id the id to use. If null or an empty string a unique random id will be
      * created.
      * @param enclosed the enclosed collection.
      * @param resource the name of the resource the collection was read from if any. May be null.

@@ -30,9 +30,9 @@ import org.apache.rat.config.parameters.ConfigComponent;
 /**
  * Matches a typical Copyright header line only based on a regex pattern which
  * allows for one (starting) year or year range, and a configurable copyright
- * owner. <br>
+ * owner.<br>
  * <br>
- * The matching is done case insensitive<br>
+ * The matching is done case-insensitive<br>
  * <br>
  * Example supported Copyright header lines, using copyright owner
  * &quot;FooBar&quot;
@@ -71,7 +71,7 @@ public class CopyrightMatcher extends AbstractHeaderMatcher {
     private static final String TWO_PART = "\\s+((" + COPYRIGHT_SYMBOL_DEFN + ")\\s+)?%s,?\\s+%s";
     /** Format string to build a pattern to match two dates */
     private static final String DOUBLE_DATE_FMT = "%s\\s*-\\s*%s";
-    /** String to build pattern to match an arbitrary date (year) */
+    /** String to build a pattern to match an arbitrary date (year) */
     private static final String ARBITRARY_DATE = "[0-9]{4}";
     /** The built Pattern for matching "Copyright date owner" */
     private final Pattern dateOwnerPattern;
@@ -81,7 +81,7 @@ public class CopyrightMatcher extends AbstractHeaderMatcher {
     @ConfigComponent(type = ComponentType.PARAMETER, desc = "The initial year of the copyright if any")
     private final String start;
     /** The end date of the copyright. May be null. */
-    @ConfigComponent(type = ComponentType.PARAMETER, desc = "The last year the copyright.  Only valid with 'start'")
+    @ConfigComponent(type = ComponentType.PARAMETER, desc = "The last year the copyright. Only valid with 'start'")
     private final String end;
     /** The owner of the copyright. May be null */
     @ConfigComponent(type = ComponentType.PARAMETER, desc = "The owner of the copyright")
@@ -109,6 +109,7 @@ public class CopyrightMatcher extends AbstractHeaderMatcher {
             throw new ConfigurationException(String.format("'%s' must be numeric (value provided: '%s')", label, value));
         }
     }
+
     /**
      * Constructs the CopyrightMatcher with the specified start, stop and owner
      * strings.
@@ -117,7 +118,7 @@ public class CopyrightMatcher extends AbstractHeaderMatcher {
      * @param start the start date for the copyright, may be null.
      * @param end the end date for the copyright, may be null. May not be
      * specified if start is not specified.
-     * @param owner the owner of the copyright. may be null.
+     * @param owner the owner of the copyright. May be null.
      */
     public CopyrightMatcher(final String id, final String start, final String end, final String owner) {
         super(id);
