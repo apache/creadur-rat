@@ -106,10 +106,10 @@ public enum Arg {
             .addOption(Option.builder("A").longOpt("addLicense")
                     .deprecated(DeprecatedAttributes.builder().setForRemoval(true).setSince("0.17")
                             .setDescription(StdMsgs.useMsg("--edit-license")).get())
-                    .desc("Add the Apache V2 license header to any file with an unknown license that is not in the exclusion list.")
+                    .desc("Add the Apache-2.0 license header to any file with an unknown license that is not in the exclusion list.")
                     .build())
             .addOption(Option.builder().longOpt("edit-license").desc(
-                    "Add the Apache V2 license header to any file with an unknown license that is not in the exclusion list. "
+                    "Add the Apache-2.0 license header to any file with an unknown license that is not in the exclusion list. "
                             + "By default new files will be created with the license header, "
                             + "to force the modification of existing files use the --edit-overwrite option.").build()
             )),
@@ -246,7 +246,7 @@ public enum Arg {
 
 ////////////////// INPUT OPTIONS
     /**
-     * Reads files to test from file.
+     * Reads files to test from a file.
      */
     SOURCE(new OptionGroup()
             .addOption(Option.builder().longOpt("input-source").hasArgs().argName("File")
@@ -272,7 +272,7 @@ public enum Arg {
                     .build())),
 
     /**
-     * Excludes files based on contents of a file.
+     * Excludes files based on the contents of a file.
      */
     EXCLUDE_FILE(new OptionGroup()
             .addOption(Option.builder("E").longOpt("exclude-file")
@@ -323,7 +323,7 @@ public enum Arg {
     ),
 
     /**
-     * Includes files based on contents of a file.
+     * Includes files based on the contents of a file.
      */
     INCLUDE_FILE(new OptionGroup()
             .addOption(Option.builder().longOpt("input-include-file")
@@ -364,7 +364,7 @@ public enum Arg {
                     .argName("StandardCollection")
                     .hasArgs().converter(s -> StandardCollection.valueOf(s.toUpperCase()))
                     .desc("Parse SCM based exclusion files to exclude specified files and directories. " +
-                            "This action can apply to any standard collection that implements file processor.")
+                            "This action can apply to any standard collection that implements a file processor.")
                     .type(StandardCollection.class)
                     .build())
     ),
@@ -869,7 +869,7 @@ public enum Arg {
         }
 
         if (OUTPUT_STYLE.isSelected()) {
-            String selected = OUTPUT_STYLE.getSelected().getKey();
+            String selected = OUTPUT_STYLE.getSelected().getKey(); // is not null due to above isSelected()-call
             if ("x".equals(selected)) {
                 // display deprecated message.
                 context.getCommandLine().hasOption("x");
