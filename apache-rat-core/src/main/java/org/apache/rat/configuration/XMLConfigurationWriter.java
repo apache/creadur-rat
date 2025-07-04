@@ -100,7 +100,7 @@ public class XMLConfigurationWriter {
             try {
                 writer.openElement(XMLConfig.ROOT);
 
-                // write Families section
+                // Families section
                 SortedSet<ILicenseFamily> families = configuration.getLicenseFamilies(configuration.listFamilies());
                 if (!families.isEmpty()) {
                     writer.openElement(XMLConfig.FAMILIES);
@@ -110,7 +110,7 @@ public class XMLConfigurationWriter {
                     writer.closeElement(); // FAMILIES
                 }
 
-                // write licenses section
+                // licenses section
                 SortedSet<ILicense> licenses = configuration.getLicenses(configuration.listLicenses());
                 if (!licenses.isEmpty()) {
                     writer.openElement(XMLConfig.LICENSES);
@@ -120,7 +120,7 @@ public class XMLConfigurationWriter {
                     writer.closeElement(); // LICENSES
                 }
 
-                // write approved section
+                // approved section
                 writer.openElement(XMLConfig.APPROVED);
                 for (String family : configuration.getLicenseCategories(LicenseFilter.APPROVED)) {
                     writer.openElement(XMLConfig.APPROVED).attribute(XMLConfig.ATT_LICENSE_REF, family.trim())
@@ -128,7 +128,7 @@ public class XMLConfigurationWriter {
                 }
                 writer.closeElement(); // APPROVED
 
-                // write matchers section
+                // matchers section
                 MatcherBuilderTracker tracker = MatcherBuilderTracker.instance();
                 writer.openElement(XMLConfig.MATCHERS);
                 for (Class<?> clazz : tracker.getClasses()) {
@@ -181,7 +181,7 @@ public class XMLConfigurationWriter {
 
     private void writeComment(final IXmlWriter writer, final Description description) throws IOException {
         if (StringUtils.isNotBlank(description.getDescription())) {
-            writer.comment(description.getDescription());
+            writer.comment(description.getDescription().replace("-->", "-&ndash;>"));
         }
     }
 
@@ -208,7 +208,7 @@ public class XMLConfigurationWriter {
                 // id will not be present in matcherRef
                 if (id.isPresent()) {
                     String matcherId = id.get().getParamValue(component);
-                    // if we have seen the ID before just put a reference to the other one.
+                    // if we have seen the ID before, put a reference to the other one.
                     if (matchers.contains(matcherId)) {
                         component = new MatcherRefBuilder.IHeaderMatcherProxy(matcherId, null);
                         description = component.getDescription();
@@ -226,7 +226,7 @@ public class XMLConfigurationWriter {
                     }
                 }
 
-                // if resource only list the resource not the contents of the matcher
+                // if only a resource, list the resource not the contents of the matcher
                 Optional<Description> resource = description.childrenOfType(ComponentType.PARAMETER).stream()
                         .filter(i -> XMLConfig.ATT_RESOURCE.equals(i.getCommonName())).findFirst();
                 if (resource.isPresent()) {

@@ -31,8 +31,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.rat.commandline.Arg;
 import org.apache.rat.config.exclusion.StandardCollection;
 import org.apache.rat.help.AbstractHelp;
-import org.apache.rat.tools.AbstractOption;
-import org.apache.rat.tools.AntOption;
+import org.apache.rat.documentation.options.AbstractOption;
+import org.apache.rat.documentation.options.AntOption;
 import org.apache.rat.utils.DefaultLog;
 import org.apache.rat.utils.Log;
 
@@ -50,10 +50,10 @@ import static java.lang.String.format;
  * The attribute <code>format</code> defines the output format and can take the
  * values
  * <ul>
- * <li>xml - Rat's native XML output.</li>
+ * <li>xml - RAT's native XML output.</li>
  * <li>styled - transforms the XML output using the given stylesheet. The
  * stylesheet attribute must be set as well if this attribute is used.</li>
- * <li>plain - plain text using Rat's built-in stylesheet. This is the
+ * <li>plain - plain text using RAT's built-in stylesheet. This is the
  * default.</li>
  * </ul>
  */
@@ -172,7 +172,7 @@ public class Help extends BaseAntTask {
             final String dpad = createPadding(descPad);
             // first create list containing only <lpad>-a,--aaa where
             // -a is opt and --aaa is long opt; in parallel look for
-            // the longest opt string this list will be then used to
+            // the longest opt string this list will then be used to
             // sort options ascending
             String optionTitle = " -- Option --";
             String exampleTitle = " -- Example --";

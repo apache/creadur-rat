@@ -38,7 +38,7 @@ import org.apache.rat.commandline.Arg;
 import org.apache.rat.commandline.StyleSheets;
 import org.apache.rat.document.DocumentName;
 import org.apache.rat.license.LicenseSetFactory;
-import org.apache.rat.tools.AntOption;
+import org.apache.rat.documentation.options.AntOption;
 import org.apache.rat.utils.DefaultLog;
 import org.apache.tools.ant.BuildEvent;
 import org.apache.tools.ant.BuildListener;
@@ -228,7 +228,7 @@ public class GeneratedReportTest  {
      */
     static Stream<Arguments> generatedData() {
 
-        List<org.apache.rat.tools.AntOption> options = Arg.getOptions().getOptions().stream()
+        List<AntOption> options = Arg.getOptions().getOptions().stream()
                 .filter(o -> !AntOption.getFilteredOptions().contains(o)).map(AntOption::new)
                 .collect(Collectors.toList());
 

@@ -106,10 +106,10 @@ public enum Arg {
             .addOption(Option.builder("A").longOpt("addLicense")
                     .deprecated(DeprecatedAttributes.builder().setForRemoval(true).setSince("0.17")
                             .setDescription(StdMsgs.useMsg("--edit-license")).get())
-                    .desc("Add the default license header to any file with an unknown license that is not in the exclusion list.")
+                    .desc("Add the Apache-2.0 license header to any file with an unknown license that is not in the exclusion list.")
                     .build())
             .addOption(Option.builder().longOpt("edit-license").desc(
-                    "Add the default license header to any file with an unknown license that is not in the exclusion list. "
+                    "Add the Apache-2.0 license header to any file with an unknown license that is not in the exclusion list. "
                             + "By default new files will be created with the license header, "
                             + "to force the modification of existing files use the --edit-overwrite option.").build()
             )),
@@ -246,7 +246,7 @@ public enum Arg {
 
 ////////////////// INPUT OPTIONS
     /**
-     * Reads files to test from file.
+     * Reads files to test from a file.
      */
     SOURCE(new OptionGroup()
             .addOption(Option.builder().longOpt("input-source").hasArgs().argName("File")
@@ -272,7 +272,7 @@ public enum Arg {
                     .build())),
 
     /**
-     * Excludes files based on contents of a file.
+     * Excludes files based on the contents of a file.
      */
     EXCLUDE_FILE(new OptionGroup()
             .addOption(Option.builder("E").longOpt("exclude-file")
@@ -293,7 +293,8 @@ public enum Arg {
     EXCLUDE_STD(new OptionGroup()
             .addOption(Option.builder().longOpt("input-exclude-std").argName("StandardCollection")
                     .hasArgs().converter(s -> StandardCollection.valueOf(s.toUpperCase()))
-                    .desc("Excludes files defined in standard collections based on commonly occurring groups.")
+                    .desc("Excludes files defined in standard collections based on commonly occurring groups. " +
+                            "Excludes any path matcher actions but DOES NOT exclude any file processor actions.")
                     .type(StandardCollection.class)
                     .build())
     ),
@@ -304,7 +305,7 @@ public enum Arg {
     EXCLUDE_SIZE(new OptionGroup()
             .addOption(Option.builder().longOpt("input-exclude-size").argName("Integer")
                     .hasArg().type(Integer.class)
-                    .desc("Excludes files with sizes less than the given argument.")
+                    .desc("Excludes files with sizes less than the number of bytes specified.")
                     .build())
     ),
     /**
@@ -322,7 +323,7 @@ public enum Arg {
     ),
 
     /**
-     * Includes files based on contents of a file.
+     * Includes files based on the contents of a file.
      */
     INCLUDE_FILE(new OptionGroup()
             .addOption(Option.builder().longOpt("input-include-file")
@@ -345,7 +346,7 @@ public enum Arg {
             .addOption(Option.builder().longOpt("input-include-std").argName("StandardCollection")
                     .hasArgs().converter(s -> StandardCollection.valueOf(s.toUpperCase()))
                     .desc("Includes files defined in standard collections based on commonly occurring groups. " +
-                            "Will override excluded files.")
+                            "Includes any path matcher actions but DOES NOT include any file processor actions.")
                     .type(StandardCollection.class)
                     .build())
             .addOption(Option.builder().longOpt("scan-hidden-directories")
@@ -362,7 +363,8 @@ public enum Arg {
             .addOption(Option.builder().longOpt("input-exclude-parsed-scm")
                     .argName("StandardCollection")
                     .hasArgs().converter(s -> StandardCollection.valueOf(s.toUpperCase()))
-                    .desc("Parse SCM based exclusion files to exclude specified files and directories.")
+                    .desc("Parse SCM based exclusion files to exclude specified files and directories. " +
+                            "This action can apply to any standard collection that implements a file processor.")
                     .type(StandardCollection.class)
                     .build())
     ),
@@ -867,7 +869,7 @@ public enum Arg {
         }
 
         if (OUTPUT_STYLE.isSelected()) {
-            String selected = OUTPUT_STYLE.getSelected().getKey();
+            String selected = OUTPUT_STYLE.getSelected().getKey(); // is not null due to above isSelected()-call
             if ("x".equals(selected)) {
                 // display deprecated message.
                 context.getCommandLine().hasOption("x");
@@ -947,10 +949,10 @@ public enum Arg {
 
     private <T> T[] getParsedOptionValues(final CommandLine commandLine)  {
         Option option = getSelected();
-        Class<? extends T> clazz = (Class<? extends T>) option.getType();
-        String[] values = commandLine.getOptionValues(option);
-        T[] result = (T[]) Array.newInstance(clazz, values.length);
         try {
+            Class<? extends T> clazz = (Class<? extends T>) option.getType();
+            String[] values = commandLine.getOptionValues(option);
+            T[] result = (T[]) Array.newInstance(clazz, values.length);
             for (int i = 0; i < values.length; i++) {
                 result[i] = clazz.cast(option.getConverter().apply(values[i]));
             }

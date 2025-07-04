@@ -37,14 +37,14 @@ public abstract class AbstractMatcherContainer extends AbstractHeaderMatcher {
     @ConfigComponent(desc = "enclosed Matchers", type = ComponentType.PARAMETER, parameterType = IHeaderMatcher.class, required = true)
     private final Collection<IHeaderMatcher> enclosed;
 
-    /** The resource the headers were read from.  May be null */
-    @ConfigComponent(desc = "Resource to read matcher definitions from.", type = ComponentType.PARAMETER)
+    /** The resource the headers were read from. May be null */
+    @ConfigComponent(desc = "Resource (URL or file) to read enclosed text matcher definitions from.", type = ComponentType.PARAMETER)
     private final String resource;
 
     /**
      * Constructs the abstract matcher container. If the {@code id} is not set then
      * a unique random identifier is created. The {@code enclosed} collection is
-     * preserved in a new collection that retains the order of of the original
+     * preserved in a new collection that retains the order of the original
      * collection.
      *
      * @param id The id for the matcher.
@@ -61,7 +61,7 @@ public abstract class AbstractMatcherContainer extends AbstractHeaderMatcher {
     /**
      * Constructs the abstract matcher container with a unique random id. The
      * {@code enclosed} collection is preserved in a new collection that retains the
-     * order of of the original collection.
+     * order of the original collection.
      *
      * @param enclosed the collection of enclosed matchers.
      * @param resource the name of the resource if this container was read from a file or URL.

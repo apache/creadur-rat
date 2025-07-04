@@ -1,2 +1,4 @@
 /target/
 **/BaseAntTask.java
+src/site/apt/ant_options.apt
+src/site/apt/index.apt.vm

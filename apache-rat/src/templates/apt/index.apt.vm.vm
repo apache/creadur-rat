@@ -1,0 +1,190 @@
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~   Licensed to the Apache Software Foundation (ASF) under one or more
+~~   contributor license agreements.  See the NOTICE file distributed with
+~~   this work for additional information regarding copyright ownership.
+~~   The ASF licenses this file to You under the Apache License, Version 2.0
+~~   (the "License"); you may not use this file except in compliance with
+~~   the License.  You may obtain a copy of the License at
+~~
+~~       http://www.apache.org/licenses/LICENSE-2.0
+~~
+~~   Unless required by applicable law or agreed to in writing, software
+~~   distributed under the License is distributed on an "AS IS" BASIS,
+~~   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+~~   See the License for the specific language governing permissions and
+~~   limitations under the License.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#set($stringUtils = ${rat.stringUtils})
+#set($newTab = ${rat.doubleLine}+" * ")
+
+                   --------------------------
+                   Command Line Support
+                   --------------------------
+
+Apache RAT&#8482; Overview
+
+ RAT audits software distributions, with a special interest in headers.
+ If this isn't quite what you're looking for then take a look at the
+ other products developed by {{{https://creadur.apache.org}Apache Creadur}}&#8482;,
+ including {{{https://creadur.apache.org/whisker}Apache Whisker}}&#8482; which audits
+ and generates legal (for example <<<LICENSE>>>) documents for
+ complex software distributions.
+
+ There are several things to keep in mind when running RAT
+
+ [[1]] RAT highlights possible issues.
+
+ [[2]] RAT reports require interpretation.
+
+ [[3]] RAT often requires some tuning before it runs well against a project.
+
+ [[4]] RAT relies on heuristics: it may miss issues
+
+Running from the Command Line
+
+ RAT has a number of {{{apache-rat/cli_options.html}command line options}}.  The simplest way to retrieve the list of options
+ is to run the help command:
+
++------------------------------------------+
+java -jar apache-rat/target/apache-rat-${project.version}.jar --help
++------------------------------------------+
+
+ This will output a help message similar to the {{{apache-rat/cli_options.html}command line options}} document as well as
+ information from the {{{apache-rat/standard_collections.html}standard collections documentation}}.
+ options available to you.
+
+Adding license headers
+
+ RAT can be used to automatically add Apache V2 license headers to
+ files that do not currently have them. Only files that
+ are not excluded by the RAT configurations will be affected.
+
+ To add license headers use a command such as:
+
++------------------------------------------+
+java -jar apache-rat/target/apache-rat-${project.version}.jar --edit-license \
+  --edit-copyright "Copyright 2008 Foo" \
+  --edit-overwrite \
+  /path/to/project
++------------------------------------------+
+
+ This command will add the license header directly to the
+ source files along with the copyright notice.. If you prefer to see which files will be
+ changed and how then remove the "--edit-overwrite " option.
+
+Excluding files from consideration
+
+ By default RAT command line includes all the files in the specified directories.  This is not necessarily
+ the case for the Maven, Ant, or other plugins.  To exclude specific files use the one or more of the exclusion
+ options.  RAT uses a {{{apache-rat/exclusion_expression.html}modified glob exclusion}} similar to Ant or Git.
+
+ RAT supports exclusion and inclusion.  By default all files are processed.  Using the exclude command files can be excluded from
+ processing.  In addition file may be explicitly included.  <<Files that are explicitly included can not be excluded.>>
+
+* Exclusion by glob pattern
+
+ The following command will exclude all files with a "foo" extension as wll as all files in the junk folder at the root of the project.
+
++------------------------------------------+
+java -jar apache-rat/target/apache-rat-${project.version}.jar \
+ --input-exclude **/*.foo junk/** -- \
+  /path/to/project
++------------------------------------------+
+
+ Note that the command ends with a double dash (--).  This signals the end of the list of patterns and is standard for all options
+ that accept multiple arguments.
+
+* Exclusion by glob pattern file
+
+ It is often more efficient to place the exclusion patterns in a file and read that from disk.  The following is an example of
+ how to do that.
+
++------------------------------------------+
+java -jar apache-rat/target/apache-rat-${project.version}.jar \
+ --input-exclude-file /path/to/project/.rat-excludes \
+  /path/to/project
++------------------------------------------+
+
+* Using standard exclusions
+
+ RAT defines a number of {{{apache-rat/standard_collections}standard collections}} that can be used to exclude files based on
+ a standard pattern.  For example to exclude all the files associated with the git SCM the following could be used.
+
++------------------------------------------+
+java -jar apache-rat/target/apache-rat-${project.version}.jar \
+ --input-exclude-std GIT -- \
+  /path/to/project
++------------------------------------------+
+
+  Again notice the double dash (--) to signal the end of the list.
+  To exclude the files associated with the <<<.gitignore>>> file the
+  --input-exclude-parsed-scm option is used.
+
++------------------------------------------+
+java -jar apache-rat/target/apache-rat-${project.version}.jar \
+ --input-exclude-std GIT \
+ --input-exclude-parsed-scm GIT -- \
+  /path/to/project
++------------------------------------------+
+
+   Notice that the double dash (--) of the --input-exclude-parsed-scm stops the multiple input of the --input-excludes-std.
+   Adding an additional double dash before the --input-exclude-parsed-scm option will result in an error.
+
+   RAT will by default include all the files in hidden directories.  To exclude the hidden files and directories and the git
+   excluded resources the following command could be used:
+
++------------------------------------------+
+java -jar apache-rat/target/apache-rat-${project.version}.jar \
+ --input-exclude-std GIT HIDDEN_DIR HIDDEN_FILE
+ --input-exclude-parsed-scm GIT -- \
+  /path/to/project
++------------------------------------------+
+
+* Excluding files by size
+
+  RAT will exclude files below a specified size if desired.  This is done with the --input-exclude-size option.  This option
+  takes the the file size in bytes as an argument.  The following will exclude files of 10 bytes or less.
+
++------------------------------------------+
+java -jar apache-rat/target/apache-rat-${project.version}.jar \
+ --input-exclude-size 10 -- \
+  /path/to/project
++------------------------------------------+
+
+ * Including excluded files
+
+ The "--input-exclude", "--input-exclude-file" and "--input-exclude-std" have include counterparts "--input-include",
+ "--input-include-file", "--input-include-std".  The include options will add files back to the processing list.  For example,
+ taking the earlier "--input-exclude" example, if there was a file named "master/kung.foo" that should not be excluded the following
+ command will ensure that it is processed.
+
++------------------------------------------+
+java -jar apache-rat/target/apache-rat-${project.version}.jar \
+ --input-exclude **/*.foo junk/** \
+ --input-include master/kung.foo -- \
+  /path/to/project
++------------------------------------------+
+
+ The order of the arguments is not important, the "--input-include" could have come before the "--input-exclude".  In addition notice
+ that the double dash (--) of the "--input-include" options terminates the "--input-exclude" option.  In fact, adding a "--" before
+ the "--input-include" would result in an error.
+
+Styling output
+
+ RAT allows you to style the output as you see fit.  Several stylesheets are included in the RAT package.
+
+#foreach ($style in ${rat.styleSheets})
+ * {{{https://gitbox.apache.org/repos/asf/creadur-rat/blob/master/apache-rat-core/src/main/resources/org/apache/rat/${style.arg}.xsl}${style.arg}}} - ${style.desc}
+
+#end
+
+ These stylesheets can be specified using the "--output-style" option.  The following example create a pretty printed xml
+ report output.
+
++------------------------------------------+
+java -jar apache-rat/target/apache-rat-${project.version}.jar \
+ --output-style xml \
+  /path/to/project
++------------------------------------------+
+
+ To develop your own stylesheets see the RAT Output section of the menu on the left.

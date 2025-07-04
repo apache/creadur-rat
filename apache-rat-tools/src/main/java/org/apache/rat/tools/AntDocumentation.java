@@ -33,13 +33,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.rat.OptionCollection;
-import org.apache.rat.commandline.Arg;
+import org.apache.rat.documentation.options.AntOption;
 import org.apache.rat.utils.DefaultLog;
 
 import static java.lang.String.format;
@@ -85,8 +84,7 @@ public final class AntDocumentation {
     }
 
     public void execute() {
-        List<AntOption> options = Arg.getOptions().getOptions().stream().filter(AntGenerator.getFilter()).map(AntOption::new)
-                .collect(Collectors.toList());
+        List<AntOption> options = AntOption.getAntOptions();
 
         writeAttributes(options);
         writeElements(options);

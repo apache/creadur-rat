@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.rat.tools;
+package org.apache.rat.documentation.options;
 
 import java.util.HashMap;
 import java.util.Locale;
@@ -32,12 +32,19 @@ import org.apache.rat.commandline.Arg;
 
 import static java.lang.String.format;
 
+/**
+ * Abstract class that provides the framework for UI-specific RAT options.
+ * In this context UI option means an option expressed in the specific UI, such as:
+ * @see AntOption
+ * @see MavenOption
+ * @see CLIOption
+ */
 public abstract class AbstractOption {
     /** The pattern to match CLI options in text */
     protected static final Pattern PATTERN = Pattern.compile("-(-[a-z0-9]+)+");
-    /** The CLI that the Maven option is wrapping */
+    /** The actual UI-specific name for the option */
     protected final Option option;
-    /** The Maven name for the option */
+    /** The name for the option */
     protected final String name;
     /** The argument type for this option */
     protected final OptionCollection.ArgumentType argumentType;
@@ -46,6 +53,7 @@ public abstract class AbstractOption {
      * Constructor.
      *
      * @param option The CLI option
+     * @param name the UI-specific name for the option.
      */
     AbstractOption(final Option option, final String name) {
         this.option = option;
@@ -57,6 +65,14 @@ public abstract class AbstractOption {
     }
 
     /**
+     * Gets the option this abstract option is wrapping.
+     * @return the original Option.
+     */
+    public Option getOption() {
+        return option;
+    }
+
+    /**
      * Return default value.
      * @return default value or {@code null} if no argument given.
      */
@@ -65,6 +81,11 @@ public abstract class AbstractOption {
         return arg == null ? null : arg.defaultValue();
     }
 
+    /**
+     * Provide means to wrap the given option depending on the UI-specific option implementation.
+     * @param option The CLI option
+     * @return the cleaned up option name.
+     */
     protected abstract String cleanupName(Option option);
 
     /**
@@ -80,10 +101,11 @@ public abstract class AbstractOption {
     public String cleanupName() {
         return cleanupName(option);
     }
+
     /**
-     * Replaces CLI pattern options with Maven pattern options.
+     * Replaces CLI pattern options with implementation specific pattern options.
      * @param str the string to clean.
-     * @return the string with CLI names replaced with Maven names.
+     * @return the string with CLI names replaced with implementation specific names.
      */
     public String cleanup(final String str) {
         String workingStr = str;
@@ -105,15 +127,22 @@ public abstract class AbstractOption {
     }
 
     /**
-     * Gets the Maven name for the CLI option.
-     * @return The Maven name for the CLI option.
+     * Gets the implementation specific name for the CLI option.
+     * @return The implementation specific name for the CLI option.
      */
     public final String getName() {
         return name;
     }
 
     /**
-     * Gets the description escaped for XML format.
+     * return a string showing long and short options if they are available. Will return
+     * a string.
+     * @return A string showing long and short options if they are available. Never {@code null}.
+     */
+    public abstract String getText();
+
+    /**
+     * Gets the description in implementation specific format.
      *
      * @return the description or an empty string.
      */

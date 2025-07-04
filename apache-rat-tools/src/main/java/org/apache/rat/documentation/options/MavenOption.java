@@ -16,18 +16,24 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.rat.tools;
+package org.apache.rat.documentation.options;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import org.apache.commons.cli.Option;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.WordUtils;
 import org.apache.rat.OptionCollection;
 import org.apache.rat.commandline.Arg;
+import org.apache.rat.utils.CasedString;
 
 import static java.lang.String.format;
 
@@ -43,12 +49,29 @@ public class MavenOption extends AbstractOption {
      * List of CLI Options that are not supported by Maven.
      */
     private static final Set<Option> UNSUPPORTED_LIST = new HashSet<>();
+    /** A mapping of external name to internal name if not standard */
+    private static final Map<String, String> RENAME_MAP = new HashMap<>();
+
+    /**
+     * Filter to remove Options not supported by Maven.
+     */
+    private static final Predicate<Option> MAVEN_FILTER;
+
 
     static {
+        RENAME_MAP.put("addLicense", "add-license");
         DEFAULT_VALUES.put(Arg.OUTPUT_FILE, "${project.build.directory}/rat.txt");
         UNSUPPORTED_LIST.addAll(Arg.DIR.group().getOptions());
         UNSUPPORTED_LIST.addAll(Arg.LOG_LEVEL.group().getOptions());
         UNSUPPORTED_LIST.add(OptionCollection.HELP);
+
+        Set<Option> filteredOptions = getFilteredOptions();
+        MAVEN_FILTER =  option -> !(filteredOptions.contains(option) || option.getLongOpt() == null);
+    }
+
+    public static List<MavenOption> getMavenOptions() {
+        return OptionCollection.buildOptions().getOptions().stream().filter(MAVEN_FILTER)
+                .map(MavenOption::new).collect(Collectors.toList());
     }
 
     /**
@@ -56,8 +79,12 @@ public class MavenOption extends AbstractOption {
      *
      * @param option The CLI option
      */
-    MavenOption(final Option option) {
-        super(option, MavenGenerator.createName(option));
+    public MavenOption(final Option option) {
+        super(option, createName(option));
+    }
+
+    public static Map<String, String> getRenameMap() {
+        return Collections.unmodifiableMap(RENAME_MAP);
     }
 
     /**
@@ -66,13 +93,30 @@ public class MavenOption extends AbstractOption {
      * @return The set of options that are not supported by Ant.
      */
     public static Set<Option> getFilteredOptions() {
-        return UNSUPPORTED_LIST;
+        return Collections.unmodifiableSet(UNSUPPORTED_LIST);
+    }
+
+    /**
+     * Creates the Maven element name for the specified option.
+     * @param option The option to process.
+     * @return the Maven based name in camel-case syntax.
+     */
+    static String createName(final Option option) {
+        String name = StringUtils.defaultIfEmpty(option.getLongOpt(), option.getOpt());
+        name = StringUtils.defaultIfEmpty(RENAME_MAP.get(name), name).toLowerCase(Locale.ROOT);
+        return new CasedString(CasedString.StringCase.KEBAB, name).toCase(CasedString.StringCase.CAMEL);
     }
 
     @Override
     protected String cleanupName(final Option option) {
-        return format("<%s>", MavenGenerator.createName(option));
+        return format("<%s>", createName(option));
     }
+
+    @Override
+    public String getText() {
+        return cleanupName(option);
+    }
+
 
     @Override
     public String getDefaultValue() {

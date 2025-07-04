@@ -29,13 +29,13 @@ import org.apache.rat.config.parameters.ConfigComponent;
  * A matcher that performs a logical {@code AND} across all the contained
  * matchers.
  */
-@ConfigComponent(type = ComponentType.MATCHER, name = "all", desc = "Returns true if all enclosed matchers return true.")
+@ConfigComponent(type = ComponentType.MATCHER, name = "all", desc = "A collection of matchers that will report true if any enclosed matcher is true.")
 public class AndMatcher extends AbstractMatcherContainer {
 
     /**
      * Constructs the AndMatcher with the specified id and enclosed collection.
      *
-     * @param id the to use. If null or an empty string a unique random id will be
+     * @param id the id to use. If null or an empty string a unique random id will be
      * created.
      * @param enclosed the enclosed collection.
      * @param resource the name of the resource the collection was read from if any. May be null.
@@ -45,7 +45,7 @@ public class AndMatcher extends AbstractMatcherContainer {
     }
 
     /**
-     * Constructs the AndMatcher with an unique random id and the enclosed
+     * Constructs the AndMatcher with a unique random id and the enclosed
      * collection.
      *
      * @param enclosed the enclosed collection.
