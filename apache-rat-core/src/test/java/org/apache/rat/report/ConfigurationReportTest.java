@@ -64,7 +64,7 @@ public class ConfigurationReportTest {
     }
 
     @Test
-    public void testAll() throws Exception {
+    public void testAllFamiliesAndMatchers() throws Exception {
         report.startReport();
         report.endReport();
         writer.closeDocument();

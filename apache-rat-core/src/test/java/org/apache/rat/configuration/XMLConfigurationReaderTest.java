@@ -24,6 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Collection;
@@ -98,8 +99,9 @@ public class XMLConfigurationReaderTest {
     @Test
     public void checkSystemMatcherTest() throws URISyntaxException {
         XMLConfigurationReader reader = new XMLConfigurationReader();
-        URL url = XMLConfigurationReaderTest.class.getResource("/org/apache/rat/default.xml");
-        reader.read(url.toURI());
+        URI uri = XMLConfigurationReaderTest.class.getResource("/org/apache/rat/default.xml").toURI();
+        assertThat(uri).isNotNull();
+        reader.read(uri);
         reader.readMatcherBuilders();
         checkMatcher("all", AllBuilder.class);
         checkMatcher("any", AnyBuilder.class);
@@ -114,8 +116,9 @@ public class XMLConfigurationReaderTest {
     @Test
     public void descriptionTest() throws SecurityException, URISyntaxException {
         XMLConfigurationReader reader = new XMLConfigurationReader();
-        URL url = XMLConfigurationReaderTest.class.getResource("/org/apache/rat/default.xml");
-        reader.read(url.toURI());
+        URI uri = XMLConfigurationReaderTest.class.getResource("/org/apache/rat/default.xml").toURI();
+        assertThat(uri).isNotNull();
+        reader.read(uri);
         reader.readMatcherBuilders();
 
         IHeaderMatcher.Builder builder = MatcherBuilderTracker.getMatcherBuilder("copyright");
