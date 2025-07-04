@@ -949,10 +949,10 @@ public enum Arg {
 
     private <T> T[] getParsedOptionValues(final CommandLine commandLine)  {
         Option option = getSelected();
-        Class<? extends T> clazz = (Class<? extends T>) option.getType();
-        String[] values = commandLine.getOptionValues(option);
-        T[] result = (T[]) Array.newInstance(clazz, values.length);
         try {
+            Class<? extends T> clazz = (Class<? extends T>) option.getType();
+            String[] values = commandLine.getOptionValues(option);
+            T[] result = (T[]) Array.newInstance(clazz, values.length);
             for (int i = 0; i < values.length; i++) {
                 result[i] = clazz.cast(option.getConverter().apply(values[i]));
             }
