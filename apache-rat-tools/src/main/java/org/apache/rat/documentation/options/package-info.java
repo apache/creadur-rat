@@ -16,6 +16,6 @@
 */
 
 /**
-* Contains ancillary enhanced options for the various interfaces
+* Contains ancillary enhanced options for the various RAT interfaces.
 */
 package org.apache.rat.documentation.options;

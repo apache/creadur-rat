@@ -45,7 +45,7 @@ import org.apache.velocity.runtime.resource.loader.FileResourceLoader;
 import org.apache.velocity.tools.generic.EscapeTool;
 
 /**
- * Uses Apache Velocity to write a document containing RAT configuration information..
+ * Uses Apache Velocity to write a document containing RAT configuration information.
  *
  * @see <a href="https://velocity.apache.org/">Apache Velocity</a>
  */
@@ -60,9 +60,9 @@ public class Exporter {
      * Executes the generation of documentation from a configuration definition.
      * Arguments are
      * <ol>
-     * <li>Template directory - the top level directory in a tree of  Velocity templates.  The process scans the directory
+     * <li>Template directory - the top level directory in a tree of Velocity templates. The process scans the directory
      * tree looking for files ending in {@code .vm} and processes them.</li>
-     * <li>Output directory - The top level directory to writhe the processed files to.  The process removes the {@code .vm}
+     * <li>Output directory - The top level directory to writhe the processed files to. The process removes the {@code .vm}
      * from the input file name and writes the resulting file to an equivalent directory entry in the output directory.</li>
      * </ol>
      *
@@ -73,14 +73,14 @@ public class Exporter {
      * @throws InvocationTargetException if the method can not be invoked.
      * @throws InstantiationException if the class can not be instantiated.
      * @throws IllegalAccessException if there are access restrictions on the class.
-     * @throws RatException on rat processing error.
+     * @throws RatException on RAT processing error.
      */
     public static void main(final String[] args) throws IOException, ClassNotFoundException, NoSuchMethodException,
             InvocationTargetException, InstantiationException, IllegalAccessException, RatException {
         String templateDir = args[0];
         String outputDir = args[1];
 
-        // crate a DirectoryWalker to walk the template tree.
+        // create a DirectoryWalker to walk the template tree.
         File sourceDir = new File(templateDir);
         DocumentName sourceName = DocumentName.builder(sourceDir).build();
         FileFilter fileFilter = new OrFileFilter(new SuffixFileFilter(".vm"), DirectoryFileFilter.INSTANCE);
@@ -96,7 +96,7 @@ public class Exporter {
     }
 
     /**
-     * A RatReport implementation that processes the {@code .vm} files in the tempalte tree and writes the
+     * A RatReport implementation that processes the {@code .vm} files in the template tree and writes the
      * results to the output tree.
      */
     private static class Rewriter implements RatReport {
@@ -161,7 +161,7 @@ public class Exporter {
     }
 
     /**
-     * A RatReport implementation that processes the {@code .vm} files in the tempalte tree and writes the
+     * A RatReport implementation that processes the {@code .vm} files in the template tree and writes the
      * results to the output tree.
      */
     private static class Cleaner implements RatReport {
