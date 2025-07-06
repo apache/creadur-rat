@@ -50,7 +50,7 @@ import org.apache.velocity.tools.config.ValidScope;
 
 /**
  * The Velocity RAT plugin that provides access to the RAT data.
- * <br />
+ * <br>
  * DEVHINT: Be careful when removing methods as this may invalidate contents and functionality of the velocity templates.
  */
 @SuppressWarnings("unused")

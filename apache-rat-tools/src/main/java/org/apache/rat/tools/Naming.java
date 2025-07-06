@@ -93,6 +93,7 @@ public final class Naming {
      *    <li>the name of the output file with path if desired</li>
      * </ol>
      * @throws IOException on error
+     * @throws ParseException in case of option-related errors
      * @param args arguments, only 1 is required.
      */
     public static void main(final String[] args) throws IOException, ParseException {
