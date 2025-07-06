@@ -30,6 +30,7 @@ import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 import org.apache.commons.cli.Option;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.rat.Defaults;
 import org.apache.rat.OptionCollection;
 import org.apache.rat.commandline.StyleSheets;
@@ -49,7 +50,10 @@ import org.apache.velocity.tools.config.ValidScope;
 
 /**
  * The Velocity RAT plugin that provides access to the RAT data.
+ * <br />
+ * DEVHINT: Be careful when removing methods as this may invalidate contents and functionality of the velocity templates.
  */
+@SuppressWarnings("unused")
 @DefaultKey("rat")
 @ValidScope({"application"})
 public class RatTool {
@@ -207,6 +211,15 @@ public class RatTool {
         return Arrays.stream(StyleSheets.values())
                 .sorted(Comparator.comparing(StyleSheets::arg))
                 .collect(Collectors.toList());
+    }
+
+    /**
+     * Gets the {@link StringUtils} object in order to work with it in Velocity templates.
+     * @return the org.apache.commons.lang3 StringUtils object.
+     * @see org.apache.commons.lang3.StringUtils
+     */
+    public StringUtils stringUtils() {
+        return new StringUtils();
     }
 
     /**

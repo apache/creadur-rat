@@ -45,7 +45,7 @@ Command Line Options
 #if(${option.hasArg})
   * Argument Type: \<${option.argName}\>
 
-  * Argument Count: #if(${option.option.args} == -2)Unlimited.  Unlimited arguments must end with `--` or another option starting with `--`.#else ${option.option.args}#end
+  * Argument Count: #if(${option.option.args} == -2)Unlimited. Unlimited arguments must end with `--` or another option starting with `--`.#else ${option.option.args}#end
 #end
 
   * Example: $rat.aptEscape(${option.example})
