@@ -24,8 +24,8 @@
   </parent>
   <artifactId>apache-rat-tools</artifactId>
   <packaging>jar</packaging>
-  <name>Apache Creadur Rat::Tools</name>
-  <description>Tools to manage and report on Rat</description>
+  <name>Apache Creadur RAT::Tools</name>
+  <description>Tools to manage and report on RAT</description>
   <build>
     <resources>
       <resource>

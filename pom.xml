@@ -26,19 +26,19 @@
   <artifactId>apache-rat-project</artifactId>
   <version>0.17-SNAPSHOT</version>
   <packaging>pom</packaging>
-  <name>Apache Creadur Rat</name>
+  <name>Apache Creadur RAT</name>
   <url>https://creadur.apache.org/rat/</url>
   <description>
-Apache Rat is a release audit tool. It improves accuracy and efficiency when checking
+Apache RAT is a release audit tool. It improves accuracy and efficiency when checking
 releases. It is heuristic in nature: making guesses about possible problems. It
 will produce false positives and cannot find every possible issue with a release.
 Its reports require interpretation.
 
-In response to demands from project quality tool developers, Rat is available as a
+In response to demands from project quality tool developers, RAT is available as a
 library suitable for inclusion in tools. This POM describes that library.
 Note that binary compatibility is not guaranteed between 0.x releases.
 
-Apache Rat is developed by the Apache Creadur project, a language and build
+Apache RAT is developed by the Apache Creadur project, a language and build
 agnostic home for software distribution comprehension and audit tools.
   </description>
   <inceptionYear>2006</inceptionYear>
