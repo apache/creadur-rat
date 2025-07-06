@@ -46,17 +46,16 @@ public class MavenOption extends AbstractOption {
      */
     private static final Map<Arg, String> DEFAULT_VALUES = new HashMap<>();
     /**
-     * List of CLI Options that are not supported by Maven.
+     * List of CLI options that are not supported by Maven.
      */
     private static final Set<Option> UNSUPPORTED_LIST = new HashSet<>();
-    /** A mapping of external name to internal name if not standard */
+    /** A mapping of external name to internal name if not standard. */
     private static final Map<String, String> RENAME_MAP = new HashMap<>();
 
     /**
-     * Filter to remove Options not supported by Maven.
+     * Filter to remove options not supported by Maven.
      */
     private static final Predicate<Option> MAVEN_FILTER;
-
 
     static {
         RENAME_MAP.put("addLicense", "add-license");
@@ -88,9 +87,9 @@ public class MavenOption extends AbstractOption {
     }
 
     /**
-     * Gets the set of options that are not supported by Ant.
+     * Gets the set of options that are not supported by Maven.
      *
-     * @return The set of options that are not supported by Ant.
+     * @return The set of options that are not supported by Maven.
      */
     public static Set<Option> getFilteredOptions() {
         return Collections.unmodifiableSet(UNSUPPORTED_LIST);
@@ -116,7 +115,6 @@ public class MavenOption extends AbstractOption {
     public String getText() {
         return cleanupName(option);
     }
-
 
     @Override
     public String getDefaultValue() {

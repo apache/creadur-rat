@@ -99,11 +99,11 @@ Apache RAT&#8482;
 
    * Add a new {{{./matcher_def.html}Matcher definition}}. Requires Java expertise.
 
-   * Add a new definition format.  Requires Java expertise as well as expertise with the format.
+   * Add a new definition format. Requires Java expertise as well as expertise with the format.
 
-   * Write a new {{{./xslt_def.html}output report}}.  Requires XSLT knowledge.
+   * Write a new {{{./xslt_def.html}output report}}. Requires XSLT knowledge.
 
-   * Write a new {{{./ui_def.html}user interface}}.  Requires Java expertise, but there are tools to help.
+   * Write a new {{{./ui_def.html}user interface}}. Requires Java expertise, but there are tools to help.
 
 * Quick Start: Running RAT
 
@@ -116,7 +116,7 @@ Apache RAT&#8482;
 
 ** Checkout the code
 
-  RAT uses a Git repository.  You can clone it using:
+  RAT uses a Git repository. You can clone it using:
 
 +------------------------------------------+
 git clone https://gitbox.apache.org/repos/asf/creadur-rat.git

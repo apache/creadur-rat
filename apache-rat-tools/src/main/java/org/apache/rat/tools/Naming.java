@@ -61,7 +61,6 @@ import org.apache.rat.help.AbstractHelp;
  */
 public final class Naming {
 
-    private Naming() { }
     /** The maximum width of the output. */
     private static final Option WIDTH = Option.builder().longOpt("width").type(Integer.class)
             .desc("Set the display width of the output").hasArg().build();
@@ -81,6 +80,11 @@ public final class Naming {
             .addOption(CSV)
             .addOption(INCLUDE_DEPRECATED)
             .addOption(WIDTH);
+
+    /**
+     * No instantiation of utility class.
+     */
+    private Naming() { }
 
     /**
      * Creates the CSV file.

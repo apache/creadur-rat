@@ -21,7 +21,7 @@
 > <br />[Options](./options.html) | Generator | [UI Specific](./ui_specific.html)
 
 
-The generator is the bit of code that ties the new UI to the Rat CLI. In this section we will explore how the Rat core module exposes the information necessary to build a valuable new UI.  We will be using the Maven tooling code in `apache-rat-tools` as the basis of the examples in this section.  As always, the current code base is the source of truth.
+The generator is the bit of code that ties the new UI to the RAT CLI. In this section we will explore how the Rat core module exposes the information necessary to build a valuable new UI.  We will be using the Maven tooling code in `apache-rat-tools` as the basis of the examples in this section.  As always, the current code base is the source of truth.
 
 There are two implementations of the Generator concept `AntGenerator` and `MavenGenerator`.
 

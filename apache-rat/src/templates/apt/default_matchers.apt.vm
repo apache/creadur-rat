@@ -22,8 +22,8 @@
 
 Default Matcher Definitions
 
- RAT provides a number of matcher definitions.  These definitions are sufficient to define most licences.  Additional
- matchers can be created and installed in the system.  The listing below is the set of standard matchers.
+ RAT provides a number of matcher definitions. These definitions are sufficient to define most licences. Additional
+ matchers can be created and installed in the system. The listing below is the set of standard matchers.
 
 #foreach ($matcher in $rat.matchers)
 

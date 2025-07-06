@@ -19,7 +19,7 @@ ${esc.hash} Command Line Support
 
   ${esc.hash}${esc.hash} About Apache Rat&#8482;
 
-Rat audits software distributions, with a special interest in headers.
+RAT audits software distributions, with a special interest in headers.
 If this isn't quite what you're looking for then take a look at the
 other products developed by [Apache Creadur](https://creadur.apache.org)&#8482;,
 including [Apache Whisker](https://creadur.apache.org/whisker)&#8482; which audits
@@ -39,9 +39,9 @@ options available to you.
 
 ${esc.hash}${esc.hash} Adding license headers
 
-Rat can be used to automatically add license headers to
+RAT can be used to automatically add license headers to
 files that do not currently have them. Only files that
-are not excluded by the Rat configurations will be affected.
+are not excluded by the RAT configurations will be affected.
 
 To add license headers use a command such as:
 
@@ -55,9 +55,9 @@ changed and how then remove the "--force" option.
 
 ${esc.hash}${esc.hash} Using multiple excludes from a file
 
-It is common to use the Rat with the Maven or Ant plugins and specify
+It is common to use RAT with the Maven or Ant plugins and specify
 a series of files to exclude (such as a README or version control
-files).  If you are using the Rat application instead of a plugin you
+files). If you are using the RAT application instead of a plugin you
 can specify a series of regex excludes in a file and specify that with
 the `--exclude-file` option.
 
@@ -78,13 +78,13 @@ ${esc.hash}${esc.hash} Command Line Options
 - Required: ${option.required}
   #if(${option.hasArg})
 - Argument Type: ${option.argName}
-- Argument Count: #if(${option.args} == -2)Unlimited.  Unlimited arguments must end with `--` or another option starting with `--`.#else ${option.args}#end
+- Argument Count: #if(${option.args} == -2)Unlimited. Unlimited arguments must end with `--` or another option starting with `--`.#else ${option.args}#end
   #end
 #end
 
 ${esc.hash}${esc.hash}${esc.hash} Arguments Definitions
 
-The above list references a number of argument types.  This is the definition of those types.
+The above list references a number of argument types. This is the definition of those types.
 
 
 #foreach ($type in $ArgumentTypes)
@@ -99,7 +99,7 @@ ${esc.hash}${esc.hash} \<${type.displayName}\>
 
 ${esc.hash}${esc.hash} Styling output
 
-RAT allows you to style the output as you see fit.  Three stylesheets are included in the "rat" package.
+RAT allows you to style the output as you see fit. Three stylesheets are included in the "rat" package.
 
 * The [default stylesheet](https://gitbox.apache.org/repos/asf/creadur-rat/blob/master/apache-rat-core/src/main/resources/org/apache/rat/plain-rat.xsl}plain-rat).
 
@@ -109,4 +109,4 @@ RAT allows you to style the output as you see fit.  Three stylesheets are includ
 
 These stylesheets can be specified using options in the command line, Maven or Ant clients.
 
-To develop your own stylesheets see the Rat Output section of the menu on the left.
+To develop your own stylesheets see the RAT Output section of the menu on the left.

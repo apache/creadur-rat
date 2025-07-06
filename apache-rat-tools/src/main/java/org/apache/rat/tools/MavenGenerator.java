@@ -42,10 +42,9 @@ import org.apache.rat.utils.CasedString.StringCase;
 import static java.lang.String.format;
 
 /**
- * A simple tool to convert CLI options to Maven Mojo base class
+ * A simple tool to convert CLI options to a Maven Mojo base class.
  */
 public final class MavenGenerator {
-
 
     private MavenGenerator() {
     }
@@ -190,5 +189,4 @@ public final class MavenGenerator {
                     option.getName(), option.keyValue());
         }
     }
-
 }

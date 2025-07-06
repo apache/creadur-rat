@@ -30,7 +30,6 @@ import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 import org.apache.commons.cli.Option;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.rat.Defaults;
 import org.apache.rat.OptionCollection;
 import org.apache.rat.commandline.StyleSheets;
@@ -69,12 +68,12 @@ public class RatTool {
      */
     private static final String[] MARKDOWN_CHARS = charParser("\\`*_{}[]<>()#+-.!|");
     /**
-     * The characters to escape for APT (Almost Plain Text)
+     * The characters to escape for APT (Almost Plain Text).
      */
     private static final String[] APT_CHARS = charParser("\\~=-+*[]<>{}");
 
-    /** The license factory this tool uses */
-    private final LicenseSetFactory licenseSetFactory;;
+    /** The license factory this tool uses. */
+    private final LicenseSetFactory licenseSetFactory;
 
     /**
      * Constructor.
@@ -172,7 +171,7 @@ public class RatTool {
      */
     public List<OptionCollection.ArgumentType> argumentTypes() {
         return Arrays.stream(OptionCollection.ArgumentType.values()).filter(t -> t != OptionCollection.ArgumentType.NONE)
-                .sorted((a, b) -> a.getDisplayName().compareTo(b.getDisplayName()))
+                .sorted(Comparator.comparing(OptionCollection.ArgumentType::getDisplayName))
                 .collect(Collectors.toList());
     }
 
@@ -182,7 +181,7 @@ public class RatTool {
      */
     public Set<Matcher> matchers() {
         MatcherBuilderTracker tracker = MatcherBuilderTracker.instance();
-        Set<Matcher> documentationSet = new TreeSet<>((x, y) -> x.getName().compareTo(y.getName()));
+        Set<Matcher> documentationSet = new TreeSet<>(Comparator.comparing(Matcher::getName));
         for (Class<?> clazz : tracker.getClasses()) {
             Description desc = DescriptionBuilder.buildMap(clazz);
             documentationSet.add(new Matcher(desc, null));
@@ -196,7 +195,7 @@ public class RatTool {
      */
     public List<StandardCollection> standardCollections() {
         return Arrays.stream(org.apache.rat.config.exclusion.StandardCollection.values())
-                .sorted((a, b) -> a.name().compareTo(b.name()))
+                .sorted(Comparator.comparing(Enum::name))
                 .collect(Collectors.toList());
     }
 
@@ -211,15 +210,6 @@ public class RatTool {
     }
 
     /**
-     * Gets the {@link StringUtils} object.
-     * @return the org.apache.commons.lang3 StringUtils object.
-     * @see org.apache.commons.lang3.StringUtils
-     */
-    public StringUtils stringUtils() {
-        return new StringUtils();
-    }
-
-    /**
      * Gets a tab character.
      * @return the tab character.
      */
@@ -228,7 +218,7 @@ public class RatTool {
     }
 
     /**
-     * Gets two new line.
+     * Gets two new lines.
      * @return a string containing two new lines.
      */
     public String doubleLine() {
@@ -243,7 +233,7 @@ public class RatTool {
         SortedSet<ILicense> licenses = licenseSetFactory.getLicenses(LicenseSetFactory.LicenseFilter.ALL);
         Description licenseDescription = DescriptionBuilder.build(licenses.first());
         List<Description> descriptions = new ArrayList<>(licenseDescription.filterChildren(d -> d.getType() == ComponentType.PARAMETER));
-        descriptions.sort((a, b) -> a.getCommonName().compareTo(b.getCommonName()));
+        descriptions.sort(Comparator.comparing(Description::getCommonName));
         return descriptions;
     }
 
@@ -258,7 +248,7 @@ public class RatTool {
 
     /**
      * Creates a string of spaces of the specified length.
-     * @param length the lenght of the string.
+     * @param length the length of the string.
      * @return a string of spaces of the specified length.
      */
     public String pad(final int length) {

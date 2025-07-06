@@ -37,7 +37,7 @@ public class MatcherTree {
 
     /**
      * Constructor.
-     * @param root the root of the tree.  The matcher from a license.
+     * @param root the root of the tree. The matcher from a license.
      */
     public MatcherTree(final IHeaderMatcher root) {
         this.root = root;
@@ -52,8 +52,8 @@ public class MatcherTree {
     }
 
     /**
-     * executes an in order traversal of the tree.
-     * @return A list of {@link Node}s from an in order traversal.
+     * Executes an in-order-traversal of the tree.
+     * @return A list of {@link Node}s from an in-order-traversal.
      */
     public List<Node> traverse() {
         List<Node> result = new ArrayList<>();
@@ -63,7 +63,7 @@ public class MatcherTree {
     }
 
     /**
-     * process a node and crate all the children of it.
+     * Process a node and create all the children of it.
      * @param result the result to add the children to.
      * @param node the node to process.
      */
@@ -81,10 +81,10 @@ public class MatcherTree {
 
     /**
      * The representation of a node in a License Matcher tree.
-     * A node is a Matcher that tracks the level of the tree in which is appears.
+     * A node is a Matcher that tracks the level of the tree in which it appears.
      */
     public static class Node extends Matcher {
-        /** The level of the tree that his node appears in. */
+        /** The level of the tree that this node appears in. */
         private final int level;
 
         /**
@@ -127,7 +127,7 @@ public class MatcherTree {
 
         /**
          * Gets the attributes only if they have values.
-         * @return the collection of Attributes that have values.
+         * @return the collection of attributes that have values.
          */
         @Override
         public Collection<Attribute> getAttributes() {

@@ -19,12 +19,7 @@
 package org.apache.rat.documentation.velocity;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Objects;
-import java.util.Set;
-import java.util.TreeSet;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
@@ -45,14 +40,15 @@ public class Matcher {
     private final Description desc;
 
     /**
-     * The header matcher we are wrapping.  May be {@code null}.
+     * The header matcher we are wrapping. May be {@code null}.
      */
     private final IHeaderMatcher self;
 
     /**
-     * The description of the enclosed attribute.  May be null.
+     * The description of the enclosed attribute. May be null.
      */
     private final Enclosed enclosed;
+
     /**
      * The set of attributes for this matcher.
      */
@@ -87,7 +83,7 @@ public class Matcher {
         this.desc = desc;
         this.self = self;
         Enclosed enclosed = null;
-        attributes = new TreeSet<>((x, y) -> x.getName().compareTo(y.getName()));
+        attributes = new TreeSet<>(Comparator.comparing(Attribute::getName));
         for (Description child : desc.childrenOfType(ComponentType.PARAMETER)) {
             if (XMLConfig.isInlineNode(desc.getCommonName(), child.getCommonName())) {
                 enclosed = new Enclosed(child);
@@ -124,7 +120,7 @@ public class Matcher {
 
     /**
      * Gets the attributes of this matcher.
-     * @return a collection of attributes for this matcher.  May be empty but not {@code null}.
+     * @return a collection of attributes for this matcher. May be empty but not {@code null}.
      */
     public Collection<Attribute> getAttributes() {
         return attributes;
@@ -132,7 +128,7 @@ public class Matcher {
 
     /**
      * Gets the direct children of this matcher.
-     * @return A collection of the direct children of this matcher.  May be empty but not {@code null}.
+     * @return A collection of the direct children of this matcher. May be empty but not {@code null}.
      */
     Collection<Matcher> getChildren() {
         if (self != null && enclosed != null && IHeaderMatcher.class.equals(enclosed.desc.getChildType())) {
@@ -166,7 +162,7 @@ public class Matcher {
         }
 
         /**
-         * gets the required flag.
+         * Gets the required flag.
          * @return the word "required" or "optional" depending on the state of the required flag.
          */
         public String getRequired() {
@@ -192,7 +188,7 @@ public class Matcher {
         /**
          * Gets the value of the enclosed matcher.
          *  <ul>
-         *  <li>if the Matcher does not have an {@link IHeaderMatcher} defined this method returns null.</li>
+         *  <li>If the Matcher does not have an {@link IHeaderMatcher} defined this method returns {@code null}.</li>
          *  <li>If the value is a string it is normalized before being returned.</li>
          *  </ul>
          * @return the value of the enclosed matcher in the provided {@link IHeaderMatcher}.
@@ -221,14 +217,14 @@ public class Matcher {
         /**
          * The description for the attribute.
          */
-        private final Description desc;
+        private final Description description;
 
         /**
          * Constructor
-         * @param desc the description for this attribute.
+         * @param description the description for this attribute.
          */
-        Attribute(final Description desc) {
-            this.desc = desc;
+        Attribute(final Description description) {
+            this.description = description;
         }
 
         /**
@@ -236,22 +232,23 @@ public class Matcher {
          * @return the attribut name.
          */
         public String getName() {
-            return desc.getCommonName();
+            return description.getCommonName();
         }
 
         /**
-         * gets the required flag.
+         * Gets the required flag.
          * @return the word "required" or "optional" depending on the state of the required flag.
          */
         public String getRequired() {
-            return desc.isRequired() ? "required" : "optional";
+            return description.isRequired() ? "required" : "optional";
         }
+
         /**
          * Get the type of the attribute.
          * @return the type of the enclosed matcher.
          */
         public String getType() {
-            return desc.getChildType().getSimpleName();
+            return description.getChildType().getSimpleName();
         }
 
         /**
@@ -259,15 +256,16 @@ public class Matcher {
          * @return the description of the attribute or an empty string.
          */
         public String getDescription() {
-            return StringUtils.defaultIfEmpty(desc.getDescription(), "");
+            return StringUtils.defaultIfEmpty(description.getDescription(), "");
         }
+
         /**
          * Gets the value of the enclosed matcher.
          * <ul>
-         * <li>If the Matcher does not have an {@link IHeaderMatcher} defined this method returns null.</li>
-         * <li>If the value of is null, this method returns null.</li>
-         * <li>If the value is a string it is normalized before being returned.</li>
-         * <li>If the attribute is an "id" and the value is a UUID, null is returned.</li>
+         * <li>If the Matcher does not have an {@link IHeaderMatcher} defined this method returns {@code null}.</li>
+         * <li>If the value of the attribute (self) is {@code null}, this method returns {@code null}.</li>
+         * <li>If the value is a string, it is normalized before being returned.</li>
+         * <li>If the attribute is an "id" and the value is a UUID, {@code null} is returned.</li>
          * <li>otherwise, the string value is returned.</li>
          * </ul>
          * @return the value of the enclosed matcher in the provided {@link IHeaderMatcher}.
@@ -276,10 +274,10 @@ public class Matcher {
         public String getValue() {
             if (self != null) {
                 try {
-                    Object value = desc.getter(self.getClass()).invoke(self);
+                    Object value = description.getter(self.getClass()).invoke(self);
                     if (value != null) {
                         String result = value.toString();
-                        if (desc.getCommonName().equals("id")) {
+                        if (description.getCommonName().equals("id")) {
                             try {
                                 UUID.fromString(result);
                                 return null;

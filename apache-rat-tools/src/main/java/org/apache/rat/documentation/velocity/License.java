@@ -27,10 +27,10 @@ import org.apache.rat.license.ILicense;
  * The License representation for documentation.
  */
 public final class License {
-    /** the RAT internal license we are wrapping */
+    /** The RAT internal license we are wrapping */
     private final ILicense license;
 
-    /** constructor */
+    /** Constructor */
     License(final ILicense license) {
         this.license = license;
     }
@@ -61,7 +61,7 @@ public final class License {
     }
 
     /**
-     * Gets the ID for this license if it is not a system generated one.
+     * Gets the id for this license if it is not a system generated one.
      * @return the id for this license. May be {@code null}.
      */
     public String id() {

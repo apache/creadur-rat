@@ -23,7 +23,7 @@
 
 Command Line Options
 
- The RAT command line has a number of options.  RAT is a command line first project.  All new functionality is introduced via
+ The RAT command line has a number of options. RAT is a command line first project. All new functionality is introduced via
  command line options before being implemented in other clients/UIs.
 
  The argument types specified in the list below are defined in section following.

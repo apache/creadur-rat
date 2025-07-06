@@ -16,12 +16,12 @@
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
             --------------------------
-            How to define new Rat reports
+            How to define new RAT reports
             --------------------------
 
-How to define new Rat reports
+How to define new RAT reports
 
- All Rat reports are {{{https://www.w3.org/TR/xslt-30/}XSLT stylesheets}} that transform the XML output.  The {{{https://www.w3.org/TR/xmlschema11-1/}schema}} for the XML output can be found in the
+ All RAT reports are {{{https://www.w3.org/TR/xslt-30/}XSLT stylesheets}} that transform the XML output. The {{{https://www.w3.org/TR/xmlschema11-1/}schema}} for the XML output can be found in the
  {{{https://gitbox.apache.org/repos/asf/creadur-rat/blob/master/apache-rat-core/src/main/resources/org/apache/rat/rat-report.xsd}
 core resources rat-report.xsd file.}}
 
@@ -38,12 +38,12 @@ unapproved-licenses.xsl}}: A report that lists files with unapproved licenses.
 
 * The Report XML
 
- The apache-rat sub-module has an example of
- {{{https://gitbox.apache.org/repos/asf/creadur-rat/blob/master/apache-rat/src/site/examples/rat-report.txt}the Rat report XML file.}}
+ The apache-rat submodule has an example of
+ {{{https://gitbox.apache.org/repos/asf/creadur-rat/blob/master/apache-rat/src/site/examples/rat-report.txt}the RAT report XML file.}}
 
 ** <<<rat-report>>> Element
 
- The XML document starts with a <<<rat-report>>> element that has a <<<timestamp>>> attribute that contains the date and time the Rat report was created.  The <<<rat-report>>> contains one <<<verions>>>, one or more <<<resource>>>, and one <<<statistics>>> elements.
+ The XML document starts with a <<<rat-report>>> element that has a <<<timestamp>>> attribute that contains the date and time the RAT report was created. The <<<rat-report>>> contains one <<<verions>>>, one or more <<<resource>>>, and one <<<statistics>>> elements.
 
 ** <<<version>>> Element
 
@@ -58,11 +58,11 @@ unapproved-licenses.xsl}}: A report that lists files with unapproved licenses.
 
 ** <<<resource>>> Element
 
- There is one <<<resource>>> element for every file that was processed.  The <<<resource>>> may contain <<<license>>>  child elements. It has four attributes:
+ There is one <<<resource>>> element for every file that was processed. The <<<resource>>> may contain <<<license>>> child elements. It has four attributes:
 
  * <<<name>>>: The name of the file.
 
- * <<<type>>>: The document type.  This is one of the <<<Document.Type>>> enum values.  The value is always in lower case.  See the {{{https://gitbox.apache.org/repos/asf/creadur-rat/blob/master/apache-rat/src/main/java/org/apache/rat/api/Document.java}Document.java}}  file for a complete list of document types.
+ * <<<type>>>: The document type. This is one of the <<<Document.Type>>> enum values. The value is always in lower case. See the {{{https://gitbox.apache.org/repos/asf/creadur-rat/blob/master/apache-rat/src/main/java/org/apache/rat/api/Document.java}Document.java}} file for a complete list of document types.
 
  * <<<mediaType>>>: The media type of the file.
 
@@ -72,16 +72,16 @@ unapproved-licenses.xsl}}: A report that lists files with unapproved licenses.
 
 ** <<<license>>> Element
 
- The <<<license>>> element is only found as a child of a <<<resource>>> element and may have a <<<notes>>> child element.  The <<<license>>> element has four attributes:
+ The <<<license>>> element is only found as a child of a <<<resource>>> element and may have a <<<notes>>> child element. The <<<license>>> element has four attributes:
 
- * <<<approval>>>: Specifies whether the license is approved.  Values are restricted to 'true' and 'false'.
+ * <<<approval>>>: Specifies whether the license is approved. Values are restricted to 'true' and 'false'.
 
- * <<<family>>>: The license family code.  This is always 5 characters long and may have spaces at the end.
+ * <<<family>>>: The license family code. This is always 5 characters long and may have spaces at the end.
 
- * <<<id>>>: The license id.  This is often the same as the license family code with trailing spaces removed, but may be other values.
+ * <<<id>>>: The license id. This is often the same as the license family code with trailing spaces removed, but may be other values.
  It is guaranteed to be unique within licenses.
 
- * <<<name>>>: The name of the license.  This is the human-readable name that was provided when the license was defined.
+ * <<<name>>>: The name of the license. This is the human-readable name that was provided when the license was defined.
 
 ** <<<notes>>> Element
 
@@ -89,4 +89,4 @@ unapproved-licenses.xsl}}: A report that lists files with unapproved licenses.
 
 * How to use the report
 
- Once an XSLT stylesheet has been developed it can be tested by running Rat and providing the full path to the XSLT stylesheet as the stylesheet  argument for the client being used.  See Running Rat from the {{{./apache-rat/index.html}Command line}},  {{{./apache-rat-plugin/index.html}Maven}}, or  {{{./apache-rat-tasks/index.html}Ant}} for details.
+ Once an XSLT stylesheet has been developed it can be tested by running RAT and providing the full path to the XSLT stylesheet as the stylesheet argument for the client being used. See Running RAT from the {{{./apache-rat/index.html}Command line}},  {{{./apache-rat-plugin/index.html}Maven}}, or  {{{./apache-rat-tasks/index.html}Ant}} for details.
