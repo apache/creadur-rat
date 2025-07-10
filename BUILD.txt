@@ -1,7 +1,7 @@
 How to build RAT
 ================
 
-There is a maven default goal configured that builds and installs a fresh artifact. Just launch maven without any goals in the project root directory.
+There is a Maven default goal configured that builds and installs a fresh artifact. Just launch Maven without any goals in the project root directory.
 or
 Normal development:
 
@@ -18,4 +18,13 @@ Build apache release
     mvn clean install -Papache-release OR
     ./mvnw clean install -Papache-release
 
-RAT uses the previos release version during the build to verify it complies its own rules.
+RAT uses the previous release version during the build to verify it complies its own rules.
+
+Developer settings
+==================
+
+Do not forget to disable star imports in your IDE:
+https://stackoverflow.com/questions/3587071/disable-intellij-starred-package-imports
+and do not forget to run builds locally before submitting patches.
+
+Thanks for any contribution!

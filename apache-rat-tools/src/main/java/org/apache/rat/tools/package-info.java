@@ -16,6 +16,6 @@
 */
 
 /**
-* Contains ancillary tools for the Rat program including code generators and name harmonization code.
+* Contains ancillary tools for the RAT program including code generators and name harmonization code.
 */
 package org.apache.rat.tools;

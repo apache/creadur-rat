@@ -24,9 +24,9 @@
   </parent>
   <artifactId>apache-rat-tasks</artifactId>
   <packaging>jar</packaging>
-  <name>Apache Creadur Rat::Tasks4Ant</name>
+  <name>Apache Creadur RAT::Tasks4Ant</name>
   <description>
- A plugin for Apache Ant that runs Apache Rat
+ A plugin for Apache Ant that runs Apache RAT
    to audit the source to be distributed.
   </description>
   <dependencies>
@@ -145,16 +145,17 @@
             </configuration>
           </execution>
           <execution>
-            <id>Ant argument types generation</id>
+            <id>Initial site generation</id>
             <phase>pre-site</phase>
             <goals>
               <goal>java</goal>
             </goals>
             <configuration>
-              <mainClass>org.apache.rat.tools.ArgumentTypes</mainClass>
+              <mainClass>org.apache.rat.documentation.Exporter</mainClass>
               <classpathScope>test</classpathScope>
               <arguments>
-                <argument>${project.basedir}/src/site/apt/argument_types.txt</argument>
+                <argument>${project.basedir}/src/templates</argument>
+                <argument>${project.basedir}/src/site</argument>
               </arguments>
             </configuration>
           </execution>

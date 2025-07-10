@@ -26,19 +26,19 @@
   <artifactId>apache-rat-project</artifactId>
   <version>0.17-SNAPSHOT</version>
   <packaging>pom</packaging>
-  <name>Apache Creadur Rat</name>
+  <name>Apache Creadur RAT</name>
   <url>https://creadur.apache.org/rat/</url>
   <description>
-Apache Rat is a release audit tool. It improves accuracy and efficiency when checking
+Apache RAT is a release audit tool. It improves accuracy and efficiency when checking
 releases. It is heuristic in nature: making guesses about possible problems. It
 will produce false positives and cannot find every possible issue with a release.
 Its reports require interpretation.
 
-In response to demands from project quality tool developers, Rat is available as a
+In response to demands from project quality tool developers, RAT is available as a
 library suitable for inclusion in tools. This POM describes that library.
 Note that binary compatibility is not guaranteed between 0.x releases.
 
-Apache Rat is developed by the Apache Creadur project, a language and build
+Apache RAT is developed by the Apache Creadur project, a language and build
 agnostic home for software distribution comprehension and audit tools.
   </description>
   <inceptionYear>2006</inceptionYear>
@@ -57,6 +57,8 @@ agnostic home for software distribution comprehension and audit tools.
     <mavenMinVersion>3.2.5</mavenMinVersion>
     <mavenVersion>3.9.10</mavenVersion>
     <creadur.jira.id>RAT</creadur.jira.id>
+    <velocity.core.version>2.4.1</velocity.core.version>
+    <velocity.tools.version>3.1</velocity.tools.version>
     <!-- maven plugin versions -->
     <mavenPluginTestingVersion>3.3.0</mavenPluginTestingVersion>
     <mavenPluginPluginVersion>3.15.1</mavenPluginPluginVersion>
@@ -217,6 +219,16 @@ agnostic home for software distribution comprehension and audit tools.
         <groupId>org.apache.tika</groupId>
         <artifactId>tika-parser-text-module</artifactId>
         <version>${tika.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.velocity</groupId>
+        <artifactId>velocity-engine-core</artifactId>
+        <version>${velocity.core.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.velocity.tools</groupId>
+        <artifactId>velocity-tools-generic</artifactId>
+        <version>${velocity.tools.version}</version>
       </dependency>
       <dependency>
         <groupId>org.codehaus.groovy</groupId>
@@ -495,6 +507,7 @@ agnostic home for software distribution comprehension and audit tools.
               <!-- RAT-353: until https://bugs.openjdk.org/browse/JDK-8227487 is fixed we manually add the fonts -->
               <exclude>**/src/site/javadocFont/**</exclude>
               <exclude>apache-rat/src/site/examples/**</exclude>
+              <exclude>apache-rat/src/site/resources/templates/**</exclude>
               <exclude>apache-rat-plugin/src/site/apt/plugin_help.txt</exclude>
             </excludes>
           </configuration>

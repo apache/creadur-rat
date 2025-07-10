@@ -23,7 +23,7 @@
     <version>0.17-SNAPSHOT</version>
   </parent>
   <artifactId>apache-rat-testdata</artifactId>
-  <name>Apache Creadur Rat::Testdata</name>
+  <name>Apache Creadur RAT::Testdata</name>
   <properties>
     <maven.compiler.source>${javaVersion}</maven.compiler.source>
     <maven.compiler.target>${javaVersion}</maven.compiler.target>

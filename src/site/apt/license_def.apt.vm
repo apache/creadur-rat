@@ -19,9 +19,9 @@
                    How to define new licenses
                    --------------------------
 
-How to define licenses in Apache Rat
+How to define licenses in Apache RAT
 
- All licenses in Apache Rat are defined in configuration files. There is a default 
+ All licenses in Apache RAT are defined in configuration files. There is a default
  {{{https://gitbox.apache.org/repos/asf/creadur-rat/blob/master/apache-rat-core/src/main/resources/org/apache/rat/default.xml}
  XML based configuration file}} that can serve as a good example of various definitions.
 
@@ -35,7 +35,7 @@ How to define licenses in Apache Rat
  
 * Families
  
- Families are groups that define licenses that share similarities.  Each family has an id and a name. An example
+ Families are groups that define licenses that share similarities. Each family has an id and a name. An example
  of an entry in this section is
  
 +------------------------------------------+
@@ -48,11 +48,11 @@ How to define licenses in Apache Rat
  
 * Matchers
 
- Matchers define tests that check the contents of files for specific patterns.  Matchers are defined in Java
- code and are required to have Builder classes that build them.  There is {{{./matcher_def.html}additional documentation 
- explaining how to create new Matchers}}.  In the XML document Matchers are identified by the "matcher" element that has
- a single "class" property.  The value of the "class" property is the fully qualified class name that 
- identifies a Builder class.  An example of a matchers entry is
+ Matchers define tests that check the contents of files for specific patterns. Matchers are defined in Java
+ code and are required to have Builder classes that build them. There is {{{./matcher_def.html}additional documentation
+ explaining how to create new Matchers}}. In the XML document Matchers are identified by the "matcher" element that has
+ a single "class" property. The value of the "class" property is the fully qualified class name that
+ identifies a Builder class. An example of a matchers entry is
  
 +------------------------------------------+
  <rat-config>
@@ -67,26 +67,26 @@ How to define licenses in Apache Rat
 * Licenses
 
  License elements have three properties: "family", "id", and "name". The family property must refer to
- the "id" of a family element.  The family element can be defined in the current document or in another
- included document.  It has to exist by the time all the configuration files are read.  The "id" element
- is optional, if it is not provided the id will be set to the id of the associated family.  However, the 
- "id" property must be unique across all licenses.  The "name" property is also optional.  If not specified
- the name of the associated family will be used.  It is recommended that each license have a unique name
+ the "id" of a family element. The family element can be defined in the current document or in another
+ included document. It has to exist by the time all the configuration files are read. The "id" element
+ is optional, if it is not provided the id will be set to the id of the associated family. However, the
+ "id" property must be unique across all licenses. The "name" property is also optional. If not specified
+ the name of the associated family will be used. It is recommended that each license have a unique name
  as name conflicts make problem determination difficult.
  
- License elements have two child element types.  The first is "notes".  There may be multiple "notes" 
- child elements.  They are simple text elements that define notes about the license.  The other element
- is a Matcher type.  A matcher element is defined by a builder in the "matchers" section as described
- above.  The matchers listed in the example above define the "any", "spdx", and "text" matcher elements.
+ License elements have two child element types. The first is "notes". There may be multiple "notes"
+ child elements. They are simple text elements that define notes about the license. The other element
+ is a Matcher type. A matcher element is defined by a builder in the "matchers" section as described
+ above. The matchers listed in the example above define the "any", "spdx", and "text" matcher elements.
  
- When defining the license the matcher is required and only one may be defined.  However, there are matchers
- that accept multiple matcher child nodes.  In the example below the CDDL1 license uses the "any" matcher.
+ When defining the license the matcher is required and only one may be defined. However, there are matchers
+ that accept multiple matcher child nodes. In the example below the CDDL1 license uses the "any" matcher.
  The "any" matcher accepts multiple child matchers and will report a match if any of the enclosed matchers
- report a match. In the example below the "any" matcher has "text" and "spdx" child matchers.  The "text"
+ report a match. In the example below the "any" matcher has "text" and "spdx" child matchers. The "text"
  matcher will match the enclosed text and the "spdx" matcher matches {{{https://spdx.org/licenses/}SPDX}}
- tags.  The second license defined below is the "ILLUMOS" license.  It shares the same family as the CDDL1
- license, has its own "id" and "name" properties.  It also has a "note" child element that tells the user
- that it is a modified CDDL1 license.  The license has a single "text" matcher.
+ tags. The second license defined below is the "ILLUMOS" license. It shares the same family as the CDDL1
+ license, has its own "id" and "name" properties. It also has a "note" child element that tells the user
+ that it is a modified CDDL1 license. The license has a single "text" matcher.
  
 +------------------------------------------+
  <rat-config>
@@ -114,9 +114,9 @@ How to define licenses in Apache Rat
  
 * Approved 
  
- Approved element lists the approved licenses from this configuration.  It is possible to define licenses
- that you want to detect but not allow.  If the "approved" element is not present all defined families
- are considered to be approved.  The approved entry has "family" child entries that have "license_ref"
+ Approved element lists the approved licenses from this configuration. It is possible to define licenses
+ that you want to detect but not allow. If the "approved" element is not present all defined families
+ are considered to be approved. The approved entry has "family" child entries that have "license_ref"
  properties that reference the "id" of the family being approved.
  
 +------------------------------------------+
@@ -129,7 +129,7 @@ How to define licenses in Apache Rat
 
 * Reading multiple configuration files.
 
- Multiple configuration files can be read by using the <<<--config>>> argument.  Later definitions override earlier definitions.
+ Multiple configuration files can be read by using the <<<--config>>> argument. Later definitions override earlier definitions.
 
 * Listing components
 
@@ -137,5 +137,5 @@ How to define licenses in Apache Rat
  argument. This will produce a textual report of all the components.
 
  License definitions and license family definitions can be added to the XML output by using the <<<--output-licenses>>> and <<<--output-families>>> options.
- These options output directly to the XML and are ignored by the standard XSLT reports.  To see the output either a custom XSLT will need to be
+ These options output directly to the XML and are ignored by the standard XSLT reports. To see the output either a custom XSLT will need to be
  created or use the <<<--output-style xml>>> option.

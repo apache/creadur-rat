@@ -44,6 +44,8 @@ import org.apache.commons.csv.CSVPrinter;
 import org.apache.commons.csv.QuoteMode;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.rat.OptionCollection;
+import org.apache.rat.documentation.options.AntOption;
+import org.apache.rat.documentation.options.MavenOption;
 import org.apache.rat.help.AbstractHelp;
 
 /**
@@ -59,7 +61,6 @@ import org.apache.rat.help.AbstractHelp;
  */
 public final class Naming {
 
-    private Naming() { }
     /** The maximum width of the output. */
     private static final Option WIDTH = Option.builder().longOpt("width").type(Integer.class)
             .desc("Set the display width of the output").hasArg().build();
@@ -81,12 +82,18 @@ public final class Naming {
             .addOption(WIDTH);
 
     /**
+     * No instantiation of utility class.
+     */
+    private Naming() { }
+
+    /**
      * Creates the CSV file.
      * Requires 1 argument:
      * <ol>
      *    <li>the name of the output file with path if desired</li>
      * </ol>
      * @throws IOException on error
+     * @throws ParseException in case of option-related errors
      * @param args arguments, only 1 is required.
      */
     public static void main(final String[] args) throws IOException, ParseException {

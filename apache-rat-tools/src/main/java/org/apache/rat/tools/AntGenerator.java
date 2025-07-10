@@ -30,11 +30,8 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 import org.apache.commons.cli.Option;
 import org.apache.commons.io.IOUtils;
@@ -42,7 +39,7 @@ import org.apache.commons.io.LineIterator;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.WordUtils;
 import org.apache.rat.OptionCollection;
-import org.apache.rat.commandline.Arg;
+import org.apache.rat.documentation.options.AntOption;
 import org.apache.rat.utils.CasedString;
 import org.apache.rat.utils.CasedString.StringCase;
 
@@ -52,19 +49,6 @@ import static java.lang.String.format;
  * A simple tool to convert CLI options into an Ant report base class.
  */
 public final class AntGenerator {
-
-    /**
-     * The list of Options that are not supported by Ant.
-     */
-    private static final Set<Option> ANT_FILTER_LIST = AntOption.getFilteredOptions();
-
-    /**
-     * the filter to filter out CLI options that Ant does not support.
-     */
-    private static final Predicate<Option> ANT_FILTER = option -> !(ANT_FILTER_LIST.contains(option) || option.getLongOpt() == null);
-
-    /** A mapping of external name to internal name if not standard. */
-    private static final Map<String, String> RENAME_MAP = new HashMap<>();
 
     /**
      * A map of type patterns for that type.
@@ -122,19 +106,10 @@ public final class AntGenerator {
             }
             GENERATE_TYPE_MAP.put(type, generateType);
         }
-
-        RENAME_MAP.put("addLicense", "add-license");
     }
 
     private AntGenerator() { }
 
-    /**
-     * Gets the Option predicate that removes unsupported CLI options.
-     * @return The Option predicate that removes unsupported CLI options.
-     */
-    public static Predicate<Option> getFilter() {
-        return ANT_FILTER;
-    }
 
     /**
      * Gets the key for the Args array.
@@ -166,8 +141,7 @@ public final class AntGenerator {
         String className = args[1];
         String destDir = args[2];
 
-        List<AntOption> options = Arg.getOptions().getOptions().stream().filter(ANT_FILTER).map(AntOption::new)
-                .collect(Collectors.toList());
+        List<AntOption> options = AntOption.getAntOptions();
 
         String pkgName = String.join(File.separator, new CasedString(StringCase.DOT, packageName).getSegments());
         File file = new File(new File(new File(destDir), pkgName), className + ".java");
@@ -184,15 +158,15 @@ public final class AntGenerator {
                 String line = iter.next();
                 switch (line.trim()) {
                     case "${static}":
-                        for (Map.Entry<String, String> entry : RENAME_MAP.entrySet()) {
+                        for (Map.Entry<String, String> entry : AntOption.getRenameMap().entrySet()) {
                             writer.append(format("        xlateName.put(\"%s\", \"%s\");%n", entry.getKey(), entry.getValue()));
                         }
-                        for (Option option : ANT_FILTER_LIST) {
+                        for (Option option : AntOption.getFilteredOptions()) {
                             writer.append(format("        unsupportedArgs.add(\"%s\");%n", argsKey(option)));
                         }
                         for (AntOption option : options) {
                             if (option.isDeprecated()) {
-                                writer.append(format("        deprecatedArgs.put(\"%s\", \"%s\");%n", argsKey(option.option),
+                                writer.append(format("        deprecatedArgs.put(\"%s\", \"%s\");%n", argsKey(option.getOption()),
                                         format("Use of deprecated option '%s'. %s", option.getName(), option.getDeprecated())));
                             }
                         }
@@ -267,12 +241,6 @@ public final class AntGenerator {
         result.append(format("    }%n"));
 
         return result.toString();
-    }
-
-    static String createName(final Option option) {
-        String name = option.getLongOpt();
-        name = StringUtils.defaultIfEmpty(RENAME_MAP.get(name), name).toLowerCase(Locale.ROOT);
-        return new CasedString(StringCase.KEBAB, name).toCase(StringCase.CAMEL);
     }
 
     public static class GenerateType {

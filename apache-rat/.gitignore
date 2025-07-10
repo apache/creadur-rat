@@ -1,3 +1,8 @@
 /src/site/apt/cli_help.txt
 /src/site/examples/**
 /target/
+src/site/apt/cli_options.apt
+src/site/apt/default_licenses.apt
+src/site/apt/default_matchers.apt
+src/site/apt/index.apt.vm
+src/site/apt/standard_collections.apt

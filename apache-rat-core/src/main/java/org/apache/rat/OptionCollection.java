@@ -123,7 +123,7 @@ public final class OptionCollection {
      * @param workingDirectory The directory to resolve relative file names against.
      * @param args the arguments to parse
      * @param helpCmd the help command to run when necessary.
-     * @param noArgs If true then the commands do not need extra arguments
+     * @param noArgs If {@code true} then the commands do not need extra arguments.
      * @return a ReportConfiguration or {@code null} if Help was printed.
      * @throws IOException on error.
      */
@@ -307,9 +307,9 @@ public final class OptionCollection {
         /**
          * A style sheet.
          */
-        STYLESHEET("StyleSheet", () -> format("Either an external xsl file or one of the internal named sheets. Internal sheets are: %s",
+        STYLESHEET("StyleSheet", () -> format("Either an external xsl file or one of the internal named sheets. Internal sheets are: %n%s",
                 Arrays.stream(StyleSheets.values())
-                        .map(v -> format("\t%s: %s", v.arg(), v.desc()))
+                        .map(v -> format("\t%s: %s%n", v.arg(), v.desc()))
                         .collect(Collectors.joining(System.lineSeparator())))),
         /**
          * A license id.
@@ -322,9 +322,9 @@ public final class OptionCollection {
         /**
          * A standard collection name.
          */
-        STANDARDCOLLECTION("StandardCollection", () -> format("Defines standard expression patterns (see above). Valid values are: %s%n",
+        STANDARDCOLLECTION("StandardCollection", () -> format("Defines standard expression patterns (see above). Valid values are: %n%s%n",
                 Arrays.stream(StandardCollection.values())
-                        .map(v -> format("\t%s: %s", v.name(), v.desc()))
+                        .map(v -> format("\t%s: %s%n", v.name(), v.desc()))
                         .collect(Collectors.joining(System.lineSeparator())))),
         /**
          * A Counter pattern name
@@ -332,7 +332,7 @@ public final class OptionCollection {
         COUNTERPATTERN("CounterPattern", () -> format("A pattern comprising one of the following prefixes followed by " +
                         "a colon and a count (e.g. %s:5).  Prefixes are %n%s.", ClaimStatistic.Counter.UNAPPROVED,
                 Arrays.stream(ClaimStatistic.Counter.values())
-                        .map(v -> format("\t%s: %s Default range [%s, %s]", v.name(), v.getDescription(),
+                        .map(v -> format("\t%s: %s Default range [%s, %s]%n", v.name(), v.getDescription(),
                                 v.getDefaultMinValue(),
                                 v.getDefaultMaxValue() == -1 ? "unlimited" : v.getDefaultMaxValue()))
                         .collect(Collectors.joining(System.lineSeparator())))),

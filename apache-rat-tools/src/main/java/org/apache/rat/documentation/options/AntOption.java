@@ -16,24 +16,29 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.rat.tools;
+package org.apache.rat.documentation.options;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import org.apache.commons.cli.Option;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
 import org.apache.commons.text.WordUtils;
 import org.apache.rat.OptionCollection;
 import org.apache.rat.commandline.Arg;
+import org.apache.rat.utils.CasedString;
 
 import static java.lang.String.format;
 
@@ -43,22 +48,32 @@ import static java.lang.String.format;
 public class AntOption extends AbstractOption {
 
     /**
+     * The filter to filter out CLI options that Ant does not support.
+     */
+    private static final Predicate<Option> ANT_FILTER;
+
+    /**
      * The list of Options that are not supported by Ant.
      */
     private static final List<Option> UNSUPPORTED_LIST = new ArrayList<>();
 
     /**
-     * The Mapping of option to the implementation option in Ant.
+     * The mapping of option to the implementation option in Ant.
      */
     private static final Map<Option, Option> ANT_CONVERSION_MAP = new HashMap<>();
 
     /**
-     * The list of example patterns for various classes
+     * The list of example patterns for various classes.
      */
     private static final Map<OptionCollection.ArgumentType, BuildType> BUILD_TYPE_MAP = new HashMap<>();
 
-    /** The list of attribute Types */
+    /** The list of attribute types. */
     private static final List<Class<?>> ATTRIBUTE_TYPES = new ArrayList<>();
+    /** A mapping of external name to internal name if not standard. */
+    private static final Map<String, String> RENAME_MAP = new HashMap<>();
+
+    /** Attributes that are required for example data. */
+    private static final Map<String, Map<String, String>> REQUIRED_ATTRIBUTES = new HashMap<>();
 
     /**
      * Adds a mapping from the specified Arg to the Arg to be used for generation.
@@ -75,6 +90,7 @@ public class AntOption extends AbstractOption {
     }
 
     static {
+        RENAME_MAP.put("addLicense", "add-license");
         ATTRIBUTE_TYPES.add(String.class);
         ATTRIBUTE_TYPES.add(String[].class);
         ATTRIBUTE_TYPES.add(Integer.class);
@@ -108,7 +124,7 @@ public class AntOption extends AbstractOption {
                             return "  <fileset file='%s' />\n";
                         }
                     };
-                  BUILD_TYPE_MAP.put(type, buildType);
+                    BUILD_TYPE_MAP.put(type, buildType);
                     break;
                 case NONE:
                     buildType = new BuildType(type, "");
@@ -140,14 +156,31 @@ public class AntOption extends AbstractOption {
                     BUILD_TYPE_MAP.put(type, buildType);
             }
         }
+        Set<Option> filteredOptions = getFilteredOptions();
+        ANT_FILTER = option -> !(filteredOptions.contains(option) || option.getLongOpt() == null);
+
+        Map<String, String> attributes = new HashMap<>();
+        attributes.put("editLicense", "true");
+        REQUIRED_ATTRIBUTES.put("copyright", attributes);
+        REQUIRED_ATTRIBUTES.put("editCopyright", attributes);
+        REQUIRED_ATTRIBUTES.put("force", attributes);
+        REQUIRED_ATTRIBUTES.put("editOverwrite", attributes);
     }
 
     /**
+     * Gets the list of all available Ant options.
+     * @return the list of all available Ant options.
+     */
+    public static List<AntOption> getAntOptions() {
+        return Arg.getOptions().getOptions().stream().filter(ANT_FILTER).map(AntOption::new)
+                .collect(Collectors.toList());
+    }
+    /**
      * Gets the list of unsupported options.
-     * @return The list of unsupported options.
+     * @return the list of unsupported options.
      */
     public static List<Option> getUnsupportedOptions() {
-        return UNSUPPORTED_LIST;
+        return Collections.unmodifiableList(UNSUPPORTED_LIST);
     }
 
     /**
@@ -161,13 +194,23 @@ public class AntOption extends AbstractOption {
         return filteredOptions;
     }
 
+    public static Map<String, String> getRenameMap() {
+        return Collections.unmodifiableMap(RENAME_MAP);
+    }
+
     /**
      * Constructor.
      *
      * @param option the option to wrap.
      */
     public AntOption(final Option option) {
-        super(option, AntGenerator.createName(option));
+        super(option, createName(option));
+    }
+
+    public static String createName(final Option option) {
+        String name = option.getLongOpt();
+        name = StringUtils.defaultIfEmpty(RENAME_MAP.get(name), name).toLowerCase(Locale.ROOT);
+        return new CasedString(CasedString.StringCase.KEBAB, name).toCase(CasedString.StringCase.CAMEL);
     }
 
     /**
@@ -176,9 +219,8 @@ public class AntOption extends AbstractOption {
      * @return {@code true} if the option should be an attribute of the &lt;rat:report&gt; element.
      */
     public boolean isAttribute() {
-        return (!option.hasArg() || option.getArgs() == 1) && ATTRIBUTE_TYPES.contains(option.getType())
-                && convertedFrom().isEmpty();
-
+        return (!option.hasArg() || option.getArgs() == 1) && convertedFrom().isEmpty()
+                && ATTRIBUTE_TYPES.contains(option.getType());
     }
 
     /**
@@ -210,10 +252,15 @@ public class AntOption extends AbstractOption {
                 .collect(Collectors.toSet());
     }
 
+    @Override
+    public String getText() {
+        return cleanupName(option);
+    }
+
     protected String cleanupName(final Option option) {
         AntOption antOption = new AntOption(option);
         String fmt = antOption.isAttribute() ? "%s attribute" : "<%s>";
-        return format(fmt, AntGenerator.createName(option));
+        return format(fmt, createName(option));
     }
 
     /**
@@ -257,7 +304,6 @@ public class AntOption extends AbstractOption {
         }
         return sb.append(format("     */%n")).toString();
     }
-
 
     /**
      * Get the signature of the attribute function.
@@ -329,18 +375,6 @@ public class AntOption extends AbstractOption {
         }
     }
 
-    /** Attributes that are required for example data */
-    private static final Map<String, Map<String, String>> REQUIRED_ATTRIBUTES = new HashMap<>();
-
-    static {
-        Map<String, String> attributes = new HashMap<>();
-        attributes.put("editLicense", "true");
-        REQUIRED_ATTRIBUTES.put("copyright", attributes);
-        REQUIRED_ATTRIBUTES.put("editCopyright", attributes);
-        REQUIRED_ATTRIBUTES.put("force", attributes);
-        REQUIRED_ATTRIBUTES.put("editOverwrite", attributes);
-    }
-
     /**
      * An example code generator for this AntOption.
      */
@@ -365,7 +399,7 @@ public class AntOption extends AbstractOption {
          * @param data The data value for this option.
          * @param attributes A map of attribute keys and values.
          * @param childElements a list of child elements for the example
-         * @return
+         * @return example Ant XML report call using ant option with the specified attributes and child elements.
          */
         public String getExample(final String data, final Map<String, String> attributes, final List<String> childElements) {
             if (UNSUPPORTED_LIST.contains(option)) {

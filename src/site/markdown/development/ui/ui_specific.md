@@ -20,25 +20,27 @@
 > Up: [UI Implementation](../ui_implementation.html)
 > <br />[Options](./options.html)  | [Generator](./generator.html) | UI Specific
 
-In most cases the UI provides values for some of the CLI options, or have additional options that are not supported by CLI.  In the case of Maven there is a "skip" option that causes the Maven plugin to not execute.  This is not implemented in the CLI as it is assumed if you don't want to execute the CLI you won't call it.
+In most cases the UI provides values for some of the CLI options, or have additional options that are not supported by CLI.
+In the case of Maven there is a "skip" option that causes the Maven plugin to not execute.
+This is not implemented in the CLI as it is assumed if you don't want to execute the CLI you won't call it.
 
-The `apache-rat-plugin` contains the code for the Maven UI extension.  In this particular case there are three components that extend the generated abstract class.
-1. `AbstractRatMojo` - extends the generated class and add standard functionality.
-2. `RatCheckMojo` - extends `AbstractRatMojo` and adds the functionality to execute the Rat core `Reporter` class.
+The `apache-rat-plugin` contains the code for the Maven UI extension. In this particular case there are three components that extend the generated abstract class:
+1. `AbstractRatMojo` - extends the generated class and adds standard functionality.
+2. `RatCheckMojo` - extends `AbstractRatMojo` and adds the functionality to execute the RAT core `Reporter` class.
 3. `RatReportMojo` - extends `AbstractRatMojo` and adds the functionality to provide reports into the Maven reporting system.
 
 ## Added / Modified functionality
 
 ### Logging
 
-Most UIs have some process for logging.  Rat defines a [Log](https://github.com/apache/creadur-rat/blob/master/apache-rat-core/src/main/java/org/apache/rat/utils/Log.java) interface and uses the [DefaultLog](https://github.com/apache/creadur-rat/blob/master/apache-rat-core/src/main/java/org/apache/rat/utils/DefaultLog.java) class to track the instance.
+Most UIs have some process for logging. RAT defines a [Log](https://github.com/apache/creadur-rat/blob/master/apache-rat-core/src/main/java/org/apache/rat/utils/Log.java) interface and uses the [DefaultLog](https://github.com/apache/creadur-rat/blob/master/apache-rat-core/src/main/java/org/apache/rat/utils/DefaultLog.java) class to track the instance.
 
-The `AbstractRatMojo` class has a `makeLog` method that wraps the Maven log to create an instance of the Rat Log interface.  In the `getConfiguration` method the DefaultLog default is set to return the wrapped Maven log.
-
+The `AbstractRatMojo` class has a `makeLog` method that wraps the Maven log to create an instance of the RAT Log interface.
+In the `getConfiguration` method the DefaultLog default is set to return the wrapped Maven log.
 
 ### Processing Arguments
 
-the `AbstractRatMojo.getConfiguration` performs some changes to the args defined in generated base class, generates the configuration and then calls:
+The `AbstractRatMojo.getConfiguration` performs some changes to the args defined in generated base class, generates the configuration and then calls:
 
 ```java
 ReportConfiguration config = OptionCollection.parseCommands(args().toArray(new String[0]),
@@ -50,9 +52,10 @@ The above line creates the configuration from the args and if the user somehow m
 
 After the `ReportConfiguration` is created it is modified based on specific Maven command line options before it is returned to the calling method.
 
-## Executing the Rat scan****
+## Executing the RAT scan
 
-The Maven code executes the Rat scan in the `RatCheckMojo.execute()` method.  This method processes the Maven "skip" option, checks is the output is overridden in the Args structure and if not sets the Maven default, retrieves the configuration and executes:
+The Maven code executes the RAT scan in the `RatCheckMojo.execute()` method.
+This method processes the Maven "skip" option, checks if the output is overridden in the Args structure and if not sets the Maven default, retrieves the configuration and executes:
 
 ```java
 try {
@@ -70,7 +73,9 @@ The `check()` method performs custom checks and logging for Maven specific issue
 
 ## Ant processing
 
-The Ant processing is performed by the `Report` class in the `apache-rat-tasks` module.  It follows the same basic processing path as the Maven processing except that it handle Ant specific requirements and options.  The class has an `execute()` method that looks very similar to the Maven version:
+The Ant processing is performed by the `Report` class in the `apache-rat-tasks` module.
+It follows the same basic processing path as the Maven processing except that it handle Ant specific requirements and options.
+The class has an `execute()` method that looks very similar to the Maven version:
 
 ```java
 try {
