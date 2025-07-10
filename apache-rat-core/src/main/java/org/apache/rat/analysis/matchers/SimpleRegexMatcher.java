@@ -42,8 +42,7 @@ public class SimpleRegexMatcher extends AbstractHeaderMatcher {
      * Regex pattern.
      *
      * @param id the id for this matcher, may be null.
-     * @param pattern the pattern to match. This pattern will only match a single line
-     * from the input stream.
+     * @param pattern the pattern to match.
      */
     public SimpleRegexMatcher(final String id, final Pattern pattern) {
         super(id);
