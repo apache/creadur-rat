@@ -170,7 +170,6 @@ public class Exporter {
          */
         private final DocumentName targetDir;
 
-
         /**
          * Create a rewriter.
          *
