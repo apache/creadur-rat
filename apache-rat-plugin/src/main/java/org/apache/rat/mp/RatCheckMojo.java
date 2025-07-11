@@ -40,9 +40,9 @@ import org.apache.rat.utils.DefaultLog;
 import static java.lang.String.format;
 
 /**
- * Run Rat to perform a violation check.
+ * Run RAT to perform a violation check.
  * <p>
- *     This documentation mentions data types for some of the arguments. An <a href="data_types.html">explanation of the data types</a> is included
+ *     This documentation mentions data types for some arguments. An <a href="data_types.html">explanation of the data types</a> is included
  *     in this documentation package.
  * </p>
  */

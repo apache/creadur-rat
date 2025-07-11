@@ -61,7 +61,7 @@ import org.codehaus.plexus.util.ReaderFactory;
 import static org.apache.maven.shared.utils.logging.MessageUtils.buffer;
 
 /**
- * Generates a report with Rat's output.
+ * Generates a report with RAT's output.
  */
 @Mojo(name = "rat", requiresDependencyResolution = ResolutionScope.TEST, threadSafe = true)
 public class RatReportMojo extends AbstractRatMojo implements MavenMultiPageReport {

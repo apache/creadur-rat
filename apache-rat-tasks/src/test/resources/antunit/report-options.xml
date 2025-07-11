@@ -38,7 +38,6 @@
 		</path>
 	</pathconvert>
 
-
 	<target name="testOption">
 		<rat:report>
 ${option}
