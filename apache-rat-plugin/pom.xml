@@ -33,8 +33,8 @@
   </prerequisites>
   <properties>
     <currentVersion>${project.version}</currentVersion>
-    <doxiaVersion>1.12.0</doxiaVersion>
-    <doxiaSitetoolsVersion>1.11.1</doxiaSitetoolsVersion>
+    <doxiaVersion>2.0.0</doxiaVersion>
+    <doxiaSitetoolsVersion>2.0.0-M6</doxiaSitetoolsVersion>
   </properties>
   <build>
     <resources>
@@ -378,7 +378,7 @@
     <dependency>
       <groupId>org.apache.maven.doxia</groupId>
       <artifactId>doxia-module-xhtml</artifactId>
-      <version>${doxiaVersion}</version>
+      <version>2.0.0-M3</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven.doxia</groupId>
@@ -410,7 +410,7 @@
     <dependency>
       <groupId>org.apache.maven.reporting</groupId>
       <artifactId>maven-reporting-api</artifactId>
-      <version>3.1.1</version>
+      <version>4.0.0</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven.shared</groupId>

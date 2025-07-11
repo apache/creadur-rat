@@ -53,8 +53,8 @@ agnostic home for software distribution comprehension and audit tools.
     <tika.version>2.9.2</tika.version>
     <maven.compiler.source>${javaVersion}</maven.compiler.source>
     <maven.compiler.target>${javaVersion}</maven.compiler.target>
-    <!-- This is the version of Maven required to use the Rat Maven Plugin -->
-    <mavenMinVersion>3.2.5</mavenMinVersion>
+    <!-- This is the version of Maven required to use the RAT Maven Plugin -->
+    <mavenMinVersion>3.6.3</mavenMinVersion>
     <mavenVersion>3.9.10</mavenVersion>
     <creadur.jira.id>RAT</creadur.jira.id>
     <velocity.core.version>2.4.1</velocity.core.version>

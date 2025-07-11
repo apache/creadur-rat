@@ -32,7 +32,6 @@ import java.util.Map;
 import java.util.ResourceBundle;
 
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.doxia.sink.SinkFactory;
 import org.apache.maven.doxia.sink.impl.SinkEventAttributeSet;
@@ -57,6 +56,7 @@ import org.apache.rat.Reporter;
 import org.apache.rat.VersionInfo;
 import org.apache.rat.license.LicenseSetFactory.LicenseFilter;
 import org.codehaus.plexus.util.ReaderFactory;
+import org.eclipse.aether.repository.RemoteRepository;
 
 import static org.apache.maven.shared.utils.logging.MessageUtils.buffer;
 
@@ -97,7 +97,7 @@ public class RatReportMojo extends AbstractRatMojo implements MavenMultiPageRepo
      * Remote repositories used for the project.
      */
     @Parameter(defaultValue = "${project.remoteArtifactRepositories}", readonly = true, required = true)
-    protected List<ArtifactRepository> remoteRepositories;
+    protected List<RemoteRepository> remoteRepositories;
 
     /**
      * SiteTool.
@@ -195,8 +195,8 @@ public class RatReportMojo extends AbstractRatMojo implements MavenMultiPageRepo
 
         SiteRenderingContext context;
         try {
-            Artifact skinArtifact = siteTool.getSkinArtifactFromRepository(session.getLocalRepository(),
-                    remoteRepositories, decorationModel);
+            Artifact skinArtifact = siteTool.getSkinArtifactFromRepository(session.getRepositorySession(),
+                    remoteRepositories, decorationModel.getSkin());
 
             getLog().debug(buffer().a("Rendering content with ").strong(skinArtifact.getId() + " skin").a('.').build());
 
@@ -212,20 +212,6 @@ public class RatReportMojo extends AbstractRatMojo implements MavenMultiPageRepo
         context.setRootDirectory(project.getBasedir());
 
         return context;
-    }
-
-    /**
-     * Generate a report.
-     *
-     * @param sink the sink to use for the generation.
-     * @param locale the wanted locale to generate the report, could be null.
-     * @throws MavenReportException if any
-     * @deprecated use {@link #generate(Sink, SinkFactory, Locale)} instead.
-     */
-    @Deprecated
-    @Override
-    public void generate(final org.codehaus.doxia.sink.Sink sink, final Locale locale) throws MavenReportException {
-        generate(sink, null, locale);
     }
 
     /**
@@ -387,7 +373,7 @@ public class RatReportMojo extends AbstractRatMojo implements MavenMultiPageRepo
         sink.paragraph_();
 
         sink.paragraph();
-        sink.verbatim(SinkEventAttributeSet.BOXED);
+        sink.verbatim(SinkEventAttributeSet.SOURCE);
         try {
             ReportConfiguration config = getConfiguration();
             config.setFrom(getDefaultsBuilder().build());
