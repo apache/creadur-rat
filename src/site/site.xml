@@ -66,12 +66,12 @@
       <item name="Maven Examples" href="apache-rat-plugin/examples/index.html"/>
     </menu>
     <menu name="Configuring RAT" inherit="bottom">
-      <item name="Option Name Cross Reference" href="apache-rat/name_xref.html" />
-      <item name="Default Licenses" href="apache-rat/default_licenses.html" />
-      <item name="Default Matchers" href="apache-rat/default_matchers.html" />
+      <item name="Option Name Cross Reference" href="apache-rat/name_xref.html"/>
+      <item name="Default Licenses" href="apache-rat/default_licenses.html"/>
+      <item name="Default Matchers" href="apache-rat/default_matchers.html"/>
       <item name="Defining New Licenses" href="license_def.html"/>
-      <item name="Configuration XSD" href="apache-rat/xsd.html" />
-      <item name="Default Configuration" href="https://gitbox.apache.org/repos/asf/creadur-rat/blob/master/apache-rat-core/src/main/resources/org/apache/rat/default.xml" />
+      <item name="Configuration XSD" href="apache-rat/xsd.html"/>
+      <item name="Default Configuration" href="https://gitbox.apache.org/repos/asf/creadur-rat/blob/master/apache-rat-core/src/main/resources/org/apache/rat/default.xml"/>
     </menu>
     <menu name="RAT Output" inherit="bottom">
       <item name="Standard Output Example" href="apache-rat/output/example.html"/>
