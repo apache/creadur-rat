@@ -25,8 +25,10 @@ import java.io.OutputStream;
 import java.lang.reflect.Array;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
 
@@ -86,11 +88,11 @@ public enum Arg {
             .addOption(Option.builder("f").longOpt("force")
                     .deprecated(DeprecatedAttributes.builder().setForRemoval(true).setSince("0.17")
                             .setDescription(StdMsgs.useMsg("--edit-overwrite")).get())
-                    .desc("Forces any changes in files to be written directly to the source files (i.e. new files are not created).")
+                    .desc("Forces any changes in files to be written directly to the source files so that new files are not created.")
                     .build())
             .addOption(Option.builder().longOpt("edit-overwrite")
-                    .desc("Forces any changes in files to be written directly to the source files (i.e. new files are not created). "
-                            + "Only valid with --edit-license")
+                    .desc("Forces any changes in files to be written directly to the source files so that new files are not created. "
+                            + "Only valid with --edit-license.")
                     .build())),
 
     /**
@@ -104,10 +106,10 @@ public enum Arg {
             .addOption(Option.builder("A").longOpt("addLicense")
                     .deprecated(DeprecatedAttributes.builder().setForRemoval(true).setSince("0.17")
                             .setDescription(StdMsgs.useMsg("--edit-license")).get())
-                    .desc("Add the default license header to any file with an unknown license that is not in the exclusion list.")
+                    .desc("Add the Apache-2.0 license header to any file with an unknown license that is not in the exclusion list.")
                     .build())
             .addOption(Option.builder().longOpt("edit-license").desc(
-                    "Add the default license header to any file with an unknown license that is not in the exclusion list. "
+                    "Add the Apache-2.0 license header to any file with an unknown license that is not in the exclusion list. "
                             + "By default new files will be created with the license header, "
                             + "to force the modification of existing files use the --edit-overwrite option.").build()
             )),
@@ -146,15 +148,17 @@ public enum Arg {
     /**
      * Option that adds approved licenses to the list
      */
-    LICENSES_APPROVED(new OptionGroup().addOption(Option.builder().longOpt("licenses-approved").hasArgs().argName("LicenseID")
-            .desc("The approved License IDs. These licenses will be added to the list of approved licenses.")
+    LICENSES_APPROVED(new OptionGroup().addOption(Option.builder().longOpt("licenses-approved").hasArg().argName("LicenseID")
+            .desc("A comma separated list of approved License IDs. These licenses will be added to the list of approved licenses.")
+                    .converter(Converters.TEXT_LIST_CONVERTER)
+                    .type(String[].class)
             .build())),
 
     /**
      * Option that adds approved licenses from a file
      */
     LICENSES_APPROVED_FILE(new OptionGroup().addOption(Option.builder().longOpt("licenses-approved-file").hasArg().argName("File")
-            .desc("Name of file containing the approved License IDs.")
+            .desc("Name of file containing comma separated lists of approved License IDs.")
             .converter(Converters.FILE_CONVERTER)
             .type(File.class)
             .build())),
@@ -162,15 +166,17 @@ public enum Arg {
     /**
      * Option that specifies approved license families
      */
-    FAMILIES_APPROVED(new OptionGroup().addOption(Option.builder().longOpt("license-families-approved").hasArgs().argName("FamilyID")
-            .desc("The approved License Family IDs. These licenses families will be added to the list of approved licenses families.")
+    FAMILIES_APPROVED(new OptionGroup().addOption(Option.builder().longOpt("license-families-approved").hasArg().argName("FamilyID")
+            .desc("A comma separated list of approved license family IDs. These license families will be added to the list of approved license families.")
+            .converter(Converters.TEXT_LIST_CONVERTER)
+            .type(String[].class)
             .build())),
 
     /**
      * Option that specifies approved license families from a file
      */
     FAMILIES_APPROVED_FILE(new OptionGroup().addOption(Option.builder().longOpt("license-families-approved-file").hasArg().argName("File")
-            .desc("Name of file containing the approved family IDs.")
+            .desc("Name of file containing comma separated lists of approved family IDs.")
             .converter(Converters.FILE_CONVERTER)
             .type(File.class)
             .build())),
@@ -178,9 +184,12 @@ public enum Arg {
     /**
      * Option to remove licenses from the approved list
      */
-    LICENSES_DENIED(new OptionGroup().addOption(Option.builder().longOpt("licenses-denied").hasArgs().argName("LicenseID")
-            .desc("The denied License IDs. These licenses will be removed from the list of approved licenses. " +
+    LICENSES_DENIED(new OptionGroup().addOption(Option.builder().longOpt("licenses-denied").hasArg().argName("LicenseID")
+            .desc("A comma separated list of denied License IDs. " +
+                    "These licenses will be removed from the list of approved licenses. " +
                     "Once licenses are removed they can not be added back.")
+            .converter(Converters.TEXT_LIST_CONVERTER)
+            .type(String[].class)
             .build())),
 
     /**
@@ -189,22 +198,30 @@ public enum Arg {
     LICENSES_DENIED_FILE(new OptionGroup().addOption(Option.builder().longOpt("licenses-denied-file")
             .hasArg().argName("File").type(File.class)
             .converter(Converters.FILE_CONVERTER)
-            .desc("Name of file containing the denied license IDs.")
+            .desc("Name of file containing comma separated lists of the denied license IDs. " +
+                    "These licenses will be removed from the list of approved licenses. " +
+                    "Once licenses are removed they can not be added back.")
             .build())),
 
     /**
      * Option to list license families to remove from the approved list.
      */
     FAMILIES_DENIED(new OptionGroup().addOption(Option.builder().longOpt("license-families-denied")
-            .hasArgs().argName("FamilyID")
-            .desc("The denied License family IDs. These license families will be removed from the list of approved licenses.")
+            .hasArg().argName("FamilyID")
+            .desc("A comma separated list of denied License family IDs. " +
+                    "These license families will be removed from the list of approved licenses. " +
+                    "Once license families are removed they can not be added back.")
+            .converter(Converters.TEXT_LIST_CONVERTER)
+            .type(String[].class)
             .build())),
 
     /**
      * Option to read a list of license families to remove from the approved list.
      */
     FAMILIES_DENIED_FILE(new OptionGroup().addOption(Option.builder().longOpt("license-families-denied-file").hasArg().argName("File")
-            .desc("Name of file containing the denied license IDs.")
+            .desc("Name of file containing comma separated lists of denied license IDs. " +
+                    "These license families will be removed from the list of approved licenses. " +
+                    "Once license families are removed they can not be added back.")
             .type(File.class)
             .converter(Converters.FILE_CONVERTER)
             .build())),
@@ -229,7 +246,7 @@ public enum Arg {
 
 ////////////////// INPUT OPTIONS
     /**
-     * Reads files to test from file.
+     * Reads files to test from a file.
      */
     SOURCE(new OptionGroup()
             .addOption(Option.builder().longOpt("input-source").hasArgs().argName("File")
@@ -255,7 +272,7 @@ public enum Arg {
                     .build())),
 
     /**
-     * Excludes files based on contents of a file.
+     * Excludes files based on the contents of a file.
      */
     EXCLUDE_FILE(new OptionGroup()
             .addOption(Option.builder("E").longOpt("exclude-file")
@@ -276,7 +293,9 @@ public enum Arg {
     EXCLUDE_STD(new OptionGroup()
             .addOption(Option.builder().longOpt("input-exclude-std").argName("StandardCollection")
                     .hasArgs().converter(s -> StandardCollection.valueOf(s.toUpperCase()))
-                    .desc("Excludes files defined in standard collections based on commonly occurring groups.")
+                    .desc("Excludes files defined in standard collections based on commonly occurring groups. " +
+                            "Excludes any path matcher actions but DOES NOT exclude any file processor actions.")
+                    .type(StandardCollection.class)
                     .build())
     ),
 
@@ -286,7 +305,7 @@ public enum Arg {
     EXCLUDE_SIZE(new OptionGroup()
             .addOption(Option.builder().longOpt("input-exclude-size").argName("Integer")
                     .hasArg().type(Integer.class)
-                    .desc("Excludes files with sizes less than the given argument.")
+                    .desc("Excludes files with sizes less than the number of bytes specified.")
                     .build())
     ),
     /**
@@ -304,7 +323,7 @@ public enum Arg {
     ),
 
     /**
-     * Includes files based on contents of a file.
+     * Includes files based on the contents of a file.
      */
     INCLUDE_FILE(new OptionGroup()
             .addOption(Option.builder().longOpt("input-include-file")
@@ -327,7 +346,8 @@ public enum Arg {
             .addOption(Option.builder().longOpt("input-include-std").argName("StandardCollection")
                     .hasArgs().converter(s -> StandardCollection.valueOf(s.toUpperCase()))
                     .desc("Includes files defined in standard collections based on commonly occurring groups. " +
-                            "Will override excluded files.")
+                            "Includes any path matcher actions but DOES NOT include any file processor actions.")
+                    .type(StandardCollection.class)
                     .build())
             .addOption(Option.builder().longOpt("scan-hidden-directories")
                     .desc("Scans hidden directories.")
@@ -343,7 +363,8 @@ public enum Arg {
             .addOption(Option.builder().longOpt("input-exclude-parsed-scm")
                     .argName("StandardCollection")
                     .hasArgs().converter(s -> StandardCollection.valueOf(s.toUpperCase()))
-                    .desc("Parse SCM based exclusion files to exclude specified files and directories.")
+                    .desc("Parse SCM based exclusion files to exclude specified files and directories. " +
+                            "This action can apply to any standard collection that implements a file processor.")
                     .type(StandardCollection.class)
                     .build())
     ),
@@ -579,6 +600,25 @@ public enum Arg {
         }
     }
 
+    private static List<String> processArrayArg(final ArgumentContext context, final Arg arg) throws ParseException {
+        String[] ids = context.getCommandLine().getParsedOptionValue(arg.getSelected());
+        return Arrays.asList(ids);
+    }
+
+    private static List<String> processArrayFile(final ArgumentContext context, final Arg arg) throws ParseException {
+        List<String> result = new ArrayList<>();
+        File file = context.getCommandLine().getParsedOptionValue(arg.getSelected());
+        try (InputStream in = Files.newInputStream(file.toPath())) {
+            for (String line : IOUtils.readLines(in, StandardCharsets.UTF_8)) {
+                String[] ids = Converters.TEXT_LIST_CONVERTER.apply(line);
+                result.addAll(Arrays.asList(ids));
+            }
+            return result;
+        } catch (IOException e) {
+            throw new ConfigurationException(e);
+        }
+    }
+
     /**
      * Processes the configuration options.
      *
@@ -596,71 +636,37 @@ public enum Arg {
             }
             if (CONFIGURATION_NO_DEFAULTS.isSelected()) {
                 // display deprecation log if needed.
-                context.getCommandLine().hasOption(CONFIGURATION.getSelected());
+                context.getCommandLine().hasOption(CONFIGURATION_NO_DEFAULTS.getSelected());
                 defaultBuilder.noDefault();
             }
             context.getConfiguration().setFrom(defaultBuilder.build());
 
             if (FAMILIES_APPROVED.isSelected()) {
-                for (String cat : context.getCommandLine().getOptionValues(FAMILIES_APPROVED.getSelected())) {
-                    context.getConfiguration().addApprovedLicenseCategory(cat);
-                }
+                context.getConfiguration().addApprovedLicenseCategories(processArrayArg(context, FAMILIES_APPROVED));
             }
             if (FAMILIES_APPROVED_FILE.isSelected()) {
-                try {
-                    File f = context.getCommandLine().getParsedOptionValue(FAMILIES_APPROVED_FILE.getSelected());
-                    try (InputStream in = Files.newInputStream(f.toPath())) {
-                        context.getConfiguration().addApprovedLicenseCategories(IOUtils.readLines(in, StandardCharsets.UTF_8));
-                    }
-                } catch (IOException e) {
-                    throw new ConfigurationException(e);
-                }
+                context.getConfiguration().addApprovedLicenseCategories(processArrayFile(context, FAMILIES_APPROVED_FILE));
             }
             if (FAMILIES_DENIED.isSelected()) {
-                for (String cat : context.getCommandLine().getOptionValues(FAMILIES_DENIED.getSelected())) {
-                    context.getConfiguration().removeApprovedLicenseCategory(cat);
-                }
+                context.getConfiguration().removeApprovedLicenseCategories(processArrayArg(context, FAMILIES_DENIED));
             }
             if (FAMILIES_DENIED_FILE.isSelected()) {
-                try {
-                    File f = context.getCommandLine().getParsedOptionValue(FAMILIES_DENIED_FILE.getSelected());
-                    try (InputStream in = Files.newInputStream(f.toPath())) {
-                        context.getConfiguration().removeApprovedLicenseCategories(IOUtils.readLines(in, StandardCharsets.UTF_8));
-                    }
-                } catch (IOException e) {
-                    throw new ConfigurationException(e);
-                }
+                context.getConfiguration().removeApprovedLicenseCategories(processArrayFile(context, FAMILIES_DENIED_FILE));
             }
 
             if (LICENSES_APPROVED.isSelected()) {
-                for (String id : context.getCommandLine().getOptionValues(LICENSES_APPROVED.getSelected())) {
-                    context.getConfiguration().addApprovedLicenseId(id);
-                }
+                context.getConfiguration().addApprovedLicenseIds(processArrayArg(context, LICENSES_APPROVED));
             }
+
             if (LICENSES_APPROVED_FILE.isSelected()) {
-                try {
-                    File file = context.getCommandLine().getParsedOptionValue(LICENSES_APPROVED_FILE.getSelected());
-                    try (InputStream in = Files.newInputStream(file.toPath())) {
-                        context.getConfiguration().addApprovedLicenseIds(IOUtils.readLines(in, StandardCharsets.UTF_8));
-                    }
-                } catch (IOException e) {
-                    throw new ConfigurationException(e);
-                }
+                context.getConfiguration().addApprovedLicenseIds(processArrayFile(context, LICENSES_APPROVED_FILE));
             }
             if (LICENSES_DENIED.isSelected()) {
-                for (String id : context.getCommandLine().getOptionValues(LICENSES_DENIED.getSelected())) {
-                    context.getConfiguration().removeApprovedLicenseId(id);
-                }
+                context.getConfiguration().removeApprovedLicenseIds(processArrayArg(context, LICENSES_DENIED));
             }
+
             if (LICENSES_DENIED_FILE.isSelected()) {
-                try {
-                    File file = context.getCommandLine().getParsedOptionValue(LICENSES_DENIED_FILE.getSelected());
-                    try (InputStream in = Files.newInputStream(file.toPath())) {
-                        context.getConfiguration().removeApprovedLicenseIds(IOUtils.readLines(in, StandardCharsets.UTF_8));
-                    }
-                } catch (IOException e) {
-                    throw new ConfigurationException(e);
-                }
+                context.getConfiguration().removeApprovedLicenseIds(processArrayFile(context, LICENSES_DENIED_FILE));
             }
             if (COUNTER_MAX.isSelected()) {
                 for (String arg : context.getCommandLine().getOptionValues(COUNTER_MAX.getSelected())) {
@@ -749,7 +755,8 @@ public enum Arg {
             }
             if (INCLUDE_STD.isSelected()) {
                 Option selected = INCLUDE_STD.getSelected();
-                if ("scan-hidden-directories".equals(selected.getLongOpt())) {
+                // display deprecation log if needed.
+                if (context.getCommandLine().hasOption("scan-hidden-directories")) {
                     context.getConfiguration().addIncludedCollection(StandardCollection.HIDDEN_DIR);
                 } else {
                     for (String s : context.getCommandLine().getOptionValues(selected)) {
@@ -862,7 +869,7 @@ public enum Arg {
         }
 
         if (OUTPUT_STYLE.isSelected()) {
-            String selected = OUTPUT_STYLE.getSelected().getKey();
+            String selected = OUTPUT_STYLE.getSelected().getKey(); // is not null due to above isSelected()-call
             if ("x".equals(selected)) {
                 // display deprecated message.
                 context.getCommandLine().hasOption("x");
@@ -942,17 +949,17 @@ public enum Arg {
 
     private <T> T[] getParsedOptionValues(final CommandLine commandLine)  {
         Option option = getSelected();
-        Class<? extends T> clazz = (Class<? extends T>) option.getType();
-        String[] values = getOptionValues(commandLine);
-        T[] result = (T[]) Array.newInstance(clazz, values.length);
         try {
+            Class<? extends T> clazz = (Class<? extends T>) option.getType();
+            String[] values = commandLine.getOptionValues(option);
+            T[] result = (T[]) Array.newInstance(clazz, values.length);
             for (int i = 0; i < values.length; i++) {
                 result[i] = clazz.cast(option.getConverter().apply(values[i]));
             }
             return result;
         } catch (Throwable t) {
             throw new ConfigurationException(format("'%s' converter for %s '%s' does not produce a class of type %s", this,
-                    option.getKey(), option.getConverter().getClass().getName(), option.getType()));
+                    option.getKey(), option.getConverter().getClass().getName(), option.getType()), t);
         }
     }
 

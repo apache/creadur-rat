@@ -1,0 +1,5 @@
+The local .gitignore un-ignores '*.xml'
+
+The global .gitignore ignores 'local-should-precede-global.xml'
+
+The local .gitignore takes precedence over the global, so this file should not be ignored.

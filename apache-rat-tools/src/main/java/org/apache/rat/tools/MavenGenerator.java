@@ -24,14 +24,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
-import java.util.function.Predicate;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 
 import org.apache.commons.cli.Option;
 import org.apache.commons.io.IOUtils;
@@ -40,45 +35,22 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
 import org.apache.commons.text.WordUtils;
 import org.apache.rat.OptionCollection;
-import org.apache.rat.commandline.Arg;
+import org.apache.rat.documentation.options.MavenOption;
 import org.apache.rat.utils.CasedString;
 import org.apache.rat.utils.CasedString.StringCase;
 
 import static java.lang.String.format;
 
 /**
- * A simple tool to convert CLI options to Maven Mojo base class
+ * A simple tool to convert CLI options to a Maven Mojo base class.
  */
 public final class MavenGenerator {
 
-    /** A mapping of external name to internal name if not standard */
-    private static final Map<String, String> RENAME_MAP = new HashMap<>();
-
-    /** List of CLI Options that are not supported by Maven. */
-    private static final List<Option> MAVEN_FILTER_LIST = new ArrayList<>();
-
-    static {
-        RENAME_MAP.put("addLicense", "add-license");
-
-        MAVEN_FILTER_LIST.addAll(Arg.DIR.group().getOptions());
-        MAVEN_FILTER_LIST.addAll(Arg.LOG_LEVEL.group().getOptions());
-        MAVEN_FILTER_LIST.add(OptionCollection.HELP);
-    }
-
-    /**
-     * Filter to remove Options not supported by Maven.
-     */
-    private static final Predicate<Option> MAVEN_FILTER = option -> !(MAVEN_FILTER_LIST.contains(option) || option.getLongOpt() == null);
-
-    /**
-     * Returns the Option predicate that removes all unsupported Options for the Maven UI.
-     * @return the Option predicate that removes all unsupported Options for the Maven UI.
-     */
-    public static Predicate<Option> getFilter() {
-        return MAVEN_FILTER;
-    }
-
     private MavenGenerator() {
+    }
+
+    private static String argsKey(final Option option) {
+        return StringUtils.defaultIfEmpty(option.getLongOpt(), option.getOpt());
     }
 
     /**
@@ -102,8 +74,7 @@ public final class MavenGenerator {
         String packageName = args[0];
         String className = args[1];
         String destDir = args[2];
-        List<MavenOption> options = OptionCollection.buildOptions().getOptions().stream().filter(MAVEN_FILTER)
-                .map(MavenOption::new).collect(Collectors.toList());
+        List<MavenOption> options = MavenOption.getMavenOptions();
         String pkgName = String.join(File.separator, new CasedString(StringCase.DOT, packageName).getSegments());
         File file = new File(new File(new File(destDir), pkgName), className + ".java");
         System.out.println("Creating " + file);
@@ -118,11 +89,17 @@ public final class MavenGenerator {
                 String line = iter.next();
                 switch (line.trim()) {
                     case "${static}":
-                        for (Map.Entry<String, String> entry : RENAME_MAP.entrySet()) {
+                        for (Map.Entry<String, String> entry : MavenOption.getRenameMap().entrySet()) {
                             writer.append(format("        xlateName.put(\"%s\", \"%s\");%n", entry.getKey(), entry.getValue()));
                         }
-                        for (Option option : MAVEN_FILTER_LIST) {
-                            writer.append(format("        unsupportedArgs.add(\"%s\");%n", StringUtils.defaultIfEmpty(option.getLongOpt(), option.getOpt())));
+                        for (Option option : MavenOption.getFilteredOptions()) {
+                            writer.append(format("        unsupportedArgs.add(\"%s\");%n", argsKey(option)));
+                        }
+                        for (MavenOption option : options) {
+                            if (option.isDeprecated()) {
+                                writer.append(format("        deprecatedArgs.put(\"%s\", \"%s\");%n", argsKey(option.getOption()),
+                                        format("Use of deprecated option '%s'. %s", option.getName(), option.getDeprecated())));
+                            }
                         }
                         break;
                     case "${methods}":
@@ -132,7 +109,9 @@ public final class MavenGenerator {
                         writer.append(format("package %s;%n", packageName));
                         break;
                     case "${constructor}":
-                        writer.append(format("    protected %s() {}%n", className));
+                        writer.append(format("    protected %s() {\n" +
+                                "        setDeprecationReporter();\n" +
+                                "    }%n", className));
                         break;
                     case "${class}":
                         writer.append(format("public abstract class %s extends AbstractMojo {%n", className));
@@ -163,10 +142,10 @@ public final class MavenGenerator {
         }
         String arg;
         if (option.hasArg()) {
-            arg = desc.substring(desc.indexOf(" "), desc.indexOf(".") + 1);
+            arg = desc.substring(desc.indexOf(" ") + 1, desc.indexOf(".") + 1);
             arg = WordUtils.capitalize(arg.substring(0, 1)) + arg.substring(1);
         } else {
-            arg = "the state";
+            arg = "The state";
         }
         if (option.hasArg() && option.getArgName() != null) {
             Supplier<String> sup = OptionCollection.getArgumentTypes().get(option.getArgName());
@@ -209,16 +188,5 @@ public final class MavenGenerator {
                             "        } else {%n            removeArg(%2$s);%n        }%n",
                     option.getName(), option.keyValue());
         }
-    }
-
-    /**
-     * Creates the Maven element name for the specified option.
-     * @param option The option to process.
-     * @return the Maven based name in camel-case syntax.
-     */
-    static String createName(final Option option) {
-        String name = StringUtils.defaultIfEmpty(option.getLongOpt(), option.getOpt());
-        name = StringUtils.defaultIfEmpty(RENAME_MAP.get(name), name).toLowerCase(Locale.ROOT);
-        return new CasedString(StringCase.KEBAB, name).toCase(StringCase.CAMEL);
     }
 }

@@ -503,11 +503,13 @@ public final class XMLConfigurationReader implements LicenseReader, MatcherReade
 
     @Override
     public SortedSet<ILicense> readLicenses() {
-        readFamilies();
-        readMatcherBuilders();
-        if (licenses.isEmpty()) {
-            nodeListConsumer(document.getElementsByTagName(XMLConfig.LICENSE), x -> licenses.add(parseLicense(x)));
-            document = null;
+        if (this.document != null) {
+            readFamilies();
+            readMatcherBuilders();
+            if (licenses.isEmpty()) {
+                nodeListConsumer(document.getElementsByTagName(XMLConfig.LICENSE), x -> licenses.add(parseLicense(x)));
+                document = null;
+            }
         }
         return Collections.unmodifiableSortedSet(licenses);
     }

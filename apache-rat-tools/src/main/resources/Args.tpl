@@ -1,7 +1,25 @@
     ///////////////////////// Start common Arg manipulation code
 
     /**
-     * A map of CLI based arguments to values.
+     * Sets the deprecation report method.
+     */
+    private static void setDeprecationReporter() {
+        DeprecationReporter.setLogReporter(opt -> {
+            String msg = deprecatedArgs.get(argsKey(opt));
+            if (msg == null) {
+                DeprecationReporter.getDefault().accept(opt);
+            } else {
+                DefaultLog.getInstance().warn(msg);
+            }
+        });
+    }
+
+    private static String argsKey(Option opt) {
+        return StringUtils.defaultIfEmpty(opt.getLongOpt(), opt.getKey());
+    }
+
+    /**
+     * A map of CLI-based arguments to values.
      */
     protected final Map<String, List<String>> args = new HashMap<>();
 
@@ -16,10 +34,6 @@
             result.addAll(entry.getValue().stream().filter(Objects::nonNull).collect(Collectors.toList()));
         }
         return result;
-    }
-
-    private String argsKey(Option opt) {
-        return StringUtils.defaultIfEmpty(opt.getLongOpt(), opt.getKey());
     }
 
     private boolean validateSet(String key) {
@@ -52,13 +66,15 @@
      * @param value the value to set.
      */
     protected void setArg(String key, String value) {
-        if (validateSet(key)) {
-            List<String> values = new ArrayList<>();
-            if (DefaultLog.getInstance().isEnabled(Log.Level.DEBUG)) {
-                DefaultLog.getInstance().debug(String.format("Adding [%s] to %s", String.join(", ", values), key));
+        if (value == null || StringUtils.isNotBlank(value)) {
+            if (validateSet(key)) {
+                List<String> values = new ArrayList<>();
+                if (DefaultLog.getInstance().isEnabled(Log.Level.DEBUG)) {
+                    DefaultLog.getInstance().debug(String.format("Setting %s to '%s'", key, value));
+                }
+                values.add(value);
+                args.put(key, values);
             }
-            values.add(value);
-            args.put(key, values);
         }
     }
 
@@ -73,21 +89,21 @@
 
     /**
      * Add values to the key in the argument list.
+     * empty values are ignored. If no non-empty values are present no change is made.
      * If the key does not exist, adds it.
      * @param key the key for the map.
-     * @param value the value to set.
+     * @param value the array of values to set.
      */
     protected void addArg(String key, String[] value) {
-        if (validateSet(key)) {
-            if (DefaultLog.getInstance().isEnabled(Log.Level.DEBUG)) {
-                DefaultLog.getInstance().debug(String.format("Adding [%s] to %s", String.join(", ", Arrays.asList(value)), key));
+        List<String> newValues = Arrays.stream(value).filter(StringUtils::isNotBlank).collect(Collectors.toList());
+        if (!newValues.isEmpty()) {
+            if (validateSet(key)) {
+                if (DefaultLog.getInstance().isEnabled(Log.Level.DEBUG)) {
+                    DefaultLog.getInstance().debug(String.format("Adding [%s] to %s", String.join(", ", Arrays.asList(value)), key));
+                }
+                List<String> values = args.computeIfAbsent(key, k -> new ArrayList<>());
+                values.addAll(newValues);
             }
-            List<String> values = args.get(key);
-            if (values == null) {
-                values = new ArrayList<>();
-                args.put(key, values);
-            }
-            values.addAll(Arrays.asList(value));
         }
     }
 
@@ -98,16 +114,18 @@
      * @param value the value to set.
      */
     protected void addArg(String key, String value) {
-        if (validateSet(key)) {
-            List<String> values = args.get(key);
-            if (DefaultLog.getInstance().isEnabled(Log.Level.DEBUG)) {
-                DefaultLog.getInstance().debug(String.format("Adding [%s] to %s", String.join(", ", Arrays.asList(value)), key));
+        if (StringUtils.isNotBlank(value)) {
+            if (validateSet(key)) {
+                List<String> values = args.get(key);
+                if (DefaultLog.getInstance().isEnabled(Log.Level.DEBUG)) {
+                    DefaultLog.getInstance().debug(String.format("Adding [%s] to %s", String.join(", ", Arrays.asList(value)), key));
+                }
+                if (values == null) {
+                    values = new ArrayList<>();
+                    args.put(key, values);
+                }
+                values.add(value);
             }
-            if (values == null) {
-                values = new ArrayList<>();
-                args.put(key, values);
-            }
-            values.add(value);
         }
     }
 

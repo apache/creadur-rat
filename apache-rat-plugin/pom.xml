@@ -24,8 +24,8 @@
   </parent>
   <artifactId>apache-rat-plugin</artifactId>
   <packaging>maven-plugin</packaging>
-  <name>Apache Creadur Rat::Plugin4Maven</name>
-  <description>A plugin for Apache Maven that runs Apache Rat
+  <name>Apache Creadur RAT::Plugin4Maven</name>
+  <description>A plugin for Apache Maven that runs Apache RAT
                 to audit the source to be distributed.</description>
   <inceptionYear>2007</inceptionYear>
   <prerequisites>
@@ -114,8 +114,8 @@
               <pluginExecutions>
                 <pluginExecution>
                   <pluginExecutionFilter>
-                    <groupId> org.apache.maven.plugins </groupId>
-                    <artifactId> maven-plugin-plugin </artifactId>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-plugin-plugin</artifactId>
                     <versionRange>[3.3,)</versionRange>
                     <goals>
                       <goal>descriptor</goal>
@@ -160,7 +160,7 @@
             <configuration>
               <includeArtifactIds>apache-rat-core</includeArtifactIds>
               <excludeClassifiers>tests</excludeClassifiers>
-              <include>META-INF/RELEASE_NOTES.txt</include>
+              <includes>META-INF/RELEASE_NOTES.txt</includes>
               <outputDirectory>${project.build.outputDirectory}</outputDirectory>
             </configuration>
           </execution>
@@ -182,36 +182,22 @@
               <arguments>
                 <argument>org.apache.rat.plugin</argument>
                 <argument>BaseRatMojo</argument>
-                <argument>${project.build.directory}/generated/src/main/java</argument>
+                <argument>${project.build.sourceDirectory}</argument>
               </arguments>
             </configuration>
           </execution>
           <execution>
-            <id>Maven argument types generation</id>
+            <id>Initial site generation</id>
             <phase>pre-site</phase>
             <goals>
               <goal>java</goal>
             </goals>
             <configuration>
-              <mainClass>org.apache.rat.tools.ArgumentTypes</mainClass>
+              <mainClass>org.apache.rat.documentation.Exporter</mainClass>
               <classpathScope>test</classpathScope>
               <arguments>
-                <argument>${project.basedir}/src/site/apt/argument_types.txt</argument>
-              </arguments>
-            </configuration>
-          </execution>
-          <execution>
-            <id>Maven options generation</id>
-            <phase>pre-site</phase>
-            <goals>
-              <goal>java</goal>
-            </goals>
-            <configuration>
-              <mainClass>org.apache.rat.tools.Naming</mainClass>
-              <classpathScope>test</classpathScope>
-              <arguments>
-                <argument>--maven</argument>
-                <argument>${project.basedir}/src/site/apt/options.txt</argument>
+                <argument>${project.basedir}/src/templates</argument>
+                <argument>${project.basedir}/src/site</argument>
               </arguments>
             </configuration>
           </execution>
@@ -221,23 +207,6 @@
             <LANG>en_US</LANG>
           </environmentVariables>
         </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>build-helper-maven-plugin</artifactId>
-        <executions>
-          <execution>
-            <phase>generate-sources</phase>
-            <goals>
-              <goal>add-source</goal>
-            </goals>
-            <configuration>
-              <sources>
-                <source>${project.build.directory}/generated/src/main/java</source>
-              </sources>
-            </configuration>
-          </execution>
-        </executions>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -269,6 +238,13 @@
           <filesets>
             <fileset>
               <directory>invoker_target</directory>
+              <followSymlinks>false</followSymlinks>
+            </fileset>
+            <fileset>
+              <directory>src/main/java/org/apache/rat/plugin/</directory>
+              <includes>
+                <include>BaseRatMojo.java</include>
+              </includes>
               <followSymlinks>false</followSymlinks>
             </fileset>
           </filesets>
@@ -359,7 +335,6 @@
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-plugin-api</artifactId>
-      <version>${mavenVersion}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -445,8 +420,19 @@
     <dependency>
       <groupId>org.apache.maven.plugin-testing</groupId>
       <artifactId>maven-plugin-testing-harness</artifactId>
-      <version>3.3.0</version>
       <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.codehaus.plexus</groupId>
+      <artifactId>plexus-testing</artifactId>
+      <version>1.5.0</version>
+      <exclusions>
+        <exclusion>
+          <!-- we need as optional dependencies -->
+          <groupId>org.junit.jupiter</groupId>
+          <artifactId>junit-jupiter-api</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.assertj</groupId>

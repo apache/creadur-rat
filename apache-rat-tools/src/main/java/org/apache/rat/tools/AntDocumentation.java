@@ -33,13 +33,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.rat.OptionCollection;
-import org.apache.rat.commandline.Arg;
+import org.apache.rat.documentation.options.AntOption;
 import org.apache.rat.utils.DefaultLog;
 
 import static java.lang.String.format;
@@ -58,14 +57,13 @@ public final class AntDocumentation {
      *     <li>the directory in which to write the documentation files.</li>
      * </ol>
      * @param args the arguments.
-     * @throws IOException on error
      */
-    public static void main(final String[] args) throws IOException {
-
+    public static void main(final String[] args) {
         if (args.length == 0) {
             System.err.println("Output directory must be specified");
             System.exit(1);
         }
+
         File outputDir = new File(args[0]);
         if (outputDir.exists()) {
             if (!outputDir.isDirectory()) {
@@ -86,8 +84,7 @@ public final class AntDocumentation {
     }
 
     public void execute() {
-        List<AntOption> options = Arg.getOptions().getOptions().stream().filter(AntGenerator.getFilter()).map(AntOption::new)
-                .collect(Collectors.toList());
+        List<AntOption> options = AntOption.getAntOptions();
 
         writeAttributes(options);
         writeElements(options);
@@ -148,7 +145,6 @@ public final class AntDocumentation {
     }
 
     private void printValueTypes() {
-
         File f = new File(outputDir, "report_arg_types.txt");
         try (Writer writer = new OutputStreamWriter(Files.newOutputStream(f.toPath()), StandardCharsets.UTF_8)) {
 
@@ -169,7 +165,7 @@ public final class AntDocumentation {
     /**
      * A class to write APT formatted text.
      */
-    private static class AptFormat  {
+    private static final class AptFormat  {
 
         /**
          * Copy the "license.apt" from the resources to the writer.
@@ -258,10 +254,10 @@ public final class AntDocumentation {
 
         /**
          * Write a table entry.
-         * @param writer the Writer to write to.
-         * @param table the Table to write
+         * @param writer the writer to write to.
+         * @param table the table to write
          * @param pattern the pattern before and after the table.
-         * @throws IOException on error
+         * @throws IOException on error.
          */
         public static void writeTable(final Writer writer, final Collection<? extends Collection<String>> table,
                                       final String pattern) throws IOException {

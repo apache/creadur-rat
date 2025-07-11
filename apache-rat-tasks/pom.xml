@@ -24,9 +24,9 @@
   </parent>
   <artifactId>apache-rat-tasks</artifactId>
   <packaging>jar</packaging>
-  <name>Apache Creadur Rat::Tasks4Ant</name>
+  <name>Apache Creadur RAT::Tasks4Ant</name>
   <description>
- A plugin for Apache Ant that runs Apache Rat
+ A plugin for Apache Ant that runs Apache RAT
    to audit the source to be distributed.
   </description>
   <dependencies>
@@ -118,25 +118,8 @@
             <configuration>
               <includeArtifactIds>apache-rat-core</includeArtifactIds>
               <excludeClassifiers>tests</excludeClassifiers>
-              <include>META-INF/RELEASE_NOTES.txt</include>
+              <includes>META-INF/RELEASE_NOTES.txt</includes>
               <outputDirectory>${project.build.outputDirectory}</outputDirectory>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>build-helper-maven-plugin</artifactId>
-        <executions>
-          <execution>
-            <phase>generate-sources</phase>
-            <goals>
-              <goal>add-source</goal>
-            </goals>
-            <configuration>
-              <sources>
-                <source>${project.build.directory}/generated/src/main/java</source>
-              </sources>
             </configuration>
           </execution>
         </executions>
@@ -157,21 +140,22 @@
               <arguments>
                 <argument>org.apache.rat.anttasks</argument>
                 <argument>BaseAntTask</argument>
-                <argument>${project.build.directory}/generated/src/main/java</argument>
+                <argument>${project.build.sourceDirectory}</argument>
               </arguments>
             </configuration>
           </execution>
           <execution>
-            <id>Ant argument types generation</id>
+            <id>Initial site generation</id>
             <phase>pre-site</phase>
             <goals>
               <goal>java</goal>
             </goals>
             <configuration>
-              <mainClass>org.apache.rat.tools.ArgumentTypes</mainClass>
+              <mainClass>org.apache.rat.documentation.Exporter</mainClass>
               <classpathScope>test</classpathScope>
               <arguments>
-                <argument>${project.basedir}/src/site/apt/argument_types.txt</argument>
+                <argument>${project.basedir}/src/templates</argument>
+                <argument>${project.basedir}/src/site</argument>
               </arguments>
             </configuration>
           </execution>
@@ -248,6 +232,19 @@
         <artifactId>spotbugs-maven-plugin</artifactId>
         <configuration>
           <excludeFilterFile>../src/conf/spotbugs-exclude.xml</excludeFilterFile>
+        </configuration>
+      </plugin>
+      <plugin>
+        <artifactId>maven-clean-plugin</artifactId>
+        <configuration>
+          <filesets>
+            <fileset>
+              <directory>src/main/java/org/apache/rat/anttasks</directory>
+              <includes>
+                <include>BaseAntTask.java</include>
+              </includes>
+            </fileset>
+          </filesets>
         </configuration>
       </plugin>
     </plugins>

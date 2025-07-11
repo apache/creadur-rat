@@ -1,0 +1,57 @@
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~   Licensed to the Apache Software Foundation (ASF) under one or more
+~~   contributor license agreements.  See the NOTICE file distributed with
+~~   this work for additional information regarding copyright ownership.
+~~   The ASF licenses this file to You under the Apache License, Version 2.0
+~~   (the "License"); you may not use this file except in compliance with
+~~   the License.  You may obtain a copy of the License at
+~~
+~~       http://www.apache.org/licenses/LICENSE-2.0
+~~
+~~   Unless required by applicable law or agreed to in writing, software
+~~   distributed under the License is distributed on an "AS IS" BASIS,
+~~   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+~~   See the License for the specific language governing permissions and
+~~   limitations under the License.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#set($stringUtils = ${rat.stringUtils})
+#set($newTab = ${rat.doubleLine}+" * ")
+
+                   --------------------------
+                   Standard Collections
+                   --------------------------
+
+Standard Collections
+
+ Apache RAT&#8482; defines a series of standard collection that make it easy to ignore
+ file patterns that are commonly grouped together.
+
+* List of Collections
+
+#set($descEnd = ${rat.doubleLine} + " ")
+#foreach ($stdCol in ${rat.standardCollections})
+#set($desc = $rat.aptEscape(${stdCol.desc}))
+#set($desc = $stringUtils.replace($desc, ${esc.N}, ${descEnd}))
+
+** ${stdCol.name}
+
+ ${desc}
+
+#if (!${stdCol.patterns.empty})
+  * Patterns: #foreach ($pattern in ${stdCol.patterns})<<<${rat.aptEscape(${pattern})}>>>#if(${foreach.count} < ${stdCol.patterns.size}), #end#end
+#end
+
+#if (${stdCol.fileProcessorBuilder.hasNext})
+  * Provides a file processor.
+
+#end
+#if (${stdCol.hasStaticDocumentNameMatcher})
+  * Provides path matcher.
+#end
+
+#end
+
+* Notes
+
+ * A file processor will process the associated <<<ignore>>> file for include and exclude directives
+ * A path matcher will match specific information about the file.

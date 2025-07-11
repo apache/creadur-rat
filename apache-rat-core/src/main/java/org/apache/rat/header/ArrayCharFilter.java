@@ -36,7 +36,7 @@ class ArrayCharFilter implements CharFilter {
 
     public boolean isFilteredOut(char character) {
         boolean result = false;
-        for(int i=0; i<length ;i++) {
+        for(int i = 0; i < length; i++) {
             if (character == filtered[i]) {
                 result = true;
                 break;

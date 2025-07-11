@@ -27,13 +27,11 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
+import java.util.Set;
 
 import org.apache.commons.cli.Option;
 import org.apache.commons.io.IOUtils;
@@ -41,7 +39,7 @@ import org.apache.commons.io.LineIterator;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.WordUtils;
 import org.apache.rat.OptionCollection;
-import org.apache.rat.commandline.Arg;
+import org.apache.rat.documentation.options.AntOption;
 import org.apache.rat.utils.CasedString;
 import org.apache.rat.utils.CasedString.StringCase;
 
@@ -53,37 +51,75 @@ import static java.lang.String.format;
 public final class AntGenerator {
 
     /**
-     * The list of Options that are not supported by Ant.
+     * A map of type patterns for that type.
      */
-    private static final List<Option> ANT_FILTER_LIST = new ArrayList<>();
+    private static final Map<OptionCollection.ArgumentType, GenerateType> GENERATE_TYPE_MAP = new HashMap<>();
 
     static {
-        ANT_FILTER_LIST.addAll(Arg.LOG_LEVEL.group().getOptions());
-        ANT_FILTER_LIST.addAll(Arg.DIR.group().getOptions());
-        ANT_FILTER_LIST.add(OptionCollection.HELP);
-    }
+        String defaultFmt = "        public void add%$1s(String %2$s) {%n" +
+                "            addArg(%%1$s, %2$s);%n" +
+                "        }%n%n";
+        GenerateType generateType;
+        for (OptionCollection.ArgumentType type : OptionCollection.ArgumentType.values()) {
+            switch (type) {
+                case FILE:
+                case DIRORARCHIVE:
+                    generateType = new GenerateType("fileset") {
+                        protected String getMethodFormat(final AntOption antOption) {
+                            return "        public void addConfiguredFileset(FileSet fileSet) {\n" +
+                                    "            for (Resource resource : fileSet) {\n" +
+                                    "                if (resource.isFilesystemOnly()) {\n" +
+                                    "                    addArg(%1$s, ((FileResource) resource).getFile().getAbsolutePath());\n" +
+                                    "                }\n" +
+                                    "            }\n" +
+                                    "        }\n\n";
+                        }
+                    };
+                    break;
+                case NONE:
+                    generateType = new GenerateType("") {
+                        protected String getMethodFormat(final AntOption antOption) {
+                            return "";
+                        }
+                    };
+                    break;
+                case STANDARDCOLLECTION:
+                    generateType = new GenerateType("Std");
+                    break;
+                case EXPRESSION:
+                    generateType = new GenerateType("Expr");
+                    break;
+                case COUNTERPATTERN:
+                    generateType = new GenerateType("Cntr");
+                    break;
+                case LICENSEID:
+                case FAMILYID:
+                    generateType = new GenerateType("Lst");
+                    break;
+                default:
+                    generateType = new GenerateType(type.getDisplayName()) {
 
-    /**
-     * the filter to filter out CLI options that Ant does not support.
-     */
-    private static final Predicate<Option> ANT_FILTER = option -> !(ANT_FILTER_LIST.contains(option) || option.getLongOpt() == null);
-
-    /** A mapping of external name to internal name if not standard */
-    private static final Map<String, String> RENAME_MAP = new HashMap<>();
-
-    static {
-        RENAME_MAP.put("addLicense", "add-license");
+                        protected String getMethodFormat(final AntOption antOption) {
+                            return String.format(defaultFmt, innerClass, WordUtils.uncapitalize(antOption.getArgName()));
+                        }
+                    };
+            }
+            GENERATE_TYPE_MAP.put(type, generateType);
+        }
     }
 
     private AntGenerator() { }
 
+
     /**
-     * Gets the Option predicate that removes unsupported CLI options.
-     * @return The Option predicate that removes unsupported CLI options.
+     * Gets the key for the Args array.
+     * @param option the option to get the key for.
+     * @return the key for the option.
      */
-    public static Predicate<Option> getFilter() {
-        return ANT_FILTER;
+    private static String argsKey(final Option option) {
+        return StringUtils.defaultIfEmpty(option.getLongOpt(), option.getOpt());
     }
+
     /**
      * Creates a base class for an Ant task.
      * Requires 3 arguments:
@@ -105,8 +141,7 @@ public final class AntGenerator {
         String className = args[1];
         String destDir = args[2];
 
-        List<AntOption> options = Arg.getOptions().getOptions().stream().filter(ANT_FILTER).map(AntOption::new)
-                .collect(Collectors.toList());
+        List<AntOption> options = AntOption.getAntOptions();
 
         String pkgName = String.join(File.separator, new CasedString(StringCase.DOT, packageName).getSegments());
         File file = new File(new File(new File(destDir), pkgName), className + ".java");
@@ -123,11 +158,17 @@ public final class AntGenerator {
                 String line = iter.next();
                 switch (line.trim()) {
                     case "${static}":
-                        for (Map.Entry<String, String> entry : RENAME_MAP.entrySet()) {
+                        for (Map.Entry<String, String> entry : AntOption.getRenameMap().entrySet()) {
                             writer.append(format("        xlateName.put(\"%s\", \"%s\");%n", entry.getKey(), entry.getValue()));
                         }
-                        for (Option option : ANT_FILTER_LIST) {
-                            writer.append(format("        unsupportedArgs.add(\"%s\");%n", StringUtils.defaultIfEmpty(option.getLongOpt(), option.getOpt())));
+                        for (Option option : AntOption.getFilteredOptions()) {
+                            writer.append(format("        unsupportedArgs.add(\"%s\");%n", argsKey(option)));
+                        }
+                        for (AntOption option : options) {
+                            if (option.isDeprecated()) {
+                                writer.append(format("        deprecatedArgs.put(\"%s\", \"%s\");%n", argsKey(option.getOption()),
+                                        format("Use of deprecated option '%s'. %s", option.getName(), option.getDeprecated())));
+                            }
                         }
                         break;
                     case "${methods}":
@@ -137,7 +178,9 @@ public final class AntGenerator {
                         writer.append(format("package %s;%n", packageName));
                         break;
                     case "${constructor}":
-                        writer.append(format("    protected %s() {}%n", className));
+                        writer.append(format("    protected %s() {\n" +
+                                "        setDeprecationReporter();\n" +
+                                "    }%n", className));
                         break;
                     case "${class}":
                         writer.append(format("public abstract class %s extends Task {%n", className));
@@ -169,9 +212,7 @@ public final class AntGenerator {
             if (option.isAttribute()) {
                 writer.append(option.getComment(true));
                 writer.append(format("    public void %s {%n%s%n    }%n%n", option.getAttributeFunctionName(), getAttributeBody(option)));
-            }
-
-            if (option.isElement()) {
+            } else {
                 customClasses.append(option.getComment(false));
                 customClasses.append(format("    public %1$s create%1$s() {%n        return new %1$s();%n    }%n%n",
                         WordUtils.capitalize(option.getName())));
@@ -186,13 +227,45 @@ public final class AntGenerator {
     }
 
     private static String getElementClass(final AntOption option) {
-        return format("    public class %1$s extends Child { %1$s() {super(%2$s);}}%n%n", WordUtils.capitalize(option.getName()),
-                option.keyValue());
+
+        String elementConstructor =
+                "    public class %1$s {\n" +
+                        "        %1$s() { }\n\n";
+
+        String funcName = WordUtils.capitalize(option.getName());
+        StringBuilder result = new StringBuilder(format(elementConstructor, funcName));
+        Set<AntOption> implementedOptions = new HashSet<>();
+        implementedOptions.add(option);
+        option.convertedFrom().stream().filter(o -> !AntOption.getUnsupportedOptions().contains(o)).forEach(opt -> implementedOptions.add(new AntOption(opt)));
+        implementedOptions.forEach(o -> result.append(GENERATE_TYPE_MAP.get(o.getArgType()).getPattern(option, o)));
+        result.append(format("    }%n"));
+
+        return result.toString();
     }
 
-    static String createName(final Option option) {
-        String name = option.getLongOpt();
-        name = StringUtils.defaultIfEmpty(RENAME_MAP.get(name), name).toLowerCase(Locale.ROOT);
-        return new CasedString(StringCase.KEBAB, name).toCase(StringCase.CAMEL);
+    public static class GenerateType {
+        /** the inner class name text */
+        protected final String innerClass;
+
+        GenerateType(final String innerClass) {
+            this.innerClass = innerClass;
+        }
+
+        protected String getMethodFormat(final AntOption antOption) {
+            return String.format("        public void addConfigured%1$s(%1$s %%2$s) {\n" +
+                    "            addArg(%%1$s, %%2$s.value);\n" +
+                    "        }\n\n", innerClass);
+        }
+
+        public String getPattern(final AntOption delegateOption, final AntOption antOption) {
+            if (delegateOption.isAttribute()) {
+                String fmt = "<rat:report %s='%s' />";
+                return format(fmt, delegateOption.getName(), antOption.hasArg() ? antOption.getArgName() : "true");
+            } else {
+                return format(getMethodFormat(antOption), antOption.keyValue(),
+                        WordUtils.uncapitalize(antOption.getArgName()));
+            }
+        }
     }
+
 }

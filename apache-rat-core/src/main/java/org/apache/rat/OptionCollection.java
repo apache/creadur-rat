@@ -76,46 +76,21 @@ public final class OptionCollection {
             .desc("Print help for the RAT command line interface and exit.").build();
 
     /** A mapping of {@code argName(value)} values to a description of those values. */
+    @Deprecated
     private static final Map<String, Supplier<String>> ARGUMENT_TYPES;
     static {
         ARGUMENT_TYPES = new TreeMap<>();
-        ARGUMENT_TYPES.put("File", () -> "A file name.");
-        ARGUMENT_TYPES.put("Integer", () -> "An integer value.");
-        ARGUMENT_TYPES.put("DirOrArchive", () -> "A directory or archive file to scan.");
-        ARGUMENT_TYPES.put("Expression", () -> "A file matching pattern usually of the form used in Ant build files and " +
-                "'.gitignore' files (see https://ant.apache.org/manual/dirtasks.html#patterns for examples). " +
-                "Regular expression patterns may be specified by surrounding the pattern with '%regex[' and ']'. " +
-                "For example '%regex[[A-Z].*]' would match files and directories that start with uppercase latin letters.");
-        ARGUMENT_TYPES.put("LicenseFilter", () -> format("A defined filter for the licenses to include. Valid values: %s.",
-                asString(LicenseSetFactory.LicenseFilter.values())));
-        ARGUMENT_TYPES.put("LogLevel", () -> format("The log level to use. Valid values %s.", asString(Level.values())));
-        ARGUMENT_TYPES.put("ProcessingType", () -> format("Specifies how to process file types. Valid values are: %s%n",
-                Arrays.stream(ReportConfiguration.Processing.values())
-                        .map(v -> format("\t%s: %s", v.name(), v.desc()))
-                        .collect(Collectors.joining(System.lineSeparator()))));
-        ARGUMENT_TYPES.put("StyleSheet", () -> format("Either an external xsl file or one of the internal named sheets. Internal sheets are: %s",
-                Arrays.stream(StyleSheets.values())
-                        .map(v -> format("\t%s: %s", v.arg(), v.desc()))
-                        .collect(Collectors.joining(System.lineSeparator()))));
-        ARGUMENT_TYPES.put("LicenseID", () -> "The ID for a license.");
-        ARGUMENT_TYPES.put("FamilyID", () -> "The ID for a license family.");
-        ARGUMENT_TYPES.put("StandardCollection", () -> format("Defines standard expression patterns (see above). Valid values are: %s%n",
-                Arrays.stream(StandardCollection.values())
-                        .map(v -> format("\t%s: %s", v.name(), v.desc()))
-                        .collect(Collectors.joining(System.lineSeparator()))));
-        ARGUMENT_TYPES.put("CounterPattern", () -> format("A pattern comprising one of the following prefixes followed by " +
-                "a colon and a count (e.g. %s:5).  Prefixes are %n%s.", ClaimStatistic.Counter.UNAPPROVED,
-                Arrays.stream(ClaimStatistic.Counter.values())
-                        .map(v -> format("\t%s: %s Default range [%s, %s]", v.name(), v.getDescription(),
-                                v.getDefaultMinValue(),
-                                v.getDefaultMaxValue() == -1 ? "unlimited" : v.getDefaultMaxValue()))
-                        .collect(Collectors.joining(System.lineSeparator()))));
+        for (ArgumentType argType : ArgumentType.values()) {
+            ARGUMENT_TYPES.put(argType.getDisplayName(), argType.description);
+        }
     }
 
     /**
      * Gets the mapping of {@code argName(value)} values to a description of those values.
      * @return the mapping of {@code argName(value)} values to a description of those values.
+     * @deprecated use {@link ArgumentType}
      */
+    @Deprecated
     public static Map<String, Supplier<String>> getArgumentTypes() {
         return Collections.unmodifiableMap(ARGUMENT_TYPES);
     }
@@ -135,7 +110,7 @@ public final class OptionCollection {
      * @param workingDirectory The directory to resolve relative file names against.
      * @param args the arguments to parse
      * @param helpCmd the help command to run when necessary.
-     * @return a ReportConfiguration or null if Help was printed.
+     * @return a ReportConfiguration or {@code null} if Help was printed.
      * @throws IOException on error.
      */
     public static ReportConfiguration parseCommands(final File workingDirectory, final String[] args, final Consumer<Options> helpCmd) throws IOException {
@@ -148,7 +123,7 @@ public final class OptionCollection {
      * @param workingDirectory The directory to resolve relative file names against.
      * @param args the arguments to parse
      * @param helpCmd the help command to run when necessary.
-     * @param noArgs If true then the commands do not need extra arguments
+     * @param noArgs If {@code true} then the commands do not need extra arguments.
      * @return a ReportConfiguration or {@code null} if Help was printed.
      * @throws IOException on error.
      */
@@ -267,7 +242,7 @@ public final class OptionCollection {
     /**
      * This class implements the {@code Comparator} interface for comparing Options.
      */
-    private static class OptionComparator implements Comparator<Option>, Serializable {
+    private static final class OptionComparator implements Comparator<Option>, Serializable {
         /** The serial version UID.  */
         private static final long serialVersionUID = 5305467873966684014L;
 
@@ -290,6 +265,107 @@ public final class OptionCollection {
         @Override
         public int compare(final Option opt1, final Option opt2) {
             return getKey(opt1).compareToIgnoreCase(getKey(opt2));
+        }
+    }
+
+    public enum ArgumentType {
+        /**
+         * A plain file.
+         */
+        FILE("File", () -> "A file name."),
+        /**
+         * An Integer.
+         */
+        INTEGER("Integer", () -> "An integer value."),
+        /**
+         * A directory or archive.
+         */
+        DIRORARCHIVE("DirOrArchive", () -> "A directory or archive file to scan."),
+        /**
+         * A matching expression.
+         */
+        EXPRESSION("Expression", () -> "A file matching pattern usually of the form used in Ant build files and " +
+                "'.gitignore' files (see https://ant.apache.org/manual/dirtasks.html#patterns for examples). " +
+                "Regular expression patterns may be specified by surrounding the pattern with '%regex[' and ']'. " +
+                "For example '%regex[[A-Z].*]' would match files and directories that start with uppercase latin letters."),
+        /**
+         * A license filter.
+         */
+        LICENSEFILTER("LicenseFilter", () -> format("A defined filter for the licenses to include. Valid values: %s.",
+                asString(LicenseSetFactory.LicenseFilter.values()))),
+        /**
+         * A log level.
+         */
+        LOGLEVEL("LogLevel", () -> format("The log level to use. Valid values %s.", asString(Level.values()))),
+        /**
+         * A processing type.
+         */
+        PROCESSINGTYPE("ProcessingType", () -> format("Specifies how to process file types. Valid values are: %s%n",
+                Arrays.stream(ReportConfiguration.Processing.values())
+                        .map(v -> format("\t%s: %s", v.name(), v.desc()))
+                        .collect(Collectors.joining(System.lineSeparator())))),
+        /**
+         * A style sheet.
+         */
+        STYLESHEET("StyleSheet", () -> format("Either an external xsl file or one of the internal named sheets. Internal sheets are: %n%s",
+                Arrays.stream(StyleSheets.values())
+                        .map(v -> format("\t%s: %s%n", v.arg(), v.desc()))
+                        .collect(Collectors.joining(System.lineSeparator())))),
+        /**
+         * A license id.
+         */
+        LICENSEID("LicenseID", () -> "The ID for a license."),
+        /**
+         * A license family id.
+         */
+        FAMILYID("FamilyID", () -> "The ID for a license family."),
+        /**
+         * A standard collection name.
+         */
+        STANDARDCOLLECTION("StandardCollection", () -> format("Defines standard expression patterns (see above). Valid values are: %n%s%n",
+                Arrays.stream(StandardCollection.values())
+                        .map(v -> format("\t%s: %s%n", v.name(), v.desc()))
+                        .collect(Collectors.joining(System.lineSeparator())))),
+        /**
+         * A Counter pattern name
+         */
+        COUNTERPATTERN("CounterPattern", () -> format("A pattern comprising one of the following prefixes followed by " +
+                        "a colon and a count (e.g. %s:5).  Prefixes are %n%s.", ClaimStatistic.Counter.UNAPPROVED,
+                Arrays.stream(ClaimStatistic.Counter.values())
+                        .map(v -> format("\t%s: %s Default range [%s, %s]%n", v.name(), v.getDescription(),
+                                v.getDefaultMinValue(),
+                                v.getDefaultMaxValue() == -1 ? "unlimited" : v.getDefaultMaxValue()))
+                        .collect(Collectors.joining(System.lineSeparator())))),
+        /**
+         * A generic argument.
+         */
+        ARG("Arg", () -> "A string"),
+        /**
+         * No argument.
+         */
+        NONE("", () -> "");
+
+        /**
+         * The display name
+         */
+        private final String displayName;
+        /**
+         * A supplier of the description
+         */
+        private final Supplier<String> description;
+
+        ArgumentType(final String name,
+                     final Supplier<String> description) {
+            this.displayName = name;
+            this.description = description;
+        }
+
+        public String getDisplayName() {
+            return displayName;
+        }
+
+        public Supplier<String> description() {
+            return description;
         }
     }
 }

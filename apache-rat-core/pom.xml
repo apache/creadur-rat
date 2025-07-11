@@ -24,8 +24,8 @@
   </parent>
   <artifactId>apache-rat-core</artifactId>
   <packaging>jar</packaging>
-  <name>Apache Creadur Rat::Core</name>
-  <description>The core functionality of Rat that is used by all Clients.</description>
+  <name>Apache Creadur RAT::Core</name>
+  <description>The core functionality of RAT that is used by all clients.</description>
   <build>
     <resources>
       <resource>
@@ -276,7 +276,7 @@
       <artifactId>tika-parser-text-module</artifactId>
     </dependency>
     <dependency>
-      <!-- this dependency is actually used by integeration testing code -->
+      <!-- this dependency is actually used by integration testing code -->
       <groupId>org.codehaus.groovy</groupId>
       <artifactId>groovy-all</artifactId>
       <scope>test</scope>

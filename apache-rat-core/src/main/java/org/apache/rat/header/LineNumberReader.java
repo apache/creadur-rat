@@ -45,7 +45,7 @@ public class LineNumberReader {
 
 	public int read() throws IOException {
 		final int c = parent.read();
-		switch(c) {
+		switch (c) {
 		case 13:
 			previousCharWasCR = true;
 			++lineNumber;

@@ -18,6 +18,7 @@
  */
 package org.apache.rat.anttasks;
 
+import org.apache.rat.DeprecationReporter;
 import org.apache.rat.license.ILicense;
 import org.apache.rat.license.ILicenseFamily;
 
@@ -30,6 +31,7 @@ import org.apache.rat.analysis.IHeaderMatcher;
  * @deprecated use configuration file.
  */
 @Deprecated // since 0.17
+@DeprecationReporter.Info(since = "0.17", forRemoval = true, use = "Configuration file and <config> element")// since 0.17
 public class License {
 
     private final ILicense.Builder builder = ILicense.builder();

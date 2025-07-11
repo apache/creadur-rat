@@ -21,7 +21,6 @@ package org.apache.rat.mp;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.net.MalformedURLException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -39,7 +38,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
-import org.apache.rat.ConfigurationException;
 import org.apache.rat.Defaults;
 import org.apache.rat.OptionCollection;
 import org.apache.rat.ReportConfiguration;
@@ -271,11 +269,7 @@ public abstract class AbstractRatMojo extends BaseRatMojo {
         Defaults.Builder result = Defaults.builder();
         if (defaultLicenseFiles != null) {
             for (String defaultLicenseFile : defaultLicenseFiles) {
-                try {
-                    result.add(defaultLicenseFile);
-                } catch (MalformedURLException e) {
-                    throw new ConfigurationException(defaultLicenseFile + " is not a valid license file", e);
-                }
+                result.add(defaultLicenseFile);
             }
         }
         return result;

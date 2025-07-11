@@ -20,25 +20,25 @@
   <parent>
     <groupId>org.apache</groupId>
     <artifactId>apache</artifactId>
-    <version>33</version>
+    <version>35</version>
   </parent>
   <groupId>org.apache.rat</groupId>
   <artifactId>apache-rat-project</artifactId>
   <version>0.17-SNAPSHOT</version>
   <packaging>pom</packaging>
-  <name>Apache Creadur Rat</name>
+  <name>Apache Creadur RAT</name>
   <url>https://creadur.apache.org/rat/</url>
   <description>
-Apache Rat is a release audit tool. It improves accuracy and efficiency when checking
+Apache RAT is a release audit tool. It improves accuracy and efficiency when checking
 releases. It is heuristic in nature: making guesses about possible problems. It
 will produce false positives and cannot find every possible issue with a release.
 Its reports require interpretation.
 
-In response to demands from project quality tool developers, Rat is available as a
+In response to demands from project quality tool developers, RAT is available as a
 library suitable for inclusion in tools. This POM describes that library.
 Note that binary compatibility is not guaranteed between 0.x releases.
 
-Apache Rat is developed by the Apache Creadur project, a language and build
+Apache RAT is developed by the Apache Creadur project, a language and build
 agnostic home for software distribution comprehension and audit tools.
   </description>
   <inceptionYear>2006</inceptionYear>
@@ -55,13 +55,16 @@ agnostic home for software distribution comprehension and audit tools.
     <maven.compiler.target>${javaVersion}</maven.compiler.target>
     <!-- This is the version of Maven required to use the Rat Maven Plugin -->
     <mavenMinVersion>3.2.5</mavenMinVersion>
-    <mavenVersion>3.9.9</mavenVersion>
+    <mavenVersion>3.9.10</mavenVersion>
     <creadur.jira.id>RAT</creadur.jira.id>
+    <velocity.core.version>2.4.1</velocity.core.version>
+    <velocity.tools.version>3.1</velocity.tools.version>
     <!-- maven plugin versions -->
+    <mavenPluginTestingVersion>3.3.0</mavenPluginTestingVersion>
     <mavenPluginPluginVersion>3.15.1</mavenPluginPluginVersion>
     <mavenChangesVersion>3.0.0-M1</mavenChangesVersion>
     <mavenJavadocPluginVersion>3.11.2</mavenJavadocPluginVersion>
-    <mavenPmdPluginVersion>3.26.0</mavenPmdPluginVersion>
+    <mavenPmdPluginVersion>3.27.0</mavenPmdPluginVersion>
     <!-- Used to generate download page for RAT during site builds, please adapt versions manually BEFORE doing a release -->
     <!-- START - adapt manually before doing a release -->
     <previousRatVersion>0.17</previousRatVersion>
@@ -125,17 +128,17 @@ agnostic home for software distribution comprehension and audit tools.
       <dependency>
         <groupId>org.apache.commons</groupId>
         <artifactId>commons-collections4</artifactId>
-        <version>4.4</version>
+        <version>4.5.0</version>
       </dependency>
       <dependency>
         <groupId>commons-io</groupId>
         <artifactId>commons-io</artifactId>
-        <version>2.18.0</version>
+        <version>2.19.0</version>
       </dependency>
       <dependency>
         <groupId>org.apache.commons</groupId>
         <artifactId>commons-lang3</artifactId>
-        <version>3.17.0</version>
+        <version>3.18.0</version>
       </dependency>
       <dependency>
         <groupId>org.apache.commons</groupId>
@@ -145,17 +148,17 @@ agnostic home for software distribution comprehension and audit tools.
       <dependency>
         <groupId>org.apache.commons</groupId>
         <artifactId>commons-text</artifactId>
-        <version>1.13.0</version>
+        <version>1.13.1</version>
       </dependency>
       <dependency>
         <groupId>org.apache.commons</groupId>
         <artifactId>commons-csv</artifactId>
-        <version>1.13.0</version>
+        <version>1.14.0</version>
       </dependency>
       <dependency>
         <groupId>org.junit</groupId>
         <artifactId>junit-bom</artifactId>
-        <version>5.11.4</version>
+        <version>5.13.3</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
@@ -196,6 +199,12 @@ agnostic home for software distribution comprehension and audit tools.
         <scope>provided</scope>
       </dependency>
       <dependency>
+        <groupId>org.apache.maven.plugin-testing</groupId>
+        <artifactId>maven-plugin-testing-harness</artifactId>
+        <version>${mavenPluginTestingVersion}</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
         <groupId>org.apache.maven</groupId>
         <artifactId>maven-plugin-api</artifactId>
         <version>${mavenVersion}</version>
@@ -216,6 +225,16 @@ agnostic home for software distribution comprehension and audit tools.
         <groupId>org.apache.tika</groupId>
         <artifactId>tika-parser-text-module</artifactId>
         <version>${tika.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.velocity</groupId>
+        <artifactId>velocity-engine-core</artifactId>
+        <version>${velocity.core.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.velocity.tools</groupId>
+        <artifactId>velocity-tools-generic</artifactId>
+        <version>${velocity.tools.version}</version>
       </dependency>
       <dependency>
         <groupId>org.codehaus.groovy</groupId>
@@ -458,7 +477,7 @@ agnostic home for software distribution comprehension and audit tools.
               <plugin>
                 <groupId>com.h3xstream.findsecbugs</groupId>
                 <artifactId>findsecbugs-plugin</artifactId>
-                <version>1.13.0</version>
+                <version>1.14.0</version>
               </plugin>
             </plugins>
           </configuration>
@@ -485,7 +504,7 @@ agnostic home for software distribution comprehension and audit tools.
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-compiler-plugin</artifactId>
-          <version>3.13.0</version>
+          <version>3.14.0</version>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
@@ -500,7 +519,7 @@ agnostic home for software distribution comprehension and audit tools.
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-invoker-plugin</artifactId>
-          <version>3.9.0</version>
+          <version>3.9.1</version>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
@@ -547,6 +566,7 @@ agnostic home for software distribution comprehension and audit tools.
               <!-- RAT-353: until https://bugs.openjdk.org/browse/JDK-8227487 is fixed we manually add the fonts -->
               <exclude>**/src/site/javadocFont/**</exclude>
               <exclude>apache-rat/src/site/examples/**</exclude>
+              <exclude>apache-rat/src/site/resources/templates/**</exclude>
               <exclude>apache-rat-plugin/src/site/apt/plugin_help.txt</exclude>
             </excludes>
           </configuration>
@@ -577,12 +597,12 @@ agnostic home for software distribution comprehension and audit tools.
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-failsafe-plugin</artifactId>
-          <version>3.5.2</version>
+          <version>3.5.3</version>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-surefire-plugin</artifactId>
-          <version>3.5.2</version>
+          <version>3.5.3</version>
           <configuration>
             <forkCount>1</forkCount>
             <argLine>-Dfile.encoding=ISO-8859-1</argLine>
@@ -618,17 +638,17 @@ agnostic home for software distribution comprehension and audit tools.
         <plugin>
           <groupId>org.codehaus.mojo</groupId>
           <artifactId>exec-maven-plugin</artifactId>
-          <version>3.5.0</version>
+          <version>3.5.1</version>
         </plugin>
         <plugin>
           <groupId>org.codehaus.mojo</groupId>
           <artifactId>build-helper-maven-plugin</artifactId>
-          <version>3.6.0</version>
+          <version>3.6.1</version>
         </plugin>
         <plugin>
           <groupId>org.codehaus.mojo</groupId>
           <artifactId>maven-clean-plugin</artifactId>
-          <version>3.4.0</version>
+          <version>3.4.1</version>
         </plugin>
       </plugins>
     </pluginManagement>
@@ -717,7 +737,7 @@ agnostic home for software distribution comprehension and audit tools.
           <dependency>
             <groupId>org.codehaus.mojo</groupId>
             <artifactId>extra-enforcer-rules</artifactId>
-            <version>1.9.0</version>
+            <version>1.10.0</version>
           </dependency>
           <dependency>
             <groupId>org.apache.ws.commons.axiom</groupId>
