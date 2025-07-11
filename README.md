@@ -1,4 +1,4 @@
-# Apache Creadur Rat - Build status
+# Apache Creadur RAT - Build status
 
 ASF Jenkins: [![ASF Jenkins Build Status](https://ci-builds.apache.org/buildStatus/icon?job=Creadur%2FCreadur-Rat)](https://ci-builds.apache.org/job/Creadur/job/Creadur-Rat/)
 

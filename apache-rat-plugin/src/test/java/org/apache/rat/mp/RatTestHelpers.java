@@ -1,17 +1,3 @@
-package org.apache.rat.mp;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.IOException;
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.Proxy;
-import java.nio.file.Files;
-import java.util.List;
-
-import org.apache.commons.io.FileUtils;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
@@ -28,7 +14,10 @@ import org.apache.commons.io.FileUtils;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.apache.rat.mp;
 
+import com.google.common.base.Charsets;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.factory.DefaultArtifactFactory;
@@ -36,14 +25,21 @@ import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.repository.ArtifactRepositoryPolicy;
 import org.apache.maven.artifact.repository.MavenArtifactRepository;
 import org.apache.maven.artifact.repository.layout.ArtifactRepositoryLayout;
-import org.apache.maven.doxia.siterenderer.Renderer;
 import org.apache.maven.settings.Settings;
 import org.apache.maven.settings.io.xpp3.SettingsXpp3Reader;
 import org.apache.rat.testhelpers.TextUtils;
 import org.codehaus.plexus.PlexusContainer;
 import org.codehaus.plexus.util.DirectoryScanner;
 
-import com.google.common.base.Charsets;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.IOException;
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Proxy;
+import java.nio.file.Files;
+import java.util.List;
 
 /**
  * Test helpers used when verifying mojo interaction in RAT integration tests.
@@ -67,7 +63,7 @@ public final class RatTestHelpers {
     }
 
     /**
-     * Copies the given files recursively in order to get all integration test files
+     * Copies the given files recursively to get all integration test files
      * into a target directory.
      *
      * @param pSource source files.
@@ -112,17 +108,6 @@ public final class RatTestHelpers {
         } else {
             throw new IOException("Unable to copy unknown object " + pSource);
         }
-    }
-
-    /**
-     * Creates a new instance of {@link Renderer}.
-     *
-     * @param container current plexus container.
-     * @return A configured instance of a Default renderer.
-     * @throws Exception Creating the object failed.
-     */
-    public static Renderer newSiteRenderer(PlexusContainer container) throws Exception {
-        return (Renderer) container.lookup(Renderer.ROLE, "default");
     }
 
     /**

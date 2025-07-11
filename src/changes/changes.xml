@@ -72,6 +72,9 @@ The <action> type attribute can be one of:
     </release>
     -->
     <release version="0.17-SNAPSHOT" date="xxxx-yy-zz" description="Current SNAPSHOT - release to be done">
+      <action issue="RAT-440" type="add" dev="pottlinger">
+        Raise minimum Maven version to 3.6.3 in order to be compliant with new Doxia 2.x and reporting-api 4.x stack.
+      </action>
       <action issue="RAT-473" type="add" dev="engelen">
         Take global gitignore into account when determining which files to audit and which to skip.
       </action>

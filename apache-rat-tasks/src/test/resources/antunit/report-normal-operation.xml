@@ -127,8 +127,8 @@ SPDX-License-Identifier: Apache-2.0
 			<rat:license
 				family="YASL1"
 				notes="Interesting License">
-				<!-- non existant copyright in this file -->
-				<rat:copyright owner="non existant" />
+				<!-- non existent copyright in this file -->
+				<rat:copyright owner="non existent" />
 			</rat:license>
 		</rat:report>
 	</target>
@@ -142,8 +142,8 @@ SPDX-License-Identifier: Apache-2.0
 				<rat:license
 					family="YASL1"
 					notes="Interesting License">
-					 <!--  non existant copyright in this file  -->
-					<rat:copyright owner="non existant" />
+					 <!--  non existent copyright in this file  -->
+					<rat:copyright owner="non existent" />
 				</rat:license>
 			</rat:report>
 			<copy overwrite="true" file="${report.file}" toFile="${reports.dir}/TEST-testWithALUnknownSentToFile.out"/>
@@ -224,8 +224,8 @@ SPDX-License-Identifier: Apache-2.0
 					family="YASL1"
 					notes="Interesting License">
 					<rat:not>
-						 <!--  non existant copyright in this file  -->
-						<rat:copyright owner="non existant" />
+						 <!--  non existent copyright in this file  -->
+						<rat:copyright owner="non existent" />
 					</rat:not>
 				</rat:license>
 			</rat:report>
@@ -348,8 +348,8 @@ SPDX-License-Identifier: Apache-2.0
 				<rat:license
 					family="YASL1"
 					notes="Interesting License">
-					 <!--  non existant copyright in this file  -->
-					<rat:copyright owner="non existant" />
+					 <!--  non existent copyright in this file  -->
+					<rat:copyright owner="non existent" />
 				</rat:license>
 			</rat:report>
 			<copy overwrite="true" file="${report.file}" toFile="${reports.dir}/TEST-testNoLicenseMatchSentToFile.out"/>
