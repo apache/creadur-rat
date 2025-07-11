@@ -30,7 +30,7 @@
       </gitHub>
     </fluidoSkin>
   </custom>
-  <bannerLeft name="Apache Rat" href="https://www.apache.org/">
+  <bannerLeft name="Apache RAT" href="https://www.apache.org/">
     <image src="https://www.apache.org/img/asf_logo.png" alt="The Apache Software Foundation"/>
   </bannerLeft>
   <poweredBy>

@@ -19,7 +19,7 @@
  under the License.                                           *
 
 -->
-<project name="AntUnit Tests for Rat Ant Tasks"
+<project name="AntUnit Tests for RAT Ant Tasks"
          default="antunit">
 
   <property name="jar.name" location="target/classes"/>
