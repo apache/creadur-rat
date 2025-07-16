@@ -55,7 +55,7 @@ agnostic home for software distribution comprehension and audit tools.
     <maven.compiler.target>${javaVersion}</maven.compiler.target>
     <!-- This is the version of Maven required to use the Rat Maven Plugin -->
     <mavenMinVersion>3.2.5</mavenMinVersion>
-    <mavenVersion>3.9.10</mavenVersion>
+    <mavenVersion>3.9.11</mavenVersion>
     <creadur.jira.id>RAT</creadur.jira.id>
     <velocity.core.version>2.4.1</velocity.core.version>
     <velocity.tools.version>3.1</velocity.tools.version>
