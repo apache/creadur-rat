@@ -239,7 +239,7 @@ agnostic home for software distribution comprehension and audit tools.
       <dependency>
         <groupId>com.google.jimfs</groupId>
         <artifactId>jimfs</artifactId>
-        <version>1.3.0</version>
+        <version>1.3.1</version>
         <scope>test</scope>
       </dependency>
     </dependencies>
