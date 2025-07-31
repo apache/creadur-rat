@@ -50,9 +50,9 @@ public class XmlElements {
      * The elements in the report.
      */
     public enum Elements {
-        /** The start of the Rat report */
+        /** The start of the RAT report */
         RAT_REPORT("rat-report"),
-        /** The version of Rat being run */
+        /** The version of RAT being run */
         VERSION(),
         /** A resource element */
         RESOURCE(),
@@ -141,7 +141,7 @@ public class XmlElements {
     }
 
     /**
-     * Create the Rat report element. Includes the timestamp and the version element.
+     * Create the RAT report element. Includes the timestamp and the version element.
      * @return this.
      * @throws RatException on error
      */
