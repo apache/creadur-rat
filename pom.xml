@@ -147,7 +147,7 @@ agnostic home for software distribution comprehension and audit tools.
       <dependency>
         <groupId>org.apache.commons</groupId>
         <artifactId>commons-csv</artifactId>
-        <version>1.14.0</version>
+        <version>1.14.1</version>
       </dependency>
       <dependency>
         <groupId>org.junit</groupId>
