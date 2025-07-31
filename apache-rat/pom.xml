@@ -87,6 +87,7 @@
               <excludes>META-INF/**</excludes>
             </configuration>
           </execution>
+          <!--
           <execution>
             <id>unpack testdata</id>
             <phase>prepare-package</phase>
@@ -100,6 +101,7 @@
               <excludes>META-INF/**</excludes>
             </configuration>
           </execution>
+        -->
         </executions>
       </plugin>
       <plugin>

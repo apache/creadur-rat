@@ -185,6 +185,29 @@
         </executions>
       </plugin>
       <plugin>
+    <artifactId>maven-resources-plugin</artifactId>
+    <executions>
+        <execution>
+            <id>copy-exampleData</id>
+            <phase>generate-resources</phase>
+            <goals>
+                <goal>copy-resources</goal>
+            </goals>
+            <configuration>
+                <outputDirectory>${project.build.testOutputDirectory}/examples</outputDirectory>
+                <overwrite>true</overwrite>
+                <resources>
+                    <resource>
+                        <directory>../apache-rat-testdata/src/main/resources/examples</directory>                      
+                    </resource>
+                </resources>
+            </configuration>
+        </execution>
+    </executions>
+</plugin>
+
+      <!--
+      <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-dependency-plugin</artifactId>
         <executions>
@@ -203,6 +226,7 @@
           </execution>
         </executions>
       </plugin>
+      -->
     </plugins>
   </build>
   <dependencies>
