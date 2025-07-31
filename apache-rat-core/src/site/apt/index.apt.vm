@@ -19,16 +19,16 @@
                    Core Module
                    --------------------------
 
-About Apache Rat
+About Apache RAT
 
- Rat audits software distributions, with a special interest in headers.
+ RAT audits software distributions, with a special interest in headers.
  If this isn't quite what you're looking for then take a look at the
  other products developed by {{{https://creadur.apache.org}Apache Creadur}},
  including {{{https://creadur.apache.org/whisker}Apache Whisker}} which audits
  and generates legal (for example <<<LICENSE>>>) documents for
  complex software distributions.
 
-Developing Rat
+Developing RAT
 
 * Introducing the Modules
 
@@ -44,7 +44,7 @@ Developing Rat
 *----------+--------------+----------------+
  A Maven plugin | {{{https://maven.apache.org}Apache Maven}}     | {{{../apache-rat-plugin}apache-rat-plugin}}       |
 *----------+--------------+----------------+
-<<Modules that run Rat>>
+<<Modules that run RAT>>
 
  Support for new build tools and alternative ways to run RAT should be coded
  in new modules building on <<<apache-rat-core>>>. Developers interested in

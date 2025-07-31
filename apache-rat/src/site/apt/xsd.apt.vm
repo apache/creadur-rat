@@ -19,8 +19,8 @@
                     Configuration XML Schema Definition
                    ------------------------------------
 
-  There is a standard {{{./rat.xsd}Rat XSD file}} that describes the configuration file options and can be used to verify
-  any configuration file that only depends on the matchers shipped with Rat.
+  There is a standard {{{./rat.xsd}RAT XSD file}} that describes the configuration file options and can be used to verify
+  any configuration file that only depends on the matchers shipped with RAT.
 
   If new matchers are implemented and properly documented the system can generate the XSD for it as well. To generate
   a XSD execute the following:

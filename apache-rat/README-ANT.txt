@@ -1,4 +1,4 @@
-Apache Rat Ant Task Library
+Apache RAT Ant Task Library
 ===========================
 
 The Ant Task Library provides a single Ant task and a few supporting Ant types to run Rat,
@@ -10,7 +10,7 @@ or even URLs directly.
 Requirements
 ------------
 
-The Rat Ant Task Library requires Apache Ant 1.7.1 or higher (it works well with 1.8.x)
+The RAT Ant Task Library requires Apache Ant 1.7.1 or higher (it works well with 1.8.x)
 
 Installation
 ------------

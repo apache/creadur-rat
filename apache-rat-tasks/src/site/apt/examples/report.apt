@@ -21,8 +21,8 @@
 Report Task
 
 
-  The Report task is the heart of the Apache Rat Ant Task Library, it
-  runs Rat on a given set of resources and generates the report.
+  The Report task is the heart of the Apache RAT Ant Task Library, it
+  runs RAT on a given set of resources and generates the report.
 
   The task can work on any Ant
   {{{https://ant.apache.org/manual/Types/resources.html}resource or
@@ -33,7 +33,7 @@ Report Task
   by a custom XSLT stylesheet.
 
   It is possible to define custom matchers for licenses not directly supported
-  by Rat via nested elements to the Report task.
+  by RAT via nested elements to the Report task.
 
 * Report Task Attributes
 
