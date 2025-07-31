@@ -29,5 +29,5 @@
 java -jar apache-rat/target/apache-rat-${project.version}.jar org.apache.rat.tools.xsd.XsdGenerator [options]
 +------------------------------------------+
 
-  Where '[options]' are the options used to add the new definitions to Rat. Specifically these will include configurations
+  Where '[options]' are the options used to add the new definitions to RAT. Specifically these will include configurations
   that define new matchers.

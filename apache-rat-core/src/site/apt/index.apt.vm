@@ -36,7 +36,7 @@ Developing RAT
  engine. Other modules allow this engine to be run in various ways.
 
 *----------+--------------+----------------+
- <<Runs Rat via>> | <<Requires>>     | <<Module>>       |
+ <<Runs RAT via>> | <<Requires>>     | <<Module>>       |
 *----------+--------------+----------------+
  An Ant task | {{{https://ant.apache.org}Apache Ant}}     | {{{../apache-rat-tasks}apache-rat-tasks}}      |
 *----------+--------------+----------------+
