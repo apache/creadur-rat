@@ -37,7 +37,7 @@ Custom License Matchers
 
   The easiest solution for defining custom licenses is to use the <<<config>>> option. For this option write your custom configuration like you would for the command line and then include it. In the example below the custom configuration is called <<<myConfig.xml>>>
 
-  ------------------------------------------------------------------
+------------------------------------------------------------------
   <build>
     <plugins>
       ...
