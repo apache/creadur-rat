@@ -64,21 +64,6 @@
             <lifecycleMappingMetadata>
               <pluginExecutions>
                 <pluginExecution>
-                  <pluginExecutionFilter>
-                    <groupId>
-        							com.github.jochenw.jmp
-        						</groupId>
-                    <artifactId>
-        							jwigrv-maven-plugin
-        						</artifactId>
-                    <versionRange>[0.2,)</versionRange>
-                    <goals>
-                      <goal>run</goal>
-                    </goals>
-                  </pluginExecutionFilter>
-                  <action>
-                    <ignore/>
-                  </action>
                 </pluginExecution>
               </pluginExecutions>
             </lifecycleMappingMetadata>

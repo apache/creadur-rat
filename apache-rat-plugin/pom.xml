@@ -146,27 +146,30 @@
       </plugins>
     </pluginManagement>
     <plugins>
-          <!--
       <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-dependency-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>copy-release-notes-from-core</id>
-            <goals>
-              <goal>unpack-dependencies</goal>
-            </goals>
-            <phase>generate-resources</phase>
-            <configuration>
-              <includeArtifactIds>apache-rat-core</includeArtifactIds>
-              <excludeClassifiers>tests</excludeClassifiers>
-              <includes>META-INF/RELEASE_NOTES.txt</includes>
-              <outputDirectory>${project.build.outputDirectory}</outputDirectory>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-          -->
+	    <artifactId>maven-resources-plugin</artifactId>
+	    <executions>
+	        <execution>
+	            <id>copy-release-notes</id>
+	            <phase>generate-resources</phase>
+	            <goals>
+	                <goal>copy-resources</goal>
+	            </goals>
+	            <configuration>
+                	<outputDirectory>${project.build.outputDirectory}/META-INF</outputDirectory>
+	                <overwrite>true</overwrite>
+	                <resources>
+	                    <resource>
+	                    <directory>${project.basedir}/..</directory>
+	                        <includes>
+	                        	<include>RELEASE_NOTES.txt</include>
+	         				</includes>                  
+	                    </resource>
+	                </resources>
+	            </configuration>
+	        </execution>
+	    </executions>
+	  </plugin>
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>exec-maven-plugin</artifactId>

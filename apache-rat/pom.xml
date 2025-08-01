@@ -58,22 +58,33 @@
         </configuration>
       </plugin>
       <plugin>
+	    <artifactId>maven-resources-plugin</artifactId>
+	    <executions>
+	        <execution>
+	            <id>copy-release-notes</id>
+	            <phase>generate-resources</phase>
+	            <goals>
+	                <goal>copy-resources</goal>
+	            </goals>
+	            <configuration>
+                	<outputDirectory>${project.build.outputDirectory}/META-INF</outputDirectory>
+	                <overwrite>true</overwrite>
+	                <resources>
+	                    <resource>
+	                    <directory>${project.basedir}/..</directory>
+	                        <includes>
+	                        	<include>RELEASE_NOTES.txt</include>
+	         				</includes>
+	                    </resource>
+	                </resources>
+	            </configuration>
+	        </execution>
+	    </executions>
+	  </plugin>
+      <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-dependency-plugin</artifactId>
         <executions>
-          <!-- Copy resource files from the apache-rat-core project. -->
-          <execution>
-            <id>copy-release-notes-from-core</id>
-            <goals>
-              <goal>unpack-dependencies</goal>
-            </goals>
-            <phase>generate-resources</phase>
-            <configuration>
-              <includeArtifactIds>apache-rat-core</includeArtifactIds>
-              <excludeClassifiers>tests</excludeClassifiers>
-              <outputDirectory>${project.build.outputDirectory}</outputDirectory>
-            </configuration>
-          </execution>
           <execution>
             <id>unpack dependencies</id>
             <phase>prepare-package</phase>
