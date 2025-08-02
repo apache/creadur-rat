@@ -554,7 +554,6 @@ agnostic home for software distribution comprehension and audit tools.
             <excludes>
               <exclude>.asf.yaml</exclude>
               <!-- rat:check does not seem to use exclusions from modules -->
-              <exclude>apache-rat/README*.txt</exclude>
               <exclude>apache-rat-core/src/test/resources/**</exclude>
               <exclude>apache-rat*/target/**</exclude>
               <exclude>apache-rat-plugin/src/test/resources/**</exclude>
