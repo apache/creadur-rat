@@ -21,11 +21,11 @@
 
 Examples
 
-  These examples assume you have installed the Rat Antlib in a way
+  These examples assume you have installed the RAT Antlib in a way
   that provides the Report task in the XML namespace associated with
   the prefix <<<rat>>>.
 
-* Run Rat in default configuration on all files in directory <<<src>>>.
+* Run RAT in default configuration on all files in directory <<<src>>>.
 
 ---
 <rat:report>
@@ -44,7 +44,7 @@ java -jar apache-rat-${project.version}.jar src
   except that Ant's default excludes will be applied when looking for
   documents to check.
 
-* Run Rat on multiple directories
+* Run RAT on multiple directories
 
 ---
 <rat:report>
@@ -76,7 +76,7 @@ java -jar apache-rat-${project.version}.jar --edit-license
 
  There are two types of styled reports, both are activated by using the "outputStyled" attribute on the "rat:report" element.
 
- The first is the standard report type. This uses one of the standard reports shipped with Rat which are activated by setting the value of "outputStyled" to the name of the report.
+ The first is the standard report type. This uses one of the standard reports shipped with RAT which are activated by setting the value of "outputStyled" to the name of the report.
 
          * plain-rat: The default style.
 
@@ -94,7 +94,7 @@ java -jar apache-rat-${project.version}.jar --edit-license
 </rat:report>
 ---
 
- The second type is the user defined XSLT. In this case the user provides the path to the xslt document as shown below. There is a report XSD and the standard report XSLT files are listed in the Rat Output documentation. In the example below the user has provided a "rat-xml-2-html.xslt" transformation and the output will be written to "rat.html"
+ The second type is the user defined XSLT. In this case the user provides the path to the xslt document as shown below. There is a report XSD and the standard report XSLT files are listed in the RAT Output documentation. In the example below the user has provided a "rat-xml-2-html.xslt" transformation and the output will be written to "rat.html"
 
 ---
 <rat:report outputStyle="my/rat-xml-2-html.xslt" outputFile="rat.html">
@@ -102,7 +102,7 @@ java -jar apache-rat-${project.version}.jar --edit-license
 </rat:report>
 ---
 
-* Run Rat on a tarball located on a webserver
+* Run RAT on a tarball located on a webserver
 
 ---
 <rat:report>
@@ -114,7 +114,7 @@ java -jar apache-rat-${project.version}.jar --edit-license
 </rat:report>
 ---
 
-* Run Rat but make the Apache License Version 2.0 the only one
+* Run RAT but make the Apache License Version 2.0 the only one
   accepted
 
 ---
@@ -124,7 +124,7 @@ java -jar apache-rat-${project.version}.jar --edit-license
 </rat:report>
 ---
 
-* Run Rat on all files in <<<src>>> that have been modified today
+* Run RAT on all files in <<<src>>> that have been modified today
 
 ---
 <tstamp/>
@@ -136,7 +136,7 @@ java -jar apache-rat-${project.version}.jar --edit-license
 </rat:report>
 ---
 
-* Make Rat only detect your custom license and mark this license
+* Make RAT only detect your custom license and mark this license
   approved.
 
   Create a configuration file containing only your definition(s).

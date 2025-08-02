@@ -17,7 +17,7 @@
 ${esc.hash} Command Line Support
 #set($doublespace = ${esc.newLine}+${esc.newline})
 
-  ${esc.hash}${esc.hash} About Apache Rat&#8482;
+  ${esc.hash}${esc.hash} About Apache RAT&#8482;
 
 RAT audits software distributions, with a special interest in headers.
 If this isn't quite what you're looking for then take a look at the

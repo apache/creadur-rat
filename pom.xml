@@ -62,7 +62,7 @@ agnostic home for software distribution comprehension and audit tools.
     <!-- maven plugin versions -->
     <mavenPluginTestingVersion>3.3.0</mavenPluginTestingVersion>
     <mavenPluginPluginVersion>3.15.1</mavenPluginPluginVersion>
-    <mavenChangesVersion>2.12.1</mavenChangesVersion>
+    <mavenChangesVersion>3.0.0-M1</mavenChangesVersion>
     <mavenJavadocPluginVersion>3.11.2</mavenJavadocPluginVersion>
     <mavenPmdPluginVersion>3.27.0</mavenPmdPluginVersion>
     <!-- Used to generate download page for RAT during site builds, please adapt versions manually BEFORE doing a release -->
@@ -82,6 +82,12 @@ agnostic home for software distribution comprehension and audit tools.
   </distributionManagement>
   <dependencyManagement>
     <dependencies>
+      <!-- used to render the site and make skin updates more transparent -->
+      <dependency>
+        <groupId>org.apache.maven.skins</groupId>
+        <artifactId>maven-fluido-skin</artifactId>
+        <version>2.0.1</version>
+      </dependency>
       <dependency>
         <groupId>org.apache.rat</groupId>
         <artifactId>apache-rat-core</artifactId>
@@ -262,8 +268,6 @@ agnostic home for software distribution comprehension and audit tools.
           <statusIds>Resolved,Closed</statusIds>
           <!-- Don't include sub-task -->
           <typeIds>Bug,New Feature,Task,Improvement,Wish,Test</typeIds>
-          <!-- For JIRA >= 5.1 -->
-          <useJql>true</useJql>
           <!-- TODO: what's the meaning of these copy-paste variables? -->
           <onlyCurrentVersion>${commons.changes.onlyCurrentVersion}</onlyCurrentVersion>
           <maxEntries>${commons.changes.maxEntries}</maxEntries>
@@ -274,11 +278,69 @@ agnostic home for software distribution comprehension and audit tools.
         <reportSets>
           <reportSet>
             <reports>
-              <report>changes-report</report>
-              <report>jira-report</report>
+              <report>changes</report>
+              <report>jira-changes</report>
+              <report>github-changes</report>
             </reports>
           </reportSet>
         </reportSets>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-changelog-plugin</artifactId>
+        <version>2.3</version>
+      </plugin>
+      <!-- catch code tags -->
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>taglist-maven-plugin</artifactId>
+        <version>3.2.1</version>
+        <configuration>
+          <tagListOptions>
+            <tagClasses>
+              <tagClass>
+                <displayName>Todo Work</displayName>
+                <tags>
+                  <tag>
+                    <matchString>todo</matchString>
+                    <matchType>ignoreCase</matchType>
+                  </tag>
+                  <tag>
+                    <matchString>fixme</matchString>
+                    <matchType>ignoreCase</matchType>
+                  </tag>
+                </tags>
+              </tagClass>
+              <tagClass>
+                <displayName>Refactor Work</displayName>
+                <tags>
+                  <tag>
+                    <matchString>refactor</matchString>
+                    <matchType>ignoreCase</matchType>
+                  </tag>
+                </tags>
+              </tagClass>
+              <tagClass>
+                <displayName>Review Work</displayName>
+                <tags>
+                  <tag>
+                    <matchString>review</matchString>
+                    <matchType>ignoreCase</matchType>
+                  </tag>
+                </tags>
+              </tagClass>
+              <tagClass>
+                <displayName>Deprecated items</displayName>
+                <tags>
+                  <tag>
+                    <matchString>@deprecated</matchString>
+                    <matchType>ignoreCase</matchType>
+                  </tag>
+                </tags>
+              </tagClass>
+            </tagClasses>
+          </tagListOptions>
+        </configuration>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -355,7 +417,7 @@ agnostic home for software distribution comprehension and audit tools.
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-project-info-reports-plugin</artifactId>
-        <version>3.6.2</version>
+        <version>3.9.0</version>
         <reportSets>
           <reportSet>
             <reports>
@@ -480,10 +542,7 @@ agnostic home for software distribution comprehension and audit tools.
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-site-plugin</artifactId>
-          <version>3.12.1</version>
-          <configuration>
-            <relativizeDecorationLinks>false</relativizeDecorationLinks>
-          </configuration>
+          <version>3.21.0</version>
         </plugin>
         <plugin>
           <groupId>org.apache.rat</groupId>

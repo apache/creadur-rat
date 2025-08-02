@@ -30,7 +30,7 @@ import org.apache.rat.report.xml.XmlElements;
 public interface IXmlWriter extends AutoCloseable {
 
     /**
-     * Starts a document by writing a prolog.
+     * Starts a document by writing a prologue.
      * Calling this method is optional.
      * When writing a document fragment, it should <em>not</em> be called.
      * @return this object
@@ -56,7 +56,7 @@ public interface IXmlWriter extends AutoCloseable {
      *
      * @param element the element, not null
      * @return this object
-     * @throws InvalidXmlException if the name is not valid for an xml element
+     * @throws InvalidXmlException if the name is not valid for a xml element
      * @throws OperationNotAllowedException
      * if called after the first element has been closed
      */

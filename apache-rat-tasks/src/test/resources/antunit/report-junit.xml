@@ -527,8 +527,5 @@ public class InlineMatcher extends AbstractHeaderMatcher {
 		<rat:report helpLicenses='true' />
 	</target>
 
-
-
 <!--	Process finished with exit code 0 -->
-
 </project>

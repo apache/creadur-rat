@@ -19,7 +19,7 @@
                         Introduction
                         -----
 
-Apache Rat Tools
+Apache RAT Tools
 
  The tools project contains code generators and tooling to write configuration data for:
 
@@ -29,4 +29,4 @@ Apache Rat Tools
 
  * XSD file generation
 
- * available configuration options or arguments and their documentation for Rat
+ * available configuration options or arguments and their documentation for RAT

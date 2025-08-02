@@ -72,6 +72,12 @@ The <action> type attribute can be one of:
     </release>
     -->
     <release version="0.17-SNAPSHOT" date="xxxx-yy-zz" description="Current SNAPSHOT - release to be done">
+      <action issue="RAT-444" type="fix" dev="pottlinger">
+        Fix missing headlines when site templates are handled/filtered by Velocity.
+      </action>
+      <action issue="RAT-397" type="add" dev="pottlinger">
+        Migrate webpage to newer site-plugin stack and change skin of site. Removed some of the reports as plugins are discontinued. Rename to RAT consistently.
+      </action>
       <action issue="RAT-473" type="add" dev="engelen">
         Take global gitignore into account when determining which files to audit and which to skip.
       </action>

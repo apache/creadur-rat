@@ -1,4 +1,4 @@
-<?xml version="1.0" ?>
+<?xml version="1.0"?>
 <!--
   Licensed to the Apache Software Foundation (ASF) under one or more
   contributor license agreements.  See the NOTICE file distributed with
@@ -15,74 +15,71 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
-<project xmlns="http://maven.apache.org/DECORATION/1.3.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="https://maven.apache.org/DECORATION/1.3.0 https://maven.apache.org/xsd/decoration-1.3.0.xsd"
-         name="Apache Rat&amp;trade;">
-  <bannerLeft>
-    <title>The Apache Software Foundation</title>
-    <name>The Apache Software Foundation</name>
-    <src>https://www.apache.org/img/asf_logo.png</src>
-    <href>https://www.apache.org/</href>
+<site xmlns="http://maven.apache.org/SITE/2.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/SITE/2.0.0 https://maven.apache.org/xsd/site-2.0.0.xsd" name="Apache RAT&#x2122; - A Release Audit Tool">
+  <skin>
+    <groupId>org.apache.maven.skins</groupId>
+    <artifactId>maven-fluido-skin</artifactId>
+    <!-- version is managed in pom.xml in order to be grabbed by dependabot -->
+  </skin>
+  <custom>
+    <fluidoSkin>
+      <gitHub>
+        <projectId>apache/creadur-rat</projectId>
+        <ribbonOrientation>right</ribbonOrientation>
+        <ribbonColor>blue</ribbonColor>
+      </gitHub>
+    </fluidoSkin>
+  </custom>
+  <bannerLeft name="Apache RAT" href="https://www.apache.org/">
+    <image src="https://www.apache.org/img/asf_logo.png" alt="The Apache Software Foundation"/>
   </bannerLeft>
-
   <poweredBy>
-      <logo name="Maven"
-            href="https://maven.apache.org/"
-            img="https://maven.apache.org/images/logos/maven-feather.png"/>
+    <logo name="Maven" href="https://maven.apache.org/">
+      <image src="https://maven.apache.org/images/logos/maven-feather.png"/>
+    </logo>
   </poweredBy>
-
   <body>
-    <head>
-      <![CDATA[<link href="https://creadur.apache.org/font/matesc.css" type="text/css" rel="stylesheet" />]]>
-    </head>
-
+    <head><![CDATA[<link href="https://creadur.apache.org/font/matesc.css" type="text/css" rel="stylesheet" />]]></head>
     <breadcrumbs>
       <item name="Apache" href="https://www.apache.org/"/>
       <item name="Creadur" href="https://creadur.apache.org/"/>
       <item name="RAT" href="https://creadur.apache.org/rat/"/>
     </breadcrumbs>
-
-    <menu name="Apache RAT&#8482;" inherit="bottom">
+    <menu name="Apache RAT&#x2122;" inherit="bottom">
       <item name="Introducing RAT" href="/index.html"/>
       <item name="Downloads" href="/download_rat.cgi"/>
-      <item name="Changes" href="/changes-report.html"/>
+      <item name="Changes" href="/changes.html"/>
     </menu>
-
     <menu name="RAT from the Command Line" inherit="bottom">
       <item name="Command Line Introduction" href="apache-rat/index.html"/>
       <item name="Command Line Options" href="apache-rat/cli_options.html"/>
       <item name="Exclusion Expressions" href="apache-rat-core/exclusion_expression.html"/>
       <item name="Standard Collections" href="apache-rat/standard_collections.html"/>
     </menu>
-
     <menu name="RAT from Ant" inherit="bottom">
       <item name="Ant Task Introduction" href="apache-rat-tasks/index.html"/>
       <item name="Ant Elements and Attributes" href="apache-rat-tasks/ant_options.html"/>
     </menu>
-
     <menu name="RAT from Maven" inherit="bottom">
       <item name="Maven Plugin Introduction" href="apache-rat-plugin/index.html"/>
       <item name="Maven Options" href="apache-rat-plugin/mvn_options.html"/>
       <item name="Maven Examples" href="apache-rat-plugin/examples/index.html"/>
     </menu>
-
     <menu name="Configuring RAT" inherit="bottom">
-      <item name="Option Name Cross Reference" href="apache-rat/name_xref.html" />
-      <item name="Default Licenses" href="apache-rat/default_licenses.html" />
-      <item name="Default Matchers" href="apache-rat/default_matchers.html" />
+      <item name="Option Name Cross Reference" href="apache-rat/name_xref.html"/>
+      <item name="Default Licenses" href="apache-rat/default_licenses.html"/>
+      <item name="Default Matchers" href="apache-rat/default_matchers.html"/>
       <item name="Defining New Licenses" href="license_def.html"/>
-      <item name="Configuration XSD" href="apache-rat/xsd.html" />
-      <item name="Default Configuration" href="https://gitbox.apache.org/repos/asf/creadur-rat/blob/master/apache-rat-core/src/main/resources/org/apache/rat/default.xml" />
+      <item name="Configuration XSD" href="apache-rat/xsd.html"/>
+      <item name="Default Configuration" href="https://gitbox.apache.org/repos/asf/creadur-rat/blob/master/apache-rat-core/src/main/resources/org/apache/rat/default.xml"/>
     </menu>
-
     <menu name="RAT Output" inherit="bottom">
       <item name="Standard Output Example" href="apache-rat/output/example.html"/>
-      <item name="Output XSD" href="https://gitbox.apache.org/repos/asf/creadur-rat/blob/master/apache-rat-core/src/main/resources/org/apache/rat/rat-report.xsd" />
-      <item name ="XSLT - Plain text" href="https://gitbox.apache.org/repos/asf/creadur-rat/blob/master/apache-rat-core/src/main/resources/org/apache/rat/plain-rat.xsl" />
-      <item name ="XSLT - Missing headers list" href="https://gitbox.apache.org/repos/asf/creadur-rat/blob/master/apache-rat-core/src/main/resources/org/apache/rat/missing-headers.xsl" />
-      <item name ="XSLT - Unapproved licenses list" href="https://gitbox.apache.org/repos/asf/creadur-rat/blob/master/apache-rat-core/src/main/resources/org/apache/rat/unapproved-licenses.xsl" />
+      <item name="Output XSD" href="https://gitbox.apache.org/repos/asf/creadur-rat/blob/master/apache-rat-core/src/main/resources/org/apache/rat/rat-report.xsd"/>
+      <item name="XSLT - Plain text" href="https://gitbox.apache.org/repos/asf/creadur-rat/blob/master/apache-rat-core/src/main/resources/org/apache/rat/plain-rat.xsl"/>
+      <item name="XSLT - Missing headers list" href="https://gitbox.apache.org/repos/asf/creadur-rat/blob/master/apache-rat-core/src/main/resources/org/apache/rat/missing-headers.xsl"/>
+      <item name="XSLT - Unapproved licenses list" href="https://gitbox.apache.org/repos/asf/creadur-rat/blob/master/apache-rat-core/src/main/resources/org/apache/rat/unapproved-licenses.xsl"/>
     </menu>
-
     <menu name="Developing RAT" inherit="bottom">
       <item name="Architecture" href="architecture.html"/>
       <item name="Javadocs" href="/apidocs/index.html"/>
@@ -90,54 +87,42 @@
       <item name="UI Development" href="development/ui_implementation.html"/>
       <item name="Writing a File Processor" href="apache-rat-core/development/write_file_processor.html"/>
     </menu>
-
-    <menu name="Apache Creadur&#8482;" inherit="bottom">
-      <item name='Creadur Project Home' href="https://creadur.apache.org"/>
-      <item name='Apache Tentacles' href="https://creadur.apache.org/tentacles"/>
-      <item name='Apache Whisker' href="https://creadur.apache.org/whisker"/>
-      <item name='Security' href='https://www.apache.org/security/'/>
-      <item name='License' href='https://www.apache.org/licenses/'/>
-      <item name='Privacy' href='https://privacy.apache.org/policies/privacy-policy-public.html'/>
-      <item name='Sponsorship' href='https://www.apache.org/foundation/sponsorship.html'/>
-      <item name='Thanks' href='https://www.apache.org/foundation/thanks.html'/>
+    <menu name="Apache Creadur&#x2122;" inherit="bottom">
+      <item name="Creadur Project Home" href="https://creadur.apache.org"/>
+      <item name="Apache Tentacles" href="https://creadur.apache.org/tentacles"/>
+      <item name="Apache Whisker" href="https://creadur.apache.org/whisker"/>
+      <item name="Security" href="https://www.apache.org/security/"/>
+      <item name="License" href="https://www.apache.org/licenses/"/>
+      <item name="Privacy" href="https://privacy.apache.org/policies/privacy-policy-public.html"/>
+      <item name="Sponsorship" href="https://www.apache.org/foundation/sponsorship.html"/>
+      <item name="Thanks" href="https://www.apache.org/foundation/thanks.html"/>
     </menu>
-
     <menu name="The Apache Software Foundation" inherit="bottom">
-        <item name='About the Foundation'
-            href="https://www.apache.org/foundation"/>
-        <item name='The projects'
-            href="https://projects.apache.org"/>
-        <item name='The people'
-            href="https://people.apache.org"/>
-        <item name='How we work'
-            href='https://www.apache.org/foundation/how-it-works.html'/>
-        <item name='Our history'
-            href='https://www.apache.org/foundation/how-it-works.html#history'/>
-        <item name='News'
-            href='https://blogs.apache.org/foundation/'/>
+      <item name="About the Foundation" href="https://www.apache.org/foundation"/>
+      <item name="The projects" href="https://projects.apache.org"/>
+      <item name="The people" href="https://people.apache.org"/>
+      <item name="How we work" href="https://www.apache.org/foundation/how-it-works.html"/>
+      <item name="Our history" href="https://www.apache.org/foundation/how-it-works.html#history"/>
+      <item name="News" href="https://blogs.apache.org/foundation/"/>
     </menu>
-
     <menu name="Contribute" inherit="bottom">
-      <item name="Get Involved" href='https://www.apache.org/foundation/getinvolved.html'/>
+      <item name="Get Involved" href="https://www.apache.org/foundation/getinvolved.html"/>
     </menu>
-
     <menu name="Committer Info" inherit="bottom">
-      <item name="ASF Committers' FAQ" href='https://www.apache.org/dev/committers.html'/>
-      <item name='New Committers Guide' href='https://www.apache.org/dev/new-committers-guide.html'/>
+      <item name="ASF Committers' FAQ" href="https://www.apache.org/dev/committers.html"/>
+      <item name="New Committers Guide" href="https://www.apache.org/dev/new-committers-guide.html"/>
       <item name="How to publish this site" href="https://gitbox.apache.org/repos/asf/creadur-site/blob/asf-site/README.md"/>
-      <item name='Community' href='https://community.apache.org/'/>
-      <item name='Legal' href='https://www.apache.org/legal/'/>
-      <item name='Branding' href='https://www.apache.org/foundation/marks/'/>
-      <item name='Media Relations' href='https://www.apache.org/press/'/>
+      <item name="Community" href="https://community.apache.org/"/>
+      <item name="Legal" href="https://www.apache.org/legal/"/>
+      <item name="Branding" href="https://www.apache.org/foundation/marks/"/>
+      <item name="Media Relations" href="https://www.apache.org/press/"/>
     </menu>
-
     <menu ref="modules"/>
     <menu ref="reports"/>
-
     <footer>Copyright &amp;copy; 2016-2025 The Apache Software Foundation, Licensed under the Apache License, Version 2.0.
       Apache Creadur, Creadur, Apache RAT, Apache Tentacles, Apache Whisker, Apache and the Apache feather logo are trademarks
       of The Apache Software Foundation.
       Oracle and Java are registered trademarks of Oracle and/or its affiliates.
       All other marks mentioned may be trademarks or registered trademarks of their respective owners.</footer>
   </body>
-</project>
+</site>

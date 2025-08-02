@@ -15,14 +15,14 @@
  limitations under the License.
 -->
 
-# Rat Exclusion Expressions
+# RAT Exclusion Expressions
 
-Rat uses a variation on the Ant or Git exclusion syntax.
+RAT uses a variation on the Ant or Git exclusion syntax.
 
-* `?` matches a single character.  For example 'ca?' will match 'cat' and 'can' but not 'call' or the abbreviation for california  (or Canada) 'CA'.
+* `?` matches a single character. For example 'ca?' will match 'cat' and 'can' but not 'call' or the abbreviation for california  (or Canada) 'CA'.
 * `*` matches zero or more characters. For example 'ca*' will match 'cat', 'can', 'call' and the abbreviation for california  (or Canada) 'CA'.
-* `**` matches zero or more directories.  For example '**/ca?' will match 'my/cat', 'my/can', 'the/cat', 'the/can', 'cat' and 'can'.
-* `!` reverses the meaning of the expression.  Example "!ca?" will not match "cat" or "can".  See include/exclude notes below.
+* `**` matches zero or more directories. For example '**/ca?' will match 'my/cat', 'my/can', 'the/cat', 'the/can', 'cat' and 'can'.
+* `!` reverses the meaning of the expression. Example "!ca?" will not match "cat" or "can". See include/exclude notes below.
 
 The table below shows an example of how the `*` and `**` differ and interact.
 
@@ -54,4 +54,4 @@ Patterns may use either '/' or '\\' as the path separation character. '/' is rec
 
 ## Case sensitivity
 
-The case sensitivity of the matching patterns depends upon the file system in use.  If the file is case-sensitive then the matches are case-sensitive.
+The case sensitivity of the matching patterns depends upon the file system in use. If the file is case-sensitive then the matches are case-sensitive.

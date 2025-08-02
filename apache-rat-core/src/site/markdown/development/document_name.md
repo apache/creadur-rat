@@ -16,16 +16,16 @@
 -->
 # Document Names
 
-Rat must be able to distinguish files in multiple file systems; most notably Windows&#174; and Linux&#174;. In addition, we want Rat to produce reports that are comparable across the platforms. To achieve these goals the `org.apache.rat.document.impl.DocumentName` class was developed.
+RAT must be able to distinguish files in multiple file systems; most notably Windows&#174; and Linux&#174;. In addition, we want RAT to produce reports that are comparable across the platforms. To achieve these goals the `org.apache.rat.document.impl.DocumentName` class was developed.
 
-All documents in the Rat system have a base directory. Different UIs will set the base directory differently. For example:
+All documents in the RAT system have a base directory. Different UIs will set the base directory differently. For example:
 
  * The command line sets the base directory to the directory or archive  specified on the command line.
  * Ant UI sets the base directory to the directory where the `build.xml` file is located.
  * Maven UI sets the base directory to the directory where the project is located.
  * Other UIs may define the base directory as it fits the underlying build system.
 
-When reporting a document Rat will report the path from the base directory to the file; the path relative to the base directory.
+When reporting a document RAT will report the path from the base directory to the file; the path relative to the base directory.
 
 The `DocumentName` comprises:
 
@@ -39,7 +39,7 @@ The class `DocumentName` also provides a static value that identifies the case-s
 `DocumentName` also provides methods to:
 
 * Resolve a name: This method takes a path relative to the DocumentName and creates a new DocumentName instance with the same baseName, dirSeparator and case-sensitivity flag is the original DocumentName.
-* Localize a name: This method returns the path from the baseName to the file.  It utilizes the dirSeparator to separate the directories.
+* Localize a name: This method returns the path from the baseName to the file. It utilizes the dirSeparator to separate the directories.
 * Localize with separator: This method returns the path from the baseName to the file but utilizes a specified string as the directory separator.
 * Short name: This method returns the last segment of the name.
 

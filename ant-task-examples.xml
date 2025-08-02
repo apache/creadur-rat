@@ -30,7 +30,7 @@
             location="apache-rat-core/target/apache-rat-core-${version}-sources.jar"/>
 
   <target name="javasources" depends="-taskdef"
-    description="runs the tasks over Rat's source tree excluding the license directory">
+    description="runs the tasks over RAT's source tree excluding the license directory">
     <rat:report xmlns:rat="antlib:org.apache.rat.anttasks">
       <fileset dir="${src-dir}">
         <exclude name="rat/license/"/>
@@ -39,14 +39,14 @@
   </target>
 
   <target name="jar" depends="-taskdef"
-    description="runs the task over Rat's source tree">
+    description="runs the task over RAT's source tree">
     <rat:report xmlns:rat="antlib:org.apache.rat.anttasks">
       <zipfileset src="${src-jar}"/>
     </rat:report>
   </target>
 
   <target name="tarball" depends="-taskdef"
-    description="creates a tarball of Rat's source tree and runs the task over the tarball">
+    description="creates a tarball of RAT's source tree and runs the task over the tarball">
     <tar destfile="ratsrc.tar.gz" compression="gzip">
       <fileset dir="${src-dir}"/>
     </tar>
@@ -61,7 +61,7 @@
   </target>
 
   <target name="javasources-w3c" depends="-taskdef"
-    description="runs the tasks over Rat's source tree accepting only the W3C license">
+    description="runs the tasks over RAT's source tree accepting only the W3C license">
     <rat:report xmlns:rat="antlib:org.apache.rat.anttasks"
       addDefaultLicenseMatchers="false">
       <fileset dir="${src-dir}"/>
@@ -72,7 +72,7 @@
   </target>
 
   <target name="url" depends="-taskdef"
-    description="runs the task on the ASF's homepage">
+    description="runs the task on the ASF homepage">
     <rat:report xmlns:rat="antlib:org.apache.rat.anttasks">
       <url url="https://www.apache.org/"/>
     </rat:report>
@@ -85,7 +85,7 @@
   </target>
 
   <target name="run-on-rat-output-xml" depends="-taskdef"
-          description="Runs Rat on its own source tree and creates an XML report">
+          description="Runs RAT on its own source tree and creates an XML report">
     <rat:report xmlns:rat="antlib:org.apache.rat.anttasks"
                 format="xml" reportFile="rat-report.xml">
       <fileset dir="."/>
@@ -93,7 +93,7 @@
   </target>
 
   <target name="run-on-rat-output-styled" depends="-taskdef"
-          description="Runs Rat on its own source tree and creates a report using XSLT">
+          description="Runs RAT on its own source tree and creates a report using XSLT">
     <rat:report xmlns:rat="antlib:org.apache.rat.anttasks"
                 format="styled" reportFile="rat-report.txt">
       <stylesheet>
@@ -104,7 +104,7 @@
   </target>
 
   <target name="restrict" depends="-taskdef"
-          description="Run Rat on all files in this source tree that have been modified today">
+          description="Run RAT on all files in this source tree that have been modified today">
     <tstamp/>
     <rat:report xmlns:rat="antlib:org.apache.rat.anttasks">
       <restrict>
