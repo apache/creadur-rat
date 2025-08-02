@@ -278,25 +278,6 @@
         </configuration>
       </plugin>
       <plugin>
-        <artifactId>maven-antrun-plugin</artifactId>
-        <version>3.0.0</version>
-        <executions>
-          <execution>
-            <phase>pre-site</phase>
-            <configuration>
-              <target>
-                <copy todir="${basedir}/src/site/apt">
-                  <fileset dir="${project.build.outputDirectory}/classes/org/apache/rat" includes="generation-keywords.txt" />
-                </copy>
-              </target>
-            </configuration>
-            <goals>
-              <goal>run</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
         <artifactId>maven-clean-plugin</artifactId>
         <configuration>
           <filesets>
@@ -316,6 +297,31 @@
             </fileset>
           </filesets>
         </configuration>
+      </plugin>
+      <plugin>
+        <artifactId>maven-resources-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>copy-generation-keywords</id>
+            <phase>pre-site</phase>
+            <goals>
+              <goal>copy-resources</goal>
+            </goals>
+            <configuration>
+              <outputDirectory>${basedir}/src/site/apt</outputDirectory>
+              <overwrite>true</overwrite>
+              <resources>
+                <resource>
+                  <!-- target/classes/org/apache/rat/generation-keywords.txt -->
+                  <directory>${project.build.outputDirectory}/org/apache/rat</directory>
+                  <includes>
+                    <include>generation-keywords.txt</include>
+                  </includes>
+                </resource>
+              </resources>
+            </configuration>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
     <pluginManagement>
