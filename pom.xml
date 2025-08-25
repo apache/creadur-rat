@@ -285,11 +285,12 @@ agnostic home for software distribution comprehension and audit tools.
           </reportSet>
         </reportSets>
       </plugin>
+<!-- Disabled until https://github.com/apache/maven-changelog-plugin/issues/200 is fixed
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-changelog-plugin</artifactId>
         <version>2.3</version>
-      </plugin>
+      </plugin-->
       <!-- catch code tags -->
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
