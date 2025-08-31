@@ -145,13 +145,9 @@ public final class OptionCollection {
         Arg.processLogLevel(commandLine);
 
         ArgumentContext argumentContext = new ArgumentContext(workingDirectory, commandLine);
+
         if (commandLine.hasOption(HELP)) {
             helpCmd.accept(opts);
-            return null;
-        }
-
-        if (commandLine.hasOption(HELP_LICENSES)) {
-            new Licenses(createConfiguration(argumentContext), new PrintWriter(System.out)).printHelp();
             return null;
         }
 

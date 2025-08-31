@@ -44,7 +44,7 @@ import org.apache.rat.license.ILicenseFamily;
 import org.apache.rat.license.LicenseSetFactory;
 import org.apache.rat.license.LicenseSetFactory.LicenseFilter;
 import org.apache.rat.report.claim.ClaimStatistic;
-import org.apache.rat.test.AbstractOptionsProvider;
+import org.apache.rat.test.AbstractConfigurationOptionsProvider;
 import org.apache.rat.test.utils.Resources;
 import org.apache.rat.testhelpers.TextUtils;
 import org.apache.rat.testhelpers.XmlUtils;
@@ -69,7 +69,7 @@ public class RatCheckMojoTest {
 
     @AfterAll
     static void preserveData() {
-        AbstractOptionsProvider.preserveData(tempDir.toFile(), "unit");
+        AbstractConfigurationOptionsProvider.preserveData(tempDir.toFile(), "unit");
     }
 
     @AfterAll

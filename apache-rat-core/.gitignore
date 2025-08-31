@@ -1,1 +1,11 @@
-/target/
+# somethings
+!thingone
+thing*
+
+
+# some fish
+**/fish
+*_fish
+# some colorful directories
+red/
+blue/*/
