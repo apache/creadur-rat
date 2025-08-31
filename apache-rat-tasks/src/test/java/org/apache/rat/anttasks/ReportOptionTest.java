@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
 import org.apache.commons.cli.Option;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
-import org.apache.rat.test.AbstractOptionsProvider;
+import org.apache.rat.test.AbstractConfigurationOptionsProvider;
 import org.apache.rat.OptionCollectionTest;
 import org.apache.rat.ReportConfiguration;
 import org.apache.rat.testhelpers.TestingLog;
@@ -58,7 +58,7 @@ public class ReportOptionTest  {
 
     @AfterAll
     static void preserveData() {
-        AbstractOptionsProvider.preserveData(testPath.toFile(), "optionTest");
+        AbstractConfigurationOptionsProvider.preserveData(testPath.toFile(), "optionTest");
     }
 
     @ParameterizedTest
@@ -78,7 +78,7 @@ public class ReportOptionTest  {
         }
     }
 
-    final static class AntOptionsProvider extends AbstractOptionsProvider implements ArgumentsProvider {
+    final static class AntOptionsProvider extends AbstractConfigurationOptionsProvider implements ArgumentsProvider {
 
         public AntOptionsProvider() {
             super(BaseAntTask.unsupportedArgs(), testPath.toFile());

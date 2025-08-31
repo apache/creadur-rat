@@ -120,11 +120,11 @@ public class Reporter {
 
     /**
      * Outputs the report using the stylesheet and output specified in the configuration.
-     *
+     * @return the Claim statistic from the run.
      * @throws RatException on error.
      */
-    public void output() throws RatException {
-        output(configuration.getStyleSheet(), configuration.getOutput());
+    public ClaimStatistic output() throws RatException {
+        return output(configuration.getStyleSheet(), configuration.getOutput());
     }
 
     /**
@@ -133,10 +133,11 @@ public class Reporter {
      *
      * @param stylesheet the style sheet to use for XSLT formatting.
      * @param output the output stream to write to.
+     * @return the Claim statistic for the run.
      * @throws RatException on error.
      */
-    public void output(final IOSupplier<InputStream> stylesheet, final IOSupplier<OutputStream> output) throws RatException {
-        execute();
+    public ClaimStatistic output(final IOSupplier<InputStream> stylesheet, final IOSupplier<OutputStream> output) throws RatException {
+        ClaimStatistic result = execute();
         TransformerFactory tf = TransformerFactory.newInstance();
         Transformer transformer;
         try (OutputStream out = output.get();
@@ -149,6 +150,7 @@ public class Reporter {
             transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
             transformer.transform(new DOMSource(document),
                     new StreamResult(new OutputStreamWriter(out, StandardCharsets.UTF_8)));
+            return result;
         } catch (TransformerException | IOException e) {
             throw new RatException(e);
         }
