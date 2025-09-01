@@ -172,6 +172,9 @@ public abstract class AbstractOptionsProvider implements ArgumentsProvider {
     }
 
     final protected File writeFile(File baseDir, final String name, final Iterable<String> lines) {
+        if (baseDir == null) {
+            fail("base directory not specified");
+        }
         File file = new File(baseDir, name);
         try (PrintWriter writer = new PrintWriter(new FileWriter(file))) {
             lines.forEach(writer::println);
