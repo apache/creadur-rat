@@ -71,7 +71,7 @@ Apart from that you can file an issue in ASF's Jira: [project RAT](https://issue
 ## How to build RAT
 
 RAT is developed using the Maven build tool.  The simplest method for building RAT is to clone the 
-repository and execute `mvn install`.  The `./mvnw`, or `./mvnw.cmd` scripts can be run inplace of the `mvn` command.
+repository and execute `mvn install`.  The `./mvnw`, or `./mvnw.cmd` scripts can be run in place of the `mvn` command.
 
 The RAT build generates some source and copies test data, therefore it is necessary to run one of three commands to initially configure the system:
  * *package*: Will compile and create the packages for each module. For example `mvn package`.
@@ -82,11 +82,11 @@ To build without running the tests add `-Dmaven.test.skip=true` to the `mvn` or 
 
 RAT uses the previous release version during the build to verify it complies its own rules.
 
-### Profiles
+### Maven build profiles
 
 #### apache-release
 
-The "apache-release" profile creates the source release archive as part of the build process.
+The "apache-release" profile creates the source release archive as part of the build process and is only relevant during release builds.
 
 #### release-notes
 
@@ -94,7 +94,7 @@ The "release-notes" profile generates the `RELEASE-NOTES.txt` in the top-level d
 
 Usage: `mvn changes:announcement-generate -Prelease-notes [-Dchanges.version=nnn]`
 
-Defining changes.version creates the Release notice without first removing the SNAPSHOT suffix.
+Defining changes.version creates the release notice without first removing the SNAPSHOT suffix.
 
 Requires: file `src/changes/release-notes.vm` to format the changes.xml.
 
@@ -103,10 +103,9 @@ Requires: file `src/changes/release-notes.vm` to format the changes.xml.
 To import RAT into Eclipse, 
  1. Clone the repository.
  2. Import the directory into Eclipse as an existing Maven project.
- 3. Right click the `creadur-rat` project and execute "Run As -> maven install"
+ 3. Right click the `creadur-rat` project and execute "Run As -> Maven install"
  
 The above steps will generate the necessary source code as well as testing resources.
-
 
 ### Using IntelliJ
 
@@ -119,6 +118,3 @@ To import RAT into IntelliJ
  6. Select "Run Maven Build"
  
 The above steps will generate the necessary source code as well as testing resources.
- 
- 
-
