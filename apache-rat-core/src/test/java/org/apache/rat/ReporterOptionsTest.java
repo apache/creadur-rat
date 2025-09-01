@@ -24,6 +24,7 @@ import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
@@ -79,7 +80,15 @@ public class ReporterOptionsTest {
 
     private static void delete(File file) {
         if (file.exists()) {
-            boolean ignored = file.delete();
+            if (file.isDirectory()) {
+                try {
+                    FileUtils.deleteDirectory(file);
+                } catch (IOException ignore) {
+                    //
+                }
+            } else {
+                boolean ignored = file.delete();
+            }
         }
     }
 
@@ -212,7 +221,14 @@ public class ReporterOptionsTest {
         }
 
         private void configureSourceDir(Option option) {
+            configureSourceDir(option, false);
+        }
+
+        private void configureSourceDir(Option option, boolean forceClean) {
             sourceDir = new File(baseDir, OptionFormatter.getName(option));
+            if (forceClean) {
+                delete(sourceDir);
+            }
             mkDir(sourceDir);
         }
 
@@ -318,7 +334,7 @@ public class ReporterOptionsTest {
         }
 
         protected void licensesDeniedFileTest() {
-            File outputFile = writeFile("licensesDenied.txt", Collections.singletonList("ILLUMOS"));
+            File outputFile = writeFile(baseDir, "licensesDenied.txt", Collections.singletonList("ILLUMOS"));
             execLicensesDeniedTest(Arg.LICENSES_DENIED_FILE.find("licenses-denied-file"),
                     new String[]{outputFile.getAbsolutePath()});
         }
@@ -435,7 +451,8 @@ public class ReporterOptionsTest {
         }
 
         private void excludeFileTest(final Option option) {
-            File outputFile = writeFile("exclude.txt", Arrays.asList(EXCLUDE_ARGS));
+            configureSourceDir(option);
+            File outputFile = writeFile(baseDir, "exclude.txt", Arrays.asList(EXCLUDE_ARGS));
             execExcludeTest(option, new String[]{outputFile.getAbsolutePath()});
         }
 
@@ -614,7 +631,7 @@ public class ReporterOptionsTest {
         }
 
         private void includeFileTest(final Option option) {
-            File outputFile = writeFile("include.txt", Arrays.asList(INCLUDE_ARGS));
+            File outputFile = writeFile(baseDir, "include.txt", Arrays.asList(INCLUDE_ARGS));
             execIncludeTest(option, new String[]{outputFile.getAbsolutePath()});
         }
 
@@ -728,9 +745,9 @@ public class ReporterOptionsTest {
         }
 
         protected void licenseFamiliesApprovedFileTest() {
-            File outputFile = writeFile("familiesApproved.txt", Collections.singletonList("catz"));
-            execLicenseFamiliesApprovedTest(Arg.FAMILIES_APPROVED_FILE.find("license-families-approved-file"),
-                    new String[]{outputFile.getAbsolutePath()});
+            Option option = Arg.FAMILIES_APPROVED_FILE.find("license-families-approved-file");
+            File outputFile = writeFile(baseDir, "familiesApproved.txt", Collections.singletonList("catz"));
+            execLicenseFamiliesApprovedTest(option, new String[]{outputFile.getAbsolutePath()});
         }
 
         protected void licenseFamiliesApprovedTest() {
@@ -766,7 +783,7 @@ public class ReporterOptionsTest {
         }
 
         protected void licenseFamiliesDeniedFileTest() {
-            File outputFile = writeFile("familiesDenied.txt", Collections.singletonList("BSD-3"));
+            File outputFile = writeFile(baseDir,"familiesDenied.txt", Collections.singletonList("BSD-3"));
             execLicenseFamiliesDeniedTest(Arg.FAMILIES_DENIED_FILE.find("license-families-denied-file"),
                     new String[]{outputFile.getAbsolutePath()});
         }
@@ -855,7 +872,7 @@ public class ReporterOptionsTest {
         }
 
         protected void licensesApprovedFileTest() {
-            File outputFile = writeFile("licensesApproved.txt", Collections.singletonList("GPL1"));
+            File outputFile = writeFile(baseDir, "licensesApproved.txt", Collections.singletonList("GPL1"));
             execLicensesApprovedTest(Arg.LICENSES_APPROVED_FILE.find("licenses-approved-file"),
                     new String[]{outputFile.getAbsolutePath()});
         }
@@ -1063,12 +1080,13 @@ public class ReporterOptionsTest {
         private void listLicenses(final Option option) {
             XPath xPath = XPathFactory.newInstance().newXPath();
             String[] args = {null};
-            File outFile = new File(sourceDir, "out.xml");
-            ImmutablePair<Option, String[]> outputFile = ImmutablePair.of(Arg.OUTPUT_FILE.option(), new String[]{outFile.getAbsolutePath()});
-            ImmutablePair<Option, String[]> stylesheet = ImmutablePair.of(Arg.OUTPUT_STYLE.option(), new String[]{StyleSheets.XML.arg()});
 
             try {
                 configureSourceDir(option);
+                File outFile = new File(sourceDir, "out.xml");
+                delete(outFile);
+                ImmutablePair<Option, String[]> outputFile = ImmutablePair.of(Arg.OUTPUT_FILE.option(), new String[]{outFile.getAbsolutePath()});
+                ImmutablePair<Option, String[]> stylesheet = ImmutablePair.of(Arg.OUTPUT_STYLE.option(), new String[]{StyleSheets.XML.arg()});
                 for (LicenseSetFactory.LicenseFilter filter : LicenseSetFactory.LicenseFilter.values()) {
                     args[0] = filter.name();
                     ReportConfiguration config = generateConfig(outputFile, stylesheet, ImmutablePair.of(option, args));
@@ -1109,12 +1127,13 @@ public class ReporterOptionsTest {
         private void listFamilies(final Option option) {
             XPath xPath = XPathFactory.newInstance().newXPath();
             String[] args = {null};
-            File outFile = new File(sourceDir, "out.xml");
-            ImmutablePair<Option, String[]> outputFile = ImmutablePair.of(Arg.OUTPUT_FILE.option(), new String[]{outFile.getAbsolutePath()});
-            ImmutablePair<Option, String[]> stylesheet = ImmutablePair.of(Arg.OUTPUT_STYLE.option(), new String[]{StyleSheets.XML.arg()});
 
             try {
                 configureSourceDir(option);
+                File outFile = new File(sourceDir, "out.xml");
+                delete(outFile);
+                ImmutablePair<Option, String[]> outputFile = ImmutablePair.of(Arg.OUTPUT_FILE.option(), new String[]{outFile.getAbsolutePath()});
+                ImmutablePair<Option, String[]> stylesheet = ImmutablePair.of(Arg.OUTPUT_STYLE.option(), new String[]{StyleSheets.XML.arg()});
                 for (LicenseSetFactory.LicenseFilter filter : LicenseSetFactory.LicenseFilter.values()) {
                     args[0] = filter.name();
                     ReportConfiguration config = generateConfig(outputFile, stylesheet, ImmutablePair.of(option, args));
@@ -1155,17 +1174,18 @@ public class ReporterOptionsTest {
         private void archiveTest(final Option option) {
             XPath xPath = XPathFactory.newInstance().newXPath();
             String[] args = {null};
-            File outFile = new File(sourceDir, "out.xml");
-            ImmutablePair<Option, String[]> outputFile = ImmutablePair.of(Arg.OUTPUT_FILE.option(), new String[]{outFile.getAbsolutePath()});
-            ImmutablePair<Option, String[]> stylesheet = ImmutablePair.of(Arg.OUTPUT_STYLE.option(), new String[]{StyleSheets.XML.arg()});
 
             try {
                 configureSourceDir(option);
+                File outFile = new File(sourceDir, "out.xml");
+                delete(outFile);
+                ImmutablePair<Option, String[]> outputFile = ImmutablePair.of(Arg.OUTPUT_FILE.option(), new String[]{outFile.getAbsolutePath()});
+                ImmutablePair<Option, String[]> stylesheet = ImmutablePair.of(Arg.OUTPUT_STYLE.option(), new String[]{StyleSheets.XML.arg()});
                 File archive = Resources.getResourceFile("tikaFiles/archive/dummy.jar");
                 File localArchive = new File(sourceDir, "dummy.jar");
                 try (InputStream in = Files.newInputStream(archive.toPath());
                      OutputStream out = Files.newOutputStream(localArchive.toPath())) {
-                    IOUtils.copy(in, out);
+                     IOUtils.copy(in, out);
                 }
 
                 for (ReportConfiguration.Processing proc : ReportConfiguration.Processing.values()) {
@@ -1206,12 +1226,13 @@ public class ReporterOptionsTest {
         private void standardTest(final Option option) {
             XPath xPath = XPathFactory.newInstance().newXPath();
             String[] args = {null};
-            File outFile = new File(sourceDir, "out.xml");
-            ImmutablePair<Option, String[]> outputFile = ImmutablePair.of(Arg.OUTPUT_FILE.option(), new String[]{outFile.getAbsolutePath()});
-            ImmutablePair<Option, String[]> stylesheet = ImmutablePair.of(Arg.OUTPUT_STYLE.option(), new String[]{StyleSheets.XML.arg()});
 
             try {
                 configureSourceDir(option);
+                File outFile = new File(sourceDir, "out.xml");
+                ImmutablePair<Option, String[]> outputFile = ImmutablePair.of(Arg.OUTPUT_FILE.option(), new String[]{outFile.getAbsolutePath()});
+                ImmutablePair<Option, String[]> stylesheet = ImmutablePair.of(Arg.OUTPUT_STYLE.option(), new String[]{StyleSheets.XML.arg()});
+
                 writeFile("Test.java", Arrays.asList("/*\n", "SPDX-License-Identifier: Apache-2.0\n",
                         "*/\n\n", "class Test {}\n"));
                 writeFile("Missing.java", Arrays.asList("/* no license */\n\n", "class Test {}\n"));
