@@ -76,11 +76,9 @@ public class ReportTest extends AbstractRatAntTaskTest {
             StringBuilder sb = new StringBuilder(documentName.getBaseName() + " DOES exist (RAT CHECK)\n")
                     .append("antfile: ").append(antFile).append("\n")
                     .append("baseFile: ").append(baseFile).append("\n");
-            LoggerFactory.getLogger(ReportTest.class).warn(sb.toString());
+            System.err.println(sb.toString());
     }
         System.setProperty(MagicNames.PROJECT_BASEDIR, documentName.getBaseName());
-        LoggerFactory.getLogger(ReportTest.class).warn(getAntFile().getAbsolutePath());
-        LoggerFactory.getLogger(ReportTest.class).warn(System.getProperty(MagicTestNames.TEST_ROOT_DIRECTORY), getAntFile().getPath());
         super.setUp();
     }
     @Override
