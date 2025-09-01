@@ -43,6 +43,7 @@ import org.apache.tools.ant.Target;
 import org.apache.tools.ant.Task;
 import org.apache.tools.ant.UnknownElement;
 
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -60,6 +61,14 @@ public class ReportTest extends AbstractRatAntTaskTest {
             baseFile = baseFile.getParentFile();
         }
         documentName = DocumentName.builder(antFile).setBaseName(baseFile).build();
+
+        File f = new File(documentName.getBaseName());
+        if (!f.exists()) {
+            StringBuilder sb = new StringBuilder(documentName.getBaseName() + " does not exist (RAT CHECK)\n")
+                    .append("antfile: ").append(antFile).append("\n")
+                            .append("baseFile: ").append(baseFile).append("\n");
+            Assertions.fail(sb.toString());
+        }
         System.setProperty(MagicNames.PROJECT_BASEDIR, documentName.getBaseName());
         super.setUp();
     }
