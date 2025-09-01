@@ -24,9 +24,11 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.regex.Pattern;
+import org.apache.tools.ant.Project;
 import org.junit.jupiter.api.BeforeEach;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.fail;
 
 public abstract class AbstractRatAntTaskTest {
     private static final File tempDir = new File("target/anttasks");
@@ -41,6 +43,10 @@ public abstract class AbstractRatAntTaskTest {
 
     @BeforeEach
     public void setUp() {
+        File f = new File(getAntFile().getPath());
+        if (!f.exists()) {
+            fail(f + " does not exist (RAT CHECK)");
+        }
         buildRule.configureProject(getAntFile().getPath());
         buildRule.getProject().setProperty("output.dir", tempDir.getAbsolutePath());
         buildRule.getProject().setProperty("resource.dir", getAntFile().getParent());
