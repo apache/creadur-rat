@@ -28,7 +28,8 @@ import org.apache.rat.commandline.ArgumentContext;
 import org.apache.rat.document.DocumentName;
 import org.apache.rat.license.LicenseSetFactory;
 import org.apache.rat.report.IReportable;
-import org.apache.rat.test.AbstractOptionsProvider;
+import org.apache.rat.test.AbstractConfigurationOptionsProvider;
+import org.apache.rat.test.utils.OptionFormatter;
 import org.apache.rat.testhelpers.TestingLog;
 import org.apache.rat.utils.DefaultLog;
 import org.apache.rat.utils.Log;
@@ -61,7 +62,7 @@ public class OptionCollectionTest {
 
     @AfterAll
     static void preserveData() {
-        AbstractOptionsProvider.preserveData(testPath.toFile(), "optionTest");
+        AbstractConfigurationOptionsProvider.preserveData(testPath.toFile(), "optionTest");
     }
 
     /**
@@ -80,15 +81,6 @@ public class OptionCollectionTest {
     @EnabledOnOs(OS.WINDOWS)
     void cleanUp() {
         System.gc();
-    }
-
-    /**
-     * Returns the command line format (with '--' prefix) for the Option.
-     * @param opt the option to process.
-     * @return the command line option.
-     */
-    private static String longOpt(Option opt) {
-        return "--" + opt.getLongOpt();
     }
 
     @Test
@@ -166,14 +158,14 @@ public class OptionCollectionTest {
     /**
      * A class to provide the Options and tests to the testOptionsUpdateConfig.
      */
-    static class CliOptionsProvider extends AbstractOptionsProvider implements ArgumentsProvider {
+    static class CliOptionsProvider extends AbstractConfigurationOptionsProvider implements ArgumentsProvider {
 
         /** A flag to determine if help was called */
         final AtomicBoolean helpCalled = new AtomicBoolean(false);
 
         @Override
         public void helpTest() {
-            String[] args = { longOpt(OptionCollection.HELP) };
+            String[] args = { OptionFormatter.longOpt(OptionCollection.HELP) };
             try {
                 ReportConfiguration config = OptionCollection.parseCommands(testPath.toFile(), args, o -> helpCalled.set(true), true);
                 assertThat(config).as("Should not have config").isNull();
