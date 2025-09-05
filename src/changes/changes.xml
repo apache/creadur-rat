@@ -72,6 +72,9 @@ The <action> type attribute can be one of:
     </release>
     -->
     <release version="0.17-SNAPSHOT" date="xxxx-yy-zz" description="Current SNAPSHOT - release to be done">
+      <action issue="RAT-474" type="fix" dev="claudenw">
+        Rework handling of release notes and test resource propagation in builds to ease project import into Eclipse IDE and adapt build howto.
+      </action>
       <action issue="RAT-444" type="fix" dev="pottlinger">
         Fix missing headlines when site templates are handled/filtered by Velocity.
       </action>

@@ -55,61 +55,9 @@
             </excludes>
           </configuration>
         </plugin>
-        <!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
-        <plugin>
-          <groupId>org.eclipse.m2e</groupId>
-          <artifactId>lifecycle-mapping</artifactId>
-          <version>1.0.0</version>
-          <configuration>
-            <lifecycleMappingMetadata>
-              <pluginExecutions>
-                <pluginExecution>
-                  <pluginExecutionFilter>
-                    <groupId>
-        							com.github.jochenw.jmp
-        						</groupId>
-                    <artifactId>
-        							jwigrv-maven-plugin
-        						</artifactId>
-                    <versionRange>[0.2,)</versionRange>
-                    <goals>
-                      <goal>run</goal>
-                    </goals>
-                  </pluginExecutionFilter>
-                  <action>
-                    <ignore/>
-                  </action>
-                </pluginExecution>
-              </pluginExecutions>
-            </lifecycleMappingMetadata>
-          </configuration>
-        </plugin>
       </plugins>
     </pluginManagement>
     <plugins>
-      <plugin>
-        <groupId>com.github.jochenw.jmp</groupId>
-        <artifactId>jwigrv-maven-plugin</artifactId>
-        <version>0.2</version>
-        <executions>
-          <!-- Run Groovy script, which copies resource files from the parent project. -->
-          <execution>
-            <phase>generate-resources</phase>
-            <goals>
-              <goal>run</goal>
-            </goals>
-            <configuration>
-              <scriptFile>src/main/build-grv/copyResourcesFromParentProject.groovy</scriptFile>
-              <scriptProperties>
-                <!-- Where -->
-                <sourceDir>${project.basedir}/..</sourceDir>
-                <targetDir>${project.build.outputDirectory}/META-INF</targetDir>
-                <filesToCopy>RELEASE_NOTES.txt</filesToCopy>
-              </scriptProperties>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>
@@ -185,24 +133,45 @@
         </executions>
       </plugin>
       <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-dependency-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>unpack testdata</id>
-            <phase>generate-test-resources</phase>
-            <goals>
-              <goal>unpack</goal>
-            </goals>
-            <configuration>
-              <artifact>org.apache.rat:apache-rat-testdata:${project.parent.version}</artifact>
-              <outputDirectory>${project.build.testOutputDirectory}</outputDirectory>
-              <overWriteIfNewer>true</overWriteIfNewer>
-              <excludes>META-INF/**</excludes>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
+	    <artifactId>maven-resources-plugin</artifactId>
+	    <executions>
+	        <execution>
+	            <id>copy-release-notes</id>
+	            <phase>generate-resources</phase>
+	            <goals>
+	                <goal>copy-resources</goal>
+	            </goals>
+	            <configuration>
+                	<outputDirectory>${project.build.outputDirectory}/META-INF</outputDirectory>
+	                <overwrite>true</overwrite>
+	                <resources>
+	                    <resource>
+	                    <directory>${project.basedir}/..</directory>
+	                        <includes>
+	                        	<include>RELEASE_NOTES.txt</include>
+	         				</includes>                  
+	                    </resource>
+	                </resources>
+	            </configuration>
+	        </execution>
+	        <execution>
+	            <id>copy-example-data</id>
+	            <phase>generate-resources</phase>
+	            <goals>
+	                <goal>copy-resources</goal>
+	            </goals>
+	            <configuration>
+	                <outputDirectory>${project.build.testOutputDirectory}/examples</outputDirectory>
+	                <overwrite>true</overwrite>
+	                <resources>
+	                    <resource>
+	                        <directory>../apache-rat-testdata/src/main/resources/examples</directory>                      
+	                    </resource>
+	                </resources>
+	            </configuration>
+	        </execution>
+	    </executions>
+	  </plugin>
     </plugins>
   </build>
   <dependencies>

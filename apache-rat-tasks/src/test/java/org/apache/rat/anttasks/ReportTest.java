@@ -39,13 +39,16 @@ import org.apache.rat.ReportConfigurationTest;
 import org.apache.rat.document.DocumentName;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.MagicNames;
+import org.apache.tools.ant.MagicTestNames;
 import org.apache.tools.ant.Target;
 import org.apache.tools.ant.Task;
 import org.apache.tools.ant.UnknownElement;
 
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 
 public class ReportTest extends AbstractRatAntTaskTest {
@@ -54,12 +57,27 @@ public class ReportTest extends AbstractRatAntTaskTest {
     private DocumentName documentName;
 
     @BeforeEach
-    public void setUp()  {
+    public void setUp() {
         File baseFile = antFile.getParentFile();
         for (int i = 0; i < 4; i++) {
             baseFile = baseFile.getParentFile();
         }
         documentName = DocumentName.builder(antFile).setBaseName(baseFile).build();
+
+        File f = new File(documentName.getBaseName());
+
+
+        if (!f.exists()) {
+            StringBuilder sb = new StringBuilder(documentName.getBaseName() + " does not exist (RAT CHECK)\n")
+                    .append("antfile: ").append(antFile).append("\n")
+                    .append("baseFile: ").append(baseFile).append("\n");
+            Assertions.fail(sb.toString());
+        } else {
+            StringBuilder sb = new StringBuilder(documentName.getBaseName() + " DOES exist (RAT CHECK)\n")
+                    .append("antfile: ").append(antFile).append("\n")
+                    .append("baseFile: ").append(baseFile).append("\n");
+            System.err.println(sb.toString());
+    }
         System.setProperty(MagicNames.PROJECT_BASEDIR, documentName.getBaseName());
         super.setUp();
     }
