@@ -39,7 +39,6 @@ import org.apache.rat.ReportConfigurationTest;
 import org.apache.rat.document.DocumentName;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.MagicNames;
-import org.apache.tools.ant.MagicTestNames;
 import org.apache.tools.ant.Target;
 import org.apache.tools.ant.Task;
 import org.apache.tools.ant.UnknownElement;
@@ -48,7 +47,6 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 
 public class ReportTest extends AbstractRatAntTaskTest {

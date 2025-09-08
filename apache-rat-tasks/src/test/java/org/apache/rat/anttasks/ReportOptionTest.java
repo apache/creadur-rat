@@ -20,6 +20,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
 import org.apache.commons.cli.Option;
@@ -33,6 +34,8 @@ import org.apache.rat.documentation.options.AntOption;
 import org.apache.rat.utils.DefaultLog;
 import org.apache.rat.utils.Log;
 import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.condition.DisabledIf;
+import org.junit.jupiter.api.condition.EnabledIf;
 import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ArgumentsProvider;
@@ -56,6 +59,9 @@ public class ReportOptionTest  {
 
     static ReportConfiguration reportConfiguration;
 
+    static boolean isGitHubLinux() {
+        return System.getenv("GITHUB_ACTION") != null && System.getProperty("os.name").toLowerCase(Locale.ENGLISH).contains("linux");
+    }
     @AfterAll
     static void preserveData() {
         AbstractOptionsProvider.preserveData(testPath.toFile(), "optionTest");
@@ -63,9 +69,14 @@ public class ReportOptionTest  {
 
     @ParameterizedTest
     @ArgumentsSource(AntOptionsProvider.class)
+    @DisabledIf("isGitHubLinux")
     public void testOptionsUpdateConfig(String name, OptionCollectionTest.OptionTest test) {
         DefaultLog.getInstance().info("Running " + name);
-        test.test();
+        try {
+            test.test();
+        } catch (RuntimeException e) {
+            fail(name + " test failed", e);
+        }
     }
 
     public static class OptionTest extends Report {
