@@ -64,7 +64,6 @@ public class ReportTest extends AbstractRatAntTaskTest {
 
         File f = new File(documentName.getBaseName());
 
-
         if (!f.exists()) {
             StringBuilder sb = new StringBuilder(documentName.getBaseName() + " does not exist (RAT CHECK)\n")
                     .append("antfile: ").append(antFile).append("\n")

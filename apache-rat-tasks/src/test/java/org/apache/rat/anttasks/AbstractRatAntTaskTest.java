@@ -24,14 +24,9 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.regex.Pattern;
-import org.apache.tools.ant.MagicNames;
-import org.apache.tools.ant.MagicTestNames;
-import org.apache.tools.ant.Project;
 import org.junit.jupiter.api.BeforeEach;
-import org.slf4j.LoggerFactory;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.fail;
 
 public abstract class AbstractRatAntTaskTest {
     private static final File tempDir = new File("target/anttasks");
@@ -46,10 +41,6 @@ public abstract class AbstractRatAntTaskTest {
 
     @BeforeEach
     public void setUp() {
-        System.err.println("Antfile: "+getAntFile().toString());
-        System.err.println("TEST_ROOT_DIRECTORY: "+System.getProperty(MagicTestNames.TEST_ROOT_DIRECTORY));
-        System.err.println("tempdir: "+tempDir.toString());
-
         buildRule.configureProject(getAntFile().getPath());
         buildRule.getProject().setProperty("output.dir", tempDir.getAbsolutePath());
         buildRule.getProject().setProperty("resource.dir", getAntFile().getParent());
