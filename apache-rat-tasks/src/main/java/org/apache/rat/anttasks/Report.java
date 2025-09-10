@@ -403,7 +403,7 @@ public class Report extends BaseAntTask {
     }
 
     /**
-     * Creates the ReportConfiguration from the ant options.
+     * Creates the ReportConfiguration from the Ant options.
      *
      * @return the ReportConfiguration.
      */

@@ -67,3 +67,54 @@ final form and so library users are recommended to either use the supplied style
 If you want to contribute, feel free to branch from master and provide a pull request via GitHub.
 You should file a contributor license agreement in order to properly handle your input.
 Apart from that you can file an issue in ASF's Jira: [project RAT](https://issues.apache.org/jira/browse/RAT)
+
+## How to build RAT
+
+RAT is developed using the Maven build tool.  The simplest method for building RAT is to clone the 
+repository and execute `mvn install`.  The `./mvnw`, or `./mvnw.cmd` scripts can be run in place of the `mvn` command.
+
+The RAT build generates some source and copies test data, therefore it is necessary to run one of three commands to initially configure the system:
+ * *package*: Will compile and create the packages for each module. For example `mvn package`.
+ * *verify*: Will create the package and verify that the packaging is correct. For example `./mvnw verify`
+ * *install*: Will create the packages and install them in your local repository. For example `mvn install`.
+
+To build without running the tests add `-Dmaven.test.skip=true` to the `mvn` or `mvnw` command line.
+
+RAT uses the previous release version during the build to verify it complies its own rules.
+
+### Maven build profiles
+
+#### apache-release
+
+The "apache-release" profile creates the source release archive as part of the build process and is only relevant during release builds.
+
+#### release-notes
+
+The "release-notes" profile generates the `RELEASE-NOTES.txt` in the top-level directory from the `src/changes/changes.xml` file using the [maven-changes-plugin](https://maven.apache.org/plugins/maven-changes-plugin/) plugin.
+
+Usage: `mvn changes:announcement-generate -Prelease-notes [-Dchanges.version=nnn]`
+
+Defining changes.version creates the release notice without first removing the SNAPSHOT suffix.
+
+Requires: file `src/changes/release-notes.vm` to format the changes.xml.
+
+### Using Eclipse
+
+To import RAT into Eclipse, 
+ 1. Clone the repository.
+ 2. Import the directory into Eclipse as an existing Maven project.
+ 3. Right click the `creadur-rat` project and execute "Run As -> Maven install"
+ 
+The above steps will generate the necessary source code as well as testing resources.
+
+### Using IntelliJ
+
+To import RAT into IntelliJ 
+ 1. Clone the repository.
+ 2. Import the directory into IntelliJ as a project using "File -> new -> Project from Existing Sources..."
+ 3. Select "maven" type for import.
+ 4. Select the maven icon from the right menu.
+ 5. Right click on  "Apache Creadur Rat -> Lifecycle -> verify"
+ 6. Select "Run Maven Build"
+ 
+The above steps will generate the necessary source code as well as testing resources.
