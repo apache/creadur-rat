@@ -35,7 +35,6 @@ import org.apache.rat.utils.DefaultLog;
 import org.apache.rat.utils.Log;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.condition.DisabledIf;
-import org.junit.jupiter.api.condition.EnabledIf;
 import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ArgumentsProvider;
@@ -62,6 +61,7 @@ public class ReportOptionTest  {
     static boolean isGitHubLinux() {
         return System.getenv("GITHUB_ACTION") != null && System.getProperty("os.name").toLowerCase(Locale.ENGLISH).contains("linux");
     }
+
     @AfterAll
     static void preserveData() {
         AbstractOptionsProvider.preserveData(testPath.toFile(), "optionTest");

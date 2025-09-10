@@ -64,17 +64,17 @@ public class ReportTest extends AbstractRatAntTaskTest {
 
         File f = new File(documentName.getBaseName());
 
+        StringBuilder sb = new StringBuilder(documentName.getBaseName());
+                    sb.append("antfile: ").append(antFile).append("\n")
+                            .append("baseFile: ").append(baseFile).append("\n");
         if (!f.exists()) {
-            StringBuilder sb = new StringBuilder(documentName.getBaseName() + " does not exist (RAT CHECK)\n")
-                    .append("antfile: ").append(antFile).append("\n")
-                    .append("baseFile: ").append(baseFile).append("\n");
+            sb.append(" does not exist (RAT CHECK)\n");
+            System.err.println(sb);
             Assertions.fail(sb.toString());
-        } else {
-            StringBuilder sb = new StringBuilder(documentName.getBaseName() + " DOES exist (RAT CHECK)\n")
-                    .append("antfile: ").append(antFile).append("\n")
-                    .append("baseFile: ").append(baseFile).append("\n");
-            System.err.println(sb.toString());
-    }
+        }
+
+        sb.append(" DOES exist (RAT CHECK)\n");
+        System.err.println(sb);
         System.setProperty(MagicNames.PROJECT_BASEDIR, documentName.getBaseName());
         super.setUp();
     }
