@@ -298,6 +298,31 @@
           </filesets>
         </configuration>
       </plugin>
+      <plugin>
+        <artifactId>maven-resources-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>copy-generation-keywords</id>
+            <phase>pre-site</phase>
+            <goals>
+              <goal>copy-resources</goal>
+            </goals>
+            <configuration>
+              <outputDirectory>${basedir}/src/site/apt</outputDirectory>
+              <overwrite>true</overwrite>
+              <resources>
+                <resource>
+                  <!-- target/classes/org/apache/rat/generation-keywords.txt -->
+                  <directory>${project.build.outputDirectory}/org/apache/rat</directory>
+                  <includes>
+                    <include>generation-keywords.txt</include>
+                  </includes>
+                </resource>
+              </resources>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
     </plugins>
     <pluginManagement>
       <plugins>
