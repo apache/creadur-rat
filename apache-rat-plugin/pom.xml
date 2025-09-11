@@ -147,29 +147,29 @@
     </pluginManagement>
     <plugins>
       <plugin>
-	    <artifactId>maven-resources-plugin</artifactId>
-	    <executions>
-	        <execution>
-	            <id>copy-release-notes</id>
-	            <phase>generate-resources</phase>
-	            <goals>
-	                <goal>copy-resources</goal>
-	            </goals>
-	            <configuration>
-                	<outputDirectory>${project.build.outputDirectory}/META-INF</outputDirectory>
-	                <overwrite>true</overwrite>
-	                <resources>
-	                    <resource>
-	                    <directory>${project.basedir}/..</directory>
-	                        <includes>
-	                        	<include>RELEASE_NOTES.txt</include>
-	         				</includes>                  
-	                    </resource>
-	                </resources>
-	            </configuration>
-	        </execution>
-	    </executions>
-	  </plugin>
+        <artifactId>maven-resources-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>copy-release-notes</id>
+            <phase>generate-resources</phase>
+            <goals>
+              <goal>copy-resources</goal>
+            </goals>
+            <configuration>
+              <outputDirectory>${project.build.outputDirectory}/META-INF</outputDirectory>
+              <overwrite>true</overwrite>
+              <resources>
+                <resource>
+                  <directory>${project.basedir}/..</directory>
+                  <includes>
+                    <include>RELEASE_NOTES.txt</include>
+                  </includes>
+                </resource>
+              </resources>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>exec-maven-plugin</artifactId>
