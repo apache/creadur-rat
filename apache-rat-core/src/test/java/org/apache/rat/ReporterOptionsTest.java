@@ -986,7 +986,7 @@ public class ReporterOptionsTest {
                             TextUtils.assertContainsExactly(1, "<resource encoding=\"ISO-8859-1\" mediaType=\"text/plain\" name=\"/stylesheet\" type=\"STANDARD\">", actualText);
                             break;
                         case UNAPPROVED_LICENSES:
-                            TextUtils.assertContainsExactly(1, "Files with unapproved licenses:\n  /stylesheet", actualText);
+                            TextUtils.assertContainsExactly(1, "Files with unapproved licenses:" + System.lineSeparator() + "  /stylesheet", actualText);
                             break;
                         default:
                             fail("No test for stylesheet " + sheet);
