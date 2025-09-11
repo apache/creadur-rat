@@ -975,7 +975,7 @@ public class ReporterOptionsTest {
                     String actualText = baos.toString(StandardCharsets.UTF_8.name());
                     switch (sheet) {
                         case MISSING_HEADERS:
-                            TextUtils.assertContainsExactly(1, "Files with missing headers:\n" +
+                            TextUtils.assertContainsExactly(1, "Files with missing headers:" + System.lineSeparator() +
                                     "  /stylesheet", actualText);
                             break;
                         case PLAIN:
