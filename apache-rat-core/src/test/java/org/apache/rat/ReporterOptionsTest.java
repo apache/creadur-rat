@@ -3,7 +3,6 @@ package org.apache.rat;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -115,7 +114,12 @@ public class ReporterOptionsTest {
     @ArgumentsSource(ReporterOptionsProvider.class)
     public void testOptionsUpdateConfig(String name, OptionCollectionTest.OptionTest test) {
         DefaultLog.getInstance().log(Log.Level.INFO, "Running test for: " + name);
-        test.test();
+        try {
+            test.test();
+        } catch (Exception e) {
+            fail("failed running "+name, e);
+            throw e;
+        }
     }
 
     /**
