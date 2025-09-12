@@ -40,12 +40,14 @@ Document document = XmlUtils.toDom(new FileInputStream(args[0]))
 XPath xPath = XPathFactory.newInstance().newXPath()
 
 List<String> ignoredFiles = new ArrayList<>(Arrays.asList(
-        "/dir1/dir1.txt",
-        "/dir1/.gitignore",
-        "/dir2/dir2.md",
-        "/dir3/dir3.log",
         "/.gitignore",
-        "/root.md"))
+        "/root.md",
+        "/dir3/dir3.log",
+        "/dir1/.gitignore",
+        "/dir1/dir1.txt",
+//        "/dir1/file1.log",  This file is excluded due to bug noted in RAT-476
+        "/dir2/dir2.md",
+))
 
 NodeList nodeList = XmlUtils.getNodeList(document, xPath, "/rat-report/resource[@type='IGNORED']")
 for (int i = 0 ; i < nodeList.getLength(); i++) {
