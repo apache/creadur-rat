@@ -25,7 +25,6 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
-import org.apache.rat.OptionCollectionTest;
 import org.apache.rat.ReportConfiguration;
 import org.apache.rat.ReporterTest;
 import org.apache.rat.commandline.Arg;
@@ -33,7 +32,6 @@ import org.apache.rat.commandline.StyleSheets;
 import org.apache.rat.config.exclusion.StandardCollection;
 import org.apache.rat.document.DocumentNameMatcher;
 import org.apache.rat.document.DocumentName;
-import org.apache.rat.document.DocumentNameMatcherTest;
 import org.apache.rat.license.ILicense;
 import org.apache.rat.license.ILicenseFamily;
 import org.apache.rat.license.LicenseSetFactory;
@@ -42,30 +40,20 @@ import org.apache.rat.test.utils.Resources;
 import org.apache.rat.testhelpers.TextUtils;
 import org.apache.rat.utils.DefaultLog;
 import org.apache.rat.utils.Log.Level;
-import org.junit.jupiter.api.extension.ExtensionContext;
-import org.junit.jupiter.params.provider.Arguments;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintStream;
-import java.io.PrintWriter;
 import java.nio.file.Files;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
-import java.util.Map;
 import java.util.SortedSet;
-import java.util.TreeMap;
-import java.util.stream.Stream;
-import org.junit.jupiter.params.provider.ArgumentsProvider;
 
 import static org.apache.rat.commandline.Arg.HELP_LICENSES;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -92,14 +80,6 @@ public abstract class AbstractConfigurationOptionsProvider extends AbstractOptio
         } catch (IOException e) {
             System.err.format("Unable to copy data from %s to %s%n", baseDir, recordPath);
         }
-    }
-
-    /**
-     * Gets the document name based on the baseDir.
-     * @return The document name based on the baseDir.
-     */
-    protected DocumentName baseName() {
-        return DocumentName.builder(baseDir).build();
     }
 
     /**
@@ -852,6 +832,4 @@ public abstract class AbstractConfigurationOptionsProvider extends AbstractOptio
             fail(e.getMessage());
         }
     }
-
-
 }

@@ -270,6 +270,7 @@ public class ReporterOptionsTest {
 
                 Reporter reporter = new Reporter(config);
                 ClaimStatistic claimStatistic = reporter.execute();
+                assertThat(claimStatistic).isNotNull();
                 String contents = String.join("\n", IOUtils.readLines(new FileReader(testFile)));
                 assertThat(contents).isEqualTo("class NoLicense {}");
                 assertThat(resultFile).exists();
@@ -577,7 +578,6 @@ public class ReporterOptionsTest {
                 dir = new File(sourceDir, "another");
                 mkDir(dir);
                 writeFile(dir, "red_fish");
-
 
                 ReportConfiguration config = generateConfig(Collections.emptyList());
                 Reporter reporter = new Reporter(config);
@@ -1392,7 +1392,6 @@ public class ReporterOptionsTest {
             }
         }
 
-
         protected void helpLicenses() {
             PrintStream origin = System.out;
             Option option = HELP_LICENSES.option();
@@ -1410,6 +1409,7 @@ public class ReporterOptionsTest {
                 System.setOut(origin);
             }
 
+            assertThat(actualText).isNotNull();
             TextUtils.assertContains("====== Licenses ======", actualText);
             TextUtils.assertContains("====== Defined Matchers ======", actualText);
             TextUtils.assertContains("====== Defined Families ======", actualText);

@@ -105,6 +105,12 @@ public class TextUtils {
                 .isFalse();
     }
 
+    /**
+     * Read given file as UTF-8.
+     * @param f File to read from.
+     * @return contents of the file as UTF-8.
+     * @throws IOException in case of I/O-errors.
+     */
     public static String readFile(File f) throws IOException {
         return String.join("\n", IOUtils.readLines(Files.newInputStream(f.toPath()), StandardCharsets.UTF_8));
     }

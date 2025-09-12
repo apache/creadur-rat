@@ -71,10 +71,6 @@ public final class OptionCollection {
     /** The Help option */
     public static final Option HELP = new Option("?", "help", false, "Print help for the RAT command line interface and exit.");
 
-    /** Provide license definition listing */
-    public static final Option HELP_LICENSES = Option.builder().longOpt("help-licenses")
-            .desc("Print help for the RAT command line interface and exit.").build();
-
     /** A mapping of {@code argName(value)} values to a description of those values. */
     @Deprecated
     private static final Map<String, Supplier<String>> ARGUMENT_TYPES;
