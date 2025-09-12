@@ -26,4 +26,5 @@ How RAT Detects Generated Files
 
 +------------------------------------------+
 #include( "generation-keywords.txt" )
+
 +------------------------------------------+
