@@ -72,11 +72,8 @@ public class FileDocument extends Document {
             if (files != null) {
                 FileFilter fileFilter = ExclusionUtils.asFileFilter(name, nameMatcher);
                 for (File child : files) {
-                    if (fileFilter.accept(child)) {
-                        result.add(new FileDocument(name, child, nameMatcher));
-                    } else {
-                        result.add(new IgnoredDocument(name, child, nameMatcher));
-                    }
+                    Document childDoc = fileFilter.accept(child) ? new FileDocument(name, child, nameMatcher) : new IgnoredDocument(name, child, nameMatcher);
+                    result.add(childDoc);
                 }
             }
             return result;

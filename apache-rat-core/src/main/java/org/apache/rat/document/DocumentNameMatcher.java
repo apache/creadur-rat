@@ -32,6 +32,8 @@ import java.util.function.Predicate;
 import org.apache.rat.ConfigurationException;
 import org.apache.rat.config.exclusion.plexus.MatchPattern;
 import org.apache.rat.config.exclusion.plexus.MatchPatterns;
+import org.apache.rat.utils.DefaultLog;
+import org.apache.rat.utils.Log;
 
 import static java.lang.String.format;
 
@@ -163,6 +165,22 @@ public final class DocumentNameMatcher {
     @Override
     public String toString() {
         return name;
+    }
+
+    /**
+     * Calculages the match result and logs the calculations.
+     * @param candidate the candidate to evaluate the match for.
+     * @return the result of the calculation
+     */
+    public boolean logDecompositionWhileMatching(final DocumentName candidate) {
+        boolean result = matches(candidate);
+        Log log = DefaultLog.getInstance();
+        Log.Level level = log.getLevel();
+        log.log(level, format("FILTER TEST for %s -> %s", candidate, result));
+        List<DecomposeData> data = decompose(candidate);
+        log.log(level, "Decomposition for " + candidate);
+        data.forEach(s -> log.log(level, s));
+        return result;
     }
 
     /**

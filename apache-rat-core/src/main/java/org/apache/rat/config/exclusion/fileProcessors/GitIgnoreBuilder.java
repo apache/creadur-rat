@@ -27,6 +27,8 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.function.Consumer;
 
+import org.apache.commons.lang3.StringUtils;
+import org.apache.rat.api.EnvVar;
 import org.apache.rat.config.exclusion.ExclusionUtils;
 import org.apache.rat.config.exclusion.MatcherSet;
 import org.apache.rat.config.exclusion.plexus.MatchPatterns;
@@ -149,19 +151,16 @@ public class GitIgnoreBuilder extends AbstractFileProcessorBuilder {
      * variables.
      */
     protected Optional<File> globalGitIgnore() {
-        if (System.getenv("RAT_NO_GIT_GLOBAL_IGNORE") != null) {
+        if (EnvVar.RAT_NO_GIT_GLOBAL_IGNORE.isSet()) {
             return Optional.empty();
         }
 
-        String xdgConfigHome = System.getenv("XDG_CONFIG_HOME");
+        String xdgConfigHome = EnvVar.XDG_CONFIG_HOME.getValue();
         String filename;
         if (xdgConfigHome != null && !xdgConfigHome.isEmpty()) {
             filename = xdgConfigHome + File.separator + "git" + File.separator + "ignore";
         } else {
-            String home = System.getenv("HOME");
-            if (home == null) {
-                home = "";
-            }
+            String home = StringUtils.defaultIfEmpty(EnvVar.HOME.getValue(), "");
             filename = home + File.separator + ".config" + File.separator + "git" + File.separator + "ignore";
         }
         File file = new File(filename);

@@ -25,7 +25,9 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.rat.OptionCollectionTest;
 import org.apache.rat.ReportConfiguration;
+import org.apache.rat.ReporterOptionsTest;
 import org.apache.rat.ReporterTest;
 import org.apache.rat.commandline.Arg;
 import org.apache.rat.commandline.StyleSheets;
@@ -99,56 +101,56 @@ public abstract class AbstractConfigurationOptionsProvider extends AbstractOptio
 
     protected AbstractConfigurationOptionsProvider(final Collection<String> unsupportedArgs, final File baseDir) {
         super(setup(baseDir));
-        testMap.put("addLicense", this::addLicenseTest);
-        testMap.put("config", this::configTest);
-        testMap.put("configuration-no-defaults", this::configurationNoDefaultsTest);
-        testMap.put("copyright", this::copyrightTest);
-        testMap.put("counter-min", this::counterMinTest);
-        testMap.put("counter-max", this::counterMaxTest);
-        testMap.put("dir", () -> DefaultLog.getInstance().info("--dir has no valid test"));
-        testMap.put("dry-run", this::dryRunTest);
-        testMap.put("edit-copyright", this::editCopyrightTest);
-        testMap.put("edit-license", this::editLicensesTest);
-        testMap.put("edit-overwrite", this::editOverwriteTest);
-        testMap.put("exclude", this::excludeTest);
-        testMap.put("exclude-file", this::excludeFileTest);
-        testMap.put("force", this::forceTest);
-        testMap.put("help", this::helpTest);
-        testMap.put("help-licenses", this::helpLicenses);
-        testMap.put("include", this::includeTest);
-        testMap.put("includes-file", this::includesFileTest);
-        testMap.put("input-exclude", this::inputExcludeTest);
-        testMap.put("input-exclude-file", this::inputExcludeFileTest);
-        testMap.put("input-exclude-parsed-scm", this::inputExcludeParsedScmTest);
-        testMap.put("input-exclude-std", this::inputExcludeStdTest);
-        testMap.put("input-exclude-size", this::inputExcludeSizeTest);
-        testMap.put("input-include", this::inputIncludeTest);
-        testMap.put("input-include-file", this::inputIncludeFileTest);
-        testMap.put("input-include-std", this::inputIncludeStdTest);
-        testMap.put("input-source", this::inputSourceTest);
-        testMap.put("license-families-approved", this::licenseFamiliesApprovedTest);
-        testMap.put("license-families-approved-file", this::licenseFamiliesApprovedFileTest);
-        testMap.put("license-families-denied", this::licenseFamiliesDeniedTest);
-        testMap.put("license-families-denied-file", this::licenseFamiliesDeniedFileTest);
-        testMap.put("licenses", this::licensesTest);
-        testMap.put("licenses-approved", this::licensesApprovedTest);
-        testMap.put("licenses-approved-file", this::licensesApprovedFileTest);
-        testMap.put("licenses-denied", this::licensesDeniedTest);
-        testMap.put("licenses-denied-file", this::licensesDeniedFileTest);
-        testMap.put("list-families", this::listFamiliesTest);
-        testMap.put("list-licenses", this::listLicensesTest);
-        testMap.put("log-level", this::logLevelTest);
-        testMap.put("no-default-licenses", this::noDefaultsTest);
-        testMap.put("out", this::outTest);
-        testMap.put("output-archive", this::outputArchiveTest);
-        testMap.put("output-families", this::outputFamiliesTest);
-        testMap.put("output-file", this::outputFileTest);
-        testMap.put("output-licenses", this::outputLicensesTest);
-        testMap.put("output-standard", this::outputStandardTest);
-        testMap.put("output-style", this::outputStyleTest);
-        testMap.put("scan-hidden-directories", this::scanHiddenDirectoriesTest);
-        testMap.put("stylesheet", this::styleSheetTest);
-        testMap.put("xml", this::xmlTest);
+        addTest(OptionCollectionTest.OptionTest.namedTest("addLicense", this::addLicenseTest));
+        addTest(OptionCollectionTest.OptionTest.namedTest("config", this::configTest));
+        addTest(OptionCollectionTest.OptionTest.namedTest("configuration-no-defaults", this::configurationNoDefaultsTest));
+        addTest(OptionCollectionTest.OptionTest.namedTest("copyright", this::copyrightTest));
+        addTest(OptionCollectionTest.OptionTest.namedTest("counter-min", this::counterMinTest));
+        addTest(OptionCollectionTest.OptionTest.namedTest("counter-max", this::counterMaxTest));
+        addTest(OptionCollectionTest.OptionTest.namedTest("dir", () -> DefaultLog.getInstance().info("--dir has no valid test")));
+        addTest(OptionCollectionTest.OptionTest.namedTest("dry-run", this::dryRunTest));
+        addTest(OptionCollectionTest.OptionTest.namedTest("edit-copyright", this::editCopyrightTest));
+        addTest(OptionCollectionTest.OptionTest.namedTest("edit-license", this::editLicenseTest));
+        addTest(OptionCollectionTest.OptionTest.namedTest("edit-overwrite", this::editOverwriteTest));
+        addTest(OptionCollectionTest.OptionTest.namedTest("exclude", this::excludeTest));
+        addTest(OptionCollectionTest.OptionTest.namedTest("exclude-file", this::excludeFileTest));
+        addTest(OptionCollectionTest.OptionTest.namedTest("force", this::forceTest));
+        addTest(OptionCollectionTest.OptionTest.namedTest("help", this::helpTest));
+        addTest(OptionCollectionTest.OptionTest.namedTest("help-licenses", this::helpLicenses));
+        addTest(OptionCollectionTest.OptionTest.namedTest("include", this::includeTest));
+        addTest(OptionCollectionTest.OptionTest.namedTest("includes-file", this::includesFileTest));
+        addTest(OptionCollectionTest.OptionTest.namedTest("input-exclude", this::inputExcludeTest));
+        addTest(OptionCollectionTest.OptionTest.namedTest("input-exclude-file", this::inputExcludeFileTest));
+        addTest(OptionCollectionTest.OptionTest.namedTest("input-exclude-parsed-scm", this::inputExcludeParsedScmTest));
+        addTest(OptionCollectionTest.OptionTest.namedTest("input-exclude-std", this::inputExcludeStdTest));
+        addTest(OptionCollectionTest.OptionTest.namedTest("input-exclude-size", this::inputExcludeSizeTest));
+        addTest(OptionCollectionTest.OptionTest.namedTest("input-include", this::inputIncludeTest));
+        addTest(OptionCollectionTest.OptionTest.namedTest("input-include-file", this::inputIncludeFileTest));
+        addTest(OptionCollectionTest.OptionTest.namedTest("input-include-std", this::inputIncludeStdTest));
+        addTest(OptionCollectionTest.OptionTest.namedTest("input-source", this::inputSourceTest));
+        addTest(OptionCollectionTest.OptionTest.namedTest("license-families-approved", this::licenseFamiliesApprovedTest));
+        addTest(OptionCollectionTest.OptionTest.namedTest("license-families-approved-file", this::licenseFamiliesApprovedFileTest));
+        addTest(OptionCollectionTest.OptionTest.namedTest("license-families-denied", this::licenseFamiliesDeniedTest));
+        addTest(OptionCollectionTest.OptionTest.namedTest("license-families-denied-file", this::licenseFamiliesDeniedFileTest));
+        addTest(OptionCollectionTest.OptionTest.namedTest("licenses", this::licensesTest));
+        addTest(OptionCollectionTest.OptionTest.namedTest("licenses-approved", this::licensesApprovedTest));
+        addTest(OptionCollectionTest.OptionTest.namedTest("licenses-approved-file", this::licensesApprovedFileTest));
+        addTest(OptionCollectionTest.OptionTest.namedTest("licenses-denied", this::licensesDeniedTest));
+        addTest(OptionCollectionTest.OptionTest.namedTest("licenses-denied-file", this::licensesDeniedFileTest));
+        addTest(OptionCollectionTest.OptionTest.namedTest("list-families", this::listFamiliesTest));
+        addTest(OptionCollectionTest.OptionTest.namedTest("list-licenses", this::listLicensesTest));
+        addTest(OptionCollectionTest.OptionTest.namedTest("log-level", this::logLevelTest));
+        addTest(OptionCollectionTest.OptionTest.namedTest("no-default-licenses", this::noDefaultsTest));
+        addTest(OptionCollectionTest.OptionTest.namedTest("out", this::outTest));
+        addTest(OptionCollectionTest.OptionTest.namedTest("output-archive", this::outputArchiveTest));
+        addTest(OptionCollectionTest.OptionTest.namedTest("output-families", this::outputFamiliesTest));
+        addTest(OptionCollectionTest.OptionTest.namedTest("output-file", this::outputFileTest));
+        addTest(OptionCollectionTest.OptionTest.namedTest("output-licenses", this::outputLicensesTest));
+        addTest(OptionCollectionTest.OptionTest.namedTest("output-standard", this::outputStandardTest));
+        addTest(OptionCollectionTest.OptionTest.namedTest("output-style", this::outputStyleTest));
+        addTest(OptionCollectionTest.OptionTest.namedTest("scan-hidden-directories", this::scanHiddenDirectoriesTest));
+        addTest(OptionCollectionTest.OptionTest.namedTest("stylesheet", this::styleSheetTest));
+        addTest(OptionCollectionTest.OptionTest.namedTest("xml", this::xmlTest));
         super.validate(unsupportedArgs);
     }
 
@@ -628,7 +630,7 @@ public abstract class AbstractConfigurationOptionsProvider extends AbstractOptio
         editLicenseTest(Arg.EDIT_ADD.find("addLicense"));
     }
 
-    protected void editLicensesTest() {
+    protected void editLicenseTest() {
         editLicenseTest(Arg.EDIT_ADD.find("edit-license"));
     }
 

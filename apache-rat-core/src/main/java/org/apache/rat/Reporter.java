@@ -185,4 +185,12 @@ public class Reporter {
                     .append(System.lineSeparator());
         }
     }
+
+    /**
+     * Gets the document that was generated during execution.
+     * @return the document that was generated during execution.
+     */
+    public Document getDocument() {
+        return document;
+    }
 }

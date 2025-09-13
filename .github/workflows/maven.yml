@@ -65,6 +65,24 @@ jobs:
       - name: Build with Maven
         run: ./mvnw -e -B -V -ntp clean install
 
+      - name: Archive integration failure
+        uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: integration-test-failure-logs
+          retention-days: 3
+          path: |
+            apache-rat-core/target/test-classes/ReportTest/**
+
+      - name: Archive test failure
+        uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: integration-test-failure-logs
+          retention-days: 3
+          path: |
+            **/target/surefire-reports
+
       - name: Generate javadoc
         run: ./mvnw -e -B -V -ntp javadoc:javadoc
 

@@ -44,6 +44,7 @@ import org.apache.rat.document.DocumentNameMatcher;
 import org.apache.rat.document.FileDocument;
 import org.apache.rat.document.RatDocumentAnalysisException;
 import org.apache.rat.report.RatReport;
+import org.apache.rat.test.AbstractOptionsProvider;
 import org.apache.rat.utils.DefaultLog;
 import org.apache.rat.utils.Log;
 import org.apache.rat.walker.DirectoryWalker;
@@ -82,7 +83,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 public class ReportTest {
 
     private String[] asArgs(final List<String> argsList) {
-        return argsList.toArray(new String[argsList.size()]);
+        return argsList.toArray(new String[0]);
     }
 
     @ParameterizedTest(name = "{index} {0}")
@@ -138,9 +139,13 @@ public class ReportTest {
             for (String classPath : System.getProperty("java.class.path").split(File.pathSeparator)) {
                 shell.getClassLoader().addClasspath(classPath);
             }
-            Object value = shell.run(groovyScript, new String[]{outputFile.getAbsolutePath(), logFile.getAbsolutePath()});
-            if (value != null) {
-                fail(String.format("%s",value));
+            try {
+                Object value = shell.run(groovyScript, new String[]{outputFile.getAbsolutePath(), logFile.getAbsolutePath()});
+                if (value != null) {
+                    fail(String.format("%s", value));
+                }
+            } catch (AssertionError e) {
+                throw new AssertionError(String.format("%s: %s", testName, e.getMessage()), e);
             }
         }
     }
@@ -157,15 +162,16 @@ public class ReportTest {
         DocumentName docName = DocumentName.builder(baseDir).build();
         AbstractFileFilter fileFilter = new NameFileFilter("commandLine.txt", docName.isCaseSensitive() ? IOCase.SENSITIVE : IOCase.INSENSITIVE);
         fileFilter = new OrFileFilter(fileFilter, DirectoryFileFilter.INSTANCE);
+
         Document document = new FileDocument(docName, baseDir, new DocumentNameMatcher(fileFilter));
         DirectoryWalker walker = new DirectoryWalker(document);
         RatReport report = new RatReport() {
             @Override
             public void report(Document document)  {
-                if (!document.isIgnored()) {
-                    String[] tokens = DocumentName.FSInfo.getDefault().tokenize(document.getName().localized());
-                    results.add(Arguments.of(tokens[1], document));
-                }
+            if (!document.isIgnored()) {
+                String[] tokens = DocumentName.FSInfo.getDefault().tokenize(document.getName().localized());
+                results.add(Arguments.of(tokens[1], document));
+            }
             }
         };
         walker.run(report);
