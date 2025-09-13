@@ -326,10 +326,6 @@
           <artifactId>apache-rat-plugin</artifactId>
           <configuration>
             <excludes>
-              <!-- These files only describe how to use the project and they
-                   have no license headers -->
-              <exclude>README-ANT.txt</exclude>
-              <exclude>README-CLI.txt</exclude>
               <!-- files that are examples of output from the tool -->
               <exclude>src/site/examples/**</exclude>
               <exclude>src/site/apt/*.txt</exclude>
