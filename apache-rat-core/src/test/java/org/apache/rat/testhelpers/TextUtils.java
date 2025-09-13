@@ -21,7 +21,12 @@ package org.apache.rat.testhelpers;
 import static java.lang.String.format;
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.regex.Pattern;
+import org.apache.commons.io.IOUtils;
 
 /**
  * Utilities to assert text appears or does not appear in text.
@@ -82,11 +87,11 @@ public class TextUtils {
     public static void assertContainsExactly(int times, String find, String target) {
         String t = target;
         for (int i = 0; i < times; i++) {
-            assertThat(t.contains(find)).as(() -> format("Target does not contain %s copies fo %s%n%s", times, find, target))
+            assertThat(t.contains(find)).as(() -> format("Target does not contain %s copies of %s%n%s", times, find, target))
                     .isTrue();
             t = t.substring(t.indexOf(find) + find.length());
         }
-        assertThat(t.contains(find)).as(() -> format("Target contains more than %s copies fo %s%n%s", times, find, target))
+        assertThat(t.contains(find)).as(() -> format("Target contains more than %s copies of %s%n%s", times, find, target))
                 .isFalse();
     }
 
@@ -98,5 +103,15 @@ public class TextUtils {
     public static void assertNotContains(final String find, final String target) {
         assertThat(target.contains(find)).as(() -> format("Target contains the text: %s%n%s", find , target))
                 .isFalse();
+    }
+
+    /**
+     * Read given file as UTF-8.
+     * @param f File to read from.
+     * @return contents of the file as UTF-8.
+     * @throws IOException in case of I/O-errors.
+     */
+    public static String readFile(File f) throws IOException {
+        return String.join("\n", IOUtils.readLines(Files.newInputStream(f.toPath()), StandardCharsets.UTF_8));
     }
 }
