@@ -1,0 +1,5 @@
+--output-style
+xml
+--input-exclude-parsed-scm
+GIT
+--
