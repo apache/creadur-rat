@@ -208,4 +208,12 @@ public final class XmlUtils {
     public static void assertIsNotPresent(Object source, XPath xPath, String xpath) throws XPathExpressionException {
         assertThat(isPresent(source, xPath, xpath)).as("Non-presence of " + xpath).isFalse();
     }
+
+    public static void assertIsPresent(String identifier, Object source, XPath xPath, String xpath) throws XPathExpressionException {
+        assertThat(isPresent(source, xPath, xpath)).as(identifier + ": Presence of " + xpath).isTrue();
+    }
+
+    public static void assertIsNotPresent(String identifier, Object source, XPath xPath, String xpath) throws XPathExpressionException {
+        assertThat(isPresent(source, xPath, xpath)).as(identifier + ": Non-presence of " + xpath).isFalse();
+    }
 }

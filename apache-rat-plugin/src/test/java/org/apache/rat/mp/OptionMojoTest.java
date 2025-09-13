@@ -25,7 +25,7 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.ProjectBuilder;
 import org.apache.maven.project.ProjectBuildingRequest;
-import org.apache.rat.test.AbstractOptionsProvider;
+import org.apache.rat.test.AbstractConfigurationOptionsProvider;
 import org.apache.rat.OptionCollectionTest;
 import org.apache.rat.ReportConfiguration;
 import org.apache.rat.plugin.BaseRatMojo;
@@ -69,7 +69,7 @@ public class OptionMojoTest {
 
     @AfterAll
     static void preserveData() {
-         AbstractOptionsProvider.preserveData(testPath.toFile(), "optionTest");
+         AbstractConfigurationOptionsProvider.preserveData(testPath.toFile(), "optionTest");
     }
 
     /**
@@ -89,7 +89,7 @@ public class OptionMojoTest {
         test.test();
     }
 
-    static class MojoOptionsProvider extends AbstractOptionsProvider implements ArgumentsProvider  {
+    static class MojoOptionsProvider extends AbstractConfigurationOptionsProvider implements ArgumentsProvider  {
 
         private RatCheckMojo mojo = null;
 
@@ -139,7 +139,7 @@ public class OptionMojoTest {
         protected final ReportConfiguration generateConfig(List<Pair<Option, String[]>> args) throws IOException {
             try {
                 this.mojo = generateMojo(args);
-                AbstractOptionsProvider.setup(this.mojo.getProject().getBasedir());
+                AbstractConfigurationOptionsProvider.setup(this.mojo.getProject().getBasedir());
                 return mojo.getConfiguration();
             } catch (MojoExecutionException e) {
                 throw new IOException(e.getMessage(), e);
