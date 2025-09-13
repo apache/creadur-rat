@@ -1,0 +1,4 @@
+--license-families-approved
+GPL
+--output-style
+xml
