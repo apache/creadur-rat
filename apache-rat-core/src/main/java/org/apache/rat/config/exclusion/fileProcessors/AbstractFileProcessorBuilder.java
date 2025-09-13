@@ -106,10 +106,9 @@ public abstract class AbstractFileProcessorBuilder {
      * Creates the MatcherSet from each level and returns them in a list in reverse order.
      * @return a list of MatcherSet
      */
-
     private List<MatcherSet> createMatcherSetList() {
         List<Integer> keys = new ArrayList<>(levelBuilders.keySet());
-        keys.sort((a, b) -> -1 * Integer.compare(a, b));
+        keys.sort((a, b) -> Integer.compare(b, a));
         return keys.stream().map(key -> levelBuilders.get(key).asMatcherSet()).collect(Collectors.toList());
     }
 
