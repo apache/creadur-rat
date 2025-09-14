@@ -28,8 +28,9 @@ import org.junit.jupiter.params.provider.Arguments;
  */
 public class ApacheSoftwareLicenseTest extends AbstractLicenseTest {
 
-    public static final String id = "AL";
-    public static final String name = "Apache License Version 2.0";
+    public static final String familyId = "AL";
+    public static final String licenseId = "AL2.0";
+    public static final String name = "Apache License 2.0";
     private static final String[][] targets = {
             { "short", "Licensed under the Apache License, Version 2.0 (the \"License\")" },
             { "short2",
@@ -64,6 +65,6 @@ public class ApacheSoftwareLicenseTest extends AbstractLicenseTest {
     };
 
     public static Stream<Arguments> parameterProvider() {
-        return Stream.of(Arguments.of(id, id, name, null, targets));
+        return Stream.of(Arguments.of(licenseId, familyId, name, null, targets));
     }
 }
