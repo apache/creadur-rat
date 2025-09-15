@@ -23,22 +23,14 @@ assert content.contains('[INFO] Including patterns: pom.xml') // explicit inclus
 assert content.contains('[INFO] Processing exclude file from STANDARD_SCMS.') // default exclusions worked
 assert ! content.contains('[WARNING] No resources included')
 
-// Report is in apache-rat-plugin/target/invoker/RAT-469/target/site/rat-report.html
+// Report is in apache-rat-plugin/target/invoker-reports
 report = new File(basedir, 'target/site/rat-report.html').text
 assert TextUtils.isMatching("^  /verify.groovy\\s+S ", report)
+assert TextUtils.isMatching("^  /pom.xml\\s+S ", report)
 
-// enable after patch is applied:
-// assert TextUtils.isMatching("^  /pom.xml\\s+S ", report)
-
-/* should be GPL after patch is applied
-! /pom.xml
-  S         application/xml    ISO-8859-1
-        ?????    ?????         Unknown license (Unapproved)
-*/
-assert report.contains('! Unapproved:         1')
-// assert report.contains('   GPL       GPL3            GNU General Public License V3.0')
+assert report.contains('Unapproved:         0')
+assert report.contains('    GPL      GPL3          GNU General Public License V3.0')
 
 assert report.contains('   AL       AL            Apache License Version 2.0')
-assert report.contains('Approved:           2')
+assert report.contains('Approved:           3')
 assert report.contains('Standards:          3')
-// TODO: RAT-469 apply and alter test after fix is applied
