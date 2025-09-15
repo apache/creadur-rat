@@ -29,6 +29,7 @@ assert TextUtils.isMatching("^  /verify.groovy\\s+S ", report)
 assert TextUtils.isMatching("^  /pom.xml\\s+S ", report)
 
 assert report.contains('Unapproved:         0')
+assert report.contains('GPL  : 1')
 assert report.contains('    GPL      GPL3          GNU General Public License V3.0')
 
 assert report.contains('   AL       AL            Apache License Version 2.0')
