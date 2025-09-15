@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    RAT-469 integration test
+    Copyright (C) 2025, ASF Apache Creadur
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>org.apache.rat.test</groupId>
+  <artifactId>it-rat469-default</artifactId>
+  <version>1.0</version>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.rat</groupId>
+        <artifactId>apache-rat-plugin</artifactId>
+        <version>@pom.version@</version>
+        <configuration>
+          <consoleOutput>true</consoleOutput>
+          <ignoreErrors>false</ignoreErrors>
+          <inputIncludes>
+            <include>pom.xml</include>
+          </inputIncludes>
+          <inputExcludeStds>
+            <exclude>STANDARD_PATTERNS</exclude>
+            <exclude>STANDARD_SCMS</exclude>
+            <exclude>MAVEN</exclude>
+            <exclude>IDEA</exclude>
+          </inputExcludeStds>
+        </configuration>
+      </plugin>
+    </plugins>
+    <!-- RAT-354: prevent warning about missing version property of maven-clean-plugin -->
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-clean-plugin</artifactId>
+          <version>3.3.2</version>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+  </build>
+</project>
