@@ -601,7 +601,7 @@ agnostic home for software distribution comprehension and audit tools.
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-surefire-plugin</artifactId>
-          <version>3.5.3</version>
+          <version>3.5.4</version>
           <configuration>
             <forkCount>1</forkCount>
             <argLine>-Dfile.encoding=ISO-8859-1</argLine>
