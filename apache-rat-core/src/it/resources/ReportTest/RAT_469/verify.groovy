@@ -41,5 +41,5 @@ Document document = XmlUtils.toDom(new FileInputStream(args[0]))
 XPath xPath = XPathFactory.newInstance().newXPath()
 
 // Document types
-XmlUtils.assertAttributes(document, xPath, "/rat-report/resource[@name='/Gpl.java']/license",
+XmlUtils.assertAttributes(document, xPath, "/rat-report/resource[@name='/GPLTestClass.java']/license",
         mapOf("family", "GPL  ", "approval", "true" ))
