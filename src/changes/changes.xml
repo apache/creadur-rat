@@ -72,6 +72,9 @@ The <action> type attribute can be one of:
     </release>
     -->
     <release version="0.17-SNAPSHOT" date="xxxx-yy-zz" description="Current SNAPSHOT - release to be done">
+      <action issue="RAT-469" type="add" dev="claudenw" due-to="pottlinger">
+        Add more integration tests for CLI and Maven plugin to verify configuration of valid licenses, ensure copyleft has to be enabled explicitly.
+      </action>
       <action issue="RAT-479" type="add" dev="claudenw">
         Cleanup documentation and remove deprecated and outdated README files in RAT's main repository.
       </action>
