@@ -75,6 +75,9 @@ The <action> type attribute can be one of:
       <action issue="RAT-362" type="add" dev="claudenw">
         Improve test and test result reporting for .gitignore parsing. Introduce environment variable abstraction.
       </action>
+      <action issue="RAT-469" type="add" dev="claudenw" due-to="pottlinger">
+        Add more integration tests for CLI and Maven plugin to verify configuration of valid licenses, ensure copyleft has to be enabled explicitly.
+      </action>
       <action issue="RAT-479" type="add" dev="claudenw">
         Cleanup documentation and remove deprecated and outdated README files in RAT's main repository.
       </action>

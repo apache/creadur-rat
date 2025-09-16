@@ -26,12 +26,12 @@ assert ! content.contains('[WARNING] No resources included')
 // Report is in apache-rat-plugin/target/invoker-reports
 report = new File(basedir, 'target/site/rat-report.html').text
 assert TextUtils.isMatching("^  /verify.groovy\\s+S ", report)
-assert TextUtils.isMatching("^  /pom.xml\\s+S ", report)
+assert TextUtils.isMatching("^! /pom.xml\\s+S ", report)
 
-assert report.contains('Unapproved:         0')
+assert report.contains('Unapproved:         1')
 assert report.contains('GPL  : 1')
 assert report.contains('    GPL      GPL3          GNU General Public License V3.0')
 
 assert report.contains('   AL       AL            Apache License Version 2.0')
-assert report.contains('Approved:           3')
+assert report.contains('Approved:           2')
 assert report.contains('Standards:          3')
