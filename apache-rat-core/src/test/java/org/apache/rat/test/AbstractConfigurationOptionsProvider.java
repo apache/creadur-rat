@@ -27,7 +27,6 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.rat.OptionCollectionTest;
 import org.apache.rat.ReportConfiguration;
-import org.apache.rat.ReporterOptionsTest;
 import org.apache.rat.ReporterTest;
 import org.apache.rat.commandline.Arg;
 import org.apache.rat.commandline.StyleSheets;

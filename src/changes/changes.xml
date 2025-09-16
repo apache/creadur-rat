@@ -72,6 +72,9 @@ The <action> type attribute can be one of:
     </release>
     -->
     <release version="0.17-SNAPSHOT" date="xxxx-yy-zz" description="Current SNAPSHOT - release to be done">
+      <action issue="RAT-362" type="add" dev="claudenw">
+        Improve test and test result reporting for .gitignore parsing. Introduce environment variable abstraction.
+      </action>
       <action issue="RAT-479" type="add" dev="claudenw">
         Cleanup documentation and remove deprecated and outdated README files in RAT's main repository.
       </action>

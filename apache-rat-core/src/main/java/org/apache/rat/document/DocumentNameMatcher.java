@@ -168,7 +168,7 @@ public final class DocumentNameMatcher {
     }
 
     /**
-     * Calculages the match result and logs the calculations.
+     * Calculates the match result and logs the calculations.
      * @param candidate the candidate to evaluate the match for.
      * @return the result of the calculation
      */

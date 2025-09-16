@@ -25,19 +25,12 @@ import org.apache.rat.api.EnvVar;
  */
 public final class DefaultLog implements Log {
     /**
-     * The environment variable to set the default log level that RAT should log at.
-     * If not specified INFO is used.
-     * @see #setLevel(Level)
-     */
-    public static final String ENV_VAR = DefaultLog.class.getName();
-
-    /**
      * The instance of the default log.
      */
     private static Log instance = new DefaultLog();
 
     /**
-     * Retrieves teh DefaultLog instance.
+     * Retrieves the DefaultLog instance.
      * @return the Default log instance.
      */
     public static Log getInstance() {

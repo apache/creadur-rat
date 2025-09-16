@@ -41,7 +41,6 @@ node = nodeList.item(0)
 attributes = node.getAttributes()
 assertEquals("false", attributes.getNamedItem("approval").getNodeValue())
 
-
 nodeList = XmlUtils.getNodeList(doc, xPath, "/rat-report/resource[@name='/windows-newlines.txt.bin']")
 assertEquals(1, nodeList.getLength())
 node = nodeList.item(0)

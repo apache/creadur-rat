@@ -102,7 +102,7 @@ public class OptionCollectionTest {
          * @return the formatted message.
          */
         default String formatMsg(String msg) {
-            return String.format("%s: %s", toString(), msg);
+            return String.format("%s: %s", this, msg);
         }
 
         /**
@@ -126,7 +126,7 @@ public class OptionCollectionTest {
     }
 
     /**
-     * A test function.  Used to annotate methods in test providers.
+     * A test function. Used to annotate methods in test providers.
      */
     @Retention(RetentionPolicy.RUNTIME)
     @Target(ElementType.METHOD)

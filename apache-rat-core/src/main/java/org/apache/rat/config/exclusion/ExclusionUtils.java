@@ -44,7 +44,7 @@ import org.apache.rat.utils.ExtendedIterator;
 import static java.lang.String.format;
 
 /**
- * Utilities for Exclusion processing.
+ * Utilities for exclusion processing.
  */
 public final class ExclusionUtils {
 

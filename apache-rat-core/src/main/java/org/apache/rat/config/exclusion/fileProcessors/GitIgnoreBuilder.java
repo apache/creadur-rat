@@ -46,7 +46,7 @@ public class GitIgnoreBuilder extends AbstractFileProcessorBuilder {
     private static final String IGNORE_FILE = ".gitignore";
     /** The comment prefix */
     private static final String COMMENT_PREFIX = "#";
-    /** An escaped comment in the .gitignore file.  (Not a comment) */
+    /** An escaped comment in the .gitignore file. (Not a comment) */
     private static final String ESCAPED_COMMENT = "\\#";
     /** An escaped negation in the .gitignore file. (Not a negation) */
     private static final String ESCAPED_NEGATION = "\\!";
@@ -82,7 +82,7 @@ public class GitIgnoreBuilder extends AbstractFileProcessorBuilder {
     protected MatcherSet process(final Consumer<MatcherSet> matcherSetConsumer, final DocumentName root, final DocumentName documentName) {
       if (root.equals(documentName.getBaseDocumentName())) {
           Optional<File> globalGitIgnore = globalGitIgnore();
-          List<MatcherSet> matcherSets = new ArrayList<MatcherSet>();
+          List<MatcherSet> matcherSets = new ArrayList<>();
           matcherSets.add(super.process(matcherSetConsumer, root, documentName));
           if (globalGitIgnore.isPresent()) {
               LevelBuilder levelBuilder = getLevelBuilder(Integer.MAX_VALUE);
@@ -98,7 +98,7 @@ public class GitIgnoreBuilder extends AbstractFileProcessorBuilder {
     /**
      * Convert the string entry.
      * If the string ends with a slash an {@link DocumentNameMatcher#and} is constructed from a directory check and the file
-     * name matcher.  In this case an empty Optional is returned.
+     * name matcher. In this case an empty Optional is returned.
      * If the string starts with {@value ExclusionUtils#NEGATION_PREFIX} then the entry is placed in the include list, otherwise
      * the entry is placed in the exclude list and the name of the check returned.
      * @param documentName The name of the document being processed.
@@ -147,7 +147,9 @@ public class GitIgnoreBuilder extends AbstractFileProcessorBuilder {
 
     /**
      * The global gitignore file to process, based on the
-     * RAT_NO_GIT_GLOBAL_IGNORE, XDG_CONFIG_HOME, and HOME environment
+     * {@link EnvVar#RAT_NO_GIT_GLOBAL_IGNORE},
+     * {@link EnvVar#XDG_CONFIG_HOME} and
+     * {@link EnvVar#HOME} environment
      * variables.
      */
     protected Optional<File> globalGitIgnore() {
@@ -170,5 +172,4 @@ public class GitIgnoreBuilder extends AbstractFileProcessorBuilder {
             return Optional.empty();
         }
     }
-
 }

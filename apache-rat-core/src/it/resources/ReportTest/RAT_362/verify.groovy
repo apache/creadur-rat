@@ -1,4 +1,4 @@
-package ReportTest.RAT_335
+package ReportTest.RAT_362
 
 import org.apache.rat.testhelpers.XmlUtils
 import org.apache.rat.utils.DefaultLog
@@ -45,7 +45,7 @@ XPath xPath = XPathFactory.newInstance().newXPath()
 List<String> ignoredFiles = new ArrayList<>(Arrays.asList(
         "/.gitignore",
         "/foo.md",
-        "/src.md"));
+        "/src.md"))
 
 NodeList nodeList = XmlUtils.getNodeList(document, xPath, "/rat-report/resource[@type='IGNORED']")
 for (int i = 0 ; i < nodeList.getLength(); i++) {
@@ -54,8 +54,6 @@ for (int i = 0 ; i < nodeList.getLength(); i++) {
     assertThat(ignoredFiles).contains(s)
     ignoredFiles.remove(s)
 }
-
-
 
 assertThat(ignoredFiles).isEmpty()
 

@@ -28,16 +28,16 @@ public enum EnvVar {
     /**
      * Ignore Git Global ignore file.
      */
-    RAT_NO_GIT_GLOBAL_IGNORE("Ignore global ingnore file when processing GIT ignore files"),
+    RAT_NO_GIT_GLOBAL_IGNORE("Ignore global ignore file when processing GIT ignore files."),
     /**
      * Log matcher decomposition when used.
      */
-    RAT_DECOMPOSE_MATCHER_ON_USE("Log the decomposition of matchers on use.  Messages will be logged at the minimum log level currently enabled."),
+    RAT_DECOMPOSE_MATCHER_ON_USE("Log the decomposition of matchers on use. Messages will be logged at the minimum log level currently enabled."),
     /**
      * Defines the XDG home.
      */
-    XDG_CONFIG_HOME("Where user-specific configurations are written. Generally defaults to $HOME/.config.  " +
-            "Only needs to be set if it has been changed on the system"),
+    XDG_CONFIG_HOME("Where user-specific configurations are written. Generally defaults to $HOME/.config. " +
+            "Only needs to be set if it has been changed on the system."),
     /**
      * Defines the user HOME.
      */
@@ -45,7 +45,7 @@ public enum EnvVar {
     /**
      * Sets the log level for the DefaultLog when it is constructed.
      */
-    RAT_DEFAULT_LOG_LEVEL("The default log level for the command line logger.  Should be one of: " +
+    RAT_DEFAULT_LOG_LEVEL("The default log level for the command line logger. Should be one of: " +
             Arrays.stream(Log.Level.values()).map(Log.Level::name).collect(Collectors.joining(", ")));
     /**
      * The documentation for this EnvVar.

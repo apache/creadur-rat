@@ -30,7 +30,7 @@ import static org.assertj.core.api.Fail.fail;
 public class FileUtils {
 
     /**
-     * makes a directory if it does not exist.
+     * Creates a directory if it does not exist.
      * @param dir the directory to make.
      */
     public static void mkDir(File dir) {
@@ -59,7 +59,7 @@ public class FileUtils {
      * Writes a test file.
      * @param dir The directory to write the file in.
      * @param name the name of the file.
-     * @param lines the lines to wrint into the file.
+     * @param lines the lines to write into the file.
      * @return the new File.
      */
     static public File writeFile(File dir, final String name, final Iterable<String> lines) {
@@ -79,7 +79,7 @@ public class FileUtils {
      * Writes a test file.
      * @param dir The directory to write the file in.
      * @param name the name of the file.
-     * @param lines the lines to wrint into the file.
+     * @param lines the lines to write into the file.
      * @return the new File.
      */
     static public File writeFile(File dir, final String name, final String... lines) {
@@ -88,7 +88,7 @@ public class FileUtils {
 
     /**
      * Writes a text file containing the name of the file.
-     * @param dir The directoy to write the file into.
+     * @param dir The directory to write the file into.
      * @param name the name of the file.
      * @return the new file.
      */

@@ -44,7 +44,6 @@ import org.apache.rat.document.DocumentNameMatcher;
 import org.apache.rat.document.FileDocument;
 import org.apache.rat.document.RatDocumentAnalysisException;
 import org.apache.rat.report.RatReport;
-import org.apache.rat.test.AbstractOptionsProvider;
 import org.apache.rat.utils.DefaultLog;
 import org.apache.rat.utils.Log;
 import org.apache.rat.walker.DirectoryWalker;
@@ -150,7 +149,7 @@ public class ReportTest {
         }
     }
 
-    public static Stream<Arguments> args() throws RatException {
+    static Stream<Arguments> args() throws RatException {
         List<Arguments> results = new ArrayList<>();
         URL url = ReportTest.class.getResource("/ReportTest");
         String urlAsFile = url.getFile();
@@ -158,7 +157,7 @@ public class ReportTest {
             throw new RatException("Could not find root directory for " + url);
         }
 
-        File baseDir = new File(url.getFile());
+        File baseDir = new File(urlAsFile);
         DocumentName docName = DocumentName.builder(baseDir).build();
         AbstractFileFilter fileFilter = new NameFileFilter("commandLine.txt", docName.isCaseSensitive() ? IOCase.SENSITIVE : IOCase.INSENSITIVE);
         fileFilter = new OrFileFilter(fileFilter, DirectoryFileFilter.INSTANCE);
@@ -189,7 +188,6 @@ public class ReportTest {
          * The level at which we will write messages
          */
         private Level level;
-
 
         FileLog(File logFile) throws IOException {
             this.logFile = new PrintStream(logFile);
