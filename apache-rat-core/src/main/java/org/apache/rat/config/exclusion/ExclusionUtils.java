@@ -34,18 +34,17 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.LineIterator;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.rat.ConfigurationException;
+import org.apache.rat.api.EnvVar;
 import org.apache.rat.config.exclusion.plexus.MatchPattern;
 import org.apache.rat.config.exclusion.plexus.SelectorUtils;
 import org.apache.rat.document.DocumentName;
 import org.apache.rat.document.DocumentNameMatcher;
-import org.apache.rat.utils.DefaultLog;
 import org.apache.rat.utils.ExtendedIterator;
-import org.apache.rat.utils.Log;
 
 import static java.lang.String.format;
 
 /**
- * Utilities for Exclusion processing.
+ * Utilities for exclusion processing.
  */
 public final class ExclusionUtils {
 
@@ -121,17 +120,8 @@ public final class ExclusionUtils {
     public static FileFilter asFileFilter(final DocumentName parent, final DocumentNameMatcher nameMatcher) {
         return file -> {
             DocumentName candidate = DocumentName.builder(file).setBaseName(parent.getBaseName()).build();
-            boolean result = nameMatcher.matches(candidate);
-            Log log = DefaultLog.getInstance();
-            if (log.isEnabled(Log.Level.DEBUG)) {
-                log.debug(format("FILTER TEST for %s -> %s", file, result));
-                if (!result) {
-                    List< DocumentNameMatcher.DecomposeData> data = nameMatcher.decompose(candidate);
-                    log.debug("Decomposition for " + candidate);
-                    data.forEach(log::debug);
-                }
-            }
-            return result;
+            return EnvVar.RAT_DECOMPOSE_MATCHER_ON_USE.isSet() ? nameMatcher.logDecompositionWhileMatching(candidate) :
+                nameMatcher.matches(candidate);
         };
     }
 

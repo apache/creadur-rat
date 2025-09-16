@@ -19,14 +19,13 @@
 package org.apache.rat.test;
 
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -79,6 +78,14 @@ public abstract class AbstractOptionsProvider implements ArgumentsProvider {
         } catch (IOException e) {
             System.err.format("Unable to copy data from %s to %s%n", baseDir, recordPath);
         }
+    }
+
+    protected void processTestFunctionAnnotations() {
+        testMap.putAll(OptionCollectionTest.processTestFunctionAnnotations(this));
+    }
+
+    protected void addTest(OptionCollectionTest.OptionTest test) {
+        testMap.put(test.toString(), test);
     }
 
     /**
@@ -143,21 +150,27 @@ public abstract class AbstractOptionsProvider implements ArgumentsProvider {
      */
     protected abstract ReportConfiguration generateConfig(final List<Pair<Option, String[]>> args) throws IOException;
 
-    protected File writeFile(final String name, final Iterable<String> lines) {
-        return writeFile(baseDir, name, lines);
+    /**
+     * Converts each {@code Pair<Option, String[]>} into the option string and its arguments.
+     * @param args the argument paris to process.
+     * @return an array of arguments for the processing.
+     */
+    public static String[] extractArgs(List<Pair<Option, String[]>> args) {
+        List<String> sArgs = new ArrayList<>();
+        for (Pair<Option, String[]> pair : args) {
+            if (pair.getKey() != null) {
+                sArgs.add("--" + pair.getKey().getLongOpt());
+                String[] oArgs = pair.getValue();
+                if (oArgs != null) {
+                    Collections.addAll(sArgs, oArgs);
+                }
+            }
+        }
+        return sArgs.toArray(new String[0]);
     }
 
-    final protected File writeFile(File baseDir, final String name, final Iterable<String> lines) {
-        if (baseDir == null) {
-            fail("base directory not specified");
-        }
-        File file = new File(baseDir, name);
-        try (PrintWriter writer = new PrintWriter(new FileWriter(file))) {
-            lines.forEach(writer::println);
-        } catch (IOException e) {
-            fail(e.getMessage());
-        }
-        return file;
+    protected File writeFile(final String name, final Iterable<String> lines) {
+        return org.apache.rat.testhelpers.FileUtils.writeFile(baseDir, name, lines);
     }
 
     final protected DocumentName mkDocName(final String name) {

@@ -18,7 +18,16 @@
  */
 package org.apache.rat;
 
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.nio.file.Path;
+import java.util.Locale;
+import java.util.Map;
+import java.util.TreeMap;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.Option;
@@ -31,6 +40,7 @@ import org.apache.rat.report.IReportable;
 import org.apache.rat.test.AbstractConfigurationOptionsProvider;
 import org.apache.rat.test.utils.OptionFormatter;
 import org.apache.rat.testhelpers.TestingLog;
+import org.apache.rat.utils.CasedString;
 import org.apache.rat.utils.DefaultLog;
 import org.apache.rat.utils.Log;
 import org.junit.jupiter.api.AfterAll;
@@ -70,7 +80,90 @@ public class OptionCollectionTest {
      */
     @FunctionalInterface
     public interface OptionTest {
-        void test();
+        /**
+         * Executes the test and uses fail or asserts to generate failures.
+         */
+        void exec();
+
+        /**
+         * Execute the test and ensure any failures have the test name added.
+         */
+        default void test() {
+            try {
+                exec();
+            } catch (AssertionError e) {
+                throw new AssertionError(formatMsg(e.getMessage()), e);
+            }
+        }
+
+        /**
+         * Formats the messages by adding the test name.
+         * @param msg the message to reformat.
+         * @return the formatted message.
+         */
+        default String formatMsg(String msg) {
+            return String.format("%s: %s", this, msg);
+        }
+
+        /**
+         * Creates a named OptionTest.
+         * @param name the name of the test.
+         * @param test the test to execute.
+         * @return a named option test.
+         */
+        static OptionTest namedTest(String name, OptionTest test) {
+            return new OptionTest() {
+                @Override
+                public void exec() {
+                    test.exec();
+                }
+                @Override
+                public String toString() {
+                    return name;
+                }
+            };
+        }
+    }
+
+    /**
+     * A test function. Used to annotate methods in test providers.
+     */
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target(ElementType.METHOD)
+    public @interface TestFunction {
+    }
+
+    /**
+     * Process methods in a test provider.
+     * Tests are detected by looking for the {@link TestFunction} annotation.
+     * @param testProvider the test provider
+     * @return a map of named tests to a named OptionTest.
+     */
+    public static Map<String, OptionTest> processTestFunctionAnnotations(Object testProvider) {
+        final int testLength = 4;
+        final Class<?> clazz = testProvider.getClass();
+        final Map<String, OptionTest> result = new TreeMap<>();
+        for (Method method : clazz.getDeclaredMethods()) {
+            if (method.isAnnotationPresent(TestFunction.class) && method.getParameterCount() == 0 && method.getReturnType() == void.class) {
+                String name = method.getName();
+                if (name.endsWith("Test")) {
+                    name = name.substring(0, name.length() - testLength);
+                }
+                if (name.startsWith("test")) {
+                    name = name.substring(testLength);
+                }
+                name = new CasedString(CasedString.StringCase.CAMEL, name).toCase(CasedString.StringCase.KEBAB).toLowerCase(Locale.ROOT);
+                result.put(name, OptionTest.namedTest(name, () -> {
+                            try {
+                                method.invoke(testProvider);
+                            } catch (IllegalAccessException | InvocationTargetException e) {
+                                throw new RuntimeException(e);
+                            }
+                        }
+                ));
+            }
+        }
+        return result;
     }
 
     /**
