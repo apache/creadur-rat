@@ -465,7 +465,7 @@ agnostic home for software distribution comprehension and audit tools.
         <plugin>
           <groupId>com.github.spotbugs</groupId>
           <artifactId>spotbugs-maven-plugin</artifactId>
-          <version>4.8.6.6</version>
+          <version>4.9.5.0</version>
           <configuration>
             <!-- RAT-369: JDK21 finds 98 errors, while older releases find fewer -->
             <maxAllowedViolations>98</maxAllowedViolations>
