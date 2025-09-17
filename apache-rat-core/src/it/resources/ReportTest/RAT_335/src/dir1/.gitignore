@@ -1,3 +1,4 @@
 *.txt
 !dir1.md
+# this should override the "dont ignore file*.log" in the root .gitignore
 file1.log
