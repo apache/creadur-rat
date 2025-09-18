@@ -33,6 +33,7 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.rat.Defaults;
 import org.apache.rat.OptionCollection;
+import org.apache.rat.api.EnvVar;
 import org.apache.rat.commandline.StyleSheets;
 import org.apache.rat.config.exclusion.StandardCollection;
 import org.apache.rat.config.parameters.ComponentType;
@@ -177,6 +178,16 @@ public class RatTool {
     public List<OptionCollection.ArgumentType> argumentTypes() {
         return Arrays.stream(OptionCollection.ArgumentType.values()).filter(t -> t != OptionCollection.ArgumentType.NONE)
                 .sorted(Comparator.comparing(OptionCollection.ArgumentType::getDisplayName))
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Gets the list of argument types.
+     * @return a list of argument types.
+     */
+    public List<EnvVar> environmentVariables() {
+        return Arrays.stream(EnvVar.values())
+                .sorted(Comparator.comparing(EnvVar::name))
                 .collect(Collectors.toList());
     }
 
