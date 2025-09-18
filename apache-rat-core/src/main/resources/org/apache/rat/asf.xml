@@ -33,9 +33,6 @@
 		<family id="UKOGL" name="UK Open Government License family" />
 		<family id="WTF" name="WTF Public License family" />
 
-
-
-
 		<family id="CDDL1"
 			name="COMMON DEVELOPMENT AND DISTRIBUTION LICENSE Version 1.0" />
 		<family id="GEN" name="Generated Files" />
@@ -473,18 +470,6 @@ Definition files and XSD files">
 		<license family="WTF" name="The Romantic WTF public license" >
 			<text>The Romantic WTF public license</text>
 		</license>
-
-
-
-
-
-
-
-
-
-
-
-
 
 		<license family="CDDL1">
 			<any>

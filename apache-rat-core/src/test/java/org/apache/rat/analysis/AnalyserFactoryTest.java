@@ -133,7 +133,7 @@ public class AnalyserFactoryTest {
         analyser.analyse(document);
         assertThat(document.getMetaData().getDocumentType()).isEqualTo(Document.Type.ARCHIVE);
         assertThat(document.getMetaData().getMediaType().toString()).isEqualTo("application/java-archive");
-        assertThat(document.getMetaData().licenses().count()).as(archiveProcessing.desc()+ " count").isEqualTo(expectedLicenseCount);
+        assertThat(document.getMetaData().licenses().count()).as(archiveProcessing.desc() + " count").isEqualTo(expectedLicenseCount);
     }
 
     @Test

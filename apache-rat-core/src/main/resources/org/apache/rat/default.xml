@@ -17,7 +17,7 @@
 				<copyright start="1995" end="1999" owner="The Apache Group"/>
 				<spdx name='Apache-1.0' />
 			</any>
-			<note>Retired.  Use Apache License 2.0</note>
+			<note>Retired. Use Apache License 2.0</note>
 		</license>
 		<license family="AL" id="AL1.1" name="Apache License 1.1">
 			<any>
@@ -25,7 +25,7 @@
 			<copyright start="2000" owner="The Apache Software Foundation"/>
 			<spdx name='Apache-1.1' />
 			</any>
-			<note>Retired.  Use Apache License 2.0</note>
+			<note>Retired. Use Apache License 2.0</note>
 		</license>
 		<license family="AL" id="AL2.0" name="Apache License 2.0">
 			<any id="ALStandard">

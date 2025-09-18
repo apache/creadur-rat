@@ -53,7 +53,6 @@ public class MetaData {
         this.matchedLicenses = new TreeSet<>();
     }
 
-
     /**
      * Gets the charset for the document. If the charset was not set will return the system default charset.
      * @return the charset for the document
@@ -105,11 +104,12 @@ public class MetaData {
     /**
      * Gets the predicate to filter approved licenses.
      * @return The predicate to validate licenses.
+     * @throws IllegalStateException if no predicate was set.
      */
     private Predicate<ILicense> getApprovalPredicate() {
         if (approvalPredicate == null) {
-            DefaultLog.getInstance().error("Approval Predicate was not set.");
-            throw new IllegalStateException("Approval Predicate was not set.");
+            DefaultLog.getInstance().error("Approval predicate was not set.");
+            throw new IllegalStateException("Approval predicate was not set.");
         }
         return approvalPredicate;
     }
