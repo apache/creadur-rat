@@ -32,6 +32,6 @@ assert report.contains('Unapproved:         0')
 assert report.contains('GPL  : 1')
 assert report.contains('    GPL      GPL3          GNU General Public License V3.0')
 
-assert report.contains('   AL       AL            Apache License Version 2.0')
+assert report.contains('AL       AL2.0         Apache License 2.0')
 assert report.contains('Approved:           3')
 assert report.contains('Standards:          3')

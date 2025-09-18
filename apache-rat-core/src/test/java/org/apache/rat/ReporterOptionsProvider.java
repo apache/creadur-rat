@@ -846,7 +846,7 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
             assertThat(claimStatistic.getCounter(ClaimStatistic.Counter.UNAPPROVED)).isEqualTo(0);
 
             String actualText = TextUtils.readFile(outFile);
-            TextUtils.assertContainsExactly(1, "Apache License Version 2.0: 1 ", actualText);
+            TextUtils.assertContainsExactly(1, "Apache License 2.0: 1 ", actualText);
             TextUtils.assertContainsExactly(1, "STANDARD: 1 ", actualText);
 
         } catch (IOException | RatException e) {
@@ -1018,15 +1018,15 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
                 Document document = XmlUtils.toDom(new FileInputStream(outFile));
                 switch (filter) {
                     case ALL:
-                        XmlUtils.assertIsPresent(filter.name(), document, xPath, "/rat-report/rat-config/licenses/license[@id='AL']");
+                        XmlUtils.assertIsPresent(filter.name(), document, xPath, "/rat-report/rat-config/licenses/license[@id='AL2.0']");
                         XmlUtils.assertIsPresent(filter.name(), document, xPath, "/rat-report/rat-config/licenses/license[@id='GPL1']");
                         break;
                     case APPROVED:
-                        XmlUtils.assertIsPresent(filter.name(), document, xPath, "/rat-report/rat-config/licenses/license[@id='AL']");
+                        XmlUtils.assertIsPresent(filter.name(), document, xPath, "/rat-report/rat-config/licenses/license[@id='AL2.0']");
                         XmlUtils.assertIsNotPresent(filter.name(), document, xPath, "/rat-report/rat-config/licenses/license[@id='GPL1']");
                         break;
                     case NONE:
-                        XmlUtils.assertIsNotPresent(filter.name(), document, xPath, "/rat-report/rat-config/licenses/license[@id='AL']");
+                        XmlUtils.assertIsNotPresent(filter.name(), document, xPath, "/rat-report/rat-config/licenses/license[@id='AL2.0']");
                         XmlUtils.assertIsNotPresent(filter.name(), document, xPath, "/rat-report/rat-config/licenses/license[@id='GPL1']");
                         break;
                     default:

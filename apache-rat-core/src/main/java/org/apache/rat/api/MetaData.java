@@ -51,10 +51,6 @@ public class MetaData {
      */
     public MetaData() {
         this.matchedLicenses = new TreeSet<>();
-        this.approvalPredicate = x -> {
-                DefaultLog.getInstance().error("Approved Predicate was not set.");
-                throw new IllegalStateException("Approved Predicate was not set.");
-        };
     }
 
     /**
@@ -106,6 +102,19 @@ public class MetaData {
     }
 
     /**
+     * Gets the predicate to filter approved licenses.
+     * @return The predicate to validate licenses.
+     * @throws IllegalStateException if no predicate was set.
+     */
+    private Predicate<ILicense> getApprovalPredicate() {
+        if (approvalPredicate == null) {
+            DefaultLog.getInstance().error("Approval predicate was not set.");
+            throw new IllegalStateException("Approval predicate was not set.");
+        }
+        return approvalPredicate;
+    }
+
+    /**
      * Sets the set of approved licenses.
      * @param approvalPredicate the predicate to validate licenses.
      */
@@ -135,7 +144,7 @@ public class MetaData {
      * @return {@code true} if the license is in the list of approved licenses, {@code false} otherwise.
      */
     public boolean isApproved(final ILicense license) {
-        return approvalPredicate.test(license);
+        return getApprovalPredicate().test(license);
     }
 
     /**
@@ -198,6 +207,6 @@ public class MetaData {
     @Override
     public String toString() {
         return String.format("MetaData[%s license, %s approved]", matchedLicenses.size(),
-                matchedLicenses.stream().filter(approvalPredicate).count());
+                approvalPredicate == null ? "unknown" : matchedLicenses.stream().filter(getApprovalPredicate()).count());
     }
 }

@@ -157,7 +157,7 @@ public class OptionCollectionTest {
                             try {
                                 method.invoke(testProvider);
                             } catch (IllegalAccessException | InvocationTargetException e) {
-                                throw new RuntimeException(e);
+                                throw new AssertionError(e);
                             }
                         }
                 ));

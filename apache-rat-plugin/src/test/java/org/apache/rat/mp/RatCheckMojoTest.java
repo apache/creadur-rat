@@ -394,7 +394,7 @@ public class RatCheckMojoTest {
                     mapOf("count", "1"));
 
             // license names
-            XmlUtils.assertAttributes(document, xPath, "/rat-report/statistics/licenseName[@name='Apache License Version 2.0']",
+            XmlUtils.assertAttributes(document, xPath, "/rat-report/statistics/licenseName[@name='Apache License 2.0']",
                     mapOf("count", "1"));
 
             XmlUtils.assertAttributes(document, xPath, "/rat-report/statistics/licenseName[@name='Unknown license']",

@@ -24,4 +24,4 @@ assert ! content.contains('[WARNING] No resources included')
 
 report = new File(basedir, 'target/site/rat-report.html').text
 assert TextUtils.isMatching("^  /pom.xml\\s+S ", report)
-assert report.contains('   AL       AL            Apache License Version 2.0')
+assert report.contains('AL       AL2.0         Apache License 2.0')

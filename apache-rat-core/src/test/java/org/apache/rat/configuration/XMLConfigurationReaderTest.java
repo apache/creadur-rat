@@ -53,7 +53,7 @@ public class XMLConfigurationReaderTest {
     public static final String[] APPROVED_IDS = { "AL", "BSD-3", "CDDL1",  "MIT", "OASIS",
             "W3C", "W3CD" };
 
-    public static final String[] EXPECTED_LICENSES = { "AL", "ASL", "BSD-3", "DOJO", "TMF", "CDDL1", "ILLUMOS", "GPL1", "GPL2",
+    public static final String[] EXPECTED_LICENSES = { "AL1.0", "AL1.1", "AL2.0", "BSD-3", "DOJO", "TMF", "CDDL1", "ILLUMOS", "GPL1", "GPL2",
             "GPL3", "MIT", "OASIS", "W3C", "W3CD" };
 
     @Test
@@ -76,7 +76,7 @@ public class XMLConfigurationReaderTest {
 
         Collection<String> readCategories = reader.readLicenses().stream().map(IHeaderMatcher::getId)
                 .collect(Collectors.toList());
-        assertArrayEquals(EXPECTED_LICENSES, readCategories.toArray(new String[readCategories.size()]));
+        assertArrayEquals(EXPECTED_LICENSES, readCategories.toArray(new String[0]));
     }
 
     @Test
