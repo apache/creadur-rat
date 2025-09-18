@@ -50,7 +50,7 @@ agnostic home for software distribution comprehension and audit tools.
     <ant.version>1.10.15</ant.version>
     <mockito.version>4.11.0</mockito.version>
     <javaVersion>1.8</javaVersion>
-    <tika.version>2.9.2</tika.version>
+    <tika.version>3.2.3</tika.version>
     <maven.compiler.source>${javaVersion}</maven.compiler.source>
     <maven.compiler.target>${javaVersion}</maven.compiler.target>
     <!-- This is the version of Maven required to use the RAT Maven Plugin -->
