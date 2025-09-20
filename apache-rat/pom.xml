@@ -184,12 +184,12 @@
           <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>apache-rat-tools</artifactId>
-            <version>${parent.version}</version>
+            <version>${project.parent.version}</version>
           </dependency>
           <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>apache-rat-core</artifactId>
-            <version>${parent.version}</version>
+            <version>${project.parent.version}</version>
           </dependency>
         </dependencies>
       </plugin>

@@ -182,8 +182,8 @@ public class RatTool {
     }
 
     /**
-     * Gets the list of argument types.
-     * @return a list of argument types.
+     * Gets the list of environment variables.
+     * @return a list of environment variables.
      */
     public List<EnvVar> environmentVariables() {
         return Arrays.stream(EnvVar.values())
