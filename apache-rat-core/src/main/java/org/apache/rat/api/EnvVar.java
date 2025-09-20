@@ -41,12 +41,12 @@ public enum EnvVar {
     /**
      * Defines the user HOME.
      */
-    HOME("The home directory"),
+    HOME("The current user's home directory."),
     /**
      * Sets the log level for the DefaultLog when it is constructed.
      */
     RAT_DEFAULT_LOG_LEVEL("The default log level for the command line logger. Should be one of: " +
-            Arrays.stream(Log.Level.values()).map(Log.Level::name).collect(Collectors.joining(", ")));
+            Arrays.stream(Log.Level.values()).map(Log.Level::name).collect(Collectors.joining(", ")) + ".");
     /**
      * The documentation for this EnvVar.
      */

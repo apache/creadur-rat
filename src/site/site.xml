@@ -53,6 +53,7 @@
     <menu name="RAT from the Command Line" inherit="bottom">
       <item name="Command Line Introduction" href="apache-rat/index.html"/>
       <item name="Command Line Options" href="apache-rat/cli_options.html"/>
+      <item name="Environment Variables" href="apache-rat/env_vars.html" />
       <item name="Exclusion Expressions" href="apache-rat-core/exclusion_expression.html"/>
       <item name="Standard Collections" href="apache-rat/standard_collections.html"/>
     </menu>
