@@ -75,6 +75,9 @@ The <action> type attribute can be one of:
       <action issue="RAT-128" type="add" dev="claudenw">
         Properly distinguish between Apache licenses 1.0, 1.1 and 2.0 and rename to Apache license in reports.
       </action>
+      <action issue="RAT-485" type="add" dev="claudenw">
+        Add documentation of environment variables used in the RAT engine.
+      </action>
       <action issue="RAT-362" type="add" dev="claudenw">
         Improve test and test result reporting for .gitignore parsing. Introduce environment variable abstraction.
       </action>
