@@ -20,16 +20,16 @@ public class Source {
  ]]></sample>
     </resource>
     <resource name="src/test/resources/elements/Text.txt" type="STANDARD">
-        <license approval="true" family="AL   " id="AL" name="Apache License Version 2.0"/>
+        <license approval="true" family="AL   " id="AL" name="Apache License 2.0"/>
     </resource>
     <resource name="src/test/resources/elements/TextHttps.txt" type="STANDARD">
-        <license approval="true" family="AL   " id="AL" name="Apache License Version 2.0"/>
+        <license approval="true" family="AL   " id="AL" name="Apache License 2.0"/>
     </resource>
     <resource name="src/test/resources/elements/Xml.xml" type="STANDARD">
-        <license approval="true" family="AL   " id="AL" name="Apache License Version 2.0"/>
+        <license approval="true" family="AL   " id="AL" name="Apache License 2.0"/>
     </resource>
     <resource name="src/test/resources/elements/buildr.rb" type="STANDARD">
-        <license approval="true" family="AL   " id="AL" name="Apache License Version 2.0"/>
+        <license approval="true" family="AL   " id="AL" name="Apache License 2.0"/>
     </resource>
     <resource name="src/test/resources/elements/dummy.jar" type="ARCHIVE"/>
     <resource name="src/test/resources/elements/generated.txt" type="GENERATED">

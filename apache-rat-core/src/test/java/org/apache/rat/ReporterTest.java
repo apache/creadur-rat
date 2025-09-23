@@ -110,7 +110,7 @@ public class ReporterTest {
 
         TreeMap<String, Integer> expected = new TreeMap<>();
         expected.put("Unknown license", 2);
-        expected.put("Apache License Version 2.0", 5);
+        expected.put("Apache License 2.0", 5);
         expected.put("The MIT License", 1);
         expected.put("BSD 3 clause", 1);
         expected.put("The Telemanagement Forum License", 1);
@@ -225,8 +225,7 @@ public class ReporterTest {
         NodeList nodeList = XmlUtils.getNodeList(doc, xPath, "/rat-report/resource/license[@approval='false']");
         assertThat(nodeList.getLength()).isEqualTo(2);
 
-        nodeList = XmlUtils.getNodeList(doc, xPath, "/rat-report/resource/license[@id='AL']");
-
+        nodeList = XmlUtils.getNodeList(doc, xPath, "/rat-report/resource/license[@id='AL2.0']");
         assertThat(nodeList.getLength()).isEqualTo(5);
 
         nodeList = XmlUtils.getNodeList(doc, xPath, "/rat-report/resource/license[@id='MIT']");
@@ -266,7 +265,7 @@ public class ReporterTest {
         assertThat(nodeList.getLength()).isEqualTo(1);
 
         // check licenses
-        Map<String, String> apacheLicense = mapOf("approval", "true", "family", "AL   ", "id", "AL", "name", "Apache License Version 2.0");
+        Map<String, String> apacheLicense = mapOf("approval", "true", "family", "AL   ", "id", "AL2.0", "name", "Apache License 2.0");
         Map<String, String> unknownLicense = mapOf("approval", "false", "family", "?????",
                 "id", "?????", "name", "Unknown license");
         expected = new HashMap<>();
@@ -350,7 +349,7 @@ public class ReporterTest {
         TextUtils.assertPatternInTarget("^! Unapproved:\\s*2 ", document);
         TextUtils.assertPatternInTarget("^  Unknown:\\s*2 ", document);
 
-        TextUtils.assertPatternInTarget("^Apache License Version 2.0: 5 ", document);
+        TextUtils.assertPatternInTarget("^Apache License 2.0: 5 ", document);
         TextUtils.assertPatternInTarget("^BSD 3 clause: 1 ", document);
         TextUtils.assertPatternInTarget("^The MIT License: 1 ", document);
         TextUtils.assertPatternInTarget("^The Telemanagement Forum License: 1 ", document);
@@ -415,7 +414,7 @@ public class ReporterTest {
 
         XmlUtils.getNode(doc, xPath, "/rat-report[@timestamp]");
 
-        LicenseInfo apacheLic = new LicenseInfo("AL", true, false);
+        LicenseInfo apacheLic = new LicenseInfo("AL2.0", "AL", true, false);
         checkNode(doc, xPath, "/ILoggerFactory.java", new LicenseInfo("MIT", true, false),
                 "STANDARD");
         checkNode(doc, xPath, "/Image.png", null, "BINARY");

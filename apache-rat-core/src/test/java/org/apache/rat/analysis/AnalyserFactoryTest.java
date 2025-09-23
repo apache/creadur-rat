@@ -128,11 +128,12 @@ public class AnalyserFactoryTest {
         ReportConfiguration config = new ReportConfiguration();
         config.setFrom(defaults);
         config.setArchiveProcessing(archiveProcessing);
+        document.getMetaData().setApprovalPredicate(config.getLicenseSetFactory().getApprovedLicensePredicate());
         analyser = AnalyserFactory.createConfiguredAnalyser(config);
         analyser.analyse(document);
         assertThat(document.getMetaData().getDocumentType()).isEqualTo(Document.Type.ARCHIVE);
         assertThat(document.getMetaData().getMediaType().toString()).isEqualTo("application/java-archive");
-        assertThat(document.getMetaData().licenses().count()).isEqualTo(expectedLicenseCount);
+        assertThat(document.getMetaData().licenses().count()).as(archiveProcessing.desc() + " count").isEqualTo(expectedLicenseCount);
     }
 
     @Test

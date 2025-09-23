@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <rat-config>
 	<families>
-		<family id="AL" name="Apache License Version 2.0" />
+		<family id="AL" name="Apache License" />
 		<family id="CDDL1"
 			name="COMMON DEVELOPMENT AND DISTRIBUTION LICENSE Version 1.0" />
 		<family id="GPL" name="GNU General Public License family" />
@@ -12,35 +12,38 @@
 		<family id='BSD-3' name="BSD 3 clause" />
 	</families>
 	<licenses>
-		<license family="AL">
-			<all>
-				<any id="ALStandard">
-					<text>Licensed under the Apache License, Version 2.0 (the
-						"License")</text>
-					<text>Licensed to the Apache Software Foundation (ASF) under
-						one
-						or more contributor license agreements; and to You under
-						the
-						Apache License, Version 2.0.</text>
-					<text>http://www.apache.org/licenses/LICENSE-2.0</text>
-					<text>https://www.apache.org/licenses/LICENSE-2.0</text>
-					<text>http://www.apache.org/licenses/LICENSE-2.0.html</text>
-					<text>https://www.apache.org/licenses/LICENSE-2.0.html</text>
-					<text>http://www.apache.org/licenses/LICENSE-2.0.txt</text>
-					<text>https://www.apache.org/licenses/LICENSE-2.0.txt</text>
-					<spdx name='Apache-2.0' />
-				</any>
-				<not>
-					<copyright />
-				</not>
-			</all>
+		<license family="AL" id="AL1.0" name="Apache License 1.0">
+			<any>
+				<copyright start="1995" end="1999" owner="The Apache Group"/>
+				<spdx name='Apache-1.0' />
+			</any>
+			<note>Retired. Use Apache License 2.0</note>
 		</license>
-
-		<license family="AL" id="ASL" name="Applied Apache License Version 2.0">
-			<all>
-				<matcherRef refId="ALStandard" />
-				<copyright />
-			</all>
+		<license family="AL" id="AL1.1" name="Apache License 1.1">
+			<any>
+			<text>The Apache Software License, Version 1.1</text>
+			<copyright start="2000" owner="The Apache Software Foundation"/>
+			<spdx name='Apache-1.1' />
+			</any>
+			<note>Retired. Use Apache License 2.0</note>
+		</license>
+		<license family="AL" id="AL2.0" name="Apache License 2.0">
+			<any id="ALStandard">
+				<text>Licensed under the Apache License, Version 2.0 (the
+					"License")</text>
+				<text>Licensed to the Apache Software Foundation (ASF) under
+					one
+				or more contributor license agreements; and to You under
+				the
+				Apache License, Version 2.0.</text>
+				<text>http://www.apache.org/licenses/LICENSE-2.0</text>
+				<text>https://www.apache.org/licenses/LICENSE-2.0</text>
+				<text>http://www.apache.org/licenses/LICENSE-2.0.html</text>
+				<text>https://www.apache.org/licenses/LICENSE-2.0.html</text>
+				<text>http://www.apache.org/licenses/LICENSE-2.0.txt</text>
+				<text>https://www.apache.org/licenses/LICENSE-2.0.txt</text>
+				<spdx name='Apache-2.0' />
+			</any>
 		</license>
 
 		<license family="CDDL1">

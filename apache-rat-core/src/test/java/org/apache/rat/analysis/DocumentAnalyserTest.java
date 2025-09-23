@@ -140,7 +140,7 @@ public class DocumentAnalyserTest {
 
     private static List<ILicenseFamily> defaultApprovedLicenseFamilies() {
         return Arrays.asList(
-                ILicenseFamily.builder().setLicenseFamilyCategory("AL").setLicenseFamilyName("Apache License Version 2.0").build(),
+                ILicenseFamily.builder().setLicenseFamilyCategory("AL").setLicenseFamilyName("Apache License").build(),
                 ILicenseFamily.builder().setLicenseFamilyCategory("CDDL1").setLicenseFamilyName("COMMON DEVELOPMENT AND DISTRIBUTION LICENSE Version 1.0").build(),
                 ILicenseFamily.builder().setLicenseFamilyCategory("MIT").setLicenseFamilyName("The MIT License").build(),
                 ILicenseFamily.builder().setLicenseFamilyCategory("OASIS").setLicenseFamilyName("OASIS Open License").build(),
@@ -158,8 +158,9 @@ public class DocumentAnalyserTest {
 
     private static List<ILicense> defaultApprovedLicenses() {
         return Arrays.asList(
-                new TestingLicense("AL", "AL"),
-                new TestingLicense("AL", "ASL"),
+                new TestingLicense("AL", "AL1.0"),
+                new TestingLicense("AL", "AL1.1"),
+                new TestingLicense("AL", "AL2.0"),
                 new TestingLicense("BSD-3", "BSD-3"),
                 new TestingLicense("BSD-3", "DOJO"),
                 new TestingLicense("BSD-3", "TMF"),

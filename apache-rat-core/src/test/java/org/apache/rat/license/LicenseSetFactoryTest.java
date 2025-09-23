@@ -37,7 +37,7 @@ public class LicenseSetFactoryTest {
     private static final int NUMBER_OF_DEFAULT_ACCEPTED_LICENSES = 7;
 
     private static final ILicenseFamily[] APPROVED_FAMILIES = { //
-            makeFamily("AL", "Apache License Version 2.0"),
+            makeFamily("AL", "Apache License"),
             makeFamily("BSD-3", "BSD 3 clause"),
             makeFamily("CDDL1", "COMMON DEVELOPMENT AND DISTRIBUTION LICENSE Version 1.0"),
             makeFamily("MIT", "The MIT License"),
