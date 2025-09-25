@@ -37,6 +37,7 @@ jobs:
 # Caused by: sun.security.validator.ValidatorException: PKIX path building failed: sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid certification path to requested target
 #
 # Java 17 disabled, because we are running into https://bugs.openjdk.java.net/browse/JDK-8270866
+# Java 25 is not working until we drop JDK8!
         java: [8, 11, 21]
       fail-fast: false
 
@@ -78,7 +79,7 @@ jobs:
         uses: actions/upload-artifact@v4
         if: failure()
         with:
-          name: integration-test-failure-logs
+          name: integration-test-failure-logs-${{ matrix.os }}-JDK${{ matrix.java }}
           retention-days: 3
           path: |
             **/target/surefire-reports
