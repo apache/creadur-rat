@@ -46,7 +46,7 @@ are not excluded by the RAT configurations will be affected.
 To add license headers use a command such as:
 
 ```
-java -jar apache-rat/target/apache-rat-${project.version}.jar --addLicense --copyright "Copyright 2008 Foo" --force /path/to/project
+java -jar apache-rat/target/apache-rat-${project.version}.jar --edit-license --copyright "Copyright 2008 Foo" --force /path/to/project
 ```
 
 This command will add the license header directly to the
