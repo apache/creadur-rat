@@ -175,6 +175,7 @@ Styling output
 
 #foreach ($style in ${rat.styleSheets})
  * {{{https://gitbox.apache.org/repos/asf/creadur-rat/blob/master/apache-rat-core/src/main/resources/org/apache/rat/${style.arg}.xsl}${style.arg}}} - ${style.desc}
+
 #end
 
  These stylesheets can be specified using the "--output-style" option. The following example create a pretty printed XML
