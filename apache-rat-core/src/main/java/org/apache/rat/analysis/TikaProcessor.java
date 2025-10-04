@@ -167,7 +167,7 @@ public final class TikaProcessor {
             try {
                 return Charset.forName(charsetMatch.getName());
             } catch (UnsupportedCharsetException e) {
-                DefaultLog.getInstance().warn(String.format("Unsupported character set '%s' in file '%s'.  Will use system default encoding.",
+                DefaultLog.getInstance().warn(String.format("Unsupported character set '%s' in file '%s'. Will use system default encoding.",
                                 charsetMatch.getName(), documentName));
             }
         }
