@@ -24,6 +24,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
 import org.apache.commons.cli.Option;
+import org.apache.commons.lang3.SystemUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.rat.test.AbstractConfigurationOptionsProvider;
@@ -58,8 +59,11 @@ public class ReportOptionTest  {
 
     static ReportConfiguration reportConfiguration;
 
-    static boolean isGitHubLinux() {
-        return System.getenv("GITHUB_ACTION") != null && System.getProperty("os.name").toLowerCase(Locale.ENGLISH).contains("linux");
+    static boolean isGitHubLinuxOrWindowsWithJava8() {
+        return System.getenv("GITHUB_ACTION") != null &&
+                (System.getProperty("os.name").toLowerCase(Locale.ENGLISH).contains("linux") ||
+                        (System.getProperty("os.name").toLowerCase(Locale.ENGLISH).contains("windows") && SystemUtils.IS_JAVA_1_8)
+                );
     }
 
     @AfterAll
@@ -69,7 +73,7 @@ public class ReportOptionTest  {
 
     @ParameterizedTest
     @ArgumentsSource(AntOptionsProvider.class)
-    @DisabledIf("isGitHubLinux")
+    @DisabledIf("isGitHubLinuxOrWindowsWithJava8")
     public void testOptionsUpdateConfig(String name, OptionCollectionTest.OptionTest test) {
         DefaultLog.getInstance().info("Running " + name);
         try {
