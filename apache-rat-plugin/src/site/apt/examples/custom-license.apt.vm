@@ -31,7 +31,7 @@ Custom License Matchers
   Unlike earlier versions (before 0.16) no custom implementations are required to define
   custom licenses.
 
-  There is a file that defines all the standard licenses: {{{https://gitbox.apache.org/repos/asf/creadur-rat/blob/master/apache-rat-core/src/main/resources/org/apache/rat/default.xml}default.xml}}. The pom.xml implementations vary slightly from the configuration because the pom does not allow attributes on the configuration entries. For a full mapping of the command line options to the Maven options see the {{{../apache-rat/name_xref.html}Option Name Cross-Reference}}
+  There is a file that defines all the standard licenses: {{{https://gitbox.apache.org/repos/asf/creadur-rat/blob/master/apache-rat-core/src/main/resources/org/apache/rat/default.xml}default.xml}}. The pom.xml implementations vary slightly from the configuration because the pom does not allow attributes on the configuration entries. For a full mapping of the command line options to the Maven options see the {{{../../apache-rat/name_xref.html}Option Name Cross-Reference}}
 
   Please be aware that custom licenses need to have <<unique names>>, otherwise a warning is issued and your custom definitions are ignored in favour of the standard license definitions.
 
