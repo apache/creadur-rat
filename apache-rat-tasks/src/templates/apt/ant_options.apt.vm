@@ -107,7 +107,7 @@ Ant Elements and Attributes
  ${desc}
 #if(${type.displayName} == "StandardCollection")
 
- A complete description of each of the {{{./standard_collections.html}standard collection types}} is available.
+ A complete description of each of the {{{../apache-rat/standard_collections.html}standard collection types}} is available.
 #end
 
 #end

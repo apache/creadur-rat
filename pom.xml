@@ -272,8 +272,6 @@ agnostic home for software distribution comprehension and audit tools.
           <onlyCurrentVersion>${commons.changes.onlyCurrentVersion}</onlyCurrentVersion>
           <maxEntries>${commons.changes.maxEntries}</maxEntries>
           <runOnlyAtExecutionRoot>${commons.changes.runOnlyAtExecutionRoot}</runOnlyAtExecutionRoot>
-          <!-- RAT-353: v3.x of the plugin will use the correct target link as parameter team, while v2.x uses teamlist -->
-          <teamlist>team.html</teamlist>
         </configuration>
         <reportSets>
           <reportSet>

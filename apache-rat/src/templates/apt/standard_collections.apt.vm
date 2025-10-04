@@ -54,4 +54,5 @@ Standard Collections
 * Notes
 
  * A file processor will process the associated <<<ignore>>> file for include and exclude directives
+
  * A path matcher will match specific information about the file.

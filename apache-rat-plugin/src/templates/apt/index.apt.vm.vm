@@ -118,3 +118,21 @@ Configuration Options
   * Adding the report to the {{{./examples/site.html}generated site}}.
 
   * Applying a {{{./examples/custom-license.html}custom license}}.
+
+Using SNAPSHOT versions
+
+    In case you want to try out current development versions, you need to adapt your pom.xml in order to include the ASF snapshot repossitory:
+
+------------------------------------------------------------------
+    <pluginRepositories>
+        <pluginRepository>
+            <id>apache.snapshots</id>
+            <url>https://repository.apache.org/content/repositories/snapshots</url>
+            <snapshots>
+                <enabled>true</enabled>
+                <updatePolicy>always</updatePolicy>
+                <checksumPolicy>warn</checksumPolicy>
+            </snapshots>
+        </pluginRepository>
+    </pluginRepositories>
+------------------------------------------------------------------

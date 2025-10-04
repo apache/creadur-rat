@@ -16,6 +16,33 @@
 #
 # DEVHINT: RAT-302: Do not use modern JDK due to the javadoc problem; JDK8 and 16 are okay
 # DEVHINT: package build is required as site target requires access to the completed jar package.
-./mvnw clean package site site:stage
-cp -rvf target/staging/* ../creadur-site/rat017/
-cp -rvf src/site/javadocFont/* ../creadur-site/rat017/apidocs/
+./mvnw -B clean package site site:stage
+
+# DEVHINT: with trailing slash please!
+targetDirectory=../creadur-site/rat017/
+
+echo "Copying site resources into asf-site repo under $targetDirectory"
+cp -rvf target/staging/* $targetDirectory > /dev/null
+echo "DONE."
+
+echo
+echo "Copying JS/CSS resources into generated reports"
+for subdirectory in "apidocs" "testapidocs" "xref" "xref-test"
+ do
+  echo "> $subdirectory"
+  mkdir -p $targetDirectory/$subdirectory && cp -rvf src/site/javadocFont/* $targetDirectory/$subdirectory/ > /dev/null
+ done
+echo "DONE."
+
+echo
+echo "Fixing missing JS/CSS resources in all subprojects"
+for module in "apache-rat" "apache-rat-core" "apache-rat-plugin" "apache-rat-tasks" "apache-rat-testdata" "apache-rat-tools"
+ do
+  echo ">> Module: $module"
+   for targetSubdirectory in "apidocs" "testapidocs" "xref" "xref-test"
+   do
+     mkdir -p $targetDirectory$module/$targetSubdirectory && cp -rvf src/site/javadocFont/* $targetDirectory$module/$targetSubdirectory/ > /dev/null
+   done
+ done
+
+echo "DONE."
