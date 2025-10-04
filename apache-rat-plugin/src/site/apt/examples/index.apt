@@ -13,11 +13,13 @@
 ~~   See the License for the specific language governing permissions and
 ~~   limitations under the License.
 
- --------------
- Maven Examples
- --------------
+ -----------------------
+ Maven Examples Overview
+ -----------------------
 
-  The following examples should provide a better understanding of some usages of the RAT Maven Plugin.
+Maven Examples Overview
+
+ The following examples should provide a better understanding of some usages of the RAT Maven Plugin.
 
   * {{{./basic.html}Basic use}} of the <<apache-rat:check>> goal.
 
