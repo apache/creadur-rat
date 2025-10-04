@@ -42,8 +42,7 @@ import static java.lang.String.format;
 /**
  * Run RAT to perform a violation check.
  * <p>
- *     This documentation mentions data types for some arguments. An <a href="data_types.html">explanation of the data types</a> is included
- *     in this documentation package.
+ *     This documentation mentions data types for some arguments.
  * </p>
  */
 @Mojo(name = "check", defaultPhase = LifecyclePhase.VALIDATE, threadSafe = true)
