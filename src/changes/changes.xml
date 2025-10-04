@@ -72,6 +72,9 @@ The <action> type attribute can be one of:
     </release>
     -->
     <release version="0.17-SNAPSHOT" date="xxxx-yy-zz" description="Current SNAPSHOT - release to be done">
+      <action issue="RAT-481" type="add" dev="pottlinger">
+        Update scripts to generate RAT's webpage and fix multiple linking, menu and documentation errors.
+      </action>
       <action issue="RAT-128" type="add" dev="claudenw">
         Properly distinguish between Apache licenses 1.0, 1.1 and 2.0 and rename to Apache license in reports.
       </action>
