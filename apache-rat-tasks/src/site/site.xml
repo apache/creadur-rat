@@ -21,7 +21,7 @@
     <menu ref="parent"/>
     <menu name="Overview">
       <item name="Introduction" href="index.html"/>
-      <item name="Report Task" href="report.html"/>
+      <item name="Report Task" href="examples/report.html"/>
     </menu>
     <menu name="Examples">
       <item name="Basic Usage" href="examples/basic.html"/>
