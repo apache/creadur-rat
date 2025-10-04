@@ -17,7 +17,7 @@
 #set($stringUtils = ${rat.stringUtils})
 #set($newTab = ${rat.doubleLine}+" * ")
 
-                       -----
+                        -----
                         Apache RAT Ant Task Library
                         -----
 Apache RAT Overview
