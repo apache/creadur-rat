@@ -107,7 +107,7 @@ java -jar apache-rat/target/apache-rat-${project.version}.jar \
 
 * Using standard exclusions
 
- RAT defines a number of {{{apache-rat/standard_collections}standard collections}} that can be used to exclude files based on
+ RAT defines a number of {{{apache-rat/standard_collections.html}standard collections}} that can be used to exclude files based on
  a standard pattern. For example to exclude all the files associated with the git SCM the following could be used.
 
 +------------------------------------------+
