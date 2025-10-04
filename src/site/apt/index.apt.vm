@@ -78,7 +78,7 @@ Apache RAT&#8482;
 
    * A {{{./apache-rat/index.html}command line}} client.
 
-   * An Apache {{{./apache-rat-task/index.html}Ant task library}} ,
+   * An Apache {{{./apache-rat-tasks/index.html}Ant task library}} ,
 
    * An Apache {{{./apache-rat-plugin/index.html}Maven plugin}}.
 
@@ -108,7 +108,7 @@ Apache RAT&#8482;
 * Quick Start: Running RAT
 
   There are three user interfaces for RAT: from the {{{./apache-rat/index.html}command line}},
-  from {{{./apache-rat-task/index.html}Ant}}, and from {{{./apache-rat-plugin/index.html}Maven}}.
+  from {{{./apache-rat-tasks/index.html}Ant}}, and from {{{./apache-rat-plugin/index.html}Maven}}.
 
   Please see the specific documentation in one of the links above.
 
