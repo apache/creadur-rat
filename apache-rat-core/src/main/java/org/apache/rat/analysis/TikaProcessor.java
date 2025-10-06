@@ -143,11 +143,11 @@ public final class TikaProcessor {
             if (Document.Type.STANDARD == document.getMetaData().getDocumentType()) {
                 try {
                     document.getMetaData().setCharset(detectCharset(stream, document.getName()));
+                    if (NoteGuesser.isNote(document)) {
+                        document.getMetaData().setDocumentType(Document.Type.NOTICE);
+                    }
                 } catch (UnsupportedCharsetException e) {
                     document.getMetaData().setDocumentType(Document.Type.UNKNOWN);
-                }
-                if (NoteGuesser.isNote(document)) {
-                    document.getMetaData().setDocumentType(Document.Type.NOTICE);
                 }
             }
             return result;
@@ -162,6 +162,7 @@ public final class TikaProcessor {
      * @param documentName the name of the document being processed.
      * @return the detected character set or {@code null} if not detectable.
      * @throws IOException on IO error.
+     * @throws UnsupportedCharsetException on unsupported charset.
      */
     private static Charset detectCharset(final InputStream stream, final DocumentName documentName) throws IOException, UnsupportedCharsetException {
         CharsetDetector encodingDetector = new CharsetDetector();
