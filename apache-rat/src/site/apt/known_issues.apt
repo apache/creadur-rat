@@ -21,10 +21,6 @@
 
 Known issues
 
- Apache RAT&#8482; has the following known issues. As it is developed as an open source project, you are free to help, comment or provide insights about the known issues.
+ This page collects any known issues with Apache RAT&#8482;. As it is developed as an open source project, you are free to help, comment or provide insights about the known issues.
 
-* 0.17-SNAPSHOT
-
- There are the following issues already known in the above version:
-
-  * tbd
+  * {{{https://issues.apache.org/jira/browse/RAT-476}RAT-476}}: RAT's include/exclude precedence rules do not match gitignore semantics
