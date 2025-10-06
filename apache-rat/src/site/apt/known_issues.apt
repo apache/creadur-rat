@@ -24,3 +24,7 @@ Known issues
  This page collects any known issues with Apache RAT&#8482;. As it is developed as an open source project, you are free to help, comment or provide insights about the known issues.
 
   * {{{https://issues.apache.org/jira/browse/RAT-476}RAT-476}}: RAT's include/exclude precedence rules do not match gitignore semantics
+
+  * {{{https://issues.apache.org/jira/browse/RAT-97}RAT-97}}: Maven plugin parameter <<<excludeSubProjects>>> does not work properly if deeper than one hierarchy level
+
+ Feel free to have a look into our project's {{{https://issues.apache.org/jira/browse/RAT}Jira}} to find other reported {{{https://issues.apache.org/jira/issues/?jql=project%20%3D%20%22Apache%20Rat%22%20%20and%20issuetype%20%3D%20Bug%20and%20status%20not%20in%20(resolved%2C%20closed)}bugs}} or open issues.
