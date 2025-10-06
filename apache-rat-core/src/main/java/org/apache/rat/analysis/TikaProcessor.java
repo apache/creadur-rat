@@ -141,7 +141,11 @@ public final class TikaProcessor {
                         .setDocumentType(fromMediaType(mediaType));
             }
             if (Document.Type.STANDARD == document.getMetaData().getDocumentType()) {
-                document.getMetaData().setCharset(detectCharset(stream, document.getName()));
+                try {
+                    document.getMetaData().setCharset(detectCharset(stream, document.getName()));
+                } catch (UnsupportedCharsetException e) {
+                    document.getMetaData().setDocumentType(Document.Type.UNKNOWN);
+                }
                 if (NoteGuesser.isNote(document)) {
                     document.getMetaData().setDocumentType(Document.Type.NOTICE);
                 }
@@ -155,11 +159,11 @@ public final class TikaProcessor {
     /**
      * Determine the character set for the input stream. Input stream must implement {@code mark}.
      * @param stream the stream to check.
-     * @param documentName the name of the document being read.
+     * @param documentName the name of the document being processed.
      * @return the detected character set or {@code null} if not detectable.
      * @throws IOException on IO error.
      */
-    private static Charset detectCharset(final InputStream stream, final DocumentName documentName) throws IOException {
+    private static Charset detectCharset(final InputStream stream, final DocumentName documentName) throws IOException, UnsupportedCharsetException {
         CharsetDetector encodingDetector = new CharsetDetector();
         encodingDetector.setText(stream);
         CharsetMatch charsetMatch = encodingDetector.detect();
@@ -167,8 +171,9 @@ public final class TikaProcessor {
             try {
                 return Charset.forName(charsetMatch.getName());
             } catch (UnsupportedCharsetException e) {
-                DefaultLog.getInstance().warn(String.format("Unsupported character set '%s' in file '%s'. Will use system default encoding.",
-                                charsetMatch.getName(), documentName));
+                DefaultLog.getInstance().warn(String.format("Unsupported character set '%s' in file '%s'",
+                        charsetMatch.getName(), documentName));
+                throw e;
             }
         }
         return null;
