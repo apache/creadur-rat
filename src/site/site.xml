@@ -49,7 +49,7 @@
       <item name="Introducing RAT" href="/index.html"/>
       <item name="Downloads" href="/download_rat.cgi"/>
       <item name="Changes" href="/changes.html"/>
-      <item name="Known issues" href="apache-rat/known-issues.html"/>
+      <item name="Known issues" href="apache-rat/known_issues.html"/>
     </menu>
     <menu name="RAT from the Command Line" inherit="bottom">
       <item name="Command Line Introduction" href="apache-rat/index.html"/>
