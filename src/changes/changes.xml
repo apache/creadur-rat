@@ -72,6 +72,9 @@ The <action> type attribute can be one of:
     </release>
     -->
     <release version="0.17-SNAPSHOT" date="xxxx-yy-zz" description="Current SNAPSHOT - release to be done">
+      <action issue="RAT-494" type="fix" dev="claudenw" due-to="Tilman Hausherr">
+        Fix NPE when encoding found in scanned document is not supported by the currently used JDK. Tika part of the bugfix can be found via TIKA-4505.
+      </action>
       <action issue="RAT-481" type="add" dev="pottlinger">
         Update scripts to generate RAT's webpage and fix multiple linking, menu and documentation errors.
       </action>
