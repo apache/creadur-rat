@@ -24,6 +24,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import java.io.File;
 import java.io.StringWriter;
 
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
@@ -137,7 +138,7 @@ public class AnalyserFactoryTest {
     }
 
     @Test
-    public void missingFileTest() {
+    public void missingFileTest() throws URISyntaxException {
         final Document document = new FileDocument(basedir,
                 new File(Resources.getExampleResource("exampleData"), "not_a_real_file"), DocumentNameMatcher.MATCHES_ALL);
         Defaults defaults = Defaults.builder().build();
