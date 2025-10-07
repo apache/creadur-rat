@@ -72,6 +72,9 @@ The <action> type attribute can be one of:
     </release>
     -->
     <release version="0.17-SNAPSHOT" date="xxxx-yy-zz" description="Current SNAPSHOT - release to be done">
+      <action issue="RAT-489" type="add" dev="pottlinger">
+        Provide a central known issues section to the RAT homepage in order to inform users more directly about already known challenges with the current RAT version.
+      </action>
       <action issue="RAT-481" type="add" dev="pottlinger">
         Update scripts to generate RAT's webpage and fix multiple linking, menu and documentation errors.
       </action>
