@@ -1,0 +1,30 @@
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~   Licensed to the Apache Software Foundation (ASF) under one or more
+~~   contributor license agreements.  See the NOTICE file distributed with
+~~   this work for additional information regarding copyright ownership.
+~~   The ASF licenses this file to You under the Apache License, Version 2.0
+~~   (the "License"); you may not use this file except in compliance with
+~~   the License.  You may obtain a copy of the License at
+~~
+~~       http://www.apache.org/licenses/LICENSE-2.0
+~~
+~~   Unless required by applicable law or agreed to in writing, software
+~~   distributed under the License is distributed on an "AS IS" BASIS,
+~~   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+~~   See the License for the specific language governing permissions and
+~~   limitations under the License.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+                   --------------------------
+                   Known issues
+                   --------------------------
+
+Known issues
+
+ This page collects any known issues with Apache RAT&#8482;. As it is developed as an open source project, you are free to help, comment or provide insights about the known issues.
+
+  * {{{https://issues.apache.org/jira/browse/RAT-476}RAT-476}}: RAT's include/exclude precedence rules do not match gitignore semantics
+
+  * {{{https://issues.apache.org/jira/browse/RAT-97}RAT-97}}: Maven plugin parameter <<<excludeSubProjects>>> does not work properly if deeper than one hierarchy level
+
+ Feel free to have a look into our project's {{{https://issues.apache.org/jira/browse/RAT}Jira}} to find other reported {{{https://issues.apache.org/jira/issues/?jql=project%20%3D%20%22Apache%20Rat%22%20%20and%20issuetype%20%3D%20Bug%20and%20status%20not%20in%20(resolved%2C%20closed)}bugs}} or open issues.
