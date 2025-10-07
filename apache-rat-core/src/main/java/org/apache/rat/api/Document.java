@@ -109,8 +109,8 @@ public abstract class Document implements Comparable<Document> {
      * @throws IOException if this document cannot be read.
      */
     public Reader reader() throws IOException {
+        // RAT-494: Tika's CharsetDetector.getReader() may return null if the read can not be constructed due to I/O or encoding errors
         Reader result = new CharsetDetector().getReader(TikaProcessor.markSupportedInputStream(inputStream()), getMetaData().getCharset().name());
-        // CharsetDetector.getReader() may return null if the read can not be constructed even though its Javadoc says otherwise.
         if (result == null) {
             throw new IOException(String.format("Can not read document `%s`", getName()));
         }
