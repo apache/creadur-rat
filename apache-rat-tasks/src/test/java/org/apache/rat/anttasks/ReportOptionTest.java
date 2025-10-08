@@ -36,6 +36,8 @@ import org.apache.rat.utils.DefaultLog;
 import org.apache.rat.utils.Log;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.condition.DisabledIf;
+import org.junit.jupiter.api.condition.EnabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ArgumentsProvider;
@@ -69,6 +71,12 @@ public class ReportOptionTest  {
     @AfterAll
     static void preserveData() {
         AbstractConfigurationOptionsProvider.preserveData(testPath.toFile(), "optionTest");
+    }
+
+    @AfterAll
+    @EnabledOnOs(OS.WINDOWS)
+    static void cleanup() {
+        System.gc(); // hacky workaround for windows bug described in RAT-475, try to force resource cleanup via GC
     }
 
     @ParameterizedTest
