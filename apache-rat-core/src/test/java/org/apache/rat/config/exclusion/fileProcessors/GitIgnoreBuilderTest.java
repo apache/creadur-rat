@@ -19,6 +19,8 @@
 package org.apache.rat.config.exclusion.fileProcessors;
 
 import java.io.File;
+import java.net.URISyntaxException;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -118,7 +120,7 @@ public class GitIgnoreBuilderTest extends AbstractIgnoreBuilderTest {
     }
 
     @Test
-    public void test_RAT_335() {
+    public void test_RAT_335() throws URISyntaxException {
         GitIgnoreBuilder underTest = new GitIgnoreBuilder() {
             @Override
             protected Optional<File> globalGitIgnore() {
@@ -126,7 +128,7 @@ public class GitIgnoreBuilderTest extends AbstractIgnoreBuilderTest {
             }
         };
         URL url = GitIgnoreBuilderTest.class.getClassLoader().getResource("GitIgnoreBuilderTest/src/");
-        File file = new File(url.getFile());
+        File file = Paths.get(url.toURI()).toFile();
 
         DocumentName documentName = DocumentName.builder(file).build();
         List<MatcherSet> matcherSets = underTest.build(documentName);
@@ -144,9 +146,8 @@ public class GitIgnoreBuilderTest extends AbstractIgnoreBuilderTest {
     }
 
     /**
-     * Test that exclusions from a global gitignore are also applied
-     *
-     * https://issues.apache.org/jira/browse/RAT-473
+     * Test that exclusions from a global gitignore are also applied,
+     * see <a href="https://issues.apache.org/jira/browse/RAT-473">RAT-473</a> for details.
      */
     @Test
     public void test_global_gitignore() {
@@ -154,9 +155,14 @@ public class GitIgnoreBuilderTest extends AbstractIgnoreBuilderTest {
             @Override
             protected Optional<File> globalGitIgnore() {
                 URL globalGitIgnoreUrl = GitIgnoreBuilderTest.class.getClassLoader().getResource("GitIgnoreBuilderTest/global-gitignore");
-                String globalGitIgnore = globalGitIgnoreUrl.getFile();
-
-                return Optional.of(new File(globalGitIgnore));
+                String globalGitIgnore;
+                try {
+                    globalGitIgnore = Paths.get(globalGitIgnoreUrl.toURI()).toString();
+                    return Optional.of(new File(globalGitIgnore));
+                } catch (URISyntaxException e) {
+                    System.err.println("Unable to load global gitignore in test from " + globalGitIgnoreUrl + ", due to " + e.getMessage());
+                    return Optional.empty();
+                }
             }
         };
         URL url = GitIgnoreBuilderTest.class.getClassLoader().getResource("GitIgnoreBuilderTest/src/");
