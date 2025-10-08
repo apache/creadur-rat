@@ -150,7 +150,7 @@ public class GitIgnoreBuilderTest extends AbstractIgnoreBuilderTest {
      * see <a href="https://issues.apache.org/jira/browse/RAT-473">RAT-473</a> for details.
      */
     @Test
-    public void test_global_gitignore() {
+    public void test_global_gitignore() throws URISyntaxException {
         GitIgnoreBuilder underTest = new GitIgnoreBuilder() {
             @Override
             protected Optional<File> globalGitIgnore() {
@@ -166,7 +166,7 @@ public class GitIgnoreBuilderTest extends AbstractIgnoreBuilderTest {
             }
         };
         URL url = GitIgnoreBuilderTest.class.getClassLoader().getResource("GitIgnoreBuilderTest/src/");
-        File file = new File(url.getFile());
+        File file = Paths.get(url.toURI()).toFile();
 
         DocumentName documentName = DocumentName.builder(file).build();
         List<MatcherSet> matcherSets = underTest.build(documentName);
