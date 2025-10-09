@@ -22,7 +22,7 @@ assert content.contains('BUILD SUCCESS')
 
 assert ! content.contains('[WARNING] No resources included')
 
-report = new File(basedir, 'target/site/rat-report.html').text
+report = new File(basedir, 'target/site/rat-report.xhtml').text
 
 assert !report.contains('Unknown License')
 assert TextUtils.isMatching("^  /pom.xml\\s+S ", report)
