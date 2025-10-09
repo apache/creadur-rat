@@ -105,8 +105,8 @@ pipeline {
 
         stage('Ensure site build works') {
             steps {
-                echo 'Verify site build is okay ....'
-                sh './mvnw site'
+                echo 'Verify site build is working ....'
+                sh './mvnw -B clean package site site:stage'
             }
         }
     }
