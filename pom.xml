@@ -456,6 +456,33 @@ agnostic home for software distribution comprehension and audit tools.
       -->
       <plugins>
         <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>animal-sniffer-maven-plugin</artifactId>
+          <version>1.26</version>
+          <executions>
+            <execution>
+              <!-- This checks the source code of our project -->
+              <!--
+                Note that this cannot use our ${javaVersion} property, so it must
+                be changed manually when we decide to move to a higher version of
+                Java
+              -->
+              <id>check-java-1.8-compat</id>
+              <phase>process-classes</phase>
+              <goals>
+                <goal>check</goal>
+              </goals>
+              <configuration>
+                <signature>
+                  <groupId>org.codehaus.mojo.signature</groupId>
+                  <artifactId>java18</artifactId>
+                  <version>1.0</version>
+                </signature>
+              </configuration>
+            </execution>
+          </executions>
+        </plugin>
+        <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-checkstyle-plugin</artifactId>
           <version>3.6.0</version>
@@ -757,29 +784,6 @@ agnostic home for software distribution comprehension and audit tools.
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>animal-sniffer-maven-plugin</artifactId>
-        <version>1.26</version>
-        <executions>
-          <execution>
-            <!-- This checks the source code of our project -->
-            <!--
-              Note that this cannot use our ${javaVersion} property, so it must
-              be changed manually when we decide to move to a higher version of
-              Java
-            -->
-            <id>check-java-1.8-compat</id>
-            <phase>process-classes</phase>
-            <goals>
-              <goal>check</goal>
-            </goals>
-            <configuration>
-              <signature>
-                <groupId>org.codehaus.mojo.signature</groupId>
-                <artifactId>java18</artifactId>
-                <version>1.0</version>
-              </signature>
-            </configuration>
-          </execution>
-        </executions>
       </plugin>
     </plugins>
     <extensions>
