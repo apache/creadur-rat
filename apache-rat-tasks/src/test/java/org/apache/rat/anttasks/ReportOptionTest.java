@@ -68,8 +68,9 @@ public class ReportOptionTest  {
                 );
     }
 
-    static boolean isRunningOnGitHubAction() {
-        return System.getenv("GITHUB_ACTION") != null;
+    static boolean isRunningOnGitHubActionOrLinux() {
+        return System.getenv("GITHUB_ACTION") != null || 
+         System.getProperty("os.name").toLowerCase(Locale.ENGLISH).contains("linux");
     }
 
     @AfterAll
@@ -81,7 +82,8 @@ public class ReportOptionTest  {
     // hacky workaround for windows bug described in RAT-475, try to force resource cleanup via GC
     @EnabledOnOs(OS.WINDOWS)
     // GC is also enabled on GitHubAction runs as its JDK is configured to do I/O stuff lazily, thus a GC forces all resources to be closed
-    @EnabledIf("isRunningOnGitHubAction")
+    // Failures happen on ASF Jenkins as well, therefore we call the workaround under linux as well
+    @EnabledIf("isRunningOnGitHubActionOrLinux")
     static void cleanup() {
         System.gc();
     }
