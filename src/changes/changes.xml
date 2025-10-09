@@ -41,7 +41,7 @@ Run with changes.version-parameter in order to not generate a SNAPSHOT changelog
     having the issue number first makes it easier to read the XML outline
 
 If you wonder which action types are available:
-https://maven.apache.org/plugins/maven-changes-plugin/xsd/changes-1.0.0.xsd
+https://maven.apache.org/xsd/changes-2.0.0.xsd
 
 The <action> type attribute can be one of:
 
@@ -53,14 +53,14 @@ The <action> type attribute can be one of:
 -->
 <document xmlns="http://maven.apache.org/changes/1.0.0"
           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-          xsi:schemaLocation="http://maven.apache.org/changes/1.0.0 https://maven.apache.org/xsd/changes-1.0.0.xsd">
+          xsi:schemaLocation="http://maven.apache.org/changes/2.0.0 https://maven.apache.org/xsd/changes-2.0.0.xsd">
   <properties>
     <title>Changes in Apache Creadur RAT</title>
     <author email="dev@creadur.apache.org">Apache Creadur RAT developers</author>
   </properties>
 
   <body>
-    <!--release version="0.18-SNAPSHOT" date="xxxx-yy-zz" description="Current SNAPSHOT - release to be done">
+    <!--release version="1.0.0-SNAPSHOT" date="xxxx-yy-zz" description="Current SNAPSHOT - release to be done">
       <action issue="RAT-xxx" type="update" dev="pottlinger" due-to="dependabot">
         TODO: collect all dependabot updates for release 0.18.
       </action>
@@ -71,7 +71,7 @@ The <action> type attribute can be one of:
       </action>
     </release>
     -->
-    <release version="0.17-SNAPSHOT" date="xxxx-yy-zz" description="Current SNAPSHOT - release to be done">
+    <release version="0.17-SNAPSHOT" date="2025-10-xx" description="Current SNAPSHOT - release to be done">
       <action issue="RAT-475" type="fix" dev="pottlinger" due-to="Arnould Engelen">
         Added a workaround garbage collection call to flaky tests if running on GitHubAction in order to fix deferred I/O cleanup with jUnit's TempDir.
       </action>
@@ -360,8 +360,8 @@ The <action> type attribute can be one of:
       </action>
       <action issue="RAT-366" type="update" dev="claudenw">
         Switch to processing header matches in one call rather than line by line.
-        This change also resulted in the possibility of multiple licenses being detected and reported.  forcing a change in the
-        XML ouptut.  XML schema was developed for the output.
+        This change also resulted in the possibility of multiple licenses being detected and reported. Forcing a change in the
+        XML ouptut. XML schema was developed for the output.
       </action>
       <action issue="RAT-333" type="fix" dev="claudenw">
         Fix if --force option is used executable bit is not set properly on newly created/license-augmented file.
