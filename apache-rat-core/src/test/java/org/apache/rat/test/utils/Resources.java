@@ -25,9 +25,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Objects;
 
 /**
@@ -72,11 +74,12 @@ public class Resources {
      * Locates a file in the unpacked example data archive.
      * @param pResource the name of the resource to find.
      * @return the File for the resource.
+     * @throws URISyntaxException in case of path I/O errors with the given resource.
      */
-    public static File getExampleResource(String pResource) {
+    public static File getExampleResource(String pResource) throws URISyntaxException {
         URL url = Resources.class.getResource("/examples/" + pResource);
         Objects.requireNonNull(url, "/examples/" + pResource + " not found");
-        return new File(url.getFile());
+        return Paths.get(url.toURI()).toFile();
     }
 
     /**

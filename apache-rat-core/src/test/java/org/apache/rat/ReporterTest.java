@@ -25,6 +25,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.PrintStream;
+import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 
 import java.util.Arrays;
@@ -74,7 +75,7 @@ public class ReporterTest {
     File tempDirectory;
     final String basedir;
 
-    ReporterTest() {
+    ReporterTest() throws URISyntaxException {
         basedir = Resources.getExampleResource("exampleData").getPath();
     }
 
@@ -329,7 +330,7 @@ public class ReporterTest {
         }
     }
 
-    private ReportConfiguration initializeConfiguration() {
+    private ReportConfiguration initializeConfiguration() throws URISyntaxException {
         Defaults defaults = Defaults.builder().build();
         final File elementsFile = Resources.getExampleResource("exampleData");
         final ReportConfiguration configuration = new ReportConfiguration();
