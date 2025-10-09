@@ -161,7 +161,6 @@
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>animal-sniffer-maven-plugin</artifactId>
-        <version>1.24</version>
         <executions>
           <execution>
             <!-- This sub project has no source code, so we need to skip animal sniffer -->
