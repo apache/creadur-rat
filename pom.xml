@@ -248,6 +248,12 @@ agnostic home for software distribution comprehension and audit tools.
         <version>1.3.1</version>
         <scope>test</scope>
       </dependency>
+      <dependency>
+        <groupId>com.google.guava</groupId>
+        <artifactId>guava</artifactId>
+        <!-- overwrite due to CVE-2023-2976 and CVE-2020-8908 in Guice transitive dependencies -->
+        <version>33.5.0-jre</version>
+      </dependency>
     </dependencies>
   </dependencyManagement>
   <reporting>
