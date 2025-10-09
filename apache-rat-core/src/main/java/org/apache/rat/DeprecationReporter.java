@@ -94,7 +94,7 @@ public final class DeprecationReporter {
      */
     public static void logDeprecated(final Class<?> clazz) {
         if (clazz.getAnnotation(Deprecated.class) != null) {
-            String name = format("Deprecated class used: %s ", clazz);
+            String name = format("class used: %s ", clazz);
             Info info = clazz.getAnnotation(Info.class);
             if (info == null) {
                 DefaultLog.getInstance().warn(formatEntry(name, "", false, ""));
