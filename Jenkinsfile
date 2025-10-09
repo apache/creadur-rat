@@ -41,7 +41,8 @@ pipeline {
 
     tools {
         maven 'maven_3_latest'
-        jdk 'jdk_17_latest'
+// No JDK due to https://issues.apache.org/jira/browse/RAT-497 - java.lang.NullPointerException: Cannot invoke "com.sun.source.util.DocTreePath.getTreePath()" because "path" is null
+        jdk 'jdk_16_latest'
     }
 
     options {
