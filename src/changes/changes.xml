@@ -72,6 +72,9 @@ The <action> type attribute can be one of:
     </release>
     -->
     <release version="0.17-SNAPSHOT" date="xxxx-yy-zz" description="Current SNAPSHOT - release to be done">
+      <action issue="RAT-475" type="fix" dev="pottlinger" due-to="Arnould Engelen">
+        Added a workaround garbage collection call to flaky tests if running on GitHubAction in order to fix deferred I/O cleanup with jUnit's TempDir.
+      </action>
       <action issue="RAT-496" type="fix" dev="pottlinger" due-to="Tilman Hausherr">
         Fix FileNotFoundException if path of test resources contains spaces (Windows).
       </action>
