@@ -68,7 +68,7 @@ agnostic home for software distribution comprehension and audit tools.
     <!-- Used to generate download page for RAT during site builds, please adapt versions manually BEFORE doing a release -->
     <!-- START - adapt manually before doing a release -->
     <previousRatVersion>0.17</previousRatVersion>
-    <currentSnapshotRatVersion>0.18-SNAPSHOT</currentSnapshotRatVersion>
+    <currentSnapshotRatVersion>1.0.0-SNAPSHOT</currentSnapshotRatVersion>
     <!-- END - adapt manually before doing a release -->
   </properties>
   <distributionManagement>
@@ -869,7 +869,7 @@ agnostic home for software distribution comprehension and audit tools.
       <email>pottlinger@apache.org</email>
     </developer>
     <developer>
-      <id>claude</id>
+      <id>claudenw</id>
       <name>Claude Warren</name>
       <email>claude@apache.org</email>
     </developer>
@@ -880,6 +880,10 @@ agnostic home for software distribution comprehension and audit tools.
     </developer>
   </developers>
   <contributors>
+    <contributor>
+      <name>Lars Trieloff</name>
+      <email>lars@trieloff.net</email>
+    </contributor>
     <contributor>
       <name>Jukka Zitting</name>
       <email>jukka@apache.org</email>
@@ -915,6 +919,10 @@ agnostic home for software distribution comprehension and audit tools.
     <contributor>
       <name>Niels Basjes</name>
       <email>nielsbasjes@apache.org</email>
+    </contributor>
+    <contributor>
+      <name>Bernd Bohmann</name>
+      <email>bommel@apache.org</email>
     </contributor>
   </contributors>
   <scm>
