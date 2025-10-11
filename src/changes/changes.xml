@@ -31,7 +31,7 @@ To generate the release notes from this file:
 mvn changes:announcement-generate -Prelease-notes [-Dchanges.version=nn]
 then tweak the formatting if necessary
 and commit.
-Run with changes.version-parameter in order to not generate a SNAPSHOT changelog
+Run with changes.version-parameter in order to not generate a SNAPSHOT changelog into RELEASE-NOTES.txt
 
     Please list action attributes in the following order:
     issue - required
@@ -84,9 +84,149 @@ Additionally a new automated test suite was developed in order to ease testing o
 
 RAT's homepage contents and its generation method were modernized and a lot of new documentation was added to ease configuration of RAT in your project.
 
+This release will be the last with JDK8-compatibility as we intend to head for a 1.0.0 release.
+
 Thanks for your patience and all the feedback in the making of this release! #bigKudosToClaude would be a proper release name.">
       <action issue="RAT-345" type="update" dev="pottlinger" due-to="dependabot">
-        TODO: collect all dependabot updates for release 0.17.
+          Update tika from 2.9.2 to 2.9.4.
+      </action>
+      <action issue="RAT-345" type="update" dev="pottlinger" due-to="dependabot">
+          Update jimfs from 1.3.0 to 1.3.1.
+      </action>
+      <action issue="RAT-345" type="update" dev="pottlinger" due-to="dependabot">
+          Update plexus-testing from 1.4.0 to 1.6.0.
+      </action>
+      <action issue="RAT-345" type="update" dev="pottlinger" due-to="dependabot">
+          Update maven-clean-plugin from 3.4.0 to 3.4.1.
+      </action>
+      <action issue="RAT-345" type="update" dev="pottlinger" due-to="dependabot">
+          Update findsecbugs-plugin to 1.14.0.
+      </action>
+      <action issue="RAT-345" type="update" dev="pottlinger" due-to="dependabot">
+          Update commons-collection4 to 4.5.
+      </action>
+      <action issue="RAT-345" type="update" dev="pottlinger" due-to="dependabot">
+          Update maven-remote-resources-plugin from 3.1.0 to 3.3.0.
+      </action>
+      <action issue="RAT-345" type="update" dev="pottlinger" due-to="dependabot">
+          Update commons-text from 1.12.0 to 1.14.0.
+      </action>
+      <action issue="RAT-345" type="update" dev="pottlinger" due-to="dependabot">
+          Update groovy-all from 2.4.8 to 2.4.21.
+      </action>
+      <action issue="RAT-345" type="update" dev="pottlinger" due-to="dependabot">
+          Update commons-csv from 1.11.0 to 1.14.1.
+      </action>
+      <action issue="RAT-345" type="update" dev="pottlinger" due-to="dependabot">
+          Update com.gradle:common-custom-user-data-maven-extension from 2.0 to 2.0.6.
+      </action>
+      <action issue="RAT-345" type="update" dev="pottlinger" due-to="dependabot">
+          Update Ant from 1.10.14 to 1.10.15.
+      </action>
+      <action issue="RAT-345" type="update" dev="pottlinger" due-to="dependabot">
+          Update mavenPluginPluginVersion from 3.13.1 to 3.15.0.
+      </action>
+      <action issue="RAT-345" type="update" dev="pottlinger" due-to="dependabot">
+          Update org.hamcrest:hamcrest-library from 2.2 to 3.0.
+      </action>
+      <action issue="RAT-345" type="update" dev="pottlinger" due-to="dependabot">
+          Update commons-lang3 from 3.14.0 to 3.19.0.
+      </action>
+      <action issue="RAT-345" type="update" dev="pottlinger" due-to="dependabot">
+          Update org.codehaus.mojo:build-helper-maven-plugin from 3.2.0 to 3.6.1.
+      </action>
+      <action issue="RAT-345" type="update" dev="pottlinger" due-to="dependabot">
+          Update org.codehaus.mojo:animal-sniffer-maven-plugin from 1.23 to 1.26.
+      </action>
+      <action issue="RAT-345" type="update" dev="pottlinger" due-to="dependabot">
+          Update com.gradle:develocity-maven-extension from 1.21.4 to 2.2.
+      </action>
+      <action issue="RAT-345" type="update" dev="pottlinger" due-to="dependabot">
+          Update maven-project-info-reports-plugin from 3.5.0 to 3.9.0.
+      </action>
+      <action issue="RAT-345" type="update" dev="pottlinger" due-to="dependabot">
+          Update maven-release-plugin from 3.0.1 to 3.1.1.
+      </action>
+      <action issue="RAT-345" type="update" dev="pottlinger" due-to="dependabot">
+          Update maven-surefire-plugin from 3.2.5 to 3.5.4.
+      </action>
+      <action issue="RAT-345" type="update" dev="pottlinger" due-to="dependabot">
+          Update maven-failsafe-plugin from 3.2.5 to 3.5.4.
+      </action>
+      <action issue="RAT-345" type="update" dev="pottlinger" due-to="dependabot">
+          Update maven-javadoc-plugin from 3.6.3 to 3.12.0.
+      </action>
+      <action issue="RAT-345" type="update" dev="pottlinger" due-to="dependabot">
+          Update maven-jxr-plugin from 3.3.2 to 3.6.0.
+      </action>
+      <action issue="RAT-345" type="update" dev="pottlinger" due-to="dependabot">
+          Update maven-fluido-skin from 2.0.1 to 2.1.0.
+      </action>
+      <action issue="RAT-345" type="update" dev="pottlinger" due-to="dependabot">
+          Update maven-changes-plugin from 3.0.0-M1 to 3.0.0-M3.
+      </action>
+      <action issue="RAT-345" type="update" dev="pottlinger" due-to="dependabot">
+          Update maven-checkstyle-plugin from 3.3.1 to 3.6.0.
+      </action>
+      <action issue="RAT-345" type="update" dev="pottlinger" due-to="dependabot">
+          Update maven-dependency-plugin from 3.6.1 to 3.9.0.
+      </action>
+      <action issue="RAT-345" type="update" dev="pottlinger" due-to="dependabot">
+          Update org.codehaus.mojo:exec-maven-plugin from 3.2.0 to 3.6.1.
+      </action>
+      <action issue="RAT-345" type="update" dev="pottlinger" due-to="dependabot">
+          Update spotbugs-maven-plugin from 4.8.4.0 to 4.8.6.6.
+      </action>
+      <action issue="RAT-345" type="update" dev="pottlinger" due-to="dependabot">
+          Update org.apache.maven.plugins:maven-pmd-plugin from 3.21.2 to 3.28.0.
+      </action>
+      <action issue="RAT-345" type="update" dev="pottlinger" due-to="dependabot">
+          Update org.apache:apache (ASF-parent) from 31 to 35.
+      </action>
+      <action issue="RAT-345" type="update" dev="pottlinger" due-to="dependabot">
+          Update commons-cli from 1.6.0 to 1.9.0.
+      </action>
+      <action issue="RAT-345" type="update" dev="pottlinger" due-to="dependabot">
+          Update org.apache.maven.plugin-tools:maven-plugin-annotations from 3.11.0 to 3.15.1.
+      </action>
+      <action issue="RAT-345" type="update" dev="pottlinger" due-to="dependabot">
+          Update maven-invoker-plugin from 3.6.0 to 3.9.1.
+      </action>
+      <action issue="RAT-345" type="update" dev="pottlinger" due-to="dependabot">
+          Update commons-io from 2.15.1 to 2.20.0.
+      </action>
+      <action issue="RAT-345" type="update" dev="pottlinger" due-to="dependabot">
+          Update maven-compiler-plugin from 3.12.1 to 3.14.1.
+      </action>
+      <action issue="RAT-345" type="update" dev="pottlinger" due-to="dependabot">
+          Update GHA actions/setup-java from 4.0.0 to 5.
+      </action>
+      <action issue="RAT-345" type="update" dev="pottlinger" due-to="dependabot">
+          Update GHA actions/checkout from 4 to 5.
+      </action>
+      <action issue="RAT-345" type="update" dev="pottlinger" due-to="dependabot">
+          Update GHA actions/cache from 4.0.0 to 4.0.2.
+      </action>
+      <action issue="RAT-345" type="update" dev="pottlinger" due-to="dependabot">
+          Update no-package-cycles-enforcer-rule from 1.2.20 to 1.2.22.
+      </action>
+      <action issue="RAT-345" type="update" dev="pottlinger" due-to="dependabot">
+          Update extra-enforcer-rules from 1.7.0 to 1.11.0.
+      </action>
+      <action issue="RAT-345" type="update" dev="pottlinger" due-to="dependabot">
+        Update commons-compress from 1.25.0 to 1.28.0.
+      </action>
+      <action issue="RAT-345" type="update" dev="pottlinger" due-to="dependabot">
+          Update gitignore-reader from 1.3.1 to 1.6.0.
+      </action>
+      <action issue="RAT-345" type="update" dev="pottlinger" due-to="dependabot">
+          Update and use junit-bom from 5.10.2 to 5.13.4.
+      </action>
+      <action issue="RAT-345" type="update" dev="pottlinger" due-to="dependabot">
+          Update slf4j-simple from 2.0.11 to 2.0.16.
+      </action>
+      <action issue="RAT-345" type="update" dev="pottlinger" due-to="dependabot">
+          Update assertj-core from 3.25.1 to 3.27.6.
       </action>
       <action issue="RAT-475" type="fix" dev="pottlinger" due-to="Arnould Engelen">
         Added a workaround garbage collection call to flaky tests if running on GitHubAction in order to fix deferred I/O cleanup with jUnit's TempDir.
