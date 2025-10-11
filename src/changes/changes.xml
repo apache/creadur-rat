@@ -51,18 +51,17 @@ The <action> type attribute can be one of:
  * remove: removed some functionality from the project.
 
 -->
-<document xmlns="http://maven.apache.org/changes/1.0.0"
+<document xmlns="http://maven.apache.org/changes/2.0.0"
           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
           xsi:schemaLocation="http://maven.apache.org/changes/2.0.0 https://maven.apache.org/xsd/changes-2.0.0.xsd">
   <properties>
     <title>Changes in Apache Creadur RAT</title>
     <author email="dev@creadur.apache.org">Apache Creadur RAT developers</author>
   </properties>
-
   <body>
     <!--release version="1.0.0-SNAPSHOT" date="xxxx-yy-zz" description="Current SNAPSHOT - release to be done">
-      <action issue="RAT-xxx" type="update" dev="pottlinger" due-to="dependabot">
-        TODO: collect all dependabot updates for release 0.18.
+      <action issue="RAT-498" type="update" dev="pottlinger" due-to="dependabot">
+        TODO: collect all dependabot updates for release 1.0.0.
       </action>
     </release>
     <release version="0.17-SNAPSHOT" date="xxxx-yy-zz" description="Current SNAPSHOT - release to be done">
@@ -71,7 +70,24 @@ The <action> type attribute can be one of:
       </action>
     </release>
     -->
-    <release version="0.17-SNAPSHOT" date="2025-10-xx" description="Current SNAPSHOT - release to be done">
+    <release version="0.17" date="2025-10-12" description=
+"Apart from many dependency updates and multiple bugfixes,
+this release brings a major harmonization among all available UIs (CLI, Apache Ant, Apache Maven) concerning parameters and configuration options to run RAT.
+Therefore please consult the available extended and updated documentation over at the project's webpage in order to see examples and overviews of the new configuration options!
+
+RAT generates a more expressive report now as certain individually configurable limits for counters exist. In case you do preprocessing of the report, you need to adapt your scripts according to RAT's XSD schema.
+
+Furthermore the inclusion/exclusion configuration (e.g. .gitignore), parsing and processing in RAT was overhauled - see RAT-476 for a known issue in that regard.
+
+Many checkstyle, spotbugs and documentation issues were fixed.
+Additionally a new automated test suite was developed in order to ease testing of edge cases and example licenses and custom license definitions.
+
+RAT's homepage contents and its generation method were modernized and a lot of new documentation was added to ease configuration of RAT in your project.
+
+Thanks for your patience and all the feedback in the making of this release! #bigKudosToClaude would be a proper release name.">
+      <action issue="RAT-345" type="update" dev="pottlinger" due-to="dependabot">
+        TODO: collect all dependabot updates for release 0.17.
+      </action>
       <action issue="RAT-475" type="fix" dev="pottlinger" due-to="Arnould Engelen">
         Added a workaround garbage collection call to flaky tests if running on GitHubAction in order to fix deferred I/O cleanup with jUnit's TempDir.
       </action>
@@ -290,7 +306,7 @@ The <action> type attribute can be one of:
         Integrate develocity service from Gradle and link to current results from badge in README.md.
       </action>
       <action issue="RAT-345" type="add" dev="pottlinger">
-        Update build scripts and Maven wrapper in the RAT repo to Maven 3.9.7.
+        Update build scripts and Maven wrapper in the RAT repo to Maven 3.9.11.
       </action>
       <action issue="RAT-374, RAT-381" type="add" dev="claudenw">
         Automatically generate commandline options/CLI help during the build and include it into the project webpage. Adapt READMEs.
@@ -377,9 +393,6 @@ The <action> type attribute can be one of:
       </action>
       <action issue="RAT-77" type="add" dev="claudenw">
         Adds another stylesheet to explicitly output files with missing-headers. Thus plain-rat (default), missing-headers, and unapproved-licenses can be used in all RAT clients. From the CLI the -s option allows to use a short name (e.g. -s missing-headers or -s unapproved-licenses).
-      </action>
-      <action issue="RAT-345" type="update" dev="pottlinger" due-to="dependabot">
-        TODO: collect all dependabot updates for release 0.17.
       </action>
     </release>
     <release version="0.16.1" date="2024-01-24" description=
