@@ -24,7 +24,7 @@
   </parent>
   <groupId>org.apache.rat</groupId>
   <artifactId>apache-rat-project</artifactId>
-  <version>0.17-SNAPSHOT</version>
+  <version>0.17</version>
   <packaging>pom</packaging>
   <name>Apache Creadur RAT</name>
   <url>https://creadur.apache.org/rat/</url>
@@ -652,7 +652,7 @@ agnostic home for software distribution comprehension and audit tools.
                     </goals>
                   </pluginExecutionFilter>
                   <action>
-                    <ignore/>
+                    <ignore />
                   </action>
                 </pluginExecution>
               </pluginExecutions>
@@ -715,7 +715,7 @@ agnostic home for software distribution comprehension and audit tools.
             </goals>
             <configuration>
               <target>
-                <copy file="RELEASE_NOTES.txt" todir="${project.build.directory}/site/" failonerror="false"/>
+                <copy file="RELEASE_NOTES.txt" todir="${project.build.directory}/site/" failonerror="false" />
               </target>
             </configuration>
           </execution>
@@ -734,7 +734,7 @@ agnostic home for software distribution comprehension and audit tools.
             <configuration>
               <skip>true</skip>
               <rules>
-                <NoPackageCyclesRule implementation="org.apache.axiom.buildutils.enforcer.NoPackageCyclesEnforcerRule"/>
+                <NoPackageCyclesRule implementation="org.apache.axiom.buildutils.enforcer.NoPackageCyclesEnforcerRule" />
               </rules>
             </configuration>
           </execution>
@@ -929,7 +929,7 @@ agnostic home for software distribution comprehension and audit tools.
     <connection>scm:git:https://gitbox.apache.org/repos/asf/creadur-rat.git</connection>
     <developerConnection>scm:git:https://gitbox.apache.org/repos/asf/creadur-rat.git</developerConnection>
     <url>https://gitbox.apache.org/repos/asf?p=creadur-rat.git</url>
-    <tag>HEAD</tag>
+    <tag>apache-rat-project-0.17</tag>
   </scm>
   <modules>
     <module>apache-rat-core</module>

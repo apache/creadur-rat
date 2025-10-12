@@ -20,7 +20,7 @@
   <parent>
     <artifactId>apache-rat-project</artifactId>
     <groupId>org.apache.rat</groupId>
-    <version>0.17-SNAPSHOT</version>
+    <version>0.17</version>
   </parent>
   <artifactId>apache-rat-plugin</artifactId>
   <packaging>maven-plugin</packaging>
@@ -123,7 +123,7 @@
                     </goals>
                   </pluginExecutionFilter>
                   <action>
-                    <ignore/>
+                    <ignore />
                   </action>
                 </pluginExecution>
                 <pluginExecution>
@@ -136,7 +136,7 @@
                     </goals>
                   </pluginExecutionFilter>
                   <action>
-                    <ignore/>
+                    <ignore />
                   </action>
                 </pluginExecution>
               </pluginExecutions>
