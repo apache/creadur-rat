@@ -64,11 +64,6 @@ The <action> type attribute can be one of:
         TODO: collect all dependabot updates for release 1.0.0.
       </action>
     </release>
-    <release version="0.17-SNAPSHOT" date="xxxx-yy-zz" description="Current SNAPSHOT - release to be done">
-      <action issue="RAT-345" type="update" dev="pottlinger" due-to="dependabot">
-        TODO: collect all dependabot updates for release 0.17.
-      </action>
-    </release>
     -->
     <release version="0.17" date="2025-10-12" description=
 "Apart from many dependency updates and multiple bugfixes, this release brings a major
