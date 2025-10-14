@@ -24,7 +24,7 @@ assert content.contains('[INFO] Processing exclude file from STANDARD_SCMS.') //
 assert ! content.contains('[WARNING] No resources included')
 
 // Report is in apache-rat-plugin/target/invoker-reports
-report = new File(basedir, 'target/site/rat-report.xhtml').text
+report = new File(basedir, 'target/site/rat-report.html').text
 assert TextUtils.isMatching("^  /verify.groovy\\s+S ", report)
 assert TextUtils.isMatching("^  /pom.xml\\s+S ", report)
 

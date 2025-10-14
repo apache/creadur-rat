@@ -56,6 +56,7 @@ import org.apache.rat.Reporter;
 import org.apache.rat.VersionInfo;
 import org.apache.rat.license.LicenseSetFactory.LicenseFilter;
 import org.codehaus.plexus.util.ReaderFactory;
+import org.eclipse.aether.repository.ArtifactRepository;
 import org.eclipse.aether.repository.RemoteRepository;
 
 import static org.apache.maven.shared.utils.logging.MessageUtils.buffer;
@@ -92,6 +93,15 @@ public class RatReportMojo extends AbstractRatMojo implements MavenMultiPageRepo
      */
     @Parameter(defaultValue = "${session}", readonly = true, required = true)
     protected MavenSession session;
+
+    /**
+     * Remote repositories used for the project.
+     *
+     * @deprecated replaced by {@link #remoteRepositories}
+     */
+    @Parameter(defaultValue = "${project.remoteArtifactRepositories}", readonly = true, required = true)
+    @Deprecated
+    protected List<ArtifactRepository> remoteArtifactRepositories;
 
     /**
      * Remote repositories used for the project.
@@ -141,7 +151,7 @@ public class RatReportMojo extends AbstractRatMojo implements MavenMultiPageRepo
 
         File outputDirectory = new File(getOutputDirectory());
 
-        String filename = getOutputName() + ".xhtml";
+        String filename = getOutputName() + ".html";
 
         Locale locale = Locale.getDefault();
 
@@ -180,53 +190,55 @@ public class RatReportMojo extends AbstractRatMojo implements MavenMultiPageRepo
         }
     }
 
-    private SiteRenderingContext createSiteRenderingContext(final Locale locale) throws MavenReportException, IOException {
+    private SiteRenderingContext createSiteRenderingContext(final Locale locale)
+            throws MavenReportException, IOException {
         SiteModel siteModel = new SiteModel();
-        SiteRenderingContext context;
 
         Map<String, Object> templateProperties = new HashMap<>();
-        // We tell the skin that we are rendering in standalone mode
         templateProperties.put("standalone", Boolean.TRUE);
         templateProperties.put("project", getProject());
         templateProperties.put("inputEncoding", getInputEncoding());
         templateProperties.put("outputEncoding", getOutputEncoding());
-        // Put any of the properties in directly into the Velocity context
         for (Map.Entry<Object, Object> entry : getProject().getProperties().entrySet()) {
             templateProperties.put((String) entry.getKey(), entry.getValue());
         }
 
+        org.apache.maven.doxia.site.Skin siteSkin = siteModel.getSkin();
+
+        if (siteSkin == null || siteSkin.getGroupId() == null
+                || siteSkin.getArtifactId() == null || siteSkin.getVersion() == null) {
+            getLog().debug("No skin configuration found in site.xml. Using default Maven skin configuration.");
+
+            // Create a minimal default skin configuration
+            siteSkin = new org.apache.maven.doxia.site.Skin();
+            siteSkin.setGroupId("org.apache.maven.skins");
+            siteSkin.setArtifactId("maven-fluido-skin");
+        }
+
         try {
-
-            org.apache.maven.doxia.site.Skin siteSkin = siteModel.getSkin();
-            if (siteSkin == null || siteSkin.getGroupId() == null || siteSkin.getArtifactId() == null || siteSkin.getVersion() == null) {
-                siteSkin = new org.apache.maven.doxia.site.Skin();
-                siteSkin.setGroupId("org.apache.maven.skins");
-                siteSkin.setArtifactId("maven-fluido-skin");
-                siteSkin.setVersion("2.1.0");
-            }
-
             Artifact skinArtifact = siteTool.getSkinArtifactFromRepository(
-                    session.getRepositorySession(), remoteRepositories, siteSkin);
+                    session.getRepositorySession(),
+                    remoteRepositories,
+                    siteSkin
+            );
 
             getLog().debug(buffer().a("Rendering content with ").strong(skinArtifact.getId() + " skin").a('.').build());
 
-            context = siteRenderer.createContextForSkin(
+            SiteRenderingContext context = siteRenderer.createContextForSkin(
                     skinArtifact,
                     templateProperties,
                     siteModel,
                     project.getName(),
                     locale
             );
+            context.setRootDirectory(project.getBasedir());
+            return context;
+
         } catch (SiteToolException e) {
             throw new MavenReportException("Failed to retrieve skin artifact", e);
         } catch (RendererException e) {
             throw new MavenReportException("Failed to create context for skin", e);
         }
-
-        // Generate static site
-        context.setRootDirectory(project.getBasedir());
-
-        return context;
     }
 
     /**
@@ -262,7 +274,7 @@ public class RatReportMojo extends AbstractRatMojo implements MavenMultiPageRepo
     private void generateReportManually(final Locale locale) throws MavenReportException {
         try {
             File outputDir = new File(getOutputDirectory());
-            String filename = getOutputName() + ".xhtml";
+            String filename = getOutputName() + ".html";
 
             SiteRenderingContext siteContext = createSiteRenderingContext(locale);
 
