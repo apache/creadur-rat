@@ -31,7 +31,7 @@ To generate the release notes from this file:
 mvn changes:announcement-generate -Prelease-notes [-Dchanges.version=nn]
 then tweak the formatting if necessary
 and commit.
-Run with changes.version-parameter in order to not generate a SNAPSHOT changelog
+Run with changes.version-parameter in order to not generate a SNAPSHOT changelog into RELEASE-NOTES.txt
 
     Please list action attributes in the following order:
     issue - required
@@ -41,7 +41,7 @@ Run with changes.version-parameter in order to not generate a SNAPSHOT changelog
     having the issue number first makes it easier to read the XML outline
 
 If you wonder which action types are available:
-https://maven.apache.org/plugins/maven-changes-plugin/xsd/changes-1.0.0.xsd
+https://maven.apache.org/xsd/changes-2.0.0.xsd
 
 The <action> type attribute can be one of:
 
@@ -51,27 +51,196 @@ The <action> type attribute can be one of:
  * remove: removed some functionality from the project.
 
 -->
-<document xmlns="http://maven.apache.org/changes/1.0.0"
+<document xmlns="http://maven.apache.org/changes/2.0.0"
           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-          xsi:schemaLocation="http://maven.apache.org/changes/1.0.0 https://maven.apache.org/xsd/changes-1.0.0.xsd">
+          xsi:schemaLocation="http://maven.apache.org/changes/2.0.0 https://maven.apache.org/xsd/changes-2.0.0.xsd">
   <properties>
     <title>Changes in Apache Creadur RAT</title>
     <author email="dev@creadur.apache.org">Apache Creadur RAT developers</author>
   </properties>
-
   <body>
-    <!--release version="0.18-SNAPSHOT" date="xxxx-yy-zz" description="Current SNAPSHOT - release to be done">
-      <action issue="RAT-xxx" type="update" dev="pottlinger" due-to="dependabot">
-        TODO: collect all dependabot updates for release 0.18.
-      </action>
-    </release>
-    <release version="0.17-SNAPSHOT" date="xxxx-yy-zz" description="Current SNAPSHOT - release to be done">
-      <action issue="RAT-345" type="update" dev="pottlinger" due-to="dependabot">
-        TODO: collect all dependabot updates for release 0.17.
+    <!--release version="1.0.0-SNAPSHOT" date="xxxx-yy-zz" description="Current SNAPSHOT - release to be done">
+      <action issue="RAT-498" type="update" dev="pottlinger" due-to="dependabot">
+        TODO: collect all dependabot updates for release 1.0.0.
       </action>
     </release>
     -->
-    <release version="0.17-SNAPSHOT" date="xxxx-yy-zz" description="Current SNAPSHOT - release to be done">
+    <release version="0.17" date="2025-10-12" description=
+"Apart from many dependency updates and multiple bugfixes, this release brings a major
+harmonization among all available UIs (CLI, Apache Ant, Apache Maven) concerning parameters
+and configuration options to run RAT. Therefore please consult the available extended
+and updated documentation over at the project's webpage in order to see examples and overviews
+of the new configuration options!
+
+RAT generates a more expressive report now as certain individually configurable limits for
+counters exist. In case you do preprocessing of the report, you need to adapt your scripts
+according to RAT's XSD schema.
+
+Furthermore, the inclusion/exclusion configuration (e.g. .gitignore), parsing and processing
+in RAT was overhauled - see RAT-476 for a known issue in that regard.
+
+Many checkstyle, spotbugs and documentation issues were fixed.
+
+Additionally, a new automated test suite was developed in order to ease testing of edge cases
+and example licenses and custom license definitions.
+
+RAT's homepage contents and its generation method were modernized and a lot of new
+documentation was added to ease configuration of RAT in your project.
+
+The next release will remove deprecated options and classes.
+
+Thanks for your patience and all the feedback in the making of this release!
+#bigKudosToClaude would be a proper release name.">
+      <action issue="RAT-345" type="update" dev="pottlinger" due-to="dependabot">
+          Update tika from 2.9.2 to 2.9.4.
+      </action>
+      <action issue="RAT-345" type="update" dev="pottlinger" due-to="dependabot">
+          Update jimfs from 1.3.0 to 1.3.1.
+      </action>
+      <action issue="RAT-345" type="update" dev="pottlinger" due-to="dependabot">
+          Update plexus-testing from 1.4.0 to 1.6.0.
+      </action>
+      <action issue="RAT-345" type="update" dev="pottlinger" due-to="dependabot">
+          Update maven-clean-plugin from 3.4.0 to 3.4.1.
+      </action>
+      <action issue="RAT-345" type="update" dev="pottlinger" due-to="dependabot">
+          Update findsecbugs-plugin to 1.14.0.
+      </action>
+      <action issue="RAT-345" type="update" dev="pottlinger" due-to="dependabot">
+          Update commons-collection4 to 4.5.
+      </action>
+      <action issue="RAT-345" type="update" dev="pottlinger" due-to="dependabot">
+          Update maven-remote-resources-plugin from 3.1.0 to 3.3.0.
+      </action>
+      <action issue="RAT-345" type="update" dev="pottlinger" due-to="dependabot">
+          Update commons-text from 1.12.0 to 1.14.0.
+      </action>
+      <action issue="RAT-345" type="update" dev="pottlinger" due-to="dependabot">
+          Update groovy-all from 2.4.8 to 2.4.21.
+      </action>
+      <action issue="RAT-345" type="update" dev="pottlinger" due-to="dependabot">
+          Update commons-csv from 1.11.0 to 1.14.1.
+      </action>
+      <action issue="RAT-345" type="update" dev="pottlinger" due-to="dependabot">
+          Update com.gradle:common-custom-user-data-maven-extension from 2.0 to 2.0.6.
+      </action>
+      <action issue="RAT-345" type="update" dev="pottlinger" due-to="dependabot">
+          Update Ant from 1.10.14 to 1.10.15.
+      </action>
+      <action issue="RAT-345" type="update" dev="pottlinger" due-to="dependabot">
+          Update mavenPluginPluginVersion from 3.13.1 to 3.15.0.
+      </action>
+      <action issue="RAT-345" type="update" dev="pottlinger" due-to="dependabot">
+          Update org.hamcrest:hamcrest-library from 2.2 to 3.0.
+      </action>
+      <action issue="RAT-345" type="update" dev="pottlinger" due-to="dependabot">
+          Update commons-lang3 from 3.14.0 to 3.19.0.
+      </action>
+      <action issue="RAT-345" type="update" dev="pottlinger" due-to="dependabot">
+          Update org.codehaus.mojo:build-helper-maven-plugin from 3.2.0 to 3.6.1.
+      </action>
+      <action issue="RAT-345" type="update" dev="pottlinger" due-to="dependabot">
+          Update org.codehaus.mojo:animal-sniffer-maven-plugin from 1.23 to 1.26.
+      </action>
+      <action issue="RAT-345" type="update" dev="pottlinger" due-to="dependabot">
+          Update com.gradle:develocity-maven-extension from 1.21.4 to 2.2.
+      </action>
+      <action issue="RAT-345" type="update" dev="pottlinger" due-to="dependabot">
+          Update maven-project-info-reports-plugin from 3.5.0 to 3.9.0.
+      </action>
+      <action issue="RAT-345" type="update" dev="pottlinger" due-to="dependabot">
+          Update maven-release-plugin from 3.0.1 to 3.1.1.
+      </action>
+      <action issue="RAT-345" type="update" dev="pottlinger" due-to="dependabot">
+          Update maven-surefire-plugin from 3.2.5 to 3.5.4.
+      </action>
+      <action issue="RAT-345" type="update" dev="pottlinger" due-to="dependabot">
+          Update maven-failsafe-plugin from 3.2.5 to 3.5.4.
+      </action>
+      <action issue="RAT-345" type="update" dev="pottlinger" due-to="dependabot">
+          Update maven-javadoc-plugin from 3.6.3 to 3.12.0.
+      </action>
+      <action issue="RAT-345" type="update" dev="pottlinger" due-to="dependabot">
+          Update maven-jxr-plugin from 3.3.2 to 3.6.0.
+      </action>
+      <action issue="RAT-345" type="update" dev="pottlinger" due-to="dependabot">
+          Update maven-fluido-skin from 2.0.1 to 2.1.0.
+      </action>
+      <action issue="RAT-345" type="update" dev="pottlinger" due-to="dependabot">
+          Update maven-changes-plugin from 3.0.0-M1 to 3.0.0-M3.
+      </action>
+      <action issue="RAT-345" type="update" dev="pottlinger" due-to="dependabot">
+          Update maven-checkstyle-plugin from 3.3.1 to 3.6.0.
+      </action>
+      <action issue="RAT-345" type="update" dev="pottlinger" due-to="dependabot">
+          Update maven-dependency-plugin from 3.6.1 to 3.9.0.
+      </action>
+      <action issue="RAT-345" type="update" dev="pottlinger" due-to="dependabot">
+          Update org.codehaus.mojo:exec-maven-plugin from 3.2.0 to 3.6.1.
+      </action>
+      <action issue="RAT-345" type="update" dev="pottlinger" due-to="dependabot">
+          Update spotbugs-maven-plugin from 4.8.4.0 to 4.8.6.6.
+      </action>
+      <action issue="RAT-345" type="update" dev="pottlinger" due-to="dependabot">
+          Update org.apache.maven.plugins:maven-pmd-plugin from 3.21.2 to 3.28.0.
+      </action>
+      <action issue="RAT-345" type="update" dev="pottlinger" due-to="dependabot">
+          Update org.apache:apache (ASF-parent) from 31 to 35.
+      </action>
+      <action issue="RAT-345" type="update" dev="pottlinger" due-to="dependabot">
+          Update commons-cli from 1.6.0 to 1.9.0.
+      </action>
+      <action issue="RAT-345" type="update" dev="pottlinger" due-to="dependabot">
+          Update org.apache.maven.plugin-tools:maven-plugin-annotations from 3.11.0 to 3.15.1.
+      </action>
+      <action issue="RAT-345" type="update" dev="pottlinger" due-to="dependabot">
+          Update maven-invoker-plugin from 3.6.0 to 3.9.1.
+      </action>
+      <action issue="RAT-345" type="update" dev="pottlinger" due-to="dependabot">
+          Update commons-io from 2.15.1 to 2.20.0.
+      </action>
+      <action issue="RAT-345" type="update" dev="pottlinger" due-to="dependabot">
+          Update maven-compiler-plugin from 3.12.1 to 3.14.1.
+      </action>
+      <action issue="RAT-345" type="update" dev="pottlinger" due-to="dependabot">
+          Update GHA actions/setup-java from 4.0.0 to 5.
+      </action>
+      <action issue="RAT-345" type="update" dev="pottlinger" due-to="dependabot">
+          Update GHA actions/checkout from 4 to 5.
+      </action>
+      <action issue="RAT-345" type="update" dev="pottlinger" due-to="dependabot">
+          Update GHA actions/cache from 4.0.0 to 4.0.2.
+      </action>
+      <action issue="RAT-345" type="update" dev="pottlinger" due-to="dependabot">
+          Update no-package-cycles-enforcer-rule from 1.2.20 to 1.2.22.
+      </action>
+      <action issue="RAT-345" type="update" dev="pottlinger" due-to="dependabot">
+          Update extra-enforcer-rules from 1.7.0 to 1.11.0.
+      </action>
+      <action issue="RAT-345" type="update" dev="pottlinger" due-to="dependabot">
+        Update commons-compress from 1.25.0 to 1.28.0.
+      </action>
+      <action issue="RAT-345" type="update" dev="pottlinger" due-to="dependabot">
+          Update gitignore-reader from 1.3.1 to 1.6.0.
+      </action>
+      <action issue="RAT-345" type="update" dev="pottlinger" due-to="dependabot">
+          Update and use junit-bom from 5.10.2 to 5.13.4.
+      </action>
+      <action issue="RAT-345" type="update" dev="pottlinger" due-to="dependabot">
+          Update slf4j-simple from 2.0.11 to 2.0.16.
+      </action>
+      <action issue="RAT-345" type="update" dev="pottlinger" due-to="dependabot">
+          Update assertj-core from 3.25.1 to 3.27.6.
+      </action>
+      <action issue="RAT-475" type="fix" dev="pottlinger" due-to="Arnould Engelen">
+        Added a workaround garbage collection call to flaky tests if running on GitHubAction in order to fix deferred I/O cleanup with jUnit's TempDir.
+      </action>
+      <action issue="RAT-496" type="fix" dev="pottlinger" due-to="Tilman Hausherr">
+        Fix FileNotFoundException if path of test resources contains spaces (Windows).
+      </action>
+      <action issue="RAT-494" type="fix" dev="claudenw" due-to="Tilman Hausherr">
+        Fix NPE when encoding found in scanned document is not supported by the currently used JDK. Tika part of the bugfix can be found via TIKA-4505.
+      </action>
       <action issue="RAT-489" type="add" dev="pottlinger">
         Provide a central known issues section to the RAT homepage in order to inform users more directly about already known challenges with the current RAT version.
       </action>
@@ -281,18 +450,18 @@ The <action> type attribute can be one of:
         Integrate develocity service from Gradle and link to current results from badge in README.md.
       </action>
       <action issue="RAT-345" type="add" dev="pottlinger">
-        Update build scripts and Maven wrapper in the RAT repo to Maven 3.9.7.
+        Update build scripts and Maven wrapper in the RAT repo to Maven 3.9.11.
       </action>
       <action issue="RAT-374, RAT-381" type="add" dev="claudenw">
         Automatically generate commandline options/CLI help during the build and include it into the project webpage. Adapt READMEs.
       </action>
       <action issue="RAT-377" type="add" dev="claudenw">
-          Added ability to specify the level of reporting on STANDARD files within a project.  This necessitated an addition
-          of a command line option "standard" to limit specify the level of detail in the STANDARD file reporting.  See command line
-          help for more details.  By default, there is no change in the reporting and only the presence of archives are reported.
+          Added ability to specify the level of reporting on STANDARD files within a project. This necessitated an addition
+          of a command line option "--output-standard" to limit specify the level of detail in the STANDARD file reporting. See command line
+          help for more details. By default, there is no change in the reporting and only the presence of archives are reported.
 
-          Change also fixed a major issue in license sorting.  Resulting in a change in order and expanding the name space for licenses.
-          Licenses now must have a unique id within the family name space. (e.g. family1/one is different from family2/one).
+          Change also fixed a major issue in license sorting. Resulting in a change in order and expanding the name space for licenses.
+          Licenses now must have a unique id within the family name space. (for example family1/one is different from family2/one).
       </action>
       <action issue="RAT-190" type="fix" dev="claudenw">
           Javascript (.js) files not processed as text.
@@ -303,9 +472,9 @@ The <action> type attribute can be one of:
         Updated the logging to only log a warning when at least one filter was skipped.
       </action>
       <action issue="RAT-372" type="add" dev="claudenw">
-        Added ability to process archive files within a project to look for license files.  This necessitated an addition
-        of a command line option "archive" to limit specify the level of detail in the archive report.  See command line
-        help for more details.  By default, there is no change in the reporting and only the presence of archives are reported.
+        Added ability to process archive files within a project to look for license files. This necessitated an addition
+        of a command line option "--output-archive" to limit specify the level of detail in the archive report. See command line
+        help for more details.  By default, there is no change in the reporting and only the presence of archives is reported.
 
         This change also marked as deprecated the "-a", "--dir" and command line options.
 
@@ -331,7 +500,7 @@ The <action> type attribute can be one of:
         Change to detect non UTF-8 text files as text not binary.
       </action>
       <action issue="RAT-150" type="fix" dev="claudenw">
-        Switch to Tika to detect file types.  This will result in more file types being properly categorized and may
+        Switch to Tika to detect file types. This will result in more file types being properly categorized and may
         result in some failures where the scans previously did not fail because we now properly check all text files.
       </action>
       <action issue="RAT-211" type="fix" dev="claudenw">
@@ -341,7 +510,7 @@ The <action> type attribute can be one of:
       <action issue="RAT-368" type="remove" dev="claudenw">
         Removed ReportFailedRuntimeException, ReportTransformer, RatReportAnalysisResultException, MimeTyper, ToNameTransformer,
         UnsuitableDocumentException, ReportTransformerTest, and ToNameTransformerTest as they are no longer used in the codebase.
-        Note: FullTextMatchingeLicense and SimplePatternBasedLicense will be removed in 0.18.0
+        Note: FullTextMatchingeLicense and SimplePatternBasedLicense will be removed in 1.0.0.
       </action>
       <action issue="RAT-354" type="fix" dev="pottlinger" due-to="Guillaume Nodet">
         Fix integration test failure with Maven4 by adding a version property in integration test's pom.xml. Versions above Maven4-alpha13 require Java17 and cannot be used with RAT, as it relies on Java8.
@@ -351,8 +520,8 @@ The <action> type attribute can be one of:
       </action>
       <action issue="RAT-366" type="update" dev="claudenw">
         Switch to processing header matches in one call rather than line by line.
-        This change also resulted in the possibility of multiple licenses being detected and reported.  forcing a change in the
-        XML ouptut.  XML schema was developed for the output.
+        This change also resulted in the possibility of multiple licenses being detected and reported. Forcing a change in the
+        XML ouptut. XML schema was developed for the output.
       </action>
       <action issue="RAT-333" type="fix" dev="claudenw">
         Fix if --force option is used executable bit is not set properly on newly created/license-augmented file.
@@ -367,10 +536,7 @@ The <action> type attribute can be one of:
         Older jUnit3 tests were not run during the build after switching to jUnit5.
       </action>
       <action issue="RAT-77" type="add" dev="claudenw">
-        Adds another stylesheet to explicitly output files with missing-headers. Thus plain-rat (default), missing-headers, and unapproved-licenses can be used in all RAT clients. From the CLI the -s option allows to use a short name (e.g. -s missing-headers or -s unapproved-licenses).
-      </action>
-      <action issue="RAT-345" type="update" dev="pottlinger" due-to="dependabot">
-        TODO: collect all dependabot updates for release 0.17.
+        Adds another stylesheet to explicitly output files with missing-headers. Thus, "plain-rat" (default), "missing-headers", and "unapproved-licenses" can be used in all RAT clients. From the CLI the --output-style option allows to use a short name (e.g. "--output-style missing-headers" or "--output-style unapproved-licenses").
       </action>
     </release>
     <release version="0.16.1" date="2024-01-24" description=
@@ -425,7 +591,7 @@ Thanks for your patience and all the feedback in the making of this release!">
       <action issue="RAT-325" type="fix" dev="pottlinger">
         Do not load fonts via Google/remotely, but use files hosted by ASF only and add privacy link to comply with ASF- and data protection/privacy regulations.
       </action>
-      <action issue="RAT-344" type="fix" dev="claude">
+      <action issue="RAT-344" type="fix" dev="claudenw">
         Fix double output by deleting any existing RAT report before writing a fresh file during plugin runs.
       </action>
       <action issue="RAT-339" type="update" dev="pottlinger" due-to="dependabot">

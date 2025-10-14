@@ -23,7 +23,9 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
@@ -35,7 +37,6 @@ import org.apache.commons.io.filefilter.AbstractFileFilter;
 import org.apache.commons.io.filefilter.DirectoryFileFilter;
 import org.apache.commons.io.filefilter.NameFileFilter;
 import org.apache.commons.io.filefilter.OrFileFilter;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.rat.api.Document;
 import org.apache.rat.api.RatException;
 import org.apache.rat.commandline.Arg;
@@ -152,9 +153,12 @@ public class ReportTest {
     static Stream<Arguments> args() throws RatException {
         List<Arguments> results = new ArrayList<>();
         URL url = ReportTest.class.getResource("/ReportTest");
-        String urlAsFile = url.getFile();
-        if(StringUtils.isEmpty(urlAsFile)) {
-            throw new RatException("Could not find root directory for " + url);
+
+        String urlAsFile;
+        try {
+            urlAsFile = Paths.get(url.toURI()).toString();
+        } catch (URISyntaxException e) {
+            throw new RatException("Unable to find root directory for " + url, e);
         }
 
         File baseDir = new File(urlAsFile);

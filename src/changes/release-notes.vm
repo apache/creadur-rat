@@ -27,6 +27,7 @@ $introduction.replaceAll("(?<!\015)\012", "
 ## https://maven.apache.org/plugins/maven-changes-plugin/examples/using-a-custom-announcement-template.html
 ##
 ## Hack to improve layout: replace all pairs of spaces with a single new-line
+=RELEASE ${version} ABSTRACT=
 $release.description.replaceAll("  ", "
 ")
 
@@ -120,3 +121,24 @@ For complete information on ${project.name}, including instructions on how to su
 patches, or suggestions for improvement, see the Apache ${project.name} website:
 
 ${project.url}
+
+=WEBPAGE=
+For complete information on Apache Creadur RAT, including instructions on how to submit bug reports,
+patches, or suggestions for improvement, see the Apache Apache Creadur RAT website:
+
+https://creadur.apache.org/rat/
+
+=DOWNLOAD=
+Direct download (source, binary and signature files) can be found here:
+https://creadur.apache.org/rat/download_rat.cgi
+
+=VERIFICATION=
+The KEYS file https://downloads.apache.org/creadur/KEYS links to the code signing keys used to sign the product:
+https://creadur.apache.org/rat/download_rat.cgi
+
+The PGP link downloads the OpenPGP compatible signature.
+The SHA512 links download the checksum.
+
+Enjoy and thanks for your patience!
+
+-The Apache Creadur team

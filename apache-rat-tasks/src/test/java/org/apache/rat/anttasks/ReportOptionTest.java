@@ -35,7 +35,9 @@ import org.apache.rat.documentation.options.AntOption;
 import org.apache.rat.utils.DefaultLog;
 import org.apache.rat.utils.Log;
 import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.condition.DisabledIf;
+import org.junit.jupiter.api.condition.EnabledIf;
+import org.junit.jupiter.api.condition.EnabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ArgumentsProvider;
@@ -66,14 +68,29 @@ public class ReportOptionTest  {
                 );
     }
 
+    static boolean isRunningOnGitHubActionOrLinux() {
+        return System.getenv("GITHUB_ACTION") != null || 
+         System.getProperty("os.name").toLowerCase(Locale.ENGLISH).contains("linux");
+    }
+
     @AfterAll
     static void preserveData() {
         AbstractConfigurationOptionsProvider.preserveData(testPath.toFile(), "optionTest");
     }
 
+    @AfterAll
+    // hacky workaround for windows bug described in RAT-475, try to force resource cleanup via GC
+    @EnabledOnOs(OS.WINDOWS)
+    // GC is also enabled on GitHubAction runs as its JDK is configured to do I/O stuff lazily, thus a GC forces all resources to be closed
+    // Failures happen on ASF Jenkins as well, therefore we call the workaround under linux as well
+    @EnabledIf("isRunningOnGitHubActionOrLinux")
+    static void cleanup() {
+        System.gc();
+    }
+
     @ParameterizedTest
     @ArgumentsSource(AntOptionsProvider.class)
-    @DisabledIf("isGitHubLinuxOrWindowsWithJava8")
+    // RAT-475: let's see how things evolve on GHA - @DisabledIf("isGitHubLinuxOrWindowsWithJava8")
     public void testOptionsUpdateConfig(String name, OptionCollectionTest.OptionTest test) {
         DefaultLog.getInstance().info("Running " + name);
         try {

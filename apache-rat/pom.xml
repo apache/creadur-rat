@@ -20,7 +20,7 @@
   <parent>
     <groupId>org.apache.rat</groupId>
     <artifactId>apache-rat-project</artifactId>
-    <version>0.17-SNAPSHOT</version>
+    <version>1.0.0-SNAPSHOT</version>
   </parent>
   <artifactId>apache-rat</artifactId>
   <packaging>jar</packaging>
@@ -161,7 +161,6 @@
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>animal-sniffer-maven-plugin</artifactId>
-        <version>1.24</version>
         <executions>
           <execution>
             <!-- This sub project has no source code, so we need to skip animal sniffer -->
@@ -370,7 +369,7 @@
                     </goals>
                   </pluginExecutionFilter>
                   <action>
-                    <ignore/>
+                    <ignore />
                   </action>
                 </pluginExecution>
               </pluginExecutions>

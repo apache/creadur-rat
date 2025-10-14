@@ -41,6 +41,7 @@ pipeline {
 
     tools {
         maven 'maven_3_latest'
+// No JDK due to https://issues.apache.org/jira/browse/RAT-497 - java.lang.NullPointerException: Cannot invoke "com.sun.source.util.DocTreePath.getTreePath()" because "path" is null
         jdk 'jdk_16_latest'
     }
 
@@ -105,8 +106,8 @@ pipeline {
 
         stage('Ensure site build works') {
             steps {
-                echo 'Verify site build is okay ....'
-                sh './mvnw site'
+                echo 'Verify site build is working ....'
+                sh './mvnw -B clean package site site:stage'
             }
         }
     }

@@ -1,3 +1,292 @@
+RAT 0.17
+========
+Apart from many dependency updates and multiple bugfixes, this release brings
+a major harmonization among all available UIs (CLI, Apache Ant, Apache Maven)
+concerning parameters and configuration options to run RAT. Therefore please
+consult the available extended and updated documentation over at the project's
+webpage in order to see examples and overviews of the new configuration options!
+
+RAT generates a more expressive report now as certain individually configurable
+limits for counters exist. In case you do preprocessing of the report, you need
+to adapt your scripts according to RAT's XSD schema.
+
+Furthermore, the inclusion/exclusion configuration (e.g. .gitignore), parsing
+and processing in RAT was overhauled - see RAT-476 for a known issue in that regard.
+
+Many checkstyle, spotbugs and documentation issues were fixed.
+
+Additionally, a new automated test suite was developed in order to ease testing
+of edge cases and example licenses and custom license definitions.
+
+RAT's homepage contents and its generation method were modernized and a lot of
+new documentation was added to ease configuration of RAT in your project.
+
+The next release will remove deprecated options and classes.
+
+Thanks for your patience and all the feedback in the making of this release!
+#bigKudosToClaude would be a proper release name.
+
+Changes in this version include:
+
+New features:
+o RAT-489:  Provide a central known issues section to the RAT homepage in order
+            to inform users more directly about already known challenges with
+            the current RAT version.
+o RAT-481:  Update scripts to generate RAT's webpage and fix multiple linking,
+            menu and documentation errors.
+o RAT-128:  Properly distinguish between Apache licenses 1.0, 1.1 and 2.0 and
+            rename to Apache license in reports.
+o RAT-485:  Add documentation of environment variables used in the RAT engine.
+o RAT-362:  Improve test and test result reporting for .gitignore parsing.
+            Introduce environment variable abstraction.
+o RAT-469:  Add more integration tests for CLI and Maven plugin to verify
+            configuration of valid licenses, ensure copyleft has to be enabled
+            explicitly. Thanks to pottlinger.
+o RAT-479:  Cleanup documentation and remove deprecated and outdated README
+            files in RAT's main repository.
+o RAT-406:  Added integration tests for command line combinations to ensure
+            marking a license as denied works.
+o RAT-397:  Migrate webpage to newer site-plugin stack and change skin of site.
+            Removed some of the reports as plugins are discontinued.
+            Rename to RAT consistently.
+o RAT-473:  Take global gitignore into account when determining which files to
+            audit and which to skip.
+o RAT-398:  Deprecated certain Ant report functionality in favour of new CLI
+            functionality. Deprecation information is printed to indicate how
+            the new options can be configured.
+o RAT-98:   Report skipped/excluded files and integrate testing of inclusion-
+            exclusion and DocumentNames to work under Unix, Windows and Mac.
+o RAT-471:  Integrate Creadur RAT into the updated develocity.apache.org instance. Thanks to clayjohnson.
+o RAT-469:  Verify that projects that configure valid other licenses than
+            the defaults, report correctly as well. Thanks to pottlinger.
+o RAT-467:  Add .externalToolBuilders to the default Eclipse exclusions during RAT runs.
+o RAT-453:  Change layout and rendering of RAT report to contain RAT version
+            information, counter values, encoding information of scanned files
+            and aggregation by license type.
+o RAT-178:  Added tests to TikaProcessorTests and DefaultAnalyserFactoryTest to
+            properly handle non-existent and unreadable files during processing
+            runs of our BinaryGuesser.
+o RAT-405:  Do not show sample output of scanned files in XML anymore. As files
+            are report different tooling can be used to edit/check the files.
+o RAT-259:  Add new option --input-source to explicitly specify which files
+            to scan for licenses.
+o RAT-455:  Disallow GPL license family by default as ASF does not allow this
+            license family.
+o RAT-458:  Added core integration test to verify log level can be set from
+            the command line.
+o RAT-2:    Added --input-exclude-size as an option to skip the scanning of very small files.
+o RAT-81:   Added encoding information of the file being read to the RAT report
+            in case of STANDARD document files. Added media type attribute in report for all files.
+o RAT-399:  Moved the ignore code into apache-rat-core and provide more
+            statistics in RAT report. Furthermore the CLI allows configuration
+            of counter minimum and maximum values,
+            e.g. maximum number of allowed unapproved licenses.
+o RAT-358:  Overhaul documentation of the new functionality of RAT 0.17.
+            Improve and comprehend the whole project webpage.
+o RAT-390:  Move and reimplement exclusion configuration from Maven plugin to
+            RAT core. ExclusionProcessor is the central place to handle file
+            inclusions and exclusions now.
+o RAT-383:  As part of the usage the harmonization generation of Ant documentation was added.
+o RAT-384:  As part of the usage harmonization XSD generation was added.
+o RAT-378:  As part of the usage harmonization among all UIs command line options
+            and their arguments as well as the management of the license
+            exclusion/inclusion and stylesheets were refactored.
+o RAT-380:  Commons-cli >=1.8.0 properly reports when deprecated CLI options are
+            used. RAT does not need to check for deprecated options anymore as
+            part of the usage harmonization among all UIs.
+o RAT-323:  As part of the harmonization efforts CLI options are centralized
+            into one class, which is used to generate specific classes
+            for Ant and Maven runs of RAT.
+o RAT-391:  Integrate develocity service from Gradle and link to current results from badge in README.md.
+o RAT-345:  Update build scripts and Maven wrapper in the RAT repo to Maven 3.9.11.
+o RAT-374, RAT-381: Automatically generate commandline options/CLI help during
+            the build and include it into the project webpage. Adapt READMEs.
+o RAT-377:  Added ability to specify the level of reporting on STANDARD files
+            within a project. This necessitated an addition of a command line
+            option "--output-standard" to limit specify the level of detail in
+            the STANDARD file reporting. See command line help for more details.
+            By default, there is no change in the reporting and
+            only the presence of archives are reported.
+
+            Change also fixed a major issue in license sorting. Resulting in a
+            change in order and expanding the name space for licenses.
+            Licenses now must have a unique id within the family name space.
+            (for example family1/one is different from family2/one).
+o RAT-372:  Added ability to process archive files within a project to look for
+            license files. This necessitated an addition of a command line
+            option "--output-archive" to limit specify the level of detail in
+            the archive report. See command line help for more details. By
+            default, there is no change in the reporting and only the presence
+            of archives is reported.
+
+            This change also marked as deprecated the "-a", "--dir" and command line options.
+
+            This change also marks an architecture change from processing Files
+            to processing Documents in order to facilitate processing nested files in archives.
+o RAT-314:  Add integration test for new default exclude .mvn, that was introduced with v0.16.
+o RAT-369:  Integrate checkstyle and spotbugs into the build and webpage generation.
+            Most charset-related errors cannot be fixed until we break
+            JDK8-compliance and move to newer versions. Configured a maximum of
+            allowed bugs to fail the build if new errors are introduced.
+o RAT-54:   MIME Detection Using Apache Tika.
+o RAT-355:  Optionally export XML configuration file as part of run.
+            Added framework to inspect available licenses and matchers.
+o RAT-77:   Adds another stylesheet to explicitly output files with missing-headers.
+            Thus, "plain-rat" (default), "missing-headers", and
+            "unapproved-licenses" can be used in all RAT clients. From the CLI
+            the --output-style option allows to use a short name
+            (e.g. "--output-style missing-headers" or "--output-style unapproved-licenses").
+
+Fixed Bugs:
+o RAT-475:  Added a workaround garbage collection call to flaky tests
+            if running on GitHubAction in order to fix deferred I/O cleanup
+            with jUnit's TempDir. Thanks to Arnould Engelen.
+o RAT-496:  Fix FileNotFoundException if path of test resources contains
+            spaces (Windows). Thanks to Tilman Hausherr.
+o RAT-494:  Fix NPE when encoding found in scanned document is not supported by
+            the currently used JDK. Tika part of the bugfix can be found
+            via TIKA-4505. Thanks to Tilman Hausherr.
+o RAT-483:  Reworked handling of resources fixed the site build.
+o RAT-474:  Rework handling of release notes and test resource propagation in
+            builds to ease project import into Eclipse IDE and adapt build howto.
+o RAT-444:  Fix missing headlines when site templates are handled/filtered by Velocity.
+o RAT-379:  Fix 'Path must include project or resource name: /' error after
+            importing RAT into Eclipse IDE by changing the way resources are
+            copied around submodules. Thanks to pottlinger.
+o RAT-457:  Added core integration test to verify JAR processing works correctly.
+o RAT-107:  Exclusions of defaults should work recursively and in submodules now.
+            Added unit and integration tests.
+o RAT-41:   Added core integration tests and verified results without generating
+            output via ClaimStatistics.
+o RAT-81:   Fixed encoding issue where text files not in UTF-8 encoding
+            would not be read properly. Change adds charset to the metadata
+            when it can be discovered. If not UTF-8 is returned.
+            Added integration test to show reading of UTF8 and IBM037 encoding works.
+o RAT-408:  Added core integration tests and verified RAT-408 is fixed
+            with the new exclusion engine.
+o RAT-426:  Added core integration tests and verified RAT-426 is fixed
+            with the new exclusion engine.
+o RAT-450:  Harmonize log output messages that are automatically generated
+            for Maven command line options to ease migration to v0.17.
+o RAT-358:  Generate Maven help Mojo documentation under the same package as
+            the auto-generated plugin parts: org.apache.rat.plugin.
+o RAT-439:  Fix checkstyle issues and make the build fail in case of new
+            checkstyle warnings and errors.
+o RAT-438:  Fix checkstyle issues in plugin module.
+            Deprecated several classes.
+o RAT-438:  Fix checkstyle issues in tools module.
+o RAT-422:  Fix checkstyle issues in configuration.
+o RAT-423:  Fix checkstyle issues in document subdirectories.
+o RAT-435:  Fix checkstyle issues in root package.
+o RAT-431:  Fix checkstyle issues in report.
+o RAT-428:  Fix checkstyle issues in report/claim.
+o RAT-425:  Fix checkstyle issues in help.
+o RAT-426:  Fix checkstyle issues in license.
+o RAT-424:  Fix checkstyle issues in document.
+o RAT-420:  Fix checkstyle issues in config.
+o RAT-419:  Fix checkstyle issues in config/parameters.
+o RAT-421:  Fix checkstyle issues in configuration/builders package.
+o RAT-415:  Fix checkstyle issues in commandline.
+o RAT-412:  Fix checkstyle issues in analysis package.
+o RAT-414:  Fix checkstyle issues in api package.
+o RAT-413:  Fix checkstyle issues in annotation package.
+o RAT-411:  Fix checkstyle issues in analysis/matchers.
+o RAT-441:  Fix layout error when rendering available help options (double dot).
+o RAT-240:  Exclusions can be configured as a full path
+            (due to the newly written ignore engine as of RAT-390).
+o RAT-409:  Clarify how our site is generated and adapt Maven build lifecycles
+            and parameters accordingly to include package phase.
+o RAT-371:  Do not use URL internally to load multiple files anymore and migrate
+            to URI in order to avoid URL's equals/hashCode blocking method calls.
+o RAT-369:  Centralize RAT's checkstyle configuration for all submodules under src/conf.
+o RAT-190:  Javascript (.js) files not processed as text.
+            Fixed as part of the Tika change.
+o RAT-265:  Fixed the filter compilation so that illegal regex do not cause
+            other filters to be ignored. Updated the logging to only log a
+            warning when at least one filter was skipped.
+o RAT-301:  Chinese characters in comments are not classified as binary anymore
+            (due to Tika integration). Thanks to claudenw.
+o RAT-20:   Changed to detecting binary by content not name.
+o RAT-147:  Change to detect non UTF-8 text files as text not binary.
+o RAT-150:  Switch to Tika to detect file types. This will result in more file
+            types being properly categorized and may result in some failures
+            where the scans previously did not fail because we now properly
+            check all text files.
+o RAT-211:  Generated rat-output.xml is now well-formed, even if BinaryGuesser
+            fails or there is XML content in the sample element.
+o RAT-354:  Fix integration test failure with Maven4 by adding a version property
+            in integration test's pom.xml. Versions above Maven4-alpha13 require
+            Java17 and cannot be used with RAT, as it relies on Java8. Thanks to Guillaume Nodet.
+o RAT-333:  Fix if --force option is used executable bit is not set properly
+            on newly created/license-augmented file.
+o RAT-362:  Gitignore parsing fails when excluded element is part of the current
+            base directory. Thanks to Niels Basjes, Arnout Engelen.
+o RAT-367:  Older jUnit3 tests were not run during the build after switching
+            to jUnit5. Thanks to Niels Basjes.
+
+Changes:
+o RAT-345:  Update tika from 2.9.2 to 2.9.4. Thanks to dependabot.
+o RAT-345:  Update jimfs from 1.3.0 to 1.3.1. Thanks to dependabot.
+o RAT-345:  Update plexus-testing from 1.4.0 to 1.6.0. Thanks to dependabot.
+o RAT-345:  Update maven-clean-plugin from 3.4.0 to 3.4.1. Thanks to dependabot.
+o RAT-345:  Update findsecbugs-plugin to 1.14.0. Thanks to dependabot.
+o RAT-345:  Update commons-collection4 to 4.5. Thanks to dependabot.
+o RAT-345:  Update maven-remote-resources-plugin from 3.1.0 to 3.3.0. Thanks to dependabot.
+o RAT-345:  Update commons-text from 1.12.0 to 1.14.0. Thanks to dependabot.
+o RAT-345:  Update groovy-all from 2.4.8 to 2.4.21. Thanks to dependabot.
+o RAT-345:  Update commons-csv from 1.11.0 to 1.14.1. Thanks to dependabot.
+o RAT-345:  Update com.gradle:common-custom-user-data-maven-extension from 2.0 to 2.0.6. Thanks to dependabot.
+o RAT-345:  Update Ant from 1.10.14 to 1.10.15. Thanks to dependabot.
+o RAT-345:  Update mavenPluginPluginVersion from 3.13.1 to 3.15.0. Thanks to dependabot.
+o RAT-345:  Update org.hamcrest:hamcrest-library from 2.2 to 3.0. Thanks to dependabot.
+o RAT-345:  Update commons-lang3 from 3.14.0 to 3.19.0. Thanks to dependabot.
+o RAT-345:  Update org.codehaus.mojo:build-helper-maven-plugin from 3.2.0 to 3.6.1. Thanks to dependabot.
+o RAT-345:  Update org.codehaus.mojo:animal-sniffer-maven-plugin from 1.23 to 1.26. Thanks to dependabot.
+o RAT-345:  Update com.gradle:develocity-maven-extension from 1.21.4 to 2.2. Thanks to dependabot.
+o RAT-345:  Update maven-project-info-reports-plugin from 3.5.0 to 3.9.0. Thanks to dependabot.
+o RAT-345:  Update maven-release-plugin from 3.0.1 to 3.1.1. Thanks to dependabot.
+o RAT-345:  Update maven-surefire-plugin from 3.2.5 to 3.5.4. Thanks to dependabot.
+o RAT-345:  Update maven-failsafe-plugin from 3.2.5 to 3.5.4. Thanks to dependabot.
+o RAT-345:  Update maven-javadoc-plugin from 3.6.3 to 3.12.0. Thanks to dependabot.
+o RAT-345:  Update maven-jxr-plugin from 3.3.2 to 3.6.0. Thanks to dependabot.
+o RAT-345:  Update maven-fluido-skin from 2.0.1 to 2.1.0. Thanks to dependabot.
+o RAT-345:  Update maven-changes-plugin from 3.0.0-M1 to 3.0.0-M3. Thanks to dependabot.
+o RAT-345:  Update maven-checkstyle-plugin from 3.3.1 to 3.6.0. Thanks to dependabot.
+o RAT-345:  Update maven-dependency-plugin from 3.6.1 to 3.9.0. Thanks to dependabot.
+o RAT-345:  Update org.codehaus.mojo:exec-maven-plugin from 3.2.0 to 3.6.1. Thanks to dependabot.
+o RAT-345:  Update spotbugs-maven-plugin from 4.8.4.0 to 4.8.6.6. Thanks to dependabot.
+o RAT-345:  Update org.apache.maven.plugins:maven-pmd-plugin from 3.21.2 to 3.28.0. Thanks to dependabot.
+o RAT-345:  Update org.apache:apache (ASF-parent) from 31 to 35. Thanks to dependabot.
+o RAT-345:  Update commons-cli from 1.6.0 to 1.9.0. Thanks to dependabot.
+o RAT-345:  Update org.apache.maven.plugin-tools:maven-plugin-annotations from 3.11.0 to 3.15.1. Thanks to dependabot.
+o RAT-345:  Update maven-invoker-plugin from 3.6.0 to 3.9.1. Thanks to dependabot.
+o RAT-345:  Update commons-io from 2.15.1 to 2.20.0. Thanks to dependabot.
+o RAT-345:  Update maven-compiler-plugin from 3.12.1 to 3.14.1. Thanks to dependabot.
+o RAT-345:  Update GHA actions/setup-java from 4.0.0 to 5. Thanks to dependabot.
+o RAT-345:  Update GHA actions/checkout from 4 to 5. Thanks to dependabot.
+o RAT-345:  Update GHA actions/cache from 4.0.0 to 4.0.2. Thanks to dependabot.
+o RAT-345:  Update no-package-cycles-enforcer-rule from 1.2.20 to 1.2.22. Thanks to dependabot.
+o RAT-345:  Update extra-enforcer-rules from 1.7.0 to 1.11.0. Thanks to dependabot.
+o RAT-345:  Update commons-compress from 1.25.0 to 1.28.0. Thanks to dependabot.
+o RAT-345:  Update gitignore-reader from 1.3.1 to 1.6.0. Thanks to dependabot.
+o RAT-345:  Update and use junit-bom from 5.10.2 to 5.13.4. Thanks to dependabot.
+o RAT-345:  Update slf4j-simple from 2.0.11 to 2.0.16. Thanks to dependabot.
+o RAT-345:  Update assertj-core from 3.25.1 to 3.27.6. Thanks to dependabot.
+o RAT-366:  Switch to processing header matches in one call rather than line by line.
+            This change also resulted in the possibility of multiple licenses
+            being detected and reported. Forcing a change in the XML ouptut.
+            XML schema was developed for the output.
+o RAT-345:  Update gitignore-reader from 1.4.0 to 1.5.1 to fetch changes
+            resulting from fixes of RAT-362. Thanks to Niels Basjes.
+
+Removed:
+o RAT-368:  Removed ReportFailedRuntimeException, ReportTransformer,
+            RatReportAnalysisResultException, MimeTyper, ToNameTransformer,
+            UnsuitableDocumentException, ReportTransformerTest, and
+            ToNameTransformerTest as they are no longer used in the codebase.
+
+            Note: FullTextMatchingeLicense and SimplePatternBasedLicense will be removed in 1.0.0.
+
 Rat 0.16.1
 ==========
 As release 0.16 introduced breaking changes concerning the configurability of the Maven plugin, these configuration options are reintroduced albeit as deprecated elements. You need to adapt your configuration in contrast to pre-0.16 settings: please consult our webpage for more details and examples.

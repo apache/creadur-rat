@@ -70,7 +70,7 @@ jobs:
         uses: actions/upload-artifact@v4
         if: failure()
         with:
-          name: integration-test-failure-logs-${{ matrix.os }}-JDK${{ matrix.java }}-PR${{ github.event.number }}
+          name: integration-test-failure-logs-${{ matrix.os }}-JDK${{ matrix.java }}-PR${{ github.run_id }}
           retention-days: 3
           path: |
             apache-rat-core/target/test-classes/ReportTest/**
@@ -79,7 +79,7 @@ jobs:
         uses: actions/upload-artifact@v4
         if: failure()
         with:
-          name: integration-test-failure-logs-${{ matrix.os }}-JDK${{ matrix.java }}-PR${{ github.event.number }}
+          name: integration-test-failure-logs-${{ matrix.os }}-JDK${{ matrix.java }}-PR${{ github.run_id }}
           retention-days: 3
           path: |
             **/target/surefire-reports
