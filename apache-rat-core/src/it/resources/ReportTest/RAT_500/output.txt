@@ -1,0 +1,1 @@
+Anything goes here in order to not let the integration test fail
