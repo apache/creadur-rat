@@ -574,7 +574,7 @@ agnostic home for software distribution comprehension and audit tools.
           <groupId>org.apache.rat</groupId>
           <artifactId>apache-rat-plugin</artifactId>
           <!-- Do not use property values here as this causes problems during release -->
-          <version>0.16.1</version>
+          <version>0.17</version>
           <configuration>
             <excludes>
               <exclude>.asf.yaml</exclude>
@@ -587,7 +587,7 @@ agnostic home for software distribution comprehension and audit tools.
               <exclude>/src/site/apt/naming_help.txt</exclude>
               <exclude>**/iso-8859-1.html</exclude>
               <exclude>**/velocity.log</exclude>
-              <!-- RAT-353: until https://bugs.openjdk.org/browse/JDK-8227487 is fixed we manually add the fonts -->
+              <!-- RAT-353: until https://bugs.openjdk.org/browse/JDK-8227487 is fixed we add fonts manually -->
               <exclude>**/src/site/javadocFont/**</exclude>
               <exclude>apache-rat/src/site/examples/**</exclude>
               <exclude>apache-rat/src/site/resources/templates/**</exclude>
@@ -646,13 +646,13 @@ agnostic home for software distribution comprehension and audit tools.
                     <artifactId>
                       apache-rat-plugin
                     </artifactId>
-                    <versionRange>[0.16.1,)</versionRange>
+                    <versionRange>[0.17,)</versionRange>
                     <goals>
                       <goal>check</goal>
                     </goals>
                   </pluginExecutionFilter>
                   <action>
-                    <ignore />
+                    <ignore/>
                   </action>
                 </pluginExecution>
               </pluginExecutions>
@@ -715,7 +715,7 @@ agnostic home for software distribution comprehension and audit tools.
             </goals>
             <configuration>
               <target>
-                <copy file="RELEASE_NOTES.txt" todir="${project.build.directory}/site/" failonerror="false" />
+                <copy file="RELEASE_NOTES.txt" todir="${project.build.directory}/site/" failonerror="false"/>
               </target>
             </configuration>
           </execution>
@@ -734,7 +734,7 @@ agnostic home for software distribution comprehension and audit tools.
             <configuration>
               <skip>true</skip>
               <rules>
-                <NoPackageCyclesRule implementation="org.apache.axiom.buildutils.enforcer.NoPackageCyclesEnforcerRule" />
+                <NoPackageCyclesRule implementation="org.apache.axiom.buildutils.enforcer.NoPackageCyclesEnforcerRule"/>
               </rules>
             </configuration>
           </execution>
@@ -822,61 +822,97 @@ agnostic home for software distribution comprehension and audit tools.
       <id>bodewig</id>
       <name>Stefan Bodewig</name>
       <email>bodewig@apache.org</email>
+      <roles>
+        <role>Emeritus</role>
+      </roles>
     </developer>
     <developer>
       <id>rdonkin</id>
       <name>Robert Burrell Donkin</name>
       <email>rdonkin@apache.org</email>
+      <roles>
+        <role>PMC</role>
+      </roles>
     </developer>
     <developer>
       <id>jochen</id>
       <name>Jochen Wiedmann</name>
       <email>jochen@apache.org</email>
+      <roles>
+        <role>Emeritus</role>
+      </roles>
     </developer>
     <developer>
       <id>gmcdonald</id>
       <name>Gavin</name>
       <email>gmcdonald@apache.org</email>
+      <roles>
+        <role>PMC</role>
+      </roles>
     </developer>
     <developer>
       <id>brianf</id>
       <name>Brian Fox</name>
       <email>brianf@apache.org</email>
+      <roles>
+        <role>PMC</role>
+      </roles>
     </developer>
     <developer>
       <id>dennisl</id>
       <name>Dennis Lundberg</name>
       <email>dennisl@apache.org</email>
+      <roles>
+        <role>Emeritus</role>
+      </roles>
     </developer>
     <developer>
       <id>rgardler</id>
       <name>Ross Gardler</name>
       <email>rgardler@apache.org</email>
+      <roles>
+        <role>PMC</role>
+      </roles>
     </developer>
     <developer>
       <id>crossley</id>
       <name>David Crossley</name>
       <email>crossley@apache.org</email>
+      <roles>
+        <role>PMC</role>
+      </roles>
     </developer>
     <developer>
       <id>dblevins</id>
       <name>David Blevins</name>
       <email>dblevins@apache.org</email>
+      <roles>
+        <role>PMC</role>
+      </roles>
     </developer>
     <developer>
       <id>pottlinger</id>
       <name>Philipp Ottlinger</name>
       <email>pottlinger@apache.org</email>
+      <roles>
+        <role>PMC chair</role>
+      </roles>
     </developer>
     <developer>
       <id>claudenw</id>
       <name>Claude Warren</name>
       <email>claude@apache.org</email>
+      <roles>
+        <role>PMC</role>
+      </roles>
     </developer>
     <developer>
       <id>jbonofre</id>
       <name>Jean-Baptiste Onofré</name>
       <email>jbonofre@apache.org</email>
+      <roles>
+        <role>PMC</role>
+      </roles>
     </developer>
   </developers>
   <contributors>
@@ -1033,8 +1069,8 @@ agnostic home for software distribution comprehension and audit tools.
   <!-- in order to test new releases this reference can be activated locally
   <pluginRepositories>
     <pluginRepository>
-      <id>staged-releases-rat-016.1</id>
-      <url>https://repository.apache.org/content/repositories/orgapachecreadur-1011/</url>
+      <id>staged-releases-rat-017</id>
+      <url>https://repository.apache.org/content/repositories/orgapachecreadur-1012/</url>
     </pluginRepository>
   </pluginRepositories-->
 </project>
