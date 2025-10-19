@@ -86,7 +86,7 @@ public enum StandardCollection {
      */
     ECLIPSE("The files and directories created by an Eclipse IDE based tool.",
             Arrays.asList("**/.checkstyle", "**/.classpath", "**/.factorypath",
-                    "**/.project", "**/.settings/**", "**/.externalToolBuilders"),
+                    "**/.project", "**/.settings/**", "**/.externalToolBuilders/**"),
             null, null),
     /**
      * The files and directories created by GIT source code control to support GIT, also processes files listed in '.gitignore'

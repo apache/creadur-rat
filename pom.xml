@@ -576,13 +576,19 @@ agnostic home for software distribution comprehension and audit tools.
           <!-- Do not use property values here as this causes problems during release -->
           <version>0.17</version>
           <configuration>
+            <inputExcludeStd>ECLIPSE</inputExcludeStd>
+            <inputExcludeStd>IDEA</inputExcludeStd>
+            <inputExcludeStd>MAC</inputExcludeStd>
             <inputExcludes>
               <exclude>.asf.yaml</exclude>
               <exclude>src/site/apt/naming_help.txt</exclude>
               <exclude>**/iso-8859-1.html</exclude>
               <exclude>**/velocity.log</exclude>
-              <!-- RAT-353: until https://bugs.openjdk.org/browse/JDK-8227487 is fixed we add fonts manually -->
-              <exclude>**/src/site/javadocFont/**</exclude>
+              <!--
+              RAT-353: until https://bugs.openjdk.org/browse/JDK-8227487 is fixed we add fonts manually
+              and jejavu.css does not have a license statement
+              -->
+              <exclude>src/site/javadocFont/resources/fonts/dejavu.css</exclude>
             </inputExcludes>
           </configuration>
         </plugin>
