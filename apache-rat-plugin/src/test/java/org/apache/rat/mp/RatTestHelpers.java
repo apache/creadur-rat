@@ -17,8 +17,8 @@ import org.apache.commons.io.FileUtils;
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
+ * (the "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
  *
  *      http://www.apache.org/licenses/LICENSE-2.0
  *
@@ -97,7 +97,7 @@ public final class RatTestHelpers {
             }
         } else if (pSource.isFile()) {
             try (final FileInputStream fis = new FileInputStream(pSource);
-                    final FileOutputStream fos = new FileOutputStream(pTarget)) {
+                 final FileOutputStream fos = new FileOutputStream(pTarget)) {
                 final byte[] buffer = new byte[8192];
                 for (;;) {
                     int res = fis.read(buffer);
@@ -122,7 +122,8 @@ public final class RatTestHelpers {
      * @throws Exception Creating the object failed.
      */
     public static Renderer newSiteRenderer(PlexusContainer container) throws Exception {
-        return (Renderer) container.lookup(Renderer.ROLE, "default");
+        // Replaced deprecated ROLE-based lookup with type+hint lookup.
+        return container.lookup(Renderer.class, "default");
     }
 
     /**
