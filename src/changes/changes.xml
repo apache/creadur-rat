@@ -59,12 +59,17 @@ The <action> type attribute can be one of:
     <author email="dev@creadur.apache.org">Apache Creadur RAT developers</author>
   </properties>
   <body>
-    <!--release version="1.0.0-SNAPSHOT" date="xxxx-yy-zz" description="Current SNAPSHOT - release to be done">
-      <action issue="RAT-498" type="update" dev="pottlinger" due-to="dependabot">
-        TODO: collect all dependabot updates for release 1.0.0.
+    <!--release version="2.0.0-SNAPSHOT" date="xxxx-yy-zz" description="Current SNAPSHOT - release to be done">
+      <action issue="RAT-xyz" type="update" dev="pottlinger" due-to="dependabot">
+        TODO/TBD: collect all dependabot updates for release 2.0.0.
       </action>
     </release>
     -->
+    <release version="1.0.0-SNAPSHOT" date="xxxx-yy-zz" description="Current SNAPSHOT - release to be done">
+      <action issue="RAT-498" type="update" dev="pottlinger" due-to="dependabot">
+        TODO/TBD: collect all dependabot updates for release 1.0.0.
+      </action>
+    </release>
     <release version="0.17" date="2025-10-12" description=
 "Apart from many dependency updates and multiple bugfixes, this release brings a major
 harmonization among all available UIs (CLI, Apache Ant, Apache Maven) concerning parameters
