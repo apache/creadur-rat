@@ -586,7 +586,7 @@ agnostic home for software distribution comprehension and audit tools.
               <exclude>**/velocity.log</exclude>
               <!--
               RAT-353: until https://bugs.openjdk.org/browse/JDK-8227487 is fixed we add fonts manually
-              and jejavu.css does not have a license statement
+              and dejavu.css does not have a license statement
               -->
               <exclude>src/site/javadocFont/resources/fonts/dejavu.css</exclude>
             </inputExcludes>
