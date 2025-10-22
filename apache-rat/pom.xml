@@ -163,7 +163,7 @@
         <artifactId>animal-sniffer-maven-plugin</artifactId>
         <executions>
           <execution>
-            <!-- This sub project has no source code, so we need to skip animal sniffer -->
+            <!-- This subproject has no source code, so we need to skip animal sniffer -->
             <id>check-java-1.8-compat</id>
             <configuration>
               <skip>true</skip>
@@ -345,11 +345,11 @@
           <groupId>org.apache.rat</groupId>
           <artifactId>apache-rat-plugin</artifactId>
           <configuration>
-            <excludes>
+            <inputExcludes>
               <!-- files that are examples of output from the tool -->
               <exclude>src/site/examples/**</exclude>
               <exclude>src/site/apt/*.txt</exclude>
-            </excludes>
+            </inputExcludes>
           </configuration>
         </plugin>
         <plugin>
@@ -369,7 +369,7 @@
                     </goals>
                   </pluginExecutionFilter>
                   <action>
-                    <ignore />
+                    <ignore/>
                   </action>
                 </pluginExecution>
               </pluginExecutions>

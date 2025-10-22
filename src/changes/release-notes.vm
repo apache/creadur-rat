@@ -122,6 +122,10 @@ patches, or suggestions for improvement, see the Apache ${project.name} website:
 
 ${project.url}
 
+Historical list of changes: https://creadur.apache.org/rat/changes.html
+
+Known issues: https://creadur.apache.org/rat/apache-rat/known_issues.html
+
 =WEBPAGE=
 For complete information on Apache Creadur RAT, including instructions on how to submit bug reports,
 patches, or suggestions for improvement, see the Apache Apache Creadur RAT website:

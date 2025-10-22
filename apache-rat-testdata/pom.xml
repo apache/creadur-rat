@@ -36,9 +36,9 @@
           <groupId>org.apache.rat</groupId>
           <artifactId>apache-rat-plugin</artifactId>
           <configuration>
-            <excludes>
-              <exclude>src/main/resources/examples/**</exclude>
-            </excludes>
+            <inputExcludes>
+              <exclude>/src/main/resources/examples/**</exclude>
+            </inputExcludes>
           </configuration>
         </plugin>
       </plugins>
