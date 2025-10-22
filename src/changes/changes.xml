@@ -72,7 +72,10 @@ in order to be properly linked in site reports.
         Fix CopyrightMatcher parsing issues if input contains non-space or formatting characters.
       </action>
       <action issue="RAT-501" type="fix" dev="claudenw">
-        Fix pom configuration issues from migration
+        Fix pom configuration issues from migration to using RAT 0.17.
+      </action>
+      <action issue="RAT-501" type="add" dev="claudenw" due-to="pottlinger">
+        Changed '/.externalToolBuilders' to '/.externalToolBuilders/**' in the ECLIPSE standard exclusion list and added '**/bin/**' to ignore generated binary folders in Eclipse IDE.
       </action>
       <action issue="RAT-498" type="update" dev="pottlinger" due-to="dependabot">
         TODO/TBD: collect all dependabot updates for release 1.0.0.
