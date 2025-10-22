@@ -114,7 +114,7 @@ public class CopyrightMatcher extends AbstractHeaderMatcher {
 
     /**
      * Converts the owner string into a set of tokens that may be separated by multiple whitespaces and comment characters.
-     * Any non word character may appear between the tokens.  Tokens are escaped so that any text is not interpreted as
+     * Any non word character may appear between the tokens. Tokens are escaped so that any text is not interpreted as
      * regex characters.
      * @param owner the owner string.
      * @return the regex string to match the owner string.
@@ -122,7 +122,7 @@ public class CopyrightMatcher extends AbstractHeaderMatcher {
     private String parseOwner(final String owner) {
         return Arrays.stream(owner.split("\\s+")).map(s -> "\\Q" + s + "\\E").collect(Collectors.joining("\\W+"));
     }
-    
+
     /**
      * Constructs the CopyrightMatcher with the specified start, stop and owner
      * strings.

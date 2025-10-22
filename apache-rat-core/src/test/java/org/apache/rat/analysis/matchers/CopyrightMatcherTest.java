@@ -135,6 +135,7 @@ public class CopyrightMatcherTest {
         result.add(Arguments.of("xml comment", true, "<!-- Copyright 1900 - 1904 A big conglomerate -->\n<!--  with a long name -->"));
         result.add(Arguments.of("chars after date", false, "Copyright 1900 - 1904 from A big conglomerate with a long name"));
         result.add(Arguments.of("non comment chars", false, "Copyright 1900 - 1904 A big conglomerate\n and with a long name"));
+        result.add(Arguments.of("multiple wraps before date", true, "Copyright\n\n 1900 - 1904\n\n\n\nA big conglomerate with a long name"));
         result.add(Arguments.of("wrap before date", true, "Copyright\n 1900 - 1904\nA big conglomerate with a long name"));
         result.add(Arguments.of("wrap before date with char", true, "Copyright\n * 1900 - 1904\nA big conglomerate with a long name"));
         result.add(Arguments.of("wrap date", true, "Copyright 1900 - 1904\nA big conglomerate with a long name"));
