@@ -122,6 +122,7 @@ public class CopyrightMatcher extends AbstractHeaderMatcher {
     private String parseOwner(final String owner) {
         return Arrays.stream(owner.split("\\s+")).map(s -> "\\Q" + s + "\\E").collect(Collectors.joining("\\W+"));
     }
+    
     /**
      * Constructs the CopyrightMatcher with the specified start, stop and owner
      * strings.
