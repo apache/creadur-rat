@@ -117,7 +117,7 @@ public final class OptionCollection {
      * Parses the standard options to create a ReportConfiguration.
      *
      * @param workingDirectory The directory to resolve relative file names against.
-     * @param args the arguments to parse
+     * @param args the arguments to parse.
      * @param helpCmd the help command to run when necessary.
      * @param noArgs If {@code true} then the commands do not need extra arguments.
      * @return a ReportConfiguration or {@code null} if Help was printed.
@@ -125,6 +125,7 @@ public final class OptionCollection {
      */
     public static ReportConfiguration parseCommands(final File workingDirectory, final String[] args,
                                                     final Consumer<Options> helpCmd, final boolean noArgs) throws IOException {
+
         Options opts = buildOptions();
         CommandLine commandLine;
         try {
@@ -157,7 +158,7 @@ public final class OptionCollection {
             String msg = "No directories or files specified for scanning. Did you forget to close a multi-argument option?";
             DefaultLog.getInstance().error(msg);
             helpCmd.accept(opts);
-            throw new ConfigurationException(msg);
+            return null;
         }
 
         return configuration;

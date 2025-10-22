@@ -1,4 +1,4 @@
-package RAT_355
+package GitIgnoreBuilderTest
 
 import org.apache.rat.report.claim.ClaimStatistic
 import org.apache.rat.testhelpers.XmlUtils
