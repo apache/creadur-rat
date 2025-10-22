@@ -67,7 +67,7 @@ in order to be properly linked in site reports.
       </action>
     </release>
     -->
-    <release version="1.0.0-SNAPSHOT" date="xxxx-yy-zz" description="Current SNAPSHOT - release to be done">
+    <release version="1.0.0" date="xxxx-yy-zz" description="Current SNAPSHOT - release to be done">
       <action issue="RAT-500" type="fix" dev="pottlinger">
         Do not throw an exception if no arguments are provided in CLI, encourage to use --help instead.
       </action>
