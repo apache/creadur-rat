@@ -18,8 +18,10 @@
  */
 package org.apache.rat.analysis.matchers;
 
+import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.rat.ConfigurationException;
@@ -66,11 +68,11 @@ public class CopyrightMatcher extends AbstractHeaderMatcher {
     /** The compiled pattern from {@link #COPYRIGHT_PATTERN_DEFN} */
     private static final Pattern COPYRIGHT_PATTERN = Pattern.compile(COPYRIGHT_PATTERN_DEFN);
     /** The string to build a Pattern to match a copyright with a single part (date or name) */
-    private static final String ONE_PART = "\\s+((" + COPYRIGHT_SYMBOL_DEFN + ")\\s+)?%s";
+    private static final String ONE_PART = "\\W+((" + COPYRIGHT_SYMBOL_DEFN + ")\\W+)?%s";
     /** The string to build a Pattern to match a copyright iwth both name and date */
-    private static final String TWO_PART = "\\s+((" + COPYRIGHT_SYMBOL_DEFN + ")\\s+)?%s,?\\s+%s";
+    private static final String TWO_PART = "\\W+((" + COPYRIGHT_SYMBOL_DEFN + ")\\W+)?%s,?\\W+%s";
     /** Format string to build a pattern to match two dates */
-    private static final String DOUBLE_DATE_FMT = "%s\\s*-\\s*%s";
+    private static final String DOUBLE_DATE_FMT = "%s\\W*-\\W*%s";
     /** String to build a pattern to match an arbitrary date (year) */
     private static final String ARBITRARY_DATE = "[0-9]{4}";
     /** The built Pattern for matching "Copyright date owner" */
@@ -111,6 +113,17 @@ public class CopyrightMatcher extends AbstractHeaderMatcher {
     }
 
     /**
+     * Converts the owner string into a set of tokens that may be separated by multiple whitespaces and comment characters.
+     * Any non word character may appear between the tokens. Tokens are escaped so that any text is not interpreted as
+     * regex characters.
+     * @param owner the owner string.
+     * @return the regex string to match the owner string.
+     */
+    private String parseOwner(final String owner) {
+        return Arrays.stream(owner.split("\\s+")).map(s -> "\\Q" + s + "\\E").collect(Collectors.joining("\\W+"));
+    }
+
+    /**
      * Constructs the CopyrightMatcher with the specified start, stop and owner
      * strings.
      *
@@ -146,13 +159,14 @@ public class CopyrightMatcher extends AbstractHeaderMatcher {
             dateOwnerPattern = Pattern.compile(String.format(ONE_PART, dateDefn));
             ownerDatePattern = null;
         } else {
+            String formattedOwner = parseOwner(owner);
             if (StringUtils.isEmpty(dateDefn)) {
                 dateDefn = String.format(DOUBLE_DATE_FMT, "(((" + ARBITRARY_DATE, ")?" + ARBITRARY_DATE + "))?");
-                dateOwnerPattern = Pattern.compile(String.format(TWO_PART, dateDefn, owner));
-                ownerDatePattern = Pattern.compile(String.format(ONE_PART, owner));
+                dateOwnerPattern = Pattern.compile(String.format(TWO_PART, dateDefn, formattedOwner));
+                ownerDatePattern = Pattern.compile(String.format(ONE_PART, formattedOwner));
             } else {
-                dateOwnerPattern = Pattern.compile(String.format(TWO_PART, dateDefn, owner));
-                ownerDatePattern = Pattern.compile(String.format(TWO_PART, owner, dateDefn));
+                dateOwnerPattern = Pattern.compile(String.format(TWO_PART, dateDefn, formattedOwner));
+                ownerDatePattern = Pattern.compile(String.format(TWO_PART, formattedOwner, dateDefn));
             }
         }
     }
