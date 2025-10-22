@@ -30,6 +30,7 @@ import java.util.Set;
 import java.util.stream.Stream;
 
 import org.apache.rat.analysis.IHeaders;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -111,4 +112,102 @@ public class CopyrightMatcherTest {
             matcher.reset();
         }
     }
+
+    @ParameterizedTest
+    @MethodSource("doubleDateWrapTestData")
+    void doubleDateWrapTest(String name, boolean state, String text) {
+        CopyrightMatcher undertest = new CopyrightMatcher("1900", "1904", "A big conglomerate with a long name");
+        IHeaders headers = AbstractMatcherTest.makeHeaders(text, null);
+        if (state) {
+            assertTrue(undertest.matches(headers));
+        }
+        else {
+            assertFalse(undertest.matches(headers));
+        }
+    }
+
+    static List<Arguments> doubleDateWrapTestData() {
+        List<Arguments> result = new ArrayList<>();
+        result.add(Arguments.of("simple", true, "Copyright 1900 - 1904 A big conglomerate with a long name"));
+        result.add(Arguments.of("wrapped", true, "Copyright 1900 - 1904 A big conglomerate\nwith a long name"));
+        result.add(Arguments.of("java comment", true, "// Copyright 1900 - 1904 A big conglomerate\n// with a long name"));
+        result.add(Arguments.of("java comment", true, "/* Copyright 1900 - 1904 A big conglomerate\n *  with a long name"));
+        result.add(Arguments.of("xml comment", true, "<!-- Copyright 1900 - 1904 A big conglomerate -->\n<!--  with a long name -->"));
+        result.add(Arguments.of("chars after date", false, "Copyright 1900 - 1904 from A big conglomerate with a long name"));
+        result.add(Arguments.of("non comment chars", false, "Copyright 1900 - 1904 A big conglomerate\n and with a long name"));
+        result.add(Arguments.of("wrap before date", true, "Copyright\n 1900 - 1904\nA big conglomerate with a long name"));
+        result.add(Arguments.of("wrap before date with char", true, "Copyright\n * 1900 - 1904\nA big conglomerate with a long name"));
+        result.add(Arguments.of("wrap date", true, "Copyright 1900 - 1904\nA big conglomerate with a long name"));
+        result.add(Arguments.of("wrap date with char", true, "Copyright 1900 - 1904\n * A big conglomerate with a long name"));
+        result.add(Arguments.of("wrap in date", true, "Copyright 1900\n - 1904 A big conglomerate with a long name"));
+        result.add(Arguments.of("wrap in date with char", true, "Copyright 1900\n * - 1904 A big conglomerate with a long name"));
+        result.add(Arguments.of("wrap in date with char 2", true, "Copyright 1900 - \n * 1904 A big conglomerate with a long name"));
+        return result;
+    }
+
+    @ParameterizedTest
+    @MethodSource("singleDateWrapTestData")
+    void singleDateWrapTest(String name, boolean state, String text) {
+        CopyrightMatcher undertest = new CopyrightMatcher("1900", null, "A big conglomerate with a long name");
+        IHeaders headers = AbstractMatcherTest.makeHeaders(text, null);
+        if (state) {
+            assertTrue(undertest.matches(headers));
+        }
+        else {
+            assertFalse(undertest.matches(headers));
+        }
+    }
+
+    static List<Arguments> singleDateWrapTestData() {
+        List<Arguments> result = new ArrayList<>();
+        result.add(Arguments.of("simple", true, "Copyright 1900 A big conglomerate with a long name"));
+        result.add(Arguments.of("wrapped", true, "Copyright 1900 A big conglomerate\nwith a long name"));
+        result.add(Arguments.of("java comment", true, "// Copyright 1900 A big conglomerate\n// with a long name"));
+        result.add(Arguments.of("java comment", true, "/* Copyright 1900 A big conglomerate\n *  with a long name"));
+        result.add(Arguments.of("xml comment", true, "<!-- Copyright 1900 A big conglomerate -->\n<!--  with a long name -->"));
+        result.add(Arguments.of("chars after date", false, "Copyright 1900 from A big conglomerate with a long name"));
+        result.add(Arguments.of("non comment chars", false, "Copyright 1900 A big conglomerate\n and with a long name"));
+        result.add(Arguments.of("wrap before date", true, "Copyright\n 1900 A big conglomerate with a long name"));
+        result.add(Arguments.of("wrap before date with char", true, "Copyright\n * 1900 A big conglomerate with a long name"));
+        result.add(Arguments.of("wrap date", true, "Copyright 1900\nA big conglomerate with a long name"));
+        result.add(Arguments.of("wrap date with char", true, "Copyright 1900\n * A big conglomerate with a long name"));
+        return result;
+    }
+
+    @ParameterizedTest
+    @MethodSource("noDateWrapTestData")
+    void noDateWrapTest(String name, boolean state, String text) {
+        CopyrightMatcher undertest = new CopyrightMatcher(null, null, "A big conglomerate with a long name");
+        IHeaders headers = AbstractMatcherTest.makeHeaders(text, null);
+        if (state) {
+            assertTrue(undertest.matches(headers));
+        }
+        else {
+            assertFalse(undertest.matches(headers));
+        }
+    }
+
+    static List<Arguments> noDateWrapTestData() {
+        List<Arguments> result = new ArrayList<>();
+        result.add(Arguments.of("simple", true, "Copyright A big conglomerate with a long name"));
+        result.add(Arguments.of("wrapped", true, "Copyright A big conglomerate\nwith a long name"));
+        result.add(Arguments.of("java comment", true, "// Copyright A big conglomerate\n// with a long name"));
+        result.add(Arguments.of("java comment", true, "/* Copyright A big conglomerate\n *  with a long name"));
+        result.add(Arguments.of("xml comment", true, "<!-- Copyright A big conglomerate -->\n<!--  with a long name -->"));
+        result.add(Arguments.of("chars before text", false, "Copyright from A big conglomerate with a long name"));
+        result.add(Arguments.of("non comment chars", false, "Copyright A big conglomerate\n and with a long name"));
+        result.add(Arguments.of("wrap before text", true, "Copyright\n A big conglomerate with a long name"));
+        result.add(Arguments.of("wrap before text with char", true, "Copyright \n * A big conglomerate with a long name"));
+        return result;
+    }
+
+    @Test
+    void regexOwnerPatternTest() {
+        CopyrightMatcher undertest = new CopyrightMatcher(null, null, "A big .* with a long name");
+        IHeaders headers = AbstractMatcherTest.makeHeaders("Copyright A big .* with a long name", null);
+        assertTrue(undertest.matches(headers));
+        headers = AbstractMatcherTest.makeHeaders("Copyright A big conglomerate with a long name", null);
+        assertFalse(undertest.matches(headers));
+    }
+
 }
