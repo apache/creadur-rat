@@ -1,21 +1,4 @@
 package ReportTest.RAT_469
-
-import org.apache.rat.testhelpers.TextUtils
-import org.apache.rat.testhelpers.XmlUtils
-import org.apache.rat.license.ILicenseFamily;
-import org.w3c.dom.Document
-import javax.xml.xpath.XPath
-import javax.xml.xpath.XPathFactory
-
-
-private static Map<String, String> mapOf(String... parts) {
-    Map<String, String> map = new HashMap<>()
-    for (int i = 0; i < parts.length; i += 2) {
-        map.put(parts[i], parts[i+1])
-    }
-    return map
-}
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
@@ -32,6 +15,19 @@ private static Map<String, String> mapOf(String... parts) {
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import org.apache.rat.testhelpers.XmlUtils
+import org.w3c.dom.Document
+import javax.xml.xpath.XPath
+import javax.xml.xpath.XPathFactory
+
+private static Map<String, String> mapOf(String... parts) {
+    Map<String, String> map = new HashMap<>()
+    for (int i = 0; i < parts.length; i += 2) {
+        map.put(parts[i], parts[i+1])
+    }
+    return map
+}
+
 output = new File(args[0])
 content = output.text
 
