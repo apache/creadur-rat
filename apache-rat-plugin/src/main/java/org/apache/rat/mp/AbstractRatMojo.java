@@ -475,7 +475,7 @@ public abstract class AbstractRatMojo extends BaseRatMojo {
 
                 setIncludeExclude();
 
-                getLog().warn("Basedir is : " + basedir);
+                getLog().debug("Basedir is : " + basedir);
                 ReportConfiguration config = OptionCollection.parseCommands(basedir, args().toArray(new String[0]),
                         o -> getLog().warn("Help option not supported"),
                         true);
