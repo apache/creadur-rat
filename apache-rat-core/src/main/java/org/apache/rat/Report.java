@@ -40,13 +40,14 @@ public final class Report {
      * @throws Exception on error.
      */
     public static void main(final String[] args) throws Exception {
+        DefaultLog.getInstance().info(new VersionInfo().toString());
+
         if (args == null || args.length == 0) {
             DefaultLog.getInstance().info("Please use the \"--help\" option to see a " +
                     "list of valid commands and options, as you did not provide any arguments.");
             System.exit(0);
         }
 
-        DefaultLog.getInstance().info(new VersionInfo().toString());
         ReportConfiguration configuration = OptionCollection.parseCommands(new File("."), args, Report::printUsage);
         if (configuration != null) {
             configuration.validate(DefaultLog.getInstance()::error);
