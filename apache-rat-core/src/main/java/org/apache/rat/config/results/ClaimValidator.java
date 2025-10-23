@@ -129,7 +129,7 @@ public final class ClaimValidator {
             if (!isValid(counter, statistic.getCounter(counter))) {
                 DefaultLog.getInstance().error(format("Unexpected count for %s, limit is [%s,%s].  Count: %s", counter,
                         min.get(counter), max.get(counter), statistic.getCounter(counter)));
-                DefaultLog.getInstance().info(format("%s (%s) is %s", counter, counter.displayName(),
+                DefaultLog.getInstance().debug(format("%s (%s) is %s", counter, counter.displayName(),
                         StringUtils.uncapitalize(counter.getDescription())));
             }
         }

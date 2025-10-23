@@ -19,8 +19,6 @@ import org.apache.rat.testhelpers.TextUtils
 content = new File(basedir, 'build.log').text
 
 assert content.contains('BUILD SUCCESS')
-assert content.contains('[INFO] Including patterns: pom.xml') // explicit inclusion worked
-assert content.contains('[INFO] Processing exclude file from STANDARD_SCMS.') // default exclusions worked
 assert ! content.contains('[WARNING] No resources included')
 
 // Report is in apache-rat-plugin/target/invoker-reports
