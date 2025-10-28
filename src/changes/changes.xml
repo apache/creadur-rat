@@ -68,6 +68,9 @@ in order to be properly linked in site reports.
     </release>
     -->
     <release version="1.0.0" date="xxxx-yy-zz" description="Current SNAPSHOT - release to be done">
+      <action issue="RAT-163" type="add" dev="pottlinger" due-to="Robert Stupp">
+        Add Gradle plugin.
+      </action>
       <action issue="RAT-513" type="add" dev="pottlinger" due-to="Robert Stupp">
         Introduce new standard exclusion collection for Gradle projects.
       </action>
