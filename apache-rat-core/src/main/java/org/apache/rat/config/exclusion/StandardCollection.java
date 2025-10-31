@@ -143,6 +143,15 @@ public enum StandardCollection {
     MAC("The .DS_Store files on Mac computers.",
             Collections.singletonList("**/.DS_Store"), null, null),
     /**
+     * The files and directories created by Gradle build system based projects.
+     */
+    GRADLE("The files and directories created by Gradle build system based projects.",
+            Arrays.asList(
+                    "**/build/**",
+                    "**/.gradle/**",
+                    "**/.kotlin/**"
+                    ), null, null),
+    /**
      * The files and directories created by Maven build system based project.
      */
     MAVEN("The files and directories created by Maven build system based project.",
