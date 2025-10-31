@@ -65,7 +65,7 @@ public interface IXmlWriter extends AutoCloseable {
     }
 
     /**
-     * Writes a comment
+     * Writes a comment.
      *
      * @param text the comment text
      * @return this object
@@ -77,7 +77,7 @@ public interface IXmlWriter extends AutoCloseable {
     /**
      * Writes an attribute of an element.
      * Note that this is only allowed directly after {@link #openElement(CharSequence)}
-     * or {@link #attribute}.
+     * or this method.
      *
      * @param name the attribute name, not null
      * @param value the attribute value, not null
@@ -97,7 +97,7 @@ public interface IXmlWriter extends AutoCloseable {
      * @param content the content to write
      * @return this object
      * @throws OperationNotAllowedException
-     * if called before any call to {@link #openElement}
+     * if called before any call to {@link #openElement(CharSequence)}
      * or after the first element has been closed
      */
     IXmlWriter content(CharSequence content) throws IOException;
@@ -110,7 +110,7 @@ public interface IXmlWriter extends AutoCloseable {
      * @param content the content to write
      * @return this object
      * @throws OperationNotAllowedException
-     * if called before any call to {@link #openElement}
+     * if called before any call to {@link #openElement(CharSequence)}
      * or after the first element has been closed
      */
     IXmlWriter cdata(CharSequence content) throws IOException;
@@ -120,7 +120,7 @@ public interface IXmlWriter extends AutoCloseable {
      *
      * @return this object
      * @throws OperationNotAllowedException
-     * if called before any call to {@link #openElement}
+     * if called before any call to {@link #openElement(CharSequence)}
      * or after the first element has been closed
      */
     IXmlWriter closeElement() throws IOException;
@@ -131,7 +131,7 @@ public interface IXmlWriter extends AutoCloseable {
      * @param name  the last element to close
      * @return this object
      * @throws OperationNotAllowedException
-     * if called before any call to {@link #openElement}
+     * if called before any call to {@link #openElement(CharSequence)}
      * or after the first element has been closed
      */
     IXmlWriter closeElement(CharSequence name) throws IOException;
@@ -144,7 +144,7 @@ public interface IXmlWriter extends AutoCloseable {
      *
      * @return this object
      * @throws OperationNotAllowedException
-     * if called before any call to {@link #openElement}
+     * if called before any call to {@link #openElement(CharSequence)}
      */
     IXmlWriter closeDocument() throws IOException;
 }
