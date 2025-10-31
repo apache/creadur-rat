@@ -457,7 +457,7 @@ public class XmlWriterTest {
             writer.startDocument();
             fail("Operation not allow once a prolog has been written");
         } catch (OperationNotAllowedException e) {
-            // Operation not allowed once an prolog has been written
+            // Operation not allowed once a prolog has been written
         }
     }
     
