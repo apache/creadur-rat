@@ -57,6 +57,7 @@ public class StandardCollectionTest {
         lst.add(Arguments.of(StandardCollection.DARCS, false, false, true));
         lst.add(Arguments.of(StandardCollection.ECLIPSE, false, false, true));
         lst.add(Arguments.of(StandardCollection.GIT, true, false, true));
+        lst.add(Arguments.of(StandardCollection.GRADLE, false, false, true));
         lst.add(Arguments.of(StandardCollection.HIDDEN_DIR, false, true, false));
         lst.add(Arguments.of(StandardCollection.HIDDEN_FILE, false, true, false));
         lst.add(Arguments.of(StandardCollection.IDEA, false, false, true));
