@@ -16,6 +16,6 @@
 */
 
 /**
-This package contains the Rat plugins for {@link <a href="https://maven.apache.org">Maven</a>}.
+* This package contains the RAT plugins for {@link <a href="https://maven.apache.org">Maven</a>}.
 */
 package org.apache.rat.mp;
