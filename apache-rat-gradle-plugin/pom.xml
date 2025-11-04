@@ -1,0 +1,241 @@
+<?xml version="1.0"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>org.apache.rat</groupId>
+    <artifactId>apache-rat-project</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+  </parent>
+  <!--
+    For Gradle to be able to locate the Maven artifact containing the plugin:
+    The group ID has to be plugin-ID (== org.apache.rat)
+    The artifact ID has to be plugin-ID (== org.apache.rat) plus the string 'gradle.plugin'
+   -->
+  <artifactId>org.apache.rat.gradle.plugin</artifactId>
+  <packaging>pom</packaging>
+  <name>Apache Creadur RAT::Gradle Plugin</name>
+  <description>Gradle plugin.</description>
+  <properties>
+    <gradle.task>build</gradle.task>
+    <gradle.executable>./gradlew</gradle.executable>
+    <skip.gradle.build>false</skip.gradle.build>
+    <artifactPrefix>apache-rat-gradle-plugin</artifactPrefix>
+  </properties>
+  <dependencies>
+    <dependency>
+      <groupId>org.apache.rat</groupId>
+      <artifactId>apache-rat-core</artifactId>
+    </dependency>
+  </dependencies>
+  <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.rat</groupId>
+          <artifactId>apache-rat-plugin</artifactId>
+          <configuration>
+            <inputExcludes>
+              <exclude>build/**</exclude>
+              <exclude>gradle/wrapper/gradle-wrapper.jar</exclude>
+              <exclude>gradle/wrapper/gradle-wrapper*.sha256</exclude>
+              <exclude>src/test/resources/TestGradleIntegration/badLicenseFailsBuild/**</exclude>
+            </inputExcludes>
+          </configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+    <plugins>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
+        <dependencies>
+          <!-- The apache-rat-tools module is needed for the build of the Gradle plugin,
+           but let's not add it as a "production" dependency. -->
+          <dependency>
+            <groupId>org.apache.rat</groupId>
+            <artifactId>apache-rat-tools</artifactId>
+            <version>${project.version}</version>
+          </dependency>
+        </dependencies>
+        <executions>
+          <execution>
+            <id>gradle</id>
+            <phase>prepare-package</phase>
+            <configuration>
+              <executable>${gradle.executable}</executable>
+              <arguments>
+                <argument>clean</argument>
+                <argument>${gradle.task}</argument>
+                <argument>-Pdescription=${project.description}</argument>
+                <argument>-Dmaven.repo.local=${settings.localRepository}</argument>
+                <argument>-S</argument>
+                <argument>--stacktrace</argument>
+              </arguments>
+              <environmentVariables>
+                <MAVEN_REPO_LOCAL>${settings.localRepository}</MAVEN_REPO_LOCAL>
+                <JAVA_HOME>${gradleJavaHome}</JAVA_HOME>
+              </environmentVariables>
+            </configuration>
+            <goals>
+                <goal>exec</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>build-helper-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>attach-artifacts</id>
+            <phase>package</phase>
+            <goals>
+              <goal>attach-artifact</goal>
+            </goals>
+            <configuration>
+              <artifacts>
+                <artifact>
+                  <file>build/libs/${artifactPrefix}-${project.version}.jar</file>
+                  <type>jar</type>
+                </artifact>
+                <artifact>
+                  <file>build/libs/${artifactPrefix}-${project.version}-javadoc.jar</file>
+                  <type>jar</type>
+                  <classifier>javadoc</classifier>
+                </artifact>
+                <artifact>
+                  <file>build/libs/${artifactPrefix}-${project.version}-sources.jar</file>
+                  <type>jar</type>
+                  <classifier>sources</classifier>
+                </artifact>
+              </artifacts>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-checkstyle-plugin</artifactId>
+        <configuration>
+          <consoleOutput>true</consoleOutput>
+          <failsOnError>true</failsOnError>
+          <failOnViolation>true</failOnViolation>
+          <violationSeverity>warning</violationSeverity>
+          <excludeGeneratedSources>true</excludeGeneratedSources>
+          <configLocation>../src/conf/checkstyle.xml</configLocation>
+          <suppressionsLocation>../src/conf/checkstyle-suppressions.xml</suppressionsLocation>
+        </configuration>
+        <executions>
+          <execution>
+            <goals>
+              <goal>check</goal>
+            </goals>
+            <phase>compile</phase>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+  <profiles>
+    <profile>
+      <id>skipTests</id>
+      <activation>
+        <property>
+          <name>skipTests</name>
+          <value>true</value>
+        </property>
+      </activation>
+      <properties>
+        <gradle.task>assemble</gradle.task>
+      </properties>
+    </profile>
+    <profile>
+      <id>windows</id>
+      <activation>
+        <os>
+          <family>windows</family>
+        </os>
+      </activation>
+      <properties>
+        <gradle.executable>gradlew.bat</gradle.executable>
+      </properties>
+    </profile>
+    <profile>
+      <id>linux</id>
+      <activation>
+        <os>
+          <family>unix</family>
+        </os>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>exec-maven-plugin</artifactId>
+            <dependencies>
+              <!-- The apache-rat-tools module is needed for the build of the Gradle plugin,
+               but let's not add it as a "production" dependency. -->
+              <dependency>
+                <groupId>org.apache.rat</groupId>
+                <artifactId>apache-rat-tools</artifactId>
+                <version>${project.version}</version>
+              </dependency>
+            </dependencies>
+            <executions>
+              <execution>
+                <!-- verify that the Gradle plugin, installed to the local Maven repo, works from there -->
+                <id>smoketest</id>
+                <phase>install</phase>
+                <configuration>
+                  <executable>./smoketest.sh</executable>
+                  <skip>${skipTests}</skip>
+                </configuration>
+                <goals>
+                  <goal>exec</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+    <profile>
+      <id>gradleJavaHomeSet</id>
+      <activation>
+        <property>
+          <name>env.GRADLE_JAVA_HOME</name>
+        </property>
+      </activation>
+      <properties>
+        <gradleJavaHome>${env.GRADLE_JAVA_HOME}</gradleJavaHome>
+      </properties>
+    </profile>
+    <profile>
+      <id>gradleJavaHomeNotSet</id>
+      <activation>
+        <property>
+          <name>!env.GRADLE_JAVA_HOME</name>
+        </property>
+      </activation>
+      <properties>
+        <gradleJavaHome>${env.JAVA_HOME}</gradleJavaHome>
+      </properties>
+    </profile>
+  </profiles>
+</project>
