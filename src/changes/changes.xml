@@ -63,6 +63,9 @@ The <action> type attribute can be one of:
       <action issue="RAT-498" type="update" dev="pottlinger" due-to="dependabot">
         TODO: collect all dependabot updates for release 1.0.0.
       </action>
+      <action issue="RAT-514" type="add" dev="pottlinger" due-to="Robert Stupp">
+        Add Gradle plugin for 0.17 generation methods.
+      </action>
     </release>
     -->
     <release version="0.17" date="2025-10-12" description=
