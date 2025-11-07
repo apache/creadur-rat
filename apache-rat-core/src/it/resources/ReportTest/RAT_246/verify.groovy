@@ -25,5 +25,5 @@ assert content.contains('/dir1/FileToProcess')
 logOutput = new File(args[1])
 log = logOutput.text
 
-assert log.contains('INFO: Processing exclude file from GIT.')
-assert log.contains("INFO: Excluding GIT collection.")
+assert log.contains('DEBUG: Processing exclude file from GIT.')
+assert log.contains("DEBUG: Excluding GIT collection.")

@@ -36,6 +36,7 @@ import org.apache.rat.commandline.StyleSheets;
 import org.apache.rat.license.LicenseSetFactory.LicenseFilter;
 import org.apache.rat.report.claim.ClaimStatistic;
 import org.apache.rat.utils.DefaultLog;
+import org.apache.rat.utils.Log;
 
 import static java.lang.String.format;
 
@@ -196,7 +197,7 @@ public class RatCheckMojo extends AbstractRatMojo {
     protected void check(final ReportConfiguration config) throws MojoFailureException {
         ClaimStatistic statistics = reporter.getClaimsStatistic();
         try {
-           reporter.writeSummary(DefaultLog.getInstance().asWriter());
+           reporter.writeSummary(DefaultLog.getInstance().asWriter(Log.Level.DEBUG));
            if (config.getClaimValidator().hasErrors()) {
                config.getClaimValidator().logIssues(statistics);
                if (consoleOutput &&
@@ -219,6 +220,8 @@ public class RatCheckMojo extends AbstractRatMojo {
                } else {
                    getLog().info(msg);
                }
+           } else {
+               DefaultLog.getInstance().info("No issues found.");
            }
         } catch (IOException e) {
            throw new MojoFailureException(e);

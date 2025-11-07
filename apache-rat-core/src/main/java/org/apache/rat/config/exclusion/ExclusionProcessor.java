@@ -85,7 +85,7 @@ public class ExclusionProcessor {
      * @return this
      */
     public ExclusionProcessor addIncludedPatterns(final Iterable<String> patterns) {
-        DefaultLog.getInstance().info(format("Including patterns: %s", String.join(", ", patterns)));
+        DefaultLog.getInstance().debug(format("Including patterns: %s", String.join(", ", patterns)));
         patterns.forEach(includedPatterns::add);
         resetLastMatcher();
         return this;
@@ -111,7 +111,7 @@ public class ExclusionProcessor {
      */
     public ExclusionProcessor addFileProcessor(final StandardCollection collection) {
         if (collection != null) {
-            DefaultLog.getInstance().info(format("Processing exclude file from %s.", collection));
+            DefaultLog.getInstance().debug(format("Processing exclude file from %s.", collection));
             fileProcessors.add(collection);
             resetLastMatcher();
         }
@@ -125,7 +125,7 @@ public class ExclusionProcessor {
      */
     public ExclusionProcessor addIncludedCollection(final StandardCollection collection) {
         if (collection != null) {
-            DefaultLog.getInstance().info(format("Including %s collection.", collection));
+            DefaultLog.getInstance().debug(format("Including %s collection.", collection));
             includedCollections.add(collection);
             resetLastMatcher();
         }
@@ -138,7 +138,7 @@ public class ExclusionProcessor {
      * @return this
      */
     public ExclusionProcessor addExcludedPatterns(final Iterable<String> patterns) {
-        DefaultLog.getInstance().info(format("Excluding patterns: %s", String.join(", ", patterns)));
+        DefaultLog.getInstance().debug(format("Excluding patterns: %s", String.join(", ", patterns)));
         patterns.forEach(excludedPatterns::add);
         resetLastMatcher();
         return this;
@@ -164,7 +164,7 @@ public class ExclusionProcessor {
      */
     public ExclusionProcessor addExcludedCollection(final StandardCollection collection) {
         if (collection != null) {
-            DefaultLog.getInstance().info(format("Excluding %s collection.", collection));
+            DefaultLog.getInstance().debug(format("Excluding %s collection.", collection));
             excludedCollections.add(collection);
             resetLastMatcher();
         }
@@ -302,13 +302,13 @@ public class ExclusionProcessor {
     private void extractPaths(final MatcherSet.Builder matcherBuilder) {
         if (!includedPaths.isEmpty()) {
             for (DocumentNameMatcher matcher : includedPaths) {
-                DefaultLog.getInstance().info(format("Including path matcher %s", matcher));
+                DefaultLog.getInstance().debug(format("Including path matcher %s", matcher));
                 matcherBuilder.addIncluded(matcher);
             }
         }
         if (!excludedPaths.isEmpty()) {
             for (DocumentNameMatcher matcher : excludedPaths) {
-                DefaultLog.getInstance().info(format("Excluding path matcher %s", matcher));
+                DefaultLog.getInstance().debug(format("Excluding path matcher %s", matcher));
                 matcherBuilder.addExcluded(matcher);
             }
         }
