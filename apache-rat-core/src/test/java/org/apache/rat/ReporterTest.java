@@ -137,7 +137,7 @@ public class ReporterTest {
     @Test
     public void testOutputOption() throws Exception {
         File output = new File(tempDirectory, "test");
-        CommandLine commandLine = new DefaultParser().parse(OptionCollection.buildOptions(), new String[]{"-o", output.getCanonicalPath(), basedir});
+        CommandLine commandLine = new DefaultParser().parse(OptionCollection.buildOptions(), new String[]{"--output-file", output.getCanonicalPath(), basedir});
         ArgumentContext ctxt = new ArgumentContext(new File("."), commandLine);
 
         ReportConfiguration config = OptionCollection.createConfiguration(ctxt);

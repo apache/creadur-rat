@@ -31,6 +31,7 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.stream.Stream;
 import org.apache.commons.cli.Option;
+import org.apache.commons.cli.ParseException;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.rat.OptionCollectionTest;
@@ -135,7 +136,7 @@ public abstract class AbstractOptionsProvider implements ArgumentsProvider {
     }
 
     @SafeVarargs
-    protected final ReportConfiguration generateConfig(final Pair<Option, String[]>... args) throws IOException {
+    protected final ReportConfiguration generateConfig(final Pair<Option, String[]>... args) throws IOException, ParseException {
         List<Pair<Option, String[]>> options = Arrays.asList(args);
         return generateConfig(options);
     }
@@ -148,7 +149,7 @@ public abstract class AbstractOptionsProvider implements ArgumentsProvider {
      * @return The generated ReportConfiguration.
      * @throws IOException on error.
      */
-    protected abstract ReportConfiguration generateConfig(final List<Pair<Option, String[]>> args) throws IOException;
+    protected abstract ReportConfiguration generateConfig(final List<Pair<Option, String[]>> args) throws IOException, ParseException;
 
     /**
      * Converts each {@code Pair<Option, String[]>} into the option string and its arguments.
