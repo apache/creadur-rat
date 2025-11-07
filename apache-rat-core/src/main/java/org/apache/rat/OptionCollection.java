@@ -71,26 +71,6 @@ public final class OptionCollection {
     /** The Help option */
     public static final Option HELP = new Option("?", "help", false, "Print help for the RAT command line interface and exit.");
 
-    /** A mapping of {@code argName(value)} values to a description of those values. */
-    @Deprecated
-    private static final Map<String, Supplier<String>> ARGUMENT_TYPES;
-    static {
-        ARGUMENT_TYPES = new TreeMap<>();
-        for (ArgumentType argType : ArgumentType.values()) {
-            ARGUMENT_TYPES.put(argType.getDisplayName(), argType.description);
-        }
-    }
-
-    /**
-     * Gets the mapping of {@code argName(value)} values to a description of those values.
-     * @return the mapping of {@code argName(value)} values to a description of those values.
-     * @deprecated use {@link ArgumentType}
-     */
-    @Deprecated
-    public static Map<String, Supplier<String>> getArgumentTypes() {
-        return Collections.unmodifiableMap(ARGUMENT_TYPES);
-    }
-
     /**
      * Join a collection of objects together as a comma separated list of their string values.
      * @param args the objects to join together.

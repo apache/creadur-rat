@@ -34,7 +34,6 @@ import java.util.function.Predicate;
 
 import org.apache.commons.cli.AlreadySelectedException;
 import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.DeprecatedAttributes;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.OptionGroup;
 import org.apache.commons.cli.Options;
@@ -70,49 +69,31 @@ public enum Arg {
      * Defines options to add copyright to files
      */
     EDIT_COPYRIGHT(new OptionGroup()
-            .addOption(Option.builder("c")
-                    .longOpt("copyright").hasArg()
-                    .deprecated(DeprecatedAttributes.builder().setForRemoval(true).setSince("0.17")
-                            .setDescription(StdMsgs.useMsg("--edit-copyright")).get())
-                    .desc("The copyright message to use in the license headers.")
-                    .build())
             .addOption(Option.builder().longOpt("edit-copyright").hasArg()
                     .desc("The copyright message to use in the license headers. Usually in the form of \"Copyright 2008 Foo\".  "
                             + "Only valid with --edit-license")
-                    .build())),
+                    .build())
+    ),
 
     /**
      * Causes file updates to overwrite existing files.
      */
     EDIT_OVERWRITE(new OptionGroup()
-            .addOption(Option.builder("f").longOpt("force")
-                    .deprecated(DeprecatedAttributes.builder().setForRemoval(true).setSince("0.17")
-                            .setDescription(StdMsgs.useMsg("--edit-overwrite")).get())
-                    .desc("Forces any changes in files to be written directly to the source files so that new files are not created.")
-                    .build())
             .addOption(Option.builder().longOpt("edit-overwrite")
                     .desc("Forces any changes in files to be written directly to the source files so that new files are not created. "
                             + "Only valid with --edit-license.")
-                    .build())),
+                    .build())
+    ),
 
     /**
      * Defines options to add licenses to files
      */
     EDIT_ADD(new OptionGroup()
-            .addOption(Option.builder("a")
-                    .deprecated(DeprecatedAttributes.builder().setForRemoval(true).setSince("0.17")
-                            .setDescription(StdMsgs.useMsg("--edit-license")).get())
-                    .build())
-            .addOption(Option.builder("A").longOpt("addLicense")
-                    .deprecated(DeprecatedAttributes.builder().setForRemoval(true).setSince("0.17")
-                            .setDescription(StdMsgs.useMsg("--edit-license")).get())
-                    .desc("Add the Apache-2.0 license header to any file with an unknown license that is not in the exclusion list.")
-                    .build())
             .addOption(Option.builder().longOpt("edit-license").desc(
                     "Add the Apache-2.0 license header to any file with an unknown license that is not in the exclusion list. "
                             + "By default new files will be created with the license header, "
-                            + "to force the modification of existing files use the --edit-overwrite option.").build()
-            )),
+                            + "to force the modification of existing files use the --edit-overwrite option.").build())
+    ),
 
     //////////////////////////// CONFIGURATION OPTIONS
     /**
@@ -124,26 +105,14 @@ public enum Arg {
                     .converter(Converters.FILE_CONVERTER)
                     .type(File.class)
                     .build())
-            .addOption(Option.builder().longOpt("licenses").hasArgs().argName("File")
-                    .desc("File names for system configuration.")
-                    .deprecated(DeprecatedAttributes.builder().setSince("0.17").setForRemoval(true).setDescription(StdMsgs.useMsg("--config")).get())
-                    .converter(Converters.FILE_CONVERTER)
-                    .type(File.class)
-                    .build())),
+    ),
 
     /**
      * Group of options that skip the default configuration file
      */
     CONFIGURATION_NO_DEFAULTS(new OptionGroup()
             .addOption(Option.builder().longOpt("configuration-no-defaults")
-                    .desc("Ignore default configuration.").build())
-            .addOption(Option.builder().longOpt("no-default-licenses")
-                    .deprecated(DeprecatedAttributes.builder()
-                            .setSince("0.17")
-                            .setForRemoval(true)
-                            .setDescription(StdMsgs.useMsg("--configuration-no-defaults")).get())
-                    .desc("Ignore default configuration.")
-                    .build())),
+                    .desc("Ignore default configuration.").build())),
 
     /**
      * Option that adds approved licenses to the list
@@ -152,7 +121,8 @@ public enum Arg {
             .desc("A comma separated list of approved License IDs. These licenses will be added to the list of approved licenses.")
                     .converter(Converters.TEXT_LIST_CONVERTER)
                     .type(String[].class)
-            .build())),
+            .build())
+    ),
 
     /**
      * Option that adds approved licenses from a file
@@ -161,7 +131,8 @@ public enum Arg {
             .desc("Name of file containing comma separated lists of approved License IDs.")
             .converter(Converters.FILE_CONVERTER)
             .type(File.class)
-            .build())),
+            .build())
+    ),
 
     /**
      * Option that specifies approved license families
@@ -170,7 +141,8 @@ public enum Arg {
             .desc("A comma separated list of approved license family IDs. These license families will be added to the list of approved license families.")
             .converter(Converters.TEXT_LIST_CONVERTER)
             .type(String[].class)
-            .build())),
+            .build())
+    ),
 
     /**
      * Option that specifies approved license families from a file
@@ -190,7 +162,8 @@ public enum Arg {
                     "Once licenses are removed they can not be added back.")
             .converter(Converters.TEXT_LIST_CONVERTER)
             .type(String[].class)
-            .build())),
+            .build())
+    ),
 
     /**
      * Option to read a file licenses to be removed from the approved list.
@@ -201,7 +174,8 @@ public enum Arg {
             .desc("Name of file containing comma separated lists of the denied license IDs. " +
                     "These licenses will be removed from the list of approved licenses. " +
                     "Once licenses are removed they can not be added back.")
-            .build())),
+            .build())
+    ),
 
     /**
      * Option to list license families to remove from the approved list.
@@ -213,7 +187,8 @@ public enum Arg {
                     "Once license families are removed they can not be added back.")
             .converter(Converters.TEXT_LIST_CONVERTER)
             .type(String[].class)
-            .build())),
+            .build())
+    ),
 
     /**
      * Option to read a list of license families to remove from the approved list.
@@ -224,7 +199,8 @@ public enum Arg {
                     "Once license families are removed they can not be added back.")
             .type(File.class)
             .converter(Converters.FILE_CONVERTER)
-            .build())),
+            .build())
+    ),
 
     /**
      * Option to specify an acceptable number of various counters.
@@ -233,7 +209,8 @@ public enum Arg {
             .desc("The acceptable maximum number for the specified counter. A value of '-1' specifies an unlimited number.")
             .converter(Converters.COUNTER_CONVERTER)
             .type(Pair.class)
-            .build())),
+            .build())
+    ),
 
     /**
      * Option to specify an acceptable number of various counters.
@@ -242,7 +219,8 @@ public enum Arg {
             .desc("The minimum number for the specified counter.")
             .converter(Converters.COUNTER_CONVERTER)
             .type(Pair.class)
-            .build())),
+            .build())
+    ),
 
 ////////////////// INPUT OPTIONS
     /**
@@ -256,37 +234,28 @@ public enum Arg {
                             "argument is located.")
                     .converter(Converters.FILE_CONVERTER)
                     .type(File.class)
-                    .build())),
+                    .build())
+    ),
 
     /**
      * Excludes files by expression
      */
     EXCLUDE(new OptionGroup()
-            .addOption(Option.builder("e").longOpt("exclude").hasArgs().argName("Expression")
-                    .deprecated(DeprecatedAttributes.builder().setForRemoval(true).setSince("0.17")
-                            .setDescription(StdMsgs.useMsg("--input-exclude")).get())
-                    .desc("Excludes files matching <Expression>.")
-                    .build())
             .addOption(Option.builder().longOpt("input-exclude").hasArgs().argName("Expression")
                     .desc("Excludes files matching <Expression>.")
-                    .build())),
+                    .build())
+    ),
 
     /**
      * Excludes files based on the contents of a file.
      */
     EXCLUDE_FILE(new OptionGroup()
-            .addOption(Option.builder("E").longOpt("exclude-file")
-                    .argName("File").hasArg().type(File.class)
-                    .converter(Converters.FILE_CONVERTER)
-                    .deprecated(DeprecatedAttributes.builder().setForRemoval(true).setSince("0.17")
-                            .setDescription(StdMsgs.useMsg("--input-exclude-file")).get())
-                    .desc("Reads <Expression> entries from a file. Entries will be excluded from processing.")
-                    .build())
             .addOption(Option.builder().longOpt("input-exclude-file")
                     .argName("File").hasArg().type(File.class)
                     .converter(Converters.FILE_CONVERTER)
                     .desc("Reads <Expression> entries from a file. Entries will be excluded from processing.")
-                    .build())),
+                    .build())
+    ),
     /**
      * Excludes files based on standard groupings.
      */
@@ -315,11 +284,6 @@ public enum Arg {
             .addOption(Option.builder().longOpt("input-include").hasArgs().argName("Expression")
                     .desc("Includes files matching <Expression>. Will override excluded files.")
                     .build())
-            .addOption(Option.builder().longOpt("include").hasArgs().argName("Expression")
-                    .desc("Includes files matching <Expression>. Will override excluded files.")
-                    .deprecated(DeprecatedAttributes.builder().setForRemoval(true).setSince("0.17")
-                            .setDescription(StdMsgs.useMsg("--input-include")).get())
-                    .build())
     ),
 
     /**
@@ -331,13 +295,7 @@ public enum Arg {
                     .converter(Converters.FILE_CONVERTER)
                     .desc("Reads <Expression> entries from a file. Entries will override excluded files.")
                     .build())
-            .addOption(Option.builder().longOpt("includes-file")
-                    .argName("File").hasArg().type(File.class)
-                    .converter(Converters.FILE_CONVERTER)
-                    .desc("Reads <Expression> entries from a file. Entries will be excluded from processing.")
-                    .deprecated(DeprecatedAttributes.builder().setForRemoval(true).setSince("0.17")
-                            .setDescription(StdMsgs.useMsg("--input-include-file")).get())
-                    .build())),
+    ),
 
     /**
      * Includes files based on standard groups.
@@ -349,11 +307,6 @@ public enum Arg {
                             "Includes any path matcher actions but DOES NOT include any file processor actions.")
                     .type(StandardCollection.class)
                     .build())
-            .addOption(Option.builder().longOpt("scan-hidden-directories")
-                    .desc("Scans hidden directories.")
-                    .deprecated(DeprecatedAttributes.builder().setForRemoval(true).setSince("0.17")
-                            .setDescription(StdMsgs.useMsg("--input-include-std with 'HIDDEN_DIR' argument")).get()).build()
-            )
     ),
 
     /**
@@ -369,15 +322,6 @@ public enum Arg {
                     .build())
     ),
 
-    /**
-     * Stop processing an input stream and declare an input file.
-     */
-    DIR(new OptionGroup().addOption(Option.builder().option("d").longOpt("dir").hasArg()
-                    .type(File.class)
-            .desc("Used to indicate end of list when using options that take multiple arguments.").argName("DirOrArchive")
-            .deprecated(DeprecatedAttributes.builder().setForRemoval(true).setSince("0.17")
-                    .setDescription("Use the standard '--' to signal the end of arguments.").get()).build())),
-
     /////////////// OUTPUT OPTIONS
     /**
      * Defines the stylesheet to use.
@@ -387,17 +331,7 @@ public enum Arg {
                     .desc("XSLT stylesheet to use when creating the report. "
                             + "Either an external xsl file may be specified or one of the internal named sheets.")
                     .build())
-            .addOption(Option.builder("s").longOpt("stylesheet").hasArg().argName("StyleSheet")
-                    .deprecated(DeprecatedAttributes.builder().setSince("0.17").setForRemoval(true).setDescription(StdMsgs.useMsg("--output-style")).get())
-                    .desc("XSLT stylesheet to use when creating the report.")
-                    .build())
-            .addOption(Option.builder("x").longOpt("xml")
-                    .deprecated(DeprecatedAttributes.builder()
-                            .setSince("0.17")
-                            .setForRemoval(true)
-                            .setDescription(StdMsgs.useMsg("--output-style with the 'xml' argument")).get())
-                    .desc("forces XML output rather than the textual report.")
-                    .build())),
+    ),
 
     /**
      * Specifies the license definitions that should be included in the output.
@@ -407,11 +341,7 @@ public enum Arg {
                     .desc("List the defined licenses.")
                     .converter(s -> LicenseSetFactory.LicenseFilter.valueOf(s.toUpperCase()))
                     .build())
-            .addOption(Option.builder().longOpt("list-licenses").hasArg().argName("LicenseFilter")
-                    .desc("List the defined licenses.")
-                    .converter(s -> LicenseSetFactory.LicenseFilter.valueOf(s.toUpperCase()))
-                    .deprecated(DeprecatedAttributes.builder().setSince("0.17").setForRemoval(true).setDescription(StdMsgs.useMsg("--output-licenses")).get())
-                    .build())),
+    ),
 
     /**
      * Specifies the license families that should be included in the output.
@@ -421,11 +351,7 @@ public enum Arg {
                     .desc("List the defined license families.")
                     .converter(s -> LicenseSetFactory.LicenseFilter.valueOf(s.toUpperCase()))
                     .build())
-            .addOption(Option.builder().longOpt("list-families").hasArg().argName("LicenseFilter")
-                    .desc("List the defined license families.")
-                    .converter(s -> LicenseSetFactory.LicenseFilter.valueOf(s.toUpperCase()))
-                    .deprecated(DeprecatedAttributes.builder().setSince("0.17").setForRemoval(true).setDescription(StdMsgs.useMsg("--output-families")).get())
-                    .build())),
+    ),
 
     /**
      * Specifies the log level to log messages at.
@@ -447,17 +373,12 @@ public enum Arg {
      * Specifies where the output should be written.
      */
     OUTPUT_FILE(new OptionGroup()
-            .addOption(Option.builder().option("o").longOpt("out").hasArg().argName("File")
-                    .desc("Define the output file where to write a report to.")
-                    .deprecated(DeprecatedAttributes.builder().setSince("0.17").setForRemoval(true).setDescription(StdMsgs.useMsg("--output-file")).get())
-                    .type(File.class)
-                    .converter(Converters.FILE_CONVERTER)
-                    .build())
             .addOption(Option.builder().longOpt("output-file").hasArg().argName("File")
                     .desc("Define the output file where to write a report to.")
                     .type(File.class)
                     .converter(Converters.FILE_CONVERTER)
-                    .build())),
+                    .build())
+    ),
 
     /**
      * Specifies the level of reporting detail for archive files.
@@ -870,18 +791,12 @@ public enum Arg {
 
         if (OUTPUT_STYLE.isSelected()) {
             String selected = OUTPUT_STYLE.getSelected().getKey(); // is not null due to above isSelected()-call
-            if ("x".equals(selected)) {
-                // display deprecated message.
-                context.getCommandLine().hasOption("x");
-                context.getConfiguration().setStyleSheet(StyleSheets.getStyleSheet("xml"));
-            } else {
-                String[] style = context.getCommandLine().getOptionValues(OUTPUT_STYLE.getSelected());
-                if (style.length != 1) {
-                    DefaultLog.getInstance().error("Please specify a single stylesheet");
-                    throw new ConfigurationException("Please specify a single stylesheet");
-                }
-                context.getConfiguration().setStyleSheet(StyleSheets.getStyleSheet(style[0]));
+            String[] style = context.getCommandLine().getOptionValues(OUTPUT_STYLE.getSelected());
+            if (style.length != 1) {
+                DefaultLog.getInstance().error("Please specify a single stylesheet");
+                throw new ConfigurationException("Please specify a single stylesheet");
             }
+            context.getConfiguration().setStyleSheet(StyleSheets.getStyleSheet(style[0]));
         }
     }
 

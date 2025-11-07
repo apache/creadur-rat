@@ -48,86 +48,8 @@ import static java.lang.String.format;
 @Mojo(name = "check", defaultPhase = LifecyclePhase.VALIDATE, threadSafe = true)
 public class RatCheckMojo extends AbstractRatMojo {
 
-    /** The default output file if no other is specified.
-     * @deprecated Use &lt;outputFile&gt; instead.
-     */
-    @Deprecated
-    @Parameter(defaultValue = "${project.build.directory}/rat.txt")
+    @Parameter(defaultValue = "${project.build.directory}/rat.txt", readonly = true)
     private File defaultReportFile;
-
-    /**
-     * Where to store the report.
-     * @deprecated Use 'out' property instead.
-     */
-    @Deprecated
-    @Parameter
-    public void setReportFile(final File reportFile) {
-        if (!reportFile.getParentFile().exists() && !reportFile.getParentFile().mkdirs()) {
-            getLog().error("Unable to create directory " + reportFile.getParentFile());
-        }
-        setOutputFile(reportFile.getAbsolutePath());
-    }
-
-    /**
-     * Output style of the report. Use "plain" (the default) for a plain text report
-     * or "xml" for the raw XML report. Alternatively you can give the path of an
-     * XSL transformation that will be applied on the raw XML to produce the report
-     * written to the output file.
-     * @deprecated Use setStyleSheet or xml instead.
-     */
-    @Deprecated
-    @Parameter(property = "rat.outputStyle")
-    public void setReportStyle(final String value) {
-        if (value.equalsIgnoreCase("xml")) {
-            setXml(true);
-        } else if (value.equalsIgnoreCase("plain")) {
-            setStylesheet("plain-rat");
-        } else {
-            setStylesheet(value);
-        }
-    }
-
-    /**
-     * Maximum number of files with unapproved licenses.
-     * @deprecated Use &lt;counterMax&gt;Unapproved:value&lt;/counterMax&gt;.
-     */
-    @Deprecated
-    @Parameter(property = "rat.numUnapprovedLicenses", defaultValue = "0")
-    private int numUnapprovedLicenses;
-
-    /**
-     * Whether to add license headers; possible values are {@code forced},
-     * {@code true}, and {@code false} (default).
-     * @deprecated Use &lt;editLicense&gt; and &lt;editOverwrite&gt;.
-     */
-    @Deprecated
-    @Parameter(property = "rat.addLicenseHeaders")
-    public void setAddLicenseHeaders(final String addLicenseHeaders) {
-        switch (addLicenseHeaders.trim().toUpperCase()) {
-            case "FALSE":
-                // do nothing;
-                break;
-            case "TRUE":
-                setAddLicense(true);
-                break;
-            case "FORCED":
-                setAddLicense(true);
-                setForce(true);
-                break;
-            default:
-                throw new IllegalArgumentException("Unknown addlicense header: " + addLicenseHeaders);
-        }
-    }
-
-    /**
-     * Copyright message to add to license headers.
-     * @deprecated Deprecated for removal since 0.17: Use &lt;editCopyright&gt; instead.
-     */
-    @Deprecated
-    @Parameter(property = "rat.copyrightMessage")
-    public void setCopyrightMessage(final String copyrightMessage) {
-        setCopyright(copyrightMessage);
-    }
 
     /**
      * Will ignore RAT errors and display a log message if any. Its use is NOT
@@ -154,9 +76,6 @@ public class RatCheckMojo extends AbstractRatMojo {
     @Override
     protected ReportConfiguration getConfiguration() throws MojoExecutionException {
         ReportConfiguration result = super.getConfiguration();
-        if (numUnapprovedLicenses > 0) {
-            result.getClaimValidator().setMax(ClaimStatistic.Counter.UNAPPROVED, numUnapprovedLicenses);
-        }
         return result;
     }
 
