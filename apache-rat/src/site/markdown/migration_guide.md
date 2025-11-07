@@ -22,4 +22,5 @@ As each RAT release introduce new functionality its configuration needs to be ch
 The subpages listed here help you to make the most out of the corresponding version of RAT:
 
 * [0.17](./migrationguide/0.17.html)
+* [0.18](./migrationguide/0.18.html)
 * [1.0.0](./migrationguide/1.0.0.html)
