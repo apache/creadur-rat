@@ -21,6 +21,7 @@ package org.apache.rat;
 import java.io.File;
 
 import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
 import org.apache.rat.document.RatDocumentAnalysisException;
 import org.apache.rat.help.Help;
 import org.apache.rat.utils.DefaultLog;
@@ -48,19 +49,23 @@ public final class Report {
             System.exit(0);
         }
 
-        ReportConfiguration configuration = OptionCollection.parseCommands(new File("."), args, Report::printUsage);
-        if (configuration != null) {
-            configuration.validate(DefaultLog.getInstance()::error);
-            Reporter reporter = new Reporter(configuration);
-            reporter.output();
-            reporter.writeSummary(DefaultLog.getInstance().asWriter());
+        try {
+            ReportConfiguration configuration = OptionCollection.parseCommands(new File("."), args, Report::printUsage);
+            if (configuration != null) {
+                configuration.validate(DefaultLog.getInstance()::error);
+                Reporter reporter = new Reporter(configuration);
+                reporter.output();
+                reporter.writeSummary(DefaultLog.getInstance().asWriter());
 
-            if (configuration.getClaimValidator().hasErrors()) {
-                configuration.getClaimValidator().logIssues(reporter.getClaimsStatistic());
-                throw new RatDocumentAnalysisException(format("Issues with %s",
-                        String.join(", ",
-                                configuration.getClaimValidator().listIssues(reporter.getClaimsStatistic()))));
+                if (configuration.getClaimValidator().hasErrors()) {
+                    configuration.getClaimValidator().logIssues(reporter.getClaimsStatistic());
+                    throw new RatDocumentAnalysisException(format("Issues with %s",
+                            String.join(", ",
+                                    configuration.getClaimValidator().listIssues(reporter.getClaimsStatistic()))));
+                }
             }
+        } catch (ParseException e) {
+            System.exit(1);
         }
     }
 

@@ -20,14 +20,6 @@ package org.apache.rat.analysis;
 
 import org.apache.rat.config.parameters.Description;
 import org.apache.rat.config.parameters.DescriptionBuilder;
-import org.apache.rat.configuration.builders.AllBuilder;
-import org.apache.rat.configuration.builders.AnyBuilder;
-import org.apache.rat.configuration.builders.CopyrightBuilder;
-import org.apache.rat.configuration.builders.MatcherRefBuilder;
-import org.apache.rat.configuration.builders.NotBuilder;
-import org.apache.rat.configuration.builders.RegexBuilder;
-import org.apache.rat.configuration.builders.SpdxBuilder;
-import org.apache.rat.configuration.builders.TextBuilder;
 
 /**
  * Performs explicit checks against a line from the header of a file. For

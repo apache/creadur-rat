@@ -30,7 +30,9 @@ import java.util.Map;
 import java.util.TreeMap;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.DefaultParser;
+import org.apache.commons.cli.DeprecatedAttributes;
 import org.apache.commons.cli.Option;
+import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.rat.commandline.ArgumentContext;
@@ -177,38 +179,24 @@ public class OptionCollectionTest {
     }
 
     @Test
-    public void testDeprecatedUseLogged() throws IOException {
+    public void testDeprecatedUseLogged() throws IOException, ParseException {
+        Options opts = OptionCollection.buildOptions();
+        opts.addOption(Option.builder().longOpt("deprecated-option").deprecated(DeprecatedAttributes.builder().setDescription("Deprecation reason.")
+                .setForRemoval(true).setSince("1.0.0-SNAPSHOT").get()).build());
+
         TestingLog log = new TestingLog();
         try {
             DefaultLog.setInstance(log);
-            String[] args = {"--dir", "target", "-a"};
-            ReportConfiguration config = OptionCollection.parseCommands(testPath.toFile(), args, o -> fail("Help printed"), true);
-            assertThat(config).isNotNull();
+            CommandLine commandLine = OptionCollection.parseCommandLine(opts, new String[]{"--deprecated-option", "."});
+            commandLine.hasOption("--deprecated-option");
         } finally {
             DefaultLog.setInstance(null);
         }
-        log.assertContainsExactly(1, "WARN: Option [-d, --dir] used. Deprecated for removal since 0.17: Use the standard '--'");
-        log.assertContainsExactly(1, "WARN: Option [-a] used. Deprecated for removal since 0.17: Use --edit-license");
+        log.assertContainsExactly(1, "WARN: Option [--deprecated-option] used. Deprecated for removal since 1.0.0-SNAPSHOT: Deprecation reason.");
     }
 
     @Test
-    public void testDirOptionCapturesDirectoryToScan() throws IOException {
-        TestingLog log = new TestingLog();
-        ReportConfiguration config;
-        try {
-            DefaultLog.setInstance(log);
-            String[] args = {"--dir", testPath.toFile().getAbsolutePath()};
-            config = OptionCollection.parseCommands(testPath.toFile(), args, (o) -> {
-            }, true);
-        } finally {
-            DefaultLog.setInstance(null);
-        }
-        assertThat(config).isNotNull();
-        log.assertContainsExactly(1,"WARN: Option [-d, --dir] used. Deprecated for removal since 0.17: Use the standard '--'");
-    }
-
-    @Test
-    public void testShortenedOptions() throws IOException {
+    public void testShortenedOptions() throws IOException, ParseException {
         String[] args = {"--output-lic", "ALL"};
         ReportConfiguration config = OptionCollection.parseCommands(testPath.toFile(), args, (o) -> {
         }, true);
@@ -227,7 +215,7 @@ public class OptionCollectionTest {
 
     @ParameterizedTest
     @ValueSource(strings = { ".", "./", "target", "./target" })
-    public void getReportableTest(String fName) throws IOException {
+    public void getReportableTest(String fName) throws IOException, ParseException {
         File base = new File(fName);
         String expected = DocumentName.FSInfo.getDefault().normalize(base.getAbsolutePath());
         ReportConfiguration config = OptionCollection.parseCommands(testPath.toFile(), new String[]{fName}, o -> fail("Help called"), false);
@@ -263,7 +251,7 @@ public class OptionCollectionTest {
                 ReportConfiguration config = OptionCollection.parseCommands(testPath.toFile(), args, o -> helpCalled.set(true), true);
                 assertThat(config).as("Should not have config").isNull();
                 assertThat(helpCalled.get()).as("Help was not called").isTrue();
-            } catch (IOException e) {
+            } catch (IOException | ParseException e) {
                 fail(e.getMessage());
             }
         }
@@ -282,7 +270,7 @@ public class OptionCollectionTest {
          * @return A ReportConfiguration
          * @throws IOException on critical error.
          */
-        protected final ReportConfiguration generateConfig(List<Pair<Option, String[]>> args) throws IOException {
+        protected final ReportConfiguration generateConfig(List<Pair<Option, String[]>> args) throws IOException, ParseException {
             helpCalled.set(false);
             List<String> sArgs = new ArrayList<>();
             for (Pair<Option, String[]> pair : args) {
