@@ -60,7 +60,6 @@ public class MavenOption extends AbstractOption {
     static {
         RENAME_MAP.put("addLicense", "add-license");
         DEFAULT_VALUES.put(Arg.OUTPUT_FILE, "${project.build.directory}/rat.txt");
-        UNSUPPORTED_LIST.addAll(Arg.DIR.group().getOptions());
         UNSUPPORTED_LIST.addAll(Arg.LOG_LEVEL.group().getOptions());
         UNSUPPORTED_LIST.add(OptionCollection.HELP);
 

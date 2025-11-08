@@ -25,8 +25,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
-import java.util.function.Supplier;
 
 import org.apache.commons.cli.Option;
 import org.apache.commons.io.IOUtils;
@@ -148,8 +148,9 @@ public final class MavenGenerator {
             arg = "The state";
         }
         if (option.hasArg() && option.getArgName() != null) {
-            Supplier<String> sup = OptionCollection.getArgumentTypes().get(option.getArgName());
-            if (sup == null) {
+            try {
+                OptionCollection.ArgumentType.valueOf(option.getArgName().toUpperCase(Locale.ROOT));
+            } catch (IllegalArgumentException e) {
                 throw new IllegalStateException(format("Argument type %s must be in OptionCollection.ARGUMENT_TYPES", option.getArgName()));
             }
             desc = format("%s Argument%s should be %s%s. (See Argument Types for clarification)", desc, option.hasArgs() ? "s" : "",
