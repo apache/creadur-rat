@@ -18,6 +18,7 @@
  */
 
 /**
- * Classes that generate the RAT report.
+ * Generated classes that define the Maven plugin functionality of RAT.
  */
-package org.apache.rat.report;
+package org.apache.rat.plugin;
+

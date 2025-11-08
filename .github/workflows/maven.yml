@@ -36,7 +36,7 @@ jobs:
 # RAT-296: disable JDK10 due to
 # Caused by: sun.security.validator.ValidatorException: PKIX path building failed: sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid certification path to requested target
 #
-# Java 17 disabled, because we are running into https://bugs.openjdk.java.net/browse/JDK-8270866
+# RAT-497: JDK17-javadoc error fails the site build, albeit javadoc:javadoc works fine, https://bugs.java.com/bugdatabase/view_bug?bug_id=JDK-8369613
 # Java 25 is not working until we drop JDK8!
         java: [8, 11, 21]
       fail-fast: false

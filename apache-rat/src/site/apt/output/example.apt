@@ -21,8 +21,8 @@
 
 Default Output Example
 
-  By default Rat produces a plain text output that is the result of processing the XML output with the plain text style
-  sheet.  The output is designed to provide the most commonly requested data.  Additional data may be retrieved by using
+  By default RAT produces a plain text output that is the result of processing the XML output with the plain text style
+  sheet. The output is designed to provide the most commonly requested data. Additional data may be retrieved by using
   custom style sheets.
 
 +------------------------------------------+
