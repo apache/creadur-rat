@@ -65,6 +65,9 @@ in order to be properly linked in site reports.
       <action issue="RAT-xyz" type="update" dev="pottlinger" due-to="dependabot">
         TODO/TBD: collect all dependabot updates for release 2.0.0.
       </action>
+      <action issue="RAT-514" type="add" dev="pottlinger" due-to="Robert Stupp">
+        Add Gradle plugin for 0.17 generation methods.
+      </action>
     </release>
     -->
     <release version="1.0.0" date="xxxx-yy-zz" description="Current SNAPSHOT - release to be done">
