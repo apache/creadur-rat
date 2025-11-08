@@ -130,7 +130,7 @@ public final class OptionCollection {
         CommandLine commandLine;
         try {
             commandLine = DefaultParser.builder().setDeprecatedHandler(DeprecationReporter.getLogReporter())
-                    .setAllowPartialMatching(true).build().parse(opts, args);
+                    .setAllowPartialMatching(true).get().parse(opts, args);
         } catch (ParseException e) {
             DefaultLog.getInstance().error(e.getMessage());
             DefaultLog.getInstance().error("Please use the \"--help\" option to see a list of valid commands and options.", e);
