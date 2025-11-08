@@ -179,7 +179,7 @@ public class OptionCollectionTest {
     }
 
     @Test
-    public void testDeprecatedUseLogged() throws IOException, ParseException {
+    public void testDeprecatedUseLogged() throws ParseException {
         Options opts = OptionCollection.buildOptions();
         opts.addOption(Option.builder().longOpt("deprecated-option").deprecated(DeprecatedAttributes.builder().setDescription("Deprecation reason.")
                 .setForRemoval(true).setSince("1.0.0-SNAPSHOT").get()).build());
