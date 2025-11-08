@@ -129,31 +129,31 @@ public final class TikaProcessor {
      * @throws RatDocumentAnalysisException on error.
      */
     public static String process(final Document document) throws RatDocumentAnalysisException {
-            try (InputStream stream = markSupportedInputStream(document.inputStream())) {
-                Metadata metadata = new Metadata();
-                metadata.set(TikaCoreProperties.RESOURCE_NAME_KEY, document.getName().getShortName());
-                String result = TIKA.detect(stream, metadata);
-                String[] parts = result.split("/");
-                MediaType mediaType = new MediaType(parts[0], parts[1]);
-                document.getMetaData().setMediaType(mediaType);
-                if (!document.isIgnored()) {
-                    document.getMetaData()
-                            .setDocumentType(fromMediaType(mediaType));
-                }
-                if (Document.Type.STANDARD == document.getMetaData().getDocumentType()) {
-                    try {
-                        document.getMetaData().setCharset(detectCharset(stream, document.getName()));
-                        if (NoteGuesser.isNote(document)) {
-                            document.getMetaData().setDocumentType(Document.Type.NOTICE);
-                        }
-                    } catch (UnsupportedCharsetException e) {
-                        document.getMetaData().setDocumentType(Document.Type.UNKNOWN);
-                    }
-                }
-                return result;
-            } catch (IOException e) {
-                throw new RatDocumentAnalysisException(e);
+        try (InputStream stream = markSupportedInputStream(document.inputStream())) {
+            Metadata metadata = new Metadata();
+            metadata.set(TikaCoreProperties.RESOURCE_NAME_KEY, document.getName().getShortName());
+            String result = TIKA.detect(stream, metadata);
+            String[] parts = result.split("/");
+            MediaType mediaType = new MediaType(parts[0], parts[1]);
+            document.getMetaData().setMediaType(mediaType);
+            if (!document.isIgnored()) {
+                document.getMetaData()
+                        .setDocumentType(fromMediaType(mediaType));
             }
+            if (Document.Type.STANDARD == document.getMetaData().getDocumentType()) {
+                try {
+                    document.getMetaData().setCharset(detectCharset(stream, document.getName()));
+                    if (NoteGuesser.isNote(document)) {
+                        document.getMetaData().setDocumentType(Document.Type.NOTICE);
+                    }
+                } catch (UnsupportedCharsetException e) {
+                    document.getMetaData().setDocumentType(Document.Type.UNKNOWN);
+                }
+            }
+            return result;
+        } catch (IOException e) {
+            throw new RatDocumentAnalysisException(e);
+        }
     }
 
     /**
