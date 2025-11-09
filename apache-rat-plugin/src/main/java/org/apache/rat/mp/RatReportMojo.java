@@ -216,6 +216,20 @@ public class RatReportMojo extends AbstractRatMojo implements MavenMultiPageRepo
     }
 
     /**
+     * Generate a report.
+     *
+     * @param sink the sink to use for the generation.
+     * @param locale the wanted locale to generate the report, could be null.
+     * @throws MavenReportException if any
+     * @deprecated use {@link #generate(Sink, SinkFactory, Locale)} instead.
+     */
+    @Deprecated
+    @Override
+    public void generate(final org.codehaus.doxia.sink.Sink sink, final Locale locale) throws MavenReportException {
+        generate(sink, null, locale);
+    }
+
+    /**
      * This method is called when the report generation is invoked by
      * maven-site-plugin.
      *

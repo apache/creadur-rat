@@ -28,15 +28,7 @@
         <version>@pom.version@</version>
         <configuration>
           <outputStyle>xml</outputStyle>
-          <!-- Minimize the number of active rules to keep the test minimal -->
-          <excludes>
-            <exclude>**/.gitignore</exclude>
-          </excludes>
-          <useDefaultExcludes>false</useDefaultExcludes>
-          <useMavenDefaultExcludes>false</useMavenDefaultExcludes>
-          <useEclipseDefaultExcludes>false</useEclipseDefaultExcludes>
-          <useIdeaDefaultExcludes>false</useIdeaDefaultExcludes>
-          <parseSCMIgnoresAsExcludes>true</parseSCMIgnoresAsExcludes>
+          <inputExcludeParsedScm>GIT</inputExcludeParsedScm>
         </configuration>
       </plugin>
     </plugins>

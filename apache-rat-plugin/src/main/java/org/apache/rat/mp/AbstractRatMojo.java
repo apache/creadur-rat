@@ -27,13 +27,13 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.cli.Option;
+import org.apache.commons.cli.ParseException;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.apache.rat.OptionCollection;
 import org.apache.rat.ReportConfiguration;
 import org.apache.rat.commandline.Arg;
-import org.apache.rat.config.exclusion.StandardCollection;
 import org.apache.rat.document.DocumentName;
 import org.apache.rat.document.FileDocument;
 import org.apache.rat.license.ILicense;
@@ -216,14 +216,11 @@ public abstract class AbstractRatMojo extends BaseRatMojo {
     }
 
     private void setIncludeExclude() {
-
         if (excludeSubProjects && project != null && project.getModules() != null) {
             List<String> subModules = new ArrayList<>();
             project.getModules().forEach(s -> subModules.add(format("%s/**", s)));
             setInputExcludes(subModules.toArray(new String[0]));
         }
-
-        List<String> values = getValues(Arg.EXCLUDE);
     }
 
     protected ReportConfiguration getConfiguration() throws MojoExecutionException {
@@ -254,7 +251,7 @@ public abstract class AbstractRatMojo extends BaseRatMojo {
                     new org.apache.rat.help.Licenses(config, new PrintWriter(log.asWriter())).printHelp();
                 }
                 reportConfiguration = config;
-            } catch (IOException e) {
+            } catch (IOException | ParseException e) {
                 throw new MojoExecutionException(e);
             }
         }

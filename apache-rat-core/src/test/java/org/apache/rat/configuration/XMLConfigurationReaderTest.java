@@ -43,6 +43,7 @@ import org.apache.rat.configuration.builders.NotBuilder;
 import org.apache.rat.configuration.builders.RegexBuilder;
 import org.apache.rat.configuration.builders.SpdxBuilder;
 import org.apache.rat.configuration.builders.TextBuilder;
+import org.apache.rat.license.ILicenseFamily;
 import org.junit.jupiter.api.Test;
 
 public class XMLConfigurationReaderTest {
@@ -56,6 +57,10 @@ public class XMLConfigurationReaderTest {
     public static final String[] EXPECTED_LICENSES = { "AL1.0", "AL1.1", "AL2.0", "BSD-3", "DOJO", "TMF", "CDDL1", "ILLUMOS", "GPL1", "GPL2",
             "GPL3", "MIT", "OASIS", "W3C", "W3CD" };
 
+    public static final String[] APPROVED_LICENSES = { "AL1.0", "AL1.1", "AL2.0", "BSD-3", "DOJO", "TMF", "CDDL1", "ILLUMOS",
+            "MIT", "OASIS", "W3C", "W3CD" };
+
+
     @Test
     public void approvedLicenseIdTest() throws URISyntaxException {
         XMLConfigurationReader reader = new XMLConfigurationReader();
@@ -63,9 +68,8 @@ public class XMLConfigurationReaderTest {
         assertThat(url).isNotNull();
         reader.read(url.toURI());
 
-        Collection<String> readCategories = reader.approvedLicenseId();
-
-        assertArrayEquals(APPROVED_IDS, readCategories.toArray(new String[readCategories.size()]));
+        Collection<String> actual = reader.approvedLicenseId();
+        assertThat(actual).containsExactlyInAnyOrder(APPROVED_IDS);
     }
 
     @Test
@@ -83,11 +87,13 @@ public class XMLConfigurationReaderTest {
     public void LicenseFamiliesTest() throws URISyntaxException {
         XMLConfigurationReader reader = new XMLConfigurationReader();
         URL url = XMLConfigurationReaderTest.class.getResource("/org/apache/rat/default.xml");
+        assertNotNull(url);
         reader.read(url.toURI());
 
-        Collection<String> readCategories = reader.readFamilies().stream().map(x -> x.getFamilyCategory().trim())
+        Collection<String> actual = reader.readFamilies().stream().map(lf -> lf.getFamilyCategory().trim())
                 .collect(Collectors.toList());
-        assertArrayEquals(EXPECTED_IDS, readCategories.toArray(new String[readCategories.size()]));
+
+        assertThat(actual).containsExactlyInAnyOrder(EXPECTED_IDS);
     }
 
     private void checkMatcher(String name, Class<? extends AbstractBuilder> clazz) {
