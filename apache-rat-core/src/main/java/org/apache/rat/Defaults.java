@@ -24,6 +24,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -160,7 +161,7 @@ public final class Defaults {
      */
     public static final class Builder {
         /** The list of URIs that we wil read to configure the Defaults */
-        private final Set<URI> fileNames = new TreeSet<>();
+        private final Set<URI> fileNames = new LinkedHashSet<>();
 
         private Builder() {
             if (DEFAULT_CONFIG_URI == null) {

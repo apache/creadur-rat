@@ -89,7 +89,6 @@ public class AntOption extends AbstractOption {
     }
 
     static {
-        RENAME_MAP.put("addLicense", "add-license");
         ATTRIBUTE_TYPES.add(String.class);
         ATTRIBUTE_TYPES.add(String[].class);
         ATTRIBUTE_TYPES.add(Integer.class);
@@ -159,9 +158,7 @@ public class AntOption extends AbstractOption {
 
         Map<String, String> attributes = new HashMap<>();
         attributes.put("editLicense", "true");
-        REQUIRED_ATTRIBUTES.put("copyright", attributes);
         REQUIRED_ATTRIBUTES.put("editCopyright", attributes);
-        REQUIRED_ATTRIBUTES.put("force", attributes);
         REQUIRED_ATTRIBUTES.put("editOverwrite", attributes);
     }
 

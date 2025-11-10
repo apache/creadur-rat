@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rat-config>
+    <families>
+        <family id='YASL' name='Yet Another Software License (YASL)'/>"
+    </families>
+    <licenses>
+        <license family="YASL"
+                 id="YASL1"
+                 name = "YASL version 1"
+                 notes="Interesting License">
+            <copyright start="2023" end="2024" owner="public domain" />
+        </license>
+    </licenses>
+</rat-config>

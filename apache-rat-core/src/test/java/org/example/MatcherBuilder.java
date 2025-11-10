@@ -16,19 +16,32 @@
  */
 package org.example;
 
+import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.analysis.IHeaders;
 import org.apache.rat.analysis.matchers.AbstractHeaderMatcher;
+import org.apache.rat.analysis.matchers.AndMatcher;
 import org.apache.rat.config.parameters.ComponentType;
 import org.apache.rat.config.parameters.ConfigComponent;
 
-@ConfigComponent(type = ComponentType.MATCHER, name = "myCustomMatcher", desc = "Custom matcher example")
-public class Matcher extends AbstractHeaderMatcher {
-    public Matcher() {
-        super("MyCustomMatcher");
+@org.apache.rat.config.parameters.MatcherBuilder(AndMatcher.class)
+public class MatcherBuilder implements IHeaderMatcher.Builder {
+    public MatcherBuilder() {
     }
 
     @Override
-    public boolean matches(IHeaders headers) {
-        return true;
+    public IHeaderMatcher build() {
+        return new Matcher();
+    }
+
+    @ConfigComponent(type = ComponentType.MATCHER, name = "myCustomMatcher", desc = "Custom matcher example")
+    public static class Matcher extends AbstractHeaderMatcher {
+        public Matcher() {
+            super("MyCustomMatcher");
+        }
+
+        @Override
+        public boolean matches(IHeaders headers) {
+            return true;
+        }
     }
 }

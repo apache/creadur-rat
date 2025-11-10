@@ -26,14 +26,13 @@ import java.lang.annotation.Target;
 import org.apache.rat.analysis.IHeaderMatcher;
 
 /**
- * An annotation that marks a configuration component.
+ * An annotation that marks a MatcherBuilder component.
  */
 @Target({ElementType.FIELD, ElementType.TYPE, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface MatcherBuilder {
     /**
-     * The common name for the component. If not specified the name of the field or class is used.
-     * @return the component name.
+     * The class that this build builds.
      */
     Class<? extends IHeaderMatcher> value();
 }
