@@ -22,11 +22,10 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.apache.commons.cli.Option;
+import org.apache.commons.cli.ParseException;
 import org.apache.rat.ConfigurationException;
 import org.apache.rat.ImplementationException;
 import org.apache.rat.OptionCollection;
@@ -35,13 +34,11 @@ import org.apache.rat.Reporter;
 import org.apache.rat.commandline.Arg;
 import org.apache.rat.commandline.StyleSheets;
 import org.apache.rat.document.DocumentName;
-import org.apache.rat.license.LicenseSetFactory;
 import org.apache.rat.utils.DefaultLog;
 import org.apache.rat.utils.Log;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.taskdefs.LogOutputStream;
-import org.apache.tools.ant.types.EnumeratedAttribute;
 import org.apache.tools.ant.types.ResourceCollection;
 import org.apache.tools.ant.types.resources.Union;
 
@@ -150,7 +147,7 @@ public class Report extends BaseAntTask {
                 new org.apache.rat.help.Licenses(configuration, new PrintWriter(DefaultLog.getInstance().asWriter())).printHelp();
             }
             return configuration;
-        } catch (IOException | ImplementationException e) {
+        } catch (IOException | ParseException | ImplementationException e) {
             throw new BuildException(e.getMessage(), e);
         }
     }

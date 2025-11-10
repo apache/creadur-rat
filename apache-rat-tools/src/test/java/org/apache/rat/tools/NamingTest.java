@@ -28,6 +28,7 @@ import org.apache.commons.csv.CSVParser;
 import org.apache.commons.io.IOUtils;
 import org.apache.rat.testhelpers.TextUtils;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -80,6 +81,7 @@ public class NamingTest {
     }
 
     @Test
+    @Disabled("No deprecated options exist at this time")
     public void testCliDeprecated() throws IOException, ParseException {
         Naming.main(new String[]{"--cli", "--include-deprecated", file.getAbsolutePath()});
         String result = readFile(file);
@@ -148,6 +150,7 @@ public class NamingTest {
     }
 
     @Test
+    @Disabled("No deprecated options exist at this time")
     public void testCliCsvDeprecated() throws IOException, ParseException {
         Naming.main(new String[]{"--cli", "--csv", "--include-deprecated", file.getAbsolutePath()});
         String result = readFile(file);

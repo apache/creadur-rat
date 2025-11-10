@@ -23,17 +23,23 @@ import static org.junit.jupiter.api.Assumptions.assumeTrue;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.rat.ConfigurationException;
 import org.apache.rat.ReportConfiguration;
 import org.apache.rat.ReportConfigurationTest;
 import org.apache.rat.document.DocumentName;
@@ -47,12 +53,20 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.w3c.dom.Document;
+import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
 public class ReportTest extends AbstractRatAntTaskTest {
-    private final String baseNameStr = String.join(File.separator, new String[]{"src","test","resources","antunit"});
-    private final File antFile = new File(new File(baseNameStr), "report-junit.xml").getAbsoluteFile();
+    private static final String baseNameStr = String.join(File.separator, new String[]{"src","test","resources","antunit"});
+    private static final File baseNameFile = new File(baseNameStr);
+    private static final File antFile = new File(baseNameFile, "report-junit.xml").getAbsoluteFile();
     private DocumentName documentName;
+    private DocumentName indexName;
 
     @BeforeEach
     public void setUp() {
@@ -61,6 +75,7 @@ public class ReportTest extends AbstractRatAntTaskTest {
             baseFile = baseFile.getParentFile();
         }
         documentName = DocumentName.builder(antFile).setBaseName(baseFile).build();
+        indexName = DocumentName.builder(new File(baseNameFile, "index.apt")).setBaseName(baseFile).build();
 
         File f = new File(documentName.getBaseName());
 
@@ -78,6 +93,31 @@ public class ReportTest extends AbstractRatAntTaskTest {
         System.setProperty(MagicNames.PROJECT_BASEDIR, documentName.getBaseName());
         super.setUp();
     }
+
+    @ParameterizedTest
+    @MethodSource("allTestData")
+    @Disabled("Need to build build/verify tests for all options")
+    void testAllRules(String targetName) {
+        buildRule.executeTarget(targetName);
+    }
+
+    private static List<Arguments> allTestData() {
+        List<Arguments> args = new ArrayList<>();
+        try {
+            DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+            Document document = builder.parse(new InputSource(new FileReader(antFile)));
+            NodeList nodeList = document.getElementsByTagName("target");
+            for (int i = 0; i < nodeList.getLength(); i++) {
+                String targetName = nodeList.item(i).getAttributes().getNamedItem("name").getNodeValue();
+                System.out.println(targetName);
+                args.add(Arguments.of(targetName));
+            }
+        } catch (SAXException | IOException | ParserConfigurationException e) {
+            throw new ConfigurationException("Unable to read inputSource", e);
+        }
+        return args;
+    }
+
     @Override
     protected File getAntFile() {
         return antFile;
@@ -128,29 +168,15 @@ public class ReportTest extends AbstractRatAntTaskTest {
     @Test
     public void testCustomLicense() {
         buildRule.executeTarget("testCustomLicense");
-        assertLogDoesNotMatch(logLine("AL"));
-        assertLogMatches(logLine("newFa"));
+        assertLogDoesNotMatch(logLine(indexName.localized("/"), "AL"));
+        assertLogMatches(logLine(true, indexName.localized("/"), "YASL"));
     }
 
     @Test
     public void testCustomMatcher() {
         buildRule.executeTarget("testCustomMatcher");
         assertLogDoesNotMatch(logLine("AL"));
-        assertLogMatches(logLine("YASL1"));
-    }
-
-    @Test
-    public void testInlineCustomMatcher() {
-        buildRule.executeTarget("testInlineCustomMatcher");
-        assertLogDoesNotMatch(logLine("AL"));
-        assertLogMatches(logLine("YASL1"));
-    }
-
-    @Test
-    public void testCustomMatcherBuilder() {
-        buildRule.executeTarget("testCustomMatcherBuilder");
-        assertLogDoesNotMatch(logLine("AL"));
-        assertLogMatches(logLine("YASL1"));
+        assertLogMatches(logLine("YASL2"));
     }
 
     @Test

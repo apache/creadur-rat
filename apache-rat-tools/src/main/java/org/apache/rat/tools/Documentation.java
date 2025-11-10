@@ -24,6 +24,7 @@ import java.io.Writer;
 
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
 import org.apache.rat.OptionCollection;
 import org.apache.rat.ReportConfiguration;
 import org.apache.rat.help.AbstractHelp;
@@ -44,8 +45,9 @@ public final class Documentation {
      * Creates the documentation. Writes to the output specified by the -o or --out option. Defaults to {@code System.out}.
      * @param args the arguments. Try --help for help.
      * @throws IOException on error
+     * @throws ParseException on argument error.
      */
-    public static void main(final String[] args) throws IOException {
+    public static void main(final String[] args) throws IOException, ParseException {
         ReportConfiguration config = OptionCollection.parseCommands(new File("."), args, Documentation::printUsage, true);
         if (config != null) {
             try (Writer writer = config.getWriter().get()) {

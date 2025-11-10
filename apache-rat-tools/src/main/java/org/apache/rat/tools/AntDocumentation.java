@@ -30,9 +30,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 import java.util.function.Predicate;
-import java.util.function.Supplier;
 
 
 import org.apache.commons.io.IOUtils;
@@ -151,8 +149,8 @@ public final class AntDocumentation {
         List<List<String>> table = new ArrayList<>();
         table.add(Arrays.asList("Value Type", "Description"));
 
-        for (Map.Entry<String, Supplier<String>> argInfo : OptionCollection.getArgumentTypes().entrySet()) {
-            table.add(Arrays.asList(argInfo.getKey(), argInfo.getValue().get()));
+        for (OptionCollection.ArgumentType argumentType : OptionCollection.ArgumentType.values()) {
+            table.add(Arrays.asList(argumentType.getDisplayName(), argumentType.description().get()));
         }
 
         AptFormat.writeTable(writer, table, "*--+--+");

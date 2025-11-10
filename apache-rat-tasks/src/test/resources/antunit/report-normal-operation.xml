@@ -59,7 +59,7 @@ SPDX-License-Identifier: Apache-2.0
 		classpathref="all-classes-needed-for-tests"
 		loaderref="testloader" />
 
-	<typedef name="matcher" classname="org.example.Matcher"
+	<typedef name="matcher" classname="org.example.MyCustomMatcher"
 		classpath="${test.classpath}"
 		loaderref="testloader" />
 

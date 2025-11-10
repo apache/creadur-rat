@@ -47,8 +47,8 @@ public class HelpTest extends AbstractRatAntTaskTest {
     public void testExecHelp() {
         buildRule.executeTarget("execHelp");
         System.out.println(buildRule.getOutput());
-        assertThat(buildRule.getOutput()).contains("<rat:report addLicense='value'> ");
-        assertThat(buildRule.getOutput()).contains("<inputSource>File</inputSource>");
-        assertThat(buildRule.getOutput()).contains("Deprecated for removal since 0.17: Use outputFamilies attribute instead.");
+        assertThat(buildRule.getOutput()).contains("<counterMin>CounterPattern</counterMin>");
+        assertThat(buildRule.getOutput()).contains("<rat:report dryRun='value'>");
+        assertThat(buildRule.getOutput()).doesNotContain("Deprecated for removal.");
     }
 }

@@ -32,12 +32,6 @@
 		resource="org/apache/rat/anttasks/antlib.xml"
 		classpath="${test.classpath}" />
 
-	<typedef name="matcher" classname="org.example.Matcher"
-		classpath="${test.classpath}" />
-
-	<typedef name="matcherBuilder" classname="org.example.MatcherBuilder"
-		classpath="${test.classpath}" />
-
 	<pathconvert dirsep="/" property="file.name">
 		<path>
 			<pathelement location="${ant.file}" />
@@ -49,87 +43,60 @@
 	<property name="String">hello</property>
 	<property name="StandardCollection">GIT</property>
 
-	<target name="testWithReportSentToAnt">
+	<target name="testDefault">
 		<rat:report>
 			<file file="${ant.file}" />
 		</rat:report>
 	</target>
 
 	<target name="all" />
-	
-	<target name="testDefault">
-		<rat:report />
-	</target>
-	
+
+    <target name="testWithReportSentToAnt">
+        <rat:report>
+            <file file="${ant.file}" />
+        </rat:report>
+    </target>
+
 	<target name="testWithReportSentToFile">
 		<property name="report.file" location="${output.dir}/selftest.report" />
-		<rat:report reportFile="${report.file}">
+		<rat:report outputFile="${report.file}">
 			<file file="${ant.file}" />
 		</rat:report>
 	</target>
 
 	<target name="testWithALUnknown">
-		<rat:report useDefaultLicenses="false">
-			<rat:family id='YASL1' name='Yet Another Software License (YASL) 1.0'/>
-			<rat:license
-				family="YASL1"
-				notes="Interesting License">
-				<rat:copyright start="2023" end="2024" owner="public domain" />
-			</rat:license>
+		<rat:report configurationNoDefaults="true">
+            <config>
+                <fileset file="${resource.dir}/configs/yasl.xml" />
+            </config>
 			<file file="${ant.file}" />
 		</rat:report>
 	</target>
+
+    <target name="testNoResources">
+        <rat:report />
+    </target>
 
 	<target name="testCustomLicense">
-		<property name="license.file"
-			location="${resource.dir}/customLicense.xml" />
-		<rat:report licenses="${license.file}" useDefaultLicenses="false">
-			<file file="${ant.file}" />
-		</rat:report>
-	</target>
-
-	<target name="testInlineCustomMatcher" depends="prepareCustomMatcher">
-		<rat:report useDefaultLicenses="false">
-			<rat:family id='YASL1' name='Yet Another Software License (YASL) 1.0'/>
-			<rat:license
-				family="YASL1"
-				notes="Interesting License">
-				<inlineMatcher />
-			</rat:license>
-			<file file="${ant.file}" />
+		<rat:report configurationNoDefaults="true">
+            <config>
+                <fileset file="${resource.dir}/configs/yasl.xml" />
+            </config>
+			<file file="${resource.dir}/index.apt" />
 		</rat:report>
 	</target>
 
 	<target name="testCustomMatcher">
-		<rat:report useDefaultLicenses="false">
-			<rat:family id='YASL1' name='Yet Another Software License (YASL) 1.0'/>
-			<rat:license
-				family="YASL1"
-				notes="Interesting License">
-				<matcher />
-			</rat:license>
+		<rat:report configurationNoDefaults="true">
+			<config>
+            <fileset file="${resource.dir}/configs/matcher.xml" />
+        </config>
 			<file file="${ant.file}" />
 		</rat:report>
-	</target>
-
-	<target name="testCustomMatcherBuilder">
-		<rat:report useDefaultLicenses="false">
-			<rat:family id='YASL1' name='Yet Another Software License (YASL) 1.0'/>
-			<rat:license
-				family="YASL1"
-				notes="Interesting License">
-				<matcherBuilder />
-			</rat:license>
-			<file file="${ant.file}" />
-		</rat:report>
-	</target>
-
-	<target name="testNoResources">
-		<rat:report />
 	</target>
 
 	<target name="testNoLicenseMatchers">
-		<rat:report useDefaultLicenses="false">
+		<rat:report configurationNoDefaults="true">
 			<file file="${ant.file}" />
 		</rat:report>
 	</target>
@@ -139,61 +106,18 @@
 		<mkdir dir="${output.dir}/it-sources" />
 		<copy file="${resource.dir}/index.apt"
 			tofile="${output.dir}/it-sources/index.apt" />
-		<rat:report addLicenseHeaders="true">
+		<rat:report editLicense="true">
 			<file file="${output.dir}/it-sources/index.apt" />
-		</rat:report>
-	</target>
-
-	<target name="testISO88591">
-		<rat:report format="xml">
-			<file file="src/test/resources/org/example/iso-8859-1.html" />
-		</rat:report>
-	</target>
-
-	<target name="testISO88591WithReportFile">
-		<property name="report.file" location="${output.dir}/selftest.report" />
-		<rat:report reportFile="${report.file}" format="xml">
-			<file file="src/test/resources/org/example/iso-8859-1.html" />
 		</rat:report>
 	</target>
 
 	<target name="testCopyrightBuild">
 		<rat:report>
+            <config>
+                <fileset file="${resource.dir}/configs/yasl.xml" />
+            </config>
 			<file file="${resource.dir}/index.apt" />
-			<rat:family id='YASL1' name='Yet Another Software License (YASL) 1.0'/>
-			<rat:license
-				family="YASL1"
-				notes="Interesting License">
-				<rat:copyright start="2023" end="2024" owner="public domain" />
-			</rat:license>
-		</rat:report>
-	</target>
-
-	<target name="prepareCustomMatcher">
-		<mkdir dir="${output.dir}/test-classes" />
-		<mkdir dir="${output.dir}/src/org/example" />
-		<echo file="${output.dir}/src/org/example/InlineMatcher.java"><![CDATA[
-package org.example;
-
-import org.apache.rat.analysis.matchers.AbstractHeaderMatcher;
-import org.apache.rat.analysis.IHeaders;
-
-public class InlineMatcher extends AbstractHeaderMatcher {
-    public InlineMatcher() {
-        super("InlineMatcher");
-    }
-
-    @Override
-    public boolean matches(IHeaders headers) {
-        return true;
-    }
-}
-]]></echo>
-
-		<javac srcdir="${output.dir}/src"
-			destdir="${output.dir}/../test-classes"
-			classpath="${test.classpath}" fork="true" />
-		<typedef name="inlineMatcher" classname="org.example.InlineMatcher" />
+        </rat:report>
 	</target>
 
 	<!-- complete list of Report option tests -->
@@ -203,24 +127,6 @@ public class InlineMatcher extends AbstractHeaderMatcher {
 		</rat:report>
 	</target>
 
-	<target name="addLicense">
-		<rat:report>
-			<rat:license
-					family="YASL1"
-					notes="Interesting License">
-				<rat:copyright start="2023" end="2024" owner="public domain" />
-			</rat:license>
-		</rat:report>
-	</target>
-
-	<target name="addFamily">
-		<rat:report>
-			<rat:family
-					id="YASL1"
-					name="yet another silly license">
-			</rat:family>
-		</rat:report>
-	</target>
 
 	<target name="addStylesheet">
 		<file file="${ant.file}"/>
@@ -281,9 +187,6 @@ public class InlineMatcher extends AbstractHeaderMatcher {
 		<rat:report configurationNoDefaults='true' />
 	</target>
 
-	<target name='noDefaultLicensesAttribute'>
-		<rat:report noDefaultLicenses='true' />
-	</target>
 
 	<target name='licensesApprovedElement'>
 		<rat:report>

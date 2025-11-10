@@ -24,6 +24,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
 import org.apache.commons.cli.Option;
+import org.apache.commons.cli.ParseException;
 import org.apache.commons.lang3.SystemUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
@@ -35,6 +36,8 @@ import org.apache.rat.documentation.options.AntOption;
 import org.apache.rat.utils.DefaultLog;
 import org.apache.rat.utils.Log;
 import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.EnabledIf;
 import org.junit.jupiter.api.condition.EnabledOnOs;
 import org.junit.jupiter.api.condition.OS;
@@ -143,7 +146,7 @@ public class ReportOptionTest  {
             try {
                 ReportConfiguration config = generateConfig(ImmutablePair.of(HELP_LICENSES.option(), null));
                 assertThat(config).isNotNull();
-            } catch (IOException e) {
+            } catch (IOException | ParseException e) {
                 throw new RuntimeException(e);
             } finally {
                 DefaultLog.setInstance(oldLog);
