@@ -27,8 +27,10 @@
         <artifactId>apache-rat-plugin</artifactId>
         <version>@pom.version@</version>
         <configuration>
-          <numUnapprovedLicenses>1</numUnapprovedLicenses>
-          <addLicenseHeaders>true</addLicenseHeaders>
+            <counterMin>Unapproved:1</counterMin>
+            <editLicense>true</editLicense>
+<!--          <numUnapprovedLicenses>1</numUnapprovedLicenses>-->
+<!--          <addLicenseHeaders>true</addLicenseHeaders>-->
           <outputStyle>xml</outputStyle>
         </configuration>
       </plugin>

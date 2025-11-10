@@ -28,6 +28,7 @@
         <version>@pom.version@</version>
         <configuration>
           <outputStyle>xml</outputStyle>
+            <inputExcludeParsedScm>BAZAAR</inputExcludeParsedScm>
         </configuration>
       </plugin>
     </plugins>

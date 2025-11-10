@@ -48,6 +48,7 @@ import static java.lang.String.format;
 @Mojo(name = "check", defaultPhase = LifecyclePhase.VALIDATE, threadSafe = true)
 public class RatCheckMojo extends AbstractRatMojo {
 
+    /** The default output file if no other is specified. */
     @Parameter(defaultValue = "${project.build.directory}/rat.txt", readonly = true)
     private File defaultReportFile;
 

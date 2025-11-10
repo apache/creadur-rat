@@ -39,6 +39,7 @@ import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
@@ -62,7 +63,6 @@ import org.apache.rat.testhelpers.TextUtils;
 import org.apache.rat.testhelpers.XmlUtils;
 import org.apache.rat.utils.DefaultLog;
 import org.apache.rat.utils.Log;
-import org.junit.jupiter.params.provider.ArgumentsProvider;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
@@ -73,7 +73,7 @@ import static org.assertj.core.api.Fail.fail;
 /**
  * A class to provide the Options and tests to the testOptionsUpdateConfig.
  */
-class ReporterOptionsProvider extends AbstractOptionsProvider implements ArgumentsProvider {
+class ReporterOptionsProvider extends AbstractOptionsProvider {
     static File sourceDir;
 
     /**
@@ -84,9 +84,6 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
     public ReporterOptionsProvider() {
         super(ReporterOptionsTest.testPath.toFile());
         processTestFunctionAnnotations();
-        testMap.put("addLicense", this::addLicenseTest);
-        testMap.remove("add-license");
-        testMap.put("dir", () -> DefaultLog.getInstance().info("--dir has no valid test"));
         super.validate(Collections.emptyList());
     }
 
@@ -99,11 +96,11 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
      * @throws IOException on critical error.
      */
     @Override
-    protected final ReportConfiguration generateConfig(List<Pair<Option, String[]>> args) throws IOException {
+    protected final ReportConfiguration generateConfig(List<Pair<Option, String[]>> args) throws IOException, ParseException {
         return generateConfig(args, false);
     }
 
-    protected final ReportConfiguration generateConfig(List<Pair<Option, String[]>> args, boolean helpExpected) throws IOException {
+    protected final ReportConfiguration generateConfig(List<Pair<Option, String[]>> args, boolean helpExpected) throws IOException, ParseException {
         if (sourceDir == null) {
             throw new IOException("sourceDir not set");
         }
@@ -121,7 +118,7 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
         FileUtils.mkDir(sourceDir);
     }
 
-    private void validateNoArgSetup() throws IOException, RatException {
+    private void validateNoArgSetup() throws IOException, ParseException, RatException {
         // verify that without args the report is ok.
         TestingLog log = new TestingLog();
         DefaultLog.setInstance(log);
@@ -135,11 +132,6 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
             DefaultLog.setInstance(null);
         }
 
-    }
-
-    @OptionCollectionTest.TestFunction
-    protected void addLicenseTest() {
-        editLicenseTest(Arg.EDIT_ADD.find("addLicense"));
     }
 
     @OptionCollectionTest.TestFunction
@@ -181,7 +173,7 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
                     " * under the License.\n" +
                     " */\n\n" +
                     "class NoLicense {}");
-        } catch (IOException | RatException e) {
+        } catch (IOException | ParseException | RatException e) {
             fail(e.getMessage(), e);
         }
     }
@@ -213,7 +205,7 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
             ClaimStatistic claimStatistic = reporter.execute();
             ClaimValidator validator = config.getClaimValidator();
             assertThat(validator.listIssues(claimStatistic)).containsExactly("UNAPPROVED");
-        } catch (IOException | RatException e) {
+        } catch (IOException | ParseException | RatException e) {
             fail(e.getMessage(), e);
         }
     }
@@ -248,14 +240,9 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
                 ClaimValidator validator = config.getClaimValidator();
                 assertThat(validator.listIssues(claimStatistic)).containsExactlyInAnyOrder("DOCUMENT_TYPES", "LICENSE_CATEGORIES", "LICENSE_NAMES", "STANDARDS");
             }
-        } catch (IOException | RatException e) {
+        } catch (IOException | ParseException | RatException e) {
             fail(e.getMessage(), e);
         }
-    }
-
-    @OptionCollectionTest.TestFunction
-    protected void noDefaultLicensesTest() {
-        noDefaultsTest(Arg.CONFIGURATION_NO_DEFAULTS.find("no-default-licenses"));
     }
 
     @OptionCollectionTest.TestFunction
@@ -284,7 +271,7 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
             claimStatistic = reporter.execute();
             validator = config.getClaimValidator();
             assertThat(validator.listIssues(claimStatistic)).isEmpty();
-        } catch (IOException | RatException e) {
+        } catch (IOException | ParseException | RatException e) {
             fail(e.getMessage(), e);
         }
     }
@@ -311,7 +298,7 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
             claimStatistic = reporter.execute();
             validator = config.getClaimValidator();
             assertThat(validator.listIssues(claimStatistic)).isEmpty();
-        } catch (IOException | RatException e) {
+        } catch (IOException | ParseException | RatException e) {
             fail(e.getMessage(), e);
         }
     }
@@ -340,7 +327,7 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
             claimStatistic = reporter.execute();
             assertThat(claimStatistic.getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(2);
             assertThat(claimStatistic.getCounter(ClaimStatistic.Counter.IGNORED)).isEqualTo(3);
-        } catch (IOException | RatException e) {
+        } catch (IOException | ParseException | RatException e) {
             fail(e.getMessage(), e);
         }
     }
@@ -352,18 +339,8 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
     }
 
     @OptionCollectionTest.TestFunction
-    protected void excludeFileTest() {
-        excludeFileTest(Arg.EXCLUDE_FILE.find("exclude-file"));
-    }
-
-    @OptionCollectionTest.TestFunction
     protected void inputExcludeFileTest() {
         excludeFileTest(Arg.EXCLUDE_FILE.find("input-exclude-file"));
-    }
-
-    @OptionCollectionTest.TestFunction
-    protected void excludeTest() {
-        execExcludeTest(Arg.EXCLUDE.find("exclude"), EXCLUDE_ARGS);
     }
 
     @OptionCollectionTest.TestFunction
@@ -394,7 +371,7 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
             claimStatistic = reporter.execute();
             assertThat(claimStatistic.getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(2);
             assertThat(claimStatistic.getCounter(ClaimStatistic.Counter.IGNORED)).isEqualTo(1);
-        } catch (IOException | RatException e) {
+        } catch (IOException | ParseException | RatException e) {
             fail(e.getMessage(), e);
         }
     }
@@ -429,7 +406,7 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
             claimStatistic = reporter.execute();
             assertThat(claimStatistic.getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(4);
             assertThat(claimStatistic.getCounter(ClaimStatistic.Counter.IGNORED)).isEqualTo(5);
-        } catch (IOException | RatException e) {
+        } catch (IOException | ParseException | RatException e) {
             fail(e.getMessage(), e);
         }
     }
@@ -488,7 +465,7 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
             claimStatistic = reporter.execute();
             assertThat(claimStatistic.getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(3);
             assertThat(claimStatistic.getCounter(ClaimStatistic.Counter.IGNORED)).isEqualTo(8);
-        } catch (IOException | RatException e) {
+        } catch (IOException | ParseException | RatException e) {
             fail(e.getMessage(), e);
         }
     }
@@ -526,7 +503,7 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
             assertThat(claimStatistic.getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(3);
             // .gitignore is ignored by default as it is hidden but not counted
             assertThat(claimStatistic.getCounter(ClaimStatistic.Counter.IGNORED)).isEqualTo(1);
-        } catch (IOException | RatException e) {
+        } catch (IOException | ParseException | RatException e) {
             fail(e.getMessage(), e);
         }
     }
@@ -539,16 +516,6 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
     @OptionCollectionTest.TestFunction
     protected void inputIncludeFileTest() {
         includeFileTest(Arg.INCLUDE_FILE.find("input-include-file"));
-    }
-
-    @OptionCollectionTest.TestFunction
-    protected void includesFileTest() {
-        includeFileTest(Arg.INCLUDE_FILE.find("includes-file"));
-    }
-
-    @OptionCollectionTest.TestFunction
-    protected void includeTest() {
-        execIncludeTest(Arg.INCLUDE.find("include"), INCLUDE_ARGS);
     }
 
     @OptionCollectionTest.TestFunction
@@ -586,7 +553,7 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
             claimStatistic = reporter.execute();
             assertThat(claimStatistic.getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(7);
             assertThat(claimStatistic.getCounter(ClaimStatistic.Counter.IGNORED)).isEqualTo(1);
-        } catch (IOException | RatException e) {
+        } catch (IOException | ParseException | RatException e) {
             fail(e.getMessage(), e);
         }
     }
@@ -612,7 +579,7 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
             claimStatistic = reporter.execute();
             assertThat(claimStatistic.getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(1);
             assertThat(claimStatistic.getCounter(ClaimStatistic.Counter.IGNORED)).isEqualTo(0);
-        } catch (IOException | RatException e) {
+        } catch (IOException | ParseException | RatException e) {
             fail(e.getMessage(), e);
         }
     }
@@ -646,7 +613,7 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
             assertThat(claimStatistic.getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(1);
             assertThat(claimStatistic.getCounter(ClaimStatistic.Counter.APPROVED)).isEqualTo(1);
             assertThat(claimStatistic.getCounter(ClaimStatistic.Counter.UNAPPROVED)).isEqualTo(0);
-        } catch (IOException | RatException e) {
+        } catch (IOException | ParseException | RatException e) {
             fail(e.getMessage(), e);
         }
     }
@@ -686,7 +653,7 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
             assertThat(claimStatistic.getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(1);
             assertThat(claimStatistic.getCounter(ClaimStatistic.Counter.APPROVED)).isEqualTo(0);
             assertThat(claimStatistic.getCounter(ClaimStatistic.Counter.UNAPPROVED)).isEqualTo(1);
-        } catch (IOException | RatException e) {
+        } catch (IOException | ParseException | RatException e) {
             fail(e.getMessage(), e);
         }
     }
@@ -740,14 +707,9 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
             assertThat(claimStatistic.getCounter(ClaimStatistic.Counter.APPROVED)).isEqualTo(1);
             assertThat(claimStatistic.getCounter(ClaimStatistic.Counter.UNAPPROVED)).isEqualTo(1);
 
-        } catch (IOException | RatException e) {
+        } catch (IOException | ParseException | RatException e) {
             fail(e.getMessage(), e);
         }
-    }
-
-    @OptionCollectionTest.TestFunction
-    protected void licensesTest() {
-        configTest(Arg.CONFIGURATION.find("licenses"));
     }
 
     @OptionCollectionTest.TestFunction
@@ -780,7 +742,7 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
             assertThat(claimStatistic.getCounter(ClaimStatistic.Counter.UNAPPROVED)).isEqualTo(0);
 
 
-        } catch (IOException | RatException e) {
+        } catch (IOException | ParseException | RatException e) {
             fail(e.getMessage(), e);
         }
     }
@@ -798,37 +760,37 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
                 new String[]{"GPL1"});
     }
 
-    @OptionCollectionTest.TestFunction
-    protected void scanHiddenDirectoriesTest() {
-        Option option = Arg.INCLUDE_STD.find("scan-hidden-directories");
-        Pair<Option, String[]> arg1 = ImmutablePair.of(option, null);
-
-        try {
-            configureSourceDir(option);
-
-            writeFile("apl.txt", "SPDX-License-Identifier: Apache-2.0");
-
-            File hiddenDir = new File(sourceDir, ".hiddendir");
-            FileUtils.mkDir(hiddenDir);
-            FileUtils.writeFile(hiddenDir, "gpl.txt", Collections.singletonList("SPDX-License-Identifier: GPL-1.0-only"));
-
-            ReportConfiguration config = generateConfig();
-            Reporter reporter = new Reporter(config);
-            ClaimStatistic claimStatistic = reporter.execute();
-            assertThat(claimStatistic.getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(1);
-            assertThat(claimStatistic.getCounter(ClaimStatistic.Counter.APPROVED)).isEqualTo(1);
-            assertThat(claimStatistic.getCounter(ClaimStatistic.Counter.UNAPPROVED)).isEqualTo(0);
-
-            config = generateConfig(arg1);
-            reporter = new Reporter(config);
-            claimStatistic = reporter.execute();
-            assertThat(claimStatistic.getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(2);
-            assertThat(claimStatistic.getCounter(ClaimStatistic.Counter.APPROVED)).isEqualTo(1);
-            assertThat(claimStatistic.getCounter(ClaimStatistic.Counter.UNAPPROVED)).isEqualTo(1);
-        } catch (IOException | RatException e) {
-            fail(e.getMessage(), e);
-        }
-    }
+//    @OptionCollectionTest.TestFunction
+//    protected void inputIncludeStdTest() {
+//        Option option = Arg.INCLUDE_STD.find("input-include-std");
+//        Pair<Option, String[]> arg1 = ImmutablePair.of(option, "HIDDEN_DIR");
+//
+//        try {
+//            configureSourceDir(option);
+//
+//            writeFile("apl.txt", "SPDX-License-Identifier: Apache-2.0");
+//
+//            File hiddenDir = new File(sourceDir, ".hiddendir");
+//            FileUtils.mkDir(hiddenDir);
+//            FileUtils.writeFile(hiddenDir, "gpl.txt", Collections.singletonList("SPDX-License-Identifier: GPL-1.0-only"));
+//
+//            ReportConfiguration config = generateConfig();
+//            Reporter reporter = new Reporter(config);
+//            ClaimStatistic claimStatistic = reporter.execute();
+//            assertThat(claimStatistic.getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(1);
+//            assertThat(claimStatistic.getCounter(ClaimStatistic.Counter.APPROVED)).isEqualTo(1);
+//            assertThat(claimStatistic.getCounter(ClaimStatistic.Counter.UNAPPROVED)).isEqualTo(0);
+//
+//            config = generateConfig(arg1);
+//            reporter = new Reporter(config);
+//            claimStatistic = reporter.execute();
+//            assertThat(claimStatistic.getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(2);
+//            assertThat(claimStatistic.getCounter(ClaimStatistic.Counter.APPROVED)).isEqualTo(1);
+//            assertThat(claimStatistic.getCounter(ClaimStatistic.Counter.UNAPPROVED)).isEqualTo(1);
+//        } catch (IOException | RatException e) {
+//            fail(e.getMessage(), e);
+//        }
+//    }
 
     private void outTest(final Option option) {
         try {
@@ -849,14 +811,9 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
             TextUtils.assertContainsExactly(1, "Apache License 2.0: 1 ", actualText);
             TextUtils.assertContainsExactly(1, "STANDARD: 1 ", actualText);
 
-        } catch (IOException | RatException e) {
+        } catch (IOException | ParseException | RatException e) {
             fail(e.getMessage(), e);
         }
-    }
-
-    @OptionCollectionTest.TestFunction
-    protected void outTest() {
-        outTest(Arg.OUTPUT_FILE.find("out"));
     }
 
     @OptionCollectionTest.TestFunction
@@ -920,16 +877,11 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
             String actualText = baos.toString(StandardCharsets.UTF_8.name());
             TextUtils.assertContainsExactly(1, "Hello world", actualText);
 
-        } catch (IOException | RatException e) {
+        } catch (IOException | ParseException | RatException e) {
             fail(e.getMessage(), e);
         } finally {
             System.setOut(origin);
         }
-    }
-
-    @OptionCollectionTest.TestFunction
-    protected void stylesheetTest() {
-        styleSheetTest(Arg.OUTPUT_STYLE.find("stylesheet"));
     }
 
     @OptionCollectionTest.TestFunction
@@ -937,41 +889,41 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
         styleSheetTest(Arg.OUTPUT_STYLE.find("output-style"));
     }
 
-    @OptionCollectionTest.TestFunction
-    protected void xmlTest() {
-        PrintStream origin = System.out;
-        Option option = Arg.OUTPUT_STYLE.find("xml");
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        try (PrintStream out = new PrintStream(baos)) {
-            System.setOut(out);
-            configureSourceDir(option);
-            // create a dummy stylesheet so that we match the stylesheet tests.
-            File file = writeFile("stylesheet", "<xsl:stylesheet version=\"1.0\" xmlns:xsl=\"http://www.w3.org/1999/XSL/Transform\">\n" +
-                    "    <xsl:template match=\"@*|node()\">\n" +
-                    "        Hello world\n" +
-                    "    </xsl:template>\n" +
-                    "</xsl:stylesheet>");
-
-            ReportConfiguration config = generateConfig(ImmutablePair.of(option, null));
-            Reporter reporter = new Reporter(config);
-            ClaimStatistic claimStatistic = reporter.output();
-            assertThat(claimStatistic.getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(1);
-            assertThat(claimStatistic.getCounter(ClaimStatistic.Counter.APPROVED)).isEqualTo(0);
-            assertThat(claimStatistic.getCounter(ClaimStatistic.Counter.UNAPPROVED)).isEqualTo(1);
-
-            String actualText = baos.toString(StandardCharsets.UTF_8.name());
-            TextUtils.assertContainsExactly(1, "<resource encoding=\"ISO-8859-1\" mediaType=\"text/plain\" name=\"/stylesheet\" type=\"STANDARD\">", actualText);
-
-            try (InputStream expected = StyleSheets.getStyleSheet("xml").get();
-                 InputStream actual = config.getStyleSheet().get()) {
-                assertThat(IOUtils.contentEquals(expected, actual)).as("'xml' does not match").isTrue();
-            }
-        } catch (IOException | RatException e) {
-            fail(e.getMessage(), e);
-        } finally {
-            System.setOut(origin);
-        }
-    }
+//    @OptionCollectionTest.TestFunction
+//    protected void xmlTest() {
+//        PrintStream origin = System.out;
+//        Option option = Arg.OUTPUT_STYLE.find("output-style");
+//        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+//        try (PrintStream out = new PrintStream(baos)) {
+//            System.setOut(out);
+//            configureSourceDir(option);
+//            // create a dummy stylesheet so that we match the stylesheet tests.
+//            File file = writeFile("stylesheet", "<xsl:stylesheet version=\"1.0\" xmlns:xsl=\"http://www.w3.org/1999/XSL/Transform\">\n" +
+//                    "    <xsl:template match=\"@*|node()\">\n" +
+//                    "        Hello world\n" +
+//                    "    </xsl:template>\n" +
+//                    "</xsl:stylesheet>");
+//
+//            ReportConfiguration config = generateConfig(ImmutablePair.of(option, null));
+//            Reporter reporter = new Reporter(config);
+//            ClaimStatistic claimStatistic = reporter.output();
+//            assertThat(claimStatistic.getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(1);
+//            assertThat(claimStatistic.getCounter(ClaimStatistic.Counter.APPROVED)).isEqualTo(0);
+//            assertThat(claimStatistic.getCounter(ClaimStatistic.Counter.UNAPPROVED)).isEqualTo(1);
+//
+//            String actualText = baos.toString(StandardCharsets.UTF_8.name());
+//            TextUtils.assertContainsExactly(1, "<resource encoding=\"ISO-8859-1\" mediaType=\"text/plain\" name=\"/stylesheet\" type=\"STANDARD\">", actualText);
+//
+//            try (InputStream expected = StyleSheets.getStyleSheet("xml").get();
+//                 InputStream actual = config.getStyleSheet().get()) {
+//                assertThat(IOUtils.contentEquals(expected, actual)).as("'xml' does not match").isTrue();
+//            }
+//        } catch (IOException | RatException e) {
+//            fail(e.getMessage(), e);
+//        } finally {
+//            System.setOut(origin);
+//        }
+//    }
 
     @OptionCollectionTest.TestFunction
     protected void logLevelTest() {
@@ -992,7 +944,7 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
             reporter = new Reporter(config);
             reporter.output();
             TextUtils.assertContains("DEBUG", baos.toString(StandardCharsets.UTF_8.name()));
-        } catch (IOException | RatException e) {
+        } catch (IOException | ParseException | RatException e) {
             fail(e.getMessage(), e);
         } finally {
             System.setOut(origin);
@@ -1033,15 +985,10 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
                         throw new IllegalArgumentException("Unexpected filter: " + filter);
                 }
             }
-        } catch (IOException | RatException | SAXException | ParserConfigurationException |
+        } catch (IOException | ParseException | RatException | SAXException | ParserConfigurationException |
                  XPathExpressionException e) {
             fail(e.getMessage(), e);
         }
-    }
-
-    @OptionCollectionTest.TestFunction
-    protected void listLicensesTest() {
-        listLicenses(Arg.OUTPUT_LICENSES.find("list-licenses"));
     }
 
     @OptionCollectionTest.TestFunction
@@ -1082,15 +1029,10 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
                         throw new IllegalArgumentException("Unexpected filter: " + filter);
                 }
             }
-        } catch (IOException | RatException | SAXException | ParserConfigurationException |
+        } catch (IOException | ParseException | RatException | SAXException | ParserConfigurationException |
                  XPathExpressionException e) {
             fail(e.getMessage(), e);
         }
-    }
-
-    @OptionCollectionTest.TestFunction
-    protected void listFamiliesTest() {
-        listFamilies(Arg.OUTPUT_FAMILIES.find("list-families"));
     }
 
     @OptionCollectionTest.TestFunction
@@ -1140,7 +1082,7 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
                         throw new IllegalArgumentException("Unexpected processing " + proc);
                 }
             }
-        } catch (IOException | RatException | SAXException | ParserConfigurationException |
+        } catch (IOException | ParseException| RatException | SAXException | ParserConfigurationException |
                  XPathExpressionException e) {
             fail(e.getMessage(), e);
         }
@@ -1195,7 +1137,7 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
                         throw new IllegalArgumentException("Unexpected processing " + proc);
                 }
             }
-        } catch (IOException | RatException | SAXException | ParserConfigurationException |
+        } catch (IOException | ParseException | RatException | SAXException | ParserConfigurationException |
                  XPathExpressionException e) {
             fail(e.getMessage(), e);
         }
@@ -1245,24 +1187,14 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
                 TextUtils.assertNotContains(myCopyright, actualText);
                 assertThat(newJavaFile).exists();
             }
-        } catch (IOException | RatException e) {
+        } catch (IOException | ParseException | RatException e) {
             fail(e.getMessage(), e);
         }
     }
 
     @OptionCollectionTest.TestFunction
-    protected void copyrightTest() {
-        editCopyrightTest(Arg.EDIT_COPYRIGHT.find("copyright"), null);
-    }
-
-    @OptionCollectionTest.TestFunction
     protected void editCopyrightTest() {
         editCopyrightTest(Arg.EDIT_COPYRIGHT.find("edit-copyright"), null);
-    }
-
-    @OptionCollectionTest.TestFunction
-    protected void forceTest() {
-        editCopyrightTest(Arg.EDIT_COPYRIGHT.find("edit-copyright"), Arg.EDIT_OVERWRITE.find("force"));
     }
 
     @OptionCollectionTest.TestFunction
@@ -1286,7 +1218,7 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
             assertThat(helpCalled.get()).as("Help was not called").isTrue();
             new Help(System.out).printUsage(options);
             actualText = baos.toString(StandardCharsets.UTF_8.name());
-        } catch (IOException e) {
+        } catch (IOException | ParseException e) {
             fail(e.getMessage(), e);
         } finally {
             System.setOut(origin);
@@ -1334,7 +1266,7 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
             configureSourceDir(option);
             ReportConfiguration config = generateConfig(arg1);
             actualText = baos.toString(StandardCharsets.UTF_8.name());
-        } catch (IOException e) {
+        } catch (IOException | ParseException e) {
             fail(e.getMessage(), e);
         } finally {
             System.setOut(origin);

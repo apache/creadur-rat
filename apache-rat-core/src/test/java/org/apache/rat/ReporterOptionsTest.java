@@ -24,6 +24,8 @@ import java.nio.file.Path;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
+
+import org.apache.commons.cli.ParseException;
 import org.apache.rat.api.RatException;
 import org.apache.rat.report.claim.ClaimStatistic;
 import org.apache.rat.test.AbstractConfigurationOptionsProvider;
@@ -98,7 +100,7 @@ public final class ReporterOptionsTest {
                     XmlUtils.mapOf("type", "IGNORED"));
             assertThat(claimStatistic.getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(0);
             assertThat(claimStatistic.getCounter(ClaimStatistic.Counter.IGNORED)).isEqualTo(2);
-        } catch (IOException | RatException | XPathExpressionException e) {
+        } catch (IOException | ParseException | RatException | XPathExpressionException e) {
             fail(e);
         }
     }

@@ -15,22 +15,19 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <groupId>org.apache.rat.test</groupId>
-  <artifactId>RAT-335</artifactId>
-  <version>1.0</version>
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.rat</groupId>
-        <artifactId>apache-rat-plugin</artifactId>
-        <version>@pom.version@</version>
-        <configuration>
-          <outputStyle>xml</outputStyle>
-          <inputExcludeParsedScm>GIT</inputExcludeParsedScm>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
-</project>
+<rat-config>
+	<families>
+		<family id="CC BY" name="Creative Commons Attribution" />
+	</families>
+	<licenses>
+		<license family="CC BY" id="CC BY 4.0" name="Creative Commons Attribution">
+			<any>
+				<text>creativecommons.org/licenses/by/4.0</text>
+				<spdx name='CC-BY-4.0' />
+			</any>
+		</license>
+	</licenses>
+    <approved>
+        <family license_ref='AL' />
+    </approved>
+</rat-config>

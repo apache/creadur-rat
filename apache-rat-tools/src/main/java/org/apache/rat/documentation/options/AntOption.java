@@ -29,7 +29,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.Predicate;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import org.apache.commons.cli.Option;
@@ -98,7 +97,6 @@ public class AntOption extends AbstractOption {
         ATTRIBUTE_TYPES.add(File.class);
         Arg.getOptions().getOptions().stream().filter(o -> Objects.isNull(o.getLongOpt())).forEach(UNSUPPORTED_LIST::add);
         UNSUPPORTED_LIST.addAll(Arg.LOG_LEVEL.group().getOptions());
-        UNSUPPORTED_LIST.addAll(Arg.DIR.group().getOptions());
         UNSUPPORTED_LIST.add(OptionCollection.HELP);
         UNSUPPORTED_LIST.addAll(Arg.SOURCE.group().getOptions());
         updateConversionMap(Arg.LICENSES_APPROVED_FILE, Arg.LICENSES_APPROVED);
@@ -287,9 +285,11 @@ public class AntOption extends AbstractOption {
                 arg = "The state";
             }
             if (option.getArgName() != null) {
-                Supplier<String> sup = OptionCollection.getArgumentTypes().get(option.getArgName());
-                if (sup == null) {
-                    throw new IllegalStateException(format("Argument type %s must be in OptionCollection.ARGUMENT_TYPES", option.getArgName()));
+                String argName = option.getArgName().toUpperCase(Locale.ROOT);
+                try {
+                    OptionCollection.ArgumentType.valueOf(argName);
+                }  catch (IllegalArgumentException e) {
+                    throw new IllegalStateException(format("Argument type %s must be in OptionCollection.ArgumentType", option.getArgName()));
                 }
                 desc = format("%s Argument%s should be %s%s. (See Argument Types for clarification)", desc, option.hasArgs() ? "s" : "",
                         option.hasArgs() ? "" : "a ", option.getArgName());

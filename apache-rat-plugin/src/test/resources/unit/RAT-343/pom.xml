@@ -27,64 +27,19 @@
         <artifactId>apache-rat-plugin</artifactId>
         <version>@pom.version@</version>
         <configuration>
-          <addDefaultLicenseMatchers>true</addDefaultLicenseMatchers>
-          <numUnapprovedLicenses>1</numUnapprovedLicenses>
-          <licenses>
-            <license implementation="org.apache.rat.analysis.license.SimplePatternBasedLicense">
-              <licenseFamilyCategory>MIT</licenseFamilyCategory>
-              <licenseFamilyName>MIT</licenseFamilyName>
-              <notes/>
-              <patterns>
-                <pattern>Licensed MIT</pattern>
-                <pattern>Licensed under MIT</pattern>
-                <pattern>Licensed under the MIT license</pattern>
-                <pattern>MIT/GPL2 Licensed</pattern>
-                <pattern>licensed under the MIT and GPL</pattern>
-                <pattern>MIT license</pattern>
-              </patterns>
-            </license>
-            <license implementation="org.apache.rat.analysis.license.SimplePatternBasedLicense">
-              <licenseFamilyCategory>BSD</licenseFamilyCategory>
-              <licenseFamilyName>BSD</licenseFamilyName>
-              <notes/>
-              <patterns>
-                <pattern>BSD-style license</pattern>
-              </patterns>
-            </license>
-            <license implementation="org.apache.rat.analysis.license.SimplePatternBasedLicense">
-              <licenseFamilyCategory>CC BY</licenseFamilyCategory>
-              <licenseFamilyName>Creative Commons Attribution</licenseFamilyName>
-              <notes/>
-              <patterns>
-                <pattern>creativecommons.org/licenses/by/4.0</pattern>
-              </patterns>
-            </license>
-          </licenses>
-          <licenseFamilies>
-            <licenseFamily implementation="org.apache.rat.license.SimpleLicenseFamily">
-              <familyName>MIT</familyName>
-            </licenseFamily>
-            <licenseFamily implementation="org.apache.rat.license.SimpleLicenseFamily">
-              <familyName>BSD</familyName>
-            </licenseFamily>
-            <licenseFamily implementation="org.apache.rat.license.SimpleLicenseFamily">
-              <familyName>CC BY</familyName>
-            </licenseFamily>
-          </licenseFamilies>
-          <approvedLicenses>
-            <id>BSD</id>
-          </approvedLicenses>
-          <excludes>
-            <exclude>**/*.mp3</exclude>
-            <exclude>**/localhost.jks</exclude>
-            <exclude>**/node_modules/**</exclude>
-            <exclude>**/package-lock.json</exclude>
-            <exclude>**/target/**</exclude>
-            <exclude>**/.project</exclude>
-            <exclude>**/.classpath</exclude>
-            <exclude>**/.settings/**</exclude>
-            <exclude>.gitattributes</exclude>
-          </excludes>
+          <counterMax>UNAPPROVED:1</counterMax>
+            <config>custom.xml</config>
+          <input-excludes>
+            <expression>**/*.mp3</expression>
+            <expression>**/localhost.jks</expression>
+            <expression>**/node_modules/**</expression>
+            <expression>**/package-lock.json</expression>
+            <expression>**/target/**</expression>
+            <expression>**/.project</expression>
+            <expression>**/.classpath</expression>
+            <expression>**/.settings/**</expression>
+            <expression>.gitattributes</expression>
+          </input-excludes>
         </configuration>
       </plugin>
     </plugins>

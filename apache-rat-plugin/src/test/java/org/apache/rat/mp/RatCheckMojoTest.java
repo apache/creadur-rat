@@ -33,6 +33,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 import org.apache.commons.io.FileUtils;
 import org.apache.rat.ReportConfiguration;
@@ -87,7 +88,7 @@ public class RatCheckMojoTest {
         } catch (IOException e) {
             throw e;
         } catch (Exception e) {
-            throw new IOException(format("Unable to generate mojo for %s", pomFile), e);
+            throw new IOException(format("Unable to generate mojo for %s; %s", pomFile, e.getMessage()), e);
         }
     }
 
@@ -133,12 +134,13 @@ public class RatCheckMojoTest {
         ReportConfigurationTest.validateDefault(config);
 
         mojo.execute();
+
         Map<ClaimStatistic.Counter, String> data = new HashMap<>();
         data.put(ClaimStatistic.Counter.ARCHIVES, "0");
         data.put(ClaimStatistic.Counter.APPROVED, "1");
         data.put(ClaimStatistic.Counter.BINARIES, "0");
         data.put(ClaimStatistic.Counter.DOCUMENT_TYPES, "2");
-        data.put(ClaimStatistic.Counter.IGNORED, "2");
+        data.put(ClaimStatistic.Counter.IGNORED, "1");
         data.put(ClaimStatistic.Counter.LICENSE_CATEGORIES, "1");
         data.put(ClaimStatistic.Counter.LICENSE_NAMES, "1");
         data.put(ClaimStatistic.Counter.NOTICES, "0");
@@ -147,14 +149,7 @@ public class RatCheckMojoTest {
         data.put(ClaimStatistic.Counter.UNKNOWN, "0");
 
         org.w3c.dom.Document document = XmlUtils.toDom(Files.newInputStream(ratTxtFile.toPath()));
-        XPath xPath = XPathFactory.newInstance().newXPath();
-
-        for (ClaimStatistic.Counter counter : ClaimStatistic.Counter.values()) {
-            String xpath = String.format("/rat-report/statistics/statistic[@name='%s']", counter.displayName());
-            Map<String, String> map = mapOf("approval", "true", "count", data.get(counter),
-                    "description", counter.getDescription());
-            XmlUtils.assertAttributes(document, xPath, xpath, map);
-        }
+        verifyDataMap(data, document);
 
         XmlUtils.assertAttributes(document, xPath, "/rat-report/resource[@name='/.bzrignore']",
                 mapOf("mediaType", "application/octet-stream", "type", "IGNORED"));
@@ -180,13 +175,17 @@ public class RatCheckMojoTest {
     void it2() throws Exception {
         final RatCheckMojo mojo = newRatMojo("it2");
         final File ratTxtFile = mojo.getRatTxtFile();
+
+        Map<ClaimStatistic.Counter, String> data = new HashMap<>();
+        data.put(ClaimStatistic.Counter.ARCHIVES, "0");
+        data.put(ClaimStatistic.Counter.NOTICES, "0");
+        data.put(ClaimStatistic.Counter.BINARIES, "0");
+        data.put(ClaimStatistic.Counter.STANDARDS, "2");
+        data.put(ClaimStatistic.Counter.IGNORED, "0");
+
+
         final String[] expected = {
-                "^Files with unapproved licenses\\s+\\*+\\s+\\Q/src.txt\\E\\s+",
-                ReporterTestUtils.counterText(ClaimStatistic.Counter.NOTICES, 0, false),
-                ReporterTestUtils.counterText(ClaimStatistic.Counter.BINARIES, 0, false),
-                ReporterTestUtils.counterText(ClaimStatistic.Counter.ARCHIVES, 0, false),
-                ReporterTestUtils.counterText(ClaimStatistic.Counter.STANDARDS, 2, false),
-                ReporterTestUtils.counterText(ClaimStatistic.Counter.IGNORED, 1, false),
+                "^Files with unapproved licenses[\\W\\*]+\\Q/src.txt\\E\\s+",
                 ReporterTestUtils.apacheLicenseVersion2(1),
                 ReporterTestUtils.unknownLicense(1),
                 ReporterTestUtils.documentOut(false, Document.Type.STANDARD, "/src.txt") +
@@ -215,10 +214,25 @@ public class RatCheckMojoTest {
         final RatCheckMojo mojo = newRatMojo("it3");
         final File ratTxtFile = mojo.getRatTxtFile();
 
+        Map<ClaimStatistic.Counter, String> data = new HashMap<>();
+        data.put(ClaimStatistic.Counter.APPROVED, "1");
+        data.put(ClaimStatistic.Counter.ARCHIVES, "0");
+        data.put(ClaimStatistic.Counter.BINARIES, "0");
+        data.put(ClaimStatistic.Counter.DOCUMENT_TYPES, "1");
+        data.put(ClaimStatistic.Counter.IGNORED, "0");
+        data.put(ClaimStatistic.Counter.LICENSE_CATEGORIES, "2");
+        data.put(ClaimStatistic.Counter.LICENSE_NAMES, "2");
+        data.put(ClaimStatistic.Counter.NOTICES, "0");
+        data.put(ClaimStatistic.Counter.STANDARDS, "2");
+        data.put(ClaimStatistic.Counter.UNAPPROVED, "1");
+        data.put(ClaimStatistic.Counter.UNKNOWN, "1");
+
         ReportConfiguration config = mojo.getConfiguration();
         assertThat(config.isAddingLicenses()).as("should be adding licenses").isTrue();
         mojo.execute();
         org.w3c.dom.Document document = XmlUtils.toDom(Files.newInputStream(ratTxtFile.toPath()));
+
+        verifyDataMap(data, document);
 
         XmlUtils.assertAttributes(document, xPath, "/rat-report/resource[@name='/pom.xml']", "type",
                 "STANDARD");
@@ -229,19 +243,18 @@ public class RatCheckMojoTest {
         XmlUtils.assertAttributes(document, xPath, "/rat-report/resource[@name='/src.apt']", "type",
                 "STANDARD");
 
-        for (Document.Type type : Document.Type.values()) {
-            if (type == Document.Type.STANDARD) {
-                XmlUtils.assertAttributes(document, xPath, "/rat-report/statistics/documentType[@name='STANDARD']", "count",
-                        "2");
-            } else if (type == Document.Type.IGNORED) {
-                XmlUtils.assertAttributes(document, xPath, "/rat-report/statistics/documentType[@name='IGNORED']", "count",
-                        "1");
-            } else {
-                XmlUtils.assertIsNotPresent(document, xPath, format("/rat-report/statistics/documentType[@name='%s']", type));
-            }
-        }
     }
 
+    private void verifyDataMap(Map<ClaimStatistic.Counter, String> data, org.w3c.dom.Document document) throws XPathExpressionException {
+        for (ClaimStatistic.Counter counter : ClaimStatistic.Counter.values()) {
+            String xpath = String.format("/rat-report/statistics/statistic[@name='%s']", counter.displayName());
+            Map<String, String> map = mapOf("approval",
+                    "true",
+                    "count", data.get(counter),
+                    "description", counter.getDescription());
+            XmlUtils.assertAttributes(document, xPath, xpath, map);
+        }
+    }
     /**
      * Tests defining licenses in configuration
      */
@@ -254,16 +267,15 @@ public class RatCheckMojoTest {
         assertThat(config.isAddingLicenses()).as("Should not be adding licenses").isFalse();
         assertThat(config.isAddingLicensesForced()).as("Should not be forcing licenses").isFalse();
 
-        ReportConfigurationTest.validateDefaultApprovedLicenses(config, 1);
-        assertThat(config.getLicenseCategories(LicenseFilter.APPROVED)).doesNotContain(ILicenseFamily.makeCategory("YAL"))
-                .contains(ILicenseFamily.makeCategory("CC"));
+        ReportConfigurationTest.validateDefaultLicenses(config, "CC-BY-NC-ND", "YAL");
+        ReportConfigurationTest.validateDefaultApprovedLicenses(config, "CC-BY-NC-ND");
+        ReportConfigurationTest.validateDefaultApprovedLicenseFamilies(config, "CC");
         ReportConfigurationTest.validateDefaultLicenseFamilies(config, "YAL", "CC");
         assertThat(LicenseSetFactory.familySearch("YAL", config.getLicenseFamilies(LicenseFilter.APPROVED))).isNull();
         assertThat(LicenseSetFactory.familySearch("YAL", config.getLicenseFamilies(LicenseFilter.ALL))).isNotNull();
         assertThat(LicenseSetFactory.familySearch("CC", config.getLicenseFamilies(LicenseFilter.APPROVED))).isNotNull();
         assertThat(LicenseSetFactory.familySearch("CC", config.getLicenseFamilies(LicenseFilter.ALL))).isNotNull();
 
-        ReportConfigurationTest.validateDefaultLicenses(config, "CC-BY-NC-ND", "YAL");
         assertThat(LicenseSetFactory.search("YAL", "YAL", config.getLicenses(LicenseFilter.ALL))).isPresent();
 
         mojo.execute();
@@ -273,7 +285,7 @@ public class RatCheckMojoTest {
         data.put(ClaimStatistic.Counter.ARCHIVES, "0");
         data.put(ClaimStatistic.Counter.BINARIES, "0");
         data.put(ClaimStatistic.Counter.DOCUMENT_TYPES, "2");
-        data.put(ClaimStatistic.Counter.IGNORED, "3");
+        data.put(ClaimStatistic.Counter.IGNORED, "2");
         data.put(ClaimStatistic.Counter.LICENSE_CATEGORIES, "1");
         data.put(ClaimStatistic.Counter.LICENSE_NAMES, "1");
         data.put(ClaimStatistic.Counter.NOTICES, "0");
@@ -315,17 +327,18 @@ public class RatCheckMojoTest {
         final File ratTxtFile = mojo.getRatTxtFile();
         // POM reports AL, BSD and CC BYas BSD because it contains the BSD and CC BY strings
         final String[] expected = {
-                ReporterTestUtils.documentOut(false, Document.Type.STANDARD, "/pom.xml") +
+                ReporterTestUtils.documentOut(false, Document.Type.STANDARD, "/custom.xml") +
                         ReporterTestUtils.APACHE_LICENSE +
-                        ReporterTestUtils.licenseOut("BSD", "BSD") +
-                        ReporterTestUtils.licenseOut("CC BY", "Creative Commons Attribution (Unapproved)"),
+                        ReporterTestUtils.licenseOut("CC BY", "CC BY 4.0", "Creative Commons Attribution (Unapproved)"),
                 ReporterTestUtils.counterText(ClaimStatistic.Counter.NOTICES, 0, false),
                 ReporterTestUtils.counterText(ClaimStatistic.Counter.BINARIES, 0, false),
                 ReporterTestUtils.counterText(ClaimStatistic.Counter.ARCHIVES, 0, false),
-                ReporterTestUtils.counterText(ClaimStatistic.Counter.STANDARDS, 1, false),
+                ReporterTestUtils.counterText(ClaimStatistic.Counter.STANDARDS, 2, false),
                 ReporterTestUtils.counterText(ClaimStatistic.Counter.IGNORED, 1, false),
-                ReporterTestUtils.apacheLicenseVersion2(1),
-                "^BSD: 1 ",
+                ReporterTestUtils.counterText(ClaimStatistic.Counter.UNAPPROVED, 1, false),
+                ReporterTestUtils.counterText(ClaimStatistic.Counter.LICENSE_NAMES, 2, false),
+                ReporterTestUtils.counterText(ClaimStatistic.Counter.LICENSE_CATEGORIES, 2, false),
+                ReporterTestUtils.apacheLicenseVersion2(2),
                 "^Creative Commons Attribution: 1 ",
         };
         final String[] notExpected = {
@@ -339,9 +352,9 @@ public class RatCheckMojoTest {
         assertThat(config.getCopyrightMessage()).isNull();
         assertThat(config.getStyleSheet()).withFailMessage("Stylesheet should not be null").isNotNull();
 
-        ReportConfigurationTest.validateDefaultApprovedLicenses(config, 1);
-        ReportConfigurationTest.validateDefaultLicenseFamilies(config, "BSD", "CC BY");
-        ReportConfigurationTest.validateDefaultLicenses(config, "BSD", "CC BY");
+        ReportConfigurationTest.validateDefaultApprovedLicenses(config);
+        ReportConfigurationTest.validateDefaultLicenseFamilies(config, "CC BY");
+        ReportConfigurationTest.validateDefaultLicenses(config, "CC BY 4.0");
 
         mojo.execute();
         ensureRatReportIsCorrect(ratTxtFile, expected, notExpected);

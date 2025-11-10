@@ -23,10 +23,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Serializable;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Comparator;
-import java.util.Map;
-import java.util.TreeMap;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -88,9 +85,30 @@ public final class OptionCollection {
      * @param helpCmd the help command to run when necessary.
      * @return a ReportConfiguration or {@code null} if Help was printed.
      * @throws IOException on error.
+     * @throws ParseException on option parsing error.
      */
-    public static ReportConfiguration parseCommands(final File workingDirectory, final String[] args, final Consumer<Options> helpCmd) throws IOException {
+    public static ReportConfiguration parseCommands(final File workingDirectory, final String[] args, final Consumer<Options> helpCmd)
+            throws IOException, ParseException {
         return parseCommands(workingDirectory, args, helpCmd, false);
+    }
+
+    /**
+     * Parse the options into the command line.
+     * @param opts the option definitions.
+     * @param args the argument to apply the definitions to.
+     * @return the CommandLine
+     * @throws ParseException on option parsing error.
+     */
+    //@VisibleForTesting
+    static CommandLine parseCommandLine(final Options opts, final String[] args) throws ParseException {
+        try {
+            return DefaultParser.builder().setDeprecatedHandler(DeprecationReporter.getLogReporter())
+                    .setAllowPartialMatching(true).build().parse(opts, args);
+        } catch (ParseException e) {
+            DefaultLog.getInstance().error(e.getMessage());
+            DefaultLog.getInstance().error("Please use the \"--help\" option to see a list of valid commands and options.", e);
+            throw e;
+        }
     }
 
     /**
@@ -104,20 +122,11 @@ public final class OptionCollection {
      * @throws IOException on error.
      */
     public static ReportConfiguration parseCommands(final File workingDirectory, final String[] args,
-                                                    final Consumer<Options> helpCmd, final boolean noArgs) throws IOException {
+                                                    final Consumer<Options> helpCmd, final boolean noArgs) throws IOException, ParseException {
 
         Options opts = buildOptions();
-        CommandLine commandLine;
-        try {
-            commandLine = DefaultParser.builder().setDeprecatedHandler(DeprecationReporter.getLogReporter())
-                    .setAllowPartialMatching(true).build().parse(opts, args);
-        } catch (ParseException e) {
-            DefaultLog.getInstance().error(e.getMessage());
-            DefaultLog.getInstance().error("Please use the \"--help\" option to see a list of valid commands and options.", e);
-            System.exit(1);
-            return null; // dummy return (won't be reached) to avoid Eclipse complaint about possible NPE
-            // for "commandLine"
-        }
+        CommandLine commandLine = parseCommandLine(buildOptions(), args);
+
 
         Arg.processLogLevel(commandLine);
 
@@ -157,13 +166,6 @@ public final class OptionCollection {
         argumentContext.processArgs();
         final ReportConfiguration configuration = argumentContext.getConfiguration();
         final CommandLine commandLine = argumentContext.getCommandLine();
-        if (Arg.DIR.isSelected()) {
-            try {
-                configuration.addSource(getReportable(commandLine.getParsedOptionValue(Arg.DIR.getSelected()), configuration));
-            } catch (ParseException e) {
-                throw new ConfigurationException("Unable to set parse " + Arg.DIR.getSelected(), e);
-            }
-        }
         for (String s : commandLine.getArgs()) {
             IReportable reportable = getReportable(new File(s), configuration);
             if (reportable != null) {
