@@ -68,12 +68,16 @@
 		</rat:report>
 	</target>
 
+    <target name="testNoResources">
+        <rat:report />
+    </target>
+
 	<target name="testCustomLicense">
 		<rat:report configurationNoDefaults="true">
             <config>
                 <fileset file="${resource.dir}/configs/yasl.xml" />
             </config>
-			<file file="${ant.file}" />
+			<file file="${resource.dir}/index.apt" />
 		</rat:report>
 	</target>
 

@@ -63,8 +63,10 @@ import org.xml.sax.SAXException;
 
 public class ReportTest extends AbstractRatAntTaskTest {
     private static final String baseNameStr = String.join(File.separator, new String[]{"src","test","resources","antunit"});
-    private static final File antFile = new File(new File(baseNameStr), "report-junit.xml").getAbsoluteFile();
+    private static final File baseNameFile = new File(baseNameStr);
+    private static final File antFile = new File(baseNameFile, "report-junit.xml").getAbsoluteFile();
     private DocumentName documentName;
+    private DocumentName indexName;
 
     @BeforeEach
     public void setUp() {
@@ -73,6 +75,7 @@ public class ReportTest extends AbstractRatAntTaskTest {
             baseFile = baseFile.getParentFile();
         }
         documentName = DocumentName.builder(antFile).setBaseName(baseFile).build();
+        indexName = DocumentName.builder(new File(baseNameFile, "index.apt")).setBaseName(baseFile).build();
 
         File f = new File(documentName.getBaseName());
 
@@ -165,8 +168,8 @@ public class ReportTest extends AbstractRatAntTaskTest {
     @Test
     public void testCustomLicense() {
         buildRule.executeTarget("testCustomLicense");
-        assertLogDoesNotMatch(logLine("AL"));
-        assertLogMatches(logLine("YASL"));
+        assertLogDoesNotMatch(logLine(indexName.localized("/"), "AL"));
+        assertLogMatches(logLine(true, indexName.localized("/"), "YASL"));
     }
 
     @Test
