@@ -760,38 +760,6 @@ class ReporterOptionsProvider extends AbstractOptionsProvider {
                 new String[]{"GPL1"});
     }
 
-//    @OptionCollectionTest.TestFunction
-//    protected void inputIncludeStdTest() {
-//        Option option = Arg.INCLUDE_STD.find("input-include-std");
-//        Pair<Option, String[]> arg1 = ImmutablePair.of(option, "HIDDEN_DIR");
-//
-//        try {
-//            configureSourceDir(option);
-//
-//            writeFile("apl.txt", "SPDX-License-Identifier: Apache-2.0");
-//
-//            File hiddenDir = new File(sourceDir, ".hiddendir");
-//            FileUtils.mkDir(hiddenDir);
-//            FileUtils.writeFile(hiddenDir, "gpl.txt", Collections.singletonList("SPDX-License-Identifier: GPL-1.0-only"));
-//
-//            ReportConfiguration config = generateConfig();
-//            Reporter reporter = new Reporter(config);
-//            ClaimStatistic claimStatistic = reporter.execute();
-//            assertThat(claimStatistic.getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(1);
-//            assertThat(claimStatistic.getCounter(ClaimStatistic.Counter.APPROVED)).isEqualTo(1);
-//            assertThat(claimStatistic.getCounter(ClaimStatistic.Counter.UNAPPROVED)).isEqualTo(0);
-//
-//            config = generateConfig(arg1);
-//            reporter = new Reporter(config);
-//            claimStatistic = reporter.execute();
-//            assertThat(claimStatistic.getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(2);
-//            assertThat(claimStatistic.getCounter(ClaimStatistic.Counter.APPROVED)).isEqualTo(1);
-//            assertThat(claimStatistic.getCounter(ClaimStatistic.Counter.UNAPPROVED)).isEqualTo(1);
-//        } catch (IOException | RatException e) {
-//            fail(e.getMessage(), e);
-//        }
-//    }
-
     private void outTest(final Option option) {
         try {
             configureSourceDir(option);
@@ -888,42 +856,6 @@ class ReporterOptionsProvider extends AbstractOptionsProvider {
     protected void outputStyleTest() {
         styleSheetTest(Arg.OUTPUT_STYLE.find("output-style"));
     }
-
-//    @OptionCollectionTest.TestFunction
-//    protected void xmlTest() {
-//        PrintStream origin = System.out;
-//        Option option = Arg.OUTPUT_STYLE.find("output-style");
-//        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-//        try (PrintStream out = new PrintStream(baos)) {
-//            System.setOut(out);
-//            configureSourceDir(option);
-//            // create a dummy stylesheet so that we match the stylesheet tests.
-//            File file = writeFile("stylesheet", "<xsl:stylesheet version=\"1.0\" xmlns:xsl=\"http://www.w3.org/1999/XSL/Transform\">\n" +
-//                    "    <xsl:template match=\"@*|node()\">\n" +
-//                    "        Hello world\n" +
-//                    "    </xsl:template>\n" +
-//                    "</xsl:stylesheet>");
-//
-//            ReportConfiguration config = generateConfig(ImmutablePair.of(option, null));
-//            Reporter reporter = new Reporter(config);
-//            ClaimStatistic claimStatistic = reporter.output();
-//            assertThat(claimStatistic.getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(1);
-//            assertThat(claimStatistic.getCounter(ClaimStatistic.Counter.APPROVED)).isEqualTo(0);
-//            assertThat(claimStatistic.getCounter(ClaimStatistic.Counter.UNAPPROVED)).isEqualTo(1);
-//
-//            String actualText = baos.toString(StandardCharsets.UTF_8.name());
-//            TextUtils.assertContainsExactly(1, "<resource encoding=\"ISO-8859-1\" mediaType=\"text/plain\" name=\"/stylesheet\" type=\"STANDARD\">", actualText);
-//
-//            try (InputStream expected = StyleSheets.getStyleSheet("xml").get();
-//                 InputStream actual = config.getStyleSheet().get()) {
-//                assertThat(IOUtils.contentEquals(expected, actual)).as("'xml' does not match").isTrue();
-//            }
-//        } catch (IOException | RatException e) {
-//            fail(e.getMessage(), e);
-//        } finally {
-//            System.setOut(origin);
-//        }
-//    }
 
     @OptionCollectionTest.TestFunction
     protected void logLevelTest() {

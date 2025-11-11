@@ -65,6 +65,7 @@ public final class Report {
                 }
             }
         } catch (ParseException e) {
+            DefaultLog.getInstance().error("Error parsing command line options: " + e.getMessage(), e);
             System.exit(1);
         }
     }

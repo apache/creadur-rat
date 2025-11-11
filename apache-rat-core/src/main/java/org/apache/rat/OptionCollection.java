@@ -120,6 +120,7 @@ public final class OptionCollection {
      * @param noArgs If {@code true} then the commands do not need extra arguments.
      * @return a ReportConfiguration or {@code null} if Help was printed.
      * @throws IOException on error.
+     * @throws ParseException on option parsing error.
      */
     public static ReportConfiguration parseCommands(final File workingDirectory, final String[] args,
                                                     final Consumer<Options> helpCmd, final boolean noArgs) throws IOException, ParseException {
