@@ -52,6 +52,7 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.reporting.MavenMultiPageReport;
 import org.apache.maven.reporting.MavenReportException;
+import org.apache.rat.Defaults;
 import org.apache.rat.ReportConfiguration;
 import org.apache.rat.Reporter;
 import org.apache.rat.VersionInfo;
@@ -215,33 +216,6 @@ public class RatReportMojo extends AbstractRatMojo implements MavenMultiPageRepo
     }
 
     /**
-     * Generate a report.
-     *
-     * @param sink the sink to use for the generation.
-     * @param locale the wanted locale to generate the report, could be null.
-     * @throws MavenReportException if any
-     * @deprecated use {@link #generate(Sink, SinkFactory, Locale)} instead.
-     */
-    @Deprecated
-    @Override
-    public void generate(final org.codehaus.doxia.sink.Sink sink, final Locale locale) throws MavenReportException {
-        generate(sink, null, locale);
-    }
-
-    /**
-     * Generate a report.
-     *
-     * @param sink the sink to use for the generation.
-     * @param locale the wanted locale to generate the report, could be null.
-     * @throws MavenReportException if any
-     * @deprecated use {@link #generate(Sink, SinkFactory, Locale)} instead.
-     */
-    @Deprecated
-    public void generate(final Sink sink, final Locale locale) throws MavenReportException {
-        generate(sink, null, locale);
-    }
-
-    /**
      * This method is called when the report generation is invoked by
      * maven-site-plugin.
      *
@@ -390,7 +364,7 @@ public class RatReportMojo extends AbstractRatMojo implements MavenMultiPageRepo
         sink.verbatim(SinkEventAttributeSet.BOXED);
         try {
             ReportConfiguration config = getConfiguration();
-            config.setFrom(getDefaultsBuilder().build());
+            config.setFrom(Defaults.builder().build());
             logLicenses(config.getLicenses(LicenseFilter.ALL));
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             config.setOut(() -> baos);
