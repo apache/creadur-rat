@@ -21,6 +21,7 @@ package org.apache.rat.test;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import org.apache.commons.cli.Option;
+import org.apache.commons.cli.ParseException;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
@@ -100,24 +101,16 @@ public abstract class AbstractConfigurationOptionsProvider extends AbstractOptio
 
     protected AbstractConfigurationOptionsProvider(final Collection<String> unsupportedArgs, final File baseDir) {
         super(setup(baseDir));
-        addTest(OptionCollectionTest.OptionTest.namedTest("addLicense", this::addLicenseTest));
         addTest(OptionCollectionTest.OptionTest.namedTest("config", this::configTest));
         addTest(OptionCollectionTest.OptionTest.namedTest("configuration-no-defaults", this::configurationNoDefaultsTest));
-        addTest(OptionCollectionTest.OptionTest.namedTest("copyright", this::copyrightTest));
         addTest(OptionCollectionTest.OptionTest.namedTest("counter-min", this::counterMinTest));
         addTest(OptionCollectionTest.OptionTest.namedTest("counter-max", this::counterMaxTest));
-        addTest(OptionCollectionTest.OptionTest.namedTest("dir", () -> DefaultLog.getInstance().info("--dir has no valid test")));
         addTest(OptionCollectionTest.OptionTest.namedTest("dry-run", this::dryRunTest));
         addTest(OptionCollectionTest.OptionTest.namedTest("edit-copyright", this::editCopyrightTest));
         addTest(OptionCollectionTest.OptionTest.namedTest("edit-license", this::editLicenseTest));
         addTest(OptionCollectionTest.OptionTest.namedTest("edit-overwrite", this::editOverwriteTest));
-        addTest(OptionCollectionTest.OptionTest.namedTest("exclude", this::excludeTest));
-        addTest(OptionCollectionTest.OptionTest.namedTest("exclude-file", this::excludeFileTest));
-        addTest(OptionCollectionTest.OptionTest.namedTest("force", this::forceTest));
         addTest(OptionCollectionTest.OptionTest.namedTest("help", this::helpTest));
         addTest(OptionCollectionTest.OptionTest.namedTest("help-licenses", this::helpLicenses));
-        addTest(OptionCollectionTest.OptionTest.namedTest("include", this::includeTest));
-        addTest(OptionCollectionTest.OptionTest.namedTest("includes-file", this::includesFileTest));
         addTest(OptionCollectionTest.OptionTest.namedTest("input-exclude", this::inputExcludeTest));
         addTest(OptionCollectionTest.OptionTest.namedTest("input-exclude-file", this::inputExcludeFileTest));
         addTest(OptionCollectionTest.OptionTest.namedTest("input-exclude-parsed-scm", this::inputExcludeParsedScmTest));
@@ -131,25 +124,17 @@ public abstract class AbstractConfigurationOptionsProvider extends AbstractOptio
         addTest(OptionCollectionTest.OptionTest.namedTest("license-families-approved-file", this::licenseFamiliesApprovedFileTest));
         addTest(OptionCollectionTest.OptionTest.namedTest("license-families-denied", this::licenseFamiliesDeniedTest));
         addTest(OptionCollectionTest.OptionTest.namedTest("license-families-denied-file", this::licenseFamiliesDeniedFileTest));
-        addTest(OptionCollectionTest.OptionTest.namedTest("licenses", this::licensesTest));
         addTest(OptionCollectionTest.OptionTest.namedTest("licenses-approved", this::licensesApprovedTest));
         addTest(OptionCollectionTest.OptionTest.namedTest("licenses-approved-file", this::licensesApprovedFileTest));
         addTest(OptionCollectionTest.OptionTest.namedTest("licenses-denied", this::licensesDeniedTest));
         addTest(OptionCollectionTest.OptionTest.namedTest("licenses-denied-file", this::licensesDeniedFileTest));
-        addTest(OptionCollectionTest.OptionTest.namedTest("list-families", this::listFamiliesTest));
-        addTest(OptionCollectionTest.OptionTest.namedTest("list-licenses", this::listLicensesTest));
         addTest(OptionCollectionTest.OptionTest.namedTest("log-level", this::logLevelTest));
-        addTest(OptionCollectionTest.OptionTest.namedTest("no-default-licenses", this::noDefaultsTest));
-        addTest(OptionCollectionTest.OptionTest.namedTest("out", this::outTest));
         addTest(OptionCollectionTest.OptionTest.namedTest("output-archive", this::outputArchiveTest));
         addTest(OptionCollectionTest.OptionTest.namedTest("output-families", this::outputFamiliesTest));
         addTest(OptionCollectionTest.OptionTest.namedTest("output-file", this::outputFileTest));
         addTest(OptionCollectionTest.OptionTest.namedTest("output-licenses", this::outputLicensesTest));
         addTest(OptionCollectionTest.OptionTest.namedTest("output-standard", this::outputStandardTest));
         addTest(OptionCollectionTest.OptionTest.namedTest("output-style", this::outputStyleTest));
-        addTest(OptionCollectionTest.OptionTest.namedTest("scan-hidden-directories", this::scanHiddenDirectoriesTest));
-        addTest(OptionCollectionTest.OptionTest.namedTest("stylesheet", this::styleSheetTest));
-        addTest(OptionCollectionTest.OptionTest.namedTest("xml", this::xmlTest));
         super.validate(unsupportedArgs);
     }
 
@@ -171,7 +156,7 @@ public abstract class AbstractConfigurationOptionsProvider extends AbstractOptio
                 DocumentName docName = mkDocName(fname);
                 assertThat(excluder.matches(docName)).as(() -> dump(option, fname, excluder, docName)).isFalse();
             }
-        } catch (IOException e) {
+        } catch (IOException | ParseException e) {
             fail(e.getMessage());
         }
     }
@@ -181,16 +166,8 @@ public abstract class AbstractConfigurationOptionsProvider extends AbstractOptio
         execExcludeTest(option, new String[]{outputFile.getAbsolutePath()});
     }
 
-    protected void excludeFileTest() {
-        excludeFileTest(Arg.EXCLUDE_FILE.find("exclude-file"));
-    }
-
     protected void inputExcludeFileTest() {
         excludeFileTest(Arg.EXCLUDE_FILE.find("input-exclude-file"));
-    }
-
-    protected void excludeTest() {
-        execExcludeTest(Arg.EXCLUDE.find("exclude"), EXCLUDE_ARGS);
     }
 
     protected void inputExcludeTest() {
@@ -213,7 +190,7 @@ public abstract class AbstractConfigurationOptionsProvider extends AbstractOptio
                 DocumentName docName = mkDocName(fname);
                 assertThat(excluder.matches(docName)).as(() -> dump(option, fname, excluder, docName)).isTrue();
             }
-        } catch (IOException e) {
+        } catch (IOException | ParseException e) {
             fail(e.getMessage());
         }
     }
@@ -249,7 +226,7 @@ public abstract class AbstractConfigurationOptionsProvider extends AbstractOptio
                 DocumentName docName = mkDocName(fname);
                 assertThat(excluder.matches(docName)).as(() -> dump(option, fname, excluder, docName)).isTrue();
             }
-        } catch (IOException e) {
+        } catch (IOException | ParseException e) {
             fail(e.getMessage());
         }
     }
@@ -275,7 +252,7 @@ public abstract class AbstractConfigurationOptionsProvider extends AbstractOptio
                 DocumentName docName = mkDocName(fname);
                 assertThat(excluder.matches(docName)).as(() -> dump(option, fname, excluder, docName)).isTrue();
             }
-        } catch (IOException e) {
+        } catch (IOException | ParseException e) {
             fail(e.getMessage());
         }
     }
@@ -297,7 +274,7 @@ public abstract class AbstractConfigurationOptionsProvider extends AbstractOptio
                 DocumentName docName = mkDocName(fname);
                 assertThat(excluder.matches(docName)).as(() -> dump(option, fname, excluder, docName)).isTrue();
             }
-        } catch (IOException e) {
+        } catch (IOException | ParseException e) {
             fail(e.getMessage());
         }
     }
@@ -311,13 +288,6 @@ public abstract class AbstractConfigurationOptionsProvider extends AbstractOptio
         includeFileTest(Arg.INCLUDE_FILE.find("input-include-file"));
     }
 
-    protected void includesFileTest() {
-        includeFileTest(Arg.INCLUDE_FILE.find("includes-file"));
-    }
-
-    protected void includeTest() {
-        execIncludeTest(Arg.INCLUDE.find("include"), INCLUDE_ARGS);
-    }
 
     protected void inputIncludeTest() {
         execIncludeTest(Arg.INCLUDE.find("input-include"), INCLUDE_ARGS);
@@ -341,7 +311,7 @@ public abstract class AbstractConfigurationOptionsProvider extends AbstractOptio
                 DocumentName docName = mkDocName(fname);
                 assertThat(excluder.matches(docName)).as(() -> dump(option, fname, excluder, docName)).isTrue();
             }
-        } catch (IOException e) {
+        } catch (IOException | ParseException e) {
             fail(e.getMessage());
         }
     }
@@ -351,7 +321,7 @@ public abstract class AbstractConfigurationOptionsProvider extends AbstractOptio
         try {
             ReportConfiguration config = generateConfig(ImmutablePair.of(option, new String[]{baseDir.getAbsolutePath()}));
             assertThat(config.hasSource()).isTrue();
-        } catch (IOException e) {
+        } catch (IOException | ParseException e) {
             fail(e.getMessage());
         }
     }
@@ -363,7 +333,7 @@ public abstract class AbstractConfigurationOptionsProvider extends AbstractOptio
             ReportConfiguration config = generateConfig(arg1);
             SortedSet<String> result = config.getLicenseIds(LicenseSetFactory.LicenseFilter.APPROVED);
             assertThat(result).contains("one", "two");
-        } catch (IOException e) {
+        } catch (IOException | ParseException e) {
             fail(e.getMessage());
         }
 
@@ -376,7 +346,7 @@ public abstract class AbstractConfigurationOptionsProvider extends AbstractOptio
             ReportConfiguration config = generateConfig(arg1, arg2);
             SortedSet<String> result = config.getLicenseIds(LicenseSetFactory.LicenseFilter.APPROVED);
             assertThat(result).containsExactly("one", "two");
-        } catch (IOException e) {
+        } catch (IOException | ParseException e) {
             fail(e.getMessage());
         }
     }
@@ -387,7 +357,7 @@ public abstract class AbstractConfigurationOptionsProvider extends AbstractOptio
         try (PrintStream out = new PrintStream(output)) {
             System.setOut(out);
             generateConfig(ImmutablePair.of(HELP_LICENSES.option(), null));
-        } catch (IOException e) {
+        } catch (IOException | ParseException e) {
             fail(e.getMessage());
         } finally {
             System.setOut(origin);
@@ -415,7 +385,7 @@ public abstract class AbstractConfigurationOptionsProvider extends AbstractOptio
             assertThat(config.getLicenseIds(LicenseSetFactory.LicenseFilter.ALL)).contains("ILLUMOS");
             SortedSet<String> result = config.getLicenseIds(LicenseSetFactory.LicenseFilter.APPROVED);
             assertThat(result).doesNotContain("ILLUMOS");
-        } catch (IOException e) {
+        } catch (IOException | ParseException e) {
             fail(e.getMessage());
         }
     }
@@ -437,7 +407,7 @@ public abstract class AbstractConfigurationOptionsProvider extends AbstractOptio
             ReportConfiguration config = generateConfig(arg1);
             SortedSet<String> result = config.getLicenseCategories(LicenseSetFactory.LicenseFilter.APPROVED);
             assertThat(result).contains(catz);
-        } catch (IOException e) {
+        } catch (IOException | ParseException e) {
             fail(e.getMessage());
         }
 
@@ -446,7 +416,7 @@ public abstract class AbstractConfigurationOptionsProvider extends AbstractOptio
             ReportConfiguration config = generateConfig(arg1, arg2);
             SortedSet<String> result = config.getLicenseCategories(LicenseSetFactory.LicenseFilter.APPROVED);
             assertThat(result).containsExactly(catz);
-        } catch (IOException e) {
+        } catch (IOException | ParseException e) {
             fail(e.getMessage());
         }
     }
@@ -469,7 +439,7 @@ public abstract class AbstractConfigurationOptionsProvider extends AbstractOptio
             assertThat(config.getLicenseCategories(LicenseSetFactory.LicenseFilter.ALL)).contains(gpl);
             SortedSet<String> result = config.getLicenseCategories(LicenseSetFactory.LicenseFilter.APPROVED);
             assertThat(result).doesNotContain(gpl);
-        } catch (IOException e) {
+        } catch (IOException | ParseException e) {
             fail(e.getMessage());
         }
     }
@@ -502,7 +472,7 @@ public abstract class AbstractConfigurationOptionsProvider extends AbstractOptio
             config = generateConfig(ImmutablePair.of(option, args));
             assertThat(config.getClaimValidator().getMax(ClaimStatistic.Counter.UNAPPROVED)).isEqualTo(5);
             assertThat(config.getClaimValidator().getMax(ClaimStatistic.Counter.IGNORED)).isEqualTo(0);
-        } catch (IOException e) {
+        } catch (IOException | ParseException e) {
             fail(e.getMessage());
         }
     }
@@ -524,7 +494,7 @@ public abstract class AbstractConfigurationOptionsProvider extends AbstractOptio
             config = generateConfig(ImmutablePair.of(option, args));
             assertThat(config.getClaimValidator().getMin(ClaimStatistic.Counter.UNAPPROVED)).isEqualTo(5);
             assertThat(config.getClaimValidator().getMin(ClaimStatistic.Counter.IGNORED)).isEqualTo(0);
-        } catch (IOException e) {
+        } catch (IOException | ParseException e) {
             fail(e.getMessage());
         }
     }
@@ -546,13 +516,9 @@ public abstract class AbstractConfigurationOptionsProvider extends AbstractOptio
             assertThat(set).hasSize(2);
             assertThat(LicenseSetFactory.search("ONE", "ONE", set)).isPresent();
             assertThat(LicenseSetFactory.search("TWO", "TWO", set)).isPresent();
-        } catch (IOException e) {
+        } catch (IOException | ParseException e) {
             fail(e.getMessage());
         }
-    }
-
-    protected void licensesTest() {
-        configTest(Arg.CONFIGURATION.find("licenses"));
     }
 
     protected void configTest() {
@@ -565,13 +531,9 @@ public abstract class AbstractConfigurationOptionsProvider extends AbstractOptio
             assertThat(config.getLicenses(LicenseSetFactory.LicenseFilter.ALL)).isEmpty();
             config = generateConfig(ImmutablePair.nullPair());
             assertThat(config.getLicenses(LicenseSetFactory.LicenseFilter.ALL)).isNotEmpty();
-        } catch (IOException e) {
+        } catch (IOException | ParseException e) {
             fail(e.getMessage());
         }
-    }
-
-    protected void noDefaultsTest() {
-        noDefaultsTest(Arg.CONFIGURATION_NO_DEFAULTS.find("no-default-licenses"));
     }
 
     protected void configurationNoDefaultsTest() {
@@ -584,7 +546,7 @@ public abstract class AbstractConfigurationOptionsProvider extends AbstractOptio
             assertThat(config.isDryRun()).isTrue();
             config = generateConfig(ImmutablePair.nullPair());
             assertThat(config.isDryRun()).isFalse();
-        } catch (IOException e) {
+        } catch (IOException | ParseException e) {
             fail(e.getMessage());
         }
     }
@@ -597,17 +559,12 @@ public abstract class AbstractConfigurationOptionsProvider extends AbstractOptio
             Pair<Option, String[]> arg2 = ImmutablePair.of(Arg.EDIT_ADD.find("edit-license"), null);
             config = generateConfig(arg1, arg2);
             assertThat(config.getCopyrightMessage()).isEqualTo("MyCopyright");
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (IOException | ParseException e) {
             if (e.getCause() != null) {
-                fail(e.getMessage() + ": " + e.getCause().getMessage());
+                fail(e.getMessage() + ": " + e.getCause().getMessage(), e);
             }
-            fail(e.getMessage());
+            fail(e.getMessage(), e);
         }
-    }
-
-    protected void copyrightTest() {
-        editCopyrightTest(Arg.EDIT_COPYRIGHT.find("copyright"));
     }
 
     protected void editCopyrightTest() {
@@ -620,13 +577,9 @@ public abstract class AbstractConfigurationOptionsProvider extends AbstractOptio
             assertThat(config.isAddingLicenses()).isTrue();
             config = generateConfig(ImmutablePair.nullPair());
             assertThat(config.isAddingLicenses()).isFalse();
-        } catch (IOException e) {
+        } catch (IOException | ParseException e) {
             fail(e.getMessage());
         }
-    }
-
-    protected void addLicenseTest() {
-        editLicenseTest(Arg.EDIT_ADD.find("addLicense"));
     }
 
     protected void editLicenseTest() {
@@ -642,13 +595,9 @@ public abstract class AbstractConfigurationOptionsProvider extends AbstractOptio
 
             config = generateConfig(arg1, arg2);
             assertThat(config.isAddingLicensesForced()).isTrue();
-        } catch (IOException e) {
+        } catch (IOException | ParseException e) {
             fail(e.getMessage());
         }
-    }
-
-    protected void forceTest() {
-        overwriteTest(Arg.EDIT_OVERWRITE.find("force"));
     }
 
     protected void editOverwriteTest() {
@@ -665,7 +614,7 @@ public abstract class AbstractConfigurationOptionsProvider extends AbstractOptio
                     args[0] = level.name();
                     generateConfig(ImmutablePair.of(option, args));
                     assertThat(DefaultLog.getInstance().getLevel()).isEqualTo(level);
-                } catch (IOException e) {
+                } catch (IOException | ParseException e) {
                     fail(e.getMessage());
                 }
             }
@@ -682,7 +631,7 @@ public abstract class AbstractConfigurationOptionsProvider extends AbstractOptio
                 ReportConfiguration config = generateConfig(ImmutablePair.of(option, args));
                 assertThat(config.getArchiveProcessing()).isEqualTo(proc);
             }
-        } catch (IOException e) {
+        } catch (IOException | ParseException e) {
             fail(e.getMessage());
         }
     }
@@ -698,14 +647,10 @@ public abstract class AbstractConfigurationOptionsProvider extends AbstractOptio
                 args[0] = filter.name();
                 ReportConfiguration config = generateConfig(ImmutablePair.of(option, args));
                 assertThat(config.listFamilies()).isEqualTo(filter);
-            } catch (IOException e) {
+            } catch (IOException | ParseException e) {
                 fail(e.getMessage());
             }
         }
-    }
-
-    protected void listFamiliesTest() {
-        listFamilies(Arg.OUTPUT_FAMILIES.find("list-families"));
     }
 
     protected void outputFamiliesTest() {
@@ -727,13 +672,9 @@ public abstract class AbstractConfigurationOptionsProvider extends AbstractOptio
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
-        } catch (IOException e) {
+        } catch (IOException | ParseException e) {
             fail(e.getMessage());
         }
-    }
-
-    protected void outTest() {
-        outTest(Arg.OUTPUT_FILE.find("out"));
     }
 
     protected void outputFileTest() {
@@ -747,14 +688,10 @@ public abstract class AbstractConfigurationOptionsProvider extends AbstractOptio
                 args[0] = filter.name();
                 ReportConfiguration config = generateConfig(ImmutablePair.of(option, args));
                 assertThat(config.listLicenses()).isEqualTo(filter);
-            } catch (IOException e) {
+            } catch (IOException | ParseException e) {
                 fail(e.getMessage());
             }
         }
-    }
-
-    protected void listLicensesTest() {
-        listLicenses(Arg.OUTPUT_LICENSES.find("list-licenses"));
     }
 
     protected void outputLicensesTest() {
@@ -769,7 +706,7 @@ public abstract class AbstractConfigurationOptionsProvider extends AbstractOptio
                 ReportConfiguration config = generateConfig(ImmutablePair.of(option, args));
                 assertThat(config.getStandardProcessing()).isEqualTo(proc);
             }
-        } catch (IOException e) {
+        } catch (IOException | ParseException e) {
             fail(e.getMessage());
         }
     }
@@ -799,38 +736,13 @@ public abstract class AbstractConfigurationOptionsProvider extends AbstractOptio
                     assertThat(IOUtils.contentEquals(expected, actual)).as(() -> String.format("'%s' does not match", sheet)).isTrue();
                 }
             }
-        } catch (IOException e) {
+        } catch (IOException | ParseException e) {
             fail(e.getMessage());
         }
-    }
-
-    protected void styleSheetTest() {
-        styleSheetTest(Arg.OUTPUT_STYLE.find("stylesheet"));
     }
 
     protected void outputStyleTest() {
         styleSheetTest(Arg.OUTPUT_STYLE.find("output-style"));
     }
 
-    protected void scanHiddenDirectoriesTest() {
-        try {
-            ReportConfiguration config = generateConfig(ImmutablePair.of(Arg.INCLUDE_STD.find("scan-hidden-directories"), null));
-            DocumentNameMatcher excluder = config.getDocumentExcluder(baseName());
-            assertThat(excluder.matches(mkDocName(".file"))).as(".file").isTrue();
-        } catch (IOException e) {
-            fail(e.getMessage());
-        }
-    }
-
-    protected void xmlTest() {
-        try {
-            ReportConfiguration config = generateConfig(ImmutablePair.of(Arg.OUTPUT_STYLE.find("xml"), null));
-            try (InputStream expected = StyleSheets.getStyleSheet("xml").get();
-                 InputStream actual = config.getStyleSheet().get()) {
-                assertThat(IOUtils.contentEquals(expected, actual)).as("'xml' does not match").isTrue();
-            }
-        } catch (IOException e) {
-            fail(e.getMessage());
-        }
-    }
 }

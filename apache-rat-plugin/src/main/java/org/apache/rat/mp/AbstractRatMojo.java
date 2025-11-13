@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.cli.Option;
+import org.apache.commons.cli.ParseException;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
@@ -254,7 +255,7 @@ public abstract class AbstractRatMojo extends BaseRatMojo {
                     new org.apache.rat.help.Licenses(config, new PrintWriter(log.asWriter())).printHelp();
                 }
                 reportConfiguration = config;
-            } catch (IOException e) {
+            } catch (IOException | ParseException e) {
                 throw new MojoExecutionException(e);
             }
         }
