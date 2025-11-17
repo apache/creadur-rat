@@ -69,7 +69,7 @@ in order to be properly linked in site reports.
     -->
     <release version="1.0.0" date="xxxx-yy-zz" description="Current SNAPSHOT - release to be done">
       <action issue="RAT-490" type="fix" dev="pottlinger" due-to="Lenny Primark">
-        Update commons-lang to 3.20.0 to avoid deprecation warnings when building with JDK25 (Use of the three-letter time zone ID 'ACT' is deprecated and it will be removed in a future release). RAT itself cannot be built with JDK25 yet.
+        Update commons-lang3 to 3.20.0 to avoid deprecation warnings when building with JDK25 (Use of the three-letter time zone ID 'ACT' is deprecated and it will be removed in a future release). RAT itself cannot be built with JDK25 yet.
       </action>
       <action issue="RAT-497" type="fix" dev="pottlinger">
         Fix javadoc generation problem with JDK17 (javadoc:javadoc) by removing reference to method itself and fix other javadoc errors in IXmlWriter, but combined javadoc/site build still fails.
