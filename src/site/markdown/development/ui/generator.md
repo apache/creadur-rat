@@ -83,7 +83,7 @@ The `MavenGenerator` uses a template called "Maven.tpl" that looks like:
 ${package}
 
 import org.apache.commons.cli.Option;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.rat.commandline.Arg;

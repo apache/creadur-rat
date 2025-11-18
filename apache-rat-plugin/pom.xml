@@ -26,14 +26,15 @@
   <packaging>maven-plugin</packaging>
   <name>Apache Creadur RAT::Plugin4Maven</name>
   <description>A plugin for Apache Maven that runs Apache RAT
-    to audit the source to be distributed.</description>
+                to audit the source to be distributed.</description>
   <inceptionYear>2007</inceptionYear>
   <prerequisites>
     <maven>${mavenMinVersion}</maven>
   </prerequisites>
   <properties>
     <currentVersion>${project.version}</currentVersion>
-    <doxiaVersion>2.0.0</doxiaVersion>
+    <doxiaVersion>1.12.0</doxiaVersion>
+    <doxiaSitetoolsVersion>1.11.1</doxiaSitetoolsVersion>
   </properties>
   <build>
     <resources>
@@ -375,12 +376,12 @@
     </dependency>
     <dependency>
       <groupId>org.apache.maven.doxia</groupId>
-      <artifactId>doxia-site-model</artifactId>
-      <version>${doxiaVersion}</version>
+      <artifactId>doxia-decoration-model</artifactId>
+      <version>${doxiaSitetoolsVersion}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven.doxia</groupId>
-      <artifactId>doxia-module-xhtml5</artifactId>
+      <artifactId>doxia-module-xhtml</artifactId>
       <version>${doxiaVersion}</version>
     </dependency>
     <dependency>
@@ -391,7 +392,7 @@
     <dependency>
       <groupId>org.apache.maven.doxia</groupId>
       <artifactId>doxia-integration-tools</artifactId>
-      <version>${doxiaVersion}</version>
+      <version>${doxiaSitetoolsVersion}</version>
       <exclusions>
         <exclusion>
           <groupId>org.codehaus.plexus</groupId>
@@ -402,7 +403,7 @@
     <dependency>
       <groupId>org.apache.maven.doxia</groupId>
       <artifactId>doxia-site-renderer</artifactId>
-      <version>${doxiaVersion}</version>
+      <version>${doxiaSitetoolsVersion}</version>
       <exclusions>
         <exclusion>
           <groupId>org.codehaus.plexus</groupId>
@@ -413,7 +414,7 @@
     <dependency>
       <groupId>org.apache.maven.reporting</groupId>
       <artifactId>maven-reporting-api</artifactId>
-      <version>4.0.0</version>
+      <version>3.1.1</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven.shared</groupId>
@@ -470,46 +471,4 @@
       </plugin>
     </plugins>
   </reporting>
-  <developers>
-    <developer>
-      <id>jochen</id>
-      <name>Jochen Wiedmann</name>
-      <email>jochen.wiedmann@gmail.com</email>
-    </developer>
-  </developers>
-  <contributors>
-    <contributor>
-      <name>Bernd Bohmann</name>
-      <email>bommel@apache.org</email>
-    </contributor>
-    <contributor>
-      <name>Lars Trieloff</name>
-      <email>lars@trieloff.net</email>
-    </contributor>
-    <contributor>
-      <name>Jukka Zitting</name>
-      <email>jukka@apache.org</email>
-    </contributor>
-  </contributors>
-  <!--
-  <profiles>
-    <profile>
-      <id>apache-release</id>
-      <build>
-        <plugins>
-          <plugin>
-            <artifactId>maven-docck-plugin</artifactId>
-              <executions>
-                <execution>
-                  <goals>
-                    <goal>check</goal>
-                  </goals>
-                </execution>
-              </executions>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-  </profiles>
--->
 </project>
