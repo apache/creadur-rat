@@ -470,46 +470,4 @@
       </plugin>
     </plugins>
   </reporting>
-  <developers>
-    <developer>
-      <id>jochen</id>
-      <name>Jochen Wiedmann</name>
-      <email>jochen.wiedmann@gmail.com</email>
-    </developer>
-  </developers>
-  <contributors>
-    <contributor>
-      <name>Bernd Bohmann</name>
-      <email>bommel@apache.org</email>
-    </contributor>
-    <contributor>
-      <name>Lars Trieloff</name>
-      <email>lars@trieloff.net</email>
-    </contributor>
-    <contributor>
-      <name>Jukka Zitting</name>
-      <email>jukka@apache.org</email>
-    </contributor>
-  </contributors>
-  <!--
-  <profiles>
-    <profile>
-      <id>apache-release</id>
-      <build>
-        <plugins>
-          <plugin>
-            <artifactId>maven-docck-plugin</artifactId>
-              <executions>
-                <execution>
-                  <goals>
-                    <goal>check</goal>
-                  </goals>
-                </execution>
-              </executions>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-  </profiles>
--->
 </project>
