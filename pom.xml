@@ -603,7 +603,7 @@ agnostic home for software distribution comprehension and audit tools.
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-release-plugin</artifactId>
-          <version>3.2.0</version>
+          <version>3.3.0</version>
           <configuration>
             <!-- Only prompt once for the release version -->
             <autoVersionSubmodules>true</autoVersionSubmodules>
