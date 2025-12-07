@@ -171,10 +171,12 @@ public abstract class AbstractFileProcessorBuilder {
      */
     private void checkDirectory(final int level, final DocumentName root, final DocumentName directory, final FileFilter fileFilter) {
         File dirFile = directory.asFile();
+        // find any instances of the file being processed (e.g. .gitignore) in this directory.
         for (File file : listFiles(dirFile, fileFilter)) {
             LevelBuilder levelBuilder = levelBuilders.computeIfAbsent(level, k -> new LevelBuilder());
             levelBuilder.add(process(levelBuilder::add, root, DocumentName.builder(file).build()));
         }
+        // find all the directories under this directory and add them.
         for (File dir : listFiles(dirFile, DirectoryFileFilter.DIRECTORY)) {
             checkDirectory(level + 1, root, DocumentName.builder(dir).setBaseName(directory.getBaseName()).build(), fileFilter);
         }

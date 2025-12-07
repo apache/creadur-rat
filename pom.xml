@@ -616,6 +616,7 @@ agnostic home for software distribution comprehension and audit tools.
           <version>3.4.0</version>
           <configuration>
             <propertiesEncoding>ISO-8859-1</propertiesEncoding>
+            <addDefaultExcludes>false</addDefaultExcludes>
           </configuration>
         </plugin>
         <plugin>
