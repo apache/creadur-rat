@@ -67,7 +67,7 @@ jobs:
         run: ./mvnw -e -B -V -ntp clean install
 
       - name: Archive integration failure
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         if: failure()
         with:
           name: reporting-integration-test-failure-logs-${{ matrix.os }}-JDK${{ matrix.java }}-PR${{ github.run_id }}
@@ -76,7 +76,7 @@ jobs:
             apache-rat-core/target/test-classes/ReportTest/**
 
       - name: Archive test failure
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         if: failure()
         with:
           name: test-failure-logs-${{ matrix.os }}-JDK${{ matrix.java }}-PR${{ github.run_id }}
