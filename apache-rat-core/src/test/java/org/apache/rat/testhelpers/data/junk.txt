@@ -1,0 +1,477 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one   *
+ * or more contributor license agreements.  See the NOTICE file *
+ * distributed with this work for additional information        *
+ * regarding copyright ownership.  The ASF licenses this file   *
+ * to you under the Apache License, Version 2.0 (the            *
+ * "License"); you may not use this file except in compliance   *
+ * with the License.  You may obtain a copy of the License at   *
+ *                                                              *
+ *   http://www.apache.org/licenses/LICENSE-2.0                 *
+ *                                                              *
+ * Unless required by applicable law or agreed to in writing,   *
+ * software distributed under the License is distributed on an  *
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY       *
+ * KIND, either express or implied.  See the License for the    *
+ * specific language governing permissions and limitations      *
+ * under the License.                                           *
+ */
+package org.apache.rat;
+
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.PrintStream;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.regex.Pattern;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
+import org.apache.commons.cli.Option;
+import org.apache.commons.cli.Options;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
+import org.apache.rat.api.RatException;
+import org.apache.rat.commandline.Arg;
+import org.apache.rat.commandline.StyleSheets;
+import org.apache.rat.config.exclusion.StandardCollection;
+import org.apache.rat.config.results.ClaimValidator;
+import org.apache.rat.configuration.builders.SpdxBuilder;
+import org.apache.rat.help.Help;
+import org.apache.rat.license.ILicense;
+import org.apache.rat.license.ILicenseFamily;
+import org.apache.rat.license.LicenseSetFactory;
+import org.apache.rat.report.claim.ClaimStatistic;
+import org.apache.rat.test.AbstractOptionsProvider;
+import org.apache.rat.test.utils.OptionFormatter;
+import org.apache.rat.test.utils.Resources;
+import org.apache.rat.testhelpers.FileUtils;
+import org.apache.rat.testhelpers.TestingLog;
+import org.apache.rat.testhelpers.TextUtils;
+import org.apache.rat.testhelpers.XmlUtils;
+import org.apache.rat.utils.DefaultLog;
+import org.apache.rat.utils.Log;
+import org.junit.jupiter.params.provider.ArgumentsProvider;
+import org.w3c.dom.Document;
+import org.xml.sax.SAXException;
+
+import static org.apache.rat.commandline.Arg.HELP_LICENSES;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Fail.fail;
+
+/**
+ * A class to provide the Options and tests to the testOptionsUpdateConfig.
+ */
+class ReporterOptionsProvider extends AbstractOptionsProvider implements ArgumentsProvider {
+    static File sourceDir;
+
+    /**
+     * A flag to determine if help was called
+     */
+    final AtomicBoolean helpCalled = new AtomicBoolean(false);
+
+    public ReporterOptionsProvider() {
+        super(ReporterOptionsTest.testPath.toFile());
+        processTestFunctionAnnotations();
+        testMap.put("addLicense", this::addLicenseTest);
+        testMap.remove("add-license");
+        testMap.put("dir", () -> DefaultLog.getInstance().info("--dir has no valid test"));
+        super.validate(Collections.emptyList());
+    }
+
+    /**
+     * Generate a ReportConfiguration from a set of arguments.
+     * Forces the {@code helpCalled} flag to be reset.
+     *
+     * @param args the arguments.
+     * @return A ReportConfiguration
+     * @throws IOException on critical error.
+     */
+    @Override
+    protected final ReportConfiguration generateConfig(List<Pair<Option, String[]>> args) throws IOException {
+        return generateConfig(args, false);
+    }
+
+    protected final ReportConfiguration generateConfig(List<Pair<Option, String[]>> args, boolean helpExpected) throws IOException {
+        if (sourceDir == null) {
+            throw new IOException("sourceDir not set");
+        }
+        helpCalled.set(false);
+        ReportConfiguration config = OptionCollection.parseCommands(sourceDir, extractArgs(args), o -> helpCalled.set(true), true);
+        assertThat(helpCalled.get()).as("Help was called").isEqualTo(helpExpected);
+        if (config != null && !config.hasSource()) {
+            config.addSource(OptionCollection.getReportable(sourceDir, config));
+        }
+        return config;
+    }
+
+    private void configureSourceDir(Option option) {
+        sourceDir = new File(baseDir, OptionFormatter.getName(option));
+        FileUtils.mkDir(sourceDir);
+    }
+
+    private void validateNoArgSetup() throws IOException, RatException {
+        // verify that without args the report is ok.
+        TestingLog log = new TestingLog();
+        DefaultLog.setInstance(log);
+        try {
+            ReportConfiguration config = generateConfig(Collections.emptyList());
+            Reporter reporter = new Reporter(config);
+            ClaimStatistic claimStatistic = reporter.execute();
+            ClaimValidator validator = config.getClaimValidator();
+            assertThat(validator.listIssues(claimStatistic)).isEmpty();
+        } finally {
+            DefaultLog.setInstance(null);
+        }
+
+    }
+
+
+    protected File writeFile(String name) {
+        return FileUtils.writeFile(sourceDir, name, Collections.singletonList(name));
+    }
+
+    protected File writeFile(String name, String content) {
+        return FileUtils.writeFile(sourceDir, name, Collections.singletonList(content));
+    }
+
+    protected File writeFile(String name, Iterable<String> content) {
+        return FileUtils.writeFile(sourceDir, name, content);
+    }
+
+
+
+
+    // exclude tests
+
+    private void excludeFileTest(final Option option) {
+        configureSourceDir(option);
+        File outputFile = FileUtils.writeFile(baseDir, "exclude.txt", Arrays.asList(EXCLUDE_ARGS));
+        execExcludeTest(option, new String[]{outputFile.getAbsolutePath()});
+    }
+
+    @OptionCollectionTest.TestFunction
+    protected void excludeFileTest() {
+        excludeFileTest(Arg.EXCLUDE_FILE.find("exclude-file"));
+    }
+
+    @OptionCollectionTest.TestFunction
+    protected void inputExcludeFileTest() {
+        excludeFileTest(Arg.EXCLUDE_FILE.find("input-exclude-file"));
+    }
+
+    @OptionCollectionTest.TestFunction
+    protected void excludeTest() {
+        execExcludeTest(Arg.EXCLUDE.find("exclude"), EXCLUDE_ARGS);
+    }
+
+    @OptionCollectionTest.TestFunction
+    protected void inputExcludeTest() {
+        execExcludeTest(Arg.EXCLUDE.find("input-exclude"), EXCLUDE_ARGS);
+    }
+
+    @OptionCollectionTest.TestFunction
+
+    @OptionCollectionTest.TestFunction
+
+    }
+
+    // include tests
+    private void execIncludeTest(final Option option, final String[] args) {
+    }
+
+    private void includeFileTest(final Option option) {
+        File outputFile = FileUtils.writeFile(baseDir, "include.txt", Arrays.asList(INCLUDE_ARGS));
+        execIncludeTest(option, new String[]{outputFile.getAbsolutePath()});
+    }
+
+    @OptionCollectionTest.TestFunction
+    protected void inputIncludeFileTest() {
+        includeFileTest(Arg.INCLUDE_FILE.find("input-include-file"));
+    }
+
+    @OptionCollectionTest.TestFunction
+    protected void includesFileTest() {
+        includeFileTest(Arg.INCLUDE_FILE.find("includes-file"));
+    }
+
+    @OptionCollectionTest.TestFunction
+    protected void includeTest() {
+        execIncludeTest(Arg.INCLUDE.find("include"), INCLUDE_ARGS);
+    }
+
+    @OptionCollectionTest.TestFunction
+    protected void inputIncludeTest() {
+        execIncludeTest(Arg.INCLUDE.find("input-include"), INCLUDE_ARGS);
+    }
+
+    @OptionCollectionTest.TestFunction
+    protected void inputIncludeStdTest() {
+    }
+
+    @OptionCollectionTest.TestFunction
+    protected void inputSourceTest() {
+        Option option = Arg.SOURCE.find("input-source");
+        try {
+            configureSourceDir(option);
+
+            writeFile("codefile");
+            File inputFile = writeFile("intput.txt", "codefile");
+            writeFile("notcodFile");
+
+            ReportConfiguration config = generateConfig();
+            Reporter reporter = new Reporter(config);
+            ClaimStatistic claimStatistic = reporter.execute();
+            assertThat(claimStatistic.getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(3);
+            assertThat(claimStatistic.getCounter(ClaimStatistic.Counter.IGNORED)).isEqualTo(0);
+
+            config = generateConfig(ImmutablePair.of(option, new String[]{inputFile.getAbsolutePath()}));
+            reporter = new Reporter(config);
+            claimStatistic = reporter.execute();
+            assertThat(claimStatistic.getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(1);
+            assertThat(claimStatistic.getCounter(ClaimStatistic.Counter.IGNORED)).isEqualTo(0);
+        } catch (IOException | RatException e) {
+            fail(e.getMessage(), e);
+        }
+    }
+
+    private ReportConfiguration addCatzLicense(ReportConfiguration config) {
+        String catz = ILicenseFamily.makeCategory("catz");
+        config.addFamily(ILicenseFamily.builder().setLicenseFamilyCategory(catz).setLicenseFamilyName("catz").build());
+        config.addLicense(ILicense.builder().setFamily(catz)
+                .setMatcher(new SpdxBuilder().setName("catz")));
+        return config;
+}
+
+    @OptionCollectionTest.TestFunction
+    protected void licenseFamiliesApprovedFileTest() {
+        Option option = Arg.FAMILIES_APPROVED_FILE.find("license-families-approved-file");
+        File outputFile = FileUtils.writeFile(baseDir, "familiesApproved.txt", Collections.singletonList("catz"));
+        execLicenseFamiliesApprovedTest(option, new String[]{outputFile.getAbsolutePath()});
+    }
+
+    @OptionCollectionTest.TestFunction
+    protected void licenseFamiliesApprovedTest() {
+        execLicenseFamiliesApprovedTest(Arg.FAMILIES_APPROVED.find("license-families-approved"),
+                new String[]{"catz"});
+    }
+
+
+    @OptionCollectionTest.TestFunction
+    protected void licenseFamiliesDeniedFileTest() {
+        File outputFile = FileUtils.writeFile(baseDir, "familiesDenied.txt", Collections.singletonList("BSD-3"));
+        execLicenseFamiliesDeniedTest(Arg.FAMILIES_DENIED_FILE.find("license-families-denied-file"),
+                new String[]{outputFile.getAbsolutePath()});
+    }
+
+    @OptionCollectionTest.TestFunction
+    protected void licenseFamiliesDeniedTest() {
+        execLicenseFamiliesDeniedTest(Arg.FAMILIES_DENIED.find("license-families-denied"),
+                new String[]{"BSD-3"});
+    }
+
+
+    private void configTest(final Option option) {
+
+    }
+
+    @OptionCollectionTest.TestFunction
+    protected void licensesTest() {
+        configTest(Arg.CONFIGURATION.find("licenses"));
+    }
+
+    @OptionCollectionTest.TestFunction
+    protected void configTest() {
+        configTest(Arg.CONFIGURATION.find("config"));
+    }
+
+    @OptionCollectionTest.TestFunction
+    protected void execLicensesApprovedTest(final Option option, String[] args) {
+
+    }
+
+    @OptionCollectionTest.TestFunction
+    protected void licensesApprovedFileTest() {
+        File outputFile = FileUtils.writeFile(baseDir, "licensesApproved.txt", Collections.singletonList("GPL1"));
+        execLicensesApprovedTest(Arg.LICENSES_APPROVED_FILE.find("licenses-approved-file"),
+                new String[]{outputFile.getAbsolutePath()});
+    }
+
+    @OptionCollectionTest.TestFunction
+    protected void licensesApprovedTest() {
+        execLicensesApprovedTest(Arg.LICENSES_APPROVED.find("licenses-approved"),
+                new String[]{"GPL1"});
+    }
+
+
+
+    private void outTest(final Option option) {
+
+    }
+
+    @OptionCollectionTest.TestFunction
+    protected void outTest() {
+        outTest(Arg.OUTPUT_FILE.find("out"));
+    }
+
+    @OptionCollectionTest.TestFunction
+    protected void outputFileTest() {
+        outTest(Arg.OUTPUT_FILE.find("output-file"));
+    }
+
+    private void styleSheetTest(final Option option) {
+    }
+
+    @OptionCollectionTest.TestFunction
+    protected void stylesheetTest() {
+        styleSheetTest(Arg.OUTPUT_STYLE.find("stylesheet"));
+    }
+
+    @OptionCollectionTest.TestFunction
+    protected void outputStyleTest() {
+        styleSheetTest(Arg.OUTPUT_STYLE.find("output-style"));
+    }
+
+
+
+    @OptionCollectionTest.TestFunction
+
+    private void listLicenses(final Option option) {
+
+        } catch (IOException | RatException | SAXException | ParserConfigurationException |
+                 XPathExpressionException e) {
+            fail(e.getMessage(), e);
+        }
+    }
+
+    @OptionCollectionTest.TestFunction
+    protected void listLicensesTest() {
+        listLicenses(Arg.OUTPUT_LICENSES.find("list-licenses"));
+    }
+
+    @OptionCollectionTest.TestFunction
+    protected void outputLicensesTest() {
+        listLicenses(Arg.OUTPUT_LICENSES.find("output-licenses"));
+    }
+
+    private void listFamilies(final Option option) {
+
+    }
+
+    @OptionCollectionTest.TestFunction
+    protected void listFamiliesTest() {
+        listFamilies(Arg.OUTPUT_FAMILIES.find("list-families"));
+    }
+
+    @OptionCollectionTest.TestFunction
+    protected void outputFamiliesTest() {
+        listFamilies(Arg.OUTPUT_FAMILIES.find("output-families"));
+    }
+
+
+
+    @OptionCollectionTest.TestFunction
+    protected void outputArchiveTest() {
+        archiveTest(Arg.OUTPUT_ARCHIVE.find("output-archive"));
+    }
+
+    private void standardTest(final Option option) {
+
+    }
+
+    @OptionCollectionTest.TestFunction
+    protected void outputStandardTest() {
+        standardTest(Arg.OUTPUT_STANDARD.find("output-standard"));
+    }
+
+
+
+    @OptionCollectionTest.TestFunction
+    protected void copyrightTest() {
+        editCopyrightTest(Arg.EDIT_COPYRIGHT.find("copyright"), null);
+    }
+
+    @OptionCollectionTest.TestFunction
+    protected void editCopyrightTest() {
+        editCopyrightTest(Arg.EDIT_COPYRIGHT.find("edit-copyright"), null);
+    }
+
+    @OptionCollectionTest.TestFunction
+    protected void forceTest() {
+        editCopyrightTest(Arg.EDIT_COPYRIGHT.find("edit-copyright"), Arg.EDIT_OVERWRITE.find("force"));
+    }
+
+    @OptionCollectionTest.TestFunction
+    protected void editOverwriteTest() {
+        editCopyrightTest(Arg.EDIT_COPYRIGHT.find("edit-copyright"), Arg.EDIT_OVERWRITE.find("edit-overwrite"));
+    }
+
+    @OptionCollectionTest.TestFunction
+    @Override
+    public void helpTest() {
+        PrintStream origin = System.out;
+        Options options = OptionCollection.buildOptions();
+        Pair<Option, String[]> arg1 = ImmutablePair.of(OptionCollection.HELP, null);
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        String actualText = null;
+        try (PrintStream out = new PrintStream(baos)) {
+            System.setOut(out);
+            configureSourceDir(OptionCollection.HELP);
+
+            ReportConfiguration config = generateConfig(Arrays.asList(arg1), true);
+            assertThat(helpCalled.get()).as("Help was not called").isTrue();
+            new Help(System.out).printUsage(options);
+            actualText = baos.toString(StandardCharsets.UTF_8.name());
+        } catch (IOException e) {
+            fail(e.getMessage(), e);
+        } finally {
+            System.setOut(origin);
+        }
+
+        // verify all the options
+        assertThat(actualText).contains("====== Available Options ======");
+        for (Option option : options.getOptions()) {
+            StringBuilder regex = new StringBuilder();
+            if (option.getOpt() != null) {
+                regex.append("-").append(option.getOpt());
+                if (option.hasLongOpt()) {
+                    regex.append(",");
+                }
+            }
+            if (option.hasLongOpt()) {
+                regex.append("--").append(option.getLongOpt());
+            }
+            if (option.hasArg()) {
+                String name = option.getArgName() == null ? "arg" : option.getArgName();
+                regex.append(".+\\<").append(name).append("\\>");
+            }
+            if (option.isDeprecated()) {
+                regex.append(".+\\[Deprecated ");
+            }
+            assertThat(Pattern.compile(regex.toString()).matcher(actualText).find()).as("missing '" + regex + "'").isTrue();
+        }
+
+        assertThat(actualText).contains("====== Argument Types ======");
+        assertThat(actualText).contains("====== Standard Collections ======");
+        for (StandardCollection collection : StandardCollection.values()) {
+            assertThat(actualText).contains("<" + collection.name() + ">");
+        }
+    }
+
+
+    @OptionCollectionTest.TestFunction
+    protected void dryRunTest() {
+        editCopyrightTest(Arg.EDIT_COPYRIGHT.find("edit-copyright"), Arg.DRY_RUN.find("dry-run"));
+    }
+}
