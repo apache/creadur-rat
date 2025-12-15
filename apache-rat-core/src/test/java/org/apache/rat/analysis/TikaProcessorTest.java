@@ -18,13 +18,22 @@
  */
 package org.apache.rat.analysis;
 
+import java.io.FileOutputStream;
+import java.io.OutputStream;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import org.apache.commons.io.IOUtils;
 import org.apache.rat.api.Document;
 import org.apache.rat.document.RatDocumentAnalysisException;
 import org.apache.rat.document.DocumentNameMatcher;
 import org.apache.rat.document.FileDocument;
 import org.apache.rat.report.claim.ClaimStatistic;
-import org.apache.rat.test.utils.Resources;
 import org.apache.rat.document.DocumentName;
+import org.apache.rat.testhelpers.FileUtils;
+import org.apache.rat.utils.DefaultLog;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -37,13 +46,35 @@ import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Objects;
 import java.util.SortedSet;
+import org.junit.jupiter.api.io.TempDir;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class TikaProcessorTest {
+
+    @TempDir
+    private static Path tempDir;
+
+    private final DocumentName basedir;
+
+    TikaProcessorTest() {
+        basedir = DocumentName.builder(tempDir.toFile()).build();
+    }
+
+    private static File copyResource(DocumentName basedir, final String resourceName) throws IOException {
+        final DocumentName outputName = DocumentName.builder(basedir).setName(resourceName).build();
+        final File outputFile = outputName.asFile();
+        FileUtils.mkDir(outputFile.getParentFile());
+        try (InputStream input = TikaProcessorTest.class.getResourceAsStream(resourceName);
+             OutputStream output = new FileOutputStream(outputFile)) {
+            assertThat(input).isNotNull();
+            IOUtils.copy(input, output);
+        }
+        return outputFile;
+    }
     /**
      * Used to swallow a MalformedInputException and return false
      * because the encoding of the stream was different from the
@@ -65,18 +96,14 @@ public class TikaProcessorTest {
 
     @Test
     public void UTF16_input() throws Exception {
-        Document doc = mkDocument(Resources.getResourceStream("/binaries/UTF16_with_signature.xml"),
-                DocumentNameMatcher.MATCHES_ALL);
+        Document doc = mkDocument("/binaries/UTF16_with_signature.xml");
         TikaProcessor.process(doc);
         assertEquals(Document.Type.STANDARD, doc.getMetaData().getDocumentType());
     }
 
-    private FileDocument mkDocument(File f) {
-        return new FileDocument(DocumentName.builder(f).build(), f, DocumentNameMatcher.MATCHES_ALL);
-    }
 
     private FileDocument mkDocument(String fileName) throws IOException {
-        return mkDocument(Resources.getResourceFile(fileName));
+        return new FileDocument(basedir, copyResource(basedir, fileName), DocumentNameMatcher.MATCHES_ALL);
     }
 
     @Test
@@ -101,14 +128,14 @@ public class TikaProcessorTest {
 
     @Test
     public void plainTextTest() throws Exception {
-        FileDocument doc = mkDocument(Resources.getExampleResource("exampleData/Text.txt"));
+        FileDocument doc = mkDocument("/exampleData/Text.txt");
         TikaProcessor.process(doc);
         assertEquals(Document.Type.STANDARD, doc.getMetaData().getDocumentType());
     }
 
     @Test
     public void emptyFileTest() throws Exception {
-        FileDocument doc = mkDocument(Resources.getExampleResource("exampleData/sub/Empty.txt"));
+        FileDocument doc = mkDocument("/exampleData/sub/Empty.txt");
         TikaProcessor.process(doc);
         assertEquals(Document.Type.STANDARD, doc.getMetaData().getDocumentType());
     }
@@ -120,27 +147,59 @@ public class TikaProcessorTest {
         assertEquals(Document.Type.STANDARD, doc.getMetaData().getDocumentType());
     }
 
-    @Test
-    public void testTikaFiles() throws RatDocumentAnalysisException {
-        File dir = new File("src/test/resources/tikaFiles");
-        Map<String, Document.Type> unseenMime = TikaProcessor.getDocumentTypeMap();
-        ClaimStatistic statistic = new ClaimStatistic();
+    public static List<FileDocument> getTikaTestFiles(final DocumentName basedir) throws IOException {
+        final List<FileDocument> result = new ArrayList<>();
+        final List<String> dirNames = new ArrayList<>();
         for (Document.Type docType : Document.Type.values()) {
-            File typeDir = new File(dir, docType.name().toLowerCase(Locale.ROOT));
-            if (typeDir.isDirectory()) {
-                for (File file : Objects.requireNonNull(typeDir.listFiles())) {
-                    Document doc = mkDocument(file);
-                    String mimeType = TikaProcessor.process(doc);
-                    statistic.incCounter(doc.getMetaData().getDocumentType(), 1);
-                    assertEquals(docType, doc.getMetaData().getDocumentType(), () -> "Wrong type for " + file.toString());
-                    unseenMime.remove(mimeType);
+            dirNames.add(docType.name().toLowerCase(Locale.ROOT));
+        }
+        final List<String> lines = IOUtils.readLines(TikaProcessorTest.class.getResource("/tikaFiles").openStream(),
+                StandardCharsets.UTF_8);
+        for (String line : lines) {
+            if (dirNames.contains(line)) {
+                final String path = "/tikaFiles/" + line;
+                List<String> files = IOUtils.readLines(TikaProcessorTest.class.getResource(path).openStream(),
+                        StandardCharsets.UTF_8);
+                for (String file : files) {
+                    result.add(new FileDocument(basedir, copyResource(basedir, path+"/"+file), DocumentNameMatcher.MATCHES_ALL));
                 }
+            } else {
+                result.add(new FileDocument(basedir, copyResource(basedir, "/tikaFiles/"+line), DocumentNameMatcher.MATCHES_ALL));
             }
         }
-        System.out.println("untested mime types");
-        unseenMime.keySet().forEach(System.out::println);
+        return result;
+    }
+
+    @Test
+    public void testTikaFiles() throws RatDocumentAnalysisException, IOException {
+        Pattern docTypeMatch  = Pattern.compile("/tikaFiles/([^/]+)/.*");
+        List<FileDocument> tikaFiles = getTikaTestFiles(basedir);
+        Map<String, Document.Type> unseenMime = TikaProcessor.getDocumentTypeMap();
+        ClaimStatistic statistic = new ClaimStatistic();
+        for (FileDocument document : tikaFiles) {
+            String mimeType = TikaProcessor.process(document);
+                    statistic.incCounter(document.getMetaData().getDocumentType(), 1);
+                    String localizedName = document.getName().localized("/");
+            Matcher matcher = docTypeMatch.matcher(localizedName);
+            if (matcher.matches()) {
+                String type = matcher.group(1);
+                Document.Type expected = Document.Type.valueOf(type.toUpperCase(Locale.ROOT));
+                assertThat(document.getMetaData().getDocumentType()).describedAs("Wrong type for " + document)
+                        .isEqualTo(expected);
+            }
+                    unseenMime.remove(mimeType);
+        }
+        // TODO ensure that all mime-types are tested.
+         //assertThat(unseenMime.keySet()).describedAs("Untested mime types").isEmpty();
+        unseenMime.keySet().forEach( t -> DefaultLog.getInstance().warn("Untested mime-type: " + t));
+
+        // TODO ensure that all document types are tested.
         for (Document.Type type : Document.Type.values()) {
-            System.out.format("Tested %s %s files%n", statistic.getCounter(type), type);
+            //assertThat(statistic.getCounter(type)).describedAs("Untested document type: " + type)
+            //                .isGreaterThan(0);
+            if (statistic.getCounter(type) == 0) {
+                DefaultLog.getInstance().warn("Untested documentType: " + type);
+            }
         }
     }
 

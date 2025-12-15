@@ -52,7 +52,7 @@ public class Resources {
      * Locates a test resource file in the classpath.
      */
     public static File getResourceFile(String pResource) throws IOException {
-        File f = getResourceFromBase(TEST_RESOURCE_BASE_PATH, pResource);
+        File f = getResourceFromBase(RESOURCE_BASE_PATH, pResource);
         if (!f.isFile()) {
             throw new FileNotFoundException("Unable to locate resource file: " + pResource);
         }
@@ -63,7 +63,7 @@ public class Resources {
      * Locates a test resource directory in the classpath.
      */
     public static File getResourceDirectory(String pResource) throws IOException {
-        File f = getResourceFromBase(TEST_RESOURCE_BASE_PATH, pResource);
+        File f = getResourceFromBase(RESOURCE_BASE_PATH, pResource);
         if (!f.isDirectory()) {
             throw new FileNotFoundException("Unable to locate resource directory: " + pResource);
         }
@@ -77,8 +77,8 @@ public class Resources {
      * @throws URISyntaxException in case of path I/O errors with the given resource.
      */
     public static File getExampleResource(String pResource) throws URISyntaxException {
-        URL url = Resources.class.getResource("/examples/" + pResource);
-        Objects.requireNonNull(url, "/examples/" + pResource + " not found");
+        URL url = Resources.class.getResource("/" + pResource);
+        Objects.requireNonNull(url, "/" + pResource + " not found");
         return Paths.get(url.toURI()).toFile();
     }
 

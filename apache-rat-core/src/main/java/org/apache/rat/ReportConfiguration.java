@@ -39,6 +39,7 @@ import java.util.SortedSet;
 import java.util.function.Consumer;
 
 import org.apache.commons.io.function.IOSupplier;
+import org.apache.commons.io.output.CloseShieldOutputStream;
 import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.commandline.StyleSheets;
 import org.apache.rat.config.AddLicenseHeaders;
@@ -507,7 +508,6 @@ public class ReportConfiguration {
      * closed consider wrapping it in a {@code NoCloseOutputStream}
      * @param out The OutputStream supplier that provides the output stream to write
      * the report to. A null value will use System.out.
-     * @see NoCloseOutputStream
      */
     public void setOut(final IOSupplier<OutputStream> out) {
         this.out = out;
@@ -542,7 +542,7 @@ public class ReportConfiguration {
      * @return The supplier of the output stream to write the report to.
      */
     public IOSupplier<OutputStream> getOutput() {
-        return out == null ? () -> new NoCloseOutputStream(System.out) : out;
+        return out == null ? () -> CloseShieldOutputStream.wrap(System.out) : out;
     }
 
     /**
@@ -842,63 +842,4 @@ public class ReportConfiguration {
         }
     }
 
-    /**
-     * A wrapper around an output stream that does not close the output stream.
-     */
-    public static class NoCloseOutputStream extends OutputStream {
-        /** the output stream this stream wraps */
-        private final OutputStream delegate;
-
-        /**
-         * Constructor.
-         * @param delegate the output stream to wrap.
-         */
-        public NoCloseOutputStream(final OutputStream delegate) {
-            this.delegate = delegate;
-        }
-
-        @Override
-        public void write(final int arg0) throws IOException {
-            delegate.write(arg0);
-        }
-
-        /**
-         * Does not actually close the delegate. But does perform a flush.
-         * @throws IOException on Error.
-         */
-        @Override
-        public void close() throws IOException {
-            this.delegate.flush();
-        }
-
-        @Override
-        public boolean equals(final Object obj) {
-            return delegate.equals(obj);
-        }
-
-        @Override
-        public void flush() throws IOException {
-            delegate.flush();
-        }
-
-        @Override
-        public int hashCode() {
-            return delegate.hashCode();
-        }
-
-        @Override
-        public String toString() {
-            return delegate.toString();
-        }
-
-        @Override
-        public void write(final byte[] arg0, final int arg1, final int arg2) throws IOException {
-            delegate.write(arg0, arg1, arg2);
-        }
-
-        @Override
-        public void write(final byte[] b) throws IOException {
-            delegate.write(b);
-        }
-    }
 }

@@ -18,10 +18,16 @@
  */
 package org.apache.rat.report.claim;
 
+import java.util.Set;
+import java.util.stream.Collectors;
+
 import org.apache.rat.ReportConfiguration;
 import org.apache.rat.api.Document;
 import org.apache.rat.api.RatException;
 import org.apache.rat.config.results.ClaimValidator;
+import org.apache.rat.license.ILicense;
+import org.apache.rat.license.ILicenseFamily;
+import org.apache.rat.license.LicenseSetFactory;
 import org.apache.rat.report.RatReport;
 import org.apache.rat.report.xml.XmlElements;
 import org.apache.rat.report.xml.writer.IXmlWriter;
@@ -44,6 +50,10 @@ public class ClaimValidatorReport implements RatReport {
     private final ClaimValidator validator;
 
     /**
+     * The report configuration.
+     */
+    private final ReportConfiguration configuration;
+    /**
      * Constructor.
      * @param writer the XMLWriter to write with.
      * @param statistic the Claim statistics to report.
@@ -53,6 +63,7 @@ public class ClaimValidatorReport implements RatReport {
         this.elements = new XmlElements(writer);
         this.statistic = statistic;
         this.validator = configuration.getClaimValidator();
+        this.configuration = configuration;
     }
 
     @Override
@@ -62,11 +73,15 @@ public class ClaimValidatorReport implements RatReport {
             int count = statistic.getCounter(counter);
             elements.statistic(counter.displayName(), count, counter.getDescription(), validator.isValid(counter, count));
         }
+        Set<String> families = configuration.getLicenseFamilies(LicenseSetFactory.LicenseFilter.APPROVED)
+                .stream().map(ILicenseFamily::getFamilyCategory).collect(Collectors.toSet());
         for (String category : statistic.getLicenseFamilyCategories()) {
-            elements.licenseCategory(category, statistic.getLicenseCategoryCount(category));
+            elements.licenseCategory(category, statistic.getLicenseCategoryCount(category), families.contains(category));
         }
-        for (String category : statistic.getLicenseNames()) {
-            elements.licenseName(category, statistic.getLicenseNameCount(category));
+        Set<String> licenses = configuration.getLicenses(LicenseSetFactory.LicenseFilter.APPROVED)
+                .stream().map(ILicense::getName).collect(Collectors.toSet());
+        for (String license : statistic.getLicenseNames()) {
+            elements.licenseName(license, statistic.getLicenseNameCount(license), licenses.contains(license));
         }
         for (Document.Type type : statistic.getDocumentTypes()) {
             elements.documentType(type.name(), statistic.getCounter(type));

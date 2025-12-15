@@ -65,12 +65,14 @@
                                 <xs:complexType mixed="true">
                                     <xs:attribute type="xs:integer" name="count" use="required"/>
                                     <xs:attribute type="xs:string" name="name" use="required"/>
+                                    <xs:attribute type="xs:boolean" name="approval" use="required" />
                                 </xs:complexType>
                             </xs:element>
                             <xs:element name="licenseName" maxOccurs="unbounded" minOccurs="0">
                                 <xs:complexType mixed="true">
                                     <xs:attribute type="xs:integer" name="count" use="required"/>
                                     <xs:attribute type="xs:string" name="name" use="required"/>
+                                    <xs:attribute type="xs:boolean" name="approval" use="required"/>
                                 </xs:complexType>
                             </xs:element>
                             <xs:element name="documentType" maxOccurs="unbounded" minOccurs="0">

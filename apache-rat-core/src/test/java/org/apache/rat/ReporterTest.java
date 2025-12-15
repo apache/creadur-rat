@@ -19,21 +19,23 @@
 package org.apache.rat;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Fail.fail;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.PrintStream;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.stream.Stream;
 import javax.xml.XMLConstants;
 import javax.xml.transform.Source;
 import javax.xml.transform.dom.DOMSource;
@@ -52,7 +54,6 @@ import org.apache.commons.io.FileUtils;
 import org.apache.rat.api.Document.Type;
 import org.apache.rat.api.RatException;
 import org.apache.rat.commandline.ArgumentContext;
-import org.apache.rat.commandline.StyleSheets;
 import org.apache.rat.document.FileDocument;
 import org.apache.rat.document.DocumentName;
 import org.apache.rat.license.ILicenseFamily;
@@ -60,9 +61,15 @@ import org.apache.rat.report.claim.ClaimStatistic;
 import org.apache.rat.test.utils.Resources;
 import org.apache.rat.testhelpers.TextUtils;
 import org.apache.rat.testhelpers.XmlUtils;
+import org.apache.rat.testhelpers.data.ReportTestDataProvider;
+import org.apache.rat.testhelpers.data.TestData;
+import org.apache.rat.testhelpers.data.ValidatorData;
 import org.apache.rat.walker.DirectoryWalker;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
@@ -86,7 +93,7 @@ public class ReporterTest {
         CommandLine cl = new DefaultParser().parse(OptionCollection.buildOptions(), new String[]{"--output-style", "xml", "--output-file", output.getPath(), basedir});
         ArgumentContext ctxt = new ArgumentContext(new File("."), cl);
         ReportConfiguration config = OptionCollection.createConfiguration(ctxt);
-        ClaimStatistic statistic = new Reporter(config).execute();
+        ClaimStatistic statistic = new Reporter(config).execute().getStatistic();
 
         assertThat(statistic.getCounter(Type.ARCHIVE)).isEqualTo(1);
         assertThat(statistic.getCounter(Type.BINARY)).isEqualTo(2);
@@ -137,11 +144,11 @@ public class ReporterTest {
     @Test
     public void testOutputOption() throws Exception {
         File output = new File(tempDirectory, "test");
-        CommandLine commandLine = new DefaultParser().parse(OptionCollection.buildOptions(), new String[]{"-o", output.getCanonicalPath(), basedir});
+        CommandLine commandLine = new DefaultParser().parse(OptionCollection.buildOptions(), new String[]{"--output-file", output.getCanonicalPath(), basedir});
         ArgumentContext ctxt = new ArgumentContext(new File("."), commandLine);
 
         ReportConfiguration config = OptionCollection.createConfiguration(ctxt);
-        new Reporter(config).output();
+        new Reporter(config).execute().format(config);
         assertThat(output.exists()).isTrue();
         String content = FileUtils.readFileToString(output, StandardCharsets.UTF_8);
         TextUtils.assertPatternInTarget("^! Unapproved:\\s*2 ", content);
@@ -160,7 +167,7 @@ public class ReporterTest {
             ArgumentContext ctxt = new ArgumentContext(new File("."), commandLine);
 
             ReportConfiguration config = OptionCollection.createConfiguration(ctxt);
-            new Reporter(config).output();
+            new Reporter(config).execute().format(config);
         } finally {
             System.setOut(origin);
         }
@@ -213,7 +220,7 @@ public class ReporterTest {
         ArgumentContext ctxt = new ArgumentContext(new File("."), commandLine);
 
         ReportConfiguration config = OptionCollection.createConfiguration(ctxt);
-        new Reporter(config).output();
+        new Reporter(config).execute().format(config);
 
         assertThat(output).exists();
         Document doc = XmlUtils.toDom(java.nio.file.Files.newInputStream(output.toPath()));
@@ -403,13 +410,8 @@ public class ReporterTest {
 
     @Test
     public void xmlReportTest() throws Exception {
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-
         ReportConfiguration configuration = initializeConfiguration();
-        configuration.setStyleSheet(StyleSheets.XML.getStyleSheet());
-        configuration.setOut(() -> out);
-        new Reporter(configuration).output();
-        Document doc = XmlUtils.toDom(new ByteArrayInputStream(out.toByteArray()));
+        Document doc = new Reporter(configuration).execute().getDocument();
 
         XPath xPath = XPathFactory.newInstance().newXPath();
 
@@ -456,9 +458,8 @@ public class ReporterTest {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         ReportConfiguration configuration = initializeConfiguration();
         configuration.setOut(() -> out);
-        new Reporter(configuration).output();
+        new Reporter(configuration).execute().format(configuration);
 
-        out.flush();
         String document = out.toString();
 
         TextUtils.assertNotContains("<?xml version=\"1.0\" encoding=\"UTF-8\"?>", document);
@@ -473,9 +474,8 @@ public class ReporterTest {
         ReportConfiguration configuration = initializeConfiguration();
         configuration.setOut(() -> out);
         configuration.setStyleSheet(this.getClass().getResource("/org/apache/rat/unapproved-licenses.xsl"));
-        new Reporter(configuration).output();
+        new Reporter(configuration).execute().format(configuration);
 
-        out.flush();
         String document = out.toString();
 
         TextUtils.assertContains("Generated at: ", document );
@@ -486,19 +486,44 @@ public class ReporterTest {
     @Test
     public void counterMaxTest() throws Exception {
         ReportConfiguration config = initializeConfiguration();
-        Reporter reporter = new Reporter(config);
-        reporter.output();
+        Reporter.Output output = new Reporter(config).execute();
         assertThat(config.getClaimValidator().hasErrors()).isTrue();
-        assertThat(config.getClaimValidator().isValid(ClaimStatistic.Counter.UNAPPROVED, reporter.getClaimsStatistic().getCounter(ClaimStatistic.Counter.UNAPPROVED)))
+        assertThat(config.getClaimValidator().isValid(ClaimStatistic.Counter.UNAPPROVED, output.getStatistic().getCounter(ClaimStatistic.Counter.UNAPPROVED)))
                 .isFalse();
 
         config = initializeConfiguration();
         config.getClaimValidator().setMax(ClaimStatistic.Counter.UNAPPROVED, 2);
-        reporter = new Reporter(config);
-        reporter.output();
+        output = new Reporter(config).execute();
         assertThat(config.getClaimValidator().hasErrors()).isFalse();
-        assertThat(config.getClaimValidator().isValid(ClaimStatistic.Counter.UNAPPROVED, reporter.getClaimsStatistic().getCounter(ClaimStatistic.Counter.UNAPPROVED)))
+        assertThat(config.getClaimValidator().isValid(ClaimStatistic.Counter.UNAPPROVED, output.getStatistic().getCounter(ClaimStatistic.Counter.UNAPPROVED)))
                 .isTrue();
+    }
+
+    static Stream<Arguments> getTestData() {
+        return new ReportTestDataProvider().getOptionTests().stream().map(testData ->
+                Arguments.of(testData.getTestName(), testData));
+    }
+
+    @ParameterizedTest( name = "{index} {0}")
+    @MethodSource("getTestData")
+    void testReportData(String name, TestData test) throws Exception {
+        Path tempPath = tempDirectory.toPath();
+        Path basePath = tempPath.resolve(test.getTestName());
+        test.setupFiles(basePath);
+        ReportConfiguration config = OptionCollection.parseCommands(basePath.toFile(),
+                test.getCommandLine(basePath.toString()), o -> fail("Help called"), true);
+        if (test.expectingException()) {
+            assertThatThrownBy(() -> new Reporter(config).execute()).as("Expected throws from " + name)
+                    .hasMessageContaining(test.getExpectedException().getMessage());
+            ValidatorData data = new ValidatorData(
+                    null, config, basePath.toString());
+            test.getValidator().accept(data);
+        } else {
+            Reporter.Output output = config != null ? new Reporter(config).execute() : null;
+            ValidatorData data = new ValidatorData(
+                    output, config, basePath.toString());
+            test.getValidator().accept(data);
+        }
     }
 
     private record LicenseInfo(String id, String family, boolean approval, boolean hasNotes) {

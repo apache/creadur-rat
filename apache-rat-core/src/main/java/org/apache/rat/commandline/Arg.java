@@ -873,14 +873,14 @@ public enum Arg {
             if ("x".equals(selected)) {
                 // display deprecated message.
                 context.getCommandLine().hasOption("x");
-                context.getConfiguration().setStyleSheet(StyleSheets.getStyleSheet("xml"));
+                context.getConfiguration().setStyleSheet(StyleSheets.getStyleSheet("xml", context.getWorkingDirectory()));
             } else {
                 String[] style = context.getCommandLine().getOptionValues(OUTPUT_STYLE.getSelected());
                 if (style.length != 1) {
                     DefaultLog.getInstance().error("Please specify a single stylesheet");
                     throw new ConfigurationException("Please specify a single stylesheet");
                 }
-                context.getConfiguration().setStyleSheet(StyleSheets.getStyleSheet(style[0]));
+                context.getConfiguration().setStyleSheet(StyleSheets.getStyleSheet(style[0], context.getWorkingDirectory()));
             }
         }
     }

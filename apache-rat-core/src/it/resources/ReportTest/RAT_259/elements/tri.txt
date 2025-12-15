@@ -1,6 +1,0 @@
-Licensed under the Apache License, Version 2.0 (the  "License")
-This file is not TMF854 Version 1.0
-This file is not Copyright TeleManagement Forum
-this file does not match SPDX-License-Identifier: BSD-3-Clause
-
-This file should be detected under three licenses.

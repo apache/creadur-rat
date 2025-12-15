@@ -21,12 +21,11 @@ package org.apache.rat.commandline;
 import java.io.InputStream;
 import java.net.URL;
 import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Objects;
 
 import org.apache.commons.io.function.IOSupplier;
 import org.apache.rat.ConfigurationException;
+import org.apache.rat.document.DocumentName;
 
 import static java.lang.String.format;
 
@@ -83,14 +82,14 @@ public enum StyleSheets {
      * @param name the short name for or the path to a style sheet.
      * @return the IOSupplier for the style sheet.
      */
-    public static IOSupplier<InputStream> getStyleSheet(final String name) {
+    public static IOSupplier<InputStream> getStyleSheet(final String name, final DocumentName workingDirectory) {
         URL url = StyleSheets.class.getClassLoader().getResource(format("org/apache/rat/%s.xsl", name));
         if (url != null) {
             return url::openStream;
         }
-        Path p = Paths.get(name);
-        if (p.toFile().exists()) {
-            return () -> Files.newInputStream(p);
+        DocumentName xslt = workingDirectory.resolve(name);
+        if (xslt.asFile().exists()) {
+            return () -> Files.newInputStream(xslt.asFile().toPath());
         }
         throw new ConfigurationException(format("Stylesheet file '%s' not found", name));
     }
