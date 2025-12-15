@@ -250,13 +250,15 @@ public class XmlElements {
      * Creates a statistic element. Closes the element before returning.
      * @param name the name of the statistics element.
      * @param count the count for the element.
+     * @param approved true if the licenseCategory is approved.
      * @return this
      * @throws RatException on error.
      */
-    public XmlElements licenseCategory(final String name, final int count) throws RatException {
+    public XmlElements licenseCategory(final String name, final int count, final boolean approved) throws RatException {
         return write(Elements.LICENSE_CATEGORY)
                 .write(Attributes.NAME, name)
                 .write(Attributes.COUNT, Integer.toString(count))
+                .write(Attributes.APPROVAL, Boolean.toString(approved))
                 .closeElement();
     }
 
@@ -267,10 +269,11 @@ public class XmlElements {
      * @return this
      * @throws RatException on error.
      */
-    public XmlElements licenseName(final String name, final int count) throws RatException {
+    public XmlElements licenseName(final String name, final int count, final boolean approved) throws RatException {
         return write(Elements.LICENSE_NAME)
                 .write(Attributes.NAME, name)
                 .write(Attributes.COUNT, Integer.toString(count))
+                .write(Attributes.APPROVAL, Boolean.toString(approved))
                 .closeElement();
     }
 

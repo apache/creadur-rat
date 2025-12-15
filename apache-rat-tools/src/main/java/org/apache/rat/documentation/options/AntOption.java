@@ -38,6 +38,7 @@ import org.apache.commons.text.StringEscapeUtils;
 import org.apache.commons.text.WordUtils;
 import org.apache.rat.OptionCollection;
 import org.apache.rat.commandline.Arg;
+import org.apache.rat.ui.AbstractOption;
 import org.apache.rat.utils.CasedString;
 
 import static java.lang.String.format;

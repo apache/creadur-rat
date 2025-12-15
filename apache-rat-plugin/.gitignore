@@ -1,5 +1,0 @@
-/target/
-/invoker_target/
-/src/site/apt/index.apt.vm
-/src/site/apt/mvn_options.apt
-/src/main/java/org/apache/rat/plugin/BaseRatMojo.java

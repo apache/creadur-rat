@@ -50,9 +50,6 @@
               <!-- exclude test generation files that contain unapproved license text -->
               <exclude>**/ReporterOptionsProvider.java</exclude>
               <exclude>**/GPLLicenseTest.java</exclude>
-              <!-- These files have bad license headers because they are used to test bad license headers -->
-              <exclude>src/test/resources/**</exclude>
-              <exclude>src/it/resources/ReportTest/**</exclude>
             </inputExcludes>
           </configuration>
         </plugin>
@@ -62,13 +59,6 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>
-        <executions>
-          <execution>
-            <goals>
-              <goal>test-jar</goal>
-            </goals>
-          </execution>
-        </executions>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -155,32 +145,20 @@
               </resources>
             </configuration>
           </execution>
-          <execution>
-            <id>copy-example-data</id>
-            <phase>generate-resources</phase>
-            <goals>
-              <goal>copy-resources</goal>
-            </goals>
-            <configuration>
-              <outputDirectory>${project.build.testOutputDirectory}/examples</outputDirectory>
-              <overwrite>true</overwrite>
-              <resources>
-                <resource>
-                  <directory>../apache-rat-testdata/src/main/resources/examples</directory>
-                </resource>
-              </resources>
-            </configuration>
-          </execution>
         </executions>
       </plugin>
     </plugins>
   </build>
   <dependencies>
-    <dependency>
-      <groupId>org.apache.rat</groupId>
-      <artifactId>apache-rat-testdata</artifactId>
-      <scope>test</scope>
-    </dependency>
+      <dependency>
+          <groupId>org.apache.velocity</groupId>
+          <artifactId>velocity-engine-core</artifactId>
+      </dependency>
+      <dependency>
+          <groupId>org.reflections</groupId>
+          <artifactId>reflections</artifactId>
+          <scope>test</scope>
+      </dependency>
     <dependency>
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-collections4</artifactId>
@@ -211,11 +189,6 @@
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter-api</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.junit.vintage</groupId>
-      <artifactId>junit-vintage-engine</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>

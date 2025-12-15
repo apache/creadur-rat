@@ -22,12 +22,20 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.StringWriter;
 
 import java.net.URISyntaxException;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
+import org.apache.commons.io.IOUtils;
 import org.apache.rat.Defaults;
 import org.apache.rat.ReportConfiguration;
 import org.apache.rat.api.Document;
@@ -39,17 +47,21 @@ import org.apache.rat.document.RatDocumentAnalysisException;
 import org.apache.rat.report.claim.SimpleXmlClaimReporter;
 import org.apache.rat.report.xml.writer.XmlWriter;
 import org.apache.rat.test.utils.Resources;
+import org.apache.rat.testhelpers.FileUtils;
 import org.apache.rat.testhelpers.TestingDocument;
 import org.apache.rat.testhelpers.TestingDocumentAnalyser;
 import org.apache.rat.testhelpers.TextUtils;
-import org.assertj.core.util.Files;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
 public class AnalyserFactoryTest {
+
+    @TempDir
+    private static Path tempDir;
 
     private final DocumentName basedir;
 
@@ -58,7 +70,7 @@ public class AnalyserFactoryTest {
     private DocumentAnalyser analyser;
 
     AnalyserFactoryTest() {
-        basedir = DocumentName.builder(new File(Files.currentFolder(), Resources.SRC_TEST_RESOURCES)).build();
+        basedir = DocumentName.builder(tempDir.toFile()).build();
     }
 
     @BeforeEach
@@ -70,10 +82,23 @@ public class AnalyserFactoryTest {
         analyser = AnalyserFactory.createConfiguredAnalyser(config);
     }
 
+    private File copyResource(final String resourceName) throws IOException {
+        final DocumentName outputName = DocumentName.builder(basedir).setName(resourceName).build();
+        final File outputFile = outputName.asFile();
+        FileUtils.mkDir(outputFile.getParentFile());
+        try (InputStream input = AnalyserFactoryTest.class.getResourceAsStream(resourceName);
+             OutputStream output = new FileOutputStream(outputFile)) {
+            assertThat(input).isNotNull();
+            IOUtils.copy(input, output);
+        }
+        return outputFile;
+    }
+
     @Test
     public void standardTypeAnalyser() throws Exception {
-        final Document document = new FileDocument(basedir,
-                Resources.getExampleResource("exampleData/Text.txt"), DocumentNameMatcher.MATCHES_ALL);
+        final File outputFile = copyResource("/exampleData/Text.txt");
+        final Document document = new FileDocument(basedir, outputFile, DocumentNameMatcher.MATCHES_ALL);
+
         analyser.analyse(document);
         assertThat(document.getMetaData().getDocumentType()).isEqualTo(Document.Type.STANDARD);
         assertThat(document.getMetaData().getMediaType().toString()).isEqualTo("text/plain");
@@ -83,8 +108,9 @@ public class AnalyserFactoryTest {
 
     @Test
     public void noteTypeAnalyser() throws Exception {
-        final Document document = new FileDocument(basedir,
-                Resources.getExampleResource("exampleData/LICENSE"), DocumentNameMatcher.MATCHES_ALL);
+        final File outputFile = copyResource("/exampleData/LICENSE");
+        final Document document = new FileDocument(basedir, outputFile, DocumentNameMatcher.MATCHES_ALL);
+
         analyser.analyse(document);
         assertThat(document.getMetaData().getDocumentType()).isEqualTo(Document.Type.NOTICE);
         assertThat(document.getMetaData().getMediaType().toString()).isEqualTo("text/plain");
@@ -92,8 +118,9 @@ public class AnalyserFactoryTest {
 
     @Test
     public void binaryTypeAnalyser() throws Exception {
-        final Document document = new FileDocument(basedir,
-                Resources.getExampleResource("exampleData/Image.png"), DocumentNameMatcher.MATCHES_ALL);
+        final File outputFile = copyResource("/exampleData/Image.png");
+        final Document document = new FileDocument(basedir, outputFile, DocumentNameMatcher.MATCHES_ALL);
+
         analyser.analyse(document);
         assertThat(document.getMetaData().getDocumentType()).isEqualTo(Document.Type.BINARY);
         assertThat(document.getMetaData().getMediaType().toString()).isEqualTo("image/png");
@@ -101,8 +128,9 @@ public class AnalyserFactoryTest {
 
     @Test
     public void archiveTypeAnalyserTest() throws Exception {
-        final Document document = new FileDocument(basedir,
-                Resources.getExampleResource("exampleData/dummy.jar"), DocumentNameMatcher.MATCHES_ALL);
+        final File outputFile = copyResource("/exampleData/dummy.jar");
+        final Document document = new FileDocument(basedir, outputFile, DocumentNameMatcher.MATCHES_ALL);
+
         Defaults defaults = Defaults.builder().build();
         ReportConfiguration config = new ReportConfiguration();
         config.setFrom(defaults);
@@ -123,8 +151,9 @@ public class AnalyserFactoryTest {
     @ParameterizedTest
     @MethodSource("archiveProcessingTestData")
     public void archiveProcessingTest(ReportConfiguration.Processing archiveProcessing, int expectedLicenseCount) throws Exception {
-        final Document document = new FileDocument(basedir,
-                Resources.getExampleResource("exampleData/dummy.jar"), DocumentNameMatcher.MATCHES_ALL);
+        final File outputFile = copyResource("/exampleData/dummy.jar");
+        final Document document = new FileDocument(basedir, outputFile, DocumentNameMatcher.MATCHES_ALL);
+
         Defaults defaults = Defaults.builder().build();
         ReportConfiguration config = new ReportConfiguration();
         config.setFrom(defaults);
@@ -150,8 +179,9 @@ public class AnalyserFactoryTest {
 
     @Test
     public void archiveTypeAnalyser() throws Exception {
-        final Document document = new FileDocument(basedir,
-                Resources.getExampleResource("exampleData/dummy.jar"), DocumentNameMatcher.MATCHES_ALL);
+        final File outputFile = copyResource("/exampleData/dummy.jar");
+        final Document document = new FileDocument(basedir, outputFile, DocumentNameMatcher.MATCHES_ALL);
+
         analyser.analyse(document);
         assertThat(document.getMetaData().getDocumentType()).isEqualTo(Document.Type.ARCHIVE);
         assertThat(document.getMetaData().getMediaType().toString()).isEqualTo("application/java-archive");
@@ -159,8 +189,9 @@ public class AnalyserFactoryTest {
 
     @Test
     public void RAT211_bmp_Test() throws Exception {
-        final Document document = new FileDocument(basedir,
-                Resources.getResourceFile("/jira/RAT211/side_left.bmp"), DocumentNameMatcher.MATCHES_ALL);
+        final File outputFile = copyResource("/jira/RAT211/side_left.bmp");
+        final Document document = new FileDocument(basedir, outputFile, DocumentNameMatcher.MATCHES_ALL);
+
         analyser.analyse(document);
         assertThat(document.getMetaData().getDocumentType()).isEqualTo(Document.Type.BINARY);
         assertThat(document.getMetaData().getMediaType().toString()).isEqualTo("image/bmp");
@@ -168,8 +199,9 @@ public class AnalyserFactoryTest {
 
     @Test
     public void RAT211_dia_Test() throws Exception {
-        final Document document = new FileDocument(basedir,
-                Resources.getResourceFile("/jira/RAT211/leader-election-message-arrives.dia"), DocumentNameMatcher.MATCHES_ALL);
+        final File outputFile = copyResource("/jira/RAT211/leader-election-message-arrives.dia");
+        final Document document = new FileDocument(basedir, outputFile, DocumentNameMatcher.MATCHES_ALL);
+
         analyser.analyse(document);
         assertThat(document.getMetaData().getDocumentType()).isEqualTo(Document.Type.ARCHIVE);
         assertThat(document.getMetaData().getMediaType().toString()).isEqualTo("application/gzip");
@@ -177,8 +209,9 @@ public class AnalyserFactoryTest {
 
     @Test
     public void RAT147_unix_Test() throws Exception {
-        final Document document = new FileDocument(basedir,
-                Resources.getResourceFile("/jira/RAT147/unix-newlines.txt.bin"), DocumentNameMatcher.MATCHES_ALL);
+        final File outputFile = copyResource("/jira/RAT147/unix-newlines.txt.bin");
+        final Document document = new FileDocument(basedir, outputFile, DocumentNameMatcher.MATCHES_ALL);
+
         analyser.analyse(document);
         reporter.report(document);
         String result = out.toString();
@@ -189,8 +222,9 @@ public class AnalyserFactoryTest {
 
     @Test
     public void RAT147_windows_Test() throws Exception {
-        final Document document = new FileDocument(basedir,
-                Resources.getResourceFile("/jira/RAT147/windows-newlines.txt.bin"), DocumentNameMatcher.MATCHES_ALL);
+        final File outputFile = copyResource("/jira/RAT147/windows-newlines.txt.bin");
+        final Document document = new FileDocument(basedir, outputFile, DocumentNameMatcher.MATCHES_ALL);
+
         analyser.analyse(document);
         reporter.report(document);
         String result = out.toString();
@@ -207,13 +241,13 @@ public class AnalyserFactoryTest {
         config.setStandardProcessing(ReportConfiguration.Processing.NOTIFICATION);
         analyser = AnalyserFactory.createConfiguredAnalyser(config);
 
-        Document document = new FileDocument(basedir,
-                Resources.getExampleResource("exampleData/Text.txt"), DocumentNameMatcher.MATCHES_ALL);
+        File outputFile = copyResource("/exampleData/Text.txt");
+        Document document = new FileDocument(basedir, outputFile, DocumentNameMatcher.MATCHES_ALL);
         analyser.analyse(document);
         assertThat(document.getMetaData().detectedLicense()).isFalse();
 
-        document = new FileDocument(basedir,
-                Resources.getExampleResource("exampleData/sub/Empty.txt"), DocumentNameMatcher.MATCHES_ALL);
+        outputFile = copyResource("/exampleData/sub/Empty.txt");
+        document = new FileDocument(basedir, outputFile, DocumentNameMatcher.MATCHES_ALL);
         analyser.analyse(document);
         assertThat(document.getMetaData().detectedLicense()).isFalse();
     }
@@ -226,13 +260,13 @@ public class AnalyserFactoryTest {
         config.setStandardProcessing(ReportConfiguration.Processing.ABSENCE);
         analyser = AnalyserFactory.createConfiguredAnalyser(config);
 
-        Document document = new FileDocument(basedir,
-                Resources.getExampleResource("exampleData/Text.txt"), DocumentNameMatcher.MATCHES_ALL);
+        File outputFile = copyResource("/exampleData/Text.txt");
+        Document document = new FileDocument(basedir, outputFile, DocumentNameMatcher.MATCHES_ALL);
         analyser.analyse(document);
         assertThat(document.getMetaData().detectedLicense()).isTrue();
 
-        document = new FileDocument(basedir,
-                Resources.getExampleResource("exampleData/sub/Empty.txt"), DocumentNameMatcher.MATCHES_ALL);
+        outputFile = copyResource("/exampleData/sub/Empty.txt");
+        document = new FileDocument(basedir, outputFile, DocumentNameMatcher.MATCHES_ALL);
         analyser.analyse(document);
         assertThat(document.getMetaData().detectedLicense()).isTrue();
     }
@@ -245,13 +279,13 @@ public class AnalyserFactoryTest {
         config.setStandardProcessing(ReportConfiguration.Processing.PRESENCE);
         analyser = AnalyserFactory.createConfiguredAnalyser(config);
 
-        Document document = new FileDocument(basedir,
-                Resources.getExampleResource("exampleData/Text.txt"), DocumentNameMatcher.MATCHES_ALL);
+        File outputFile = copyResource("/exampleData/Text.txt");
+        Document document = new FileDocument(basedir, outputFile, DocumentNameMatcher.MATCHES_ALL);
         analyser.analyse(document);
         assertThat(document.getMetaData().detectedLicense()).isTrue();
 
-        document = new FileDocument(basedir,
-                Resources.getExampleResource("exampleData/sub/Empty.txt"), DocumentNameMatcher.MATCHES_ALL);
+        outputFile = copyResource("/exampleData/sub/Empty.txt");
+        document = new FileDocument(basedir, outputFile, DocumentNameMatcher.MATCHES_ALL);
         analyser.analyse(document);
         assertThat(document.getMetaData().detectedLicense()).isFalse();
     }

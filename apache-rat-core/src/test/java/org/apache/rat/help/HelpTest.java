@@ -25,7 +25,9 @@ import org.apache.rat.testhelpers.TextUtils;
 import org.junit.jupiter.api.Test;
 
 import java.io.StringWriter;
+import java.util.Arrays;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static java.lang.String.format;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -55,7 +57,7 @@ public class HelpTest {
     @Test
     public void verifyArgumentsListed() {
         Options opts = OptionCollection.buildOptions();
-        Set<String> argTypes = OptionCollection.getArgumentTypes().keySet();
+        Set<String> argTypes = Arrays.stream(OptionCollection.ArgumentType.values()).map(OptionCollection.ArgumentType::getDisplayName).collect(Collectors.toSet());
         StringWriter out = new StringWriter();
         new Help(out).printUsage(opts);
         String result = out.toString();

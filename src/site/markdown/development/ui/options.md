@@ -25,7 +25,7 @@ In this section we will explore how the RAT core module exposes the information 
 
 RAT core uses the Apache Commons CLI library to process command line options. All the options are recorded in the `org.apache.rat.commandline.Arg` enumeration. Internally the Arg enumeration contains logical option groups that represent a single option. The use of option groups provides us a way to deprecate options and create replacements. Only one option in an option group may be used in a single RAT invocation.
 
-Each UI will have a representation of the individual options specified within the Arg enumeration. To simplify the code each UI implementation should have an implementation of the `org.apache.rat.documentation.options.AbstractOption` class. This class will map the information contained in the `org.apache.commons.cli.Option` into methods that make sense with respect to the UI being implemented.
+Each UI will have a representation of the individual options specified within the Arg enumeration. To simplify the code each UI implementation should have an implementation of the `org.apache.rat.ui.AbstractOption` class. This class will map the information contained in the `org.apache.commons.cli.Option` into methods that make sense with respect to the UI being implemented.
 
 As an example we will look at the `org.apache.rat.documentation.options.MavenOption`.
 

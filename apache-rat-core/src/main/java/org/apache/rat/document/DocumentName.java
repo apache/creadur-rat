@@ -135,6 +135,7 @@ public class DocumentName implements Comparable<DocumentName> {
 
     /**
      * Creates a path from the document name.
+     * Does not include the document root.
      * @return a new Path object.
      */
     public Path asPath() {

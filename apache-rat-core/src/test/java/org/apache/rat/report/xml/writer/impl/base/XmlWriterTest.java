@@ -337,10 +337,25 @@ public class XmlWriterTest {
         assertEquals(
                 writer, writer.openElement("alpha"), "XmlWriters should always return themselves");
          assertEquals("<alpha", out.toString(), "Alpha element started");
-        assertEquals(
-                writer, writer.content(new String(ZERO_CHAR)), "XmlWriters should always return themselves");
-        String out = this.out.toString();
-        assertEquals("<alpha>?", out, "Replace illegal characters with question marks");
+         CharSequence cs = new CharSequence() {
+             @Override
+             public int length() {
+                 return 1;
+             }
+
+             @Override
+             public char charAt(int index) {
+                 return Character.highSurrogate(0x110000);
+             }
+
+             @Override
+             public CharSequence subSequence(int start, int end) {
+                 return null;
+             }
+         };
+
+        assertEquals(writer, writer.content(cs), "XmlWriters should always return themselves");
+        assertEquals("<alpha>\\uDC00", this.out.toString(), "Replace illegal characters with \\u encoding");
     }
     
     @Test

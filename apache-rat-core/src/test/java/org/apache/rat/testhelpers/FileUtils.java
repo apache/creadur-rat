@@ -66,6 +66,7 @@ public class FileUtils {
         if (dir == null) {
             fail("base directory not specified");
         }
+        mkDir(dir);
         File file = new File(dir, name);
         try (PrintWriter writer = new PrintWriter(new FileWriter(file))) {
             lines.forEach(writer::println);

@@ -62,7 +62,6 @@ public final class Defaults {
     /** The license set factory to build license sets based upon default options */
     private final LicenseSetFactory setFactory;
 
-    // TODO look at this static block with respect to the init() static method and figure out if we need both.
     static {
          URL url = Defaults.class.getResource(DEFAULT_CONFIG_PATH);
          URI uri = null;

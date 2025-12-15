@@ -24,13 +24,13 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
-import java.io.File;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.net.URISyntaxException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.function.Consumer;
@@ -39,13 +39,12 @@ import org.apache.rat.BuilderParams;
 import org.apache.rat.analysis.matchers.AndMatcher;
 import org.apache.rat.analysis.matchers.CopyrightMatcher;
 import org.apache.rat.api.Document;
-import org.apache.rat.document.DocumentName;
-import org.apache.rat.document.DocumentNameMatcher;
-import org.apache.rat.document.FileDocument;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.reflections.Reflections;
+import org.reflections.scanners.Scanners;
 
 public class DescriptionBuilderTest {
 
@@ -74,12 +73,13 @@ public class DescriptionBuilderTest {
 
     /**
      * Test to verify that all Description based inspection invoked methods exist.
+     *
      * @param clazz The class to check
      * @param desc The description of an element in that class.
      */
-    @ParameterizedTest
+    @ParameterizedTest(name = "{index} {0}")
     @MethodSource("descriptionSource")
-    public void textConfigParameters(Class<?> clazz, Description desc) {
+    public void textConfigParameters(String name, Class<?> clazz, Description desc) {
         if (desc.getType() == ComponentType.BUILD_PARAMETER) {
             try {
                 Method m = BuilderParams.class.getMethod(desc.getCommonName());
@@ -97,9 +97,12 @@ public class DescriptionBuilderTest {
         }
     }
 
-    /** Class to build a list of documents that are class files. */
+    /**
+     * Class to build a list of documents that are class files.
+     */
     private static class DocumentProcessor implements Consumer<Document> {
         final SortedSet<Document> documents = new TreeSet<>();
+
         @Override
         public void accept(Document document) {
             if (document.isDirectory()) {
@@ -114,31 +117,36 @@ public class DescriptionBuilderTest {
 
     /**
      * Scans the build classes directory to locate all class files that have Description annotations and ensure its validity.
+     *
      * @return A stream of class and descriptions to validate.
      * @throws URISyntaxException if URI is incorrect.
      * @throws ClassNotFoundException if class can not be found.
      */
     public static Stream<Arguments> descriptionSource() throws URISyntaxException, ClassNotFoundException {
-        List<Arguments> arguments = new ArrayList<>();
-        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-        URL url = classLoader.getResource("");
-        File baseDir = new File(url.toURI());
-        baseDir = new File(baseDir.getParent(), "classes");
-        DocumentName documentName = DocumentName.builder(baseDir).build();
-        FileDocument fileDocument =  new FileDocument(documentName, baseDir, DocumentNameMatcher.MATCHES_ALL);
-        DocumentProcessor processor = new DocumentProcessor();
-        processor.accept(fileDocument);
+        Reflections reflections = new Reflections("org.apache.rat",
+                Scanners.TypesAnnotated,
+                Scanners.FieldsAnnotated,
+                Scanners.MethodsAnnotated);
+        Set<Class<?>> types = reflections
+                .getTypesAnnotatedWith(ConfigComponent.class);
 
-        for (Document document : processor.documents) {
-            String className = document.getName().localized(".");
-            className = className.substring(1, className.length() - ".class".length());
-            Class<?> clazz = Class.forName(className);
+        Set<Method> methods = reflections
+                .getMethodsAnnotatedWith(ConfigComponent.class);
+        methods.forEach(method -> types.add(method.getDeclaringClass()));
+
+        Set<Field> fields = reflections.getFieldsAnnotatedWith(ConfigComponent.class);
+        fields.forEach(field -> types.add(field.getDeclaringClass()));
+
+
+        List<Arguments> arguments = new ArrayList<>();
+        for (Class<?> clazz : types) {
             List<Description> descriptionList = DescriptionBuilder.getConfigComponents(clazz);
             if (descriptionList != null) {
-                descriptionList.forEach( desc -> arguments.add(Arguments.of(clazz, desc)));
+                descriptionList.forEach(desc -> arguments.add(Arguments.of(
+                        String.format("%s %s %s", clazz.getSimpleName(), desc.getType(), desc.getCommonName()),
+                        clazz, desc)));
             }
         }
-
         return arguments.stream();
     }
 }

@@ -18,6 +18,7 @@
  */
 package org.apache.rat.annotation;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -25,14 +26,19 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.Writer;
 import java.nio.charset.Charset;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.rat.analysis.AnalyserFactoryTest;
+import org.apache.rat.document.DocumentName;
 import org.apache.rat.test.utils.Resources;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -41,7 +47,6 @@ public class TestLicenseAppender {
 
     @TempDir
     private File baseTempFolder;
-
     private static final String FIRST_LICENSE_LINE = " Licensed to the Apache Software Foundation (ASF) under one";
 
     @FunctionalInterface
@@ -384,9 +389,23 @@ public class TestLicenseAppender {
         }, checkLines(firstLine, secondLine, thirdLine));
     }
 
+    private File copyResource(final DocumentName basedir, final String resourceName) throws IOException {
+        final DocumentName outputName = DocumentName.builder(basedir).setName(resourceName).build();
+        final File outputFile = outputName.asFile();
+        org.apache.rat.testhelpers.FileUtils.mkDir(outputFile.getParentFile());
+        try (InputStream input = TestLicenseAppender.class.getResourceAsStream(resourceName);
+             OutputStream output = new FileOutputStream(outputFile)) {
+            assertThat(input).isNotNull();
+            IOUtils.copy(input, output);
+        }
+        return outputFile;
+    }
+
     @Test
     public void fileWithBOM() throws IOException {
-        File f = Resources.getResourceFile("violations/FilterTest.cs");
+        DocumentName basedir = DocumentName.builder(baseTempFolder).build();
+
+        File f = copyResource(basedir, "/violations/FilterTest.cs");
 
         ApacheV2LicenseAppender appender = new ApacheV2LicenseAppender();
         appender.append(f);

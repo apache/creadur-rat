@@ -29,6 +29,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Collection;
 
+import java.util.stream.Collectors;
 import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.config.parameters.ComponentType;
 import org.apache.rat.config.parameters.Description;
@@ -55,6 +56,10 @@ public class XMLConfigurationReaderTest {
     public static final String[] EXPECTED_LICENSES = { "AL1.0", "AL1.1", "AL2.0", "BSD-3", "DOJO", "TMF", "CDDL1", "ILLUMOS", "GPL1", "GPL2",
             "GPL3", "MIT", "OASIS", "W3C", "W3CD" };
 
+    public static final String[] APPROVED_LICENSES = { "AL1.0", "AL1.1", "AL2.0", "BSD-3", "DOJO", "TMF", "CDDL1", "ILLUMOS",
+            "MIT", "OASIS", "W3C", "W3CD" };
+
+
     @Test
     public void approvedLicenseIdTest() throws URISyntaxException {
         XMLConfigurationReader reader = new XMLConfigurationReader();
@@ -62,9 +67,8 @@ public class XMLConfigurationReaderTest {
         assertThat(url).isNotNull();
         reader.read(url.toURI());
 
-        Collection<String> readCategories = reader.approvedLicenseId();
-
-        assertArrayEquals(APPROVED_IDS, readCategories.toArray(new String[readCategories.size()]));
+        Collection<String> actual = reader.approvedLicenseId();
+        assertThat(actual).containsExactlyInAnyOrder(APPROVED_IDS);
     }
 
     @Test
@@ -80,9 +84,12 @@ public class XMLConfigurationReaderTest {
     public void LicenseFamiliesTest() throws URISyntaxException {
         XMLConfigurationReader reader = new XMLConfigurationReader();
         URL url = XMLConfigurationReaderTest.class.getResource("/org/apache/rat/default.xml");
+        assertNotNull(url);
         reader.read(url.toURI());
 
-        assertArrayEquals(EXPECTED_IDS, reader.readFamilies().stream().map(x -> x.getFamilyCategory().trim()).toArray(String[]::new));
+        Collection<String> actual = reader.readFamilies().stream().map(lf -> lf.getFamilyCategory().trim())
+                .collect(Collectors.toList());
+        assertThat(actual).containsExactlyInAnyOrder(EXPECTED_IDS);
     }
 
     private void checkMatcher(String name, Class<? extends AbstractBuilder> clazz) {
@@ -118,7 +125,7 @@ public class XMLConfigurationReaderTest {
 
         IHeaderMatcher.Builder builder = MatcherBuilderTracker.getMatcherBuilder("copyright");
         Description desc = DescriptionBuilder.buildMap(builder.getClass());
-        assertNotNull(desc, () -> "did not build description for 'copyright'");
+        assertNotNull(desc, "did not build description for 'copyright'");
         assertEquals("copyright", desc.getCommonName());
         assertEquals(ComponentType.MATCHER, desc.getType());
         assertFalse(desc.isCollection());

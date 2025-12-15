@@ -145,7 +145,7 @@
           </excludes>
           <archive>
             <manifestEntries>
-              <Main-Class>org.apache.rat.Report</Main-Class>
+              <Main-Class>org.apache.rat.cli.Report</Main-Class>
               <Extension-Name>rat</Extension-Name>
               <Specification-Title>Apache Creadur RAT</Specification-Title>
               <Specification-Vendor>apache.org</Specification-Vendor>
@@ -241,7 +241,7 @@
               <arguments>
                 <argument>-cp</argument>
                 <argument>target/apache-rat-${project.version}.jar</argument>
-                <argument>org.apache.rat.Report</argument>
+                <argument>org.apache.rat.cli.Report</argument>
                 <argument>--counter-max</argument>
                 <argument>UNAPPROVED:2</argument>
                 <argument>--output-file</argument>
@@ -261,7 +261,7 @@
               <arguments>
                 <argument>-cp</argument>
                 <argument>target/apache-rat-${project.version}.jar</argument>
-                <argument>org.apache.rat.Report</argument>
+                <argument>org.apache.rat.cli.Report</argument>
                 <argument>--counter-max</argument>
                 <argument>UNAPPROVED:2</argument>
                 <argument>--output-file</argument>
@@ -283,7 +283,7 @@
               <arguments>
                 <argument>-cp</argument>
                 <argument>target/apache-rat-${project.version}.jar</argument>
-                <argument>org.apache.rat.Report</argument>
+                <argument>org.apache.rat.cli.Report</argument>
                 <argument>--counter-max</argument>
                 <argument>UNAPPROVED:2</argument>
                 <argument>--output-file</argument>

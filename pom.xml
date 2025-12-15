@@ -83,6 +83,11 @@ agnostic home for software distribution comprehension and audit tools.
   </distributionManagement>
   <dependencyManagement>
     <dependencies>
+      <dependency>
+        <groupId>org.reflections</groupId>
+        <artifactId>reflections</artifactId>
+        <version>0.10.2</version>
+      </dependency>
       <!-- used to render the site and make skin updates more transparent -->
       <dependency>
         <groupId>org.apache.maven.skins</groupId>
@@ -118,7 +123,7 @@ agnostic home for software distribution comprehension and audit tools.
       </dependency>
       <dependency>
         <groupId>org.apache.rat</groupId>
-        <artifactId>apache-rat-plugin</artifactId>
+        <artifactId>apache-rat-plugin-parent</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
@@ -985,7 +990,9 @@ agnostic home for software distribution comprehension and audit tools.
   </scm>
   <modules>
     <module>apache-rat-core</module>
-    <module>apache-rat-plugin</module>
+    <module>apache-rat-core-tests</module>
+    <module>apache-rat-cli</module>
+    <module>apache-rat-plugin-parent</module>
     <module>apache-rat-tasks</module>
     <module>apache-rat</module>
     <module>apache-rat-tools</module>

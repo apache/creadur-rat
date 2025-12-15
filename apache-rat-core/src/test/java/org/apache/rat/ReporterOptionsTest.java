@@ -21,25 +21,26 @@ package org.apache.rat;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.stream.Stream;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
+import org.apache.commons.cli.ParseException;
 import org.apache.rat.api.RatException;
 import org.apache.rat.report.claim.ClaimStatistic;
-import org.apache.rat.test.AbstractConfigurationOptionsProvider;
 import org.apache.rat.testhelpers.FileUtils;
+import org.apache.rat.testhelpers.data.OptionTestDataProvider;
+import org.apache.rat.testhelpers.data.TestData;
+import org.apache.rat.testhelpers.data.ValidatorData;
 import org.apache.rat.testhelpers.XmlUtils;
-import org.apache.rat.utils.DefaultLog;
-import org.apache.rat.utils.Log;
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledOnOs;
 import org.junit.jupiter.api.condition.OS;
 import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ArgumentsSource;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Fail.fail;
@@ -49,10 +50,7 @@ public final class ReporterOptionsTest {
     @TempDir
     static Path testPath;
 
-    @AfterAll
-    static void preserveData() {
-        AbstractConfigurationOptionsProvider.preserveData(testPath.toFile(), "reporterOptionsTest");
-    }
+    private static final OptionTestDataProvider optionTestDataProvider = new OptionTestDataProvider();
 
     /**
      * This method is a known workaround for
@@ -64,9 +62,10 @@ public final class ReporterOptionsTest {
         System.gc();
     }
 
-    @BeforeEach
-    void setup() {
-        ReporterOptionsProvider.sourceDir = null;
+
+    static Stream<Arguments> getTestData() {
+        return optionTestDataProvider.getOptionTests().stream().map(testData ->
+                Arguments.of(testData.getTestName(), testData));
     }
 
     /**
@@ -74,10 +73,15 @@ public final class ReporterOptionsTest {
      * @param name The name of the test.
      */
     @ParameterizedTest( name = "{index} {0}")
-    @ArgumentsSource(ReporterOptionsProvider.class)
-    void testOptionsUpdateConfig(String name, OptionCollectionTest.OptionTest test) {
-        DefaultLog.getInstance().log(Log.Level.INFO, "Running test for: " + name);
-        test.test();
+    @MethodSource("getTestData")
+    void testOptionsUpdateConfig(String name, TestData test) throws Exception {
+        Path basePath = testPath.resolve(test.getTestName());
+        test.setupFiles(basePath);
+        ReportConfiguration config = OptionCollection.parseCommands(basePath.toFile(), test.getCommandLine(), o -> fail("Help called"), true);
+        Reporter.Output output = config != null ? new Reporter(config).execute() : null;
+        ValidatorData data = new ValidatorData(
+                output, config, basePath.toString());
+        test.getValidator().accept(data);
     }
 
     @Test
@@ -90,15 +94,15 @@ public final class ReporterOptionsTest {
             FileUtils.writeFile(testDir, "foo.md");
             ReportConfiguration config = OptionCollection.parseCommands(testDir, args, o -> fail("Help called"), true);
             Reporter reporter = new Reporter(config);
-            ClaimStatistic claimStatistic = reporter.execute();
-            XmlUtils.printDocument(System.out, reporter.getDocument());
+            Reporter.Output output = reporter.execute();
+            XmlUtils.printDocument(System.out, output.getDocument());
             XPath xpath = XPathFactory.newInstance().newXPath();
-            XmlUtils.assertIsPresent(reporter.getDocument(), xpath, "/rat-report/resource[@name='/foo.md']");
-            XmlUtils.assertAttributes(reporter.getDocument(), xpath, "/rat-report/resource[@name='/foo.md']",
+            XmlUtils.assertIsPresent(output.getDocument(), xpath, "/rat-report/resource[@name='/foo.md']");
+            XmlUtils.assertAttributes(output.getDocument(), xpath, "/rat-report/resource[@name='/foo.md']",
                     XmlUtils.mapOf("type", "IGNORED"));
-            assertThat(claimStatistic.getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(0);
-            assertThat(claimStatistic.getCounter(ClaimStatistic.Counter.IGNORED)).isEqualTo(2);
-        } catch (IOException | RatException | XPathExpressionException e) {
+            assertThat(output.getStatistic().getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(0);
+            assertThat(output.getStatistic().getCounter(ClaimStatistic.Counter.IGNORED)).isEqualTo(2);
+        } catch (IOException | ParseException | RatException | XPathExpressionException e) {
             fail(e);
         }
     }
