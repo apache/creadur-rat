@@ -18,6 +18,7 @@
  */
 package org.apache.rat.utils;
 
+import java.io.PrintWriter;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.Iterator;
@@ -27,6 +28,8 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
+
+import org.apache.rat.api.RatException;
 
 /**
  * A sorted set that reports insertion collisions.
@@ -111,10 +114,12 @@ public class ReportingSet<T> implements SortedSet<T> {
      */
     private boolean add(final boolean reportDup, final T e) {
         if (delegate.contains(e)) {
-            String msg = String.format("%s", ReportingSet.this.duplicateFmt.apply(e));
+            String msg = ReportingSet.this.duplicateFmt.apply(e);
             if (reportDup) {
                 msg =  String.format("%s (action: %s)", msg, duplicateOption);
                 DefaultLog.getInstance().log(duplicateLogLevel, msg);
+                new RatException("just for trace").printStackTrace(new PrintWriter(DefaultLog.getInstance().asWriter()));
+                DefaultLog.getInstance().warn(new RatException("just for trace"));
             }
             switch (duplicateOption) {
             case FAIL:

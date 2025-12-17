@@ -73,6 +73,13 @@ public abstract class AbstractRatMojo extends BaseRatMojo {
     private File basedir;
 
     /**
+     * Specifies the verbose output.
+     * @since 0.8
+     */
+    @Parameter(property = "rat.verbose", defaultValue = "false")
+    protected boolean verbose;
+
+    /**
      * Specifies the licenses to accept. By default, these are added to the default
      * licenses, unless you set &lt;addDefaultLicenseMatchers&gt; to false. Arguments should be
      * file name of &lt;Configs&gt; file structure.
@@ -266,7 +273,7 @@ public abstract class AbstractRatMojo extends BaseRatMojo {
     }
 
     protected Defaults.Builder getDefaultsBuilder() {
-        Defaults.Builder result = Defaults.builder();
+        Defaults.Builder result = Defaults.builder().noDefault();
         if (defaultLicenseFiles != null) {
             for (String defaultLicenseFile : defaultLicenseFiles) {
                 result.add(defaultLicenseFile);
@@ -462,7 +469,7 @@ public abstract class AbstractRatMojo extends BaseRatMojo {
         Log log = DefaultLog.getInstance();
         if (reportConfiguration == null) {
             try {
-                if (super.getLog().isDebugEnabled()) {
+                if (getLog().isDebugEnabled()) {
                     log.debug("Start BaseRatMojo Configuration options");
                     for (Map.Entry<String, List<String>> entry : args.entrySet()) {
                         log.debug(format(" * %s %s", entry.getKey(), String.join(", ", entry.getValue())));
@@ -472,7 +479,6 @@ public abstract class AbstractRatMojo extends BaseRatMojo {
 
                 boolean helpLicenses = !getValues(Arg.HELP_LICENSES).isEmpty();
                 removeKey(Arg.HELP_LICENSES);
-
                 setIncludeExclude();
 
                 getLog().debug("Basedir is : " + basedir);

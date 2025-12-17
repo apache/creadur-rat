@@ -176,6 +176,18 @@ public class ReportConfiguration {
     }
 
     /**
+     * Report the excluded files to the appendable object.
+     * @param appendable the appendable object to write to.
+     */
+    public void reportExclusions(final Appendable appendable) {
+        try {
+            exclusionProcessor.reportExclusions(appendable);
+        } catch (IOException e) {
+            DefaultLog.getInstance().warn("Unable to report exclusions", e);
+        }
+    }
+
+    /**
      * Adds a file as a source of files to scan.
      * The file must be a text file that lists files to be included.
      * File within the file must be in linux format with a

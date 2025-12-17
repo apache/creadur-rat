@@ -219,7 +219,7 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-invoker-plugin</artifactId>
         <configuration>
-          <cloneProjectsTo>${project.basedir}/invoker_target</cloneProjectsTo>
+          <cloneProjectsTo>${project.build.directory}/invoker_target</cloneProjectsTo>
           <localRepositoryPath>${project.build.directory}/local-repo</localRepositoryPath>
           <addTestClassPath>true</addTestClassPath>
           <settingsFile>src/it/settings.xml</settingsFile>

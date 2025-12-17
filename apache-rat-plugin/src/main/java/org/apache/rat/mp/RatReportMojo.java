@@ -54,7 +54,9 @@ import org.apache.maven.reporting.MavenReportException;
 import org.apache.rat.ReportConfiguration;
 import org.apache.rat.Reporter;
 import org.apache.rat.VersionInfo;
+import org.apache.rat.api.RatException;
 import org.apache.rat.license.LicenseSetFactory.LicenseFilter;
+import org.apache.rat.utils.DefaultLog;
 import org.codehaus.plexus.util.ReaderFactory;
 import org.eclipse.aether.repository.ArtifactRepository;
 import org.eclipse.aether.repository.RemoteRepository;
@@ -87,6 +89,7 @@ public class RatReportMojo extends AbstractRatMojo implements MavenMultiPageRepo
      */
     @Parameter(property = "outputEncoding", defaultValue = "${project.reporting.outputEncoding}", readonly = true)
     private String outputEncoding;
+
 
     /**
      * The local repository.
@@ -428,25 +431,33 @@ public class RatReportMojo extends AbstractRatMojo implements MavenMultiPageRepo
         sink.link(bundle.getString("report.rat.url"));
         sink.text(bundle.getString("report.rat.fullName"));
         sink.link_();
-        final String ratVersion = new VersionInfo(RatReportMojo.class).toString();
-        if (ratVersion != null) {
-            sink.text(" " + ratVersion);
-        }
+        sink.text(" " + new VersionInfo(RatReportMojo.class));
         sink.text(".");
         sink.paragraph_();
 
         sink.paragraph();
         sink.verbatim(new SinkEventAttributeSet());
-        try {
-            ReportConfiguration config = getConfiguration();
-            config.setFrom(getDefaultsBuilder().build());
-            logLicenses(config.getLicenses(LicenseFilter.ALL));
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            config.setOut(() -> baos);
-            new Reporter(config).output();
-            sink.text(baos.toString(StandardCharsets.UTF_8.name()));
-        } catch (Exception e) {
-            throw new MavenReportException(e.getMessage(), e);
+        try (Writer logWriter = DefaultLog.getInstance().asWriter()) {
+            try {
+                ReportConfiguration config = getConfiguration();
+                config.setFrom(getDefaultsBuilder().build());
+                logLicenses(config.getLicenses(LicenseFilter.ALL));
+                if (verbose) {
+                    config.reportExclusions(logWriter);
+                }
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                config.setOut(() -> baos);
+                Reporter reporter = new Reporter(config);
+                reporter.output();
+                if (verbose) {
+                    reporter.writeSummary(logWriter);
+                }
+                sink.text(baos.toString(StandardCharsets.UTF_8.name()));
+            } catch (IOException | MojoExecutionException | RatException e) {
+                throw new MavenReportException(e.getMessage(), e);
+            }
+        } catch (IOException e) {
+            DefaultLog.getInstance().warn("Unable to close log writer", e);
         }
         sink.verbatim_();
         sink.paragraph_();

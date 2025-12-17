@@ -18,6 +18,7 @@
  */
 package org.apache.rat.config.exclusion;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -156,6 +157,25 @@ public class ExclusionProcessor {
         }
         return this;
     }
+
+    /**
+     * Report the excluded files to the appendable object.
+     * @param appendable the appendable object to write to.
+     */
+    public void reportExclusions(final Appendable appendable) throws IOException {
+        appendable.append(format("Excluding patterns: %s%n", String.join(", ", excludedPatterns)));
+        appendable.append(format("Including patterns: %s%n", String.join(", ", includedPatterns)));
+        for (StandardCollection sc : excludedCollections) {
+            appendable.append(format("Excluding %s collection.%n", sc.name()));
+        }
+        for (StandardCollection sc : includedCollections) {
+            appendable.append(format("Including %s collection.%n", sc.name()));
+        }
+        for (StandardCollection sc : fileProcessors) {
+            appendable.append(format("Processing exclude file from %s.%n", sc.name()));
+        }
+    }
+
 
     /**
      * Excludes the files/directories specified by a StandardCollection.

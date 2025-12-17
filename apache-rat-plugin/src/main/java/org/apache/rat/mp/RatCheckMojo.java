@@ -21,6 +21,7 @@ package org.apache.rat.mp;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
@@ -180,17 +181,26 @@ public class RatCheckMojo extends AbstractRatMojo {
             setArg(Arg.OUTPUT_FILE.option().getLongOpt(), defaultReportFile.getAbsolutePath());
         }
 
-        ReportConfiguration config = getConfiguration();
-
-        logLicenses(config.getLicenses(LicenseFilter.ALL));
-        try {
-            this.reporter = new Reporter(config);
-            reporter.output();
-            check(config);
-        } catch (MojoFailureException e) {
-            throw e;
-        } catch (Exception e) {
-            throw new MojoExecutionException(e.getMessage(), e);
+        try (Writer logWriter = DefaultLog.getInstance().asWriter()) {
+            ReportConfiguration config = getConfiguration();
+            logLicenses(config.getLicenses(LicenseFilter.ALL));
+            if (verbose) {
+                config.reportExclusions(logWriter);
+            }
+            try {
+                this.reporter = new Reporter(config);
+                reporter.output();
+                if (verbose) {
+                    reporter.writeSummary(logWriter);
+                }
+                check(config);
+            } catch (MojoFailureException e) {
+                throw e;
+            } catch (Exception e) {
+                throw new MojoExecutionException(e.getMessage(), e);
+            }
+        } catch (IOException e) {
+            DefaultLog.getInstance().warn("Unable to close writeable log.", e);
         }
     }
 

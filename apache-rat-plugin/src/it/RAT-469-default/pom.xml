@@ -28,6 +28,7 @@
         <artifactId>apache-rat-plugin</artifactId>
         <version>@pom.version@</version>
         <configuration>
+          <verbose>true</verbose>
           <consoleOutput>true</consoleOutput>
           <ignoreErrors>false</ignoreErrors>
           <inputIncludes>
