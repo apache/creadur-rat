@@ -68,6 +68,9 @@ in order to be properly linked in site reports.
     </release>
     -->
     <release version="1.0.0" date="xxxx-yy-zz" description="Current SNAPSHOT - release to be done">
+      <action issue="RAT-498" type="update" dev="pottlinger">
+        Update Maven wrapper to v3.9.12.
+      </action>
       <action issue="RAT-526" type="fix" dev="claudenw">
         New version of maven-resources-plugin does not by default include hiden files, adapt our test setup accordingly.
       </action>
