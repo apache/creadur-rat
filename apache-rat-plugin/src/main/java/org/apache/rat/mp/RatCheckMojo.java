@@ -200,7 +200,7 @@ public class RatCheckMojo extends AbstractRatMojo {
                 throw new MojoExecutionException(e.getMessage(), e);
             }
         } catch (IOException e) {
-            DefaultLog.getInstance().warn("Unable to close writeable log.", e);
+            DefaultLog.getInstance().warn("Unable to close writable log.", e);
         }
     }
 

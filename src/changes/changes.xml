@@ -69,7 +69,7 @@ in order to be properly linked in site reports.
     -->
     <release version="1.0.0" date="xxxx-yy-zz" description="Current SNAPSHOT - release to be done">
       <action issue="RAT-508" type="update" dev="claudenw" due-to="Gary D. Gregory">
-        Removed excess INFO logging in maven plugin.
+        Removed excess INFO logging in Maven plugin. Run with -X in order to see output on debug level.
       </action>  
       <action issue="RAT-498" type="update" dev="pottlinger">
         Update Maven wrapper to v3.9.12.
