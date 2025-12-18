@@ -68,6 +68,9 @@ in order to be properly linked in site reports.
     </release>
     -->
     <release version="1.0.0" date="xxxx-yy-zz" description="Current SNAPSHOT - release to be done">
+      <action issue="RAT-524" type="update" dev="claudenw">
+        Fixes case-sensitive detection time and removed MAVEN StandardCollection from default Maven processing.
+      </action>
       <action issue="RAT-508" type="update" dev="claudenw" due-to="Gary D. Gregory">
         Removed excess INFO logging in Maven plugin. Run with -X or use the verbose option in order to see output on debug level.
       </action>  
