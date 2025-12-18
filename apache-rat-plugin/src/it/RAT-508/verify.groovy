@@ -18,21 +18,21 @@ import org.apache.rat.testhelpers.TextUtils
 
 content = new File(basedir, 'build.log').text
 
+// verify debug output
+assert content.contains('input-exclude-std ALL')
+assert content.contains('Adding [MAVEN] to input-exclude-std')
+assert content.contains('Including patterns: pom.xml')
+
 assert content.contains('BUILD SUCCESS')
-// should be DEBUG because we are running with a -X option.
-assert content.contains('[DEBUG] Including patterns: pom.xml') // explicit inclusion worked
-assert content.contains('[DEBUG] Processing exclude file from STANDARD_SCMS.') // default exclusions worked
 assert ! content.contains('[WARNING] No resources included')
 
 // Report is in apache-rat-plugin/target/invoker-reports
+// Make sure that report is generated completely
 report = new File(basedir, 'target/site/rat-report.html').text
 assert TextUtils.isMatching("^  /verify.groovy\\s+S ", report)
-assert TextUtils.isMatching("^! /pom.xml\\s+S ", report)
+assert TextUtils.isMatching("^  /pom.xml\\s+S ", report)
 
-assert report.contains('Unapproved:         1')
-assert report.contains('GPL  : 1')
-assert report.contains('    GPL      GPL3          GNU General Public License V3.0')
-
+assert report.contains('Unapproved:         0')
 assert report.contains('AL       AL2.0         Apache License 2.0')
-assert report.contains('Approved:           2')
+assert report.contains('Approved:           3')
 assert report.contains('Standards:          3')

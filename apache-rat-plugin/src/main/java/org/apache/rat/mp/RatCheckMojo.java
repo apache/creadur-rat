@@ -21,6 +21,7 @@ package org.apache.rat.mp;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
@@ -36,6 +37,7 @@ import org.apache.rat.commandline.StyleSheets;
 import org.apache.rat.license.LicenseSetFactory.LicenseFilter;
 import org.apache.rat.report.claim.ClaimStatistic;
 import org.apache.rat.utils.DefaultLog;
+import org.apache.rat.utils.Log;
 
 import static java.lang.String.format;
 
@@ -179,24 +181,33 @@ public class RatCheckMojo extends AbstractRatMojo {
             setArg(Arg.OUTPUT_FILE.option().getLongOpt(), defaultReportFile.getAbsolutePath());
         }
 
-        ReportConfiguration config = getConfiguration();
-
-        logLicenses(config.getLicenses(LicenseFilter.ALL));
-        try {
-            this.reporter = new Reporter(config);
-            reporter.output();
-            check(config);
-        } catch (MojoFailureException e) {
-            throw e;
-        } catch (Exception e) {
-            throw new MojoExecutionException(e.getMessage(), e);
+        try (Writer logWriter = DefaultLog.getInstance().asWriter()) {
+            ReportConfiguration config = getConfiguration();
+            logLicenses(config.getLicenses(LicenseFilter.ALL));
+            if (verbose) {
+                config.reportExclusions(logWriter);
+            }
+            try {
+                this.reporter = new Reporter(config);
+                reporter.output();
+                if (verbose) {
+                    reporter.writeSummary(logWriter);
+                }
+                check(config);
+            } catch (MojoFailureException e) {
+                throw e;
+            } catch (Exception e) {
+                throw new MojoExecutionException(e.getMessage(), e);
+            }
+        } catch (IOException e) {
+            DefaultLog.getInstance().warn("Unable to close writable log.", e);
         }
     }
 
     protected void check(final ReportConfiguration config) throws MojoFailureException {
         ClaimStatistic statistics = reporter.getClaimsStatistic();
         try {
-           reporter.writeSummary(DefaultLog.getInstance().asWriter());
+           reporter.writeSummary(DefaultLog.getInstance().asWriter(Log.Level.DEBUG));
            if (config.getClaimValidator().hasErrors()) {
                config.getClaimValidator().logIssues(statistics);
                if (consoleOutput &&
@@ -219,6 +230,8 @@ public class RatCheckMojo extends AbstractRatMojo {
                } else {
                    getLog().info(msg);
                }
+           } else {
+               DefaultLog.getInstance().info("No issues found.");
            }
         } catch (IOException e) {
            throw new MojoFailureException(e);

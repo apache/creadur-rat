@@ -18,6 +18,7 @@
  */
 package org.apache.rat.config.exclusion;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -85,7 +86,7 @@ public class ExclusionProcessor {
      * @return this
      */
     public ExclusionProcessor addIncludedPatterns(final Iterable<String> patterns) {
-        DefaultLog.getInstance().info(format("Including patterns: %s", String.join(", ", patterns)));
+        DefaultLog.getInstance().debug(format("Including patterns: %s", String.join(", ", patterns)));
         patterns.forEach(includedPatterns::add);
         resetLastMatcher();
         return this;
@@ -111,7 +112,7 @@ public class ExclusionProcessor {
      */
     public ExclusionProcessor addFileProcessor(final StandardCollection collection) {
         if (collection != null) {
-            DefaultLog.getInstance().info(format("Processing exclude file from %s.", collection));
+            DefaultLog.getInstance().debug(format("Processing exclude file from %s.", collection));
             fileProcessors.add(collection);
             resetLastMatcher();
         }
@@ -125,7 +126,7 @@ public class ExclusionProcessor {
      */
     public ExclusionProcessor addIncludedCollection(final StandardCollection collection) {
         if (collection != null) {
-            DefaultLog.getInstance().info(format("Including %s collection.", collection));
+            DefaultLog.getInstance().debug(format("Including %s collection.", collection));
             includedCollections.add(collection);
             resetLastMatcher();
         }
@@ -138,7 +139,7 @@ public class ExclusionProcessor {
      * @return this
      */
     public ExclusionProcessor addExcludedPatterns(final Iterable<String> patterns) {
-        DefaultLog.getInstance().info(format("Excluding patterns: %s", String.join(", ", patterns)));
+        DefaultLog.getInstance().debug(format("Excluding patterns: %s", String.join(", ", patterns)));
         patterns.forEach(excludedPatterns::add);
         resetLastMatcher();
         return this;
@@ -158,13 +159,32 @@ public class ExclusionProcessor {
     }
 
     /**
+     * Report the excluded files to the appendable object.
+     * @param appendable the appendable object to write to.
+     */
+    public void reportExclusions(final Appendable appendable) throws IOException {
+        appendable.append(format("Excluding patterns: %s%n", String.join(", ", excludedPatterns)));
+        appendable.append(format("Including patterns: %s%n", String.join(", ", includedPatterns)));
+        for (StandardCollection sc : excludedCollections) {
+            appendable.append(format("Excluding %s collection.%n", sc.name()));
+        }
+        for (StandardCollection sc : includedCollections) {
+            appendable.append(format("Including %s collection.%n", sc.name()));
+        }
+        for (StandardCollection sc : fileProcessors) {
+            appendable.append(format("Processing exclude file from %s.%n", sc.name()));
+        }
+    }
+
+
+    /**
      * Excludes the files/directories specified by a StandardCollection.
      * @param collection the StandardCollection that identifies the files to exclude.
      * @return this
      */
     public ExclusionProcessor addExcludedCollection(final StandardCollection collection) {
         if (collection != null) {
-            DefaultLog.getInstance().info(format("Excluding %s collection.", collection));
+            DefaultLog.getInstance().debug(format("Excluding %s collection.", collection));
             excludedCollections.add(collection);
             resetLastMatcher();
         }
@@ -302,13 +322,13 @@ public class ExclusionProcessor {
     private void extractPaths(final MatcherSet.Builder matcherBuilder) {
         if (!includedPaths.isEmpty()) {
             for (DocumentNameMatcher matcher : includedPaths) {
-                DefaultLog.getInstance().info(format("Including path matcher %s", matcher));
+                DefaultLog.getInstance().debug(format("Including path matcher %s", matcher));
                 matcherBuilder.addIncluded(matcher);
             }
         }
         if (!excludedPaths.isEmpty()) {
             for (DocumentNameMatcher matcher : excludedPaths) {
-                DefaultLog.getInstance().info(format("Excluding path matcher %s", matcher));
+                DefaultLog.getInstance().debug(format("Excluding path matcher %s", matcher));
                 matcherBuilder.addExcluded(matcher);
             }
         }
