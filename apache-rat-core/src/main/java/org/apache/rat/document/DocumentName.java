@@ -28,8 +28,10 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
@@ -298,43 +300,36 @@ public class DocumentName implements Comparable<DocumentName> {
         return HashCodeBuilder.reflectionHashCode(this);
     }
 
-    /**
-     * The file system information needed to process document names.
-     */
-    public static class FSInfo implements Comparable<FSInfo> {
-        /** The common name for the file system this Info represents. */
-        private final String name;
-        /** The separator between directory names. */
-        private final String separator;
-        /** The case-sensitivity flag. */
+    private static final class FSInfoData {
+        /** The case sensitivity flag */
         private final boolean isCaseSensitive;
         /** The list of roots for the file system. */
         private final List<String> roots;
-
-        public static FSInfo getDefault() {
-            FSInfo result = (FSInfo) System.getProperties().get("FSInfo");
-            return result == null ?
-                    new FSInfo("default", FileSystems.getDefault())
-                    : result;
-        }
-        /**
-         * Constructor. Extracts the necessary data from the file system.
-         * @param fileSystem the file system to extract data from.
-         */
-        public FSInfo(final FileSystem fileSystem) {
-            this("anon", fileSystem);
-        }
+        /** The separator between directory names. */
+        private final String separator;
 
         /**
-         * Constructor. Extracts the necessary data from the file system.
-         * @param fileSystem the file system to extract data from.
+         * Constructor for known properties.
+         * @param separator the directory separator character(s).
+         * @param isCaseSensitive {@code true} if the file system is cases sensitive.
+         * @param roots THe list of roots for the file system.
          */
-        public FSInfo(final String name, final FileSystem fileSystem) {
-            this.name = name;
-            this.separator = fileSystem.getSeparator();
-            this.isCaseSensitive = isCaseSensitive(fileSystem);
+        FSInfoData(final String separator, final boolean isCaseSensitive, final List<String> roots) {
+            this.isCaseSensitive = isCaseSensitive;
+            this.roots = roots;
+            this.separator = separator;
+        }
+
+        /**
+         * Constructor for an arbitrary file system.
+         * This constructor can be processor intensive as it has to check the file system for case sensitivity.
+         * @param fileSystem the file system.
+         */
+        FSInfoData(final FileSystem fileSystem) {
+            isCaseSensitive = isCaseSensitive(fileSystem);
             roots = new ArrayList<>();
             fileSystem.getRootDirectories().forEach(r -> roots.add(r.toString()));
+            separator = fileSystem.getSeparator();
         }
 
         /**
@@ -375,6 +370,65 @@ public class DocumentName implements Comparable<DocumentName> {
             return isCaseSensitive;
         }
 
+    }
+    /**
+     * The file system information needed to process document names.
+     */
+    public static final class FSInfo implements Comparable<FSInfo> {
+        /**
+         * The map of FileSystem to FSInfoData used to avoid expensive FileSystem processing.
+         */
+        private static final Map<FileSystem, FSInfoData> REGISTRY = new ConcurrentHashMap<>();
+
+        /** The case-sensitivity flag. */
+        private final FSInfoData data;
+
+        /** The common name for the file system */
+        private final String name;
+
+        /**
+         * Gets the FSInfo for the default file system.
+         * If the System property {@code FSInfo} is set, the {@code FSInfo} stored there is used, otherwise
+         * the {@link FileSystem} returned from {@link FileSystems#getDefault()} is used.
+         * @return the FSInfo for the default file system.
+         */
+        public static FSInfo getDefault() {
+            FSInfo result = (FSInfo) System.getProperties().get("FSInfo");
+            return result == null ?
+                    new FSInfo(FileSystems.getDefault())
+                    : result;
+        }
+
+        /**
+         * Constructor. Extracts the necessary data from the file system.
+         * @param fileSystem the file system to extract data from.
+         */
+        public FSInfo(final FileSystem fileSystem) {
+            this("anon", fileSystem);
+        }
+
+        /**
+         * Constructor. Extracts the necessary data from the file system.
+         * @param name the common name for the file system.
+         * @param fileSystem the file system to extract data from.
+         */
+        FSInfo(final String name, final FileSystem fileSystem) {
+            this.data = REGISTRY.computeIfAbsent(fileSystem, k -> new FSInfoData(fileSystem));
+            this.name = name;
+        }
+
+        /**
+         * Constructor for virtual/abstract file systems for example the entry names within an archive.
+         * @param name the common name for the file system.
+         * @param separator the separator string to use.
+         * @param isCaseSensitive the case-sensitivity flag.
+         * @param roots the roots for the file system.
+         */
+        FSInfo(final String name, final String separator, final boolean isCaseSensitive, final List<String> roots) {
+            data = new FSInfoData(separator, isCaseSensitive, roots);
+            this.name = name;
+        }
+
         /**
          * Gets the common name for the underlying file system.
          * @return the common file system name.
@@ -385,24 +439,11 @@ public class DocumentName implements Comparable<DocumentName> {
         }
 
         /**
-         * Constructor for virtual/abstract file systems for example the entry names within an archive.
-         * @param separator the separator string to use.
-         * @param isCaseSensitive the case-sensitivity flag.
-         * @param roots the roots for the file system.
-         */
-        FSInfo(final String name, final String separator, final boolean isCaseSensitive, final List<String> roots) {
-            this.name = name;
-            this.separator = separator;
-            this.isCaseSensitive = isCaseSensitive;
-            this.roots = new ArrayList<>(roots);
-        }
-
-        /**
          * Gets the directory separator.
          * @return The directory separator.
          */
         public String dirSeparator() {
-            return separator;
+            return data.separator;
         }
 
         /**
@@ -410,7 +451,7 @@ public class DocumentName implements Comparable<DocumentName> {
          * @return the case-sensitivity flag.
          */
         public boolean isCaseSensitive() {
-            return isCaseSensitive;
+            return data.isCaseSensitive;
         }
 
         /**
@@ -419,7 +460,7 @@ public class DocumentName implements Comparable<DocumentName> {
          * @return an optional containing the root or empty.
          */
         public Optional<String> rootFor(final String name) {
-            for (String sysRoot : roots) {
+            for (String sysRoot : data.roots) {
                 if (name.startsWith(sysRoot)) {
                     return Optional.of(sysRoot);
                 }

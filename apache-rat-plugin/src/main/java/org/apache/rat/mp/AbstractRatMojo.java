@@ -70,7 +70,7 @@ public abstract class AbstractRatMojo extends BaseRatMojo {
      * The base directory, in which to search for files.
      */
     @Parameter(property = "rat.basedir", defaultValue = "${basedir}", required = true)
-    private File basedir;
+    protected File basedir;
 
     /**
      * Specifies the verbose output.

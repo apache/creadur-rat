@@ -20,6 +20,7 @@ package org.apache.rat.mp;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileFilter;
 import java.io.IOException;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
@@ -34,6 +35,7 @@ import org.apache.rat.ReportConfiguration;
 import org.apache.rat.Reporter;
 import org.apache.rat.commandline.Arg;
 import org.apache.rat.commandline.StyleSheets;
+import org.apache.rat.config.exclusion.StandardCollection;
 import org.apache.rat.license.LicenseSetFactory.LicenseFilter;
 import org.apache.rat.report.claim.ClaimStatistic;
 import org.apache.rat.utils.DefaultLog;
@@ -56,6 +58,12 @@ public class RatCheckMojo extends AbstractRatMojo {
     @Deprecated
     @Parameter(defaultValue = "${project.build.directory}/rat.txt")
     private File defaultReportFile;
+
+    /**
+     * The defined build directory
+     */
+    @Parameter(defaultValue = "${project.build.directory}", readonly = true)
+    private String buildDirectory;
 
     /**
      * Where to store the report.
@@ -159,6 +167,18 @@ public class RatCheckMojo extends AbstractRatMojo {
         if (numUnapprovedLicenses > 0) {
             result.getClaimValidator().setMax(ClaimStatistic.Counter.UNAPPROVED, numUnapprovedLicenses);
         }
+        result.addExcludedCollection(StandardCollection.MAVEN);
+        if (StandardCollection.MAVEN.fileProcessorBuilder().hasNext()) {
+            result.addExcludedFileProcessor(StandardCollection.MAVEN);
+        }
+        if (StandardCollection.MAVEN.hasStaticDocumentNameMatcher()) {
+            StandardCollection.MAVEN.staticDocumentNameMatcher();
+        }
+
+        String buildDirAbsolutePath = new File(buildDirectory).getAbsolutePath();
+        FileFilter buildFilter = f -> f.getAbsolutePath().startsWith(buildDirAbsolutePath);
+        result.addExcludedFilter(buildFilter);
+
         return result;
     }
 
