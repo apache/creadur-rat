@@ -31,14 +31,9 @@ jobs:
 
     strategy:
       matrix:
-# RAT-468: macos-latest starts with JDK11 and has no JDK8 available
-        os: [ubuntu-latest, windows-latest]
-# RAT-296: disable JDK10 due to
-# Caused by: sun.security.validator.ValidatorException: PKIX path building failed: sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid certification path to requested target
-#
+        os: [macos-latest, ubuntu-latest, windows-latest]
 # RAT-497: JDK17-javadoc error fails the site build, albeit javadoc:javadoc works fine, https://bugs.java.com/bugdatabase/view_bug?bug_id=JDK-8369613
-# Java 25 is not working until we drop JDK8!
-        java: [8, 11, 21]
+        java: [18, 21, 25]
       fail-fast: false
 
     runs-on: ${{ matrix.os }}
