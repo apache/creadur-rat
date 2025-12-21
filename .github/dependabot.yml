@@ -22,7 +22,7 @@ updates:
 # Remember that version range definitions depend on the build tool, thus for Maven:
 # https://docs.github.com/en/code-security/dependabot/working-with-dependabot/dependabot-options-reference#versions-ignore
 # https://maven.apache.org/pom.html#Dependency_Version_Requirement_Specification
-# Example: 
+# Example:
 #    ignore:
 #      - dependency-name: "org.apache.tika:tika-core"
 #        versions: ["[3,)"]
