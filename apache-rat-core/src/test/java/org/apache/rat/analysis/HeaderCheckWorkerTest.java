@@ -22,7 +22,7 @@ package org.apache.rat.analysis;
 import java.io.StringReader;
 
 import java.util.Collections;
-import java.util.stream.Collectors;
+
 import org.apache.rat.Defaults;
 import org.apache.rat.api.Document;
 import org.apache.rat.configuration.builders.AnyBuilder;
