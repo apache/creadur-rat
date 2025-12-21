@@ -85,5 +85,5 @@ jobs:
         run: ./mvnw -e -B -V -ntp javadoc:javadoc
 
       - name: Build site
-        if: ${{ matrix.java }} != 17
+        if: ${{ matrix.java != 17}}
         run: ./mvnw -e -B -V -ntp site site:stage
