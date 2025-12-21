@@ -48,9 +48,9 @@ agnostic home for software distribution comprehension and audit tools.
     <!-- MSITE-1018, RAT-397: nil out timestamp in order to get current build timestamp -->
     <project.build.outputTimestamp>a</project.build.outputTimestamp>
     <ant.version>1.10.15</ant.version>
-    <mockito.version>4.11.0</mockito.version>
     <javaVersion>17</javaVersion>
     <tika.version>3.2.3</tika.version>
+    <mockito.version>5.21.0</mockito.version>
     <maven.compiler.source>${javaVersion}</maven.compiler.source>
     <maven.compiler.target>${javaVersion}</maven.compiler.target>
     <!-- This is the version of Maven required to use the RAT Maven Plugin -->
@@ -164,9 +164,10 @@ agnostic home for software distribution comprehension and audit tools.
       </dependency>
       <dependency>
         <groupId>org.mockito</groupId>
-        <artifactId>mockito-core</artifactId>
+        <artifactId>mockito-bom</artifactId>
         <version>${mockito.version}</version>
-        <scope>test</scope>
+        <type>pom</type>
+        <scope>import</scope>
       </dependency>
       <dependency>
         <groupId>org.hamcrest</groupId>
