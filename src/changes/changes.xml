@@ -71,6 +71,9 @@ in order to be properly linked in site reports.
       <action issue="RAT-478" type="add" dev="pottlinger">
         Switch to Java17 language level in Creadur RAT. Due to RAT-497 we cannot generate Javadocs/the site with JDK17, thus use JDK21 to build the project.
       </action>
+      <action issue="RAT-498" type="update" dev="pottlinger">
+        Update tika from 2.9.4 to 3.2.3 due to CVE-2025-66516.
+      </action>
       <action issue="RAT-524" type="add" dev="claudenw">
         Fixes case-sensitive detection time of underlying file system and removed MAVEN StandardCollection from default Maven processing to improve overall processing time.
       </action>
