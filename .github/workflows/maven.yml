@@ -33,7 +33,8 @@ jobs:
       matrix:
         os: [macos-latest, ubuntu-latest, windows-latest]
 # RAT-497: JDK17/18/19-javadoc error fails the site build, albeit javadoc:javadoc works fine, https://bugs.java.com/bugdatabase/view_bug?bug_id=JDK-8369613
-        java: [20, 21, 25]
+# Due to RAT-497 we skip javadoc and site generation
+        java: [17, 20, 21, 25]
       fail-fast: false
 
     runs-on: ${{ matrix.os }}
@@ -80,7 +81,9 @@ jobs:
             **/target/surefire-reports
 
       - name: Generate javadoc
+        if: ${{ github.event.inputs.jdk != '17' }}
         run: ./mvnw -e -B -V -ntp javadoc:javadoc
 
       - name: Build site
+        if: ${{ github.event.inputs.jdk != '17' }}
         run: ./mvnw -e -B -V -ntp site site:stage
