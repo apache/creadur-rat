@@ -81,11 +81,9 @@ jobs:
             **/target/surefire-reports
 
       - name: Generate javadoc
-        if: ${{ github.event.inputs.jdk != '17' }}
-        run: |
-          ./mvnw -e -B -V -ntp javadoc:javadoc
+        if: ${{ matrix.java }} != 17
+        run: ./mvnw -e -B -V -ntp javadoc:javadoc
 
       - name: Build site
-        if: ${{ github.event.inputs.jdk != '17' }}
-        run: |
-          ./mvnw -e -B -V -ntp site site:stage
+        if: ${{ matrix.java }} != 17
+        run: ./mvnw -e -B -V -ntp site site:stage
