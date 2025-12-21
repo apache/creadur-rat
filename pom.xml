@@ -48,6 +48,7 @@ agnostic home for software distribution comprehension and audit tools.
     <!-- MSITE-1018, RAT-397: nil out timestamp in order to get current build timestamp -->
     <project.build.outputTimestamp>a</project.build.outputTimestamp>
     <ant.version>1.10.15</ant.version>
+    <assertj.version>4.0.0-M1</assertj.version>
     <javaVersion>17</javaVersion>
     <tika.version>3.2.3</tika.version>
     <mockito.version>5.21.0</mockito.version>
@@ -156,6 +157,13 @@ agnostic home for software distribution comprehension and audit tools.
         <version>1.14.1</version>
       </dependency>
       <dependency>
+        <groupId>org.assertj</groupId>
+        <artifactId>assertj-bom</artifactId>
+        <version>${assertj.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+      <dependency>
         <groupId>org.junit</groupId>
         <artifactId>junit-bom</artifactId>
         <version>5.14.1</version>
@@ -214,7 +222,7 @@ agnostic home for software distribution comprehension and audit tools.
       <dependency>
         <groupId>org.assertj</groupId>
         <artifactId>assertj-core</artifactId>
-        <version>3.27.6</version>
+        <version>${assertj.version}</version>
         <scope>test</scope>
       </dependency>
       <dependency>
@@ -240,6 +248,7 @@ agnostic home for software distribution comprehension and audit tools.
       <dependency>
         <groupId>org.codehaus.groovy</groupId>
         <artifactId>groovy-all</artifactId>
+        <!-- TODO RAT-527: migrate to newer version under ASF umbrella: 5.x including itests in RAT's core -->
         <version>2.4.21</version>
         <scope>test</scope>
       </dependency>
@@ -670,7 +679,7 @@ agnostic home for software distribution comprehension and audit tools.
         <plugin>
           <groupId>org.codehaus.mojo</groupId>
           <artifactId>exec-maven-plugin</artifactId>
-          <version>3.6.2</version>
+          <version>3.6.3</version>
         </plugin>
         <plugin>
           <groupId>org.codehaus.mojo</groupId>

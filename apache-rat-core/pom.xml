@@ -247,6 +247,7 @@
     </dependency>
     <dependency>
       <!-- this dependency is actually used by integration testing code -->
+      <!-- TODO RAT-527: migrate to newer version under ASF umbrella: 5.x including itests -->
       <groupId>org.codehaus.groovy</groupId>
       <artifactId>groovy-all</artifactId>
       <scope>test</scope>

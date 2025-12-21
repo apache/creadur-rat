@@ -69,6 +69,15 @@ in order to be properly linked in site reports.
     -->
     <release version="1.0.0" date="xxxx-yy-zz" description="Current SNAPSHOT - release to be done">
       <action issue="RAT-498" type="update" dev="pottlinger">
+        Update assertj from 3.27.6 to 4.0.0-M1 and use bom for dependency management.
+      </action>
+      <action issue="RAT-498" type="update" dev="pottlinger">
+        Update plexus-utils from 3.5.1 to 3.6.0.
+      </action>
+      <action issue="RAT-498" type="update" dev="pottlinger">
+        Update exec-maven-plugin from 3.6.1 to 3.6.3.
+      </action>
+      <action issue="RAT-498" type="update" dev="pottlinger">
         Update junit from 5.13.4 to 5.14.1.
       </action>
       <action issue="RAT-498" type="update" dev="pottlinger">
