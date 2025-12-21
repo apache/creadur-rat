@@ -81,7 +81,7 @@ jobs:
             **/target/surefire-reports
 
       - name: Generate javadoc
-        if: startsWith(${{ matrix.java }}, '17')
+        if: ${{ matrix.java != 17}}
         run: ./mvnw -e -B -V -ntp javadoc:javadoc
 
       - name: Build site
