@@ -103,12 +103,13 @@ public enum StandardCollection {
      */
     HIDDEN_DIR("The hidden directories. Directories with names that start with '.'",
             null,
-            new DocumentNameMatcher("HIDDEN_DIR", new Predicate<DocumentName>() {
+            new DocumentNameMatcher("HIDDEN_DIR", new Predicate<>() {
                 @Override
                 public boolean test(final DocumentName documentName) {
                     File file = documentName.asFile();
                     return file.isDirectory() && ExclusionUtils.isHidden(documentName.getShortName());
                 }
+
                 @Override
                 public String toString() {
                     return "HIDDEN_DIR";
@@ -120,12 +121,13 @@ public enum StandardCollection {
      */
     HIDDEN_FILE("The hidden files. Directories with names that start with '.'",
             null,
-            new DocumentNameMatcher("HIDDEN_FILE", new Predicate<DocumentName>() {
+            new DocumentNameMatcher("HIDDEN_FILE", new Predicate<>() {
                 @Override
                 public boolean test(final DocumentName documentName) {
                     File file = documentName.asFile();
                     return file.isFile() && ExclusionUtils.isHidden(documentName.getShortName());
                 }
+
                 @Override
                 public String toString() {
                     return "HIDDEN_FILE";

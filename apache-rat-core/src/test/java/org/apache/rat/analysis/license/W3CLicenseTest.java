@@ -24,8 +24,10 @@ import org.junit.jupiter.params.provider.Arguments;
 
 public class W3CLicenseTest extends AbstractLicenseTest {
 
-    private static final String W3C_note = "Note that W3C requires a NOTICE.\n" + "All modifications require notes.\n"
-            + "See http://www.w3.org/Consortium/Legal/2002/copyright-software-20021231.";
+    private static final String W3C_note = """
+            Note that W3C requires a NOTICE.
+            All modifications require notes.
+            See http://www.w3.org/Consortium/Legal/2002/copyright-software-20021231.""";
     private static final Arguments W3C = Arguments.of("W3C", "W3C", "W3C Software Copyright", W3C_note,
             new String[][] { { "fulltext", "http://www.w3.org/Consortium/Legal/2002/copyright-software-20021231" },
                     { "spdx-tab", "SPDX-License-Identifier:\tW3C" },

@@ -115,22 +115,25 @@ public class GeneratedReportTest  {
      * The prefix for the ant build.xml file.
      */
     private static final String BUILD_XML_PREFIX =
-            "<project default=\"all\"\n" +
-                "  xmlns:au=\"antlib:org.apache.ant.antunit\"\n" +
-                "  xmlns:rat=\"antlib:org.apache.rat.anttasks\">\n" +
-                "\n" +
-                "  <taskdef uri=\"antlib:org.apache.ant.antunit\"\n" +
-                "  \tresource=\"org/apache/ant/antunit/antlib.xml\"\n" +
-                "  \tclasspath=\"${test.classpath}\" />\n" +
-                "\n" +
-                "  <taskdef uri=\"antlib:org.apache.rat.anttasks\"\n" +
-                "  \tresource=\"org/apache/rat/anttasks/antlib.xml\"\n" +
-                "  \tclasspath=\"${test.classpath}\" />\n" +
-                "\n" +
-                "  <property name=\"File\" value='test.file' />\n" +
-                "  <property name=\"Integer\" value=\"5\" />\n" +
-                "  <property name=\"String\" value=\"hello\" />\n" +
-                "  <property name=\"ConfigFile\" location=\"configData.xml\" />\n\n";
+            """
+                    <project default="all"
+                      xmlns:au="antlib:org.apache.ant.antunit"
+                      xmlns:rat="antlib:org.apache.rat.anttasks">
+                    
+                      <taskdef uri="antlib:org.apache.ant.antunit"
+                      \tresource="org/apache/ant/antunit/antlib.xml"
+                      \tclasspath="${test.classpath}" />
+                    
+                      <taskdef uri="antlib:org.apache.rat.anttasks"
+                      \tresource="org/apache/rat/anttasks/antlib.xml"
+                      \tclasspath="${test.classpath}" />
+                    
+                      <property name="File" value='test.file' />
+                      <property name="Integer" value="5" />
+                      <property name="String" value="hello" />
+                      <property name="ConfigFile" location="configData.xml" />
+                    
+                    """;
 
     private static File writeFile(String name, String contents) throws IOException {
         final File testFile = new File(tempDir.toFile(), name);
@@ -230,7 +233,7 @@ public class GeneratedReportTest  {
 
         List<AntOption> options = Arg.getOptions().getOptions().stream()
                 .filter(o -> !AntOption.getFilteredOptions().contains(o)).map(AntOption::new)
-                .collect(Collectors.toList());
+                .toList();
 
         List<Arguments> lst = new ArrayList<>();
 
@@ -304,109 +307,85 @@ public class GeneratedReportTest  {
     }
     private static String getData(String name) {
         try {
-            switch (name) {
-                case "copyright":
-                case "editCopyright":
-                    return "My Copyright info";
-                case "config":
+            return switch (name) {
+                case "copyright", "editCopyright" -> "My Copyright info";
+                case "config" -> {
                     writeFile("configData.xml", "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<rat-config/>");
-                    return "${ConfigFile}";
-                case "licenses":
-                    return writeFile("licensesData.xml", "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<rat-config/>").getName();
-                case "licenseFamiliesApprovedFile":
-                    return writeFile("licenseFamiliesApprovedFile.txt", getData("licenseFamiliesApproved")).getName();
-                case "licenseFamiliesDeniedFile":
-                    return writeFile("licenseFamiliesDeniedFile.txt", getData("licenseFamiliesDenied")).getName();
-                case "licensesApproved":
-                case "licenseFamiliesApproved":
-                case "licenseFamiliesDenied":
-                case "licensesDenied":
-                    return "AL, CC";
-                case "licensesApprovedFile":
-                    return writeFile("licensesApprovedFile.txt", getData("licensesApproved")).getName();
-                case "licensesDeniedFile":
-                    return writeFile("licensesDeniedFile.txt", getData("licensesDenied")).getName();
-                case "configurationNoDefaults":
-                    writeFile("noDefaultsConfig.xml", "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
-                            "<rat-config>\n" +
-                            "\t<families>\n" +
-                            "\t\t<family id=\"DUMMY\" name=\"A Dummy license\" />\n" +
-                            "\t</families>\n" +
-                            "\t<licenses>\n" +
-                            "\t\t<license family=\"DUMMY\">\n" +
-                            "\t\t\t<text>Any old text</text>\n" +
-                            "\t\t</license>\n" +
-                            "\t</licenses>\n" +
-                            "\t<approved>\n" +
-                            "\t\t<family license_ref='DUMMY' />\n" +
-                            "\t</approved>\n" +
-                            "\t<matchers>\n" +
-                            "\t\t<matcher class=\"org.apache.rat.configuration.builders.AllBuilder\" />\n" +
-                            "\t\t<matcher class=\"org.apache.rat.configuration.builders.AnyBuilder\" />\n" +
-                            "\t\t<matcher class=\"org.apache.rat.configuration.builders.CopyrightBuilder\" />\n" +
-                            "\t\t<matcher class=\"org.apache.rat.configuration.builders.MatcherRefBuilder\" />\n" +
-                            "\t\t<matcher class=\"org.apache.rat.configuration.builders.NotBuilder\" />\n" +
-                            "\t\t<matcher class=\"org.apache.rat.configuration.builders.RegexBuilder\" />\n" +
-                            "\t\t<matcher class=\"org.apache.rat.configuration.builders.SpdxBuilder\" />\n" +
-                            "\t\t<matcher class=\"org.apache.rat.configuration.builders.TextBuilder\" />\n" +
-                            "\t</matchers>\n" +
-                            "</rat-config>\n");
-                    return "true";
-                case "noDefaultLicenses":
-                    writeFile("noDefaultLicensesConfig.xml", "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
-                            "<rat-config>\n" +
-                            "\t<families>\n" +
-                            "\t\t<family id=\"DUMMY\" name=\"A Dummy license\" />\n" +
-                            "\t</families>\n" +
-                            "\t<licenses>\n" +
-                            "\t\t<license family=\"DUMMY\">\n" +
-                            "\t\t\t<text>Any old text</text>\n" +
-                            "\t\t</license>\n" +
-                            "\t</licenses>\n" +
-                            "</rat-config>\n");
-                    return "true";
-                case "out":
-                case "outputFile":
-                    return tempDir.resolve(name + ".txt").toString();
-                case "xml":
-                    return "true";
-                case "stylesheet":
-                case "outputStyle":
-                    return StyleSheets.PLAIN.arg();
-                case "inputInclude":
-                case "inputExclude":
-                case "exclude":
-                case "include":
-                    return "a/**file/stuff";
-                case "excludeFile" :
-                    return writeFile("excludeFile.txt", getData("exclude")).getAbsolutePath();
-                case "includesFile" :
-                    return writeFile("includeFile.txt", getData("include")).getAbsolutePath();
-                case "inputIncludeFile" :
-                    return writeFile("inputIncludeFile.txt", getData("inputInclude")).getName();
-                case "inputExcludeFile" :
-                    return writeFile("inputExcludeFile.txt", getData("inputExclude")).getName();
-                case "inputExcludeSize":
-                    return "500";
-                case "inputIncludeStd":
-                case "inputExcludeStd":
-                    return "GIT";
-                case "counterMin":
-                case "counterMax":
-                    return "BINARIES:3";
-                case "inputExcludeParsedScm":
-                    return "IDEA";
-                case "outputLicenses":
-                case "outputFamilies":
-                case "listLicenses":
-                case "listFamilies":
-                    return LicenseSetFactory.LicenseFilter.ALL.name();
-                case "outputArchive":
-                case "outputStandard":
-                    return ReportConfiguration.Processing.ABSENCE.name();
-                default:
-                    return null;
-            }
+                    yield "${ConfigFile}";
+                }
+                case "licenses" ->
+                        writeFile("licensesData.xml", "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<rat-config/>").getName();
+                case "licenseFamiliesApprovedFile" ->
+                        writeFile("licenseFamiliesApprovedFile.txt", getData("licenseFamiliesApproved")).getName();
+                case "licenseFamiliesDeniedFile" ->
+                        writeFile("licenseFamiliesDeniedFile.txt", getData("licenseFamiliesDenied")).getName();
+                case "licensesApproved", "licenseFamiliesApproved", "licenseFamiliesDenied", "licensesDenied" ->
+                        "AL, CC";
+                case "licensesApprovedFile" ->
+                        writeFile("licensesApprovedFile.txt", getData("licensesApproved")).getName();
+                case "licensesDeniedFile" -> writeFile("licensesDeniedFile.txt", getData("licensesDenied")).getName();
+                case "configurationNoDefaults" -> {
+                    writeFile("noDefaultsConfig.xml", """
+                            <?xml version="1.0" encoding="UTF-8"?>
+                            <rat-config>
+                            \t<families>
+                            \t\t<family id="DUMMY" name="A Dummy license" />
+                            \t</families>
+                            \t<licenses>
+                            \t\t<license family="DUMMY">
+                            \t\t\t<text>Any old text</text>
+                            \t\t</license>
+                            \t</licenses>
+                            \t<approved>
+                            \t\t<family license_ref='DUMMY' />
+                            \t</approved>
+                            \t<matchers>
+                            \t\t<matcher class="org.apache.rat.configuration.builders.AllBuilder" />
+                            \t\t<matcher class="org.apache.rat.configuration.builders.AnyBuilder" />
+                            \t\t<matcher class="org.apache.rat.configuration.builders.CopyrightBuilder" />
+                            \t\t<matcher class="org.apache.rat.configuration.builders.MatcherRefBuilder" />
+                            \t\t<matcher class="org.apache.rat.configuration.builders.NotBuilder" />
+                            \t\t<matcher class="org.apache.rat.configuration.builders.RegexBuilder" />
+                            \t\t<matcher class="org.apache.rat.configuration.builders.SpdxBuilder" />
+                            \t\t<matcher class="org.apache.rat.configuration.builders.TextBuilder" />
+                            \t</matchers>
+                            </rat-config>
+                            """);
+                    yield "true";
+                }
+                case "noDefaultLicenses" -> {
+                    writeFile("noDefaultLicensesConfig.xml", """
+                            <?xml version="1.0" encoding="UTF-8"?>
+                            <rat-config>
+                            \t<families>
+                            \t\t<family id="DUMMY" name="A Dummy license" />
+                            \t</families>
+                            \t<licenses>
+                            \t\t<license family="DUMMY">
+                            \t\t\t<text>Any old text</text>
+                            \t\t</license>
+                            \t</licenses>
+                            </rat-config>
+                            """);
+                    yield "true";
+                }
+                case "out", "outputFile" -> tempDir.resolve(name + ".txt").toString();
+                case "xml" -> "true";
+                case "stylesheet", "outputStyle" -> StyleSheets.PLAIN.arg();
+                case "inputInclude", "inputExclude", "exclude", "include" -> "a/**file/stuff";
+                case "excludeFile" -> writeFile("excludeFile.txt", getData("exclude")).getAbsolutePath();
+                case "includesFile" -> writeFile("includeFile.txt", getData("include")).getAbsolutePath();
+                case "inputIncludeFile" -> writeFile("inputIncludeFile.txt", getData("inputInclude")).getName();
+                case "inputExcludeFile" -> writeFile("inputExcludeFile.txt", getData("inputExclude")).getName();
+                case "inputExcludeSize" -> "500";
+                case "inputIncludeStd", "inputExcludeStd" -> "GIT";
+                case "counterMin", "counterMax" -> "BINARIES:3";
+                case "inputExcludeParsedScm" -> "IDEA";
+                case "outputLicenses", "outputFamilies", "listLicenses", "listFamilies" ->
+                        LicenseSetFactory.LicenseFilter.ALL.name();
+                case "outputArchive", "outputStandard" -> ReportConfiguration.Processing.ABSENCE.name();
+                default -> null;
+            };
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

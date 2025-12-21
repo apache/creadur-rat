@@ -555,19 +555,13 @@ public class Report extends BaseAntTask {
      * @return the equivalent RAT log level.
      */
     public static Log.Level fromProjectLevel(final int level) {
-        switch (level) {
-            case Project.MSG_DEBUG:
-            case Project.MSG_VERBOSE:
-                return Log.Level.DEBUG;
-            case Project.MSG_INFO:
-                return Log.Level.INFO;
-            case Project.MSG_WARN:
-                return Log.Level.WARN;
-            case Project.MSG_ERR:
-                return Log.Level.ERROR;
-            default:
-                return Log.Level.OFF;
-        }
+        return switch (level) {
+            case Project.MSG_DEBUG, Project.MSG_VERBOSE -> Log.Level.DEBUG;
+            case Project.MSG_INFO -> Log.Level.INFO;
+            case Project.MSG_WARN -> Log.Level.WARN;
+            case Project.MSG_ERR -> Log.Level.ERROR;
+            default -> Log.Level.OFF;
+        };
     }
 
     /**
@@ -576,19 +570,13 @@ public class Report extends BaseAntTask {
      * @return the equivalent Ant Project log level.
      */
     static int toProjectLevel(final Log.Level level) {
-        switch (level) {
-            case DEBUG:
-                return Project.MSG_DEBUG;
-            case INFO:
-                return Project.MSG_INFO;
-            case WARN:
-                return Project.MSG_WARN;
-            case ERROR:
-                return Project.MSG_ERR;
-            case OFF:
-            default:
-                return -1;
-        }
+        return switch (level) {
+            case DEBUG -> Project.MSG_DEBUG;
+            case INFO -> Project.MSG_INFO;
+            case WARN -> Project.MSG_WARN;
+            case ERROR -> Project.MSG_ERR;
+            default -> -1;
+        };
     }
 
     /**

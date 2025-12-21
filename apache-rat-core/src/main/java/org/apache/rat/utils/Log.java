@@ -219,7 +219,7 @@ public interface Log {
 
             @Override
             public void flush() {
-                if (sb.length() > 0) {
+                if (!sb.isEmpty()) {
                     Log.this.log(level, sb.toString());
                 }
                 sb = new StringBuilder();

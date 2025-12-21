@@ -50,8 +50,7 @@ public final class DescriptionBuilder {
      * @return the Description of the object.
      */
     public static Description build(final Object object) {
-        if (object instanceof ILicense) {
-            ILicense license = (ILicense) object;
+        if (object instanceof ILicense license) {
             Class<?> clazz = object.getClass();
             ConfigComponent configComponent = clazz.getAnnotation(ConfigComponent.class);
             if (configComponent == null || configComponent.type() != ComponentType.LICENSE) {

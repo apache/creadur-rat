@@ -109,9 +109,11 @@ public final class MavenGenerator {
                         writer.append(format("package %s;%n", packageName));
                         break;
                     case "${constructor}":
-                        writer.append(format("    protected %s() {\n" +
-                                "        setDeprecationReporter();\n" +
-                                "    }%n", className));
+                        writer.append(format("""
+                                    protected %s() {
+                                        setDeprecationReporter();
+                                    }%n\
+                                """, className));
                         break;
                     case "${class}":
                         writer.append(format("public abstract class %s extends AbstractMojo {%n", className));

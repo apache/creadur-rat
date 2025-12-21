@@ -147,7 +147,7 @@ public class ClaimValidatorTest {
     @Test
     public void listIssuesTest() {
         ClaimStatistic statistic = new ClaimStatistic();
-        List<String> required = getRequiredCounters().stream().map(ClaimStatistic.Counter::name).collect(Collectors.toList());
+        List<String> required = getRequiredCounters().stream().map(ClaimStatistic.Counter::name).toList();
 
         int value = 5;
         for (ClaimStatistic.Counter counter : ClaimStatistic.Counter.values()) {

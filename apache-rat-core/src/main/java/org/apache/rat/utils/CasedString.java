@@ -134,7 +134,7 @@ public class CasedString {
             StringBuilder sb = new StringBuilder();
             for (char c : string.toCharArray()) {
                 if (splitter.test(c)) {
-                    if (sb.length() > 0) {
+                    if (!sb.isEmpty()) {
                         lst.add(sb.toString());
                         sb.setLength(0);
                     }
@@ -145,7 +145,7 @@ public class CasedString {
                     sb.append(c);
                 }
             }
-            if (sb.length() > 0) {
+            if (!sb.isEmpty()) {
                 lst.add(sb.toString());
             }
             return lst.toArray(new String[0]);

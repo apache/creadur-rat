@@ -122,14 +122,11 @@ public final class AnalyserFactory {
          */
         private Predicate<ILicense> licenseFilter(final ReportConfiguration.Processing proc)  {
             return license -> {
-                switch (proc) {
-                    case PRESENCE:
-                        return !license.getLicenseFamily().equals(UnknownLicense.INSTANCE.getLicenseFamily());
-                    case ABSENCE:
-                        return true;
-                    default:
-                        return false;
-                }
+                return switch (proc) {
+                    case PRESENCE -> !license.getLicenseFamily().equals(UnknownLicense.INSTANCE.getLicenseFamily());
+                    case ABSENCE -> true;
+                    default -> false;
+                };
             };
         }
 

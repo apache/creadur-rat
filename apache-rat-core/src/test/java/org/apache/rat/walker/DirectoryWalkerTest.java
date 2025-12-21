@@ -134,7 +134,7 @@ public class DirectoryWalkerTest {
             assertThat(actual).as(()-> String.format("Missing %s", ex)).contains(ex);
         }
 
-        List<Document> excluded = scanned.stream().filter(Document::isIgnored).collect(Collectors.toList());
+        List<Document> excluded = scanned.stream().filter(Document::isIgnored).toList();
         assertThat(excluded.size()).isEqualTo(1);
         Document d = excluded.get(0);
         assertThat(d.getName().localized("/")).isEqualTo("/.hidden");

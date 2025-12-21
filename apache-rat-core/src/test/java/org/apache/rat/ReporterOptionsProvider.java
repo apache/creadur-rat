@@ -162,25 +162,27 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
             assertThat(contents).isEqualTo("class NoLicense {}");
             assertThat(resultFile).exists();
             contents = String.join("\n", IOUtils.readLines(new FileReader(resultFile)));
-            assertThat(contents).isEqualTo("/*\n" +
-                    " * Licensed to the Apache Software Foundation (ASF) under one\n" +
-                    " * or more contributor license agreements.  See the NOTICE file\n" +
-                    " * distributed with this work for additional information\n" +
-                    " * regarding copyright ownership.  The ASF licenses this file\n" +
-                    " * to you under the Apache License, Version 2.0 (the\n" +
-                    " * \"License\"); you may not use this file except in compliance\n" +
-                    " * with the License.  You may obtain a copy of the License at\n" +
-                    " * \n" +
-                    " *   http://www.apache.org/licenses/LICENSE-2.0\n" +
-                    " * \n" +
-                    " * Unless required by applicable law or agreed to in writing,\n" +
-                    " * software distributed under the License is distributed on an\n" +
-                    " * \"AS IS\" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY\n" +
-                    " * KIND, either express or implied.  See the License for the\n" +
-                    " * specific language governing permissions and limitations\n" +
-                    " * under the License.\n" +
-                    " */\n\n" +
-                    "class NoLicense {}");
+            assertThat(contents).isEqualTo("""
+                    /*
+                     * Licensed to the Apache Software Foundation (ASF) under one
+                     * or more contributor license agreements.  See the NOTICE file
+                     * distributed with this work for additional information
+                     * regarding copyright ownership.  The ASF licenses this file
+                     * to you under the Apache License, Version 2.0 (the
+                     * "License"); you may not use this file except in compliance
+                     * with the License.  You may obtain a copy of the License at
+                     *\s
+                     *   http://www.apache.org/licenses/LICENSE-2.0
+                     *\s
+                     * Unless required by applicable law or agreed to in writing,
+                     * software distributed under the License is distributed on an
+                     * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+                     * KIND, either express or implied.  See the License for the
+                     * specific language governing permissions and limitations
+                     * under the License.
+                     */
+                    
+                    class NoLicense {}""");
         } catch (IOException | RatException e) {
             fail(e.getMessage(), e);
         }
@@ -871,11 +873,12 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
             System.setOut(out);
             configureSourceDir(option);
             // create a dummy stylesheet so that we have a local file for users of the testing jar.
-            File file = writeFile("stylesheet", "<xsl:stylesheet version=\"1.0\" xmlns:xsl=\"http://www.w3.org/1999/XSL/Transform\">\n" +
-                    "    <xsl:template match=\"@*|node()\">\n" +
-                    "        Hello world\n" +
-                    "    </xsl:template>\n" +
-                    "</xsl:stylesheet>");
+            File file = writeFile("stylesheet", """
+                    <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+                        <xsl:template match="@*|node()">
+                            Hello world
+                        </xsl:template>
+                    </xsl:stylesheet>""");
 
             String[] args = {null};
             for (StyleSheets sheet : StyleSheets.values()) {
@@ -946,11 +949,12 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
             System.setOut(out);
             configureSourceDir(option);
             // create a dummy stylesheet so that we match the stylesheet tests.
-            File file = writeFile("stylesheet", "<xsl:stylesheet version=\"1.0\" xmlns:xsl=\"http://www.w3.org/1999/XSL/Transform\">\n" +
-                    "    <xsl:template match=\"@*|node()\">\n" +
-                    "        Hello world\n" +
-                    "    </xsl:template>\n" +
-                    "</xsl:stylesheet>");
+            File file = writeFile("stylesheet", """
+                    <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+                        <xsl:template match="@*|node()">
+                            Hello world
+                        </xsl:template>
+                    </xsl:stylesheet>""");
 
             ReportConfiguration config = generateConfig(ImmutablePair.of(option, null));
             Reporter reporter = new Reporter(config);

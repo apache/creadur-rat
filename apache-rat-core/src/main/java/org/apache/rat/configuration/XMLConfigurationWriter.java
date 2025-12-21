@@ -68,14 +68,11 @@ public class XMLConfigurationWriter {
     private Predicate<Description> attributeFilter(final Description parent) {
         return d -> {
             if (d.getType() == ComponentType.PARAMETER) {
-                switch (parent.getType()) {
-                case MATCHER:
-                    return !XMLConfig.isInlineNode(parent.getCommonName(), d.getCommonName());
-                case LICENSE:
-                    return !licenseChildren.contains(d.getCommonName());
-                default:
-                    return true;
-                }
+                return switch (parent.getType()) {
+                    case MATCHER -> !XMLConfig.isInlineNode(parent.getCommonName(), d.getCommonName());
+                    case LICENSE -> !licenseChildren.contains(d.getCommonName());
+                    default -> true;
+                };
             }
             return false;
         };

@@ -99,6 +99,6 @@ public class TestingLog implements Log {
      * @return {@code true} if the log is empty.
      */
     public boolean isEmpty() {
-        return captured.length() == 0;
+        return captured.isEmpty();
     }
 }
