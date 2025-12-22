@@ -84,6 +84,7 @@ public class GitIgnoreBuilderTest extends AbstractIgnoreBuilderTest {
             DocumentNameMatcher matcher = matcherSets.get(0).createMatcher();
             assertThat(matcher.toString()).isEqualTo(expected);
         } else {
+            assertThat(entry).isPresent();
             assertThat(entry.get()).isEqualTo(expected);
         }
     }
@@ -128,6 +129,7 @@ public class GitIgnoreBuilderTest extends AbstractIgnoreBuilderTest {
             }
         };
         URL url = GitIgnoreBuilderTest.class.getClassLoader().getResource("GitIgnoreBuilderTest/src/");
+        assertThat(url).as("resources are missing").isNotNull();
         File file = Paths.get(url.toURI()).toFile();
 
         DocumentName documentName = DocumentName.builder(file).build();
@@ -157,6 +159,7 @@ public class GitIgnoreBuilderTest extends AbstractIgnoreBuilderTest {
                 URL globalGitIgnoreUrl = GitIgnoreBuilderTest.class.getClassLoader().getResource("GitIgnoreBuilderTest/global-gitignore");
                 String globalGitIgnore;
                 try {
+                    assertThat(globalGitIgnoreUrl).isNotNull();
                     globalGitIgnore = Paths.get(globalGitIgnoreUrl.toURI()).toString();
                     return Optional.of(new File(globalGitIgnore));
                 } catch (URISyntaxException e) {
@@ -166,6 +169,7 @@ public class GitIgnoreBuilderTest extends AbstractIgnoreBuilderTest {
             }
         };
         URL url = GitIgnoreBuilderTest.class.getClassLoader().getResource("GitIgnoreBuilderTest/src/");
+        assertThat(url).as("resources are missing").isNotNull();
         File file = Paths.get(url.toURI()).toFile();
 
         DocumentName documentName = DocumentName.builder(file).build();

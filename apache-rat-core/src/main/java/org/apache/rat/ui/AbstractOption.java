@@ -26,6 +26,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.cli.Option;
+import org.apache.commons.cli.Options;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.rat.OptionCollection;
 import org.apache.rat.commandline.Arg;
@@ -35,8 +36,9 @@ import static java.lang.String.format;
 /**
  * Abstract class that provides the framework for UI-specific RAT options.
  * In this context UI option means an option expressed in the specific UI.
+ * @param <T> the concrete implementation of AbstractOption.
  */
-public abstract class AbstractOption {
+public abstract class AbstractOption<T extends AbstractOption<T>> {
     /** The pattern to match CLI options in text */
     protected static final Pattern PATTERN = Pattern.compile("-(-[a-z0-9]+)+");
     /** The actual UI-specific name for the option */
@@ -45,6 +47,16 @@ public abstract class AbstractOption {
     protected final String name;
     /** The argument type for this option */
     protected final OptionCollection.ArgumentType argumentType;
+
+    /**
+     * Extract the core name from the option.  This is the {@link Option#getLongOpt()} if defined, otherwise
+     * the {@link Option#getOpt()}.
+     * @param option the commons cli option.
+     * @return the common cli based name.
+     */
+    public static String extractBaseName(final Option option) {
+        return StringUtils.defaultIfBlank(option.getLongOpt(), option.getOpt());
+    }
 
     /**
      * Constructor.
@@ -60,6 +72,25 @@ public abstract class AbstractOption {
                 OptionCollection.ArgumentType.valueOf(option.getArgName().toUpperCase(Locale.ROOT)) :
                 OptionCollection.ArgumentType.NONE;
     }
+
+    /**
+     * Gets the additional options for the UI.
+     *
+     * @return the additional options.
+     */
+    public abstract Options getAdditionalOptions();
+
+//    /**
+//     * Gets a map client option name to Ant Option.
+//     * @return a map client option name to Ant Option.
+//     */
+//    public Map<String, T> getOptions() {
+//        Map<String, T> result = new TreeMap<>();
+//        for (T antOption : AntOption.getAntOptions()) {
+//            result.put(CLIOption.createName(antOption.getOption()), antOption);
+//        }
+//        return result;
+//    }
 
     /**
      * Gets the option this abstract option is wrapping.
@@ -112,7 +143,7 @@ public abstract class AbstractOption {
             while (matcher.find()) {
                 String key = matcher.group();
                 String optKey = key.substring(2);
-                Optional<Option> maybeResult = Arg.getOptions().getOptions().stream()
+                Optional<Option> maybeResult = Arg.getOptions(getAdditionalOptions()).getOptions().stream()
                         .filter(o -> optKey.equals(o.getOpt()) || optKey.equals(o.getLongOpt())).findFirst();
                 maybeResult.ifPresent(value -> maps.put(key, cleanupName(value)));
             }
@@ -226,5 +257,36 @@ public abstract class AbstractOption {
      */
     public final String getDeprecated() {
         return  option.isDeprecated() ? cleanup(StringUtils.defaultIfEmpty(option.getDeprecated().toString(), StringUtils.EMPTY)) : StringUtils.EMPTY;
+    }
+
+    static final class BaseOption extends AbstractOption<BaseOption> {
+        /**
+         * Constructor.
+         *
+         * @param option The CLI option
+         */
+        BaseOption(final org.apache.commons.cli.Option option) {
+            super(option, AbstractOption.extractBaseName(option));
+        }
+
+        @Override
+        public Options getAdditionalOptions() {
+            return new Options();
+        }
+
+        @Override
+        protected String cleanupName(final org.apache.commons.cli.Option option) {
+            return AbstractOption.extractBaseName(option);
+        }
+
+        @Override
+        public String getExample() {
+            return "";
+        }
+
+        @Override
+        public String getText() {
+            return "";
+        }
     }
 }

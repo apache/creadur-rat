@@ -25,7 +25,6 @@ import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.function.Consumer;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
@@ -66,9 +65,6 @@ public final class OptionCollection {
     /** The Option comparator to sort the help */
     public static final Comparator<Option> OPTION_COMPARATOR = new OptionComparator();
 
-    /** The Help option */
-    public static final Option HELP = new Option("?", "help", false, "Print help for the RAT command line interface and exit.");
-
     /**
      * Join a collection of objects together as a comma separated list of their string values.
      * @param args the objects to join together.
@@ -83,14 +79,13 @@ public final class OptionCollection {
      *
      * @param workingDirectory The directory to resolve relative file names against.
      * @param args the arguments to parse
-     * @param helpCmd the help command to run when necessary.
-     * @return a ReportConfiguration or {@code null} if Help was printed.
+     * @return the ArgumentContext for the process.
      * @throws IOException on error.
      * @throws ParseException on option parsing error.
      */
-    public static ReportConfiguration parseCommands(final File workingDirectory, final String[] args, final Consumer<Options> helpCmd)
+    public static ArgumentContext parseCommands(final File workingDirectory, final String[] args)
             throws IOException, ParseException {
-        return parseCommands(workingDirectory, args, helpCmd, false);
+        return parseCommands(workingDirectory, args, new Options());
     }
 
     /**
@@ -117,41 +112,26 @@ public final class OptionCollection {
      *
      * @param workingDirectory The directory to resolve relative file names against.
      * @param args the arguments to parse.
-     * @param helpCmd the help command to run when necessary.
-     * @param noArgs If {@code true} then the commands do not need extra arguments.
-     * @return a ReportConfiguration or {@code null} if Help was printed.
+     * @param additionalOptions An Options object containing UI specific command line options.
+     * @return the ArgumentContext for the process.
      * @throws IOException on error.
      * @throws ParseException on option parsing error.
      */
-    public static ReportConfiguration parseCommands(final File workingDirectory, final String[] args,
-                                                    final Consumer<Options> helpCmd, final boolean noArgs) throws IOException, ParseException {
+    public static ArgumentContext parseCommands(final File workingDirectory, final String[] args,
+                                                                       final Options additionalOptions) throws IOException, ParseException {
 
-        Options opts = buildOptions();
-        CommandLine commandLine = parseCommandLine(buildOptions(), args);
+        Options opts = buildOptions(additionalOptions);
+        CommandLine commandLine = parseCommandLine(opts, args);
 
         Arg.processLogLevel(commandLine);
 
         ArgumentContext argumentContext = new ArgumentContext(workingDirectory, commandLine);
-
-        if (commandLine.hasOption(HELP)) {
-            helpCmd.accept(opts);
-            return null;
-        }
-
+        populateConfiguration(argumentContext);
         if (commandLine.hasOption(Arg.HELP_LICENSES.option())) {
-            new Licenses(createConfiguration(argumentContext), new PrintWriter(System.out, false, StandardCharsets.UTF_8)).printHelp();
-            return null;
+            new Licenses(argumentContext.getConfiguration(), new PrintWriter(argumentContext.getConfiguration().getOutput().get(), false, StandardCharsets.UTF_8)).printHelp();
         }
 
-        ReportConfiguration configuration = createConfiguration(argumentContext);
-        if (!noArgs && !configuration.hasSource()) {
-            String msg = "No directories or files specified for scanning. Did you forget to close a multi-argument option?";
-            DefaultLog.getInstance().error(msg);
-            helpCmd.accept(opts);
-            return null;
-        }
-
-        return configuration;
+        return argumentContext;
     }
 
     /**
@@ -160,17 +140,17 @@ public final class OptionCollection {
      * You probably want one of the {@code ParseCommands} methods.
      * @param argumentContext The context to execute in.
      * @return a ReportConfiguration
-     * @see #parseCommands(File, String[], Consumer)
-     * @see #parseCommands(File, String[], Consumer, boolean)
      */
-    static ReportConfiguration createConfiguration(final ArgumentContext argumentContext) {
+    static ReportConfiguration populateConfiguration(final ArgumentContext argumentContext) {
         argumentContext.processArgs();
         final ReportConfiguration configuration = argumentContext.getConfiguration();
         final CommandLine commandLine = argumentContext.getCommandLine();
-        for (String s : commandLine.getArgs()) {
-            IReportable reportable = getReportable(new File(s), configuration);
-            if (reportable != null) {
-                configuration.addSource(reportable);
+        if (!configuration.hasSource()) {
+            for (String s : commandLine.getArgs()) {
+                IReportable reportable = getReportable(new File(s), configuration);
+                if (reportable != null) {
+                    configuration.addSource(reportable);
+                }
             }
         }
         return configuration;
@@ -179,10 +159,11 @@ public final class OptionCollection {
     /**
      * Create an {@code Options} object from the list of defined Options.
      * Mutually exclusive options must be listed in an OptionGroup.
+     * @param additionalOptions Additional options to add to the collection.
      * @return the Options comprised of the Options defined in this class.
      */
-    public static Options buildOptions() {
-        return Arg.getOptions().addOption(HELP);
+    public static Options buildOptions(final Options additionalOptions) {
+        return Arg.getOptions(additionalOptions);
     }
 
     /**

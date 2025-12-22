@@ -57,6 +57,7 @@ import org.apache.rat.testhelpers.TestingLog;
 import org.apache.rat.testhelpers.TestingLicense;
 import org.apache.rat.testhelpers.TestingMatcher;
 import org.apache.rat.utils.DefaultLog;
+import org.apache.rat.utils.Log;
 import org.apache.rat.utils.Log.Level;
 import org.apache.rat.utils.ReportingSet.Options;
 import org.junit.jupiter.api.AfterEach;
@@ -516,25 +517,30 @@ public class ReportConfigurationTest {
 
     @Test
     public void testValidate() {
-        final StringBuilder sb = new StringBuilder();
-        String msg = "At least one source must be specified";
-        assertThatThrownBy(() -> underTest.validate(sb::append)).isExactlyInstanceOf(ConfigurationException.class)
-                .hasMessageContaining(msg);
-        assertThat(sb.toString()).isEqualTo(msg);
+        TestingLog testLog = new TestingLog();
+        Log oldLog = DefaultLog.getInstance();
+        try {
+            DefaultLog.setInstance(testLog);
+
+            String msg = "At least one source must be specified";
+            assertThatThrownBy(underTest::validate).isExactlyInstanceOf(ConfigurationException.class)
+                    .hasMessageContaining(msg);
+            testLog.assertContains(msg);
+            testLog.clear();
 
 
-        sb.setLength(0);
-        msg = "You must specify at least one license";
-        underTest.addSource(mock(IReportable.class));
+            msg = "At least one license must be defined";
+            underTest.addSource(mock(IReportable.class));
 
-        assertThatThrownBy(() -> underTest.validate(sb::append)).isExactlyInstanceOf(ConfigurationException.class)
-                .hasMessageContaining(msg);
-        assertThat(sb.toString()).isEqualTo(msg);
+            assertThatThrownBy(underTest::validate).isExactlyInstanceOf(ConfigurationException.class)
+                    .hasMessageContaining(msg);
+            testLog.assertContains(msg);
 
-        sb.setLength(0);
-        underTest.addLicense(testingLicense("valid", "Validation testing license"));
-        underTest.validate(sb::append);
-        assertThat(sb.length()).isEqualTo(0);
+            underTest.addLicense(testingLicense("valid", "Validation testing license"));
+            underTest.validate();
+        } finally {
+            DefaultLog.setInstance(oldLog);
+        }
     }
     
     @Test

@@ -57,9 +57,9 @@ public class DataUtils {
     /**
      * A setup that does nothing.
      */
-    static final Consumer<Path> NO_SETUP = basePath -> {};
+    public static final Consumer<Path> NO_SETUP = basePath -> {};
 
-    static final Consumer<ValidatorData> NO_VALIDATOR = validatorData -> {};
+    public static final Consumer<ValidatorData> NO_VALIDATOR = validatorData -> {};
 
     private DataUtils() {
         // do not instantiate
@@ -80,9 +80,9 @@ public class DataUtils {
      * containing as single text matcher that mateches the {@code text} parameter.
      * @param fileName The name of the file to create.
      * @param id the ID for the family.
-     * @param text the for the matcher.
+     * @param text the text for the matcher.
      */
-    static void generateSimpleConfig(Path fileName, String id, String text) {
+    static void generateTextConfig(Path fileName, String id, String text) {
         try (XmlWriter writer = new XmlWriter(new OutputStreamWriter(Files.newOutputStream(fileName.toFile().toPath()),
                         StandardCharsets.UTF_8))) {
             writer.startDocument()
@@ -99,6 +99,35 @@ public class DataUtils {
                     .attribute("family", id)
                     .openElement("text")
                     .content(text)
+                    .closeDocument(); // close all open elements
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    /**
+     * Generate a simple configuration file that defines one license based on the name of the file and
+     * containing as single text matcher that mateches the {@code text} parameter.
+     * @param fileName The name of the file to create.
+     * @param id the ID for the family.
+     * @param spdxId the SPDX id for the matcher.
+     */
+    static void generateSpdxConfig(Path fileName, String id, String spdxId) {
+        try (XmlWriter writer = new XmlWriter(new OutputStreamWriter(Files.newOutputStream(fileName.toFile().toPath()),
+                StandardCharsets.UTF_8))) {
+            writer.startDocument()
+                    .comment(ASF_TEXT)
+                    .openElement("rat-config")
+                    .openElement("families")
+                    .openElement("family")
+                    .attribute("id", id)
+                    .attribute("name", "from " + fileName.getFileName())
+                    .closeElement() // family
+                    .closeElement() // families
+                    .openElement("licenses")
+                    .openElement("license")
+                    .attribute("family", id)
+                    .openElement("spdx")
+                    .attribute("name", spdxId)
                     .closeDocument(); // close all open elements
         } catch (IOException e) {
             throw new RuntimeException(e);

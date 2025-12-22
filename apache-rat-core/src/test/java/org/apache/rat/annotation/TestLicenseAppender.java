@@ -395,7 +395,7 @@ public class TestLicenseAppender {
         org.apache.rat.testhelpers.FileUtils.mkDir(outputFile.getParentFile());
         try (InputStream input = TestLicenseAppender.class.getResourceAsStream(resourceName);
              OutputStream output = new FileOutputStream(outputFile)) {
-            assertThat(input).isNotNull();
+            assertThat(input).as(resourceName + " is not found").isNotNull();
             IOUtils.copy(input, output);
         }
         return outputFile;

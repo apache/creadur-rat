@@ -23,12 +23,15 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.ServiceLoader;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
+
 import org.apache.commons.cli.Option;
+import org.apache.commons.cli.Options;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.rat.Defaults;
 import org.apache.rat.OptionCollection;
@@ -42,6 +45,10 @@ import org.apache.rat.configuration.MatcherBuilderTracker;
 import org.apache.rat.help.AbstractHelp;
 import org.apache.rat.license.ILicense;
 import org.apache.rat.license.LicenseSetFactory;
+import org.apache.rat.ui.AbstractOption;
+import org.apache.rat.ui.OptionFactory;
+import org.apache.rat.ui.UI;
+import org.apache.rat.ui.spi.UIProvider;
 import org.apache.velocity.tools.config.DefaultKey;
 import org.apache.velocity.tools.config.ValidScope;
 
@@ -77,12 +84,21 @@ public class RatTool {
     /** The license factory this tool uses. */
     private final LicenseSetFactory licenseSetFactory;
 
+    /** The map of UI names to instances */
+    private final Map<String, UI<?>> uiMap;
+
     /**
      * Constructor.
      */
     public RatTool() {
         Defaults defaults = Defaults.builder().build();
         licenseSetFactory = defaults.getLicenseSetFactory();
+        uiMap = new TreeMap<>();
+        ServiceLoader<UIProvider> loader = ServiceLoader.load(UIProvider.class);
+        loader.forEach(uiProvider -> {
+            UI<?> ui = uiProvider.create();
+            uiMap.put(ui.name(), ui);
+        });
     }
 
     /**
@@ -90,8 +106,8 @@ public class RatTool {
      * @return the list of command line options.
      */
     public List<Option> options() {
-        List<Option> lst = new ArrayList<>(OptionCollection.buildOptions().getOptions());
-        lst.sort(Comparator.comparing(CLIOption::createName));
+        List<Option> lst = new ArrayList<>(OptionCollection.buildOptions(new Options()).getOptions());
+        lst.sort(Comparator.comparing(AbstractOption::extractBaseName));
         return lst;
     }
 
@@ -99,38 +115,39 @@ public class RatTool {
      * Gets a map client option name to Ant Option.
      * @return a map client option name to Ant Option.
      */
-    public Map<String, AntOption> antOptions() {
-        Map<String, AntOption> result = new TreeMap<>();
-        for (AntOption antOption : AntOption.getAntOptions()) {
-            result.put(CLIOption.createName(antOption.getOption()), antOption);
-        }
-        return result;
+    public <T extends AbstractOption<T>> Map<String, T> options(final String name) {
+        UI<T> ui = (UI<T>) uiMap.get(name);
+        return OptionFactory.getOptionMap(ui.getFactoryConfig());
     }
 
-    /**
-     * Gets a map client option name to CLI Option.
-     * @return a map client option name to CLI Option.
-     */
-    public Map<String, CLIOption> cliOptions() {
-        Map<String, CLIOption> result = new TreeMap<>();
-        for (Option option : OptionCollection.buildOptions().getOptions()) {
-            CLIOption cliOption = new CLIOption(option);
-            result.put(cliOption.getName(), cliOption);
-        }
-        return result;
+    public List<String> uiNames() {
+        return new ArrayList<>(uiMap.keySet());
     }
+//
+//    /**
+//     * Gets a map client option name to CLI Option.
+//     * @return a map client option name to CLI Option.
+//     */
+//    public Map<String, CLIOption> cliOptions() {
+//        Map<String, CLIOption> result = new TreeMap<>();
+//        for (Option option : OptionCollection.buildOptions().getOptions()) {
+//            CLIOption cliOption = new CLIOption(option);
+//            result.put(cliOption.getName(), cliOption);
+//        }
+//        return result;
+//    }
 
-    /**
-     * Gets a map client option name to Maven Option.
-     * @return a map client option name to Maven Option.
-     */
-    public Map<String, MavenOption> mvnOptions() {
-        Map<String, MavenOption> result = new TreeMap<>();
-        for (MavenOption mavenOption : MavenOption.getMavenOptions()) {
-            result.put(CLIOption.createName(mavenOption.getOption()), mavenOption);
-        }
-        return result;
-    }
+//    /**
+//     * Gets a map client option name to Maven Option.
+//     * @return a map client option name to Maven Option.
+//     */
+//    public Map<String, MavenOption> mvnOptions() {
+//        Map<String, MavenOption> result = new TreeMap<>();
+//        for (MavenOption mavenOption : MavenOption.getMavenOptions()) {
+//            result.put(CLIOption.createName(mavenOption.getOption()), mavenOption);
+//        }
+//        return result;
+//    }
 
     /**
      * Escapes a text string.
