@@ -8,4 +8,4 @@ the `notice` subdirectory contains files that are NOTICE types
 
 the `archive` subdirectory contains files that are ARCHIVE types.
 
-The `TikeProcessorTest.testTikaFiles()` automatically runs against the files in the directories.  To add a new file to test just place it in the proper directory.
+The `TikeProcessorTest.testTikaFiles()` automatically runs against the files in the directories. To add a new file to test just place it in the proper directory.

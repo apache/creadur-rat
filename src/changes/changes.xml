@@ -89,6 +89,9 @@ in order to be properly linked in site reports.
       <action issue="RAT-498" type="update" dev="pottlinger">
         Update tika from 2.9.4 to 3.2.3 due to CVE-2025-66516.
       </action>
+      <action issue="RAT-512" type="fix" dev="pottlinger" due-to="Niels Basjes">
+        Bugfix to mark PDF files as binary instead of standard files as they do not contain licenses.
+      </action>
       <action issue="RAT-524" type="add" dev="claudenw">
         Fixes case-sensitive detection time of underlying file system and removed MAVEN StandardCollection from default Maven processing to improve overall processing time.
       </action>
