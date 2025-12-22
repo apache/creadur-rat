@@ -78,11 +78,10 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>
-
             <configuration>
-<!--              <excludes>-->
-<!--                <exclude>META-INF/maven</exclude>-->
-<!--              </excludes>-->
+              <excludes>
+                <exclude>META-INF/maven</exclude>
+              </excludes>
               <archive>
                 <manifestEntries>
                   <Main-Class>org.apache.rat.cli.Report</Main-Class>
@@ -145,7 +144,7 @@
         <groupId>com.github.spotbugs</groupId>
         <artifactId>spotbugs-maven-plugin</artifactId>
         <configuration>
-          <excludeFilterFile>spotbugs-ignore.xml</excludeFilterFile>
+          <includeFilterFile>spotbugs-include.xml</includeFilterFile>
         </configuration>
       </plugin>
     </plugins>
