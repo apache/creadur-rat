@@ -103,17 +103,17 @@ public abstract class AbstractLicenseAppender {
     private static final int TYPE_GO = 26;
     /** PM files */
     private static final int TYPE_PM = 27;
-    /** markdown files */
+    /** Markdown files */
     private static final int TYPE_MD = 28;
     /** YAML files */
     private static final int TYPE_YAML = 29;
 
     /**
-     * the line separator for this OS
+     * The line separator for this OS.
      */
     private static final String LINE_SEP = System.lineSeparator();
     /**
-     * Files that are in the C family
+     * Files that are in the C family.
      */
     private static final int[] FAMILY_C = new int[]{
             TYPE_JAVA, TYPE_JAVASCRIPT, TYPE_C, TYPE_H, TYPE_SCALA,
@@ -146,25 +146,25 @@ public abstract class AbstractLicenseAppender {
             TYPE_APT,
     };
     /**
-     * Files in the velocity family
+     * Files in the velocity family.
      */
     private static final int[] FAMILY_VELOCITY = new int[] {
             TYPE_VM,
     };
     /**
-     * Files that expect "#/some/path"
+     * Files that expect "#/some/path".
      */
     private static final int[] EXPECTS_HASH_PLING = new int[] {
             TYPE_PYTHON, TYPE_SH, TYPE_RUBY, TYPE_PERL, TYPE_TCL,
     };
     /**
-     * Files that expect "@Echo"
+     * Files that expect "@Echo".
      */
     private static final int[] EXPECTS_AT_ECHO = new int[]{
             TYPE_BAT,
     };
     /**
-     * Files that expact package names
+     * Files that expect package names.
      */
     private static final int[] EXPECTS_PACKAGE = new int[]{
             TYPE_JAVA, TYPE_GO, TYPE_PM,
@@ -176,7 +176,7 @@ public abstract class AbstractLicenseAppender {
             TYPE_XML,
     };
     /**
-     * Files that expect the PHP header
+     * Files that expect the PHP header.
      */
     private static final int[] EXPECTS_PHP_PI = new int[] {
             TYPE_PHP,
@@ -189,7 +189,7 @@ public abstract class AbstractLicenseAppender {
     };
 
     /**
-     * Mapping of extension to fmaily type.
+     * Mapping of extension to family type.
      */
     private static final Map<String, Integer> EXT2TYPE = new HashMap<>();
 
@@ -283,7 +283,7 @@ public abstract class AbstractLicenseAppender {
      * Append the default license header to the supplied document.
      *
      * @param document document to append to.
-     * @throws IOException if there is a problem while reading or writing the file
+     * @throws IOException if there is a problem while reading or writing the file.
      */
     public void append(final File document) throws IOException {
         int type = getType(document);
@@ -329,7 +329,7 @@ public abstract class AbstractLicenseAppender {
                     DefaultLog.getInstance().warn(String.format("Could not set %s as executable.", document));
                 }
             } catch (InvalidPathException | IOException e) {
-                DefaultLog.getInstance().error(String.format("Failed to rename new file to %s, Original file is unchanged.", document), e);
+                DefaultLog.getInstance().error(String.format("Failed to rename new file to %s, original file is unchanged.", document), e);
             }
         }
     }
@@ -420,8 +420,8 @@ public abstract class AbstractLicenseAppender {
     /**
      * Check first line for specified text and process.
      */
-    private void doFirstLine(final File document, final Writer writer, final String line, final String lookfor) throws IOException {
-        if (line.startsWith(lookfor)) {
+    private void doFirstLine(final File document, final Writer writer, final String line, final String lookFor) throws IOException {
+        if (line.startsWith(lookFor)) {
             writer.write(line);
             writer.write(LINE_SEP);
             writer.write(getLicenseHeader(document));
@@ -486,7 +486,6 @@ public abstract class AbstractLicenseAppender {
         return "";
     }
 
-
     /**
      * Get the last line of the license header formatted
      * for the given type of file.
@@ -503,13 +502,12 @@ public abstract class AbstractLicenseAppender {
         return "";
     }
 
-
     /**
      * Get a line of the license header formatted
      * for the given type of file.
      *
-     * @param type    the type of file, see the TYPE_* constants
-     * @param content the content for this line
+     * @param type    the type of file, see the TYPE_* constants.
+     * @param content the content for this line.
      * @return not null
      */
     protected String getLine(final int type, final String content) {

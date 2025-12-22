@@ -112,7 +112,7 @@ public final class MavenGenerator {
                         writer.append(format("""
                                     protected %s() {
                                         setDeprecationReporter();
-                                    }%n\
+                                    }%n
                                 """, className));
                         break;
                     case "${class}":

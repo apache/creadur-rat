@@ -168,7 +168,6 @@ public class Help extends BaseAntTask {
 
         @Override
         protected StringBuffer renderOptions(final StringBuffer sb, final int width, final Options options, final int leftPad, final int descPad) {
-            final String lpad = createPadding(leftPad);
             final String dpad = createPadding(descPad);
             // first create list containing only <lpad>-a,--aaa where
             // -a is opt and --aaa is long opt; in parallel look for

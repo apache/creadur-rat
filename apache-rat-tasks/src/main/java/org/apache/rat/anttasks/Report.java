@@ -26,7 +26,6 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import org.apache.commons.cli.Option;
 import org.apache.commons.io.filefilter.IOFileFilter;
@@ -98,7 +97,7 @@ public class Report extends BaseAntTask {
          */
         private IOFileFilter inputFileFilter;
         /**
-         * the set of approved licence categories
+         * the set of approved license categories
          */
         private final Set<String> approvedLicenseCategories = new HashSet<>();
         /**
@@ -325,7 +324,7 @@ public class Report extends BaseAntTask {
     }
 
     /**
-     * Sets the copyright message
+     * Sets the copyright message.
      *
      * @param copyrightMessage the copyright message
      * @deprecated use copyright attribute
@@ -359,7 +358,7 @@ public class Report extends BaseAntTask {
     }
 
     /**
-     * Adds definition information
+     * Adds definition information.
      *
      * @param fileName the file to add
      * @deprecated Use Config child element
@@ -454,7 +453,7 @@ public class Report extends BaseAntTask {
     }
 
     /**
-     * validates the task's configuration.
+     * Validates the task's configuration.
      */
     protected ReportConfiguration validate(final ReportConfiguration cfg) {
         try {
@@ -523,7 +522,7 @@ public class Report extends BaseAntTask {
         @Override
         public String[] getValues() {
             return Arrays.stream(LicenseSetFactory.LicenseFilter.values()).map(LicenseSetFactory.LicenseFilter::name)
-                    .collect(Collectors.toList()).toArray(new String[LicenseSetFactory.LicenseFilter.values().length]);
+                    .toList().toArray(new String[LicenseSetFactory.LicenseFilter.values().length]);
         }
 
         public LicenseSetFactory.LicenseFilter internalFilter() {

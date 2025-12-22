@@ -52,6 +52,7 @@ public class ApacheV2LicenseAppender extends AbstractLicenseAppender {
     public String getLicenseHeader(final File document) {
         int type = getType(document);
         StringBuilder sb = new StringBuilder();
+
         if (copyright == null) {
             sb.append(getFirstLine(type));
             sb.append(getLine(type, "Licensed to the Apache Software Foundation (ASF) under one"));
@@ -61,16 +62,6 @@ public class ApacheV2LicenseAppender extends AbstractLicenseAppender {
             sb.append(getLine(type, "to you under the Apache License, Version 2.0 (the"));
             sb.append(getLine(type, "\"License\"); you may not use this file except in compliance"));
             sb.append(getLine(type, "with the License.  You may obtain a copy of the License at"));
-            sb.append(getLine(type, ""));
-            sb.append(getLine(type, "  http://www.apache.org/licenses/LICENSE-2.0"));
-            sb.append(getLine(type, ""));
-            sb.append(getLine(type, "Unless required by applicable law or agreed to in writing,"));
-            sb.append(getLine(type, "software distributed under the License is distributed on an"));
-            sb.append(getLine(type, "\"AS IS\" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY"));
-            sb.append(getLine(type, "KIND, either express or implied.  See the License for the"));
-            sb.append(getLine(type, "specific language governing permissions and limitations"));
-            sb.append(getLine(type, "under the License."));
-            sb.append(getLastLine(type));
         } else {
             sb.append(getFirstLine(type));
             sb.append(getLine(type, copyright));
@@ -78,17 +69,19 @@ public class ApacheV2LicenseAppender extends AbstractLicenseAppender {
             sb.append(getLine(type, "Licensed under the Apache License, Version 2.0 (the \"License\");"));
             sb.append(getLine(type, "you may not use this file except in compliance with the License."));
             sb.append(getLine(type, "You may obtain a copy of the License at"));
-            sb.append(getLine(type, ""));
-            sb.append(getLine(type, "  http://www.apache.org/licenses/LICENSE-2.0"));
-            sb.append(getLine(type, ""));
-            sb.append(getLine(type, "Unless required by applicable law or agreed to in writing,"));
-            sb.append(getLine(type, "software distributed under the License is distributed on an"));
-            sb.append(getLine(type, "\"AS IS\" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY"));
-            sb.append(getLine(type, "KIND, either express or implied.  See the License for the"));
-            sb.append(getLine(type, "specific language governing permissions and limitations"));
-            sb.append(getLine(type, "under the License."));
-            sb.append(getLastLine(type));
         }
+
+        sb.append(getLine(type, ""));
+        sb.append(getLine(type, "  http://www.apache.org/licenses/LICENSE-2.0"));
+        sb.append(getLine(type, ""));
+        sb.append(getLine(type, "Unless required by applicable law or agreed to in writing,"));
+        sb.append(getLine(type, "software distributed under the License is distributed on an"));
+        sb.append(getLine(type, "\"AS IS\" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY"));
+        sb.append(getLine(type, "KIND, either express or implied.  See the License for the"));
+        sb.append(getLine(type, "specific language governing permissions and limitations"));
+        sb.append(getLine(type, "under the License."));
+        sb.append(getLastLine(type));
+
         return sb.toString();
     }
 }

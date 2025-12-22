@@ -182,7 +182,7 @@ public final class AntGenerator {
                         writer.append(format("""
                                     protected %s() {
                                         setDeprecationReporter();
-                                    }%n\
+                                    }%n
                                 """, className));
                         break;
                     case "${class}":

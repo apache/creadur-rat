@@ -32,12 +32,12 @@
             files="src[/\\]main[/\\]java[/\\]org[/\\]apache[/\\]rat[/\\]mp[/\\]All.java" />
   <suppress checks="[a-zA-Z0-9]*"
             files="src[/\\]main[/\\]java[/\\]org[/\\]apache[/\\]rat[/\\]mp[/\\]Any.java" />
-  <!-- most all plugin java files not starting with A or R -->
+  <!-- most plugin java files not starting with A or R -->
   <suppress checks="[a-zA-Z0-9]*"
             files="src[/\\]main[/\\]java[/\\]org[/\\]apache[/\\]rat[/\\]mp[/\\]([B-Q]|[S-Z]).*.java" />
   <suppress checks="[a-zA-Z0-9]*"
             files="src[/\\]main[/\\]java[/\\]org[/\\]apache[/\\]rat[/\\]mp[/\\]Regex.java" />
-  <!-- most all task java files not starting with R -->
+  <!-- most task java files not starting with R -->
   <suppress checks="[a-zA-Z0-9]*"
             files="src[/\\]main[/\\]java[/\\]org[/\\]apache[/\\]rat[/\\]anttasks[/\\]([A-Q]|[S-Z]).*.java" />
   <suppress checks="[a-zA-Z0-9]*"
