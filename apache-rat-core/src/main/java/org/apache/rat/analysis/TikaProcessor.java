@@ -62,7 +62,7 @@ public final class TikaProcessor {
         DOCUMENT_TYPE_MAP.put("application/xhtml+xml", Document.Type.STANDARD);
 
 //        org.apache.tika.parser.pdf.PDFParser", Type.BINARY);
-        DOCUMENT_TYPE_MAP.put("application/pdf", Document.Type.STANDARD);
+        DOCUMENT_TYPE_MAP.put("application/pdf", Document.Type.BINARY);
 //org.apache.tika.parser.pkg.CompressorParser
         DOCUMENT_TYPE_MAP.put("application/zlib", Document.Type.ARCHIVE);
         DOCUMENT_TYPE_MAP.put("application/x-gzip", Document.Type.ARCHIVE);
