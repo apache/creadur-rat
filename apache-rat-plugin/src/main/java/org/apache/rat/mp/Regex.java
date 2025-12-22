@@ -30,12 +30,12 @@ public class Regex extends RegexBuilder {
 
     @Named("expr")
     public RegexBuilder setExpression(String expression) {
-        System.out.format("Calling setText() with %s\n", expression);
+        System.out.format("Calling setText() with %s%n", expression);
         return super.setExpression(expression);
     }
-    public void set(String exp) {
-        System.out.format("Calling set() with %s\n", exp);
-        setExpression(exp);
+    public void set(String expression) {
+        System.out.format("Calling set() with %s%n", expression);
+        setExpression(expression);
     }
 
 }
