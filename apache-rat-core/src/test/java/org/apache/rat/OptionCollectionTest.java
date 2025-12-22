@@ -22,6 +22,7 @@ import java.nio.file.Path;
 import java.util.stream.Stream;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.DefaultParser;
+import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.rat.commandline.ArgumentContext;
 import org.apache.rat.document.DocumentName;
@@ -43,7 +44,6 @@ import org.junit.jupiter.params.provider.ValueSource;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import static java.lang.String.format;
 
@@ -53,9 +53,6 @@ import static org.assertj.core.api.Fail.fail;
 public class OptionCollectionTest {
     @TempDir
     static Path testPath;
-
-    /** A flag to determine if help was called */
-    final AtomicBoolean helpCalled = new AtomicBoolean(false);
 
     private static final OptionTestDataProvider optionTestDataProvider = new OptionTestDataProvider();
 
@@ -77,33 +74,31 @@ public class OptionCollectionTest {
     @Test
     public void testDirOptionCapturesDirectoryToScan() throws IOException, ParseException {
         TestingLog log = new TestingLog();
-        ReportConfiguration config;
+        ArgumentContext ctxt;
         try {
             DefaultLog.setInstance(log);
             String[] args = {"--dir", testPath.toFile().getAbsolutePath()};
-            config = OptionCollection.parseCommands(testPath.toFile(), args, (o) -> {
-            }, true);
+            ctxt = OptionCollection.parseCommands(testPath.toFile(), args);
         } finally {
             DefaultLog.setInstance(null);
         }
-        assertThat(config).isNotNull();
+        assertThat(ctxt).isNotNull();
     }
 
     @Test
     public void testShortenedOptions() throws IOException, ParseException {
         String[] args = {"--output-lic", "ALL"};
-        ReportConfiguration config = OptionCollection.parseCommands(testPath.toFile(), args, (o) -> {
-        }, true);
-        assertThat(config).isNotNull();
-        assertThat(config.listLicenses()).isEqualTo(LicenseSetFactory.LicenseFilter.ALL);
+        ArgumentContext ctxt = OptionCollection.parseCommands(testPath.toFile(), args);
+        assertThat(ctxt).isNotNull();
+        assertThat(ctxt.getConfiguration().listLicenses()).isEqualTo(LicenseSetFactory.LicenseFilter.ALL);
     }
 
     @Test
     public void testDefaultConfiguration() throws ParseException {
         String[] empty = {};
-        CommandLine cl = new DefaultParser().parse(OptionCollection.buildOptions(), empty);
+        CommandLine cl = new DefaultParser().parse(OptionCollection.buildOptions(new Options()), empty);
         ArgumentContext context = new ArgumentContext(new File("."), cl);
-        ReportConfiguration config = OptionCollection.createConfiguration(context);
+        ReportConfiguration config = OptionCollection.populateConfiguration(context);
         ReportConfigurationTest.validateDefault(config);
     }
 
@@ -112,8 +107,8 @@ public class OptionCollectionTest {
     public void getReportableTest(String fName) throws IOException, ParseException {
         File base = new File(fName);
         String expected = DocumentName.FSInfo.getDefault().normalize(base.getAbsolutePath());
-        ReportConfiguration config = OptionCollection.parseCommands(testPath.toFile(), new String[]{fName}, o -> fail("Help called"), false);
-        IReportable reportable = OptionCollection.getReportable(base, config);
+        ArgumentContext ctxt = OptionCollection.parseCommands(testPath.toFile(), new String[]{fName});
+        IReportable reportable = OptionCollection.getReportable(base, ctxt.getConfiguration());
         assertThat(reportable).as(() -> format("'%s' returned null", fName)).isNotNull();
         assertThat(reportable.getName().getName()).isEqualTo(expected);
     }
@@ -128,11 +123,8 @@ public class OptionCollectionTest {
     public void testOptionsUpdateConfig(String name, TestData test) {
         test.setupFiles(testPath);
 
-        helpCalled.set(false);
-        assertThat(helpCalled.get()).as("Help was called").isFalse();
-
         try {
-            ReportConfiguration config = OptionCollection.parseCommands(testPath.toFile(), test.getCommandLine(), o -> helpCalled.set(true), true);
+            ArgumentContext ctxt = OptionCollection.parseCommands(testPath.toFile(), test.getCommandLine());
         } catch (IOException | ParseException e) {
             fail(e.getMessage(), e);
         }

@@ -52,7 +52,7 @@ public class TestData {
      * @param setupFiles the method to set up the files for the test.
      * @param validator the validator for the results of the test.
      */
-    TestData(String name, List<ImmutablePair<Option, String[]>> commandLine,
+    public TestData(String name, List<ImmutablePair<Option, String[]>> commandLine,
              Consumer<Path> setupFiles,
              Consumer<ValidatorData> validator) {
         this.name = name;
@@ -173,13 +173,16 @@ public class TestData {
      */
     public String getTestName() {
         List<String> parts = new ArrayList<>();
+        String result = null;
         if (getOption() == null) {
-            parts.add("no");
-            parts.add("arg");
+            result = name + "_DefaultTest";
         } else {
             parts.addAll(Arrays.asList(new CasedString(CasedString.StringCase.KEBAB, getOption().getLongOpt()).getSegments()));
+            result = CasedString.StringCase.CAMEL.assemble(parts.toArray(new String[0]));
+            if (name.length() > 0) {
+                result += "/" + name;
+            }
         }
-        parts.addAll(Arrays.asList(new CasedString(CasedString.StringCase.CAMEL, name).getSegments()));
-        return CasedString.StringCase.CAMEL.assemble(parts.toArray(new String[0]));
+        return result;
     }
 }

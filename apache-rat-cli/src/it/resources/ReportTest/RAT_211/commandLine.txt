@@ -1,6 +1,0 @@
---counter-min
-LICENSE_CATEGORIES:0
-LICENSE_NAMES:0
-STANDARDS:0
---output-style
-xml

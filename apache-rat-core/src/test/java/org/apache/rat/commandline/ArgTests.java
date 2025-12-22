@@ -37,7 +37,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class ArgTests {
 
     private CommandLine createCommandLine(String[] args) throws ParseException {
-        Options opts = OptionCollection.buildOptions();
+        Options opts = OptionCollection.buildOptions(new Options());
         return DefaultParser.builder().setDeprecatedHandler(DeprecationReporter.getLogReporter())
                 .setAllowPartialMatching(true).build().parse(opts, args);
     }

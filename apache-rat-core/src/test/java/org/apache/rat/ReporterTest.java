@@ -29,6 +29,7 @@ import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -49,10 +50,13 @@ import javax.xml.xpath.XPathFactory;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.DefaultParser;
+import org.apache.commons.cli.Option;
+import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.io.FileUtils;
 import org.apache.rat.api.Document.Type;
 import org.apache.rat.api.RatException;
+import org.apache.rat.commandline.Arg;
 import org.apache.rat.commandline.ArgumentContext;
 import org.apache.rat.document.FileDocument;
 import org.apache.rat.document.DocumentName;
@@ -90,9 +94,9 @@ public class ReporterTest {
     public void testExecute() throws RatException, ParseException {
         File output = new File(tempDirectory, "testExecute");
 
-        CommandLine cl = new DefaultParser().parse(OptionCollection.buildOptions(), new String[]{"--output-style", "xml", "--output-file", output.getPath(), basedir});
+        CommandLine cl = new DefaultParser().parse(OptionCollection.buildOptions(new Options()), new String[]{"--output-style", "xml", "--output-file", output.getPath(), basedir});
         ArgumentContext ctxt = new ArgumentContext(new File("."), cl);
-        ReportConfiguration config = OptionCollection.createConfiguration(ctxt);
+        ReportConfiguration config = OptionCollection.populateConfiguration(ctxt);
         ClaimStatistic statistic = new Reporter(config).execute().getStatistic();
 
         assertThat(statistic.getCounter(Type.ARCHIVE)).isEqualTo(1);
@@ -144,10 +148,10 @@ public class ReporterTest {
     @Test
     public void testOutputOption() throws Exception {
         File output = new File(tempDirectory, "test");
-        CommandLine commandLine = new DefaultParser().parse(OptionCollection.buildOptions(), new String[]{"--output-file", output.getCanonicalPath(), basedir});
+        CommandLine commandLine = new DefaultParser().parse(OptionCollection.buildOptions(new Options()), new String[]{"--output-file", output.getCanonicalPath(), basedir});
         ArgumentContext ctxt = new ArgumentContext(new File("."), commandLine);
 
-        ReportConfiguration config = OptionCollection.createConfiguration(ctxt);
+        ReportConfiguration config = OptionCollection.populateConfiguration(ctxt);
         new Reporter(config).execute().format(config);
         assertThat(output.exists()).isTrue();
         String content = FileUtils.readFileToString(output, StandardCharsets.UTF_8);
@@ -163,10 +167,10 @@ public class ReporterTest {
         PrintStream origin = System.out;
         try (PrintStream out = new PrintStream(output)) {
             System.setOut(out);
-            CommandLine commandLine = new DefaultParser().parse(OptionCollection.buildOptions(), new String[]{basedir});
+            CommandLine commandLine = new DefaultParser().parse(OptionCollection.buildOptions(new Options()), new String[]{basedir});
             ArgumentContext ctxt = new ArgumentContext(new File("."), commandLine);
 
-            ReportConfiguration config = OptionCollection.createConfiguration(ctxt);
+            ReportConfiguration config = OptionCollection.populateConfiguration(ctxt);
             new Reporter(config).execute().format(config);
         } finally {
             System.setOut(origin);
@@ -216,10 +220,10 @@ public class ReporterTest {
                 "type", "STANDARD"));
 
         File output = new File(tempDirectory, "testXMLOutput");
-        CommandLine commandLine = new DefaultParser().parse(OptionCollection.buildOptions(), new String[]{"--output-style", "xml", "--output-file", output.getPath(), basedir});
+        CommandLine commandLine = new DefaultParser().parse(OptionCollection.buildOptions(new Options()), new String[]{"--output-style", "xml", "--output-file", output.getPath(), basedir});
         ArgumentContext ctxt = new ArgumentContext(new File("."), commandLine);
 
-        ReportConfiguration config = OptionCollection.createConfiguration(ctxt);
+        ReportConfiguration config = OptionCollection.populateConfiguration(ctxt);
         new Reporter(config).execute().format(config);
 
         assertThat(output).exists();
@@ -500,7 +504,9 @@ public class ReporterTest {
     }
 
     static Stream<Arguments> getTestData() {
-        return new ReportTestDataProvider().getOptionTests().stream().map(testData ->
+        List<Option> upsupportedTests = new ArrayList<>(Arg.OUTPUT_STYLE.group().getOptions());
+        upsupportedTests.addAll(Arg.OUTPUT_FILE.group().getOptions());
+        return new ReportTestDataProvider().getOptionTests(upsupportedTests).stream().map(testData ->
                 Arguments.of(testData.getTestName(), testData));
     }
 
@@ -509,19 +515,20 @@ public class ReporterTest {
     void testReportData(String name, TestData test) throws Exception {
         Path tempPath = tempDirectory.toPath();
         Path basePath = tempPath.resolve(test.getTestName());
+        org.apache.rat.testhelpers.FileUtils.mkDir(basePath.toFile());
         test.setupFiles(basePath);
-        ReportConfiguration config = OptionCollection.parseCommands(basePath.toFile(),
-                test.getCommandLine(basePath.toString()), o -> fail("Help called"), true);
+        ArgumentContext ctxt = OptionCollection.parseCommands(basePath.toFile(),
+                test.getCommandLine(basePath.toString()));
         if (test.expectingException()) {
-            assertThatThrownBy(() -> new Reporter(config).execute()).as("Expected throws from " + name)
+            assertThatThrownBy(() -> new Reporter(ctxt.getConfiguration()).execute()).as("Expected throws from " + name)
                     .hasMessageContaining(test.getExpectedException().getMessage());
             ValidatorData data = new ValidatorData(
-                    null, config, basePath.toString());
+                    null, ctxt.getConfiguration(), basePath.toString());
             test.getValidator().accept(data);
         } else {
-            Reporter.Output output = config != null ? new Reporter(config).execute() : null;
+            Reporter.Output output = ctxt.getConfiguration() != null ? new Reporter(ctxt.getConfiguration()).execute() : null;
             ValidatorData data = new ValidatorData(
-                    output, config, basePath.toString());
+                    output, ctxt.getConfiguration(), basePath.toString());
             test.getValidator().accept(data);
         }
     }

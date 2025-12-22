@@ -27,6 +27,7 @@ import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 import org.apache.commons.cli.ParseException;
 import org.apache.rat.api.RatException;
+import org.apache.rat.commandline.ArgumentContext;
 import org.apache.rat.report.claim.ClaimStatistic;
 import org.apache.rat.testhelpers.FileUtils;
 import org.apache.rat.testhelpers.data.OptionTestDataProvider;
@@ -77,10 +78,10 @@ public final class ReporterOptionsTest {
     void testOptionsUpdateConfig(String name, TestData test) throws Exception {
         Path basePath = testPath.resolve(test.getTestName());
         test.setupFiles(basePath);
-        ReportConfiguration config = OptionCollection.parseCommands(basePath.toFile(), test.getCommandLine(), o -> fail("Help called"), true);
-        Reporter.Output output = config != null ? new Reporter(config).execute() : null;
+        ArgumentContext ctxt = OptionCollection.parseCommands(basePath.toFile(), test.getCommandLine());
+        Reporter.Output output = ctxt.getConfiguration() != null ? new Reporter(ctxt.getConfiguration()).execute() : null;
         ValidatorData data = new ValidatorData(
-                output, config, basePath.toString());
+                output, ctxt.getConfiguration(), basePath.toString());
         test.getValidator().accept(data);
     }
 
@@ -92,8 +93,8 @@ public final class ReporterOptionsTest {
             FileUtils.mkDir(testDir);
             FileUtils.writeFile(testDir, ".gitignore", "/foo.md");
             FileUtils.writeFile(testDir, "foo.md");
-            ReportConfiguration config = OptionCollection.parseCommands(testDir, args, o -> fail("Help called"), true);
-            Reporter reporter = new Reporter(config);
+            ArgumentContext ctxt = OptionCollection.parseCommands(testDir, args);
+            Reporter reporter = new Reporter(ctxt.getConfiguration());
             Reporter.Output output = reporter.execute();
             XmlUtils.printDocument(System.out, output.getDocument());
             XPath xpath = XPathFactory.newInstance().newXPath();

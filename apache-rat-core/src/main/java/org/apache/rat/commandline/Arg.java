@@ -573,11 +573,12 @@ public enum Arg {
      * Gets the full set of options.
      * @return  the full set of options for this Arg.
      */
-    public static Options getOptions() {
+    public static Options getOptions(final Options additionalOptions) {
         Options options = new Options();
         for (Arg arg : Arg.values()) {
             options.addOptionGroup(arg.group);
         }
+        options.addOptions(additionalOptions);
         return options;
     }
 

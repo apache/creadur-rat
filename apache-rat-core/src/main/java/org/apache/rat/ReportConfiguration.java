@@ -36,7 +36,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.SortedSet;
-import java.util.function.Consumer;
 
 import org.apache.commons.io.function.IOSupplier;
 import org.apache.commons.io.output.CloseShieldOutputStream;
@@ -826,20 +825,15 @@ public class ReportConfiguration {
 
     /**
      * Validates that the configuration is valid.
-     * @param logger String consumer to log warning messages to.
      * @throws ConfigurationException on configuration error.
      */
-    public void validate(final Consumer<String> logger) {
+    public void validate() {
         if (!hasSource()) {
             String msg = "At least one source must be specified";
-            logger.accept(msg);
+            DefaultLog.getInstance().error(msg);
             throw new ConfigurationException(msg);
         }
-        if (licenseSetFactory.getLicenses(LicenseFilter.ALL).isEmpty()) {
-            String msg = "You must specify at least one license";
-            logger.accept(msg);
-            throw new ConfigurationException(msg);
-        }
+        licenseSetFactory.validate();
     }
 
 }

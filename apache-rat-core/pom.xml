@@ -50,6 +50,12 @@
               <!-- exclude test generation files that contain unapproved license text -->
               <exclude>**/ReporterOptionsProvider.java</exclude>
               <exclude>**/GPLLicenseTest.java</exclude>
+              <exclude>/src/test/resources/GitIgnoreBuilderTest/**</exclude>
+              <exclude>/src/test/resources/exampleData/**</exclude>
+              <excldue>/src/test/resources/jira/RAT147/**</excldue>
+              <exclude>/src/test/resources/org/apache/rat/MatcherContainerResource.txt</exclude>
+              <exclude>/src/test/resources/tikaFiles/**</exclude>
+              <exclude>/src/test/resources/violations/**</exclude>
             </inputExcludes>
           </configuration>
         </plugin>
@@ -57,8 +63,66 @@
     </pluginManagement>
     <plugins>
       <plugin>
+        <artifactId>maven-clean-plugin</artifactId>
+        <executions>
+          <execution>
+            <phase>initialize</phase>
+            <goals>
+              <goal>clean</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>
+        <configuration>
+          <archive>
+            <manifestEntries>
+              <Extension-Name>rat</Extension-Name>
+              <Specification-Title>Apache Creadur RAT</Specification-Title>
+              <Specification-Vendor>apache.org</Specification-Vendor>
+              <Specification-Version>${project.version}</Specification-Version>
+              <Implementation-Vendor-Id>apache.org</Implementation-Vendor-Id>
+              <Implementation-Title>Apache Creadur RAT</Implementation-Title>
+              <Implementation-Vendor>Apache Software Foundation</Implementation-Vendor>
+              <Implementation-Version>${project.version}</Implementation-Version>
+            </manifestEntries>
+          </archive>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>unpack dependencies</id>
+            <phase>prepare-package</phase>
+            <goals>
+              <goal>unpack-dependencies</goal>
+            </goals>
+            <configuration>
+              <includeScope>runtime</includeScope>
+              <outputDirectory>${project.build.outputDirectory}</outputDirectory>
+              <overWriteIfNewer>true</overWriteIfNewer>
+              <excludes>META-INF/**</excludes>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-source-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>attach-sources</id>
+            <phase>compile</phase>
+            <goals>
+              <goal>jar-no-fork</goal>
+              <goal>test-jar-no-fork</goal>
+            </goals>
+          </execution>
+        </executions>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>

@@ -1,4 +1,0 @@
---counter-max
-UNAPPROVED:2
---output-style
-xml

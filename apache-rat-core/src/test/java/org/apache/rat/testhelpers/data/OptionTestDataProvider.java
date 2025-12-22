@@ -38,9 +38,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
+import java.util.TreeMap;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 import org.apache.commons.cli.Option;
+import org.apache.commons.cli.Options;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.rat.ConfigurationException;
@@ -94,13 +96,13 @@ public class OptionTestDataProvider {
      * @return the map of UI TestData indexed by testName.
      */
     public Map<String, TestData> getUITestMap() {
-        final ConfigurationException noLicenses = new ConfigurationException("You must specify at least one license");
+        final ConfigurationException noLicenses = new ConfigurationException("At least one license must be defined");
         Map<String, TestData> result = getOptionTestMap();
         result.get("configurationNoDefaults").setException(noLicenses);
-        result.get("licensesApprovedWithoutDefaults").setException(noLicenses);
-        result.get("licensesApprovedFileWithoutDefaults").setException(noLicenses);
-        result.get("licenseFamiliesApprovedWithoutDefaults").setException(noLicenses);
-        result.get("licenseFamiliesApprovedFileWithoutDefaults").setException(noLicenses);
+        result.get("licensesApproved/withoutDefaults").setException(noLicenses);
+        result.get("licensesApprovedFile/withoutDefaults").setException(noLicenses);
+        result.get("licenseFamiliesApproved/withoutDefaults").setException(noLicenses);
+        result.get("licenseFamiliesApprovedFile/withoutDefaults").setException(noLicenses);
         return result;
     }
 
@@ -110,7 +112,7 @@ public class OptionTestDataProvider {
      * @see #getOptionTests()
      */
     public Map<String, TestData> getOptionTestMap() {
-        Map<String, TestData> map = new HashMap<>();
+        Map<String, TestData> map = new TreeMap<>();
         for (TestData test : getOptionTests()) {
             map.put(test.getTestName(), test);
         }
@@ -163,7 +165,7 @@ public class OptionTestDataProvider {
     }
 
     private void validate(List<TestData> result) {
-        Set<Option> options = new HashSet<>(Arg.getOptions().getOptions());
+        Set<Option> options = new HashSet<>(Arg.getOptions(new Options()).getOptions());
         result.stream().forEach(testData -> options.remove(testData.getOption()));
         // TODO fix this once deprecated options are removed
         options.forEach(opt -> DefaultLog.getInstance().warn("Option " + opt.getKey() + " was not tested."));
@@ -559,10 +561,10 @@ DataUtils.NO_SETUP,
             Path ratDir = basePath.resolve(".rat");
             ratDir.toFile().mkdirs();
             Path oneXml = ratDir.resolve("One.xml");
-            DataUtils.generateSimpleConfig(oneXml, "ONE", "one");
+            DataUtils.generateTextConfig(oneXml, "ONE", "one");
 
             Path twoXml = ratDir.resolve("Two.xml");
-            DataUtils.generateSimpleConfig(twoXml, "TWO", "two");
+            DataUtils.generateTextConfig(twoXml, "TWO", "two");
         };
         String[] args = {".rat/One.xml", ".rat/Two.xml"};
 
@@ -733,8 +735,9 @@ return Arrays.asList(test1, test1);
                 throw new RuntimeException(e);
             }
             DocumentName outputDocument = validatorData.mkDocName("outexample");
-            try (BufferedReader reader = new BufferedReader(new InputStreamReader(Files.newInputStream(outputDocument.asFile().toPath())))) {
-                assertThat(reader.readLine()).isEqualTo("Hello world");
+
+            try {
+                assertThat(TextUtils.readFile(outputDocument.asFile())).contains("Hello world");
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }

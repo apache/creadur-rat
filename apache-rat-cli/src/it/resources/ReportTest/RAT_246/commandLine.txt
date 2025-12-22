@@ -1,4 +1,0 @@
---input-exclude-parsed-scm
-GIT
---log-level
-DEBUG

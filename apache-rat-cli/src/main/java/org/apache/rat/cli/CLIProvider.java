@@ -16,36 +16,28 @@
  * specific language governing permissions and limitations      *
  * under the License.                                           *
  */
-package org.apache.rat.test;
+package org.apache.rat.cli;
 
-import java.util.Map;
-import java.util.HashMap;
-import java.util.Set;
+import org.apache.rat.ui.OptionFactory;
+import org.apache.rat.ui.UI;
+import org.apache.rat.ui.spi.UIProvider;
 
-import org.apache.commons.cli.Option;
-import org.apache.commons.cli.Options;
-import org.apache.rat.OptionCollection;
+public class CLIProvider implements UIProvider {
 
-public final class OptionsList {
-    private final static Map<String, Option> OPTIONS_MAP = new HashMap<>();
+    @Override
+    public CLI create() {
+        return new CLI();
+    }
 
-    static {
-        for (Option option : OptionCollection.buildOptions(new Options()).getOptions()) {
-            if (option.getLongOpt() != null) {
-                OPTIONS_MAP.put(option.getLongOpt(), option);
-            }
+    public static class CLI implements UI<CLIOption> {
+        @Override
+        public String name() {
+            return "CLI";
         }
-    }
 
-    private OptionsList() {
-        // do not instantiate.
-    }
-
-    public static Option getOption(String longOpt) {
-        return OPTIONS_MAP.get(longOpt);
-    }
-
-    public static Set<String> getKeys() {
-        return OPTIONS_MAP.keySet();
+        @Override
+        public OptionFactory.Config<CLIOption> getFactoryConfig() {
+            return new OptionFactory.Config<>(null, CLIOption::new, CLIOption.ADDITIONAL_OPTIONS);
+        }
     }
 }

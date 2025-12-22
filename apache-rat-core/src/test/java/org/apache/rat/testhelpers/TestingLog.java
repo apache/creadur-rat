@@ -26,6 +26,7 @@ import org.apache.rat.utils.Log;
 public class TestingLog implements Log {
 
     private StringBuilder captured = new StringBuilder();
+    private Level level = Level.DEBUG;
 
     /**
      * Clears the captured buffer
@@ -86,12 +87,19 @@ public class TestingLog implements Log {
 
     @Override
     public Level getLevel() {
-        return Level.DEBUG;
+        return level;
     }
 
     @Override
     public void log(Level level, String msg) {
-        captured.append(String.format("%s: %s%n", level, msg));
+        if (level.ordinal() >= this.level.ordinal()) {
+            captured.append(String.format("%s: %s%n", level, msg));
+        }
+    }
+
+    @Override
+    public void setLevel(Level level) {
+        this.level = level;
     }
 
     /**

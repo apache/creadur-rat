@@ -19,6 +19,7 @@
 package org.apache.rat.documentation.velocity;
 
 import java.util.UUID;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.rat.license.ILicense;
 
