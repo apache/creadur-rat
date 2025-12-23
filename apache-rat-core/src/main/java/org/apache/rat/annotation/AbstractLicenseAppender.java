@@ -299,7 +299,7 @@ public abstract class AbstractLicenseAppender {
         boolean expectsMSVSSF = expectsMSVisualStudioSolutionFileHeader(type);
 
         File newDocument = new File(document.getAbsolutePath() + ".new");
-        try (FileWriter writer = new FileWriter(newDocument)) {
+        try (FileWriter writer = new FileWriter(newDocument, StandardCharsets.UTF_8)) {
             if (!attachLicense(writer, document,
                     expectsHashPling, expectsAtEcho, expectsPackage,
                     expectsXMLDecl, expectsPhpPI, expectsMSVSSF)) {

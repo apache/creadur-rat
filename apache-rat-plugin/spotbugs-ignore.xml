@@ -19,8 +19,8 @@
   <Match>
     <!--
     Convenience constructors that allow setting a charset are not available in Java8 for FileReader.
-  -->
     <Class name="org.apache.rat.config.exclusion.fileProcessors.GlobIgnoreMatcher"/>
     <Bug pattern="DM_DEFAULT_ENCODING"/>
+  -->
   </Match>
 </FindBugsFilter>

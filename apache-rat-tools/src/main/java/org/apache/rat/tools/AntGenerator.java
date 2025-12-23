@@ -148,9 +148,9 @@ public final class AntGenerator {
         File file = new File(new File(new File(destDir), pkgName), className + ".java");
         file.getParentFile().mkdirs();
         try (InputStream template = AntGenerator.class.getResourceAsStream("/Ant.tpl");
-             FileWriter writer = new FileWriter(file);
+             FileWriter writer = new FileWriter(file, StandardCharsets.UTF_8);
              ByteArrayOutputStream bos = new ByteArrayOutputStream();
-             OutputStreamWriter customClasses = new OutputStreamWriter(bos)) {
+             OutputStreamWriter customClasses = new OutputStreamWriter(bos, StandardCharsets.UTF_8);) {
             if (template == null) {
                 throw new RuntimeException("Template /Ant.tpl not found");
             }
@@ -182,8 +182,7 @@ public final class AntGenerator {
                         writer.append(format("""
                                     protected %s() {
                                         setDeprecationReporter();
-                                    }%n
-                                """, className));
+                                    }%n""", className));
                         break;
                     case "${class}":
                         writer.append(format("public abstract class %s extends Task {%n", className));
@@ -234,8 +233,7 @@ public final class AntGenerator {
         String elementConstructor =
                 """
                             public class %1$s {
-                                %1$s() { }
-                        """;
+                                %1$s() { }%n""";
 
         String funcName = WordUtils.capitalize(option.getName());
         StringBuilder result = new StringBuilder(format(elementConstructor, funcName));
@@ -260,8 +258,7 @@ public final class AntGenerator {
             return String.format("""
                             public void addConfigured%1$s(%1$s %%2$s) {
                                 addArg(%%1$s, %%2$s.value);
-                            }
-                    """, innerClass);
+                            }%n""", innerClass);
         }
 
         public String getPattern(final AntOption delegateOption, final AntOption antOption) {

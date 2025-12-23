@@ -156,7 +156,8 @@ public final class Naming {
             };
         }
 
-        try (Writer underWriter = cl.getArgs().length != 0 ? new FileWriter(cl.getArgs()[0]) : new OutputStreamWriter(System.out, StandardCharsets.UTF_8)) {
+        try (Writer underWriter = cl.getArgs().length != 0 ?
+                new FileWriter(cl.getArgs()[0], StandardCharsets.UTF_8) : new OutputStreamWriter(System.out, StandardCharsets.UTF_8)) {
             if (cl.hasOption(CSV)) {
                 printCSV(columns, filter, cl.hasOption(CLI), showMaven, showAnt, descriptionFunction, underWriter);
             }
