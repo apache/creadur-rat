@@ -128,6 +128,8 @@ git clone https://gitbox.apache.org/repos/asf/creadur-rat.git
 
  Build RAT with {{{https://maven.apache.org/}Apache Maven}} preferably version ${mavenVersion} or later.
 
+ RAT requires Java 17, but due to an existing JDK-error ({{{https://issues.apache.org/jira/browse/RAT-497}RAT-497}}) Javadoc cannot be generated with Java 17, use Java 21 instead.
+
  There are two methods for building the RAT suite:
 
 +------------------------------------------+
@@ -150,6 +152,6 @@ cd creadur-rat
 
  2. Execute the maven install noted above. This will place the current jars in your local repository.
 
- 3. Run "mvn package" and use the resulting jar in the apache-rat sub-module for testing.
+ 3. Run "mvn package" and use the resulting jar in the apache-rat submodule for testing.
 
-  If you modify code in one sub-module you need to run "mvn install" in that module to get it into your repository so that you can use it in later repository builds. Alternatively, you can run "mvn package", or "mvn install" on the entire project.
+  If you modify code in one submodule you need to run "mvn install" in that module to get it into your repository so that you can use it in later repository builds. Alternatively, you can run "mvn package", or "mvn install" on the entire project.
