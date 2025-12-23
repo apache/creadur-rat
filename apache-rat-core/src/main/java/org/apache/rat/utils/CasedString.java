@@ -83,7 +83,15 @@ public class CasedString {
          * in the string.  If specific capitalization is required use {@link String#toUpperCase()}, {@link String#toLowerCase()},
          *          * or the commons-text methods {@link WordUtils#capitalize(String)}, or {@link WordUtils#uncapitalize(String)} as required.
          */
-        DOT(c -> c == '.', false, a -> String.join(".", a));
+        DOT(c -> c == '.', false, a -> String.join(".", a)),
+
+        /**
+         * Slash case tags phrases of words like 'phrase.case'. This conversion does not change the capitalization of any characters
+         * in the string.  If specific capitalization is required use {@link String#toUpperCase()}, {@link String#toLowerCase()},
+         *          * or the commons-text methods {@link WordUtils#capitalize(String)}, or {@link WordUtils#uncapitalize(String)} as required.
+         */
+        SLASH(c -> c == '/', false, a -> String.join("/", a));
+
 
         /** The segment value for a null string */
         private static final String[] NULL_SEGMENT = new String[0];

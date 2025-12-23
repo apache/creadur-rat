@@ -1,0 +1,63 @@
+package org.apache.rat.maven;/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Fail.fail;
+
+import java.nio.file.Path;
+import java.util.Map;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathFactory;
+import org.apache.maven.api.plugin.testing.InjectMojo;
+import org.apache.maven.api.plugin.testing.MojoTest;
+import org.apache.rat.testhelpers.data.ReportTestDataProvider;
+import org.apache.rat.testhelpers.data.TestData;
+import org.apache.rat.testhelpers.data.ValidatorData;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledOnOs;
+import org.junit.jupiter.api.condition.OS;
+import org.junit.jupiter.api.io.TempDir;
+
+@MojoTest
+public class MavenTest {
+
+    @TempDir
+    static Path tempDir;
+
+    static ReportTestDataProvider reportTestDataProvider = new ReportTestDataProvider();
+
+
+    final Map<String, TestData> testDataMap = reportTestDataProvider.getOptionTestMap(MavenOption.UNSUPPORTED_LIST);
+
+    private final static XPath xPath = XPathFactory.newInstance().newXPath();
+
+    @AfterAll
+    @EnabledOnOs(OS.WINDOWS)
+    static void cleanup() {
+        System.gc(); // hacky workaround for windows bug.
+    }
+
+    @Test
+    @InjectMojo(goal = "validate", pom = "${pomFile}")
+    public void ${testName}Test(RatCheckMojo mojo) {
+        TestData testData = testDataMap.get(${testName});
+        ValidatorData validatorData = new ValidatorData(mojo.getOutput(), mojo.getConfiguration(), ${baseDir});
+        testData.getValidator().accept(validatorData);
+    }
+}
