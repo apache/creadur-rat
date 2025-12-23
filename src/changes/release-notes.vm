@@ -126,9 +126,11 @@ Historical list of changes: https://creadur.apache.org/rat/changes.html
 
 Known issues: https://creadur.apache.org/rat/apache-rat/known_issues.html
 
+Migration guide: https://creadur.apache.org/rat/apache-rat/migration-guide.html
+
 =WEBPAGE=
 For complete information on Apache Creadur RAT, including instructions on how to submit bug reports,
-patches, or suggestions for improvement, see the Apache Apache Creadur RAT website:
+patches, or suggestions for improvement, see the Apache Creadur RAT website:
 
 https://creadur.apache.org/rat/
 

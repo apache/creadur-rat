@@ -103,7 +103,7 @@ Requires: file `src/changes/release-notes.vm` to format the changes.xml.
 To import RAT into Eclipse, 
  1. Clone the repository.
  2. Import the directory into Eclipse as an existing Maven project.
- 3. Right click the `creadur-rat` project and execute "Run As -> Maven install"
+ 3. Right-click the `creadur-rat` project and execute "Run As -> Maven install"
  
 The above steps will generate the necessary source code as well as testing resources.
 

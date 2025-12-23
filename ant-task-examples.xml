@@ -25,7 +25,7 @@
   </description>
 
   <property name="src-dir" location="apache-rat-core/src/main/java"/>
-  <property name="version" value="1.0.0"/>
+  <property name="version" value="0.18"/>
   <property name="src-jar"
             location="apache-rat-core/target/apache-rat-core-${version}-sources.jar"/>
 
