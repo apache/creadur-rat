@@ -27,7 +27,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+
 import org.apache.commons.cli.Option;
+import org.apache.commons.cli.Options;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.WordUtils;
 import org.apache.rat.OptionCollection;
@@ -40,18 +42,19 @@ import static java.lang.String.format;
 /**
  * A representation of a CLI option as a Maven option
  */
-public class MavenOption extends AbstractOption {
+public class MavenOption extends AbstractOption<MavenOption> {
     /**
      * Default values for CLI options
      */
-    private static final Map<Arg, String> DEFAULT_VALUES = new HashMap<>();
+    static final Map<Arg, String> DEFAULT_VALUES = new HashMap<>();
     /**
      * List of CLI options that are not supported by Maven.
      */
-    private static final Set<Option> UNSUPPORTED_LIST = new HashSet<>();
+    static final Set<Option> UNSUPPORTED_LIST = new HashSet<>();
     /** A mapping of external name to internal name if not standard. */
-    private static final Map<String, String> RENAME_MAP = new HashMap<>();
-
+    static final Map<String, String> RENAME_MAP = new HashMap<>();
+    /** The additional options for the maven plugin */
+    static final Options ADDITIONAL_OPTIONS = new Options();
     /**
      * Filter to remove options not supported by Maven.
      */
@@ -62,14 +65,13 @@ public class MavenOption extends AbstractOption {
         DEFAULT_VALUES.put(Arg.OUTPUT_FILE, "${project.build.directory}/rat.txt");
         UNSUPPORTED_LIST.addAll(Arg.DIR.group().getOptions());
         UNSUPPORTED_LIST.addAll(Arg.LOG_LEVEL.group().getOptions());
-        UNSUPPORTED_LIST.add(OptionCollection.HELP);
 
         Set<Option> filteredOptions = getFilteredOptions();
         MAVEN_FILTER =  option -> !(filteredOptions.contains(option) || option.getLongOpt() == null);
     }
 
     public static List<MavenOption> getMavenOptions() {
-        return OptionCollection.buildOptions().getOptions().stream().filter(MAVEN_FILTER)
+        return OptionCollection.buildOptions(ADDITIONAL_OPTIONS).getOptions().stream().filter(MAVEN_FILTER)
                 .map(MavenOption::new).collect(Collectors.toList());
     }
 
@@ -114,6 +116,11 @@ public class MavenOption extends AbstractOption {
     @Override
     public String getText() {
         return cleanupName(option);
+    }
+
+    @Override
+    public Options getAdditionalOptions() {
+        return ADDITIONAL_OPTIONS;
     }
 
     @Override
@@ -172,5 +179,24 @@ public class MavenOption extends AbstractOption {
         } else {
             return format("<%s />", getName());
         }
+    }
+
+    public String getExample(final String[] args) {
+        StringBuilder sb = new StringBuilder("<").append(getName());
+        if (hasArg()) {
+            sb.append(">");
+            if (hasArgs()) {
+                sb.append(System.lineSeparator());
+                for (String arg : args) {
+                    sb.append(String.format("  <%1$s>%2$s</%1$s>%n", getArgName(), arg));
+                }
+            } else {
+                sb.append(args[0]);
+            }
+            sb.append("</").append(getName()).append(">");
+        } else {
+            sb.append("/>");
+        }
+        return sb.toString();
     }
 }

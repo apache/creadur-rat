@@ -25,7 +25,6 @@ import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.Collections;
 
-import static org.assertj.core.api.Fail.fail;
 
 public class FileUtils {
 
@@ -64,14 +63,14 @@ public class FileUtils {
      */
     static public File writeFile(File dir, final String name, final Iterable<String> lines) {
         if (dir == null) {
-            fail("base directory not specified");
+            throw new IllegalArgumentException("base directory not specified");
         }
         mkDir(dir);
         File file = new File(dir, name);
         try (PrintWriter writer = new PrintWriter(new FileWriter(file))) {
             lines.forEach(writer::println);
         } catch (IOException e) {
-            fail(e.getMessage());
+            throw new RuntimeException(e.getMessage(), e);
         }
         return file;
     }

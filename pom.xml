@@ -56,13 +56,10 @@ agnostic home for software distribution comprehension and audit tools.
     <maven.compiler.target>${javaVersion}</maven.compiler.target>
     <!-- This is the version of Maven required to use the RAT Maven Plugin -->
     <mavenMinVersion>3.2.5</mavenMinVersion>
-    <mavenVersion>3.9.12</mavenVersion>
     <creadur.jira.id>RAT</creadur.jira.id>
     <velocity.core.version>2.4.1</velocity.core.version>
     <velocity.tools.version>3.1</velocity.tools.version>
     <!-- maven plugin versions -->
-    <mavenPluginTestingVersion>3.4.0</mavenPluginTestingVersion>
-    <mavenPluginPluginVersion>3.15.2</mavenPluginPluginVersion>
     <mavenChangesVersion>3.0.0-M3</mavenChangesVersion>
     <mavenJavadocPluginVersion>3.12.0</mavenJavadocPluginVersion>
     <mavenPmdPluginVersion>3.28.0</mavenPmdPluginVersion>
@@ -205,24 +202,6 @@ agnostic home for software distribution comprehension and audit tools.
         <artifactId>ant-testutil</artifactId>
         <version>${ant.version}</version>
         <scope>test</scope>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.maven.plugin-tools</groupId>
-        <artifactId>maven-plugin-annotations</artifactId>
-        <version>${mavenPluginPluginVersion}</version>
-        <scope>provided</scope>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.maven.plugin-testing</groupId>
-        <artifactId>maven-plugin-testing-harness</artifactId>
-        <version>${mavenPluginTestingVersion}</version>
-        <scope>test</scope>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.maven</groupId>
-        <artifactId>maven-plugin-api</artifactId>
-        <version>${mavenVersion}</version>
-        <scope>provided</scope>
       </dependency>
       <dependency>
         <groupId>org.assertj</groupId>
