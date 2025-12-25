@@ -34,6 +34,10 @@ import org.junit.jupiter.api.condition.EnabledOnOs;
 import org.junit.jupiter.api.condition.OS;
 import org.junit.jupiter.api.io.TempDir;
 
+/**
+ * Tests extracted from {@link ReportTestDataProvider}.
+ * DO NOT EDIT - GENERATED FILE
+ */
 @MojoTest
 public class MavenTest {
 

@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.rat.mp;
+package org.apache.rat.maven;
 
 import java.io.File;
 import java.io.IOException;
@@ -38,7 +38,6 @@ import org.apache.rat.commandline.ArgumentContext;
 import org.apache.rat.document.DocumentName;
 import org.apache.rat.document.FileDocument;
 import org.apache.rat.license.ILicense;
-import org.apache.rat.maven.AbstractMaven;
 import org.apache.rat.utils.DefaultLog;
 import org.apache.rat.utils.Log;
 import org.apache.rat.walker.DirectoryWalker;
@@ -127,7 +126,7 @@ public abstract class AbstractRatMojo extends AbstractMaven {
         List<String> result = new ArrayList<>();
         for (Option option : arg.group().getOptions()) {
             if (option.getLongOpt() != null) {
-                List<String> args = setArgs.getArg(option.getLongOpt());
+                List<String> args = argumentTracker.getArg(option.getLongOpt());
                 if (args != null) {
                     result.addAll(args);
                 }
@@ -143,7 +142,7 @@ public abstract class AbstractRatMojo extends AbstractMaven {
     protected void removeKey(final Arg arg) {
         for (Option option : arg.group().getOptions()) {
             if (option.getLongOpt() != null) {
-                setArgs.removeArg(option.getLongOpt());
+                argumentTracker.removeArg(option.getLongOpt());
             }
         }
     }
@@ -245,7 +244,7 @@ public abstract class AbstractRatMojo extends AbstractMaven {
             try {
                 if (getLog().isDebugEnabled()) {
                     log.debug("Start BaseRatMojo Configuration options");
-                    for (Map.Entry<String, List<String>> entry : setArgs.entrySet()) {
+                    for (Map.Entry<String, List<String>> entry : argumentTracker.entrySet()) {
                         log.debug(format(" * %s %s", entry.getKey(), String.join(", ", entry.getValue())));
                     }
                     log.debug("End BaseRatMojo Configuration options");
@@ -255,7 +254,7 @@ public abstract class AbstractRatMojo extends AbstractMaven {
                 removeKey(Arg.HELP_LICENSES);
                 setIncludeExclude();
 
-                ArgumentContext ctxt = OptionCollection.parseCommands(basedir, setArgs.args().toArray(new String[0]));
+                ArgumentContext ctxt = OptionCollection.parseCommands(basedir, argumentTracker.args().toArray(new String[0]));
                 DocumentName dirName = DocumentName.builder(basedir).build();
                 ctxt.getConfiguration().addSource(new DirectoryWalker(new FileDocument(dirName, basedir,
                         ctxt.getConfiguration().getDocumentExcluder(dirName))));

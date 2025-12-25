@@ -46,6 +46,7 @@ import org.apache.rat.help.AbstractHelp;
 import org.apache.rat.license.ILicense;
 import org.apache.rat.license.LicenseSetFactory;
 import org.apache.rat.ui.AbstractOption;
+import org.apache.rat.ui.ArgumentTracker;
 import org.apache.rat.ui.OptionFactory;
 import org.apache.rat.ui.UI;
 import org.apache.rat.ui.spi.UIProvider;
@@ -107,7 +108,7 @@ public class RatTool {
      */
     public List<Option> options() {
         List<Option> lst = new ArrayList<>(OptionCollection.buildOptions(new Options()).getOptions());
-        lst.sort(Comparator.comparing(AbstractOption::extractBaseName));
+        lst.sort(Comparator.comparing(ArgumentTracker::extractKey));
         return lst;
     }
 

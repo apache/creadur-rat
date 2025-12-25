@@ -25,6 +25,7 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.ProjectBuilder;
 import org.apache.maven.project.ProjectBuildingRequest;
+import org.apache.rat.maven.RatCheckMojo;
 import org.apache.rat.test.AbstractConfigurationOptionsProvider;
 import org.apache.rat.OptionCollectionTest;
 import org.apache.rat.ReportConfiguration;

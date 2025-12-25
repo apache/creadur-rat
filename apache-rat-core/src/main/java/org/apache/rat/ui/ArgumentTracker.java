@@ -34,7 +34,11 @@ import org.apache.rat.commandline.Arg;
 import org.apache.rat.utils.DefaultLog;
 import org.apache.rat.utils.Log;
 
-public final class SetArgs {
+/**
+ * Tracks arguments that are set and their values for conversion from native UI to
+ * Apache commons command line values.  Native values
+ */
+public final class ArgumentTracker {
 
     /**
      * List of deprecated arguments and their deprecation notice.
@@ -48,16 +52,25 @@ public final class SetArgs {
 
     /**
      * The arguments set by the UI for the current report execution.
-     * @param renameMap the map of renamed options.
      * @param uiOptionList the list of AbstractOption implementations for this UI.
      */
-    public SetArgs(final Map<String, String> renameMap, final List<? extends AbstractOption<?>> uiOptionList) {
-        for (AbstractOption<?> option : uiOptionList) {
-            if (option.isDeprecated()) {
-                deprecatedArgs.put(option.getName(),
-                        String.format("Use of deprecated option '%s'. %s", option.getName(), option.getDeprecated()));
+    public ArgumentTracker(final List<? extends AbstractOption<?>> uiOptionList) {
+        for (AbstractOption<?> abstractOption : uiOptionList) {
+            if (abstractOption.isDeprecated()) {
+                deprecatedArgs.put(abstractOption.getName(),
+                        String.format("Use of deprecated option '%s'. %s", abstractOption.getName(), abstractOption.getDeprecated()));
             }
         }
+    }
+
+    /**
+     * Extract the core name from the option.  This is the {@link Option#getLongOpt()} if defined, otherwise
+     * the {@link Option#getOpt()}.
+     * @param option the commons cli option.
+     * @return the common cli based name.
+     */
+    public static String extractKey(final Option option) {
+        return StringUtils.defaultIfBlank(option.getLongOpt(), option.getOpt());
     }
 
     public Set<Map.Entry<String, List<String>>> entrySet() {
@@ -69,7 +82,7 @@ public final class SetArgs {
      */
     private void setDeprecationReporter() {
         DeprecationReporter.setLogReporter(opt -> {
-            String msg = deprecatedArgs.get(AbstractOption.extractBaseName(opt));
+            String msg = deprecatedArgs.get(extractKey(opt));
             if (msg == null) {
                 DeprecationReporter.getDefault().accept(opt);
             } else {
@@ -97,14 +110,14 @@ public final class SetArgs {
             final Option opt = arg.find(key);
             final Option main = arg.option();
             if (opt.isDeprecated()) {
-                args.remove(AbstractOption.extractBaseName(main));
+                args.remove(extractKey(main));
                 // deprecated options must be explicitly set so let it go.
                 return true;
             }
             // non-deprecated options may have default so ignore it if another option has already been set.
             for (Option o : arg.group().getOptions()) {
                 if (!o.equals(main)) {
-                    if (args.containsKey(AbstractOption.extractBaseName(o))) {
+                    if (args.containsKey(extractKey(o))) {
                         return false;
                     }
                 }

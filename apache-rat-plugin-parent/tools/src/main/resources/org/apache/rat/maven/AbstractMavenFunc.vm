@@ -27,18 +27,18 @@
     @Deprecated
 #end
     ${parameterAnnotation}
-    public void set${fname}(${args} ${option.getName}) {
+    public void set${fname}(final ${args} ${option.getName}) {
 #if (${option.hasArg})
   #if (${option.hasArgs})
-        setArgs.addArg("${option.keyValue}", ${option.getName});
+        argumentTracker.addArg("${option.keyValue}", ${option.getName});
   #else
-        setArgs.setArg("${option.keyValue}", ${option.getName});
+        argumentTracker.setArg("${option.keyValue}", ${option.getName});
   #end
 #else
         if (${option.getName}) {
-            setArgs.setArg("${option.keyValue}", null);
+            argumentTracker.setArg("${option.keyValue}", null);
         } else {
-            setArgs.removeArg("${option.keyValue}");
+            argumentTracker.removeArg("${option.keyValue}");
         }
 #end
     }

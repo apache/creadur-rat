@@ -1,4 +1,4 @@
-package org.apache.rat.mp;
+package org.apache.rat.maven;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one

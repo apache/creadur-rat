@@ -188,6 +188,24 @@
             </configuration>
           </execution>
           <execution>
+            <id>generate-rat-tests</id>
+            <goals>
+              <goal>java</goal>
+            </goals>
+            <phase>generate-test-sources</phase>
+            <configuration>
+              <mainClass>org.apache.rat.maven.TestGenerator</mainClass>
+              <arguments>
+                <argument>-t</argument>
+                <argument>${project.build.testSourceDirectory}</argument>
+                <argument>-r</argument>
+                <argument>${project.build.testSourceDirectory}/../resources</argument>
+                <argument>-p</argument>
+                <argument>org.apache.rat.maven</argument>
+              </arguments>
+            </configuration>
+          </execution>
+          <execution>
             <id>Initial site generation</id>
             <phase>pre-site</phase>
             <goals>
@@ -242,9 +260,9 @@
               <followSymlinks>false</followSymlinks>
             </fileset>
             <fileset>
-              <directory>src/main/java/org/apache/rat/plugin/</directory>
+              <directory>src/main/java/org/apache/rat/maven/</directory>
               <includes>
-                <include>BaseRatMojo.java</include>
+                <include>AbstractMaven.java</include>
               </includes>
               <followSymlinks>false</followSymlinks>
             </fileset>
