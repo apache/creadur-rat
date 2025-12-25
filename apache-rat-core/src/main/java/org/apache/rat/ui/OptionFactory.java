@@ -72,7 +72,7 @@ public final class OptionFactory {
      */
     public static <T extends AbstractOption<T>> Map<String, T> getOptionMap(final Config<T> config) {
         Map<String, T> result = new TreeMap<>();
-        getOptionList(config).forEach(option -> result.put(AbstractOption.extractBaseName(option.getOption()), option));
+        getOptions(config).forEach(option -> result.put(AbstractOption.extractBaseName(option.getOption()), option));
         return result;
     }
 
@@ -82,7 +82,7 @@ public final class OptionFactory {
      * @return a stream of AbstractOption implementations.
      * @param <T> the AbstractOption implementation.
      */
-    public static <T extends AbstractOption<T>> Stream<T> getOptionList(final Config<T> config) {
+    public static <T extends AbstractOption<T>> Stream<T> getOptions(final Config<T> config) {
         return Arg.getOptions(config.additionalOptions).getOptions().stream().filter(config.getFilter()).map(config.mapper);
     }
 

@@ -30,11 +30,14 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
+import org.apache.commons.collections4.map.UnmodifiableMap;
+import org.apache.commons.collections4.set.UnmodifiableSet;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.WordUtils;
 import org.apache.rat.OptionCollection;
 import org.apache.rat.commandline.Arg;
 import org.apache.rat.ui.AbstractOption;
+import org.apache.rat.ui.OptionFactory;
 import org.apache.rat.utils.CasedString;
 
 import static java.lang.String.format;
@@ -42,32 +45,45 @@ import static java.lang.String.format;
 /**
  * A representation of a CLI option as a Maven option
  */
-public class MavenOption extends AbstractOption<MavenOption> {
+public final class MavenOption extends AbstractOption<MavenOption> {
+
     /**
      * Default values for CLI options
      */
-    static final Map<Arg, String> DEFAULT_VALUES = new HashMap<>();
+    public static final UnmodifiableMap<Arg, String> DEFAULT_VALUES;
     /**
      * List of CLI options that are not supported by Maven.
      */
-    static final Set<Option> UNSUPPORTED_LIST = new HashSet<>();
+    public static final UnmodifiableSet<Option> UNSUPPORTED_SET;
     /** A mapping of external name to internal name if not standard. */
-    static final Map<String, String> RENAME_MAP = new HashMap<>();
+    public static final UnmodifiableMap<String, String> RENAME_MAP;
     /** The additional options for the maven plugin */
     static final Options ADDITIONAL_OPTIONS = new Options();
     /**
      * Filter to remove options not supported by Maven.
      */
-    private static final Predicate<Option> MAVEN_FILTER;
+    static final Predicate<Option> MAVEN_FILTER;
+    /**
+     * The OptionFactory configuration for MavenOptions.
+     */
+    public static final OptionFactory.Config<MavenOption> FACTORY_CONFIG;
+
 
     static {
-        RENAME_MAP.put("addLicense", "add-license");
-        DEFAULT_VALUES.put(Arg.OUTPUT_FILE, "${project.build.directory}/rat.txt");
-        UNSUPPORTED_LIST.addAll(Arg.DIR.group().getOptions());
-        UNSUPPORTED_LIST.addAll(Arg.LOG_LEVEL.group().getOptions());
+        HashMap<String, String> map = new HashMap<>();
+        map.put("addLicense", "add-license");
+        RENAME_MAP = (UnmodifiableMap<String, String>) UnmodifiableMap.unmodifiableMap(map);
+        HashMap<Arg, String> values = new HashMap<>();
+        values.put(Arg.OUTPUT_FILE, "${project.build.directory}/rat.txt");
+        DEFAULT_VALUES = (UnmodifiableMap<Arg, String>) UnmodifiableMap.unmodifiableMap(values);
 
-        Set<Option> filteredOptions = getFilteredOptions();
-        MAVEN_FILTER =  option -> !(filteredOptions.contains(option) || option.getLongOpt() == null);
+        Set<Option> unsupportedOptions = new HashSet<>();
+        unsupportedOptions.addAll(Arg.DIR.group().getOptions());
+        unsupportedOptions.addAll(Arg.LOG_LEVEL.group().getOptions());
+        UNSUPPORTED_SET = (UnmodifiableSet<Option>) UnmodifiableSet.unmodifiableSet(unsupportedOptions);
+
+        MAVEN_FILTER =  option -> !(UNSUPPORTED_SET.contains(option) || option.getLongOpt() == null);
+        FACTORY_CONFIG = new OptionFactory.Config<>(MavenOption.MAVEN_FILTER, MavenOption::new, MavenOption.ADDITIONAL_OPTIONS);
     }
 
     public static List<MavenOption> getMavenOptions() {
@@ -86,15 +102,6 @@ public class MavenOption extends AbstractOption<MavenOption> {
 
     public static Map<String, String> getRenameMap() {
         return Collections.unmodifiableMap(RENAME_MAP);
-    }
-
-    /**
-     * Gets the set of options that are not supported by Maven.
-     *
-     * @return The set of options that are not supported by Maven.
-     */
-    public static Set<Option> getFilteredOptions() {
-        return Collections.unmodifiableSet(UNSUPPORTED_LIST);
     }
 
     /**
@@ -171,7 +178,7 @@ public class MavenOption extends AbstractOption<MavenOption> {
 
     @Override
     public String getExample() {
-        if (UNSUPPORTED_LIST.contains(option)) {
+        if (UNSUPPORTED_SET.contains(option)) {
             return "-- not supported --";
         }
         if (hasArg()) {

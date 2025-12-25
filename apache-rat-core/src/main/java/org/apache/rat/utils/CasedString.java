@@ -171,6 +171,16 @@ public class CasedString {
     }
 
     /**
+     * A representation of a cased string and the identified case of that string.
+     * @param stringCase The {@code StringCase} that the {@code string} argument is in.
+     * @param parts The string parts.
+     */
+    public CasedString(final StringCase stringCase, final String[] parts) {
+        this.string = parts == null ? null : stringCase.assemble(parts);
+        this.stringCase = stringCase;
+    }
+
+    /**
      * Returns an array of each of the segments in this CasedString.  Segments are defined as the strings between
      * the separators in the CasedString.  For the CAMEL case the segments are determined by the presence of a capital letter.
      * @return the array of Strings that are segments of the cased string.

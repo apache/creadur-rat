@@ -264,7 +264,7 @@ public final class OptionCollection {
         /**
          * A style sheet.
          */
-        STYLESHEET("StyleSheet", () -> format("Either an external xsl file or one of the internal named sheets. Internal sheets are: %n%s",
+        STYLESHEET("StyleSheet", () -> format("Either an external XSLT file or one of the internal named sheets. Internal sheets are: %n%s",
                 Arrays.stream(StyleSheets.values())
                         .map(v -> format("\t%s: %s%n", v.arg(), v.desc()))
                         .collect(Collectors.joining(System.lineSeparator())))),
