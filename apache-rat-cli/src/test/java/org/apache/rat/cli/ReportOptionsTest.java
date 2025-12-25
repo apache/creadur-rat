@@ -21,6 +21,7 @@ package org.apache.rat.cli;
 import java.nio.file.Path;
 import java.util.stream.Stream;
 
+import org.apache.rat.Reporter;
 import org.apache.rat.api.RatException;
 import org.apache.rat.testhelpers.FileUtils;
 import org.apache.rat.testhelpers.data.OptionTestDataProvider;
@@ -77,9 +78,8 @@ public class ReportOptionsTest {
             assertThatThrownBy(() -> Report.generateReport(basePath.toFile(), test.getCommandLine(basePath.toString()))
                     ).hasMessageContaining(test.getExpectedException().getMessage());
         } else {
-            Report.CLIOutput result = Report.generateReport(basePath.toFile(), test.getCommandLine(basePath.toString()));
-            ValidatorData data = new ValidatorData(
-                    result.output, result.configuration, basePath.toString());
+            Reporter.Output result = Report.generateReport(basePath.toFile(), test.getCommandLine(basePath.toString()));
+            ValidatorData data = new ValidatorData(result, basePath.toString());
             test.getValidator().accept(data);
         }
     }

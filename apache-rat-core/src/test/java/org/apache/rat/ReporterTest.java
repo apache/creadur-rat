@@ -522,13 +522,13 @@ public class ReporterTest {
         if (test.expectingException()) {
             assertThatThrownBy(() -> new Reporter(ctxt.getConfiguration()).execute()).as("Expected throws from " + name)
                     .hasMessageContaining(test.getExpectedException().getMessage());
-            ValidatorData data = new ValidatorData(
-                    null, ctxt.getConfiguration(), basePath.toString());
+            ValidatorData data = new ValidatorData(Reporter.Output.builder().configuration(ctxt.getConfiguration()).build(),
+                    basePath.toString());
             test.getValidator().accept(data);
         } else {
-            Reporter.Output output = ctxt.getConfiguration() != null ? new Reporter(ctxt.getConfiguration()).execute() : null;
-            ValidatorData data = new ValidatorData(
-                    output, ctxt.getConfiguration(), basePath.toString());
+            Reporter.Output output = ctxt.getConfiguration() != null ? new Reporter(ctxt.getConfiguration()).execute() :
+                    Reporter.Output.builder().build();
+            ValidatorData data = new ValidatorData(output, basePath.toString());
             test.getValidator().accept(data);
         }
     }

@@ -195,7 +195,7 @@ public class ReportTestDataProvider {
         TestData test1 = new TestData(DataUtils.asDirName(option), NO_OPTIONS,
                 setup,
                 validatorData -> {
-                    ClaimStatistic claimStatistic = validatorData.output.getStatistic();
+                    ClaimStatistic claimStatistic = validatorData.getStatistic();
                     assertThat(claimStatistic.getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(5);
                     assertThat(claimStatistic.getCounter(ClaimStatistic.Counter.IGNORED)).isEqualTo(1);
                 });
@@ -204,14 +204,14 @@ public class ReportTestDataProvider {
         TestData test2 = new TestData("", Collections.singletonList(ImmutablePair.of(option, args.get())),
                 setup,
                 validatorData -> {
-                    ClaimStatistic claimStatistic = validatorData.output.getStatistic();
+                    ClaimStatistic claimStatistic = validatorData.getStatistic();
                     assertThat(claimStatistic.getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(standard.length);
                     assertThat(claimStatistic.getCounter(ClaimStatistic.Counter.IGNORED)).isEqualTo(ignored.length);
                     for (String fileName : ignored) {
-                        assertIgnoredFile(validatorData.output.getDocument(), fileName);
+                        assertIgnoredFile(validatorData.getDocument(), fileName);
                     }
                     for (String fileName : standard) {
-                        assertStandardFile(validatorData.output.getDocument(), fileName);
+                        assertStandardFile(validatorData.getDocument(), fileName);
                     }
                 });
         return Arrays.asList(test1, test2);
@@ -253,30 +253,30 @@ public class ReportTestDataProvider {
         TestData test1 = new TestData(DataUtils.asDirName(option), Collections.singletonList(ImmutablePair.nullPair()),
                 setup,
                 validatorData -> {
-                    assertThat(validatorData.output.getStatistic().getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(defaultIncluded.length + 1);
-                    assertThat(validatorData.output.getStatistic().getCounter(ClaimStatistic.Counter.IGNORED)).isEqualTo(defaultExcluded.length);
+                    assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(defaultIncluded.length + 1);
+                    assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.IGNORED)).isEqualTo(defaultExcluded.length);
                     for (String fileName : defaultIncluded) {
-                        assertStandardFile(validatorData.output.getDocument(), fileName);
+                        assertStandardFile(validatorData.getDocument(), fileName);
                     }
                     for (String fileName : defaultExcluded) {
-                        assertIgnoredFile(validatorData.output.getDocument(), fileName);
+                        assertIgnoredFile(validatorData.getDocument(), fileName);
                     }
-                    assertStandardFile(validatorData.output.getDocument(), mavenFile);
+                    assertStandardFile(validatorData.getDocument(), mavenFile);
                 });
 
 
         TestData test2 = new TestData("", Collections.singletonList(ImmutablePair.of(option, args)),
                 setup,
                 validatorData -> {
-                    assertThat(validatorData.output.getStatistic().getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(defaultIncluded.length);
-                    assertThat(validatorData.output.getStatistic().getCounter(ClaimStatistic.Counter.IGNORED)).isEqualTo(defaultExcluded.length + 1);
+                    assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(defaultIncluded.length);
+                    assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.IGNORED)).isEqualTo(defaultExcluded.length + 1);
                     for (String fileName : defaultIncluded) {
-                        assertStandardFile(validatorData.output.getDocument(), fileName);
+                        assertStandardFile(validatorData.getDocument(), fileName);
                     }
                     for (String fileName : defaultExcluded) {
-                        assertIgnoredFile(validatorData.output.getDocument(), fileName);
+                        assertIgnoredFile(validatorData.getDocument(), fileName);
                     }
-                    assertIgnoredFile(validatorData.output.getDocument(), mavenFile);
+                    assertIgnoredFile(validatorData.getDocument(), mavenFile);
                 });
         return Arrays.asList(test1, test2);
     }
@@ -325,17 +325,17 @@ public class ReportTestDataProvider {
         TestData test1 = new TestData(DataUtils.asDirName(option), Collections.singletonList(ImmutablePair.nullPair()),
             setup,
             validatorData -> {
-                assertThat(validatorData.output.getStatistic().getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(11);
+                assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(11);
                 // .gitignore is ignored by default as it is hidden
-                assertThat(validatorData.output.getStatistic().getCounter(ClaimStatistic.Counter.IGNORED)).isEqualTo(0);
+                assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.IGNORED)).isEqualTo(0);
             });
 
     TestData test2 = new TestData("GIT", Collections.singletonList(ImmutablePair.of(option, new String[] {"GIT"})),
             setup,
             validatorData -> {
-                assertThat(validatorData.output.getStatistic().getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(3);
+                assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(3);
                 // .gitignore is ignored by default as it is hidden
-                assertThat(validatorData.output.getStatistic().getCounter(ClaimStatistic.Counter.IGNORED)).isEqualTo(8);
+                assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.IGNORED)).isEqualTo(8);
             });
 
     return Arrays.asList(test1, test2);
@@ -357,26 +357,26 @@ public class ReportTestDataProvider {
         TestData test1 = new TestData(DataUtils.asDirName(option), Collections.singletonList(ImmutablePair.of(null, null)),
                 setup,
                 validatorData -> {
-                    assertThat(validatorData.output.getStatistic().getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(3);
-                    assertThat(validatorData.output.getStatistic().getCounter(ClaimStatistic.Counter.IGNORED)).isEqualTo(0);
+                    assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(3);
+                    assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.IGNORED)).isEqualTo(0);
                     for (String fname : excluded) {
-                        assertStandardFile(validatorData.output.getDocument(), fname);
+                        assertStandardFile(validatorData.getDocument(), fname);
                     }
                     for (String fname : notExcluded) {
-                        assertStandardFile(validatorData.output.getDocument(), fname);
+                        assertStandardFile(validatorData.getDocument(), fname);
                     }
                 });
 
         TestData test2 = new TestData("", Collections.singletonList(ImmutablePair.of(option, new String[]{"5"})),
                 setup,
                 validatorData -> {
-                    assertThat(validatorData.output.getStatistic().getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(2);
-                    assertThat(validatorData.output.getStatistic().getCounter(ClaimStatistic.Counter.IGNORED)).isEqualTo(1);
+                    assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(2);
+                    assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.IGNORED)).isEqualTo(1);
                     for (String fname : excluded) {
-                        assertIgnoredFile(validatorData.output.getDocument(), fname);
+                        assertIgnoredFile(validatorData.getDocument(), fname);
                     }
                     for (String fname : notExcluded) {
-                        assertStandardFile(validatorData.output.getDocument(), fname);
+                        assertStandardFile(validatorData.getDocument(), fname);
                     }
                 });
         return Arrays.asList(test1, test2);
@@ -399,25 +399,25 @@ public class ReportTestDataProvider {
         TestData test1 = new TestData(DataUtils.asDirName(option), NO_OPTIONS,
                 setup,
                 validatorData -> {
-                    assertThat(validatorData.output.getStatistic().getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(4);
-                    assertThat(validatorData.output.getStatistic().getCounter(ClaimStatistic.Counter.IGNORED)).isEqualTo(1);
+                    assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(4);
+                    assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.IGNORED)).isEqualTo(1);
                 });
 
         // verify exclude removes the files
         TestData test2 = new TestData("includeTestProof", Collections.singletonList(ImmutablePair.of(excludeOption, OptionTestDataProvider.EXCLUDE_ARGS)),
                 setup,
                 validatorData -> {
-                    assertThat(validatorData.output.getStatistic().getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(1);
+                    assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(1);
                     // .gitignore is ignored by default as it is hidden but not counted
-                    assertThat(validatorData.output.getStatistic().getCounter(ClaimStatistic.Counter.IGNORED)).isEqualTo(4);
+                    assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.IGNORED)).isEqualTo(4);
                 });
 
         TestData test3 = new TestData("", Arrays.asList(ImmutablePair.of(option, args), ImmutablePair.of(excludeOption, OptionTestDataProvider.EXCLUDE_ARGS)),
                 setup,
                 validatorData -> {
-                    assertThat(validatorData.output.getStatistic().getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(3);
+                    assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(3);
                     // .gitignore is ignored by default as it is hidden but not counted
-                    assertThat(validatorData.output.getStatistic().getCounter(ClaimStatistic.Counter.IGNORED)).isEqualTo(2);
+                    assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.IGNORED)).isEqualTo(2);
                 });
         return Arrays.asList(test1, test2, test3);
     }
@@ -462,35 +462,35 @@ public class ReportTestDataProvider {
         TestData test1 = new TestData("/includeStdValidation", Collections.singletonList(excludes),
                 setup,
                 validatorData -> {
-                    assertThat(validatorData.output.getStatistic().getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(4);
-                    assertThat(validatorData.output.getStatistic().getCounter(ClaimStatistic.Counter.IGNORED)).isEqualTo(6);
+                    assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(4);
+                    assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.IGNORED)).isEqualTo(6);
                 });
 
         TestData test2 = new TestData(StandardCollection.MISC.name().toLowerCase(Locale.ROOT), Arrays.asList(ImmutablePair.of(option, new String[]{StandardCollection.MISC.name()}), excludes),
                 setup,
                 validatorData -> {
-                    assertThat(validatorData.output.getStatistic().getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(8);
-                    assertThat(validatorData.output.getStatistic().getCounter(ClaimStatistic.Counter.IGNORED)).isEqualTo(2);
+                    assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(8);
+                    assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.IGNORED)).isEqualTo(2);
                 });
 
         TestData test3 = new TestData(StandardCollection.HIDDEN_FILE.name().toLowerCase(Locale.ROOT), Arrays.asList(ImmutablePair.of(option, new String[]{StandardCollection.HIDDEN_FILE.name()}), excludes),
                 setup,
                 validatorData -> {
-                    assertThat(validatorData.output.getStatistic().getCounter(ClaimStatistic.Counter.STANDARDS))
+                    assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.STANDARDS))
                             .isEqualTo(6);
-                    assertThat(validatorData.output.getStatistic().getCounter(ClaimStatistic.Counter.IGNORED))
+                    assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.IGNORED))
                             .isEqualTo(4);
-                    assertStandardFile(validatorData.output.getDocument(), "._afile");
-                    assertIgnoredFile(validatorData.output.getDocument(), ".hiddenDir");
+                    assertStandardFile(validatorData.getDocument(), "._afile");
+                    assertIgnoredFile(validatorData.getDocument(), ".hiddenDir");
                 });
         TestData test4 = new TestData(StandardCollection.HIDDEN_DIR.name().toLowerCase(Locale.ROOT),
                 Arrays.asList(ImmutablePair.of(option, new String[]{StandardCollection.HIDDEN_DIR.name()}), excludes),
                 setup,
                 validatorData -> {
-                    assertThat(validatorData.output.getStatistic().getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(5);
-                    assertThat(validatorData.output.getStatistic().getCounter(ClaimStatistic.Counter.IGNORED)).isEqualTo(5);
-                    assertIgnoredFile(validatorData.output.getDocument(), "._afile");
-                    assertStandardFile(validatorData.output.getDocument(), ".hiddenDir/aFile");
+                    assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(5);
+                    assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.IGNORED)).isEqualTo(5);
+                    assertIgnoredFile(validatorData.getDocument(), "._afile");
+                    assertStandardFile(validatorData.getDocument(), ".hiddenDir/aFile");
                 });
         return Arrays.asList(test1, test2, test3, test4);
     }
@@ -507,15 +507,15 @@ public class ReportTestDataProvider {
         TestData test1 = new TestData(DataUtils.asDirName(option), NO_OPTIONS,
                 setup,
                 validatorData -> {
-                    assertThat(validatorData.output.getStatistic().getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(3);
-                    assertThat(validatorData.output.getStatistic().getCounter(ClaimStatistic.Counter.IGNORED)).isEqualTo(0);
+                    assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(3);
+                    assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.IGNORED)).isEqualTo(0);
                 });
 
         TestData test2 = new TestData("", Collections.singletonList(ImmutablePair.of(option, new String[]{"intput.txt"})),
                 setup,
                 validatorData -> {
-                    assertThat(validatorData.output.getStatistic().getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(1);
-                    assertThat(validatorData.output.getStatistic().getCounter(ClaimStatistic.Counter.IGNORED)).isEqualTo(0);
+                    assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(1);
+                    assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.IGNORED)).isEqualTo(0);
                 });
         return Arrays.asList(test1, test2);
     }
@@ -533,17 +533,17 @@ public class ReportTestDataProvider {
         TestData test1 = new TestData(DataUtils.asDirName(option), NO_OPTIONS,
                 setup,
                 validatorData -> {
-                    assertThat(validatorData.output.getStatistic().getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(2);
-                    assertThat(validatorData.output.getStatistic().getCounter(ClaimStatistic.Counter.APPROVED)).isEqualTo(1);
-                    assertThat(validatorData.output.getStatistic().getCounter(ClaimStatistic.Counter.UNAPPROVED)).isEqualTo(1);
+                    assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(2);
+                    assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.APPROVED)).isEqualTo(1);
+                    assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.UNAPPROVED)).isEqualTo(1);
                 });
 
         TestData test2 = new TestData("withoutLicenseDef", Collections.singletonList(ImmutablePair.of(option, args)),
                 setup,
                 validatorData -> {
-                    assertThat(validatorData.output.getStatistic().getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(2);
-                    assertThat(validatorData.output.getStatistic().getCounter(ClaimStatistic.Counter.APPROVED)).isEqualTo(1);
-                    assertThat(validatorData.output.getStatistic().getCounter(ClaimStatistic.Counter.UNAPPROVED)).isEqualTo(1);
+                    assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(2);
+                    assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.APPROVED)).isEqualTo(1);
+                    assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.UNAPPROVED)).isEqualTo(1);
                 });
 
         Option configOpt = Arg.CONFIGURATION.option();
@@ -555,9 +555,9 @@ public class ReportTestDataProvider {
                     DataUtils.generateSpdxConfig(basePath.resolve(".rat").resolve("catz.xml"), "catz", "catz");
                 }),
                 validatorData -> {
-                    assertThat(validatorData.output.getStatistic().getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(2);
-                    assertThat(validatorData.output.getStatistic().getCounter(ClaimStatistic.Counter.APPROVED)).isEqualTo(2);
-                    assertThat(validatorData.output.getStatistic().getCounter(ClaimStatistic.Counter.UNAPPROVED)).isEqualTo(0);
+                    assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(2);
+                    assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.APPROVED)).isEqualTo(2);
+                    assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.UNAPPROVED)).isEqualTo(0);
                 });
         return Arrays.asList(test1, test2, test3);
     }
@@ -603,8 +603,8 @@ public class ReportTestDataProvider {
                 setup,
                 validatorData -> {
                 
-                ClaimStatistic claimStatistic = validatorData.output.getStatistic();
-                ClaimValidator validator = validatorData.config.getClaimValidator();
+                ClaimStatistic claimStatistic = validatorData.getStatistic();
+                ClaimValidator validator = validatorData.getConfiguration().getClaimValidator();
                 assertThat(validator.listIssues(claimStatistic)).containsExactly("UNAPPROVED");
             });
         return Collections.singletonList(test1);
@@ -630,17 +630,17 @@ public class ReportTestDataProvider {
         TestData test1 = new TestData(DataUtils.asDirName(option), NO_OPTIONS,
                 setup,
                 validatorData -> {
-                    assertThat(validatorData.output.getStatistic().getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(1);
-                    assertThat(validatorData.output.getStatistic().getCounter(ClaimStatistic.Counter.APPROVED)).isEqualTo(0);
-                    assertThat(validatorData.output.getStatistic().getCounter(ClaimStatistic.Counter.UNAPPROVED)).isEqualTo(1);
+                    assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(1);
+                    assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.APPROVED)).isEqualTo(0);
+                    assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.UNAPPROVED)).isEqualTo(1);
                 });
 
         TestData test2 = new TestData("withoutLicenseDef", Collections.singletonList(ImmutablePair.of(option, args)),
                 setup,
                 validatorData -> {
-                    assertThat(validatorData.output.getStatistic().getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(1);
-                    assertThat(validatorData.output.getStatistic().getCounter(ClaimStatistic.Counter.APPROVED)).isEqualTo(0);
-                    assertThat(validatorData.output.getStatistic().getCounter(ClaimStatistic.Counter.UNAPPROVED)).isEqualTo(1);
+                    assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(1);
+                    assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.APPROVED)).isEqualTo(0);
+                    assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.UNAPPROVED)).isEqualTo(1);
                 });
         Option configOpt = Arg.CONFIGURATION.option();
         TestData test3 = new TestData("withLicenseDef", Arrays.asList(ImmutablePair.of(option, args),
@@ -652,9 +652,9 @@ public class ReportTestDataProvider {
                             DataUtils.generateSpdxConfig(catzXml, "catz", "catz");
                         }),
                 validatorData -> {
-                    assertThat(validatorData.output.getStatistic().getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(1);
-                    assertThat(validatorData.output.getStatistic().getCounter(ClaimStatistic.Counter.APPROVED)).isEqualTo(1);
-                    assertThat(validatorData.output.getStatistic().getCounter(ClaimStatistic.Counter.UNAPPROVED)).isEqualTo(0);
+                    assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(1);
+                    assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.APPROVED)).isEqualTo(1);
+                    assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.UNAPPROVED)).isEqualTo(0);
                 });
         return Arrays.asList(test1, test2, test3);
     }
@@ -683,17 +683,17 @@ public class ReportTestDataProvider {
         TestData test1 = new TestData(DataUtils.asDirName(option), NO_OPTIONS,
                 setup,
                 validatorData -> {
-                    assertThat(validatorData.output.getStatistic().getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(1);
-                    assertThat(validatorData.output.getStatistic().getCounter(ClaimStatistic.Counter.APPROVED)).isEqualTo(1);
-                    assertThat(validatorData.output.getStatistic().getCounter(ClaimStatistic.Counter.UNAPPROVED)).isEqualTo(0);
+                    assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(1);
+                    assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.APPROVED)).isEqualTo(1);
+                    assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.UNAPPROVED)).isEqualTo(0);
                 });
 
         TestData test2 = new TestData("", Collections.singletonList(ImmutablePair.of(option, args)),
                 setup,
                 validatorData -> {
-                    assertThat(validatorData.output.getStatistic().getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(1);
-                    assertThat(validatorData.output.getStatistic().getCounter(ClaimStatistic.Counter.APPROVED)).isEqualTo(0);
-                    assertThat(validatorData.output.getStatistic().getCounter(ClaimStatistic.Counter.UNAPPROVED)).isEqualTo(1);
+                    assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(1);
+                    assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.APPROVED)).isEqualTo(0);
+                    assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.UNAPPROVED)).isEqualTo(1);
                 });
 
         return Arrays.asList(test1, test2);
@@ -721,8 +721,8 @@ public class ReportTestDataProvider {
                             "*/\n\n", "class Test {}\n"));
                 },
                 validatorData -> {
-                    ClaimStatistic claimStatistic = validatorData.output.getStatistic();
-                    ClaimValidator validator = validatorData.config.getClaimValidator();
+                    ClaimStatistic claimStatistic = validatorData.getStatistic();
+                    ClaimValidator validator = validatorData.getConfiguration().getClaimValidator();
                     assertThat(validator.listIssues(claimStatistic)).containsExactly("UNAPPROVED");
                 });
 
@@ -734,8 +734,8 @@ public class ReportTestDataProvider {
                             "*/\n\n", "class Test {}\n"));
                 },
                 validatorData -> {
-                    ClaimStatistic claimStatistic = validatorData.output.getStatistic();
-                    ClaimValidator validator = validatorData.config.getClaimValidator();
+                    ClaimStatistic claimStatistic = validatorData.getStatistic();
+                    ClaimValidator validator = validatorData.getConfiguration().getClaimValidator();
                     assertThat(validator.listIssues(claimStatistic)).isEmpty();
                 });
         return Arrays.asList(test1, test2);
@@ -751,8 +751,8 @@ public class ReportTestDataProvider {
                             "*/\n\n", "class Test {}\n"));
                 },
                 validatorData -> {
-                    ClaimStatistic claimStatistic = validatorData.output.getStatistic();
-                    ClaimValidator validator = validatorData.config.getClaimValidator();
+                    ClaimStatistic claimStatistic = validatorData.getStatistic();
+                    ClaimValidator validator = validatorData.getConfiguration().getClaimValidator();
                     assertThat(validator.listIssues(claimStatistic)).containsExactly("UNAPPROVED");
                 });
 
@@ -763,8 +763,8 @@ public class ReportTestDataProvider {
                             "*/\n\n", "class Test {}\n"));
                 },
                 validatorData -> {
-                    ClaimStatistic claimStatistic = validatorData.output.getStatistic();
-                    ClaimValidator validator = validatorData.config.getClaimValidator();
+                    ClaimStatistic claimStatistic = validatorData.getStatistic();
+                    ClaimValidator validator = validatorData.getConfiguration().getClaimValidator();
                     assertThat(validator.listIssues(claimStatistic)).isEmpty();
                 });
         return Arrays.asList(test1, test2);
@@ -790,26 +790,26 @@ public class ReportTestDataProvider {
         TestData test1 = new TestData(DataUtils.asDirName(option), NO_OPTIONS,
                 setup,
                 validatorData -> {
-                    assertThat(validatorData.output.getStatistic().getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(2);
-                    assertThat(validatorData.output.getStatistic().getCounter(ClaimStatistic.Counter.APPROVED)).isEqualTo(1);
-                    assertThat(validatorData.output.getStatistic().getCounter(ClaimStatistic.Counter.UNAPPROVED)).isEqualTo(1);
+                    assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(2);
+                    assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.APPROVED)).isEqualTo(1);
+                    assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.UNAPPROVED)).isEqualTo(1);
                 });
 
         TestData test2 = new TestData("withDefaults", Collections.singletonList(underTest),
             setup,
             validatorData -> {
-                assertThat(validatorData.output.getStatistic().getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(2);
-                assertThat(validatorData.output.getStatistic().getCounter(ClaimStatistic.Counter.APPROVED)).isEqualTo(2);
-                assertThat(validatorData.output.getStatistic().getCounter(ClaimStatistic.Counter.UNAPPROVED)).isEqualTo(0);
+                assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(2);
+                assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.APPROVED)).isEqualTo(2);
+                assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.UNAPPROVED)).isEqualTo(0);
             });
 
         TestData test3 = new TestData("noDefaults", Arrays.asList(underTest,
                 ImmutablePair.of(Arg.CONFIGURATION_NO_DEFAULTS.find("configuration-no-defaults"), null)),
             setup,
             validatorData -> {
-                assertThat(validatorData.output.getStatistic().getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(2);
-                assertThat(validatorData.output.getStatistic().getCounter(ClaimStatistic.Counter.APPROVED)).isEqualTo(1);
-                assertThat(validatorData.output.getStatistic().getCounter(ClaimStatistic.Counter.UNAPPROVED)).isEqualTo(1);
+                assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(2);
+                assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.APPROVED)).isEqualTo(1);
+                assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.UNAPPROVED)).isEqualTo(1);
             });
         return Arrays.asList(test1, test2, test3);
     }
@@ -825,7 +825,7 @@ public class ReportTestDataProvider {
                     writeFile(baseDir, "Test.java", Arrays.asList("/*\n", "SPDX-License-Identifier: Apache-2.0\n",
                             "*/\n\n", "class Test {}\n"));
                 },
-                validatorData -> assertThat(validatorData.config.getLicenses(LicenseSetFactory.LicenseFilter.ALL)).isEmpty());
+                validatorData -> assertThat(validatorData.getConfiguration().getLicenses(LicenseSetFactory.LicenseFilter.ALL)).isEmpty());
         test1.setException(NO_LICENSES_EXCEPTION);
         return Collections.singletonList(test1);
     }
@@ -838,11 +838,11 @@ public class ReportTestDataProvider {
         Option option = Arg.DRY_RUN.find("dry-run");
         TestData test1 = new TestData("stdRun", Collections.singletonList(ImmutablePair.of(option, null)),
                 NO_SETUP,
-                validatorData -> assertThat(validatorData.config.isDryRun()).isTrue());
+                validatorData -> assertThat(validatorData.getConfiguration().isDryRun()).isTrue());
 
         TestData test2 = new TestData(DataUtils.asDirName(option), NO_OPTIONS,
                 NO_SETUP,
-                validatorData -> assertThat(validatorData.config.isDryRun()).isFalse());
+                validatorData -> assertThat(validatorData.getConfiguration().isDryRun()).isFalse());
         return Arrays.asList(test1, test2);
     }
 
@@ -858,7 +858,7 @@ public class ReportTestDataProvider {
                 setup,
                 validatorData -> {
                     try {
-                        String actualText = TextUtils.readFile(validatorData.baseDir.resolve("Missing.java").toFile());
+                        String actualText = TextUtils.readFile(validatorData.getBaseDir().resolve("Missing.java").toFile());
                         TextUtils.assertNotContains("MyCopyright", actualText);
                     } catch (IOException ex) {
                         throw new RuntimeException(ex);
@@ -869,10 +869,10 @@ public class ReportTestDataProvider {
                 setup,
                 validatorData -> {
                     try {
-                        String actualText = TextUtils.readFile(validatorData.baseDir.resolve("Missing.java").toFile());
+                        String actualText = TextUtils.readFile(validatorData.getBaseDir().resolve("Missing.java").toFile());
                         TextUtils.assertNotContains("MyCopyright", actualText);
-                        assertThat(validatorData.baseDir.resolve("Missing.java.new")).exists();
-                        actualText = TextUtils.readFile(validatorData.baseDir.resolve("Missing.java.new").toFile());
+                        assertThat(validatorData.getBaseDir().resolve("Missing.java.new")).exists();
+                        actualText = TextUtils.readFile(validatorData.getBaseDir().resolve("Missing.java.new").toFile());
                         TextUtils.assertContains("MyCopyright", actualText);
                     } catch (IOException ex) {
                         throw new RuntimeException(ex);
@@ -884,21 +884,21 @@ public class ReportTestDataProvider {
                 setup,
                 validatorData -> {
                     try {
-                        String actualText = TextUtils.readFile(validatorData.baseDir.resolve("Missing.java").toFile());
+                        String actualText = TextUtils.readFile(validatorData.getBaseDir().resolve("Missing.java").toFile());
                         TextUtils.assertNotContains("MyCopyright", actualText);
                     } catch (IOException ex) {
                         throw new RuntimeException(ex);
                     }
-                    assertThat(validatorData.baseDir.resolve("Missing.java.new")).doesNotExist();
+                    assertThat(validatorData.getBaseDir().resolve("Missing.java.new")).doesNotExist();
                 });
         Option overwrite = Arg.EDIT_OVERWRITE.option();
         TestData test4 = new TestData(DataUtils.asDirName(overwrite), Arrays.asList(copyright, editLicense, ImmutablePair.of(overwrite, null)),
                 setup,
                 validatorData -> {
                     try {
-                        String actualText = TextUtils.readFile(validatorData.baseDir.resolve("Missing.java").toFile());
+                        String actualText = TextUtils.readFile(validatorData.getBaseDir().resolve("Missing.java").toFile());
                         TextUtils.assertContains("MyCopyright", actualText);
-                        assertThat(validatorData.baseDir.resolve("Missing.java.new")).doesNotExist();
+                        assertThat(validatorData.getBaseDir().resolve("Missing.java.new")).doesNotExist();
                     } catch (IOException ex) {
                         throw new RuntimeException(ex);
                     }
@@ -918,11 +918,11 @@ public class ReportTestDataProvider {
             },
                 validatorData -> {
             try {
-                assertThat(validatorData.output.getStatistic()).isNotNull();
-                File javaFile = validatorData.baseDir.resolve("NoLicense.java").toFile();
+                assertThat(validatorData.getStatistic()).isNotNull();
+                File javaFile = validatorData.getBaseDir().resolve("NoLicense.java").toFile();
                 String contents = String.join("\n", IOUtils.readLines(new FileReader(javaFile)));
                 assertThat(contents).isEqualTo("class NoLicense {}");
-                File resultFile = validatorData.baseDir.resolve("NoLicense.java.new").toFile();
+                File resultFile = validatorData.getBaseDir().resolve("NoLicense.java.new").toFile();
                 assertThat(resultFile).exists();
                 contents = String.join("\n", IOUtils.readLines(new FileReader(resultFile)));
                 assertThat(contents).isEqualTo("/*\n" +
@@ -958,13 +958,13 @@ public class ReportTestDataProvider {
     private List<TestData>  overwriteTest(final Option option) {
         TestData test1 = new TestData("noEditLicense", Collections.singletonList(ImmutablePair.of(option, null)),
                 NO_SETUP,
-                validatorData -> assertThat(validatorData.config.isAddingLicensesForced())
+                validatorData -> assertThat(validatorData.getConfiguration().isAddingLicensesForced())
                         .describedAs("Without edit-license should be false").isFalse());
 
         TestData test = new TestData("", Arrays.asList(ImmutablePair.of(option, null),
                 ImmutablePair.of(Arg.EDIT_ADD.find("edit-license"), null)),
                 NO_SETUP,
-                validatorData -> assertThat(validatorData.config.isAddingLicensesForced()).isTrue());
+                validatorData -> assertThat(validatorData.getConfiguration().isAddingLicensesForced()).isTrue());
         return Arrays.asList(test1, test);
     }
 
@@ -1022,7 +1022,7 @@ public class ReportTestDataProvider {
                         }
                     },
                     validatorData -> {
-                        Document document = validatorData.output.getDocument();
+                        Document document = validatorData.getDocument();
                         try {
                             XmlUtils.assertIsPresent(processing.name(), document, xpath, "/rat-report/resource[@name='/dummy.jar']");
                             switch (processing) {
@@ -1061,7 +1061,7 @@ public class ReportTestDataProvider {
                     Collections.singletonList(ImmutablePair.of(option, new String[]{filter.name()})),
                     NO_SETUP,
                     validatorData -> {
-                        Document document = validatorData.output.getDocument();
+                        Document document = validatorData.getDocument();
                         try {
                             switch (filter) {
                                 case ALL:
@@ -1100,11 +1100,11 @@ public class ReportTestDataProvider {
                     writeFile(baseDir, "apl.txt", "SPDX-License-Identifier: Apache-2.0");
                 },
                 validatorData -> {
-                    assertThat(validatorData.output.getStatistic().getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(1);
-                    assertThat(validatorData.output.getStatistic().getCounter(ClaimStatistic.Counter.APPROVED)).isEqualTo(1);
-                    assertThat(validatorData.output.getStatistic().getCounter(ClaimStatistic.Counter.UNAPPROVED)).isEqualTo(0);
+                    assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(1);
+                    assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.APPROVED)).isEqualTo(1);
+                    assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.UNAPPROVED)).isEqualTo(0);
 
-                    File outFile = validatorData.baseDir.resolve("outexample").toFile();
+                    File outFile = validatorData.getBaseDir().resolve("outexample").toFile();
                     try {
                         String actualText = TextUtils.readFile(outFile);
                         TextUtils.assertContainsExactly(1, "Apache License 2.0: 1 ", actualText);
@@ -1126,7 +1126,7 @@ public class ReportTestDataProvider {
             TestData test = new TestData(filter.name(), Collections.singletonList(ImmutablePair.of(option, new String[]{filter.name()})),
                     NO_SETUP,
                     validatorData -> {
-                        Document document = validatorData.output.getDocument();
+                        Document document = validatorData.getDocument();
                         try {
                             switch (filter) {
                                 case ALL:
@@ -1168,7 +1168,7 @@ public class ReportTestDataProvider {
                         writeFile(baseDir, "Missing.java", Arrays.asList("/* no license */\n\n", "class Test {}\n"));
                     },
                     validatorData -> {
-                        Document document = validatorData.output.getDocument();
+                        Document document = validatorData.getDocument();
                         String testDoc = "/rat-report/resource[@name='/Test.java']";
                         String missingDoc = "/rat-report/resource[@name='/Missing.java']";
                         try {
@@ -1221,10 +1221,10 @@ public class ReportTestDataProvider {
                     createFile,
                     validatorData -> {
                         try (InputStream expected = sheet.getStyleSheet().get();
-                             InputStream actual = validatorData.config.getStyleSheet().get()) {
+                             InputStream actual = validatorData.getConfiguration().getStyleSheet().get()) {
                             assertThat(IOUtils.contentEquals(expected, actual)).as(() -> String.format("'%s' does not match", sheet)).isTrue();
 
-                            String actualText = TextUtils.readFile(validatorData.baseDir.resolve("outputFile").toFile());
+                            String actualText = TextUtils.readFile(validatorData.getBaseDir().resolve("outputFile").toFile());
                             switch (sheet) {
                                 case MISSING_HEADERS:
                                     TextUtils.assertContainsExactly(1, "Files with missing headers:" + System.lineSeparator() +
@@ -1275,10 +1275,10 @@ public class ReportTestDataProvider {
 
                 validatorData -> {
                     try (InputStream expected = StyleSheets.getStyleSheet("fileStyleSheet.xslt", validatorData.getBaseName()).get();
-                         InputStream actual = validatorData.config.getStyleSheet().get()) {
+                         InputStream actual = validatorData.getConfiguration().getStyleSheet().get()) {
                         assertThat(IOUtils.contentEquals(expected, actual)).as(() -> "'fileStyleSheet.xslt' does not match").isTrue();
 
-                        String actualText = TextUtils.readFile(validatorData.baseDir.resolve("outputFile").toFile());
+                        String actualText = TextUtils.readFile(validatorData.getBaseDir().resolve("outputFile").toFile());
                         TextUtils.assertContainsExactly(1, "Hello World", actualText);
                     } catch (IOException e) {
                         throw new RuntimeException(e);

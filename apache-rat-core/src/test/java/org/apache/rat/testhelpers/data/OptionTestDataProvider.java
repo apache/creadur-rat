@@ -181,7 +181,7 @@ public class OptionTestDataProvider {
                 Collections.singletonList(ImmutablePair.of(option, args.get())),
                 preSetup,
                 validatorData -> {
-                    DocumentNameMatcher excluder = validatorData.config.getDocumentExcluder(validatorData.getBaseName());
+                    DocumentNameMatcher excluder = validatorData.getConfiguration().getDocumentExcluder(validatorData.getBaseName());
                     for (String fname : notExcluded) {
                         DocumentName docName = validatorData.mkDocName(fname);
                         assertThat(excluder.matches(docName)).as(() -> dump(option, fname, excluder, docName)).isTrue();
@@ -218,7 +218,7 @@ public class OptionTestDataProvider {
                 Collections.singletonList(ImmutablePair.of(option, new String[]{StandardCollection.MISC.name()})),
         DataUtils.NO_SETUP,
         validatorData -> {
-            DocumentNameMatcher excluder = validatorData.config.getDocumentExcluder(validatorData.getBaseName());
+            DocumentNameMatcher excluder = validatorData.getConfiguration().getDocumentExcluder(validatorData.getBaseName());
             for (String fname : excluded) {
                 DocumentName docName = validatorData.mkDocName(fname);
                 assertThat(excluder.matches(docName)).as(() -> dump(option, fname, excluder, docName)).isFalse();
@@ -255,7 +255,7 @@ public class OptionTestDataProvider {
                     FileUtils.mkDir(dir);
                 },
                 validatorData -> {
-                    DocumentNameMatcher excluder = validatorData.config.getDocumentExcluder(validatorData.getBaseName());
+                    DocumentNameMatcher excluder = validatorData.getConfiguration().getDocumentExcluder(validatorData.getBaseName());
                     for (String fname : excluded) {
                         DocumentName docName = validatorData.mkDocName(fname);
                         assertThat(excluder.matches(docName)).as(() -> dump(option, fname, excluder, docName)).isFalse();
@@ -283,7 +283,7 @@ public class OptionTestDataProvider {
         },
                 validatorData -> {
 
-            DocumentNameMatcher excluder = validatorData.config.getDocumentExcluder(validatorData.getBaseName());
+            DocumentNameMatcher excluder = validatorData.getConfiguration().getDocumentExcluder(validatorData.getBaseName());
             for (String fname : excluded) {
                 DocumentName docName = validatorData.mkDocName(fname);
                 assertThat(excluder.matches(docName)).as(() -> dump(option, fname, excluder, docName)).isFalse();
@@ -305,7 +305,7 @@ public class OptionTestDataProvider {
                 ImmutablePair.of(excludeOption, EXCLUDE_ARGS)),
         basePath -> setupFiles.accept(DocumentName.builder(basePath.toFile()).build()),
         validatorData -> {
-            DocumentNameMatcher excluder = validatorData.config.getDocumentExcluder(validatorData.getBaseName());
+            DocumentNameMatcher excluder = validatorData.getConfiguration().getDocumentExcluder(validatorData.getBaseName());
             for (String fname : excluded) {
                 DocumentName docName = validatorData.mkDocName(fname);
                 assertThat(excluder.matches(docName)).as(() -> dump(option, fname, excluder, docName)).isFalse();
@@ -343,7 +343,7 @@ public class OptionTestDataProvider {
         TestData test1 = new TestData("", Arrays.asList(excludes, ImmutablePair.of(option, args)),
                 DataUtils.NO_SETUP,
         validatorData -> {
-            DocumentNameMatcher excluder = validatorData.config.getDocumentExcluder(validatorData.getBaseName());
+            DocumentNameMatcher excluder = validatorData.getConfiguration().getDocumentExcluder(validatorData.getBaseName());
             for (String fname : excluded) {
                 DocumentName docName = validatorData.mkDocName(fname);
                 assertThat(excluder.matches(docName)).as(() -> dump(option, fname, excluder, docName)).isFalse();
@@ -363,7 +363,7 @@ public class OptionTestDataProvider {
             File input = dirPath.resolve("inputFile.txt").toFile();
             FileUtils.mkDir(input.getParentFile());
         },
-                validatorData -> assertThat(validatorData.config.hasSource()).isTrue());
+                validatorData -> assertThat(validatorData.getConfiguration().hasSource()).isTrue());
         return Collections.singletonList(test1);
     }
 
@@ -377,7 +377,7 @@ public class OptionTestDataProvider {
         TestData test1 = new TestData("withDefaults", Collections.singletonList(arg1),
                 setup,
                 validatorData -> {
-            SortedSet<String> result = validatorData.config.getLicenseIds(LicenseSetFactory.LicenseFilter.APPROVED);
+            SortedSet<String> result = validatorData.getConfiguration().getLicenseIds(LicenseSetFactory.LicenseFilter.APPROVED);
             assertThat(result).contains("one", "two");
         });
 
@@ -385,7 +385,7 @@ public class OptionTestDataProvider {
         TestData test2 = new TestData("withoutDefaults", Arrays.asList(arg1, arg2),
         setup,
         validatorData -> {
-            SortedSet<String> result = validatorData.config.getLicenseIds(LicenseSetFactory.LicenseFilter.APPROVED);
+            SortedSet<String> result = validatorData.getConfiguration().getLicenseIds(LicenseSetFactory.LicenseFilter.APPROVED);
             assertThat(result).containsExactly("one", "two");
         });
 
@@ -425,8 +425,8 @@ public class OptionTestDataProvider {
         TestData test1 = new TestData("ILLUMOS", Collections.singletonList(ImmutablePair.of(option, args)),
         setup,
         validatorData -> {
-            assertThat(validatorData.config.getLicenseIds(LicenseSetFactory.LicenseFilter.ALL)).contains("ILLUMOS");
-            SortedSet<String> result = validatorData.config.getLicenseIds(LicenseSetFactory.LicenseFilter.APPROVED);
+            assertThat(validatorData.getConfiguration().getLicenseIds(LicenseSetFactory.LicenseFilter.ALL)).contains("ILLUMOS");
+            SortedSet<String> result = validatorData.getConfiguration().getLicenseIds(LicenseSetFactory.LicenseFilter.APPROVED);
             assertThat(result).doesNotContain("ILLUMOS");
         });
         return Collections.singletonList(test1);
@@ -449,14 +449,14 @@ public class OptionTestDataProvider {
         TestData test1 = new TestData("withDefaults", Collections.singletonList(ImmutablePair.of(option, args)),
                 setup,
                 validatorData -> {
-                    SortedSet<String> result = validatorData.config.getLicenseCategories(LicenseSetFactory.LicenseFilter.APPROVED);
+                    SortedSet<String> result = validatorData.getConfiguration().getLicenseCategories(LicenseSetFactory.LicenseFilter.APPROVED);
                     assertThat(result).contains(catz);
                 });
 
         TestData test2 = new TestData("withoutDefaults", Arrays.asList(ImmutablePair.of(option, args), ImmutablePair.of(Arg.CONFIGURATION_NO_DEFAULTS.find("configuration-no-defaults"), null)),
                 setup,
                 validatorData -> {
-                    SortedSet<String> result = validatorData.config.getLicenseCategories(LicenseSetFactory.LicenseFilter.APPROVED);
+                    SortedSet<String> result = validatorData.getConfiguration().getLicenseCategories(LicenseSetFactory.LicenseFilter.APPROVED);
                     assertThat(result).containsExactly(catz);
                 });
         return Arrays.asList(test1, test2);
@@ -478,8 +478,8 @@ public class OptionTestDataProvider {
         TestData test1 = new TestData("GPL", Collections.singletonList(ImmutablePair.of(option, args)),
 setup,
         validatorData -> {
-            assertThat(validatorData.config.getLicenseCategories(LicenseSetFactory.LicenseFilter.ALL)).contains(gpl);
-            SortedSet<String> result = validatorData.config.getLicenseCategories(LicenseSetFactory.LicenseFilter.APPROVED);
+            assertThat(validatorData.getConfiguration().getLicenseCategories(LicenseSetFactory.LicenseFilter.ALL)).contains(gpl);
+            SortedSet<String> result = validatorData.getConfiguration().getLicenseCategories(LicenseSetFactory.LicenseFilter.APPROVED);
             assertThat(result).doesNotContain(gpl);
         });
         return Collections.singletonList(test1);
@@ -501,22 +501,22 @@ setup,
 
         TestData test1 = new TestData(DataUtils.asDirName(option), Collections.singletonList(ImmutablePair.nullPair()),
                 DataUtils.NO_SETUP,
-                validatorData -> assertThat(validatorData.config.getClaimValidator().getMin(ClaimStatistic.Counter.UNAPPROVED)).isEqualTo(0));
+                validatorData -> assertThat(validatorData.getConfiguration().getClaimValidator().getMin(ClaimStatistic.Counter.UNAPPROVED)).isEqualTo(0));
 
         TestData test2 = new TestData("negativeValue", Collections.singletonList(ImmutablePair.of(option,
                 new String[]{"Unapproved:-1", "ignored:1"})),
                 DataUtils.NO_SETUP,
                 validatorData -> {
-                    assertThat(validatorData.config.getClaimValidator().getMax(ClaimStatistic.Counter.UNAPPROVED)).isEqualTo(Integer.MAX_VALUE);
-                    assertThat(validatorData.config.getClaimValidator().getMax(ClaimStatistic.Counter.IGNORED)).isEqualTo(1);
+                    assertThat(validatorData.getConfiguration().getClaimValidator().getMax(ClaimStatistic.Counter.UNAPPROVED)).isEqualTo(Integer.MAX_VALUE);
+                    assertThat(validatorData.getConfiguration().getClaimValidator().getMax(ClaimStatistic.Counter.IGNORED)).isEqualTo(1);
                 });
 
         TestData test3 = new TestData("standardValue", Collections.singletonList(ImmutablePair.of(option,
                 new String[]{"Unapproved:5", "ignored:0"})),
 DataUtils.NO_SETUP,
                 validatorData -> {
-                    assertThat(validatorData.config.getClaimValidator().getMax(ClaimStatistic.Counter.UNAPPROVED)).isEqualTo(5);
-                    assertThat(validatorData.config.getClaimValidator().getMax(ClaimStatistic.Counter.IGNORED)).isEqualTo(0);
+                    assertThat(validatorData.getConfiguration().getClaimValidator().getMax(ClaimStatistic.Counter.UNAPPROVED)).isEqualTo(5);
+                    assertThat(validatorData.getConfiguration().getClaimValidator().getMax(ClaimStatistic.Counter.IGNORED)).isEqualTo(0);
                 });
 
         return Arrays.asList(test1, test2, test3);
@@ -527,30 +527,30 @@ DataUtils.NO_SETUP,
 
         TestData test1 = new TestData(DataUtils.asDirName(option), Collections.singletonList(ImmutablePair.nullPair()),
                 DataUtils.NO_SETUP,
-                validatorData -> assertThat(validatorData.config.getClaimValidator().getMin(ClaimStatistic.Counter.UNAPPROVED)).isEqualTo(0));
+                validatorData -> assertThat(validatorData.getConfiguration().getClaimValidator().getMin(ClaimStatistic.Counter.UNAPPROVED)).isEqualTo(0));
 
         String[] args = {"Unapproved:1", "ignored:1"};
         TestData test2 = new TestData("capitalized", Collections.singletonList(ImmutablePair.of(option, args)),
                 DataUtils.NO_SETUP,
                 validatorData -> {
-                    assertThat(validatorData.config.getClaimValidator().getMin(ClaimStatistic.Counter.UNAPPROVED)).isEqualTo(1);
-                    assertThat(validatorData.config.getClaimValidator().getMin(ClaimStatistic.Counter.IGNORED)).isEqualTo(1);
+                    assertThat(validatorData.getConfiguration().getClaimValidator().getMin(ClaimStatistic.Counter.UNAPPROVED)).isEqualTo(1);
+                    assertThat(validatorData.getConfiguration().getClaimValidator().getMin(ClaimStatistic.Counter.IGNORED)).isEqualTo(1);
                 });
 
         args = new String[]{"unapproved:5", "ignored:0"};
         TestData test3 = new TestData("lowerCase", Collections.singletonList(ImmutablePair.of(option, args)),
                 DataUtils.NO_SETUP,
                 validatorData -> {
-                    assertThat(validatorData.config.getClaimValidator().getMin(ClaimStatistic.Counter.UNAPPROVED)).isEqualTo(5);
-                    assertThat(validatorData.config.getClaimValidator().getMin(ClaimStatistic.Counter.IGNORED)).isEqualTo(0);
+                    assertThat(validatorData.getConfiguration().getClaimValidator().getMin(ClaimStatistic.Counter.UNAPPROVED)).isEqualTo(5);
+                    assertThat(validatorData.getConfiguration().getClaimValidator().getMin(ClaimStatistic.Counter.IGNORED)).isEqualTo(0);
                 });
 
         args = new String[]{"unapproved:-5", "ignored:0"};
         TestData test4 = new TestData("negativeValue", Collections.singletonList(ImmutablePair.of(option, args)),
                 DataUtils.NO_SETUP,
                 validatorData -> {
-                    assertThat(validatorData.config.getClaimValidator().getMin(ClaimStatistic.Counter.UNAPPROVED)).isEqualTo(-5);
-                    assertThat(validatorData.config.getClaimValidator().getMin(ClaimStatistic.Counter.IGNORED)).isEqualTo(0);
+                    assertThat(validatorData.getConfiguration().getClaimValidator().getMin(ClaimStatistic.Counter.UNAPPROVED)).isEqualTo(-5);
+                    assertThat(validatorData.getConfiguration().getClaimValidator().getMin(ClaimStatistic.Counter.IGNORED)).isEqualTo(0);
                 });
 
         return Arrays.asList(test1, test2, test3, test4);
@@ -571,7 +571,7 @@ DataUtils.NO_SETUP,
         TestData test1 = new TestData("withDefaults", Collections.singletonList(ImmutablePair.of(option, args)),
                 setupFiles,
                 validatorData -> {
-                    SortedSet<ILicense> set = validatorData.config.getLicenses(LicenseSetFactory.LicenseFilter.ALL);
+                    SortedSet<ILicense> set = validatorData.getConfiguration().getLicenses(LicenseSetFactory.LicenseFilter.ALL);
                     assertThat(set).hasSizeGreaterThan(2);
                     assertThat(LicenseSetFactory.search("ONE", "ONE", set)).isPresent();
                     assertThat(LicenseSetFactory.search("TWO", "TWO", set)).isPresent();
@@ -582,7 +582,7 @@ DataUtils.NO_SETUP,
                 setupFiles,
                 validatorData -> {
 
-                    SortedSet<ILicense> set = validatorData.config.getLicenses(LicenseSetFactory.LicenseFilter.ALL);
+                    SortedSet<ILicense> set = validatorData.getConfiguration().getLicenses(LicenseSetFactory.LicenseFilter.ALL);
                     assertThat(set).hasSize(2);
                     assertThat(LicenseSetFactory.search("ONE", "ONE", set)).isPresent();
                     assertThat(LicenseSetFactory.search("TWO", "TWO", set)).isPresent();
@@ -597,11 +597,11 @@ DataUtils.NO_SETUP,
     private List<TestData> noDefaultsTest(final Option option) {
         TestData test1 = new TestData("", Collections.singletonList(ImmutablePair.of(option, null)),
                 DataUtils.NO_SETUP,
-                validatorData -> assertThat(validatorData.config.getLicenses(LicenseSetFactory.LicenseFilter.ALL)).isEmpty());
+                validatorData -> assertThat(validatorData.getConfiguration().getLicenses(LicenseSetFactory.LicenseFilter.ALL)).isEmpty());
 
         TestData test2 = new TestData(DataUtils.asDirName(option), Collections.singletonList(ImmutablePair.nullPair()),
                 DataUtils.NO_SETUP,
-                validatorData -> assertThat(validatorData.config.getLicenses(LicenseSetFactory.LicenseFilter.ALL)).isNotEmpty());
+                validatorData -> assertThat(validatorData.getConfiguration().getLicenses(LicenseSetFactory.LicenseFilter.ALL)).isNotEmpty());
 
         return Arrays.asList(test1, test2);
     }
@@ -614,23 +614,23 @@ DataUtils.NO_SETUP,
         Option option = Arg.DRY_RUN.find("dry-run");
         TestData test1 = new TestData("stdRun", Collections.singletonList(ImmutablePair.of(option, null)),
                 DataUtils.NO_SETUP,
-                validatorData -> assertThat(validatorData.config.isDryRun()).isTrue());
+                validatorData -> assertThat(validatorData.getConfiguration().isDryRun()).isTrue());
 
         TestData test2 = new TestData(DataUtils.asDirName(option), Collections.singletonList(ImmutablePair.nullPair()),
                 DataUtils.NO_SETUP,
-                validatorData -> assertThat(validatorData.config.isDryRun()).isFalse());
+                validatorData -> assertThat(validatorData.getConfiguration().isDryRun()).isFalse());
         return Arrays.asList(test1, test2);
     }
 
     private List<TestData> editCopyrightTest(final Option option) {
         TestData test1 = new TestData("noEditLicense", Collections.singletonList(ImmutablePair.of(option, new String[]{"MyCopyright"})),
                 DataUtils.NO_SETUP,
-                validatorData -> assertThat(validatorData.config.getCopyrightMessage()).as("Copyright without --edit-license should not work").isNull());
+                validatorData -> assertThat(validatorData.getConfiguration().getCopyrightMessage()).as("Copyright without --edit-license should not work").isNull());
 
         TestData test2 = new TestData("MyCopyright", Arrays.asList(ImmutablePair.of(option, new String[]{"MyCopyright"}),
                 ImmutablePair.of(Arg.EDIT_ADD.find("edit-license"), null)),
                 DataUtils.NO_SETUP,
-                validatorData -> assertThat(validatorData.config.getCopyrightMessage()).isEqualTo("MyCopyright"));
+                validatorData -> assertThat(validatorData.getConfiguration().getCopyrightMessage()).isEqualTo("MyCopyright"));
 return Arrays.asList(test1, test1);
     }
 
@@ -641,11 +641,11 @@ return Arrays.asList(test1, test1);
     private List<TestData> editLicenseTest(final Option option) {
         TestData test1 = new TestData("", Collections.singletonList(ImmutablePair.of(option, null)),
                 DataUtils.NO_SETUP,
-                validatorData -> assertThat(validatorData.config.isAddingLicenses()).isTrue());
+                validatorData -> assertThat(validatorData.getConfiguration().isAddingLicenses()).isTrue());
 
         TestData test2 = new TestData(DataUtils.asDirName(option), Collections.singletonList(ImmutablePair.nullPair()),
                 DataUtils.NO_SETUP,
-                validatorData -> assertThat(validatorData.config.isAddingLicenses()).isFalse());
+                validatorData -> assertThat(validatorData.getConfiguration().isAddingLicenses()).isFalse());
         return Arrays.asList(test1, test2);
     }
 
@@ -656,13 +656,13 @@ return Arrays.asList(test1, test1);
     private List<TestData>  overwriteTest(final Option option) {
         TestData test1 = new TestData("noEditLicense", Collections.singletonList(ImmutablePair.of(option, null)),
                 DataUtils.NO_SETUP,
-                validatorData -> assertThat(validatorData.config.isAddingLicensesForced())
+                validatorData -> assertThat(validatorData.getConfiguration().isAddingLicensesForced())
                         .describedAs("Without edit-license should be false").isFalse());
 
         TestData test = new TestData("", Arrays.asList(ImmutablePair.of(option, null),
                 ImmutablePair.of(Arg.EDIT_ADD.find("edit-license"), null)),
                 DataUtils.NO_SETUP,
-                validatorData -> assertThat(validatorData.config.isAddingLicensesForced()).isTrue());
+                validatorData -> assertThat(validatorData.getConfiguration().isAddingLicensesForced()).isTrue());
         return Arrays.asList(test1, test);
     }
 
@@ -698,7 +698,7 @@ return Arrays.asList(test1, test1);
             TestData test = new TestData(processing.name(),
                     Collections.singletonList(ImmutablePair.of(option, new String[]{processing.name()})),
                     DataUtils.NO_SETUP,
-                validatorData -> assertThat(validatorData.config.getArchiveProcessing()).isEqualTo(processing));
+                validatorData -> assertThat(validatorData.getConfiguration().getArchiveProcessing()).isEqualTo(processing));
             result.add(test);
         }
         return result;
@@ -714,7 +714,7 @@ return Arrays.asList(test1, test1);
             TestData test = new TestData(filter.name(),
                     Collections.singletonList(ImmutablePair.of(option, new String[]{filter.name()})),
                     DataUtils.NO_SETUP,
-                    validatorData -> assertThat(validatorData.config.listFamilies()).isEqualTo(filter));
+                    validatorData -> assertThat(validatorData.getConfiguration().listFamilies()).isEqualTo(filter));
             result.add(test);
         }
         return result;
@@ -729,7 +729,7 @@ return Arrays.asList(test1, test1);
         TestData test1 = new TestData("", Collections.singletonList(ImmutablePair.of(option, args)),
         DataUtils.NO_SETUP,
         validatorData -> {
-            try (OutputStream os = validatorData.config.getOutput().get()) {
+            try (OutputStream os = validatorData.getConfiguration().getOutput().get()) {
                 os.write("Hello world".getBytes());
             } catch (IOException e) {
                 throw new RuntimeException(e);
@@ -754,7 +754,7 @@ return Arrays.asList(test1, test1);
         for (LicenseSetFactory.LicenseFilter filter : LicenseSetFactory.LicenseFilter.values()) {
             TestData test = new TestData(filter.name(), Collections.singletonList(ImmutablePair.of(option, new String[]{filter.name()})),
             DataUtils.NO_SETUP,
-            validatorData -> assertThat(validatorData.config.listLicenses()).isEqualTo(filter));
+            validatorData -> assertThat(validatorData.getConfiguration().listLicenses()).isEqualTo(filter));
             result.add(test);
         }
         return result;
@@ -769,7 +769,7 @@ return Arrays.asList(test1, test1);
             for (ReportConfiguration.Processing proc : ReportConfiguration.Processing.values()) {
                 TestData test = new TestData(proc.name(), Collections.singletonList(ImmutablePair.of(option, new String[]{proc.name()})),
                         DataUtils.NO_SETUP,
-                        validatorData -> assertThat(validatorData.config.getStandardProcessing()).isEqualTo(proc));
+                        validatorData -> assertThat(validatorData.getConfiguration().getStandardProcessing()).isEqualTo(proc));
                 result.add(test);
             }
             return result;
@@ -787,7 +787,7 @@ return Arrays.asList(test1, test1);
                     DataUtils.NO_SETUP,
                     validatorData -> {
                         try (InputStream expected = sheet.getStyleSheet().get();
-                             InputStream actual = validatorData.config.getStyleSheet().get()) {
+                             InputStream actual = validatorData.getConfiguration().getStyleSheet().get()) {
                             assertThat(IOUtils.contentEquals(expected, actual)).as(() -> String.format("'%s' does not match", sheet)).isTrue();
                         } catch (IOException e) {
                             throw new RuntimeException(e);
@@ -819,7 +819,7 @@ return Arrays.asList(test1, test1);
 
                 validatorData -> {
                     try (InputStream expected = StyleSheets.getStyleSheet("fileStyleSheet.xslt", validatorData.getBaseName()).get();
-                         InputStream actual = validatorData.config.getStyleSheet().get()) {
+                         InputStream actual = validatorData.getConfiguration().getStyleSheet().get()) {
                         assertThat(IOUtils.contentEquals(expected, actual)).as(() -> "'fileStyleSheet.xslt' does not match").isTrue();
                     } catch (IOException e) {
                         throw new RuntimeException(e);
