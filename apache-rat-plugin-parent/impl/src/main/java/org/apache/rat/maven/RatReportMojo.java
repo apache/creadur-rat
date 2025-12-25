@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.rat.mp;
+package org.apache.rat.maven;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;

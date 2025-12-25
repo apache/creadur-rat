@@ -20,4 +20,4 @@
 /**
  * The base package for the RAT Maven plugin.
  */
-package org.apache.rat.mp;
+package org.apache.rat.maven;

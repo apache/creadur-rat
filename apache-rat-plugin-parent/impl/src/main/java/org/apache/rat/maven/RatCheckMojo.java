@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.rat.mp;
+package org.apache.rat.maven;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -40,6 +40,7 @@ import org.apache.rat.commandline.StyleSheets;
 import org.apache.rat.config.exclusion.StandardCollection;
 import org.apache.rat.license.LicenseSetFactory.LicenseFilter;
 import org.apache.rat.report.claim.ClaimStatistic;
+import org.apache.rat.ui.ArgumentTracker;
 import org.apache.rat.utils.DefaultLog;
 import org.apache.rat.utils.Log;
 
@@ -52,7 +53,7 @@ import static java.lang.String.format;
  * </p>
  */
 @Mojo(name = "check", defaultPhase = LifecyclePhase.VALIDATE, threadSafe = true)
-public class RatCheckMojo extends AbstractRatMojo {
+public final class RatCheckMojo extends AbstractRatMojo {
 
     public RatCheckMojo() {
         super();
@@ -80,27 +81,21 @@ public class RatCheckMojo extends AbstractRatMojo {
     @Parameter(property = "rat.consoleOutput", defaultValue = "true")
     private boolean consoleOutput;
 
-    /** The reporter that this mojo uses */
-    private Reporter reporter;
-
-    Reporter.Output output;
-        /**
-         * Invoked by Maven to execute the Mojo.
-         *
-         * @throws MojoFailureException if an error in the plugin configuration was
-         * detected.
-         * @throws MojoExecutionException if another error occurred while executing the
-         * plugin.
-         */
+    /**
+     * Invoked by Maven to execute the Mojo.
+     *
+     * @throws MojoExecutionException if another error occurred while executing the
+     * plugin.
+     */
     @Override
-    public void execute() throws MojoExecutionException, MojoFailureException {
+    public void execute() throws MojoExecutionException {
         if (skip) {
             getLog().info("RAT will not execute since it is configured to be skipped via system property 'rat.skip'.");
             return;
         }
 
         if (getValues(Arg.OUTPUT_FILE).isEmpty()) {
-            setArgs.setArg(Arg.OUTPUT_FILE.option().getLongOpt(), defaultReportFile.getAbsolutePath());
+            argumentTracker.setArg(ArgumentTracker.extractKey(Arg.OUTPUT_FILE.option()), defaultReportFile.getAbsolutePath());
         }
 
         try (Writer logWriter = DefaultLog.getInstance().asWriter()) {
@@ -110,10 +105,9 @@ public class RatCheckMojo extends AbstractRatMojo {
                 config.reportExclusions(logWriter);
             }
             try {
-                this.reporter = new Reporter(config);
-                output = reporter.execute();
-                writeMojoRatReport(output);
-                if (verbose) {
+                final Reporter reporter = new Reporter(config);
+            final Reporter.Output output = reporter.execute();
+            writeMojoRatReport(output);if (verbose) {
                     output.writeSummary(DefaultLog.getInstance().asWriter());
                 }
                 // produce the requested output.
@@ -144,7 +138,7 @@ public class RatCheckMojo extends AbstractRatMojo {
         }
     }
 
-    protected void check(final ReportConfiguration config, final Reporter.Output output) throws MojoFailureException {
+    private void check(final ReportConfiguration config, final Reporter.Output output) throws MojoFailureException {
         ClaimStatistic statistics = output.getStatistic();
 
         if (config.getClaimValidator().hasErrors()) {

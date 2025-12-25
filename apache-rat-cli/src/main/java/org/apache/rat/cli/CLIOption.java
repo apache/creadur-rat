@@ -22,6 +22,7 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.rat.ui.AbstractOption;
+import org.apache.rat.ui.ArgumentTracker;
 
 /**
  * The CLI option definition.
@@ -38,7 +39,7 @@ public class CLIOption extends AbstractOption<CLIOption> {
     }
 
     public CLIOption(final Option option) {
-        super(option, extractBaseName(option));
+        super(option, ArgumentTracker.extractKey(option));
     }
 
     @Override
@@ -57,7 +58,7 @@ public class CLIOption extends AbstractOption<CLIOption> {
 
     @Override
     protected String cleanupName(final Option option) {
-        return extractBaseName(option);
+        return ArgumentTracker.extractKey(option);
     }
 
     @Override

@@ -48,7 +48,11 @@ public enum StyleSheets {
     /**
      * The plain style sheet. The current default.
      */
-    XML("xml", "Produces output in pretty-printed XML.");
+    XML("xml", "Produces output in pretty-printed XML."),
+    /**
+     * Official HTML5 stylesheet.
+     */
+    XHTML5("xhtml5", "Produces a HTML5 report");
     /**
      * The name of the style sheet. Must map to bundled resource xslt file
      */

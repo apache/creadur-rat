@@ -19,39 +19,27 @@
 
 package org.apache.rat.maven;
 
-import org.apache.maven.plugin.AbstractMojo;
-import org.apache.maven.plugins.annotations.Parameter;
-import org.apache.rat.ui.OptionFactory;
-import org.apache.rat.ui.SetArgs;
-import org.apache.rat.utils.CasedString;
-
 import java.util.List;
 import java.util.stream.Collectors;
 
-/* DO NOT EDIT - GENERATED FILE */
+import org.apache.maven.plugin.AbstractMojo;
+import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.rat.ui.ArgumentTracker;
+import org.apache.rat.ui.OptionFactory;
 
 /**
  * Generated class to provide Maven support for standard RAT command line options
+ * DO NOT EDIT - GENERATED FILE
  */
+@SuppressWarnings("checkstyle:LineLength")
 public abstract class AbstractMaven extends AbstractMojo {
+    /** The arguments that have been set */
+    protected final ArgumentTracker argumentTracker;
 
-    protected final SetArgs setArgs;
-    
     protected AbstractMaven() {
         List<MavenOption> mavenList = OptionFactory.getOptions(MavenOption.FACTORY_CONFIG).collect(Collectors.toList());
-        setArgs = new SetArgs(MavenOption.RENAME_MAP, mavenList);
+        argumentTracker = new ArgumentTracker(mavenList);
     }
-    
-
-    /**
-     * Creates a kebab case name from a camel case name.
-     * @param camelCase the camel case name to convert.
-     * @return the kebab format.
-     */
-    public static String toKebabForm(String camelCase) {
-        return new CasedString(CasedString.StringCase.CAMEL, camelCase).toCase(CasedString.StringCase.KEBAB);
-    }
-
 
     /*  GENERATED METHODS */
 

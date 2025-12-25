@@ -49,16 +49,6 @@ public abstract class AbstractOption<T extends AbstractOption<T>> {
     protected final OptionCollection.ArgumentType argumentType;
 
     /**
-     * Extract the core name from the option.  This is the {@link Option#getLongOpt()} if defined, otherwise
-     * the {@link Option#getOpt()}.
-     * @param option the commons cli option.
-     * @return the common cli based name.
-     */
-    public static String extractBaseName(final Option option) {
-        return StringUtils.defaultIfBlank(option.getLongOpt(), option.getOpt());
-    }
-
-    /**
      * Constructor.
      *
      * @param option The CLI option
@@ -266,7 +256,7 @@ public abstract class AbstractOption<T extends AbstractOption<T>> {
          * @param option The CLI option
          */
         BaseOption(final org.apache.commons.cli.Option option) {
-            super(option, AbstractOption.extractBaseName(option));
+            super(option, ArgumentTracker.extractKey(option));
         }
 
         @Override
@@ -276,7 +266,7 @@ public abstract class AbstractOption<T extends AbstractOption<T>> {
 
         @Override
         protected String cleanupName(final org.apache.commons.cli.Option option) {
-            return AbstractOption.extractBaseName(option);
+            return ArgumentTracker.extractKey(option);
         }
 
         @Override

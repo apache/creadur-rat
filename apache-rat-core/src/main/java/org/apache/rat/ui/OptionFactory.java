@@ -60,7 +60,7 @@ public final class OptionFactory {
         if (config.filter != null) {
             lst.removeIf(config.filter);
         }
-        lst.sort(Comparator.comparing(AbstractOption::extractBaseName));
+        lst.sort(Comparator.comparing(ArgumentTracker::extractKey));
         return lst;
     }
 
@@ -72,7 +72,7 @@ public final class OptionFactory {
      */
     public static <T extends AbstractOption<T>> Map<String, T> getOptionMap(final Config<T> config) {
         Map<String, T> result = new TreeMap<>();
-        getOptions(config).forEach(option -> result.put(AbstractOption.extractBaseName(option.getOption()), option));
+        getOptions(config).forEach(option -> result.put(ArgumentTracker.extractKey(option.getOption()), option));
         return result;
     }
 

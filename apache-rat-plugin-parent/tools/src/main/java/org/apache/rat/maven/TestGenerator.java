@@ -50,8 +50,6 @@ import org.apache.velocity.runtime.RuntimeConstants;
 public final class TestGenerator {
     /** They syntax for this command */
     private static final String SYNTAX = String.format("java -cp ... %s [options]", TestGenerator.class.getName());
-    /** The velocity engine to generated files */
-    private final VelocityEngine velocityEngine;
     /** The package name as a cased string */
     private final CasedString packageName;
     /** The resource directory where the test resources will be written */
@@ -70,7 +68,7 @@ public final class TestGenerator {
         this.resourceDirectory = resourceDirectory;
         this.testDirectory = testDirectory;
 
-        velocityEngine = new VelocityEngine();
+        VelocityEngine velocityEngine = new VelocityEngine();
         velocityEngine.setProperty(RuntimeConstants.RESOURCE_LOADER, "classpath");
         velocityEngine.setProperty("classpath.resource.loader.class", "org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader");
         velocityEngine.init();
@@ -157,6 +155,7 @@ public final class TestGenerator {
     private void writeTestFile(final VelocityContext context) throws IOException {
         File javaFile = Paths.get(testDirectory).resolve(packageName.toCase(CasedString.StringCase.SLASH))
                 .resolve("MavenTest.java").toFile();
+        FileUtils.mkDir(javaFile.getParentFile());
         try (FileWriter fileWriter = new FileWriter(javaFile)) {
             javaTemplate.merge(context, fileWriter);
         }

@@ -558,15 +558,19 @@ public enum Arg {
     /**
      * Returns the first non-deprecated option from the group.
      *
-     * @return the first non-deprecated option or {@code null} if no non-deprecated option is available.
+     * @return the first non-deprecated option or, if no non-deprecated option is available, the first option.
      */
     public Option option() {
+        Option first = null;
         for (Option result : group.getOptions()) {
+            if (first == null) {
+                first = result;
+            }
             if (!result.isDeprecated()) {
                 return result;
             }
         }
-        return null;
+        return first;
     }
 
     /**
