@@ -248,7 +248,7 @@ public abstract class AbstractOption<T extends AbstractOption<T>> {
      * @return the key value for the CLI argument map.
      */
     public final String keyValue() {
-        return format("\"%s\"", StringUtils.defaultIfEmpty(option.getLongOpt(), option.getOpt()));
+        return StringUtils.defaultIfEmpty(option.getLongOpt(), option.getOpt());
     }
 
     /**

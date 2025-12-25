@@ -25,7 +25,6 @@ import java.io.StringWriter;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
-import java.util.List;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.DefaultParser;
@@ -45,17 +44,28 @@ import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.runtime.RuntimeConstants;
 
+/**
+ * Generates the Maven mojo tests.
+ */
 public final class TestGenerator {
+    /** They syntax for this command */
     private static final String SYNTAX = String.format("java -cp ... %s [options]", TestGenerator.class.getName());
+    /** The velocity engine to generated files */
     private final VelocityEngine velocityEngine;
+    /** The package name as a cased string */
     private final CasedString packageName;
+    /** The resource directory where the test resources will be written */
     private final String resourceDirectory;
+    /** The directory where the test classes will be written*/
     private final String testDirectory;
+    /** The template for the pom.xml files */
     private final Template pomTemplate;
+    /** The template for the test class file */
     private final Template javaTemplate;
-    private final Template funcTemplate;
+    /** The template for the methods within the test class */
+    private final Template methodTemplate;
 
-    private TestGenerator(String packageName, String resourceDirectory, String testDirectory) {
+    private TestGenerator(final String packageName, final String resourceDirectory, final String testDirectory) {
         this.packageName = new CasedString(CasedString.StringCase.DOT, packageName);
         this.resourceDirectory = resourceDirectory;
         this.testDirectory = testDirectory;
@@ -71,18 +81,22 @@ public final class TestGenerator {
         pomTemplate = velocityEngine.getTemplate(casedTemplateName.toCase(CasedString.StringCase.SLASH) + ".vm");
         nameParts[nameParts.length - 1] = "TestJava.vm";
         javaTemplate = velocityEngine.getTemplate(CasedString.StringCase.SLASH.assemble(nameParts));
-        nameParts[nameParts.length - 1] = "TestFunc.vm";
-        funcTemplate = velocityEngine.getTemplate(CasedString.StringCase.SLASH.assemble(nameParts));
+        nameParts[nameParts.length - 1] = "TestMethod.vm";
+        methodTemplate = velocityEngine.getTemplate(CasedString.StringCase.SLASH.assemble(nameParts));
     }
 
-    private Path testPath() {
-        return Paths.get(testDirectory).resolve(packageName.toCase(CasedString.StringCase.SLASH));
-    }
-
+    /**
+     * Gets the resource path.
+     * @return the resource path.
+     */
     private Path resourcePath() {
         return Paths.get(resourceDirectory).resolve(packageName.toCase(CasedString.StringCase.SLASH));
     }
 
+    /**
+     * Gets the command line options for this executable.
+     * @return the command line options.
+     */
     private static Options getOptions() {
         return new Options()
                 .addOption(Option.builder("r").longOpt("resources").required().hasArg().desc("The path to the base resource directory").build())
@@ -91,9 +105,13 @@ public final class TestGenerator {
                 .addOption(Option.builder("p").longOpt("package").required().hasArg().desc("The package name to generate").build());
     }
 
-
-
-    public static void main(final String[] args) throws IOException, ParseException {
+    /**
+     * The main code.
+     *
+     * @param args The arguments from the command line.
+     * @throws IOException on IO error.
+     */
+    public static void main(final String[] args) throws IOException {
 
         CommandLine commandLine = null;
         try {
@@ -114,25 +132,12 @@ public final class TestGenerator {
                 commandLine.getOptionValue("r"), commandLine.getOptionValue("t"));
 
         testGenerator.execute();
-//
-//        // create the basePath
-//        final String packageName = args[1];
-//        final CasedString casedPackageName = new CasedString(CasedString.StringCase.DOT, packageName);
-//        final Path basePath = Paths.get(args[0]).resolve(casedPackageName.toCase(CasedString.StringCase.SLASH));
-//
-//        VelocityEngine velocityEngine = initializeVelocityEngine();
-//
-//        // retrieve templates
-//        CasedString casedTemplateName = new CasedString(CasedString.StringCase.DOT, TestGenerator.class.getName());
-//        String[] nameParts = Arrays.copyOf(casedTemplateName.getSegments(), casedTemplateName.getSegments().length);
-//        Template pomTemplate = velocityEngine.getTemplate(casedTemplateName.toCase(CasedString.StringCase.SLASH) + ".vm");
-//        nameParts[nameParts.length - 1] = "TestJava.vm";
-//        Template javaTemplate = velocityEngine.getTemplate(CasedString.StringCase.SLASH.assemble(nameParts));
-//        nameParts[nameParts.length - 1] = "TestFunc.vm";
-//        Template funcTemplate = velocityEngine.getTemplate(CasedString.StringCase.SLASH.assemble(nameParts));
-
     }
 
+    /**
+     * Execute the generation.
+     * @throws IOException on IO error.
+     */
     private void execute() throws IOException {
         VelocityContext context = new VelocityContext();
         context.put("packageName", packageName.toString());
@@ -144,7 +149,12 @@ public final class TestGenerator {
         writeTestFile(context);
     }
 
-    private void writeTestFile(VelocityContext context) throws IOException {
+    /**
+     * Write the {@code MavenTest.java} file
+     * @param context
+     * @throws IOException
+     */
+    private void writeTestFile(final VelocityContext context) throws IOException {
         File javaFile = Paths.get(testDirectory).resolve(packageName.toCase(CasedString.StringCase.SLASH))
                 .resolve("MavenTest.java").toFile();
         try (FileWriter fileWriter = new FileWriter(javaFile)) {
@@ -152,11 +162,18 @@ public final class TestGenerator {
         }
     }
 
-    private String writeTestPoms(VelocityContext context) throws IOException {
+    /**
+     * Write the test poms for all the supported options.
+     * Generates method definitions (one for each pom file) to be included in {@code MavenTest.java}.
+     * @param context het velocity context.
+     * @return a String comprising all the method definitions.
+     * @throws IOException
+     */
+    private String writeTestPoms(final VelocityContext context) throws IOException {
 
         StringWriter funcCode = new StringWriter();
 
-        for (final TestData testData : new ReportTestDataProvider().getOptionTests(MavenOption.UNSUPPORTED_LIST)) {
+        for (final TestData testData : new ReportTestDataProvider().getOptionTests(MavenOption.UNSUPPORTED_SET)) {
             context.put("pomFile", testData.getTestName() + "/pom.xml");
             Path testPath = resourcePath().resolve(testData.getTestName());
             context.put("baseDir", testPath.toFile().getAbsolutePath());
@@ -181,10 +198,9 @@ public final class TestGenerator {
                 pomTemplate.merge(context, writer);
             }
 
-            funcTemplate.merge(context, funcCode);
+            methodTemplate.merge(context, funcCode);
 
         }
         return funcCode.toString();
     }
-
 }

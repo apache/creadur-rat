@@ -20,12 +20,13 @@ package org.apache.rat.mp;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileFilter;
-import java.io.IOException;
-import java.io.Writer;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.List;
 
+import org.apache.commons.io.function.IOSupplier;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
@@ -33,6 +34,7 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.rat.ReportConfiguration;
 import org.apache.rat.Reporter;
+import org.apache.rat.api.RatException;
 import org.apache.rat.commandline.Arg;
 import org.apache.rat.commandline.StyleSheets;
 import org.apache.rat.config.exclusion.StandardCollection;
@@ -52,92 +54,12 @@ import static java.lang.String.format;
 @Mojo(name = "check", defaultPhase = LifecyclePhase.VALIDATE, threadSafe = true)
 public class RatCheckMojo extends AbstractRatMojo {
 
-    /** The default output file if no other is specified.
-     * @deprecated Use &lt;outputFile&gt; instead.
-     */
-    @Deprecated
-    @Parameter(defaultValue = "${project.build.directory}/rat.txt")
+    public RatCheckMojo() {
+        super();
+    }
+    /** The default output file if no other is specified. */
+    @Parameter(defaultValue = "${project.build.directory}/rat.txt", readonly = true)
     private File defaultReportFile;
-
-    /**
-     * The defined build directory
-     */
-    @Parameter(defaultValue = "${project.build.directory}", readonly = true)
-    private String buildDirectory;
-
-    /**
-     * Where to store the report.
-     * @deprecated Use 'out' property instead.
-     */
-    @Deprecated
-    @Parameter
-    public void setReportFile(final File reportFile) {
-        if (!reportFile.getParentFile().exists() && !reportFile.getParentFile().mkdirs()) {
-            getLog().error("Unable to create directory " + reportFile.getParentFile());
-        }
-        setOutputFile(reportFile.getAbsolutePath());
-    }
-
-    /**
-     * Output style of the report. Use "plain" (the default) for a plain text report
-     * or "xml" for the raw XML report. Alternatively you can give the path of an
-     * XSL transformation that will be applied on the raw XML to produce the report
-     * written to the output file.
-     * @deprecated Use setStyleSheet or xml instead.
-     */
-    @Deprecated
-    @Parameter(property = "rat.outputStyle")
-    public void setReportStyle(final String value) {
-        if (value.equalsIgnoreCase("xml")) {
-            setXml(true);
-        } else if (value.equalsIgnoreCase("plain")) {
-            setStylesheet("plain-rat");
-        } else {
-            setStylesheet(value);
-        }
-    }
-
-    /**
-     * Maximum number of files with unapproved licenses.
-     * @deprecated Use &lt;counterMax&gt;Unapproved:value&lt;/counterMax&gt;.
-     */
-    @Deprecated
-    @Parameter(property = "rat.numUnapprovedLicenses", defaultValue = "0")
-    private int numUnapprovedLicenses;
-
-    /**
-     * Whether to add license headers; possible values are {@code forced},
-     * {@code true}, and {@code false} (default).
-     * @deprecated Use &lt;editLicense&gt; and &lt;editOverwrite&gt;.
-     */
-    @Deprecated
-    @Parameter(property = "rat.addLicenseHeaders")
-    public void setAddLicenseHeaders(final String addLicenseHeaders) {
-        switch (addLicenseHeaders.trim().toUpperCase()) {
-            case "FALSE":
-                // do nothing;
-                break;
-            case "TRUE":
-                setAddLicense(true);
-                break;
-            case "FORCED":
-                setAddLicense(true);
-                setForce(true);
-                break;
-            default:
-                throw new IllegalArgumentException("Unknown addlicense header: " + addLicenseHeaders);
-        }
-    }
-
-    /**
-     * Copyright message to add to license headers.
-     * @deprecated Deprecated for removal since 0.17: Use &lt;editCopyright&gt; instead.
-     */
-    @Deprecated
-    @Parameter(property = "rat.copyrightMessage")
-    public void setCopyrightMessage(final String copyrightMessage) {
-        setCopyright(copyrightMessage);
-    }
 
     /**
      * Will ignore RAT errors and display a log message if any. Its use is NOT
@@ -161,27 +83,7 @@ public class RatCheckMojo extends AbstractRatMojo {
     /** The reporter that this mojo uses */
     private Reporter reporter;
 
-    @Override
-    protected ReportConfiguration getConfiguration() throws MojoExecutionException {
-        ReportConfiguration result = super.getConfiguration();
-        if (numUnapprovedLicenses > 0) {
-            result.getClaimValidator().setMax(ClaimStatistic.Counter.UNAPPROVED, numUnapprovedLicenses);
-        }
-        result.addExcludedCollection(StandardCollection.MAVEN);
-        if (StandardCollection.MAVEN.fileProcessorBuilder().hasNext()) {
-            result.addExcludedFileProcessor(StandardCollection.MAVEN);
-        }
-        if (StandardCollection.MAVEN.hasStaticDocumentNameMatcher()) {
-            StandardCollection.MAVEN.staticDocumentNameMatcher();
-        }
-
-        String buildDirAbsolutePath = new File(buildDirectory).getAbsolutePath();
-        FileFilter buildFilter = f -> f.getAbsolutePath().startsWith(buildDirAbsolutePath);
-        result.addExcludedFilter(buildFilter);
-
-        return result;
-    }
-
+    Reporter.Output output;
         /**
          * Invoked by Maven to execute the Mojo.
          *
@@ -198,7 +100,7 @@ public class RatCheckMojo extends AbstractRatMojo {
         }
 
         if (getValues(Arg.OUTPUT_FILE).isEmpty()) {
-            setArg(Arg.OUTPUT_FILE.option().getLongOpt(), defaultReportFile.getAbsolutePath());
+            setArgs.setArg(Arg.OUTPUT_FILE.option().getLongOpt(), defaultReportFile.getAbsolutePath());
         }
 
         try (Writer logWriter = DefaultLog.getInstance().asWriter()) {
@@ -209,11 +111,15 @@ public class RatCheckMojo extends AbstractRatMojo {
             }
             try {
                 this.reporter = new Reporter(config);
-                reporter.output();
+                output = reporter.execute();
+                writeMojoRatReport(output);
                 if (verbose) {
-                    reporter.writeSummary(logWriter);
+                    output.writeSummary(DefaultLog.getInstance().asWriter());
                 }
-                check(config);
+                // produce the requested output.
+                output.format(config.getStyleSheet(), config.getOutput());
+                // check for errors and fail if necessary
+                check(config, output);
             } catch (MojoFailureException e) {
                 throw e;
             } catch (Exception e) {
@@ -224,28 +130,41 @@ public class RatCheckMojo extends AbstractRatMojo {
         }
     }
 
-    protected void check(final ReportConfiguration config) throws MojoFailureException {
-        ClaimStatistic statistics = reporter.getClaimsStatistic();
+    /**
+     * Saves the Maven Mojo version of the XML for later.
+     * @param output the output to write to the XML file.
+     */
+    private void writeMojoRatReport(final Reporter.Output output) {
+        IOSupplier<OutputStream> outputStream = () -> Files.newOutputStream(xmlOutputFile.toPath());
+        final IOSupplier<InputStream> stylesheet = StyleSheets.XML.getStyleSheet();
         try {
-           reporter.writeSummary(DefaultLog.getInstance().asWriter(Log.Level.DEBUG));
-           if (config.getClaimValidator().hasErrors()) {
-               config.getClaimValidator().logIssues(statistics);
-               if (consoleOutput &&
-                       !config.getClaimValidator().isValid(ClaimStatistic.Counter.UNAPPROVED, statistics.getCounter(ClaimStatistic.Counter.UNAPPROVED))) {
-                   try {
-                       ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                       reporter.output(StyleSheets.UNAPPROVED_LICENSES.getStyleSheet(), () -> baos);
-                       getLog().warn(baos.toString(StandardCharsets.UTF_8));
-                   } catch (RuntimeException rte) {
-                       throw rte;
-                   } catch (Exception e) {
-                       getLog().warn("Unable to print the files with unapproved licenses to the console.");
-                   }
-               }
+            output.format(stylesheet, outputStream);
+        } catch (RatException e) {
+            getLog().warn(e.getMessage(), e);
+        }
+    }
 
-               String msg = format("Counter(s) %s exceeded minimum or maximum values. See RAT report in: '%s'.",
-                       String.join(", ", config.getClaimValidator().listIssues(statistics)),
-                       getRatTxtFile());
+    protected void check(final ReportConfiguration config, final Reporter.Output output) throws MojoFailureException {
+        ClaimStatistic statistics = output.getStatistic();
+
+        if (config.getClaimValidator().hasErrors()) {
+            config.getClaimValidator().logIssues(statistics);
+            if (consoleOutput &&
+                    !config.getClaimValidator().isValid(ClaimStatistic.Counter.UNAPPROVED, statistics.getCounter(ClaimStatistic.Counter.UNAPPROVED))) {
+                try {
+                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                    output.format(StyleSheets.UNAPPROVED_LICENSES.getStyleSheet(), () -> baos);
+                    getLog().warn(baos.toString(StandardCharsets.UTF_8.name()));
+                } catch (RuntimeException rte) {
+                    throw rte;
+                } catch (Exception e) {
+                    getLog().warn("Unable to print the files with unapproved licenses to the console.");
+                }
+            }
+
+            String msg = format("Counter(s) %s exceeded minimum or maximum values. See RAT report in: '%s'.",
+                    String.join(", ", config.getClaimValidator().listIssues(statistics)),
+                    getRatTxtFile());
 
                if (!ignoreErrors) {
                    throw new RatCheckException(msg);

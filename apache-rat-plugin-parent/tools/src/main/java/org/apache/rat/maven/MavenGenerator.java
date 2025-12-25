@@ -90,9 +90,9 @@ public final class MavenGenerator {
                         for (Map.Entry<String, String> entry : MavenOption.getRenameMap().entrySet()) {
                             writer.append(format("        xlateName.put(\"%s\", \"%s\");%n", entry.getKey(), entry.getValue()));
                         }
-                        for (Option option : MavenOption.getFilteredOptions()) {
-                            writer.append(format("        unsupportedArgs.add(\"%s\");%n", argsKey(option)));
-                        }
+//                        for (Option option : MavenOption.getFilteredOptions()) {
+//                            writer.append(format("        unsupportedArgs.add(\"%s\");%n", argsKey(option)));
+//                        }
                         for (MavenOption option : options) {
                             if (option.isDeprecated()) {
                                 writer.append(format("        deprecatedArgs.put(\"%s\", \"%s\");%n", argsKey(option.getOption()),

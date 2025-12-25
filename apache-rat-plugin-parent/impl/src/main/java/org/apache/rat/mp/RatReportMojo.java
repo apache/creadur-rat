@@ -20,8 +20,13 @@ package org.apache.rat.mp;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.io.Reader;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -31,10 +36,14 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
 
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
 import org.apache.maven.artifact.Artifact;
+import org.apache.maven.doxia.module.xhtml5.Xhtml5Parser;
+import org.apache.maven.doxia.parser.ParseException;
 import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.doxia.sink.SinkFactory;
-import org.apache.maven.doxia.sink.impl.SinkEventAttributeSet;
 import org.apache.maven.doxia.site.SiteModel;
 import org.apache.maven.doxia.siterenderer.DocumentRenderingContext;
 import org.apache.maven.doxia.siterenderer.Renderer;
@@ -51,15 +60,13 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.reporting.MavenMultiPageReport;
 import org.apache.maven.reporting.MavenReportException;
-import org.apache.rat.ReportConfiguration;
 import org.apache.rat.Reporter;
-import org.apache.rat.VersionInfo;
 import org.apache.rat.api.RatException;
-import org.apache.rat.license.LicenseSetFactory.LicenseFilter;
-import org.apache.rat.utils.DefaultLog;
+import org.apache.rat.commandline.StyleSheets;
 import org.codehaus.plexus.util.ReaderFactory;
 import org.eclipse.aether.repository.ArtifactRepository;
 import org.eclipse.aether.repository.RemoteRepository;
+import org.xml.sax.SAXException;
 
 import static org.apache.maven.shared.utils.logging.MessageUtils.buffer;
 
@@ -181,7 +188,6 @@ public class RatReportMojo extends AbstractRatMojo implements MavenMultiPageRepo
                     // render report
                     getSiteRenderer().mergeDocumentIntoSite(writer, sink, siteContext);
                 }
-
             }
 
             // copy generated resources also
@@ -403,6 +409,17 @@ public class RatReportMojo extends AbstractRatMojo implements MavenMultiPageRepo
         return !skip;
     }
 
+    Reporter.Output readReportFile() throws MavenReportException {
+        File f = new File(outputDirectory, ".rat.xml");
+        try (InputStream inputStream = new FileInputStream(f)) {
+            return new Reporter.Output(DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(inputStream));
+        } catch (FileNotFoundException e) {
+            throw new MavenReportException("Can not find RAT report file.  Was reporter executed?");
+        } catch (IOException | ParserConfigurationException | SAXException e) {
+            throw new MavenReportException("Can not read RAT report file.");
+        }
+    }
+
     /**
      * Writes the report to the Doxia sink.
      *
@@ -430,33 +447,15 @@ public class RatReportMojo extends AbstractRatMojo implements MavenMultiPageRepo
         sink.link(bundle.getString("report.rat.url"));
         sink.text(bundle.getString("report.rat.fullName"));
         sink.link_();
-        sink.text(" " + new VersionInfo(RatReportMojo.class));
-        sink.text(".");
-        sink.paragraph_();
-
-        sink.paragraph();
-        sink.verbatim(new SinkEventAttributeSet());
-        try (Writer logWriter = DefaultLog.getInstance().asWriter()) {
-            try {
-                ReportConfiguration config = getConfiguration();
-                config.setFrom(getDefaultsBuilder().build());
-                logLicenses(config.getLicenses(LicenseFilter.ALL));
-                if (verbose) {
-                    config.reportExclusions(logWriter);
-                }
-                ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                config.setOut(() -> baos);
-                Reporter reporter = new Reporter(config);
-                reporter.output();
-                if (verbose) {
-                    reporter.writeSummary(logWriter);
-                }
-                sink.text(baos.toString(StandardCharsets.UTF_8.name()));
-            } catch (IOException | MojoExecutionException | RatException e) {
-                throw new MavenReportException(e.getMessage(), e);
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        File f = new File(outputDirectory, ".rat.xhtml5");
+        try {
+            readReportFile().format(StyleSheets.XHTML5.getStyleSheet(), () -> Files.newOutputStream(f.toPath()));
+            try (Reader reader = new InputStreamReader(Files.newInputStream(f.toPath()), StandardCharsets.UTF_8)) {
+                new Xhtml5Parser().parse(reader, sink);
             }
-        } catch (IOException e) {
-            DefaultLog.getInstance().warn("Unable to close log writer", e);
+        } catch (RatException | IOException | ParseException e) {
+            throw new MavenReportException("Unable to create report: " + e.getMessage(), e);
         }
         sink.verbatim_();
         sink.paragraph_();
