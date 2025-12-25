@@ -26,6 +26,7 @@ import java.util.stream.Stream;
 import org.apache.commons.cli.Option;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.rat.OptionCollection;
+import org.apache.rat.Reporter;
 import org.apache.rat.commandline.Arg;
 import org.apache.rat.testhelpers.FileUtils;
 import org.apache.rat.testhelpers.TextUtils;
@@ -70,7 +71,7 @@ public class ReportTest {
                 DataUtils.NO_SETUP,
                 validatorData -> {
                     try {
-                        String result = TextUtils.readFile(validatorData.baseDir.resolve("helpText").toFile());
+                        String result = TextUtils.readFile(validatorData.getBaseDir().resolve("helpText").toFile());
                         for (Option option : OptionCollection.buildOptions(CLIOption.ADDITIONAL_OPTIONS).getOptions()) {
                             if (option.getOpt() != null) {
                                 TextUtils.assertContains("-" + option.getOpt() + (option.getLongOpt() == null ? " " : ","), result);
@@ -105,9 +106,8 @@ public class ReportTest {
             assertThatThrownBy(() -> Report.generateReport(basePath.toFile(), test.getCommandLine(basePath.toString()))
                     ).hasMessageContaining(test.getExpectedException().getMessage());
         } else {
-            Report.CLIOutput result = Report.generateReport(basePath.toFile(), test.getCommandLine(basePath.toString()));
-            ValidatorData data = new ValidatorData(
-                    result.output, result.configuration, basePath.toString());
+            Reporter.Output result = Report.generateReport(basePath.toFile(), test.getCommandLine(basePath.toString()));
+            ValidatorData data = new ValidatorData(result, basePath.toString());
             test.getValidator().accept(data);
         }
     }

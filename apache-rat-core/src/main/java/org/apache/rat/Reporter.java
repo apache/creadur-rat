@@ -79,25 +79,25 @@ public class Reporter {
      */
     public Output execute() throws RatException {
         try {
+            Output.Builder builder = Output.builder().configuration(configuration);
             if (configuration.hasSource()) {
                 StringBuilder sb = new StringBuilder();
                 try (IXmlWriter writer = new XmlWriter(sb)) {
                     writer.startDocument();
                     ClaimStatistic statistic = new ClaimStatistic();
+                    builder.statistic(statistic);
                     RatReport report = XmlReportFactory.createStandardReport(writer, statistic, configuration);
                     report.startReport();
                     configuration.getSources().build().run(report);
                     report.endReport();
                     InputSource inputSource = new InputSource(new StringReader(sb.toString()));
-                    output = new Output(DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(inputSource), statistic);
+                    builder.document(DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(inputSource));
                 }
-            } else {
-                output = new Output(DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument());
             }
+            return builder.build();
         } catch (Exception e) {
             throw RatException.makeRatException(e);
         }
-        return output;
     }
 
     /**
@@ -124,11 +124,10 @@ public class Reporter {
         }
     }
 
-
     /**
      * The output from a report run.
      */
-    public static class Output {
+    public static final class Output {
         /** The XML output document */
         private final Document document;
         /**
@@ -136,23 +135,23 @@ public class Reporter {
          * May be empty if the Document was read from disk.
          */
         private final ClaimStatistic statistic;
-
         /**
-         * Create an output with an empty statistics.
-         * @param document the Document from the output.
+         * The configuraiton that generated the document
          */
-        public Output(final Document document) {
-            this(document, new ClaimStatistic());
-        }
+        private final ReportConfiguration configuration;
 
         /**
          * Create an output with statistics.
-         * @param document the Document from the execution.
-         * @param statistic the statistics from the execution.
+         * @param builder the Builder
          */
-        public Output(final Document document, final ClaimStatistic statistic) {
-            this.document = document;
-            this.statistic = statistic;
+        private Output(final Builder builder) {
+            this.document = builder.document;
+            this.statistic = builder.statistic == null ? new ClaimStatistic() : builder.statistic;
+            this.configuration = builder.configuration == null ? new ReportConfiguration() : builder.configuration;
+        }
+
+        public static Builder builder() {
+            return new Builder();
         }
 
         /**
@@ -167,6 +166,9 @@ public class Reporter {
             return statistic;
         }
 
+        public ReportConfiguration getConfiguration() {
+            return configuration;
+        }
         /**
          * Formats the report to the output and using the stylesheet found in the report configuration.
          *
@@ -217,5 +219,38 @@ public class Reporter {
             }
         }
 
+        public static final class Builder {
+            /** The document that was generated */
+            private Document document;
+            /**
+             * The claim statistic from the execution that generated the document.
+             * May be empty if the Document was read from disk.
+             */
+            private ClaimStatistic statistic;
+            /**
+             * The configuraiton that generated the document
+             */
+            private ReportConfiguration configuration;
+
+            public Builder document(final Document document) {
+                this.document = document;
+                return this;
+            }
+
+            public Output build() {
+                return new Output(this);
+            }
+
+            public Builder statistic(final ClaimStatistic statistic) {
+                this.statistic = statistic;
+                return this;
+            }
+
+            public Builder configuration(final ReportConfiguration configuration) {
+                this.configuration = configuration;
+                return this;
+            }
+
+        }
     }
 }

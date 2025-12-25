@@ -23,27 +23,25 @@ import java.nio.file.Paths;
 import org.apache.rat.ReportConfiguration;
 import org.apache.rat.Reporter;
 import org.apache.rat.document.DocumentName;
+import org.apache.rat.report.claim.ClaimStatistic;
+import org.w3c.dom.Document;
 
 /**
  * The validator for test data.
  */
-public class ValidatorData {
+public final class ValidatorData {
     /** The report output */
-    public final Reporter.Output output;
-    /** the report configuration */
-    public final ReportConfiguration config;
+    private final Reporter.Output output;
     /** the base directory where the test setup was created */
-    public final Path baseDir;
+    private final Path baseDir;
 
     /**
      * Constructor.
      * @param output The report output.
-     * @param config the report configuration.
      * @param baseDir the directory where the test setup was created.
      */
-    public ValidatorData(final Reporter.Output output, final ReportConfiguration config, final String baseDir) {
+    public ValidatorData(final Reporter.Output output, final String baseDir) {
         this.output = output;
-        this.config = config;
         this.baseDir = Paths.get(baseDir);
     }
 
@@ -63,4 +61,33 @@ public class ValidatorData {
     public DocumentName mkDocName(String fileName) {
         return DocumentName.builder().setBaseName(baseDir.toFile()).setName(fileName).build();
     }
+
+    /**
+     * Gets the document that was generated during execution.
+     * @return the document that was generated during execution.
+     */
+    public Document getDocument() {
+        return output.getDocument();
+    }
+
+    /**
+     * Gets the claim statistics from the run
+     * @return the ClaimStatistic from the run.
+     */
+    public ClaimStatistic getStatistic() {
+        return output.getStatistic();
+    }
+
+    /**
+     * Gets the configuration from the run.
+     * @return the configuration from the run.
+     */
+    public ReportConfiguration getConfiguration() {
+        return output.getConfiguration();
+    }
+
+    public Path getBaseDir() {
+        return baseDir;
+    }
+
 }

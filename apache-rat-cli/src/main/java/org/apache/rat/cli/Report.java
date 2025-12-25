@@ -59,15 +59,15 @@ public final class Report {
             System.exit(0);
         }
 
-        CLIOutput result = generateReport(new File("."), args);
-        if (result.output != null) {
-            result.output.writeSummary(DefaultLog.getInstance().asWriter());
+        Reporter.Output result = generateReport(new File("."), args);
+        if (result != null) {
+            result.writeSummary(DefaultLog.getInstance().asWriter());
 
-            if (result.configuration.getClaimValidator().hasErrors()) {
-                result.configuration.getClaimValidator().logIssues(result.output.getStatistic());
+            if (result.getConfiguration().getClaimValidator().hasErrors()) {
+                result.getConfiguration().getClaimValidator().logIssues(result.getStatistic());
                 throw new RatDocumentAnalysisException(format("Issues with %s",
                         String.join(", ",
-                                result.configuration.getClaimValidator().listIssues(result.output.getStatistic()))));
+                                result.getConfiguration().getClaimValidator().listIssues(result.getStatistic()))));
             }
         }
     }
@@ -92,7 +92,7 @@ public final class Report {
      * @return The Client output.
      * @throws Exception on error.
      */
-    static CLIOutput generateReport(final File workingDirectory, final String[] args) throws Exception {
+    static Reporter.Output generateReport(final File workingDirectory, final String[] args) throws Exception {
         Reporter.Output output = null;
         ArgumentContext argumentContext = OptionCollection.parseCommands(workingDirectory, args, CLIOption.ADDITIONAL_OPTIONS);
         ReportConfiguration configuration = argumentContext.getConfiguration();
@@ -110,31 +110,10 @@ public final class Report {
                 output.format(configuration);
             }
         }
-        return new CLIOutput(configuration, output);
+        return output;
     }
 
     private Report() {
         // do not instantiate
-    }
-
-    /**
-     * Output from the UI
-     */
-    @SuppressWarnings("VisibilityModifier")
-    static class CLIOutput {
-        /** Output from the Reporter */
-        Reporter.Output output;
-        /** THe configuration that generated the output. */
-        ReportConfiguration configuration;
-
-        /**
-         * Construct client output.
-         * @param configuration the configuration that was used to generate the output.
-         * @param output The output from the reporter.
-         */
-        CLIOutput(final ReportConfiguration configuration, final Reporter.Output output) {
-            this.output = output;
-            this.configuration = configuration;
-        }
     }
 }

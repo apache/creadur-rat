@@ -79,9 +79,8 @@ public final class ReporterOptionsTest {
         Path basePath = testPath.resolve(test.getTestName());
         test.setupFiles(basePath);
         ArgumentContext ctxt = OptionCollection.parseCommands(basePath.toFile(), test.getCommandLine());
-        Reporter.Output output = ctxt.getConfiguration() != null ? new Reporter(ctxt.getConfiguration()).execute() : null;
-        ValidatorData data = new ValidatorData(
-                output, ctxt.getConfiguration(), basePath.toString());
+        Reporter.Output output = new Reporter(ctxt.getConfiguration()).execute();
+        ValidatorData data = new ValidatorData(output, basePath.toString());
         test.getValidator().accept(data);
     }
 
