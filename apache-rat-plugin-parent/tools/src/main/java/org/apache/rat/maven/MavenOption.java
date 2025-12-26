@@ -18,23 +18,17 @@
  */
 package org.apache.rat.maven;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Set;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.collections4.map.UnmodifiableMap;
 import org.apache.commons.collections4.set.UnmodifiableSet;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.text.WordUtils;
-import org.apache.rat.OptionCollection;
 import org.apache.rat.commandline.Arg;
 import org.apache.rat.ui.AbstractOption;
 import org.apache.rat.ui.OptionFactory;
@@ -86,11 +80,6 @@ public final class MavenOption extends AbstractOption<MavenOption> {
         FACTORY_CONFIG = new OptionFactory.Config<>(MavenOption.MAVEN_FILTER, MavenOption::new, MavenOption.ADDITIONAL_OPTIONS);
     }
 
-    public static List<MavenOption> getMavenOptions() {
-        return OptionCollection.buildOptions(ADDITIONAL_OPTIONS).getOptions().stream().filter(MAVEN_FILTER)
-                .map(MavenOption::new).collect(Collectors.toList());
-    }
-
     /**
      * Constructor.
      *
@@ -98,10 +87,6 @@ public final class MavenOption extends AbstractOption<MavenOption> {
      */
     public MavenOption(final Option option) {
         super(option, createName(option));
-    }
-
-    public static Map<String, String> getRenameMap() {
-        return Collections.unmodifiableMap(RENAME_MAP);
     }
 
     /**
@@ -138,42 +123,6 @@ public final class MavenOption extends AbstractOption<MavenOption> {
             result = arg.defaultValue();
         }
         return result;
-    }
-
-    public String getPropertyAnnotation(final String fname) {
-        StringBuilder sb = new StringBuilder("@Parameter");
-        String property = option.hasArgs() ? null : format("property = \"rat.%s\"", fname);
-        String defaultValue = option.isDeprecated() ? null : getDefaultValue();
-        if (property != null || defaultValue != null) {
-            sb.append("(");
-            if (property != null) {
-                sb.append(property).append(defaultValue != null ? ", " : StringUtils.EMPTY);
-            }
-            if (defaultValue != null) {
-                sb.append(format("defaultValue = \"%s\"", defaultValue));
-            }
-            sb.append(")");
-        }
-        return sb.toString();
-    }
-
-    public String getMethodSignature(final String indent, final boolean multiple) {
-        StringBuilder sb = new StringBuilder();
-        if (isDeprecated()) {
-            sb.append(format("%s@Deprecated%n", indent));
-        }
-        String fname = WordUtils.capitalize(name);
-        String args = option.hasArg() ? "String" : "boolean";
-        if (multiple) {
-            if (!(fname.endsWith("s") || fname.endsWith("Approved") || fname.endsWith("Denied"))) {
-                fname = fname + "s";
-            }
-            args = args + "[]";
-        }
-
-        return sb.append(format("%1$s%5$s%n%1$spublic void set%3$s(%4$s %2$s)",
-                        indent, name, fname, args, getPropertyAnnotation(fname)))
-                .toString();
     }
 
     @Override

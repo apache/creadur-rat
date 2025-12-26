@@ -32,12 +32,9 @@
                     <version>${plugin_version}</version>
                     <configuration>
                         ${rat_configuration}
-                        <!-- Specify where this pom will output files -->
-##                        <outputDirectory>target/test-harness/project-to-test</outputDirectory>
 
-                        <!-- The defined stubs -->
                         <project implementation="${packageName}.stubs.${stubName}"/>
-                        <settings implementation="org.apache.rat.maven.SettingsStub"/>
+##                        <settings implementation="org.apache.rat.maven.SettingsStub"/>
                     </configuration>
                 </plugin>
             </plugins>

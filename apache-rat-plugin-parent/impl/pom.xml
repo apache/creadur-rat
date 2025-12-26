@@ -51,6 +51,10 @@
         <directory>src/test/filtered-resources</directory>
         <filtering>true</filtering>
       </testResource>
+      <testResource>
+        <directory>src/test/resources</directory>
+        <filtering>false</filtering>
+      </testResource>
     </testResources>
     <pluginManagement>
       <plugins>
@@ -199,7 +203,7 @@
                 <argument>-t</argument>
                 <argument>${project.build.testSourceDirectory}</argument>
                 <argument>-r</argument>
-                <argument>${project.build.testSourceDirectory}/../../resources</argument>
+                <argument>${project.build.testSourceDirectory}/../resources</argument>
                 <argument>-p</argument>
                 <argument>org.apache.rat.maven</argument>
               </arguments>
@@ -493,12 +497,12 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-plugin-plugin</artifactId>
-        <version>${mavenPluginPluginVersion}</version>
+        <version>${mavenPluginToolsVersion}</version>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-plugin-report-plugin</artifactId>
-        <version>${mavenPluginPluginVersion}</version>
+        <version>${mavenPluginToolsVersion}</version>
       </plugin>
     </plugins>
   </reporting>

@@ -20,8 +20,10 @@ package org.apache.rat.maven;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.List;
@@ -37,12 +39,10 @@ import org.apache.rat.Reporter;
 import org.apache.rat.api.RatException;
 import org.apache.rat.commandline.Arg;
 import org.apache.rat.commandline.StyleSheets;
-import org.apache.rat.config.exclusion.StandardCollection;
 import org.apache.rat.license.LicenseSetFactory.LicenseFilter;
 import org.apache.rat.report.claim.ClaimStatistic;
 import org.apache.rat.ui.ArgumentTracker;
 import org.apache.rat.utils.DefaultLog;
-import org.apache.rat.utils.Log;
 
 import static java.lang.String.format;
 
@@ -55,7 +55,9 @@ import static java.lang.String.format;
 @Mojo(name = "check", defaultPhase = LifecyclePhase.VALIDATE, threadSafe = true)
 public final class RatCheckMojo extends AbstractRatMojo {
 
-    /** The output from the last {@link #execute()}. */
+    /**
+     * The output from the last {@link #execute()}.
+     */
     private Reporter.Output output;
 
     public RatCheckMojo() {
@@ -66,7 +68,9 @@ public final class RatCheckMojo extends AbstractRatMojo {
         return output;
     }
 
-    /** The default output file if no other is specified. */
+    /**
+     * The default output file if no other is specified.
+     */
     @Parameter(defaultValue = "${project.build.directory}/rat.txt", readonly = true)
     private File defaultReportFile;
 
@@ -110,21 +114,19 @@ public final class RatCheckMojo extends AbstractRatMojo {
             ReportConfiguration config = getConfiguration();
             logLicenses(config.getLicenses(LicenseFilter.ALL));
             if (verbose) {
-                config.reportExclusions(logWoutput = reporter.execute();
-                writeMojoRatReport(output);
-                iriter);
+                config.reportExclusions(logWriter);
             }
             try {
                 final Reporter reporter = new Reporter(config);
-                f (verbose) {
+                output = reporter.execute();
+                writeMojoRatReport(output);
+                if (verbose) {
                     output.writeSummary(DefaultLog.getInstance().asWriter());
                 }
                 // produce the requested output.
                 output.format(config.getStyleSheet(), config.getOutput());
                 // check for errors and fail if necessary
                 check(config, output);
-            } catch (MojoFailureException e) {
-                throw e;
             } catch (Exception e) {
                 throw new MojoExecutionException(e.getMessage(), e);
             }
@@ -135,6 +137,7 @@ public final class RatCheckMojo extends AbstractRatMojo {
 
     /**
      * Saves the Maven Mojo version of the XML for later.
+     *
      * @param output the output to write to the XML file.
      */
     private void writeMojoRatReport(final Reporter.Output output) {
@@ -157,7 +160,7 @@ public final class RatCheckMojo extends AbstractRatMojo {
                 try {
                     ByteArrayOutputStream baos = new ByteArrayOutputStream();
                     output.format(StyleSheets.UNAPPROVED_LICENSES.getStyleSheet(), () -> baos);
-                    getLog().warn(baos.toString(StandardCharsets.UTF_8.name()));
+                    getLog().warn(baos.toString(StandardCharsets.UTF_8));
                 } catch (RuntimeException rte) {
                     throw rte;
                 } catch (Exception e) {
@@ -169,18 +172,16 @@ public final class RatCheckMojo extends AbstractRatMojo {
                     String.join(", ", config.getClaimValidator().listIssues(statistics)),
                     getRatTxtFile());
 
-               if (!ignoreErrors) {
-                   throw new RatCheckException(msg);
-               } else {
-                   getLog().info(msg);
-               }
-           } else {
-               DefaultLog.getInstance().info("No issues found.");
-           }
-        } catch (IOException e) {
-           throw new MojoFailureException(e);
-       }
+            if (!ignoreErrors) {
+                throw new RatCheckException(msg);
+            } else {
+                getLog().info(msg);
+            }
+        } else {
+            DefaultLog.getInstance().info("No issues found.");
+        }
     }
+
 
     /**
      * Reads the location of the RAT text file from the Mojo.

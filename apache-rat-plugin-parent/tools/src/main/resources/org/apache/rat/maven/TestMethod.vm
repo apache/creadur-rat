@@ -24,7 +24,7 @@
 @Basedir("${basedir}")
 public void ${funcName}Test(RatCheckMojo mojo) throws MojoExecutionException {
     TestData testData = testDataMap.get("${testName}");
-    testData.setupFiles(Paths.get("impl/${basedir}"));
+    testData.setupFiles(Paths.get("${basedir}"));
     if (testData.getExpectedException() != null) {
         assertThatThrownBy(mojo::execute).hasMessageContaining(testData.getExpectedException().getMessage());
     } else {

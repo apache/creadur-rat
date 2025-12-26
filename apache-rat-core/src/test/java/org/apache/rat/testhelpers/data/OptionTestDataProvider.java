@@ -18,21 +18,17 @@
  */
 package org.apache.rat.testhelpers.data;
 
-import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintStream;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -53,7 +49,6 @@ import org.apache.rat.commandline.StyleSheets;
 import org.apache.rat.config.exclusion.StandardCollection;
 import org.apache.rat.document.DocumentName;
 import org.apache.rat.document.DocumentNameMatcher;
-import org.apache.rat.document.DocumentNameMatcherTest;
 import org.apache.rat.license.ILicense;
 import org.apache.rat.license.ILicenseFamily;
 import org.apache.rat.license.LicenseSetFactory;
@@ -81,10 +76,6 @@ public class OptionTestDataProvider {
     /** the list of include args */
     static final String[] INCLUDE_ARGS = {"B.bar", "justbaz"};
 
-    static String dump(final DocumentNameMatcher nameMatcher, final DocumentName name) {
-        return DocumentNameMatcherTest.processDecompose(nameMatcher, name);
-    }
-
     static String dump(final Option option, final String fname, final DocumentNameMatcher matcher, final DocumentName name) {
         StringBuilder sb = new StringBuilder();
         matcher.decompose(name).forEach(s -> sb.append(s).append("\n"));
@@ -98,11 +89,11 @@ public class OptionTestDataProvider {
     public Map<String, TestData> getUITestMap() {
         final ConfigurationException noLicenses = new ConfigurationException("At least one license must be defined");
         Map<String, TestData> result = getOptionTestMap();
-        result.get("configurationNoDefaults").setException(noLicenses);
-        result.get("licensesApproved/withoutDefaults").setException(noLicenses);
-        result.get("licensesApprovedFile/withoutDefaults").setException(noLicenses);
-        result.get("licenseFamiliesApproved/withoutDefaults").setException(noLicenses);
-        result.get("licenseFamiliesApprovedFile/withoutDefaults").setException(noLicenses);
+        result.get("configuration-no-defaults").setException(noLicenses);
+        result.get("licenses-approved/withoutDefaults").setException(noLicenses);
+        result.get("licenses-approved-file/withoutDefaults").setException(noLicenses);
+        result.get("license-families-approved/withoutDefaults").setException(noLicenses);
+        result.get("license-families-approved-file/withoutDefaults").setException(noLicenses);
         return result;
     }
 
@@ -166,7 +157,7 @@ public class OptionTestDataProvider {
 
     private void validate(List<TestData> result) {
         Set<Option> options = new HashSet<>(Arg.getOptions(new Options()).getOptions());
-        result.stream().forEach(testData -> options.remove(testData.getOption()));
+        result.forEach(testData -> options.remove(testData.getOption()));
         // TODO fix this once deprecated options are removed
         options.forEach(opt -> DefaultLog.getInstance().warn("Option " + opt.getKey() + " was not tested."));
         //assertThat(options).describedAs("All options are not accounted for.").isEmpty();
@@ -269,7 +260,6 @@ public class OptionTestDataProvider {
 
     private List<TestData> inputExcludeSizeTest() {
         Option option = Arg.EXCLUDE_SIZE.option();
-        String[] args = {"5"};
         String[] notExcluded = {"Hello.txt", "HelloWorld.txt"};
         String[] excluded = {"Hi.txt"};
 
@@ -558,7 +548,7 @@ DataUtils.NO_SETUP,
     private List<TestData> configTest(final Option option) {
         Consumer<Path> setupFiles = basePath -> {
             Path ratDir = basePath.resolve(".rat");
-            ratDir.toFile().mkdirs();
+            FileUtils.mkDir(ratDir.toFile());
             Path oneXml = ratDir.resolve("One.xml");
             DataUtils.generateTextConfig(oneXml, "ONE", "one");
 
@@ -630,7 +620,7 @@ DataUtils.NO_SETUP,
                 ImmutablePair.of(Arg.EDIT_ADD.find("edit-license"), null)),
                 DataUtils.NO_SETUP,
                 validatorData -> assertThat(validatorData.getConfiguration().getCopyrightMessage()).isEqualTo("MyCopyright"));
-return Arrays.asList(test1, test1);
+return Arrays.asList(test1, test2);
     }
 
     protected List<TestData> editCopyrightTest() {
@@ -672,7 +662,6 @@ return Arrays.asList(test1, test1);
     protected List<TestData> logLevelTest() {
         Option option = Arg.LOG_LEVEL.find("log-level");
         List<TestData> result = new ArrayList<>();
-        String[] args = {null};
         Log.Level logLevel = DefaultLog.getInstance().getLevel();
 
         for (final Log.Level level : Log.Level.values()) {

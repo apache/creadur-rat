@@ -22,9 +22,9 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.StringWriter;
-import java.nio.file.Paths;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
 import java.util.Arrays;
-import java.util.stream.Collectors;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.DefaultParser;
@@ -53,7 +53,7 @@ public final class CodeGenerator {
     /** The Syntax for this command */
     private static final String SYNTAX = String.format("java -cp ... %s [options]", CodeGenerator.class.getName());
     /** The package name for this AbstractMaven file */
-    private final CasedString packageName = new CasedString(CasedString.StringCase.DOT, "org.apache.rat.maven");;
+    private final CasedString packageName = new CasedString(CasedString.StringCase.DOT, "org.apache.rat.maven");
     /** The base source directory */
     private final String baseDirectory;
     /** The template for the methods within {@code AbstractMaven}. */
@@ -123,10 +123,10 @@ public final class CodeGenerator {
         final String methods = gatherMethods();
         final VelocityContext context = new VelocityContext();
         context.put("methods", methods);
-        File javaFile = Paths.get(baseDirectory).resolve(packageName.toCase(CasedString.StringCase.SLASH))
+        File javaFile = Path.of(baseDirectory).resolve(packageName.toCase(CasedString.StringCase.SLASH))
                 .resolve("AbstractMaven.java").toFile();
         FileUtils.mkDir(javaFile.getParentFile());
-        try (FileWriter fileWriter = new FileWriter(javaFile)) {
+        try (FileWriter fileWriter = new FileWriter(javaFile, StandardCharsets.UTF_8)) {
             javaTemplate.merge(context, fileWriter);
         }
     }
@@ -207,7 +207,7 @@ public final class CodeGenerator {
     private String gatherMethods() {
         final VelocityContext context = new VelocityContext();
         final StringWriter methodWriter = new StringWriter();
-        for (MavenOption mavenOption : OptionFactory.getOptions(MavenOption.FACTORY_CONFIG).collect(Collectors.toList())) {
+        for (MavenOption mavenOption : OptionFactory.getOptions(MavenOption.FACTORY_CONFIG).toList()) {
             context.put("option", mavenOption);
             String desc = createDesc(mavenOption);
             context.put("desc", desc);

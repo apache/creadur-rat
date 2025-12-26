@@ -81,6 +81,11 @@ agnostic home for software distribution comprehension and audit tools.
   <dependencyManagement>
     <dependencies>
       <dependency>
+        <groupId>com.github.spotbugs</groupId>
+        <artifactId>spotbugs-annotations</artifactId>
+        <version>4.9.8</version>
+      </dependency>
+      <dependency>
         <groupId>org.reflections</groupId>
         <artifactId>reflections</artifactId>
         <version>0.10.2</version>
@@ -439,6 +444,12 @@ agnostic home for software distribution comprehension and audit tools.
       </plugin>
     </plugins>
   </reporting>
+  <dependencies>
+    <dependency>
+      <groupId>com.github.spotbugs</groupId>
+      <artifactId>spotbugs-annotations</artifactId>
+    </dependency>
+  </dependencies>
   <build>
     <defaultGoal>clean install</defaultGoal>
     <pluginManagement>
@@ -554,16 +565,16 @@ agnostic home for software distribution comprehension and audit tools.
             <targetJdk>${javaVersion}</targetJdk>
           </configuration>
         </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-plugin-plugin</artifactId>
-          <version>${mavenPluginPluginVersion}</version>
-        </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-plugin-report-plugin</artifactId>
-          <version>${mavenPluginPluginVersion}</version>
-        </plugin>
+<!--        <plugin>-->
+<!--          <groupId>org.apache.maven.plugins</groupId>-->
+<!--          <artifactId>maven-plugin-plugin</artifactId>-->
+<!--          <version>${mavenPluginPluginVersion}</version>-->
+<!--        </plugin>-->
+<!--        <plugin>-->
+<!--          <groupId>org.apache.maven.plugins</groupId>-->
+<!--          <artifactId>maven-plugin-report-plugin</artifactId>-->
+<!--          <version>${mavenPluginPluginVersion}</version>-->
+<!--        </plugin>-->
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-site-plugin</artifactId>

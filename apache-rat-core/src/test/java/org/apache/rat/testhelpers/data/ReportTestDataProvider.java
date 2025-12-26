@@ -33,12 +33,13 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 import javax.xml.xpath.XPath;
@@ -100,7 +101,7 @@ public class ReportTestDataProvider {
      * @see #getOptionTests(Collection)
      */
     public Map<String, TestData> getOptionTestMap(Collection<Option> unsupportedTests) {
-        Map<String, TestData> map = new HashMap<>();
+        Map<String, TestData> map = new TreeMap<>();
         for (TestData test : getOptionTests(unsupportedTests)) {
             map.put(test.getTestName(), test);
         }
@@ -157,7 +158,7 @@ public class ReportTestDataProvider {
 
     private void validate(List<TestData> result) {
         Set<Option> options = new HashSet<>(Arg.getOptions(new Options()).getOptions());
-        result.stream().forEach(testData -> options.remove(testData.getOption()));
+        result.forEach(testData -> options.remove(testData.getOption()));
         // TODO fix this once deprecated options are removed
         options.forEach(opt -> DefaultLog.getInstance().warn("Option " + opt.getKey() + " was not tested."));
         //assertThat(options).describedAs("All options are not accounted for.").isEmpty();
@@ -199,6 +200,7 @@ public class ReportTestDataProvider {
                     assertThat(claimStatistic.getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(5);
                     assertThat(claimStatistic.getCounter(ClaimStatistic.Counter.IGNORED)).isEqualTo(1);
                 });
+
         String[] ignored = {"B.bar", "justbaz", "some.foo", ".rat"};
         String[] standard = {"well._afile", "notbaz"};
         TestData test2 = new TestData("", Collections.singletonList(ImmutablePair.of(option, args.get())),
@@ -385,8 +387,6 @@ public class ReportTestDataProvider {
     // include tests
     private List<TestData> execIncludeTest(final Option option, String[] args, Consumer<Path> setupFiles) {
         Option excludeOption = Arg.EXCLUDE.option();
-        String[] notExcluded = {"B.bar", "justbaz", "notbaz"};
-        String[] excluded = {"some.foo"};
         Consumer<Path> setup = setupFiles.andThen(basePath -> {
             File baseDir = basePath.toFile();
             writeFile(baseDir, "notbaz");
@@ -550,10 +550,7 @@ public class ReportTestDataProvider {
         TestData test3 = new TestData("withLicenseDef", Arrays.asList(ImmutablePair.of(option, args),
                 ImmutablePair.of(configOpt, new String[]{".rat/catz.xml"})),
         setup.andThen(mkRat).andThen(
-                basePath -> {
-                    Path ratDir = basePath.resolve(".rat");
-                    DataUtils.generateSpdxConfig(basePath.resolve(".rat").resolve("catz.xml"), "catz", "catz");
-                }),
+                basePath -> DataUtils.generateSpdxConfig(basePath.resolve(".rat").resolve("catz.xml"), "catz", "catz")),
                 validatorData -> {
                     assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(2);
                     assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.APPROVED)).isEqualTo(2);
@@ -584,7 +581,7 @@ public class ReportTestDataProvider {
         return execLicensesApprovedTest(Arg.LICENSES_APPROVED_FILE.find("licenses-approved-file"),
                 new String[]{".rat/licensesApproved.txt"},
                 mkRat.andThen(
-                        basePath -> writeFile(basePath.resolve(".rat").toFile(), "licensesApproved.txt", Arrays.asList("catz"))));
+                        basePath -> writeFile(basePath.resolve(".rat").toFile(), "licensesApproved.txt", List.of("catz"))));
     }
 
     protected List<TestData> licensesApprovedTest() {
@@ -662,9 +659,7 @@ public class ReportTestDataProvider {
     protected List<TestData> licenseFamiliesApprovedFileTest() {
         return execLicenseFamiliesApprovedTest(Arg.FAMILIES_APPROVED_FILE.find("license-families-approved-file"),
                 new String[]{".rat/familiesApproved.txt"},
-                mkRat.andThen( basePath -> {
-                    writeFile(basePath.resolve(".rat").toFile(), "familiesApproved.txt", Collections.singletonList("catz"));
-                }));
+                mkRat.andThen( basePath -> writeFile(basePath.resolve(".rat").toFile(), "familiesApproved.txt", Collections.singletonList("catz"))));
     }
 
     protected List<TestData> licenseFamiliesApprovedTest() {
@@ -925,25 +920,27 @@ public class ReportTestDataProvider {
                 File resultFile = validatorData.getBaseDir().resolve("NoLicense.java.new").toFile();
                 assertThat(resultFile).exists();
                 contents = String.join("\n", IOUtils.readLines(new FileReader(resultFile)));
-                assertThat(contents).isEqualTo("/*\n" +
-                        " * Licensed to the Apache Software Foundation (ASF) under one\n" +
-                        " * or more contributor license agreements.  See the NOTICE file\n" +
-                        " * distributed with this work for additional information\n" +
-                        " * regarding copyright ownership.  The ASF licenses this file\n" +
-                        " * to you under the Apache License, Version 2.0 (the\n" +
-                        " * \"License\"); you may not use this file except in compliance\n" +
-                        " * with the License.  You may obtain a copy of the License at\n" +
-                        " * \n" +
-                        " *   http://www.apache.org/licenses/LICENSE-2.0\n" +
-                        " * \n" +
-                        " * Unless required by applicable law or agreed to in writing,\n" +
-                        " * software distributed under the License is distributed on an\n" +
-                        " * \"AS IS\" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY\n" +
-                        " * KIND, either express or implied.  See the License for the\n" +
-                        " * specific language governing permissions and limitations\n" +
-                        " * under the License.\n" +
-                        " */\n\n" +
-                        "class NoLicense {}");
+                assertThat(contents).isEqualTo("""
+                        /*
+                         * Licensed to the Apache Software Foundation (ASF) under one
+                         * or more contributor license agreements.  See the NOTICE file
+                         * distributed with this work for additional information
+                         * regarding copyright ownership.  The ASF licenses this file
+                         * to you under the Apache License, Version 2.0 (the
+                         * "License"); you may not use this file except in compliance
+                         * with the License.  You may obtain a copy of the License at
+                         *\s
+                         *   http://www.apache.org/licenses/LICENSE-2.0
+                         *\s
+                         * Unless required by applicable law or agreed to in writing,
+                         * software distributed under the License is distributed on an
+                         * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+                         * KIND, either express or implied.  See the License for the
+                         * specific language governing permissions and limitations
+                         * under the License.
+                         */
+                        
+                        class NoLicense {}""");
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
@@ -1016,6 +1013,7 @@ public class ReportTestDataProvider {
                         File localArchive = new File(basePath.toFile(), "dummy.jar");
                         try (InputStream in = ReportTestDataProvider.class.getResourceAsStream("/tikaFiles/archive/dummy.jar");
                              OutputStream out = Files.newOutputStream(localArchive.toPath())) {
+                            Objects.requireNonNull(in);
                             IOUtils.copy(in, out);
                         } catch (IOException e) {
                             throw new RuntimeException(e);

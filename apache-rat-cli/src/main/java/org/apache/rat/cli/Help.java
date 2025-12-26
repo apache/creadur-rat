@@ -20,7 +20,6 @@ package org.apache.rat.cli;
 
 import java.io.PrintWriter;
 import java.io.Writer;
-import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.List;
 
