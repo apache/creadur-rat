@@ -23,7 +23,7 @@ import org.w3c.dom.NodeList
 import javax.xml.xpath.XPath
 import javax.xml.xpath.XPathFactory
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals
 
 doc = XmlUtils.toDom(new FileInputStream(args[0]))
 XPath xPath = XPathFactory.newInstance().newXPath()

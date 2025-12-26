@@ -246,19 +246,14 @@ public class Description {
      */
     public Method setter(final Class<?> clazz) throws NoSuchMethodException, SecurityException {
         String methodName = methodName(isCollection ? "add" : "set");
-        switch (type) {
-        case LICENSE:
-            throw new NoSuchMethodException("Can not set a License as a child");
-        case MATCHER:
-            return clazz.getMethod(methodName, IHeaderMatcher.Builder.class);
-        case PARAMETER:
-            return clazz.getMethod(methodName,
+        return switch (type) {
+            case LICENSE -> throw new NoSuchMethodException("Can not set a License as a child");
+            case MATCHER -> clazz.getMethod(methodName, IHeaderMatcher.Builder.class);
+            case PARAMETER -> clazz.getMethod(methodName,
                     IHeaderMatcher.class.isAssignableFrom(childClass) ? IHeaderMatcher.Builder.class : childClass);
-        case BUILD_PARAMETER:
-            return clazz.getMethod(methodName, childClass);
-        }
+            case BUILD_PARAMETER -> clazz.getMethod(methodName, childClass);
+        };
         // should not happen
-        throw new IllegalStateException("Type " + type + " not valid.");
     }
 
     private void callSetter(final Description description, final IHeaderMatcher.Builder builder, final String value) {

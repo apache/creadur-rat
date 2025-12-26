@@ -93,7 +93,7 @@ public class XsdGenerator {
      */
     public InputStream getInputStream() throws IOException {
         try (ByteArrayOutputStream baos = new ByteArrayOutputStream();
-             Writer writer = new OutputStreamWriter(baos)) {
+             Writer writer = new OutputStreamWriter(baos, StandardCharsets.UTF_8)) {
             write(writer);
             return new ByteArrayInputStream(baos.toByteArray());
         }

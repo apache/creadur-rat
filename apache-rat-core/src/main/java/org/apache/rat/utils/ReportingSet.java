@@ -121,15 +121,14 @@ public class ReportingSet<T> implements SortedSet<T> {
                 new RatException("just for trace").printStackTrace(new PrintWriter(DefaultLog.getInstance().asWriter()));
                 DefaultLog.getInstance().warn(new RatException("just for trace"));
             }
-            switch (duplicateOption) {
-            case FAIL:
-                throw new IllegalArgumentException(msg);
-            case IGNORE:
-                return false;
-            case OVERWRITE:
-                delegate.remove(e);
-                return delegate.add(e);
-            }
+            return switch (duplicateOption) {
+                case FAIL -> throw new IllegalArgumentException(msg);
+                case IGNORE -> false;
+                case OVERWRITE -> {
+                    delegate.remove(e);
+                    yield delegate.add(e);
+                }
+            };
         }
         return delegate.add(e);
     }

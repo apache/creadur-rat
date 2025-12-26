@@ -22,6 +22,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Serializable;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
@@ -149,7 +150,7 @@ public final class OptionCollection {
         }
 
         if (commandLine.hasOption(Arg.HELP_LICENSES.option())) {
-            new Licenses(createConfiguration(argumentContext), new PrintWriter(System.out)).printHelp();
+            new Licenses(createConfiguration(argumentContext), new PrintWriter(System.out, false, StandardCharsets.UTF_8)).printHelp();
             return null;
         }
 

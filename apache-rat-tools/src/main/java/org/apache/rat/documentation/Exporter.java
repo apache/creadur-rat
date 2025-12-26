@@ -22,7 +22,6 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 
@@ -67,16 +66,10 @@ public class Exporter {
      * </ol>
      *
      * @param args the arguments
-     * @throws IOException on IO error.
-     * @throws ClassNotFoundException if the configuration is not found.
-     * @throws NoSuchMethodException if the method name is not found.
-     * @throws InvocationTargetException if the method can not be invoked.
-     * @throws InstantiationException if the class can not be instantiated.
-     * @throws IllegalAccessException if there are access restrictions on the class.
      * @throws RatException on RAT processing error.
      */
-    public static void main(final String[] args) throws IOException, ClassNotFoundException, NoSuchMethodException,
-            InvocationTargetException, InstantiationException, IllegalAccessException, RatException {
+    public static void main(final String[] args) throws
+            RatException {
         String templateDir = args[0];
         String outputDir = args[1];
 
@@ -163,39 +156,35 @@ public class Exporter {
     /**
      * A RatReport implementation that processes the {@code .vm} files in the template tree and writes the
      * results to the output tree.
+     *
+     * @param targetDir The base directory we are targeting for output
      */
-    private static class Cleaner implements RatReport {
-        /**
-         * The base directory we are targeting for output
-         */
-        private final DocumentName targetDir;
-
+        private record Cleaner(DocumentName targetDir) implements RatReport {
         /**
          * Create a rewriter.
          *
          * @param targetDir the root of the output directory tree.
          */
-        Cleaner(final DocumentName targetDir) {
-            this.targetDir = targetDir;
+        private Cleaner {
         }
 
-        /**
-         * Processes the input document and creates an output document at an equivalent place in the output tree.
-         *
-         * @param document the input document.
-         */
-        @Override
-        public void report(final Document document) {
-            String localized = document.getName().localized();
-            DocumentName outputFile = targetDir.resolve(localized.substring(0, localized.length() - 3));
-            try {
-                final File file = outputFile.asFile();
-                if (file.exists()) {
-                    Files.delete(file.toPath());
+            /**
+             * Processes the input document and creates an output document at an equivalent place in the output tree.
+             *
+             * @param document the input document.
+             */
+            @Override
+            public void report(final Document document) {
+                String localized = document.getName().localized();
+                DocumentName outputFile = targetDir.resolve(localized.substring(0, localized.length() - 3));
+                try {
+                    final File file = outputFile.asFile();
+                    if (file.exists()) {
+                        Files.delete(file.toPath());
+                    }
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
                 }
-            } catch (IOException e) {
-                throw new RuntimeException(e);
             }
         }
-    }
 }

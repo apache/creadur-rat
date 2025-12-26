@@ -91,10 +91,9 @@ public interface ILicense extends IHeaderMatcher, Comparable<ILicense> {
         if (license1 == o) {
             return true;
         }
-        if (!(o instanceof ILicense)) {
+        if (!(o instanceof ILicense that)) {
             return false;
         }
-        ILicense that = (ILicense) o;
         return license1.compareTo(that) == 0;
     }
 

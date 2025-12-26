@@ -235,7 +235,9 @@ public class RatCheckMojo extends AbstractRatMojo {
                    try {
                        ByteArrayOutputStream baos = new ByteArrayOutputStream();
                        reporter.output(StyleSheets.UNAPPROVED_LICENSES.getStyleSheet(), () -> baos);
-                       getLog().warn(baos.toString(StandardCharsets.UTF_8.name()));
+                       getLog().warn(baos.toString(StandardCharsets.UTF_8));
+                   } catch (RuntimeException rte) {
+                       throw rte;
                    } catch (Exception e) {
                        getLog().warn("Unable to print the files with unapproved licenses to the console.");
                    }

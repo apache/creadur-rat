@@ -66,13 +66,15 @@ public final class AntGenerator {
                 case DIRORARCHIVE:
                     generateType = new GenerateType("fileset") {
                         protected String getMethodFormat(final AntOption antOption) {
-                            return "        public void addConfiguredFileset(FileSet fileSet) {\n" +
-                                    "            for (Resource resource : fileSet) {\n" +
-                                    "                if (resource.isFilesystemOnly()) {\n" +
-                                    "                    addArg(%1$s, ((FileResource) resource).getFile().getAbsolutePath());\n" +
-                                    "                }\n" +
-                                    "            }\n" +
-                                    "        }\n\n";
+                            return """
+                                            public void addConfiguredFileset(FileSet fileSet) {
+                                                for (Resource resource : fileSet) {
+                                                    if (resource.isFilesystemOnly()) {
+                                                        addArg(%1$s, ((FileResource) resource).getFile().getAbsolutePath());
+                                                    }
+                                                }
+                                            }
+                                    """;
                         }
                     };
                     break;
@@ -110,7 +112,6 @@ public final class AntGenerator {
 
     private AntGenerator() { }
 
-
     /**
      * Gets the key for the Args array.
      * @param option the option to get the key for.
@@ -147,9 +148,9 @@ public final class AntGenerator {
         File file = new File(new File(new File(destDir), pkgName), className + ".java");
         file.getParentFile().mkdirs();
         try (InputStream template = AntGenerator.class.getResourceAsStream("/Ant.tpl");
-             FileWriter writer = new FileWriter(file);
+             FileWriter writer = new FileWriter(file, StandardCharsets.UTF_8);
              ByteArrayOutputStream bos = new ByteArrayOutputStream();
-             OutputStreamWriter customClasses = new OutputStreamWriter(bos)) {
+             OutputStreamWriter customClasses = new OutputStreamWriter(bos, StandardCharsets.UTF_8);) {
             if (template == null) {
                 throw new RuntimeException("Template /Ant.tpl not found");
             }
@@ -178,9 +179,10 @@ public final class AntGenerator {
                         writer.append(format("package %s;%n", packageName));
                         break;
                     case "${constructor}":
-                        writer.append(format("    protected %s() {\n" +
-                                "        setDeprecationReporter();\n" +
-                                "    }%n", className));
+                        writer.append(format("""
+                                    protected %s() {
+                                        setDeprecationReporter();
+                                    }%n""", className));
                         break;
                     case "${class}":
                         writer.append(format("public abstract class %s extends Task {%n", className));
@@ -229,8 +231,9 @@ public final class AntGenerator {
     private static String getElementClass(final AntOption option) {
 
         String elementConstructor =
-                "    public class %1$s {\n" +
-                        "        %1$s() { }\n\n";
+                """
+                            public class %1$s {
+                                %1$s() { }%n""";
 
         String funcName = WordUtils.capitalize(option.getName());
         StringBuilder result = new StringBuilder(format(elementConstructor, funcName));
@@ -252,9 +255,10 @@ public final class AntGenerator {
         }
 
         protected String getMethodFormat(final AntOption antOption) {
-            return String.format("        public void addConfigured%1$s(%1$s %%2$s) {\n" +
-                    "            addArg(%%1$s, %%2$s.value);\n" +
-                    "        }\n\n", innerClass);
+            return String.format("""
+                            public void addConfigured%1$s(%1$s %%2$s) {
+                                addArg(%%1$s, %%2$s.value);
+                            }%n""", innerClass);
         }
 
         public String getPattern(final AntOption delegateOption, final AntOption antOption) {

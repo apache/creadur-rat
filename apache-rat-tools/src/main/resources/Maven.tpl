@@ -38,10 +38,9 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-/* DO NOT EDIT - GENERATED FILE */
-
 /**
  * Generated class to provide Maven support for standard RAT command line options
+ * DO NOT EDIT - GENERATED FILE
  */
 ${class}
 

@@ -26,7 +26,6 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import org.apache.commons.cli.Option;
 import org.apache.commons.io.filefilter.IOFileFilter;
@@ -98,7 +97,7 @@ public class Report extends BaseAntTask {
          */
         private IOFileFilter inputFileFilter;
         /**
-         * the set of approved licence categories
+         * the set of approved license categories
          */
         private final Set<String> approvedLicenseCategories = new HashSet<>();
         /**
@@ -325,7 +324,7 @@ public class Report extends BaseAntTask {
     }
 
     /**
-     * Sets the copyright message
+     * Sets the copyright message.
      *
      * @param copyrightMessage the copyright message
      * @deprecated use copyright attribute
@@ -359,7 +358,7 @@ public class Report extends BaseAntTask {
     }
 
     /**
-     * Adds definition information
+     * Adds definition information.
      *
      * @param fileName the file to add
      * @deprecated Use Config child element
@@ -454,7 +453,7 @@ public class Report extends BaseAntTask {
     }
 
     /**
-     * validates the task's configuration.
+     * Validates the task's configuration.
      */
     protected ReportConfiguration validate(final ReportConfiguration cfg) {
         try {
@@ -523,7 +522,7 @@ public class Report extends BaseAntTask {
         @Override
         public String[] getValues() {
             return Arrays.stream(LicenseSetFactory.LicenseFilter.values()).map(LicenseSetFactory.LicenseFilter::name)
-                    .collect(Collectors.toList()).toArray(new String[LicenseSetFactory.LicenseFilter.values().length]);
+                    .toList().toArray(new String[LicenseSetFactory.LicenseFilter.values().length]);
         }
 
         public LicenseSetFactory.LicenseFilter internalFilter() {
@@ -555,19 +554,13 @@ public class Report extends BaseAntTask {
      * @return the equivalent RAT log level.
      */
     public static Log.Level fromProjectLevel(final int level) {
-        switch (level) {
-            case Project.MSG_DEBUG:
-            case Project.MSG_VERBOSE:
-                return Log.Level.DEBUG;
-            case Project.MSG_INFO:
-                return Log.Level.INFO;
-            case Project.MSG_WARN:
-                return Log.Level.WARN;
-            case Project.MSG_ERR:
-                return Log.Level.ERROR;
-            default:
-                return Log.Level.OFF;
-        }
+        return switch (level) {
+            case Project.MSG_DEBUG, Project.MSG_VERBOSE -> Log.Level.DEBUG;
+            case Project.MSG_INFO -> Log.Level.INFO;
+            case Project.MSG_WARN -> Log.Level.WARN;
+            case Project.MSG_ERR -> Log.Level.ERROR;
+            default -> Log.Level.OFF;
+        };
     }
 
     /**
@@ -576,19 +569,13 @@ public class Report extends BaseAntTask {
      * @return the equivalent Ant Project log level.
      */
     static int toProjectLevel(final Log.Level level) {
-        switch (level) {
-            case DEBUG:
-                return Project.MSG_DEBUG;
-            case INFO:
-                return Project.MSG_INFO;
-            case WARN:
-                return Project.MSG_WARN;
-            case ERROR:
-                return Project.MSG_ERR;
-            case OFF:
-            default:
-                return -1;
-        }
+        return switch (level) {
+            case DEBUG -> Project.MSG_DEBUG;
+            case INFO -> Project.MSG_INFO;
+            case WARN -> Project.MSG_WARN;
+            case ERROR -> Project.MSG_ERR;
+            default -> -1;
+        };
     }
 
     /**

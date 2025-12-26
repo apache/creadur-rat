@@ -71,4 +71,14 @@ public class ArchiveEntryName extends DocumentName {
         superLocal = superLocal.substring(superLocal.lastIndexOf("#") + 1);
         return archiveFileName.localized(dirSeparator) + "#" + superLocal;
     }
+
+    @Override
+    public boolean equals(final Object other) {
+        return super.equals(other);
+    }
+
+    @Override
+    public int hashCode() {
+        return super.hashCode();
+    }
 }

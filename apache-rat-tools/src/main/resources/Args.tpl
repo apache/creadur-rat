@@ -31,7 +31,7 @@
         List<String> result = new ArrayList<>();
         for (Map.Entry<String, List<String>> entry : args.entrySet()) {
             result.add("--" + entry.getKey());
-            result.addAll(entry.getValue().stream().filter(Objects::nonNull).collect(Collectors.toList()));
+            result.addAll(entry.getValue().stream().filter(Objects::nonNull).toList());
         }
         return result;
     }
@@ -95,7 +95,7 @@
      * @param value the array of values to set.
      */
     protected void addArg(String key, String[] value) {
-        List<String> newValues = Arrays.stream(value).filter(StringUtils::isNotBlank).collect(Collectors.toList());
+        List<String> newValues = Arrays.stream(value).filter(StringUtils::isNotBlank).toList();
         if (!newValues.isEmpty()) {
             if (validateSet(key)) {
                 if (DefaultLog.getInstance().isEnabled(Log.Level.DEBUG)) {

@@ -23,4 +23,3 @@ The subpages listed here help you to make the most out of the corresponding vers
 
 * [0.17](./migrationguide/0.17.html)
 * [0.18](./migrationguide/0.18.html)
-* [1.0.0](./migrationguide/1.0.0.html)

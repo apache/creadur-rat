@@ -157,7 +157,7 @@ public class ReportTest {
         String urlAsFile;
         try {
             urlAsFile = Paths.get(url.toURI()).toString();
-        } catch (URISyntaxException e) {
+        } catch (NullPointerException | URISyntaxException e) {
             throw new RatException("Unable to find root directory for " + url, e);
         }
 

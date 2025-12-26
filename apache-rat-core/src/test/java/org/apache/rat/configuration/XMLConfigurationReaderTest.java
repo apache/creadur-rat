@@ -28,7 +28,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Collection;
-import java.util.stream.Collectors;
 
 import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.config.parameters.ComponentType;
@@ -74,9 +73,7 @@ public class XMLConfigurationReaderTest {
         URL url = XMLConfigurationReaderTest.class.getResource("/org/apache/rat/default.xml");
         reader.read(url.toURI());
 
-        Collection<String> readCategories = reader.readLicenses().stream().map(IHeaderMatcher::getId)
-                .collect(Collectors.toList());
-        assertArrayEquals(EXPECTED_LICENSES, readCategories.toArray(new String[0]));
+        assertArrayEquals(EXPECTED_LICENSES, reader.readLicenses().stream().map(IHeaderMatcher::getId).toArray(String[]::new));
     }
 
     @Test
@@ -85,9 +82,7 @@ public class XMLConfigurationReaderTest {
         URL url = XMLConfigurationReaderTest.class.getResource("/org/apache/rat/default.xml");
         reader.read(url.toURI());
 
-        Collection<String> readCategories = reader.readFamilies().stream().map(x -> x.getFamilyCategory().trim())
-                .collect(Collectors.toList());
-        assertArrayEquals(EXPECTED_IDS, readCategories.toArray(new String[readCategories.size()]));
+        assertArrayEquals(EXPECTED_IDS, reader.readFamilies().stream().map(x -> x.getFamilyCategory().trim()).toArray(String[]::new));
     }
 
     private void checkMatcher(String name, Class<? extends AbstractBuilder> clazz) {

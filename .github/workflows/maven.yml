@@ -31,14 +31,10 @@ jobs:
 
     strategy:
       matrix:
-# RAT-468: macos-latest starts with JDK11 and has no JDK8 available
-        os: [ubuntu-latest, windows-latest]
-# RAT-296: disable JDK10 due to
-# Caused by: sun.security.validator.ValidatorException: PKIX path building failed: sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid certification path to requested target
-#
-# RAT-497: JDK17-javadoc error fails the site build, albeit javadoc:javadoc works fine, https://bugs.java.com/bugdatabase/view_bug?bug_id=JDK-8369613
-# Java 25 is not working until we drop JDK8!
-        java: [8, 11, 21]
+        os: [macos-latest, ubuntu-latest, windows-latest]
+# RAT-497: JDK17/18/19-javadoc error fails the site build, albeit javadoc:javadoc works fine, https://bugs.java.com/bugdatabase/view_bug?bug_id=JDK-8369613
+# Due to RAT-497 we skip javadoc and site generation with JDK17!
+        java: [17, 20, 21, 25]
       fail-fast: false
 
     runs-on: ${{ matrix.os }}
@@ -85,7 +81,9 @@ jobs:
             **/target/surefire-reports
 
       - name: Generate javadoc
+        if: ${{ matrix.java != 17}}
         run: ./mvnw -e -B -V -ntp javadoc:javadoc
 
       - name: Build site
+        if: ${{ matrix.java != 17}}
         run: ./mvnw -e -B -V -ntp site site:stage

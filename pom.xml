@@ -48,9 +48,10 @@ agnostic home for software distribution comprehension and audit tools.
     <!-- MSITE-1018, RAT-397: nil out timestamp in order to get current build timestamp -->
     <project.build.outputTimestamp>a</project.build.outputTimestamp>
     <ant.version>1.10.15</ant.version>
-    <mockito.version>4.11.0</mockito.version>
-    <javaVersion>1.8</javaVersion>
-    <tika.version>2.9.4</tika.version>
+    <assertj.version>4.0.0-M1</assertj.version>
+    <javaVersion>17</javaVersion>
+    <tika.version>3.2.3</tika.version>
+    <mockito.version>5.21.0</mockito.version>
     <maven.compiler.source>${javaVersion}</maven.compiler.source>
     <maven.compiler.target>${javaVersion}</maven.compiler.target>
     <!-- This is the version of Maven required to use the RAT Maven Plugin -->
@@ -156,17 +157,25 @@ agnostic home for software distribution comprehension and audit tools.
         <version>1.14.1</version>
       </dependency>
       <dependency>
+        <groupId>org.assertj</groupId>
+        <artifactId>assertj-bom</artifactId>
+        <version>${assertj.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+      <dependency>
         <groupId>org.junit</groupId>
         <artifactId>junit-bom</artifactId>
-        <version>5.13.4</version>
+        <version>6.1.0-M1</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
       <dependency>
         <groupId>org.mockito</groupId>
-        <artifactId>mockito-core</artifactId>
+        <artifactId>mockito-bom</artifactId>
         <version>${mockito.version}</version>
-        <scope>test</scope>
+        <type>pom</type>
+        <scope>import</scope>
       </dependency>
       <dependency>
         <groupId>org.hamcrest</groupId>
@@ -213,7 +222,7 @@ agnostic home for software distribution comprehension and audit tools.
       <dependency>
         <groupId>org.assertj</groupId>
         <artifactId>assertj-core</artifactId>
-        <version>3.27.6</version>
+        <version>${assertj.version}</version>
         <scope>test</scope>
       </dependency>
       <dependency>
@@ -239,6 +248,7 @@ agnostic home for software distribution comprehension and audit tools.
       <dependency>
         <groupId>org.codehaus.groovy</groupId>
         <artifactId>groovy-all</artifactId>
+        <!-- TODO RAT-527: migrate to newer version under ASF umbrella: 5.x including itests in RAT's core -->
         <version>2.4.21</version>
         <scope>test</scope>
       </dependency>
@@ -466,8 +476,8 @@ agnostic home for software distribution comprehension and audit tools.
                 Note that this cannot use our ${javaVersion} property, so it must
                 be changed manually when we decide to move to a higher version of
                 Java
-              -->
-              <id>check-java-1.8-compat</id>
+                RAT-478: Opened https://github.com/mojohaus/animal-sniffer/issues/316 to ask how to proceed here
+              <id>check-java-17-compat</id>
               <phase>process-classes</phase>
               <goals>
                 <goal>check</goal>
@@ -479,6 +489,7 @@ agnostic home for software distribution comprehension and audit tools.
                   <version>1.0</version>
                 </signature>
               </configuration>
+              -->
             </execution>
           </executions>
         </plugin>
@@ -490,10 +501,9 @@ agnostic home for software distribution comprehension and audit tools.
         <plugin>
           <groupId>com.github.spotbugs</groupId>
           <artifactId>spotbugs-maven-plugin</artifactId>
-          <version>4.8.6.6</version>
+          <version>4.9.8.2</version>
           <configuration>
-            <!-- RAT-369: JDK21 finds 98 errors, while older releases find fewer -->
-            <maxAllowedViolations>98</maxAllowedViolations>
+            <maxAllowedViolations>46</maxAllowedViolations>
             <failOnError>true</failOnError>
             <!-- we only want to see our own problems in all subpackages -->
             <onlyAnalyze>org.apache.rat.-</onlyAnalyze>
@@ -531,6 +541,11 @@ agnostic home for software distribution comprehension and audit tools.
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-compiler-plugin</artifactId>
           <version>3.14.1</version>
+          <configuration>
+            <release>${javaVersion}</release>
+            <source>${javaVersion}</source>
+            <target>${javaVersion}</target>
+          </configuration>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
@@ -663,7 +678,7 @@ agnostic home for software distribution comprehension and audit tools.
         <plugin>
           <groupId>org.codehaus.mojo</groupId>
           <artifactId>exec-maven-plugin</artifactId>
-          <version>3.6.2</version>
+          <version>3.6.3</version>
         </plugin>
         <plugin>
           <groupId>org.codehaus.mojo</groupId>
@@ -1000,7 +1015,7 @@ agnostic home for software distribution comprehension and audit tools.
           be changed manually when we decide to move to a higher version of
           Java
         -->
-        <maven.compiler.release>8</maven.compiler.release>
+        <maven.compiler.release>17</maven.compiler.release>
       </properties>
     </profile>
     <profile>

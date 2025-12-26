@@ -24,6 +24,9 @@ import java.util.stream.Collectors;
 
 import org.apache.rat.utils.Log;
 
+/**
+ * This enumeration contains and documents RAT-specific environment variables.
+ */
 public enum EnvVar {
     /**
      * Ignore Git Global ignore file.

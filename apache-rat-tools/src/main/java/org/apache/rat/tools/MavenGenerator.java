@@ -80,7 +80,7 @@ public final class MavenGenerator {
         System.out.println("Creating " + file);
         file.getParentFile().mkdirs();
         try (InputStream template = MavenGenerator.class.getResourceAsStream("/Maven.tpl");
-             FileWriter writer = new FileWriter(file)) {
+             FileWriter writer = new FileWriter(file, StandardCharsets.UTF_8)) {
             if (template == null) {
                 throw new RuntimeException("Template /Maven.tpl not found");
             }
@@ -109,9 +109,10 @@ public final class MavenGenerator {
                         writer.append(format("package %s;%n", packageName));
                         break;
                     case "${constructor}":
-                        writer.append(format("    protected %s() {\n" +
-                                "        setDeprecationReporter();\n" +
-                                "    }%n", className));
+                        writer.append(format("""
+                                    protected %s() {
+                                        setDeprecationReporter();
+                                    }%n""", className));
                         break;
                     case "${class}":
                         writer.append(format("public abstract class %s extends AbstractMojo {%n", className));

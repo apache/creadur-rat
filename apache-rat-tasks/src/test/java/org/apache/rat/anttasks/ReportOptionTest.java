@@ -209,31 +209,32 @@ public class ReportOptionTest  {
        $3 = file name to read
        $4 = classname
      */
-    final static String ANT_FILE = "<?xml version='1.0'?>\n" +
-            "\n" +
-            "<project\n" +
-            "\txmlns:au=\"antlib:org.apache.ant.antunit\"\n" +
-            "\txmlns:rat=\"antlib:org.apache.rat.anttasks\">\n" +
-            "\n" +
-            "\t<taskdef uri=\"antlib:org.apache.ant.antunit\"\n" +
-            "\t\tresource=\"org/apache/rat/anttasks/antlib.xml\"\n" +
-            "\t\tclasspath=\"${test.classpath}\" />\n" +
-            "\n" +
-            "\t<taskdef uri=\"antlib:org.apache.rat.anttasks\"\n" +
-            "\t\tresource=\"org/apache/rat/anttasks/antlib.xml\"\n" +
-            "\t\tclasspath=\"${test.classpath}\" />\n" +
-            "\n" +
-            "\t<taskdef \n" +
-            "\t\tname=\"optionTest\"\n" +
-            "\t\tclassname=\"%5$s\"\n" +
-            "\t\tclasspath=\"${test.classpath}\" />\n" +
-            "\n" +
-            "\t<target name=\"%1$s\">\n" +
-            "\t\t<optionTest %2$s>\n" +
-            "%3$s" +
-            "\t\t\t<file file=\"%4$s\" />\n" +
-            "\t\t</optionTest>\n" +
-            "\t</target>\n" +
-            "\n" +
-            "</project>";
+    final static String ANT_FILE = """
+            <?xml version='1.0'?>
+            
+            <project
+            \txmlns:au="antlib:org.apache.ant.antunit"
+            \txmlns:rat="antlib:org.apache.rat.anttasks">
+            
+            \t<taskdef uri="antlib:org.apache.ant.antunit"
+            \t\tresource="org/apache/rat/anttasks/antlib.xml"
+            \t\tclasspath="${test.classpath}" />
+            
+            \t<taskdef uri="antlib:org.apache.rat.anttasks"
+            \t\tresource="org/apache/rat/anttasks/antlib.xml"
+            \t\tclasspath="${test.classpath}" />
+            
+            \t<taskdef\s
+            \t\tname="optionTest"
+            \t\tclassname="%5$s"
+            \t\tclasspath="${test.classpath}" />
+            
+            \t<target name="%1$s">
+            \t\t<optionTest %2$s>
+            %3$s\
+            \t\t\t<file file="%4$s" />
+            \t\t</optionTest>
+            \t</target>
+            
+            </project>""";
 }

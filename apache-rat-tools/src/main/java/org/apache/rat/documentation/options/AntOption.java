@@ -150,7 +150,7 @@ public class AntOption extends AbstractOption {
                 default:
                     buildType = new BuildType(type, type.getDisplayName()) {
                         protected String getMethodFormat(final AntOption antOption) {
-                            return String.format("<%1$s>%%s</%1$s>\n", WordUtils.uncapitalize(antOption.getArgName()));
+                            return String.format("<%1$s>%%s</%1$s>%n", WordUtils.uncapitalize(antOption.getArgName()));
                         }
                     };
                     BUILD_TYPE_MAP.put(type, buildType);
@@ -348,7 +348,7 @@ public class AntOption extends AbstractOption {
          * @return the format used for multiple arguments.
          */
         protected String getMultipleFormat(final AntOption antOption) {
-            return String.format("<%1$s>%%s</%1$s>\n", tag);
+            return String.format("<%1$s>%%s</%1$s>%n", tag);
         }
 
         /**
@@ -357,7 +357,7 @@ public class AntOption extends AbstractOption {
          * @return the method format for the option.
          */
         protected String getMethodFormat(final AntOption antOption) {
-            return antOption.hasArgs() ? getMultipleFormat(antOption) : String.format("<%1$s>%%s</%1$s>\n", tag);
+            return antOption.hasArgs() ? getMultipleFormat(antOption) : String.format("<%1$s>%%s</%1$s>%n", tag);
         }
 
         /**

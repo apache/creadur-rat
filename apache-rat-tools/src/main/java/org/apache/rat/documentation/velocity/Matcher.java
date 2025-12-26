@@ -138,8 +138,7 @@ public class Matcher {
      */
     Collection<Matcher> getChildren() {
         if (self != null && enclosed != null && IHeaderMatcher.class.equals(enclosed.desc.getChildType())) {
-            if (self instanceof AbstractMatcherContainer) {
-                AbstractMatcherContainer matcherContainer = (AbstractMatcherContainer) self;
+            if (self instanceof AbstractMatcherContainer matcherContainer) {
                 return matcherContainer.getEnclosed().stream().map(Matcher::new).collect(Collectors.toList());
             }
             try {

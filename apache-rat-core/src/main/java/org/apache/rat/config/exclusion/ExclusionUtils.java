@@ -20,9 +20,9 @@ package org.apache.rat.config.exclusion;
 
 import java.io.File;
 import java.io.FileFilter;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -136,9 +136,9 @@ public final class ExclusionUtils {
         verifyFile(patternFile);
         Objects.requireNonNull(commentFilters, "commentFilters");
         try {
-            return ExtendedIterator.create(IOUtils.lineIterator(new FileReader(patternFile))).filter(commentFilters);
-        } catch (FileNotFoundException e) {
-            throw new ConfigurationException(format("%s is not a valid file.", patternFile));
+            return ExtendedIterator.create(IOUtils.lineIterator(new FileReader(patternFile, StandardCharsets.UTF_8))).filter(commentFilters);
+        } catch (IOException e) {
+            throw new ConfigurationException(format("%s is not a valid file.", patternFile), e);
         }
     }
 
@@ -165,7 +165,7 @@ public final class ExclusionUtils {
         Objects.requireNonNull(commentFilters, "commentFilters");
         // can not return LineIterator directly as the patternFile will not be closed leading
         // to a resource leak in some cases.
-        try (FileReader reader = new FileReader(patternFile)) {
+        try (FileReader reader = new FileReader(patternFile, StandardCharsets.UTF_8)) {
             List<String> result = new ArrayList<>();
             Iterator<String> iter = new LineIterator(reader) {
                 @Override

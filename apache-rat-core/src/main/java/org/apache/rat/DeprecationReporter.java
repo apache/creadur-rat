@@ -134,7 +134,7 @@ public final class DeprecationReporter {
 
     /**
      * Annotation to provide deprecation information for Java8.
-     * TODO remove this when Java 8 no longer supported.
+     * TODO RAT-528: remove this when Java 8 is no longer supported.
      */
     @Target({ElementType.TYPE})
     @Retention(RetentionPolicy.RUNTIME)

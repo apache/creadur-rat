@@ -22,7 +22,7 @@ package org.apache.rat.analysis;
 import java.io.StringReader;
 
 import java.util.Collections;
-import java.util.stream.Collectors;
+
 import org.apache.rat.Defaults;
 import org.apache.rat.api.Document;
 import org.apache.rat.configuration.builders.AnyBuilder;
@@ -46,7 +46,7 @@ public class HeaderCheckWorkerTest {
         HeaderCheckWorker worker = new HeaderCheckWorker(new TestingMatcher(), new StringReader(""), Lists.list(matcher), subject);
         worker.read();
         assertThat(subject.getMetaData().unapprovedLicenses().count()).isEqualTo(1);
-        assertThat(subject.getMetaData().unapprovedLicenses().collect(Collectors.toList()).get(0).getLicenseFamily()).isEqualTo(ILicenseFamily.UNKNOWN);
+        assertThat(subject.getMetaData().unapprovedLicenses().toList().get(0).getLicenseFamily()).isEqualTo(ILicenseFamily.UNKNOWN);
     }
 
     @Test
