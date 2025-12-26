@@ -22,6 +22,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.StringWriter;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
@@ -46,6 +47,8 @@ import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.runtime.RuntimeConstants;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 /**
  * Generates the Maven mojo tests.
  */
@@ -67,6 +70,7 @@ public final class TestGenerator {
     /** The template for the test maven stubs */
     private final Template stubTemplate;
 
+    @SuppressFBWarnings("PATH_TRAVERSAL_IN")
     private TestGenerator(final String packageName, final String resourceDirectory, final String testDirectory) {
         this.packageName = new CasedString(CasedString.StringCase.DOT, packageName);
         this.resourceDirectory = Paths.get(resourceDirectory);
@@ -158,13 +162,13 @@ public final class TestGenerator {
 
     /**
      * Write the {@code MavenTest.java} file
-     * @param context
-     * @throws IOException
+     * @param context The velocity context to write the test file with.
+     * @throws IOException on error
      */
     private void writeTestFiles(final VelocityContext context) throws IOException {
         File javaFile = testDirectory.resolve("MavenTest.java").toFile();
         FileUtils.mkDir(javaFile.getParentFile());
-        try (FileWriter fileWriter = new FileWriter(javaFile)) {
+        try (FileWriter fileWriter = new FileWriter(javaFile, StandardCharsets.UTF_8)) {
             javaTemplate.merge(context, fileWriter);
         }
     }
@@ -174,7 +178,7 @@ public final class TestGenerator {
      * Generates method definitions (one for each pom file) to be included in {@code MavenTest.java}.
      * @param context het velocity context.
      * @return a String comprising all the method definitions.
-     * @throws IOException
+     * @throws IOException on IO error
      */
     private String writeTestPoms(final VelocityContext context) throws IOException {
 
@@ -209,7 +213,7 @@ public final class TestGenerator {
             context.put("rat_configuration", configuration.toString());
 
             File pomFile = testPath.resolve("pom.xml").toFile();
-            try (FileWriter writer = new FileWriter(pomFile)) {
+            try (FileWriter writer = new FileWriter(pomFile, StandardCharsets.UTF_8)) {
                 pomTemplate.merge(context, writer);
             }
 
@@ -217,7 +221,7 @@ public final class TestGenerator {
             File stubFile = testDirectory.resolve("stubs")
                     .resolve(testData.getClassName() + ".java").toFile();
             FileUtils.mkDir(stubFile.getParentFile());
-            try (FileWriter fileWriter = new FileWriter(stubFile)) {
+            try (FileWriter fileWriter = new FileWriter(stubFile, StandardCharsets.UTF_8)) {
                 stubTemplate.merge(context, fileWriter);
             }
 

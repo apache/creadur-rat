@@ -16,21 +16,5 @@
   limitations under the License.
 -->
 <FindBugsFilter>
-  <Match>
-    <!--
-    Convenience constructors that allow setting a charset are not available in Java8 for PrintStream.
-  -->
-    <Class name="org.apache.rat.cli.Report"/>
-    <Bug pattern="DM_DEFAULT_ENCODING"/>
-  </Match>
-
-
-  <Match>
-    <Bug pattern='PATH_TRAVERSAL_IN'/>
-  </Match>
-
-  <Match>
-    <Bug pattern='EI_EXPOSE_REP'/>
-  </Match>
 
 </FindBugsFilter>

@@ -124,31 +124,6 @@ public class RatTool {
     public List<String> uiNames() {
         return new ArrayList<>(uiMap.keySet());
     }
-//
-//    /**
-//     * Gets a map client option name to CLI Option.
-//     * @return a map client option name to CLI Option.
-//     */
-//    public Map<String, CLIOption> cliOptions() {
-//        Map<String, CLIOption> result = new TreeMap<>();
-//        for (Option option : OptionCollection.buildOptions().getOptions()) {
-//            CLIOption cliOption = new CLIOption(option);
-//            result.put(cliOption.getName(), cliOption);
-//        }
-//        return result;
-//    }
-
-//    /**
-//     * Gets a map client option name to Maven Option.
-//     * @return a map client option name to Maven Option.
-//     */
-//    public Map<String, MavenOption> mvnOptions() {
-//        Map<String, MavenOption> result = new TreeMap<>();
-//        for (MavenOption mavenOption : MavenOption.getMavenOptions()) {
-//            result.put(CLIOption.createName(mavenOption.getOption()), mavenOption);
-//        }
-//        return result;
-//    }
 
     /**
      * Escapes a text string.

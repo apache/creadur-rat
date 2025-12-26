@@ -16,10 +16,5 @@
   limitations under the License.
 -->
 <FindBugsFilter>
-    <Match>
-        <!--
-        Convenience constructors that allow setting a charset are not available in Java8 for PrintStream.
-        <Bug pattern="DM_DEFAULT_ENCODING"/>
-      -->
-    </Match>
+
 </FindBugsFilter>
