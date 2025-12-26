@@ -199,7 +199,7 @@
                 <argument>-t</argument>
                 <argument>${project.build.testSourceDirectory}</argument>
                 <argument>-r</argument>
-                <argument>${project.build.testSourceDirectory}/../resources</argument>
+                <argument>${project.build.testSourceDirectory}/../../resources</argument>
                 <argument>-p</argument>
                 <argument>org.apache.rat.maven</argument>
               </arguments>
@@ -263,7 +263,20 @@
               <directory>src/main/java/org/apache/rat/maven/</directory>
               <includes>
                 <include>AbstractMaven.java</include>
+                <include>stubs/**</include>
               </includes>
+              <followSymlinks>false</followSymlinks>
+            </fileset>
+            <fileset>
+              <directory>src/test/java/org/apache/rat/maven/</directory>
+              <includes>
+                <include>MavenTest.java</include>
+                <include>stubs/**</include>
+              </includes>
+              <followSymlinks>false</followSymlinks>
+            </fileset>
+            <fileset>
+              <directory>src/test/resources/org/apache/rat/maven/stubs</directory>
               <followSymlinks>false</followSymlinks>
             </fileset>
           </filesets>

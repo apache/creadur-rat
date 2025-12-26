@@ -25,6 +25,7 @@ import java.io.StringWriter;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.Locale;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.DefaultParser;
@@ -33,6 +34,7 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.commons.text.WordUtils;
 import org.apache.rat.DeprecationReporter;
 import org.apache.rat.VersionInfo;
 import org.apache.rat.testhelpers.FileUtils;
@@ -53,20 +55,22 @@ public final class TestGenerator {
     /** The package name as a cased string */
     private final CasedString packageName;
     /** The resource directory where the test resources will be written */
-    private final String resourceDirectory;
+    private final Path resourceDirectory;
     /** The directory where the test classes will be written*/
-    private final String testDirectory;
+    private final Path testDirectory;
     /** The template for the pom.xml files */
     private final Template pomTemplate;
     /** The template for the test class file */
     private final Template javaTemplate;
     /** The template for the methods within the test class */
     private final Template methodTemplate;
+    /** The template for the test maven stubs */
+    private final Template stubTemplate;
 
     private TestGenerator(final String packageName, final String resourceDirectory, final String testDirectory) {
         this.packageName = new CasedString(CasedString.StringCase.DOT, packageName);
-        this.resourceDirectory = resourceDirectory;
-        this.testDirectory = testDirectory;
+        this.resourceDirectory = Paths.get(resourceDirectory);
+        this.testDirectory = Paths.get(testDirectory).resolve(this.packageName.toCase(CasedString.StringCase.SLASH));
 
         VelocityEngine velocityEngine = new VelocityEngine();
         velocityEngine.setProperty(RuntimeConstants.RESOURCE_LOADER, "classpath");
@@ -76,11 +80,14 @@ public final class TestGenerator {
         // retrieve the templates
         CasedString casedTemplateName = new CasedString(CasedString.StringCase.DOT, TestGenerator.class.getName());
         String[] nameParts = Arrays.copyOf(casedTemplateName.getSegments(), casedTemplateName.getSegments().length);
-        pomTemplate = velocityEngine.getTemplate(casedTemplateName.toCase(CasedString.StringCase.SLASH) + ".vm");
+        nameParts[nameParts.length - 1] = "TestPom.vm";
+        pomTemplate = velocityEngine.getTemplate(CasedString.StringCase.SLASH.assemble(nameParts));
         nameParts[nameParts.length - 1] = "TestJava.vm";
         javaTemplate = velocityEngine.getTemplate(CasedString.StringCase.SLASH.assemble(nameParts));
         nameParts[nameParts.length - 1] = "TestMethod.vm";
         methodTemplate = velocityEngine.getTemplate(CasedString.StringCase.SLASH.assemble(nameParts));
+        nameParts[nameParts.length - 1] = "TestStub.vm";
+        stubTemplate = velocityEngine.getTemplate(CasedString.StringCase.SLASH.assemble(nameParts));
     }
 
     /**
@@ -88,7 +95,9 @@ public final class TestGenerator {
      * @return the resource path.
      */
     private Path resourcePath() {
-        return Paths.get(resourceDirectory).resolve(packageName.toCase(CasedString.StringCase.SLASH));
+        return resourceDirectory
+                .resolve(packageName.toCase(CasedString.StringCase.SLASH))
+                .resolve("stubs");
     }
 
     /**
@@ -144,7 +153,7 @@ public final class TestGenerator {
         context.put("rat_version", versionInfo.getSpecVersion());
         context.put("plugin_version", versionInfo.getVersion());
         context.put("tests", writeTestPoms(context));
-        writeTestFile(context);
+        writeTestFiles(context);
     }
 
     /**
@@ -152,9 +161,8 @@ public final class TestGenerator {
      * @param context
      * @throws IOException
      */
-    private void writeTestFile(final VelocityContext context) throws IOException {
-        File javaFile = Paths.get(testDirectory).resolve(packageName.toCase(CasedString.StringCase.SLASH))
-                .resolve("MavenTest.java").toFile();
+    private void writeTestFiles(final VelocityContext context) throws IOException {
+        File javaFile = testDirectory.resolve("MavenTest.java").toFile();
         FileUtils.mkDir(javaFile.getParentFile());
         try (FileWriter fileWriter = new FileWriter(javaFile)) {
             javaTemplate.merge(context, fileWriter);
@@ -173,15 +181,23 @@ public final class TestGenerator {
         StringWriter funcCode = new StringWriter();
 
         for (final TestData testData : new ReportTestDataProvider().getOptionTests(MavenOption.UNSUPPORTED_SET)) {
-            context.put("pomFile", testData.getTestName() + "/pom.xml");
+            context.put("option", testData.getOption());
+            // relative directory to test resources.
+            Path testDir = Paths.get("src/test/resources").resolve(packageName.toCase(CasedString.StringCase.SLASH))
+                    .resolve("stubs").resolve(testData.getTestName());
+            context.put("testdir", testDir);
+            context.put("basedir", Paths.get("target/test-classes")
+                    .resolve(packageName.toCase(CasedString.StringCase.SLASH))
+                    .resolve("stubs").resolve(testData.getTestName()));
+            // absolute path to the test resources.
             Path testPath = resourcePath().resolve(testData.getTestName());
             context.put("baseDir", testPath.toFile().getAbsolutePath());
             FileUtils.mkDir(testPath.toFile());
-            CasedString testName = new CasedString(CasedString.StringCase.SLASH, testData.getTestName());
-
-            context.put("artifactId", testName.toCase(CasedString.StringCase.KEBAB));
+            CasedString casedTestName = new CasedString(CasedString.StringCase.CAMEL, testData.getClassName());
+            context.put("artifactId", casedTestName.toCase(CasedString.StringCase.KEBAB).toLowerCase(Locale.ROOT));
             context.put("testName", testData.getTestName());
-            context.put("funcName", String.join("", testName.getSegments()));
+            context.put("stubName", testData.getClassName());
+            context.put("funcName", WordUtils.uncapitalize(testData.getClassName()));
 
             StringBuilder configuration = new StringBuilder();
             for (Pair<Option, String[]> pair : testData.getArgs()) {
@@ -198,6 +214,12 @@ public final class TestGenerator {
             }
 
             methodTemplate.merge(context, funcCode);
+            File stubFile = testDirectory.resolve("stubs")
+                    .resolve(testData.getClassName() + ".java").toFile();
+            FileUtils.mkDir(stubFile.getParentFile());
+            try (FileWriter fileWriter = new FileWriter(stubFile)) {
+                stubTemplate.merge(context, fileWriter);
+            }
 
         }
         return funcCode.toString();
