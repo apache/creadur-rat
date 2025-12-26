@@ -180,12 +180,12 @@ public final class CodeGenerator {
     /**
      * Gets parameter annotation for the method in {@code AbstractMaven.java}.
      * @param mavenOption the maven option generating the method.
-     * @param methodName the method name.
+     * @param propertyName the name of the "rat.X" property for command line override.
      * @return the method name description for the method in {@code AbstractMaven.java}.
      */
-    private String createParameterAnnotation(final MavenOption mavenOption, final String methodName) {
+    private String createParameterAnnotation(final MavenOption mavenOption, final String propertyName) {
         StringBuilder sb = new StringBuilder("@Parameter");
-        String property = mavenOption.hasArgs() ? null : format("property = \"rat.%s\"", methodName);
+        String property = mavenOption.hasArgs() ? null : format("property = \"rat.%s\"", propertyName);
         String defaultValue = mavenOption.isDeprecated() ? null : mavenOption.getDefaultValue();
         if (property != null || defaultValue != null) {
             sb.append("(");
@@ -214,7 +214,7 @@ public final class CodeGenerator {
             context.put("argDesc", createArgDesc(mavenOption, desc));
             String functionName = createMethodName(mavenOption);
             context.put("fname", functionName);
-            context.put("parameterAnnotation", createParameterAnnotation(mavenOption, functionName));
+            context.put("parameterAnnotation", createParameterAnnotation(mavenOption, mavenOption.getName()));
             context.put("args", (mavenOption.hasArg() ? "String" : "boolean") + (mavenOption.hasArgs() ? "[]" : ""));
 
             methodTemplate.merge(context, methodWriter);

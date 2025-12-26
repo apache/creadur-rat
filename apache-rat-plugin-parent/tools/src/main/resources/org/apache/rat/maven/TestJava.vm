@@ -16,15 +16,12 @@
  */
 package ${packageName};
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Fail.fail;
-
-import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Map;
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathFactory;
+import org.apache.maven.api.plugin.testing.Basedir;
 import org.apache.maven.api.plugin.testing.InjectMojo;
 import org.apache.maven.api.plugin.testing.MojoTest;
+import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.rat.testhelpers.data.ReportTestDataProvider;
 import org.apache.rat.testhelpers.data.TestData;
 import org.apache.rat.testhelpers.data.ValidatorData;
@@ -32,7 +29,8 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledOnOs;
 import org.junit.jupiter.api.condition.OS;
-import org.junit.jupiter.api.io.TempDir;
+
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
  * Tests extracted from {@link ReportTestDataProvider}.
@@ -41,15 +39,9 @@ import org.junit.jupiter.api.io.TempDir;
 @MojoTest
 public class MavenTest {
 
-    @TempDir
-    static Path tempDir;
-
     static ReportTestDataProvider reportTestDataProvider = new ReportTestDataProvider();
 
-
-    final Map<String, TestData> testDataMap = reportTestDataProvider.getOptionTestMap(MavenOption.UNSUPPORTED_LIST);
-
-    private final static XPath xPath = XPathFactory.newInstance().newXPath();
+    final Map<String, TestData> testDataMap = reportTestDataProvider.getOptionTestMap(MavenOption.UNSUPPORTED_SET);
 
     @AfterAll
     @EnabledOnOs(OS.WINDOWS)

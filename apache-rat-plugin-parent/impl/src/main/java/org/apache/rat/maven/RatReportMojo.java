@@ -18,7 +18,6 @@
  */
 package org.apache.rat.maven;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -412,7 +411,7 @@ public class RatReportMojo extends AbstractRatMojo implements MavenMultiPageRepo
     Reporter.Output readReportFile() throws MavenReportException {
         File f = new File(outputDirectory, ".rat.xml");
         try (InputStream inputStream = new FileInputStream(f)) {
-            return new Reporter.Output(DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(inputStream));
+            return Reporter.Output.builder().document(DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(inputStream)).build();
         } catch (FileNotFoundException e) {
             throw new MavenReportException("Can not find RAT report file.  Was reporter executed?");
         } catch (IOException | ParserConfigurationException | SAXException e) {
@@ -447,7 +446,6 @@ public class RatReportMojo extends AbstractRatMojo implements MavenMultiPageRepo
         sink.link(bundle.getString("report.rat.url"));
         sink.text(bundle.getString("report.rat.fullName"));
         sink.link_();
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
         File f = new File(outputDirectory, ".rat.xhtml5");
         try {
             readReportFile().format(StyleSheets.XHTML5.getStyleSheet(), () -> Files.newOutputStream(f.toPath()));

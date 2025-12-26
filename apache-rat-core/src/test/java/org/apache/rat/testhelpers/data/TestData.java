@@ -27,12 +27,14 @@ import java.util.function.Consumer;
 import org.apache.commons.cli.Option;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.commons.text.WordUtils;
+import org.apache.rat.ui.ArgumentTracker;
 import org.apache.rat.utils.CasedString;
 
 /**
  * The definition of a test.
  */
-public class TestData {
+public final class TestData {
     /** if set, the expected exception from the test. */
     private Exception expectedException;
     /** The sub name of the test */
@@ -48,13 +50,23 @@ public class TestData {
      * Constructs the Test data
      * @param name the sub name of the test.  May not be {@code null} but may be an empty string.  Should
      * be specified in Camel case for multiple words.
-     * @param commandLine The command line for the test.
-     * @param setupFiles the method to set up the files for the test.
-     * @param validator the validator for the results of the test.
+     * @param commandLine The command line for the test.  May not be {@code null} but may consist of a single {@link ImmutablePair#nullPair()}.
+     * @param setupFiles the method to set up the files for the test. May not be {@code null}.
+     * @param validator the validator for the results of the test. May not be {@code null}.
      */
     public TestData(String name, List<ImmutablePair<Option, String[]>> commandLine,
              Consumer<Path> setupFiles,
              Consumer<ValidatorData> validator) {
+        Objects.requireNonNull(name, " name cannot be null");
+        Objects.requireNonNull(commandLine, "commandLine cannot be null");
+        Objects.requireNonNull(setupFiles, "setupFiles cannot be null");
+        Objects.requireNonNull(validator, "validator cannot be null");
+        if (name.contains("/")) {
+            throw new IllegalArgumentException("name may not contain '/', use camel case instead");
+        }
+        if (commandLine.isEmpty()) {
+            throw new IllegalArgumentException("commandLine may not be empty but contain an ImmutablePair.nullPair()");
+        }
         this.name = name;
         this.commandLine = commandLine;
         this.setupFiles = setupFiles;
@@ -172,17 +184,34 @@ public class TestData {
      * @return the unique test name
      */
     public String getTestName() {
-        List<String> parts = new ArrayList<>();
+         new ArrayList<>();
         String result = null;
         if (getOption() == null) {
             result = name + "_DefaultTest";
         } else {
-            parts.addAll(Arrays.asList(new CasedString(CasedString.StringCase.KEBAB, getOption().getLongOpt()).getSegments()));
-            result = CasedString.StringCase.CAMEL.assemble(parts.toArray(new String[0]));
-            if (name.length() > 0) {
+            result = new CasedString(CasedString.StringCase.KEBAB, ArgumentTracker.extractKey(getOption())).toString();
+            if (!name.isEmpty()) {
                 result += "/" + name;
             }
         }
         return result;
+    }
+
+    /**
+     * Gets the test name as a class name.  This is based on the option concatenated with the name.
+     * @return the unique Java class name
+     */
+    public String getClassName() {
+        String result = null;
+        if (getOption() == null) {
+            result = name + "_DefaultTest";
+        } else {
+            List<String> parts = new ArrayList<>(Arrays.asList(new CasedString(CasedString.StringCase.KEBAB, ArgumentTracker.extractKey(getOption())).getSegments()));
+            if (!name.isEmpty()) {
+                parts.addAll(Arrays.asList(new CasedString(CasedString.StringCase.CAMEL, name).getSegments()));
+            }
+            result = CasedString.StringCase.CAMEL.assemble(parts.toArray(new String[0]));
+        }
+        return WordUtils.capitalize(result);
     }
 }

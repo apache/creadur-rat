@@ -404,7 +404,7 @@ public class ReportTestDataProvider {
                 });
 
         // verify exclude removes the files
-        TestData test2 = new TestData("includeTestProof", Collections.singletonList(ImmutablePair.of(excludeOption, OptionTestDataProvider.EXCLUDE_ARGS)),
+        TestData test2 = new TestData(DataUtils.asDirName(option), Collections.singletonList(ImmutablePair.of(excludeOption, OptionTestDataProvider.EXCLUDE_ARGS)),
                 setup,
                 validatorData -> {
                     assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(1);
@@ -459,7 +459,7 @@ public class ReportTestDataProvider {
         ImmutablePair<Option, String[]> excludes = ImmutablePair.of(Arg.EXCLUDE.find("input-exclude"),
                 new String[]{"*~more", "*~"});
 
-        TestData test1 = new TestData("/includeStdValidation", Collections.singletonList(excludes),
+        TestData test1 = new TestData("includeStdValidation", Collections.singletonList(excludes),
                 setup,
                 validatorData -> {
                     assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(4);
@@ -1240,6 +1240,9 @@ public class ReportTestDataProvider {
                                     break;
                                 case UNAPPROVED_LICENSES:
                                     TextUtils.assertContainsExactly(1, "Files with unapproved licenses:" + System.lineSeparator() + "  /Missing.java", actualText);
+                                    break;
+                                case XHTML5:
+                                    TextUtils.assertPatternInTarget("<td>Approved<\\/td>\\s+<td>1<\\/td>\\s+<td>A count of approved licenses.<\\/td>", actualText);
                                     break;
                                 default:
                                     fail("No test for stylesheet " + sheet);

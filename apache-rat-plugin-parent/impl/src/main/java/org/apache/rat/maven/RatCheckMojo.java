@@ -55,9 +55,17 @@ import static java.lang.String.format;
 @Mojo(name = "check", defaultPhase = LifecyclePhase.VALIDATE, threadSafe = true)
 public final class RatCheckMojo extends AbstractRatMojo {
 
+    /** The output from the last {@link #execute()}. */
+    private Reporter.Output output;
+
     public RatCheckMojo() {
         super();
     }
+
+    public Reporter.Output getOutput() {
+        return output;
+    }
+
     /** The default output file if no other is specified. */
     @Parameter(defaultValue = "${project.build.directory}/rat.txt", readonly = true)
     private File defaultReportFile;
@@ -102,12 +110,13 @@ public final class RatCheckMojo extends AbstractRatMojo {
             ReportConfiguration config = getConfiguration();
             logLicenses(config.getLicenses(LicenseFilter.ALL));
             if (verbose) {
-                config.reportExclusions(logWriter);
+                config.reportExclusions(logWoutput = reporter.execute();
+                writeMojoRatReport(output);
+                iriter);
             }
             try {
                 final Reporter reporter = new Reporter(config);
-            final Reporter.Output output = reporter.execute();
-            writeMojoRatReport(output);if (verbose) {
+                f (verbose) {
                     output.writeSummary(DefaultLog.getInstance().asWriter());
                 }
                 // produce the requested output.

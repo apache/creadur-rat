@@ -190,8 +190,7 @@ public class OptionTestDataProvider {
                         DocumentName docName = validatorData.mkDocName(fname);
                         assertThat(excluder.matches(docName)).as(() -> dump(option, fname, excluder, docName)).isFalse();
                     }
-                }) {
-        };
+                });
         return Collections.singletonList(test1);
     }
 
