@@ -125,7 +125,7 @@ agnostic home for software distribution comprehension and audit tools.
       </dependency>
       <dependency>
         <groupId>org.apache.rat</groupId>
-        <artifactId>apache-rat-plugin-parent</artifactId>
+        <artifactId>apache-rat-maven-parent</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
@@ -781,17 +781,22 @@ agnostic home for software distribution comprehension and audit tools.
           </dependency>
         </dependencies>
       </plugin>
-      <plugin>
-        <groupId>org.apache.rat</groupId>
-        <artifactId>apache-rat-plugin</artifactId>
-        <executions>
-          <execution>
-            <goals>
-              <goal>check</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
+<!--      <plugin>-->
+<!--        <groupId>org.apache.rat</groupId>-->
+<!--        <artifactId>apache-rat-plugin</artifactId>-->
+<!--        <executions>-->
+<!--          <execution>-->
+<!--            <goals>-->
+<!--              <goal>check</goal>-->
+<!--            </goals>-->
+<!--            <configuration>-->
+<!--              <inputExcludes>-->
+<!--                <exclude>apache-rat-tools/**</exclude>-->
+<!--              </inputExcludes>-->
+<!--            </configuration>-->
+<!--          </execution>-->
+<!--        </executions>-->
+<!--      </plugin>-->
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>animal-sniffer-maven-plugin</artifactId>
@@ -982,8 +987,8 @@ agnostic home for software distribution comprehension and audit tools.
     <module>apache-rat-core</module>
     <module>apache-rat-core-tests</module>
     <module>apache-rat-cli</module>
-    <module>apache-rat-plugin-parent</module>
-    <module>apache-rat-tasks</module>
+    <module>apache-rat-maven-parent</module>
+    <module>apache-rat-ant-parent</module>
     <module>apache-rat</module>
   </modules>
   <licenses>

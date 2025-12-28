@@ -1,0 +1,11 @@
+        /**
+         * Adds a configured ${argType} to the ${option.keyValue}.
+         * @param ${argName} The ${argName} to add to ${option.keyValue}.
+         */
+        public void addConfigured${argType}(${argType} ${argName}) {
+            for (Resource resource : ${argName}) {
+                if (resource.isFilesystemOnly()) {
+                    argumentTracker.addArg("${option.keyValue}", ((FileResource) resource).getFile().getAbsolutePath());
+                }
+            }
+        }

@@ -1,0 +1,7 @@
+        /**
+         * Sets the ${argName} (${option.keyValue}).
+         * @param ${argName} The ${argName} value.
+         */
+        public void add${argType}(String ${argName}) {
+            addArg("${option.keyValue}", ${argName});
+        }
