@@ -27,6 +27,7 @@ import org.apache.tools.ant.types.resources.FileResource;
 * Generated class to provide Ant support for standard RAT command line options.
 * DO NOT EDIT - GENERATED FILE
 */
+@SuppressWarnings("checkstyle:LineLength")
 public final class AntReport extends AbstractAntReport {
 
     /**

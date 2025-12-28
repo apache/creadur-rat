@@ -20,4 +20,4 @@
      * Handles ${className} processing.
      */
     public class ${className} {
-        ${className}() {}
+        ${className}() { }

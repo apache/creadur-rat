@@ -27,6 +27,7 @@ import org.apache.tools.ant.types.resources.FileResource;
 * Generated class to provide Ant support for standard RAT command line options.
 * DO NOT EDIT - GENERATED FILE
 */
+@SuppressWarnings("checkstyle:LineLength")
 public final class AntReport extends AbstractAntReport {
 
     /**
@@ -120,12 +121,12 @@ public final class AntReport extends AbstractAntReport {
      * Handles Config processing.
      */
     public class Config {
-        Config() {}
+        Config() { }
         /**
          * Adds a configured FileSet to the config.
          * @param fileSet The fileSet to add to config.
          */
-        public void addConfiguredFileSet(FileSet fileSet) {
+        public void addConfiguredFileSet(final FileSet fileSet) {
             for (Resource resource : fileSet) {
                 if (resource.isFilesystemOnly()) {
                     argumentTracker.addArg("config", ((FileResource) resource).getFile().getAbsolutePath());
@@ -147,12 +148,12 @@ public final class AntReport extends AbstractAntReport {
      * Handles Licenses processing.
      */
     public class Licenses {
-        Licenses() {}
+        Licenses() { }
         /**
          * Adds a configured FileSet to the licenses.
          * @param fileSet The fileSet to add to licenses.
          */
-        public void addConfiguredFileSet(FileSet fileSet) {
+        public void addConfiguredFileSet(final FileSet fileSet) {
             for (Resource resource : fileSet) {
                 if (resource.isFilesystemOnly()) {
                     argumentTracker.addArg("licenses", ((FileResource) resource).getFile().getAbsolutePath());
@@ -198,19 +199,19 @@ public final class AntReport extends AbstractAntReport {
      * Handles LicensesApproved processing.
      */
     public class LicensesApproved {
-        LicensesApproved() {}
+        LicensesApproved() { }
         /**
          * Adds the licenseID {@link AbstractAntReport.Lst} to licenses-approved.
          * @param licenseID The Lst to add to licenses-approved.
          */
-        public void addConfiguredLst(Lst licenseID) {
+        public void addConfiguredLst(final Lst licenseID) {
             argumentTracker.addArg("licenses-approved", licenseID.toString());
         }
         /**
          * Adds a configured FileSet to the licenses-approved.
          * @param fileSet The fileSet to add to licenses-approved.
          */
-        public void addConfiguredFileSet(FileSet fileSet) {
+        public void addConfiguredFileSet(final FileSet fileSet) {
             for (Resource resource : fileSet) {
                 if (resource.isFilesystemOnly()) {
                     argumentTracker.addArg("licenses-approved", ((FileResource) resource).getFile().getAbsolutePath());
@@ -223,12 +224,12 @@ public final class AntReport extends AbstractAntReport {
      * Handles LicensesApprovedFile processing.
      */
     public class LicensesApprovedFile {
-        LicensesApprovedFile() {}
+        LicensesApprovedFile() { }
         /**
          * Adds a configured FileSet to the licenses-approved.
          * @param fileSet The fileSet to add to licenses-approved.
          */
-        public void addConfiguredFileSet(FileSet fileSet) {
+        public void addConfiguredFileSet(final FileSet fileSet) {
             for (Resource resource : fileSet) {
                 if (resource.isFilesystemOnly()) {
                     argumentTracker.addArg("licenses-approved", ((FileResource) resource).getFile().getAbsolutePath());
@@ -248,24 +249,24 @@ public final class AntReport extends AbstractAntReport {
      * Handles LicenseFamiliesApproved processing.
      */
     public class LicenseFamiliesApproved {
-        LicenseFamiliesApproved() {}
-        /**
-         * Adds the familyID {@link AbstractAntReport.Lst} to license-families-approved.
-         * @param familyID The Lst to add to license-families-approved.
-         */
-        public void addConfiguredLst(Lst familyID) {
-            argumentTracker.addArg("license-families-approved", familyID.toString());
-        }
+        LicenseFamiliesApproved() { }
         /**
          * Adds a configured FileSet to the license-families-approved.
          * @param fileSet The fileSet to add to license-families-approved.
          */
-        public void addConfiguredFileSet(FileSet fileSet) {
+        public void addConfiguredFileSet(final FileSet fileSet) {
             for (Resource resource : fileSet) {
                 if (resource.isFilesystemOnly()) {
                     argumentTracker.addArg("license-families-approved", ((FileResource) resource).getFile().getAbsolutePath());
                 }
             }
+        }
+        /**
+         * Adds the familyID {@link AbstractAntReport.Lst} to license-families-approved.
+         * @param familyID The Lst to add to license-families-approved.
+         */
+        public void addConfiguredLst(final Lst familyID) {
+            argumentTracker.addArg("license-families-approved", familyID.toString());
         }
     }
 
@@ -273,12 +274,12 @@ public final class AntReport extends AbstractAntReport {
      * Handles LicenseFamiliesApprovedFile processing.
      */
     public class LicenseFamiliesApprovedFile {
-        LicenseFamiliesApprovedFile() {}
+        LicenseFamiliesApprovedFile() { }
         /**
          * Adds a configured FileSet to the license-families-approved.
          * @param fileSet The fileSet to add to license-families-approved.
          */
-        public void addConfiguredFileSet(FileSet fileSet) {
+        public void addConfiguredFileSet(final FileSet fileSet) {
             for (Resource resource : fileSet) {
                 if (resource.isFilesystemOnly()) {
                     argumentTracker.addArg("license-families-approved", ((FileResource) resource).getFile().getAbsolutePath());
@@ -298,12 +299,12 @@ public final class AntReport extends AbstractAntReport {
      * Handles LicensesDenied processing.
      */
     public class LicensesDenied {
-        LicensesDenied() {}
+        LicensesDenied() { }
         /**
          * Adds a configured FileSet to the licenses-denied.
          * @param fileSet The fileSet to add to licenses-denied.
          */
-        public void addConfiguredFileSet(FileSet fileSet) {
+        public void addConfiguredFileSet(final FileSet fileSet) {
             for (Resource resource : fileSet) {
                 if (resource.isFilesystemOnly()) {
                     argumentTracker.addArg("licenses-denied", ((FileResource) resource).getFile().getAbsolutePath());
@@ -314,7 +315,7 @@ public final class AntReport extends AbstractAntReport {
          * Adds the licenseID {@link AbstractAntReport.Lst} to licenses-denied.
          * @param licenseID The Lst to add to licenses-denied.
          */
-        public void addConfiguredLst(Lst licenseID) {
+        public void addConfiguredLst(final Lst licenseID) {
             argumentTracker.addArg("licenses-denied", licenseID.toString());
         }
     }
@@ -323,12 +324,12 @@ public final class AntReport extends AbstractAntReport {
      * Handles LicensesDeniedFile processing.
      */
     public class LicensesDeniedFile {
-        LicensesDeniedFile() {}
+        LicensesDeniedFile() { }
         /**
          * Adds a configured FileSet to the licenses-denied.
          * @param fileSet The fileSet to add to licenses-denied.
          */
-        public void addConfiguredFileSet(FileSet fileSet) {
+        public void addConfiguredFileSet(final FileSet fileSet) {
             for (Resource resource : fileSet) {
                 if (resource.isFilesystemOnly()) {
                     argumentTracker.addArg("licenses-denied", ((FileResource) resource).getFile().getAbsolutePath());
@@ -348,19 +349,19 @@ public final class AntReport extends AbstractAntReport {
      * Handles LicenseFamiliesDenied processing.
      */
     public class LicenseFamiliesDenied {
-        LicenseFamiliesDenied() {}
+        LicenseFamiliesDenied() { }
         /**
          * Adds the familyID {@link AbstractAntReport.Lst} to license-families-denied.
          * @param familyID The Lst to add to license-families-denied.
          */
-        public void addConfiguredLst(Lst familyID) {
+        public void addConfiguredLst(final Lst familyID) {
             argumentTracker.addArg("license-families-denied", familyID.toString());
         }
         /**
          * Adds a configured FileSet to the license-families-denied.
          * @param fileSet The fileSet to add to license-families-denied.
          */
-        public void addConfiguredFileSet(FileSet fileSet) {
+        public void addConfiguredFileSet(final FileSet fileSet) {
             for (Resource resource : fileSet) {
                 if (resource.isFilesystemOnly()) {
                     argumentTracker.addArg("license-families-denied", ((FileResource) resource).getFile().getAbsolutePath());
@@ -373,12 +374,12 @@ public final class AntReport extends AbstractAntReport {
      * Handles LicenseFamiliesDeniedFile processing.
      */
     public class LicenseFamiliesDeniedFile {
-        LicenseFamiliesDeniedFile() {}
+        LicenseFamiliesDeniedFile() { }
         /**
          * Adds a configured FileSet to the license-families-denied.
          * @param fileSet The fileSet to add to license-families-denied.
          */
-        public void addConfiguredFileSet(FileSet fileSet) {
+        public void addConfiguredFileSet(final FileSet fileSet) {
             for (Resource resource : fileSet) {
                 if (resource.isFilesystemOnly()) {
                     argumentTracker.addArg("license-families-denied", ((FileResource) resource).getFile().getAbsolutePath());
@@ -398,12 +399,12 @@ public final class AntReport extends AbstractAntReport {
      * Handles CounterMax processing.
      */
     public class CounterMax {
-        CounterMax() {}
+        CounterMax() { }
         /**
          * Adds the counterPattern {@link AbstractAntReport.Cntr} to counter-max.
          * @param counterPattern The Cntr to add to counter-max.
          */
-        public void addConfiguredCntr(Cntr counterPattern) {
+        public void addConfiguredCntr(final Cntr counterPattern) {
             argumentTracker.addArg("counter-max", counterPattern.toString());
         }
     }
@@ -419,12 +420,12 @@ public final class AntReport extends AbstractAntReport {
      * Handles CounterMin processing.
      */
     public class CounterMin {
-        CounterMin() {}
+        CounterMin() { }
         /**
          * Adds the counterPattern {@link AbstractAntReport.Cntr} to counter-min.
          * @param counterPattern The Cntr to add to counter-min.
          */
-        public void addConfiguredCntr(Cntr counterPattern) {
+        public void addConfiguredCntr(final Cntr counterPattern) {
             argumentTracker.addArg("counter-min", counterPattern.toString());
         }
     }
@@ -442,12 +443,12 @@ public final class AntReport extends AbstractAntReport {
      * Handles Exclude processing.
      */
     public class Exclude {
-        Exclude() {}
+        Exclude() { }
         /**
          * Adds the expression {@link AbstractAntReport.Expr} to exclude.
          * @param expression The Expr to add to exclude.
          */
-        public void addConfiguredExpr(Expr expression) {
+        public void addConfiguredExpr(final Expr expression) {
             argumentTracker.addArg("exclude", expression.toString());
         }
     }
@@ -463,12 +464,19 @@ public final class AntReport extends AbstractAntReport {
      * Handles InputExclude processing.
      */
     public class InputExclude {
-        InputExclude() {}
+        InputExclude() { }
+        /**
+         * Adds the standardCollection {@link AbstractAntReport.Std} to input-exclude.
+         * @param standardCollection The Std to add to input-exclude.
+         */
+        public void addConfiguredStd(final Std standardCollection) {
+            argumentTracker.addArg("input-exclude", standardCollection.toString());
+        }
         /**
          * Adds a configured FileSet to the input-exclude.
          * @param fileSet The fileSet to add to input-exclude.
          */
-        public void addConfiguredFileSet(FileSet fileSet) {
+        public void addConfiguredFileSet(final FileSet fileSet) {
             for (Resource resource : fileSet) {
                 if (resource.isFilesystemOnly()) {
                     argumentTracker.addArg("input-exclude", ((FileResource) resource).getFile().getAbsolutePath());
@@ -479,29 +487,8 @@ public final class AntReport extends AbstractAntReport {
          * Adds the expression {@link AbstractAntReport.Expr} to input-exclude.
          * @param expression The Expr to add to input-exclude.
          */
-        public void addConfiguredExpr(Expr expression) {
+        public void addConfiguredExpr(final Expr expression) {
             argumentTracker.addArg("input-exclude", expression.toString());
-        }
-        /**
-         * Adds the standardCollection {@link AbstractAntReport.Std} to input-exclude.
-         * @param standardCollection The Std to add to input-exclude.
-         */
-        public void addConfiguredStd(Std standardCollection) {
-            argumentTracker.addArg("input-exclude", standardCollection.toString());
-        }
-    }
-
-    /**
-     * Handles InputExcludeStd processing.
-     */
-    public class InputExcludeStd {
-        InputExcludeStd() {}
-        /**
-         * Adds the standardCollection {@link AbstractAntReport.Std} to input-exclude.
-         * @param standardCollection The Std to add to input-exclude.
-         */
-        public void addConfiguredStd(Std standardCollection) {
-            argumentTracker.addArg("input-exclude", standardCollection.toString());
         }
     }
 
@@ -509,17 +496,31 @@ public final class AntReport extends AbstractAntReport {
      * Handles InputExcludeFile processing.
      */
     public class InputExcludeFile {
-        InputExcludeFile() {}
+        InputExcludeFile() { }
         /**
          * Adds a configured FileSet to the input-exclude.
          * @param fileSet The fileSet to add to input-exclude.
          */
-        public void addConfiguredFileSet(FileSet fileSet) {
+        public void addConfiguredFileSet(final FileSet fileSet) {
             for (Resource resource : fileSet) {
                 if (resource.isFilesystemOnly()) {
                     argumentTracker.addArg("input-exclude", ((FileResource) resource).getFile().getAbsolutePath());
                 }
             }
+        }
+    }
+
+    /**
+     * Handles InputExcludeStd processing.
+     */
+    public class InputExcludeStd {
+        InputExcludeStd() { }
+        /**
+         * Adds the standardCollection {@link AbstractAntReport.Std} to input-exclude.
+         * @param standardCollection The Std to add to input-exclude.
+         */
+        public void addConfiguredStd(final Std standardCollection) {
+            argumentTracker.addArg("input-exclude", standardCollection.toString());
         }
     }
 
@@ -552,12 +553,19 @@ public final class AntReport extends AbstractAntReport {
      * Handles InputInclude processing.
      */
     public class InputInclude {
-        InputInclude() {}
+        InputInclude() { }
+        /**
+         * Adds the expression {@link AbstractAntReport.Expr} to input-include.
+         * @param expression The Expr to add to input-include.
+         */
+        public void addConfiguredExpr(final Expr expression) {
+            argumentTracker.addArg("input-include", expression.toString());
+        }
         /**
          * Adds a configured FileSet to the input-include.
          * @param fileSet The fileSet to add to input-include.
          */
-        public void addConfiguredFileSet(FileSet fileSet) {
+        public void addConfiguredFileSet(final FileSet fileSet) {
             for (Resource resource : fileSet) {
                 if (resource.isFilesystemOnly()) {
                     argumentTracker.addArg("input-include", ((FileResource) resource).getFile().getAbsolutePath());
@@ -565,17 +573,24 @@ public final class AntReport extends AbstractAntReport {
             }
         }
         /**
-         * Adds the expression {@link AbstractAntReport.Expr} to input-include.
-         * @param expression The Expr to add to input-include.
+         * Adds the standardCollection {@link AbstractAntReport.Std} to input-include.
+         * @param standardCollection The Std to add to input-include.
          */
-        public void addConfiguredExpr(Expr expression) {
-            argumentTracker.addArg("input-include", expression.toString());
+        public void addConfiguredStd(final Std standardCollection) {
+            argumentTracker.addArg("input-include", standardCollection.toString());
         }
+    }
+
+    /**
+     * Handles InputIncludeStd processing.
+     */
+    public class InputIncludeStd {
+        InputIncludeStd() { }
         /**
          * Adds the standardCollection {@link AbstractAntReport.Std} to input-include.
          * @param standardCollection The Std to add to input-include.
          */
-        public void addConfiguredStd(Std standardCollection) {
+        public void addConfiguredStd(final Std standardCollection) {
             argumentTracker.addArg("input-include", standardCollection.toString());
         }
     }
@@ -584,31 +599,17 @@ public final class AntReport extends AbstractAntReport {
      * Handles InputIncludeFile processing.
      */
     public class InputIncludeFile {
-        InputIncludeFile() {}
+        InputIncludeFile() { }
         /**
          * Adds a configured FileSet to the input-include.
          * @param fileSet The fileSet to add to input-include.
          */
-        public void addConfiguredFileSet(FileSet fileSet) {
+        public void addConfiguredFileSet(final FileSet fileSet) {
             for (Resource resource : fileSet) {
                 if (resource.isFilesystemOnly()) {
                     argumentTracker.addArg("input-include", ((FileResource) resource).getFile().getAbsolutePath());
                 }
             }
-        }
-    }
-
-    /**
-     * Handles InputIncludeStd processing.
-     */
-    public class InputIncludeStd {
-        InputIncludeStd() {}
-        /**
-         * Adds the standardCollection {@link AbstractAntReport.Std} to input-include.
-         * @param standardCollection The Std to add to input-include.
-         */
-        public void addConfiguredStd(Std standardCollection) {
-            argumentTracker.addArg("input-include", standardCollection.toString());
         }
     }
 
@@ -625,12 +626,12 @@ public final class AntReport extends AbstractAntReport {
      * Handles Include processing.
      */
     public class Include {
-        Include() {}
+        Include() { }
         /**
          * Adds the expression {@link AbstractAntReport.Expr} to include.
          * @param expression The Expr to add to include.
          */
-        public void addConfiguredExpr(Expr expression) {
+        public void addConfiguredExpr(final Expr expression) {
             argumentTracker.addArg("include", expression.toString());
         }
     }
@@ -670,12 +671,12 @@ public final class AntReport extends AbstractAntReport {
      * Handles InputExcludeParsedScm processing.
      */
     public class InputExcludeParsedScm {
-        InputExcludeParsedScm() {}
+        InputExcludeParsedScm() { }
         /**
          * Adds the standardCollection {@link AbstractAntReport.Std} to input-exclude-parsed-scm.
          * @param standardCollection The Std to add to input-exclude-parsed-scm.
          */
-        public void addConfiguredStd(Std standardCollection) {
+        public void addConfiguredStd(final Std standardCollection) {
             argumentTracker.addArg("input-exclude-parsed-scm", standardCollection.toString());
         }
     }

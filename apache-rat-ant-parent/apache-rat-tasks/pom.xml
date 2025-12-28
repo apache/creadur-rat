@@ -139,18 +139,17 @@
         <artifactId>exec-maven-plugin</artifactId>
         <executions>
           <execution>
-            <id>Create BaseAntTask</id>
+            <id>Create AntReport</id>
             <goals>
               <goal>java</goal>
             </goals>
             <phase>generate-sources</phase>
             <configuration>
               <classpathScope>test</classpathScope>
-              <mainClass>org.apache.rat.tools.AntGenerator</mainClass>
+              <mainClass>org.apache.rat.ant.CodeGenerator</mainClass>
               <arguments>
-                <argument>org.apache.rat.anttasks</argument>
-                <argument>BaseAntTask</argument>
-                <argument>${project.build.sourceDirectory}</argument>
+                <argument>-p</argument>
+                <argument>${build.sourceDirectory}</argument>
               </arguments>
             </configuration>
           </execution>
