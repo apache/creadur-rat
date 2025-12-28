@@ -1,11 +1,29 @@
+/*
+* Licensed to the Apache Software Foundation (ASF) under one
+* or more contributor license agreements.  See the NOTICE file
+* distributed with this work for additional information
+* regarding copyright ownership.  The ASF licenses this file
+* to you under the Apache License, Version 2.0 (the
+* "License"); you may not use this file except in compliance
+* with the License.  You may obtain a copy of the License at
+*
+*   http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing,
+* software distributed under the License is distributed on an
+* "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+* KIND, either express or implied.  See the License for the
+* specific language governing permissions and limitations
+* under the License.
+*/
 package org.apache.rat.ant;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.io.output.CloseShieldOutputStream;
@@ -13,7 +31,6 @@ import org.apache.rat.ConfigurationException;
 import org.apache.rat.OptionCollection;
 import org.apache.rat.ReportConfiguration;
 import org.apache.rat.Reporter;
-import org.apache.rat.anttasks.BaseAntTask;
 import org.apache.rat.commandline.Arg;
 import org.apache.rat.commandline.ArgumentContext;
 import org.apache.rat.commandline.StyleSheets;
@@ -26,18 +43,14 @@ import org.apache.rat.utils.Log;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.Task;
-import org.apache.tools.ant.taskdefs.Javadoc;
 import org.apache.tools.ant.taskdefs.LogOutputStream;
 import org.apache.tools.ant.types.ResourceCollection;
 import org.apache.tools.ant.types.resources.Union;
 
 public abstract class AbstractAntReport extends Task {
-
+    /** The argument tracker for this report */
     protected final ArgumentTracker argumentTracker;
-
-    /**
-     * will hold any nested resource collection
-     */
+    /** will hold any nested resource collection */
     private Union nestedResources;
 
     protected AbstractAntReport() {
@@ -155,6 +168,7 @@ public abstract class AbstractAntReport extends Task {
      * Base class for all none text command line types.
      */
     protected static class TxtValue {
+        /** The value for this object */
         private String value;
         protected TxtValue() { }
 
@@ -163,7 +177,7 @@ public abstract class AbstractAntReport extends Task {
             return value;
         }
 
-        public void addText(String text) {
+        public void addText(final String text) {
             value = text.trim();
         }
     }

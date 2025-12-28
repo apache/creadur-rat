@@ -16,32 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.rat.anttasks;
-
-import org.apache.rat.DeprecationReporter;
-import org.apache.rat.analysis.IHeaderMatcher;
-import org.apache.rat.configuration.builders.SpdxBuilder;
-
 /**
- * Creates a SPDX matcher.
- * @deprecated use configuration file.
+ * The Ant UI
  */
-@Deprecated // since 0.17
-@DeprecationReporter.Info(since = "0.17", forRemoval = true, use = "Configuration file and <config> element")// since 0.17
-public class Spdx implements IHeaderMatcher.Builder  {
-    
-    private final SpdxBuilder builder = new SpdxBuilder();
-
-    public void setName(String spdxId) {
-        builder.setName(spdxId);
-    }
-    
-    public void addText(String spdxId) {
-        builder.setName(spdxId);
-    }
-
-    @Override
-    public IHeaderMatcher build() {
-        return builder.build();
-    }
-}
+package org.apache.rat.ant;
