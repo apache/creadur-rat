@@ -86,7 +86,7 @@ public abstract class AbstractOption<T extends AbstractOption<T>> {
      * Gets the option this abstract option is wrapping.
      * @return the original Option.
      */
-    public Option getOption() {
+    public final Option getOption() {
         return option;
     }
 
@@ -111,14 +111,6 @@ public abstract class AbstractOption<T extends AbstractOption<T>> {
      * @return An example of how to use this option in the native UI.
      */
     public abstract String getExample();
-
-    /**
-     * Gets this option's cleaned up name.
-     * @return This option's cleaned up name.
-     */
-    public String cleanupName() {
-        return cleanupName(option);
-    }
 
     /**
      * Replaces CLI pattern options with implementation specific pattern options.

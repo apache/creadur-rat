@@ -38,31 +38,27 @@
                 <directory>src/main/filtered-resources</directory>
             </resource>
         </resources>
-        <pluginManagement>
-            <plugins>
-                <plugin>
-                    <groupId>org.apache.rat</groupId>
-                    <artifactId>apache-rat-plugin</artifactId>
-                    <configuration>
-                        <inputExcludes>
-                            <!-- exclude the definition file(s) -->
-                            <exclude>**/default.xml</exclude>
-                            <exclude>**/example-configuration.xml</exclude>
-                            <!-- exclude test generation files that contain unapproved license text -->
-                            <exclude>**/ReporterOptionsProvider.java</exclude>
-                            <exclude>**/GPLLicenseTest.java</exclude>
-                            <exclude>/src/test/resources/GitIgnoreBuilderTest/**</exclude>
-                            <exclude>/src/test/resources/exampleData/**</exclude>
-                            <excldue>/src/test/resources/jira/RAT147/**</excldue>
-                            <exclude>/src/test/resources/org/apache/rat/MatcherContainerResource.txt</exclude>
-                            <exclude>/src/test/resources/tikaFiles/**</exclude>
-                            <exclude>/src/test/resources/violations/**</exclude>
-                        </inputExcludes>
-                    </configuration>
-                </plugin>
-            </plugins>
-        </pluginManagement>
         <plugins>
+            <plugin>
+                <groupId>org.apache.rat</groupId>
+                <artifactId>apache-rat-plugin</artifactId>
+                <configuration>
+                    <inputExcludes>
+                        <!-- exclude the definition file(s) -->
+                        <exclude>**/default.xml</exclude>
+                        <exclude>**/example-configuration.xml</exclude>
+                        <!-- exclude test generation files that contain unapproved license text -->
+                        <exclude>**/ReporterOptionsProvider.java</exclude>
+                        <exclude>**/GPLLicenseTest.java</exclude>
+                        <exclude>/src/test/resources/GitIgnoreBuilderTest/**</exclude>
+                        <exclude>/src/test/resources/exampleData/**</exclude>
+                        <excldue>/src/test/resources/jira/RAT147/**</excldue>
+                        <exclude>/src/test/resources/org/apache/rat/MatcherContainerResource.txt</exclude>
+                        <exclude>/src/test/resources/tikaFiles/**</exclude>
+                        <exclude>/src/test/resources/violations/**</exclude>
+                    </inputExcludes>
+                </configuration>
+            </plugin>
             <plugin>
                 <artifactId>maven-clean-plugin</artifactId>
                 <executions>

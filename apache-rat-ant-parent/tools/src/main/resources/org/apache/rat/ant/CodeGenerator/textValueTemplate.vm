@@ -1,0 +1,7 @@
+        /**
+         * Adds the ${argName} {@link AbstractAntReport.${argType}} to ${option.keyValue}.
+         * @param ${argName} The ${argType} to add to ${option.keyValue}.
+         */
+        public void addConfigured${argType}(${argType} ${argName}) {
+            argumentTracker.addArg("${option.keyValue}", ${argName}.toString());
+        }
