@@ -504,7 +504,7 @@ public abstract class AbstractRatMojo extends BaseRatMojo {
                     }
                 }
                 if (families != null || getDeprecatedConfigs().findAny().isPresent()) {
-                    if (log.isEnabled(Log.Level.DEBUG)) {
+                    if (log.isEnabled(Log.Level.DEBUG) && families != null) {
                         log.debug(format("%s license families loaded from pom", families.length));
                     }
                     Consumer<ILicenseFamily> logger = super.getLog().isDebugEnabled() ? l -> log.debug(format("Family: %s", l))
