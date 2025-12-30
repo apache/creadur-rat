@@ -68,8 +68,8 @@ agnostic home for software distribution comprehension and audit tools.
     <mavenPmdPluginVersion>3.28.0</mavenPmdPluginVersion>
     <!-- Used to generate download page for RAT during site builds, please adapt versions manually BEFORE doing a release -->
     <!-- START - adapt manually before doing a release -->
-    <previousRatVersion>0.17</previousRatVersion>
-    <currentSnapshotRatVersion>0.18-SNAPSHOT</currentSnapshotRatVersion>
+    <previousRatVersion>0.18</previousRatVersion>
+    <currentSnapshotRatVersion>1.0.0-SNAPSHOT</currentSnapshotRatVersion>
     <!-- END - adapt manually before doing a release -->
   </properties>
   <distributionManagement>
