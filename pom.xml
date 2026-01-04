@@ -43,6 +43,8 @@ agnostic home for software distribution comprehension and audit tools.
   </description>
   <inceptionYear>2006</inceptionYear>
   <properties>
+    <sonar.organization>apache</sonar.organization>
+    <sonar.host.url>https://sonarcloud.io</sonar.host.url>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <!-- taken from https://maven.apache.org/guides/mini/guide-reproducible-builds.html -->
     <!-- MSITE-1018, RAT-397: nil out timestamp in order to get current build timestamp -->
