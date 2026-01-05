@@ -477,7 +477,7 @@ agnostic home for software distribution comprehension and audit tools.
               <id>report</id>
               <phase>test</phase>
               <goals>
-                <goal>report-aggregate</goal>
+                <goal>report</goal>
               </goals>
             </execution>
           </executions>
