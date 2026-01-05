@@ -69,7 +69,7 @@ in order to be properly linked in site reports.
     -->
     <release version="1.0.0" date="xxxx-yy-zz" description="Current SNAPSHOT - release to be done">
       <action issue="RAT-293" type="add" dev="pottlinger">
-        Add integration of RAT into SonarCloud analysis now that JDK8 is dropped.
+        Add integration of RAT into SonarCloud analysis now that JDK8 is dropped and generate a test coverage report with JaCoCo.
       </action>
       <action issue="RAT-478" type="add" dev="pottlinger">
         Due to the switch to Java17 language level we use UTF-8 as default charset to process configuration and exclusion configuration files within RAT.

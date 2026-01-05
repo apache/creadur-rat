@@ -458,6 +458,30 @@ agnostic home for software distribution comprehension and audit tools.
       <plugin>
         <groupId>org.jacoco</groupId>
         <artifactId>jacoco-maven-plugin</artifactId>
+        <reportSets>
+          <reportSet>
+            <reports>
+              <!-- select non-aggregate reports -->
+              <report>report</report>
+            </reports>
+          </reportSet>
+        </reportSets>
+        <configuration>
+          <executions>
+            <execution>
+              <goals>
+                <goal>prepare-agent</goal>
+              </goals>
+            </execution>
+            <execution>
+              <id>report</id>
+              <phase>test</phase>
+              <goals>
+                <goal>report-aggregate</goal>
+              </goals>
+            </execution>
+          </executions>
+        </configuration>
       </plugin>
     </plugins>
   </reporting>
@@ -651,7 +675,8 @@ agnostic home for software distribution comprehension and audit tools.
           <version>3.5.4</version>
           <configuration>
             <forkCount>1</forkCount>
-            <argLine>-Dfile.encoding=ISO-8859-1</argLine>
+            <!-- RAT-293: We need to append to the existing arguments in order for code coverage to work -->
+            <argLine>${argLine} -Dfile.encoding=ISO-8859-1</argLine>
           </configuration>
         </plugin>
         <!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
@@ -830,6 +855,10 @@ agnostic home for software distribution comprehension and audit tools.
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>animal-sniffer-maven-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>org.jacoco</groupId>
+        <artifactId>jacoco-maven-plugin</artifactId>
       </plugin>
     </plugins>
     <extensions>
