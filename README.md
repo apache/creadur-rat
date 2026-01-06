@@ -4,6 +4,8 @@ ASF Jenkins: [![ASF Jenkins Build Status](https://ci-builds.apache.org/buildStat
 
 GA: [![Github Action master branch status](https://github.com/apache/creadur-rat/actions/workflows/maven.yml/badge.svg?branch=master)](https://github.com/apache/creadur-rat/actions)
 
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=apache_creadur-rat&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=apache_creadur-rat)
+
 [![Revved up by Develocity](https://img.shields.io/badge/Revved%20up%20by-Develocity-06A0CE?logo=Gradle&labelColor=02303A)](https://develocity.apache.org/scans?list.sortColumn=buildDuration&list.sortOrder=asc&search.buildToolType=maven&search.names=not:CI%20stage&search.rootProjectNames=Apache%20Creadur%20Rat&search.tasks=install&search.timeZoneId=Europe%2FBerlin&search.values=Build%20Parent-pom)
 
 ## What is RAT?
