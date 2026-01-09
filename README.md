@@ -2,7 +2,7 @@
 
 ASF Jenkins: [![ASF Jenkins Build Status](https://ci-builds.apache.org/buildStatus/icon?job=Creadur%2FCreadur-Rat)](https://ci-builds.apache.org/job/Creadur/job/Creadur-Rat/)
 
-GA: [![Github Action master branch status](https://github.com/apache/creadur-rat/actions/workflows/maven.yml/badge.svg?branch=master)](https://github.com/apache/creadur-rat/actions)
+GHA: [![Github Action master branch status](https://github.com/apache/creadur-rat/actions/workflows/maven.yml/badge.svg?branch=master)](https://github.com/apache/creadur-rat/actions)
 
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=apache_creadur-rat&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=apache_creadur-rat)
 
