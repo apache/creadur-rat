@@ -63,7 +63,7 @@ agnostic home for software distribution comprehension and audit tools.
     <velocity.core.version>2.4.1</velocity.core.version>
     <velocity.tools.version>3.1</velocity.tools.version>
     <!-- maven plugin versions -->
-    <mavenPluginTestingVersion>3.4.0</mavenPluginTestingVersion>
+    <mavenPluginTestingVersion>3.5.0</mavenPluginTestingVersion>
     <mavenPluginPluginVersion>3.15.2</mavenPluginPluginVersion>
     <mavenChangesVersion>3.0.0-M3</mavenChangesVersion>
     <mavenJavadocPluginVersion>3.12.0</mavenJavadocPluginVersion>
