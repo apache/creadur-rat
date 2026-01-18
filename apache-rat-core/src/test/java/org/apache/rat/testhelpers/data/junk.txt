@@ -56,7 +56,7 @@ import org.apache.rat.report.claim.ClaimStatistic;
 import org.apache.rat.test.AbstractOptionsProvider;
 import org.apache.rat.test.utils.OptionFormatter;
 import org.apache.rat.test.utils.Resources;
-import org.apache.rat.testhelpers.FileUtils;
+import org.apache.rat.utils.FileUtils;
 import org.apache.rat.testhelpers.TestingLog;
 import org.apache.rat.testhelpers.TextUtils;
 import org.apache.rat.testhelpers.XmlUtils;

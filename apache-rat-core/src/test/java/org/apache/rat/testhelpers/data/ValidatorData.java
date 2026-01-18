@@ -18,13 +18,30 @@
  */
 package org.apache.rat.testhelpers.data;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import org.apache.rat.ConfigurationException;
 import org.apache.rat.ReportConfiguration;
 import org.apache.rat.Reporter;
+import org.apache.rat.api.RatException;
+import org.apache.rat.configuration.XMLConfig;
+import org.apache.rat.configuration.XMLConfigurationWriter;
 import org.apache.rat.document.DocumentName;
 import org.apache.rat.report.claim.ClaimStatistic;
+import org.apache.rat.report.xml.writer.XmlWriter;
 import org.w3c.dom.Document;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+
+import static org.apache.rat.configuration.XMLConfigurationReader.nodeListConsumer;
 
 /**
  * The validator for test data.
@@ -62,6 +79,9 @@ public final class ValidatorData {
         return DocumentName.builder().setBaseName(baseDir.toFile()).setName(fileName).build();
     }
 
+    public Reporter.Output getOutput() {
+        return output;
+    }
     /**
      * Gets the document that was generated during execution.
      * @return the document that was generated during execution.

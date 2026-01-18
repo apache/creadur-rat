@@ -83,8 +83,8 @@ public class XMLConfigurationWriter {
      * @param plainWriter a writer to write the XML to.
      * @throws RatException on error.
      */
-    public void write(final Writer plainWriter) throws RatException {
-        write(new XmlWriter(plainWriter));
+    public void writeFamilyInfo(final Writer plainWriter) throws RatException {
+        writeFamilyInfo(new XmlWriter(plainWriter));
     }
 
     /**
@@ -92,7 +92,7 @@ public class XMLConfigurationWriter {
      * @param writer the IXmlWriter to write to.
      * @throws RatException on error.
      */
-    public void write(final IXmlWriter writer) throws RatException {
+    public void writeFamilyInfo(final IXmlWriter writer) throws RatException {
         if (configuration.listFamilies() != LicenseFilter.NONE || configuration.listLicenses() != LicenseFilter.NONE) {
             try {
                 writer.openElement(XMLConfig.ROOT);

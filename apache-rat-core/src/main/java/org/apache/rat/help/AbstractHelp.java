@@ -30,7 +30,7 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.WordUtils;
-import org.apache.rat.OptionCollection;
+import org.apache.rat.OptionCollectionParser;
 import org.apache.rat.VersionInfo;
 import org.apache.rat.commandline.Arg;
 
@@ -101,7 +101,7 @@ public abstract class AbstractHelp {
          */
         RatHelpFormatter() {
             super();
-            this.optionComparator = OptionCollection.OPTION_COMPARATOR;
+            this.optionComparator = OptionCollectionParser.OPTION_COMPARATOR;
             this.setWidth(HELP_WIDTH);
         }
 

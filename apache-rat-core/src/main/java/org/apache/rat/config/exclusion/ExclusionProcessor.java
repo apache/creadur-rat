@@ -22,15 +22,22 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.NotImplementedException;
+import org.apache.rat.configuration.XMLConfigurationReader;
 import org.apache.rat.document.DocumentName;
 import org.apache.rat.document.DocumentNameMatcher;
+import org.apache.rat.report.xml.writer.IXmlWriter;
 import org.apache.rat.utils.DefaultLog;
 import org.apache.rat.utils.ExtendedIterator;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import static java.lang.String.format;
 
@@ -39,26 +46,42 @@ import static java.lang.String.format;
  * to return an IReportable that contains all the reportable objects.
  */
 public class ExclusionProcessor {
-    /** Strings that identify the files/directories to exclude */
+    /**
+     * Strings that identify the files/directories to exclude
+     */
     private final Set<String> excludedPatterns;
-    /** Path matchers that exclude files/directories */
+    /**
+     * Path matchers that exclude files/directories
+     */
     private final List<DocumentNameMatcher> excludedPaths;
-    /** Strings that identify the files/directories to include (overrides exclude) */
+    /**
+     * Strings that identify the files/directories to include (overrides exclude)
+     */
     private final Set<String> includedPatterns;
-    /** Path matchers that identify the files/directories to include (overrides exclude) */
+    /**
+     * Path matchers that identify the files/directories to include (overrides exclude)
+     */
     private final List<DocumentNameMatcher> includedPaths;
     /**
      * Collections of StandardCollections that have file processors that should be
      * used to add additional exclude files to the process
      */
     private final Set<StandardCollection> fileProcessors;
-    /** Standard collections that contribute to the inclusion processing */
+    /**
+     * Standard collections that contribute to the inclusion processing
+     */
     private final Set<StandardCollection> includedCollections;
-    /** Standard collections that contribute to the exclusion procession */
+    /**
+     * Standard collections that contribute to the exclusion procession
+     */
     private final Set<StandardCollection> excludedCollections;
-    /** The last generated PathMatcher */
+    /**
+     * The last generated PathMatcher
+     */
     private DocumentNameMatcher lastMatcher;
-    /** The base dir for the last PathMatcher */
+    /**
+     * The base dir for the last PathMatcher
+     */
     private DocumentName lastMatcherBaseDir;
 
     /**
@@ -74,7 +97,13 @@ public class ExclusionProcessor {
         excludedCollections = new HashSet<>();
     }
 
-    /** Reset the {@link #lastMatcher} and {@link #lastMatcherBaseDir} to start again */
+    public Serde serde() {
+        return new Serde();
+    }
+
+    /**
+     * Reset the {@link #lastMatcher} and {@link #lastMatcherBaseDir} to start again
+     */
     private void resetLastMatcher() {
         lastMatcher = null;
         lastMatcherBaseDir = null;
@@ -82,6 +111,7 @@ public class ExclusionProcessor {
 
     /**
      * Add the Iterable of strings to the collection of file/directory patters to ignore.
+     *
      * @param patterns the patterns to add
      * @return this
      */
@@ -94,6 +124,7 @@ public class ExclusionProcessor {
 
     /**
      * Add a DocumentNameMatcher to the collection of file/directory patterns to ignore.
+     *
      * @param matcher the DocumentNameMatcher to add. Will be ignored if {@code null}.
      * @return this
      */
@@ -107,6 +138,7 @@ public class ExclusionProcessor {
 
     /**
      * Add the file processor from a StandardCollection.
+     *
      * @param collection the collection to add the processor from.
      * @return this
      */
@@ -121,6 +153,7 @@ public class ExclusionProcessor {
 
     /**
      * Add the patterns from the StandardCollection as included patterns.
+     *
      * @param collection the standard collection to add the includes from.
      * @return this
      */
@@ -135,6 +168,7 @@ public class ExclusionProcessor {
 
     /**
      * Add the patterns from collections of patterns as excluded patterns.
+     *
      * @param patterns the strings to that define patterns to be excluded from processing.
      * @return this
      */
@@ -147,6 +181,7 @@ public class ExclusionProcessor {
 
     /**
      * Add the DocumentNameMatcher as an excluded pattern.
+     *
      * @param matcher the DocumentNameMatcher to exclude.
      * @return this
      */
@@ -160,6 +195,7 @@ public class ExclusionProcessor {
 
     /**
      * Report the excluded files to the appendable object.
+     *
      * @param appendable the appendable object to write to.
      */
     public void reportExclusions(final Appendable appendable) throws IOException {
@@ -176,9 +212,9 @@ public class ExclusionProcessor {
         }
     }
 
-
     /**
      * Excludes the files/directories specified by a StandardCollection.
+     *
      * @param collection the StandardCollection that identifies the files to exclude.
      * @return this
      */
@@ -194,6 +230,7 @@ public class ExclusionProcessor {
     /**
      * Creates a Document name matcher that will return {@code false} on any
      * document that is excluded.
+     *
      * @param basedir the base directory to make everything relative to.
      * @return A DocumentNameMatcher that will return {@code false} for any document that is to be excluded.
      */
@@ -223,13 +260,14 @@ public class ExclusionProcessor {
 
     /**
      * Extracts the file processors from {@link #fileProcessors}.
+     *
      * @param basedir The directory to base the file processors on.
      * @return a list of MatcherSets that are created for each {@link #fileProcessors} entry.
      */
     private List<MatcherSet> extractFileProcessors(final DocumentName basedir) {
         final List<MatcherSet> fileProcessorList = new ArrayList<>();
         for (StandardCollection sc : fileProcessors) {
-            ExtendedIterator<List<MatcherSet>> iter =  sc.fileProcessorBuilder().map(builder -> builder.build(basedir));
+            ExtendedIterator<List<MatcherSet>> iter = sc.fileProcessorBuilder().map(builder -> builder.build(basedir));
             if (iter.hasNext()) {
                 iter.forEachRemaining(fileProcessorList::addAll);
             } else {
@@ -242,17 +280,19 @@ public class ExclusionProcessor {
     /**
      * Converts the pattern to use the directory separator specified by the document name and localises it for
      * exclusion processing.
+     *
      * @param documentName The document name to adjust the pattern against.
      * @param pattern the pattern.
      * @return the prepared pattern.
      */
     private String preparePattern(final DocumentName documentName, final String pattern) {
         return ExclusionUtils.qualifyPattern(documentName,
-                        ExclusionUtils.convertSeparator(pattern, "/", documentName.getDirectorySeparator()));
+                ExclusionUtils.convertSeparator(pattern, "/", documentName.getDirectorySeparator()));
     }
 
     /**
      * Extracts {@link #includedPatterns} and {@link #excludedPatterns} into the specified matcherBuilder.
+     *
      * @param nameBuilder The name builder for the pattern. File names are resolved against the generated name.
      * @param matcherBuilder the MatcherSet.Builder to add the patterns to.
      */
@@ -271,6 +311,7 @@ public class ExclusionProcessor {
 
     /**
      * Extracts {@link #includedCollections} and {@link #excludedCollections} patterns into the specified matcherBuilder.
+     *
      * @param nameBuilder the name builder for the pattern names.
      * @param matcherBuilder the MatcherSet.Builder to add the collections to.
      */
@@ -301,6 +342,7 @@ public class ExclusionProcessor {
 
     /**
      * Extracts {@link #includedCollections} and {@link #excludedCollections} matchers into the specified matcherBuilder.
+     *
      * @param matcherBuilder the MatcherSet.Builder to add the collections to.
      */
     private void extractCollectionMatchers(final MatcherSet.Builder matcherBuilder) {
@@ -317,6 +359,7 @@ public class ExclusionProcessor {
 
     /**
      * Extracts {@link #includedPaths} and {@link #excludedPaths} patterns into the specified matcherBuilder.
+     *
      * @param matcherBuilder the MatcherSet.Builder to add the collections to.
      */
     private void extractPaths(final MatcherSet.Builder matcherBuilder) {
@@ -334,4 +377,85 @@ public class ExclusionProcessor {
         }
     }
 
+
+    //    private void writeCollection(final IXmlWriter writer, final Collection<?> collection, final String name) throws IOException {
+//        writer.openElement(name);
+//        for (Object obj : collection) {
+//            try {
+//                writer.openElement("entry").content(obj.toString()).closeElement();
+//            } catch (IOException e) {
+//                throw new RuntimeException(e);
+//            }
+//        }
+//        writer.closeElement();
+//    }
+    public class Serde {
+        public void serialize(final IXmlWriter writer) throws IOException {
+            writer.openElement("ExclusionProcessor");
+
+            for (String pattern : excludedPatterns) {
+                writer.openElement("excludedPattern").attribute("pattern", pattern).closeElement();
+            }
+            for (StandardCollection obj : excludedCollections) {
+                writer.openElement("excludedCollection").attribute("name", obj.name()).closeElement();
+            }
+            for (DocumentNameMatcher obj : excludedPaths) {
+                writer.openElement("excludedPath").attribute("name", obj.toString()).closeElement();
+            }
+
+            for (String pattern : includedPatterns) {
+                writer.openElement("includedPattern").attribute("pattern", pattern).closeElement();
+            }
+            for (StandardCollection obj : includedCollections) {
+                writer.openElement("includedCollection").attribute("name", obj.name()).closeElement();
+            }
+            for (DocumentNameMatcher obj : includedPaths) {
+                writer.openElement("includedPath").attribute("name", obj.toString()).closeElement();
+            }
+
+            for (StandardCollection obj : fileProcessors) {
+                writer.openElement("fileProcessor").attribute("name", obj.name()).closeElement();
+            }
+            writer.closeElement();
+
+        }
+
+        public void deserialize(final Node n) {
+            final NodeList children = n.getChildNodes();
+            for (int i = 0; i < children.getLength(); i++) {
+                Node child = children.item(i);
+                Map<String, String> attributes = XMLConfigurationReader.attributes(child);
+                StandardCollection collection;
+                switch (child.getNodeName()) {
+                    case "excludedPattern":
+                        excludedPatterns.add(attributes.get("pattern"));
+                        break;
+                    case "excludedCollection":
+                        collection = StandardCollection.valueOf(attributes.get("name"));
+                        excludedCollections.add(collection);
+                        break;
+                    case "excludedPath":
+                        excludedPaths.add(new DocumentNameMatcher(attributes.get("name"),
+                                (Predicate<DocumentName>) x -> {
+                                    throw new NotImplementedException("Deserialized ExclusionProcessor can not evaluate paths");
+                                }));
+                        break;
+                    case "includedPattern":
+                        includedPatterns.add(attributes.get("pattern"));
+                        break;
+                    case "includedCollection":
+                        collection = StandardCollection.valueOf(attributes.get("name"));
+                        includedCollections.add(collection);
+                        break;
+                    case "includedPath":
+                        excludedPaths.add(new DocumentNameMatcher(attributes.get("name"),
+                                (Predicate<DocumentName>) x -> {
+                                    throw new NotImplementedException("Deserialized ExclusionProcessor can not evaluate paths");
+                                }));
+                        break;
+                }
+
+            }
+        }
+    }
 }

@@ -37,9 +37,7 @@ import java.nio.charset.Charset;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
-import org.apache.rat.analysis.AnalyserFactoryTest;
 import org.apache.rat.document.DocumentName;
-import org.apache.rat.test.utils.Resources;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -392,7 +390,7 @@ public class TestLicenseAppender {
     private File copyResource(final DocumentName basedir, final String resourceName) throws IOException {
         final DocumentName outputName = DocumentName.builder(basedir).setName(resourceName).build();
         final File outputFile = outputName.asFile();
-        org.apache.rat.testhelpers.FileUtils.mkDir(outputFile.getParentFile());
+        org.apache.rat.utils.FileUtils.mkDir(outputFile.getParentFile());
         try (InputStream input = TestLicenseAppender.class.getResourceAsStream(resourceName);
              OutputStream output = new FileOutputStream(outputFile)) {
             assertThat(input).as(resourceName + " is not found").isNotNull();

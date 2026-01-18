@@ -29,7 +29,8 @@ import org.apache.commons.cli.ParseException;
 import org.apache.rat.api.RatException;
 import org.apache.rat.commandline.ArgumentContext;
 import org.apache.rat.report.claim.ClaimStatistic;
-import org.apache.rat.testhelpers.FileUtils;
+import org.apache.rat.testhelpers.BaseOptionCollection;
+import org.apache.rat.utils.FileUtils;
 import org.apache.rat.testhelpers.data.OptionTestDataProvider;
 import org.apache.rat.testhelpers.data.TestData;
 import org.apache.rat.testhelpers.data.ValidatorData;
@@ -52,7 +53,7 @@ public final class ReporterOptionsTest {
     static Path testPath;
 
     private static final OptionTestDataProvider optionTestDataProvider = new OptionTestDataProvider();
-
+    private final OptionCollectionParser collectionParser = new OptionCollectionParser(new BaseOptionCollection());
     /**
      * This method is a known workaround for
      * {@link <a href="https://github.com/junit-team/junit5/issues/2811">junit 5 issue #2811</a> }.
@@ -65,7 +66,7 @@ public final class ReporterOptionsTest {
 
 
     static Stream<Arguments> getTestData() {
-        return optionTestDataProvider.getOptionTests().stream().map(testData ->
+        return optionTestDataProvider.getOptionTests(new BaseOptionCollection()).stream().map(testData ->
                 Arguments.of(testData.getTestName(), testData));
     }
 
@@ -78,7 +79,7 @@ public final class ReporterOptionsTest {
     void testOptionsUpdateConfig(String name, TestData test) throws Exception {
         Path basePath = testPath.resolve(test.getTestName());
         test.setupFiles(basePath);
-        ArgumentContext ctxt = OptionCollection.parseCommands(basePath.toFile(), test.getCommandLine());
+        ArgumentContext ctxt = collectionParser.parseCommands(basePath.toFile(), test.getCommandLine());
         Reporter.Output output = new Reporter(ctxt.getConfiguration()).execute();
         ValidatorData data = new ValidatorData(output, basePath.toString());
         test.getValidator().accept(data);
@@ -92,7 +93,7 @@ public final class ReporterOptionsTest {
             FileUtils.mkDir(testDir);
             FileUtils.writeFile(testDir, ".gitignore", "/foo.md");
             FileUtils.writeFile(testDir, "foo.md");
-            ArgumentContext ctxt = OptionCollection.parseCommands(testDir, args);
+            ArgumentContext ctxt = collectionParser.parseCommands(testDir, args);
             Reporter reporter = new Reporter(ctxt.getConfiguration());
             Reporter.Output output = reporter.execute();
             XmlUtils.printDocument(System.out, output.getDocument());

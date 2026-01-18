@@ -19,6 +19,7 @@
 package org.apache.rat.utils;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.function.Function;
@@ -32,21 +33,19 @@ import org.apache.commons.text.WordUtils;
  */
 public class CasedString {
     /** the string of the cased format. */
-    private final String string;
+    private final String[] parts;
     /** the case of the string. */
     private final StringCase stringCase;
 
     /**
-     * A method to join camel string fragments together.
+     * A method to join pascal string fragments together.
      */
-    private static final Function<String[], String> CAMEL_JOINER = a -> {
-        StringBuilder sb = new StringBuilder(a[0].toLowerCase(Locale.ROOT));
-
-        for (int i = 1; i < a.length; i++) {
-            sb.append(WordUtils.capitalize(a[i].toLowerCase(Locale.ROOT)));
-        }
+    private static final Function<String[], String> PASCAL_JOINER = strings -> {
+        StringBuilder sb = new StringBuilder();
+        Arrays.stream(strings).forEach(token -> sb.append(WordUtils.capitalize(token.toLowerCase(Locale.ROOT))));
         return sb.toString();
     };
+
 
     /**
      * An enumeration of supported string cases.  These cases tag strings as having a specific format.
@@ -54,10 +53,14 @@ public class CasedString {
     public enum StringCase {
         /**
          * Camel case tags strings like 'CamelCase' or 'camelCase'. This conversion forces the first character to
-         * lower case. If specific capitalization rules are required use {@link WordUtils#capitalize(String)} to set the first
-         * character of the string.
+         * lower case. If the first character is desired to be upper case use PASCAL case instead.
          */
-        CAMEL(Character::isUpperCase, true, CAMEL_JOINER),
+        CAMEL(Character::isUpperCase, true, PASCAL_JOINER.andThen(WordUtils::uncapitalize)),
+        /**
+         * Camel case tags strings like 'PascalCase' or 'pascalCase'. This conversion forces the first character to
+         * upper case. If the first character is desired to be lower case use CAMEL case instead.
+         */
+        PASCAL(Character::isUpperCase, true, PASCAL_JOINER),
         /**
          * Snake case tags strings like 'Snake_Case'.  This conversion does not change the capitalization of any characters
          * in the string.  If specific capitalization is required use {@link String#toUpperCase()}, {@link String#toLowerCase()},
@@ -166,7 +169,7 @@ public class CasedString {
      * @param string The string.
      */
     public CasedString(final StringCase stringCase, final String string) {
-        this.string = string == null ? null : stringCase.assemble(stringCase.getSegments(string.trim()));
+        this.parts = string == null ? StringCase.NULL_SEGMENT : stringCase.getSegments(string.trim());
         this.stringCase = stringCase;
     }
 
@@ -176,8 +179,15 @@ public class CasedString {
      * @param parts The string parts.
      */
     public CasedString(final StringCase stringCase, final String[] parts) {
-        this.string = parts == null ? null : stringCase.assemble(parts);
+        this.parts = parts;
         this.stringCase = stringCase;
+    }
+
+    public CasedString as(final StringCase stringCase) {
+        if (stringCase == this.stringCase) {
+            return this;
+        }
+        return new CasedString(stringCase, Arrays.copyOf(this.parts, this.parts.length));
     }
 
     /**
@@ -186,7 +196,7 @@ public class CasedString {
      * @return the array of Strings that are segments of the cased string.
      */
     public String[] getSegments() {
-        return stringCase.getSegments(string);
+        return parts;
     }
 
     /**
@@ -196,10 +206,7 @@ public class CasedString {
      * @return the String current string represented in the new format.
      */
     public String toCase(final StringCase stringCase) {
-        if (stringCase == this.stringCase) {
-            return string;
-        }
-        return string == null ? null : stringCase.joiner.apply(getSegments());
+        return parts == StringCase.NULL_SEGMENT ? null : stringCase.joiner.apply(getSegments());
     }
 
     /**
@@ -208,6 +215,6 @@ public class CasedString {
      */
     @Override
     public String toString() {
-        return string;
+        return toCase(stringCase);
     }
 }

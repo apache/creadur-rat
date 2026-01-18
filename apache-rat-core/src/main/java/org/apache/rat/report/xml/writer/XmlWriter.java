@@ -18,12 +18,22 @@
  */
 package org.apache.rat.report.xml.writer;
 
+import java.io.ByteArrayOutputStream;
 import java.io.Closeable;
 import java.io.IOException;
 import java.util.ArrayDeque;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
+
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+
+import org.w3c.dom.Document;
 
 /**
  * <p>
@@ -39,7 +49,7 @@ import java.util.Set;
 @SuppressWarnings({"checkstyle:MagicNumber", "checkstyle:JavadocVariable"})
 public final class XmlWriter implements IXmlWriter {
 
-    private final Appendable writer;
+    private final Appendable appendable;
     private final ArrayDeque<CharSequence> elementNames;
     private final Set<CharSequence> currentAttributes = new HashSet<>();
 
@@ -52,8 +62,21 @@ public final class XmlWriter implements IXmlWriter {
      * @param writer the writer to write to.
      */
     public XmlWriter(final Appendable writer) {
-        this.writer = writer;
+        this.appendable = writer;
         this.elementNames = new ArrayDeque<>();
+    }
+
+    private void validateRootOpen() throws IOException {
+        if (elementsWritten && elementNames.isEmpty()) {
+            throw new OperationNotAllowedException("Root element already closed. Cannot open new element.");
+        }
+    }
+
+    private void maybeCloseElement() throws IOException {
+        if (inElement) {
+            appendable.append('>');
+            inElement = false;
+        }
     }
 
     /**
@@ -72,7 +95,7 @@ public final class XmlWriter implements IXmlWriter {
         if (prologWritten) {
             throw new OperationNotAllowedException("Only one prolog allowed");
         }
-        writer.append("<?xml version='1.0'?>");
+        appendable.append("<?xml version='1.0'?>");
         prologWritten = true;
         return this;
     }
@@ -88,18 +111,14 @@ public final class XmlWriter implements IXmlWriter {
      */
     @Override
     public IXmlWriter openElement(final CharSequence elementName) throws IOException {
-        if (elementsWritten && elementNames.isEmpty()) {
-            throw new OperationNotAllowedException("Root element already closed. Cannot open new element.");
-        }
+        validateRootOpen();
         if (!XMLChar.isValidName(elementName.toString())) {
             throw new InvalidXmlException("'" + elementName + "' is not a valid element name");
         }
         elementsWritten = true;
-        if (inElement) {
-            writer.append('>');
-        }
-        writer.append('<');
-        writer.append(elementName);
+        maybeCloseElement();
+        appendable.append('<');
+        appendable.append(elementName);
         inElement = true;
         elementNames.push(elementName);
         currentAttributes.clear();
@@ -108,13 +127,10 @@ public final class XmlWriter implements IXmlWriter {
 
     @Override
     public IXmlWriter comment(final CharSequence text) throws IOException {
-        if (inElement) {
-            writer.append('>');
-        }
-        inElement = false;
-        writer.append("<!-- ");
+        maybeCloseElement();
+        appendable.append("<!-- ");
         writeEscaped(text, false);
-         writer.append(" -->");
+         appendable.append(" -->");
          return this;
     }
 
@@ -134,9 +150,7 @@ public final class XmlWriter implements IXmlWriter {
     @Override
     public IXmlWriter attribute(final CharSequence name, final CharSequence value) throws IOException {
         if (elementNames.isEmpty()) {
-            if (elementsWritten) {
-                throw new OperationNotAllowedException("Root element has already been closed.");
-            }
+            validateRootOpen();
             throw new OperationNotAllowedException("Close called before an element has been opened.");
         }
         if (!XMLChar.isValidName(name.toString())) {
@@ -148,11 +162,11 @@ public final class XmlWriter implements IXmlWriter {
         if (currentAttributes.contains(name)) {
             throw new InvalidXmlException("Each attribute can only be written once");
         }
-        writer.append(' ');
-        writer.append(name);
-        writer.append("='");
+        appendable.append(' ');
+        appendable.append(name);
+        appendable.append("='");
         writeAttributeContent(value);
-        writer.append("'");
+        appendable.append("'");
         currentAttributes.add(name);
         return this;
     }
@@ -163,21 +177,16 @@ public final class XmlWriter implements IXmlWriter {
 
     private void prepareForData() throws IOException {
         if (elementNames.isEmpty()) {
-            if (elementsWritten) {
-                throw new OperationNotAllowedException("Root element has already been closed.");
-            }
+            validateRootOpen();
             throw new OperationNotAllowedException("An element must be opened before content can be written.");
         }
-        if (inElement) {
-            writer.append('>');
-        }
+        maybeCloseElement();
     }
 
     @Override
     public IXmlWriter content(final CharSequence content) throws IOException {
         prepareForData();
         writeEscaped(content, false);
-        inElement = false;
         return this;
     }
 
@@ -190,16 +199,16 @@ public final class XmlWriter implements IXmlWriter {
             sb.replace(found, found + 3, "{rat:CDATA close}");
         }
 
-        writer.append("<![CDATA[ ");
+        appendable.append("<![CDATA[ ");
         for (int i = 0; i < sb.length(); i++) {
             char c = sb.charAt(i);
             if (!XMLChar.isContent(c)) {
-                writer.append(String.format("\\u%X", (int) c));
+                appendable.append(String.format("\\u%X", (int) c));
             } else {
-                writer.append(c);
+                appendable.append(c);
             }
         }
-        writer.append(" ]]>");
+        appendable.append(" ]]>");
 
         inElement = false;
         return this;
@@ -210,19 +219,19 @@ public final class XmlWriter implements IXmlWriter {
         for (int i = 0; i < length; i++) {
             char character = content.charAt(i);
             if (character == '&') {
-                writer.append("&amp;");
+                appendable.append("&amp;");
             } else if (character == '<') {
-                writer.append("&lt;");
+                appendable.append("&lt;");
             } else if (character == '>') {
-                writer.append("&gt;");
+                appendable.append("&gt;");
             } else if (isAttributeContent && character == '\'') {
-                writer.append("&apos;");
+                appendable.append("&apos;");
             } else if (isAttributeContent && character == '\"') {
-                writer.append("&quot;");
+                appendable.append("&quot;");
             } else if (!(XMLChar.isContent(character) || XMLChar.isSpace(character))) {
-                writer.append(String.format("\\u%X", (int) character));
+                appendable.append(String.format("\\u%X", (int) character));
             } else {
-                writer.append(character);
+                appendable.append(character);
             }
         }
     }
@@ -237,18 +246,16 @@ public final class XmlWriter implements IXmlWriter {
     @Override
     public IXmlWriter closeElement() throws IOException {
         if (elementNames.isEmpty()) {
-            if (elementsWritten) {
-                throw new OperationNotAllowedException("Root element has already been closed.");
-            }
+            validateRootOpen();
             throw new OperationNotAllowedException("Close called before an element has been opened.");
         }
         final CharSequence elementName = elementNames.pop();
         if (inElement) {
-            writer.append("/>");
+            appendable.append("/>");
         } else {
-            writer.append("</");
-            writer.append(elementName);
-            writer.append('>');
+            appendable.append("</");
+            appendable.append(elementName);
+            appendable.append('>');
         }
         inElement = false;
         return this;
@@ -265,20 +272,18 @@ public final class XmlWriter implements IXmlWriter {
     public IXmlWriter closeElement(final CharSequence name) throws IOException {
         Objects.requireNonNull(name);
         if (elementNames.isEmpty()) {
-            if (elementsWritten) {
-                throw new OperationNotAllowedException("Root element has already been closed.");
-            }
+            validateRootOpen();
             throw new OperationNotAllowedException("Close called before an element has been opened.");
         }
         CharSequence elementName = null;
         while (!name.equals(elementName)) {
             elementName = elementNames.pop();
             if (inElement) {
-                writer.append("/>");
+                appendable.append("/>");
             } else {
-                writer.append("</");
-                writer.append(elementName);
-                writer.append('>');
+                appendable.append("</");
+                appendable.append(elementName);
+                appendable.append('>');
             }
             inElement = false;
         }
@@ -308,8 +313,33 @@ public final class XmlWriter implements IXmlWriter {
     @Override
     public void close() throws IOException {
         closeDocument();
-        if (writer instanceof Closeable) {
-            ((Closeable) writer).close();
+        if (appendable instanceof Closeable) {
+            ((Closeable) appendable).close();
         }
+    }
+
+    public IXmlWriter append(final Document document) throws IOException {
+        validateRootOpen();
+        elementsWritten = true;
+        maybeCloseElement();
+        appendable.append(System.lineSeparator());
+        currentAttributes.clear();
+        TransformerFactory tf = TransformerFactory.newInstance();
+        Transformer transformer;
+        try {
+            transformer = tf.newTransformer();
+            transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+            transformer.setOutputProperty(OutputKeys.METHOD, "xml");
+            transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+            transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
+            transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            transformer.transform(new DOMSource(document),
+                    new StreamResult(baos));
+            appendable.append(baos.toString());
+        } catch (TransformerException e) {
+            throw new IOException(e);
+        }
+        return this;
     }
 }

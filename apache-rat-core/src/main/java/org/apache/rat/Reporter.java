@@ -18,6 +18,8 @@
  */
 package org.apache.rat;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -26,7 +28,9 @@ import java.io.PrintWriter;
 import java.io.StringReader;
 import java.nio.charset.StandardCharsets;
 
+import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
@@ -45,6 +49,7 @@ import org.apache.rat.report.xml.writer.IXmlWriter;
 import org.apache.rat.report.xml.writer.XmlWriter;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
 /**
  * Class that executes the report as defined in a {@link ReportConfiguration} and stores
@@ -94,7 +99,8 @@ public class Reporter {
                     builder.document(DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(inputSource));
                 }
             }
-            return builder.build();
+            this.output = builder.build();
+            return output;
         } catch (Exception e) {
             throw RatException.makeRatException(e);
         }
@@ -131,12 +137,12 @@ public class Reporter {
         /** The XML output document */
         private final Document document;
         /**
-         * The claim staticsic from the execution that generated the document.
+         * The claim statics from the execution that generated the document.
          * May be empty if the Document was read from disk.
          */
         private final ClaimStatistic statistic;
         /**
-         * The configuraiton that generated the document
+         * The configuration that generated the document
          */
         private final ReportConfiguration configuration;
 
@@ -228,12 +234,28 @@ public class Reporter {
              */
             private ClaimStatistic statistic;
             /**
-             * The configuraiton that generated the document
+             * The configuration that generated the document
              */
             private ReportConfiguration configuration;
 
             public Builder document(final Document document) {
                 this.document = document;
+                return this;
+            }
+
+            public Builder document(final File documentFile) {
+                DocumentBuilder builder;
+                try {
+                    builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+                } catch (ParserConfigurationException e) {
+                    throw new ConfigurationException("Unable to create DOM builder", e);
+                }
+
+                try (InputStream inputStream = new FileInputStream(documentFile)) {
+                    this.document = builder.parse(inputStream);
+                } catch (SAXException | IOException e) {
+                    throw new ConfigurationException("Unable to read file: " + documentFile, e);
+                }
                 return this;
             }
 
@@ -246,11 +268,32 @@ public class Reporter {
                 return this;
             }
 
+            public Builder statistic(final File statisticFile) {
+                try {
+                    ClaimStatistic statistic = new ClaimStatistic();
+                    statistic.serde().deserialize(() -> new FileInputStream(statisticFile));
+                    this.statistic = statistic;
+                    return this;
+                } catch (IOException e) {
+                    throw new ConfigurationException("Unable to read file: " + statisticFile, e);
+                }
+            }
+
             public Builder configuration(final ReportConfiguration configuration) {
                 this.configuration = configuration;
                 return this;
             }
 
+            public Builder configuration(final File configurationFile) {
+                try {
+                    ReportConfiguration config = new ReportConfiguration();
+                    config.serde().deserialize(() -> new FileInputStream(configurationFile));
+                    this.configuration = config;
+                    return this;
+                } catch (IOException e) {
+                    throw new ConfigurationException("Unable to read file: " + configurationFile, e);
+                }
+            }
         }
     }
 }

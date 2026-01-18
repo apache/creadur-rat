@@ -30,11 +30,9 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 
-import org.apache.commons.cli.Option;
-import org.apache.commons.cli.Options;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.rat.Defaults;
-import org.apache.rat.OptionCollection;
+import org.apache.rat.OptionCollectionParser;
 import org.apache.rat.api.EnvVar;
 import org.apache.rat.commandline.StyleSheets;
 import org.apache.rat.config.exclusion.StandardCollection;
@@ -46,8 +44,6 @@ import org.apache.rat.help.AbstractHelp;
 import org.apache.rat.license.ILicense;
 import org.apache.rat.license.LicenseSetFactory;
 import org.apache.rat.ui.AbstractOption;
-import org.apache.rat.ui.ArgumentTracker;
-import org.apache.rat.ui.OptionFactory;
 import org.apache.rat.ui.UI;
 import org.apache.rat.ui.spi.UIProvider;
 import org.apache.velocity.tools.config.DefaultKey;
@@ -74,7 +70,7 @@ public class RatTool {
     }
 
     /**
-     * The characters to escape for markdown.
+     * The characters to escape for Markdown.
      */
     private static final String[] MARKDOWN_CHARS = charParser("\\`*_{}[]<>()#+-.!|");
     /**
@@ -103,22 +99,13 @@ public class RatTool {
     }
 
     /**
-     * Gets the list of command line options.
-     * @return the list of command line options.
-     */
-    public List<Option> options() {
-        List<Option> lst = new ArrayList<>(OptionCollection.buildOptions(new Options()).getOptions());
-        lst.sort(Comparator.comparing(ArgumentTracker::extractKey));
-        return lst;
-    }
-
-    /**
-     * Gets a map client option name to Ant Option.
-     * @return a map client option name to Ant Option.
+     * Gets a map of client option to the UI AbstractOption implementation type.
+     * @param name The name of the UI client.
+     * @return a map client option name to UI Option.
      */
     public <T extends AbstractOption<T>> Map<String, T> options(final String name) {
         UI<T> ui = (UI<T>) uiMap.get(name);
-        return OptionFactory.getOptionMap(ui.getFactoryConfig());
+        return ui.getOptionCollection().getOptionMap();
     }
 
     public List<String> uiNames() {
@@ -143,9 +130,9 @@ public class RatTool {
     }
 
     /**
-     * Escapes a string for markdown.
+     * Escapes a string for Markdown.
      * @param text the text to escape.
-     * @return the text with the markdown specific characters escaped.
+     * @return the text with the Markdown specific characters escaped.
      */
     public String markdownEscape(final String text) {
         return escape(text, MARKDOWN_CHARS);
@@ -164,9 +151,9 @@ public class RatTool {
      * Gets the list of argument types.
      * @return a list of argument types.
      */
-    public List<OptionCollection.ArgumentType> argumentTypes() {
-        return Arrays.stream(OptionCollection.ArgumentType.values()).filter(t -> t != OptionCollection.ArgumentType.NONE)
-                .sorted(Comparator.comparing(OptionCollection.ArgumentType::getDisplayName))
+    public List<OptionCollectionParser.ArgumentType> argumentTypes() {
+        return Arrays.stream(OptionCollectionParser.ArgumentType.values()).filter(t -> t != OptionCollectionParser.ArgumentType.NONE)
+                .sorted(Comparator.comparing(OptionCollectionParser.ArgumentType::getDisplayName))
                 .collect(Collectors.toList());
     }
 

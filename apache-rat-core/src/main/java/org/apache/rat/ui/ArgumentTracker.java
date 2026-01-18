@@ -24,7 +24,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
+import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
 import org.apache.commons.cli.Option;
@@ -36,7 +36,7 @@ import org.apache.rat.utils.Log;
 
 /**
  * Tracks arguments that are set and their values for conversion from native UI to
- * Apache commons command line values.  Native values
+ * Apache Commons command line values.  Native values
  */
 public final class ArgumentTracker {
 
@@ -73,10 +73,6 @@ public final class ArgumentTracker {
         return StringUtils.defaultIfBlank(option.getLongOpt(), option.getOpt());
     }
 
-    public Set<Map.Entry<String, List<String>>> entrySet() {
-        return args.entrySet();
-    }
-
     /**
      * Sets the deprecation report method.
      */
@@ -102,6 +98,13 @@ public final class ArgumentTracker {
             result.addAll(entry.getValue().stream().filter(Objects::nonNull).collect(Collectors.toList()));
         }
         return result;
+    }
+
+    /**
+     * Applies the consumer to each arg and list in turn.
+     */
+    public void apply(final BiConsumer<String, List<String>> consumer) {
+        args.forEach((key, value) -> consumer.accept(key, new ArrayList<>(value)));
     }
 
     private boolean validateSet(final String key) {

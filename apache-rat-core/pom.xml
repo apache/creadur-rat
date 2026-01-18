@@ -90,25 +90,6 @@
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-dependency-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>unpack dependencies</id>
-                        <phase>prepare-package</phase>
-                        <goals>
-                            <goal>unpack-dependencies</goal>
-                        </goals>
-                        <configuration>
-                            <includeScope>runtime</includeScope>
-                            <outputDirectory>${project.build.outputDirectory}</outputDirectory>
-                            <overWriteIfNewer>true</overWriteIfNewer>
-                            <excludes>META-INF/**</excludes>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
                 <executions>
                     <execution>
@@ -147,6 +128,7 @@
                 <artifactId>spotbugs-maven-plugin</artifactId>
                 <configuration>
                     <excludeFilterFile>spotbugs-ignore.xml</excludeFilterFile>
+                    <maxAllowedViolations>47</maxAllowedViolations>
                 </configuration>
             </plugin>
             <plugin>

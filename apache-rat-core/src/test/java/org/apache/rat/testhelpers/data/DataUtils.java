@@ -23,6 +23,7 @@ import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Locale;
 import java.util.function.Consumer;
 import org.apache.commons.cli.Option;
 import org.apache.rat.report.xml.writer.XmlWriter;
@@ -66,13 +67,15 @@ public class DataUtils {
     }
 
     /**
-     * Create a directory name from the option.  Directory names are camel case with a lower case
-     * first letter.
+     * Create a directory name from the option.  Directory names are camel.
      * @param option the option to create a directory name from.
      * @return the directory name for the option.
      */
     static String asDirName(Option option) {
-        return CasedString.StringCase.CAMEL.assemble(CasedString.StringCase.KEBAB.getSegments(option.getLongOpt()));
+        if (option.hasLongOpt()) {
+            return CasedString.StringCase.CAMEL.assemble(CasedString.StringCase.KEBAB.getSegments(option.getLongOpt()));
+        }
+        return option.getOpt().toLowerCase(Locale.ROOT);
     }
 
     /**

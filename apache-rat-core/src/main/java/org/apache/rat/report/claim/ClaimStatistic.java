@@ -19,14 +19,26 @@
 
 package org.apache.rat.report.claim;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.apache.commons.io.function.IOSupplier;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.rat.ConfigurationException;
 import org.apache.rat.api.Document;
+import org.apache.rat.configuration.XMLConfigurationReader;
+import org.apache.rat.report.xml.writer.XmlWriter;
+import org.xml.sax.SAXException;
 
 /**
  * This class provides a numerical overview about
@@ -113,6 +125,9 @@ public class ClaimStatistic {
     /** Map of counter type to value */
     private final ConcurrentHashMap<ClaimStatistic.Counter, IntCounter> counterMap = new ConcurrentHashMap<>();
 
+    public Serde serde() {
+        return new Serde();
+    }
     /**
      * Converts null counter to 0.
      *
@@ -287,6 +302,97 @@ public class ClaimStatistic {
          */
         public int value() {
             return value;
+        }
+
+        @Override
+        public String toString() {
+            return String.valueOf(value);
+        }
+    }
+
+    /**
+     * Serialze and deserialze the claim Statistic.
+     */
+    public class Serde {
+
+        public void serialize(final Appendable appendable) throws IOException {
+            try (XmlWriter writer = new XmlWriter(appendable)) {
+                writer.startDocument().openElement("ClaimStatistic")
+                        .openElement("licenseNameMap");
+                for (Map.Entry<String, IntCounter> entry : licenseNameMap.entrySet()) {
+                    if (entry.getValue().value > 0) {
+                        writer.openElement("licenseName")
+                                .attribute("count", entry.getValue().toString())
+                                .attribute("name", entry.getKey()).closeElement();
+                    }
+                }
+                writer.closeElement()
+                        .openElement("licenseFamilyCategoryMap");
+                for (Map.Entry<String, IntCounter> entry : licenseFamilyCategoryMap.entrySet()) {
+                    if (entry.getValue().value > 0) {
+                        writer.openElement("familyCategory")
+                                .attribute("count", entry.getValue().toString())
+                                .attribute("name", entry.getKey()).closeElement();
+                    }
+                }
+                writer.closeElement()
+                        .openElement("documentTypeMap");
+                for (Map.Entry<Document.Type, IntCounter> entry : documentTypeMap.entrySet()) {
+                    if (entry.getValue().value > 0) {
+                        writer.openElement("documentType")
+                                .attribute("count", entry.getValue().toString())
+                                .attribute("name", entry.getKey().name()).closeElement();
+                    }
+                }
+                writer.closeElement()
+                        .openElement("counterMap");
+                for (Map.Entry<ClaimStatistic.Counter, IntCounter> entry : counterMap.entrySet()) {
+                    if (entry.getValue().value > 0) {
+                        writer.openElement("counter")
+                                .attribute("count", entry.getValue().toString())
+                                .attribute("name", entry.getKey().name()).closeElement();
+                    }
+                }
+                writer.closeElement();
+            }
+        }
+
+        public void deserialize(final IOSupplier<InputStream> inputStreamSupplier) throws IOException {
+            DocumentBuilder builder;
+            try {
+                builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+            } catch (ParserConfigurationException e) {
+                throw new ConfigurationException("Unable to create DOM builder", e);
+            }
+            org.w3c.dom.Document document;
+            try (InputStream stream = inputStreamSupplier.get()) {
+                document = builder.parse(stream);
+
+            } catch (SAXException e) {
+                throw new IOException("Unable to read input", e);
+            }
+
+            XMLConfigurationReader.nodeListConsumer(document.getElementsByTagName("licenseName"), node -> {
+                Map<String, String> attributes = XMLConfigurationReader.attributes(node);
+                incLicenseNameCount(attributes.get("name"), Integer.parseInt(attributes.get("count")));
+            });
+
+            XMLConfigurationReader.nodeListConsumer(document.getElementsByTagName("familyCategory"), node -> {
+                Map<String, String> attributes = XMLConfigurationReader.attributes(node);
+                incLicenseCategoryCount(attributes.get("name"), Integer.parseInt(attributes.get("count")));
+            });
+
+            XMLConfigurationReader.nodeListConsumer(document.getElementsByTagName("documentType"), node -> {
+                Map<String, String> attributes = XMLConfigurationReader.attributes(node);
+                Document.Type type = Document.Type.valueOf(attributes.get("name"));
+                incCounter(type, Integer.parseInt(attributes.get("count")));
+            });
+
+            XMLConfigurationReader.nodeListConsumer(document.getElementsByTagName("counter"), node -> {
+                Map<String, String> attributes = XMLConfigurationReader.attributes(node);
+                Counter type = Counter.valueOf(attributes.get("name"));
+                incCounter(type, Integer.parseInt(attributes.get("count")));
+            });
         }
     }
 }

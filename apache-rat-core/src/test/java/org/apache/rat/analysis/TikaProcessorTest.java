@@ -32,7 +32,7 @@ import org.apache.rat.document.DocumentNameMatcher;
 import org.apache.rat.document.FileDocument;
 import org.apache.rat.report.claim.ClaimStatistic;
 import org.apache.rat.document.DocumentName;
-import org.apache.rat.testhelpers.FileUtils;
+import org.apache.rat.utils.FileUtils;
 import org.apache.rat.utils.DefaultLog;
 import org.junit.jupiter.api.Test;
 

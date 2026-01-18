@@ -29,7 +29,8 @@ public interface UI<T extends AbstractOption<T>> {
 
     /**
      * Gets the OptionFactory configuration for this UI.
+     *
      * @return the OptionFactory configuration for this UI.
      */
-    OptionFactory.Config<T> getFactoryConfig();
+    AbstractOptionCollection<T> getOptionCollection();
 }

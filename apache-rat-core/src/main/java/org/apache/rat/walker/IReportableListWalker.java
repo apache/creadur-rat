@@ -61,13 +61,13 @@ public final class IReportableListWalker implements IReportable {
             try {
                 reportable.run(report);
             } catch (RatException e) {
-                DefaultLog.getInstance().error("Error processing " + reportable.getName(), e);
+                DefaultLog.getInstance().error("Error processing " + reportable.name(), e);
             }
         }
     }
 
     @Override
-    public DocumentName getName() {
+    public DocumentName name() {
         return documentName;
     }
 
