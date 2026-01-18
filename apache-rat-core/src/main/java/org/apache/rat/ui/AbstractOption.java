@@ -26,10 +26,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.cli.Option;
-import org.apache.commons.cli.Options;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.rat.OptionCollection;
-import org.apache.rat.commandline.Arg;
+import org.apache.rat.OptionCollectionParser;
 
 import static java.lang.String.format;
 
@@ -46,7 +44,9 @@ public abstract class AbstractOption<T extends AbstractOption<T>> {
     /** The name for the option */
     protected final String name;
     /** The argument type for this option */
-    protected final OptionCollection.ArgumentType argumentType;
+    protected final OptionCollectionParser.ArgumentType argumentType;
+    /** The AbstractOptionCollection associated with this AbstractOption */
+    protected final AbstractOptionCollection<T> optionCollection;
 
     /**
      * Constructor.
@@ -54,33 +54,23 @@ public abstract class AbstractOption<T extends AbstractOption<T>> {
      * @param option The CLI option
      * @param name the UI-specific name for the option.
      */
-    protected AbstractOption(final Option option, final String name) {
+    protected <C extends AbstractOptionCollection<T>> AbstractOption(final C optionCollection, final Option option, final String name) {
+        this.optionCollection = optionCollection;
         this.option = option;
         this.name = name;
         argumentType = option.hasArg() ?
-                option.getArgName() == null ? OptionCollection.ArgumentType.ARG :
-                OptionCollection.ArgumentType.valueOf(option.getArgName().toUpperCase(Locale.ROOT)) :
-                OptionCollection.ArgumentType.NONE;
+                option.getArgName() == null ? OptionCollectionParser.ArgumentType.ARG :
+                OptionCollectionParser.ArgumentType.valueOf(option.getArgName().toUpperCase(Locale.ROOT)) :
+                OptionCollectionParser.ArgumentType.NONE;
     }
 
     /**
-     * Gets the additional options for the UI.
-     *
-     * @return the additional options.
+     * Gets the AbstractOptionCollection that this option is a member of.
+     * @return the AbstractOptionCollection that this option is a member of.
      */
-    public abstract Options getAdditionalOptions();
-
-//    /**
-//     * Gets a map client option name to Ant Option.
-//     * @return a map client option name to Ant Option.
-//     */
-//    public Map<String, T> getOptions() {
-//        Map<String, T> result = new TreeMap<>();
-//        for (T antOption : AntOption.getAntOptions()) {
-//            result.put(CLIOption.createName(antOption.getOption()), antOption);
-//        }
-//        return result;
-//    }
+    public final AbstractOptionCollection<T> getOptionCollection() {
+        return optionCollection;
+    }
 
     /**
      * Gets the option this abstract option is wrapping.
@@ -94,9 +84,8 @@ public abstract class AbstractOption<T extends AbstractOption<T>> {
      * Return default value.
      * @return default value or {@code null} if no argument given.
      */
-    public String getDefaultValue() {
-        Arg arg = Arg.findArg(option);
-        return arg == null ? null : arg.defaultValue();
+    public final String getDefaultValue() {
+        return optionCollection.getDefaultValue(option);
     }
 
     /**
@@ -125,8 +114,8 @@ public abstract class AbstractOption<T extends AbstractOption<T>> {
             while (matcher.find()) {
                 String key = matcher.group();
                 String optKey = key.substring(2);
-                Optional<Option> maybeResult = Arg.getOptions(getAdditionalOptions()).getOptions().stream()
-                        .filter(o -> optKey.equals(o.getOpt()) || optKey.equals(o.getLongOpt())).findFirst();
+                Optional<Option> maybeResult = getOptionCollection().getOptions().getOptions().stream()
+                                .filter(o -> optKey.equals(o.getOpt()) || optKey.equals(o.getLongOpt())).findFirst();
                 maybeResult.ifPresent(value -> maps.put(key, cleanupName(value)));
             }
             for (Map.Entry<String, String> entry : maps.entrySet()) {
@@ -181,7 +170,7 @@ public abstract class AbstractOption<T extends AbstractOption<T>> {
      * Gets the argument type if there is one.
      * @return the Argument name
      */
-    public final OptionCollection.ArgumentType getArgType() {
+    public final OptionCollectionParser.ArgumentType getArgType() {
         return argumentType;
     }
 
@@ -239,36 +228,5 @@ public abstract class AbstractOption<T extends AbstractOption<T>> {
      */
     public final String getDeprecated() {
         return  option.isDeprecated() ? cleanup(StringUtils.defaultIfEmpty(option.getDeprecated().toString(), StringUtils.EMPTY)) : StringUtils.EMPTY;
-    }
-
-    static final class BaseOption extends AbstractOption<BaseOption> {
-        /**
-         * Constructor.
-         *
-         * @param option The CLI option
-         */
-        BaseOption(final org.apache.commons.cli.Option option) {
-            super(option, ArgumentTracker.extractKey(option));
-        }
-
-        @Override
-        public Options getAdditionalOptions() {
-            return new Options();
-        }
-
-        @Override
-        protected String cleanupName(final org.apache.commons.cli.Option option) {
-            return ArgumentTracker.extractKey(option);
-        }
-
-        @Override
-        public String getExample() {
-            return "";
-        }
-
-        @Override
-        public String getText() {
-            return "";
-        }
     }
 }

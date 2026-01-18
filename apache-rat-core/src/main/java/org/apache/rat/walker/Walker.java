@@ -48,7 +48,7 @@ public abstract class Walker implements IReportable {
     }
 
     @Override
-    public DocumentName getName() {
+    public DocumentName name() {
         return document.getName();
     }
 }

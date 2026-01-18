@@ -69,7 +69,7 @@ public enum Arg {
     /**
      * Defines options to add copyright to files
      */
-    EDIT_COPYRIGHT(new OptionGroup()
+    EDIT_COPYRIGHT(new UpdatableOptionGroup()
             .addOption(Option.builder("c")
                     .longOpt("copyright").hasArg()
                     .deprecated(DeprecatedAttributes.builder().setForRemoval(true).setSince("0.17")
@@ -84,7 +84,7 @@ public enum Arg {
     /**
      * Causes file updates to overwrite existing files.
      */
-    EDIT_OVERWRITE(new OptionGroup()
+    EDIT_OVERWRITE(new UpdatableOptionGroup()
             .addOption(Option.builder("f").longOpt("force")
                     .deprecated(DeprecatedAttributes.builder().setForRemoval(true).setSince("0.17")
                             .setDescription(StdMsgs.useMsg("--edit-overwrite")).get())
@@ -98,7 +98,7 @@ public enum Arg {
     /**
      * Defines options to add licenses to files
      */
-    EDIT_ADD(new OptionGroup()
+    EDIT_ADD(new UpdatableOptionGroup()
             .addOption(Option.builder("a")
                     .deprecated(DeprecatedAttributes.builder().setForRemoval(true).setSince("0.17")
                             .setDescription(StdMsgs.useMsg("--edit-license")).get())
@@ -118,7 +118,7 @@ public enum Arg {
     /**
      * Group of options that read a configuration file
      */
-    CONFIGURATION(new OptionGroup()
+    CONFIGURATION(new UpdatableOptionGroup()
             .addOption(Option.builder().longOpt("config").hasArgs().argName("File")
                     .desc("File names for system configuration.")
                     .converter(Converters.FILE_CONVERTER)
@@ -134,7 +134,7 @@ public enum Arg {
     /**
      * Group of options that skip the default configuration file
      */
-    CONFIGURATION_NO_DEFAULTS(new OptionGroup()
+    CONFIGURATION_NO_DEFAULTS(new UpdatableOptionGroup()
             .addOption(Option.builder().longOpt("configuration-no-defaults")
                     .desc("Ignore default configuration.").build())
             .addOption(Option.builder().longOpt("no-default-licenses")
@@ -148,7 +148,7 @@ public enum Arg {
     /**
      * Option that adds approved licenses to the list
      */
-    LICENSES_APPROVED(new OptionGroup().addOption(Option.builder().longOpt("licenses-approved").hasArg().argName("LicenseID")
+    LICENSES_APPROVED(new UpdatableOptionGroup().addOption(Option.builder().longOpt("licenses-approved").hasArg().argName("LicenseID")
             .desc("A comma separated list of approved License IDs. These licenses will be added to the list of approved licenses.")
                     .converter(Converters.TEXT_LIST_CONVERTER)
                     .type(String[].class)
@@ -157,7 +157,7 @@ public enum Arg {
     /**
      * Option that adds approved licenses from a file
      */
-    LICENSES_APPROVED_FILE(new OptionGroup().addOption(Option.builder().longOpt("licenses-approved-file").hasArg().argName("File")
+    LICENSES_APPROVED_FILE(new UpdatableOptionGroup().addOption(Option.builder().longOpt("licenses-approved-file").hasArg().argName("File")
             .desc("Name of file containing comma separated lists of approved License IDs.")
             .converter(Converters.FILE_CONVERTER)
             .type(File.class)
@@ -166,7 +166,7 @@ public enum Arg {
     /**
      * Option that specifies approved license families
      */
-    FAMILIES_APPROVED(new OptionGroup().addOption(Option.builder().longOpt("license-families-approved").hasArg().argName("FamilyID")
+    FAMILIES_APPROVED(new UpdatableOptionGroup().addOption(Option.builder().longOpt("license-families-approved").hasArg().argName("FamilyID")
             .desc("A comma separated list of approved license family IDs. These license families will be added to the list of approved license families.")
             .converter(Converters.TEXT_LIST_CONVERTER)
             .type(String[].class)
@@ -175,7 +175,7 @@ public enum Arg {
     /**
      * Option that specifies approved license families from a file
      */
-    FAMILIES_APPROVED_FILE(new OptionGroup().addOption(Option.builder().longOpt("license-families-approved-file").hasArg().argName("File")
+    FAMILIES_APPROVED_FILE(new UpdatableOptionGroup().addOption(Option.builder().longOpt("license-families-approved-file").hasArg().argName("File")
             .desc("Name of file containing comma separated lists of approved family IDs.")
             .converter(Converters.FILE_CONVERTER)
             .type(File.class)
@@ -184,7 +184,7 @@ public enum Arg {
     /**
      * Option to remove licenses from the approved list
      */
-    LICENSES_DENIED(new OptionGroup().addOption(Option.builder().longOpt("licenses-denied").hasArg().argName("LicenseID")
+    LICENSES_DENIED(new UpdatableOptionGroup().addOption(Option.builder().longOpt("licenses-denied").hasArg().argName("LicenseID")
             .desc("A comma separated list of denied License IDs. " +
                     "These licenses will be removed from the list of approved licenses. " +
                     "Once licenses are removed they can not be added back.")
@@ -195,7 +195,7 @@ public enum Arg {
     /**
      * Option to read a file licenses to be removed from the approved list.
      */
-    LICENSES_DENIED_FILE(new OptionGroup().addOption(Option.builder().longOpt("licenses-denied-file")
+    LICENSES_DENIED_FILE(new UpdatableOptionGroup().addOption(Option.builder().longOpt("licenses-denied-file")
             .hasArg().argName("File").type(File.class)
             .converter(Converters.FILE_CONVERTER)
             .desc("Name of file containing comma separated lists of the denied license IDs. " +
@@ -206,7 +206,7 @@ public enum Arg {
     /**
      * Option to list license families to remove from the approved list.
      */
-    FAMILIES_DENIED(new OptionGroup().addOption(Option.builder().longOpt("license-families-denied")
+    FAMILIES_DENIED(new UpdatableOptionGroup().addOption(Option.builder().longOpt("license-families-denied")
             .hasArg().argName("FamilyID")
             .desc("A comma separated list of denied License family IDs. " +
                     "These license families will be removed from the list of approved licenses. " +
@@ -218,7 +218,7 @@ public enum Arg {
     /**
      * Option to read a list of license families to remove from the approved list.
      */
-    FAMILIES_DENIED_FILE(new OptionGroup().addOption(Option.builder().longOpt("license-families-denied-file").hasArg().argName("File")
+    FAMILIES_DENIED_FILE(new UpdatableOptionGroup().addOption(Option.builder().longOpt("license-families-denied-file").hasArg().argName("File")
             .desc("Name of file containing comma separated lists of denied license IDs. " +
                     "These license families will be removed from the list of approved licenses. " +
                     "Once license families are removed they can not be added back.")
@@ -229,7 +229,7 @@ public enum Arg {
     /**
      * Option to specify an acceptable number of various counters.
      */
-    COUNTER_MAX(new OptionGroup().addOption(Option.builder().longOpt("counter-max").hasArgs().argName("CounterPattern")
+    COUNTER_MAX(new UpdatableOptionGroup().addOption(Option.builder().longOpt("counter-max").hasArgs().argName("CounterPattern")
             .desc("The acceptable maximum number for the specified counter. A value of '-1' specifies an unlimited number.")
             .converter(Converters.COUNTER_CONVERTER)
             .type(Pair.class)
@@ -238,7 +238,7 @@ public enum Arg {
     /**
      * Option to specify an acceptable number of various counters.
      */
-    COUNTER_MIN(new OptionGroup().addOption(Option.builder().longOpt("counter-min").hasArgs().argName("CounterPattern")
+    COUNTER_MIN(new UpdatableOptionGroup().addOption(Option.builder().longOpt("counter-min").hasArgs().argName("CounterPattern")
             .desc("The minimum number for the specified counter.")
             .converter(Converters.COUNTER_CONVERTER)
             .type(Pair.class)
@@ -248,7 +248,7 @@ public enum Arg {
     /**
      * Reads files to test from a file.
      */
-    SOURCE(new OptionGroup()
+    SOURCE(new UpdatableOptionGroup()
             .addOption(Option.builder().longOpt("input-source").hasArgs().argName("File")
                     .desc("A file containing file names to process. " +
                             "File names must use linux directory separator ('/') or none at all. " +
@@ -261,7 +261,7 @@ public enum Arg {
     /**
      * Excludes files by expression
      */
-    EXCLUDE(new OptionGroup()
+    EXCLUDE(new UpdatableOptionGroup()
             .addOption(Option.builder("e").longOpt("exclude").hasArgs().argName("Expression")
                     .deprecated(DeprecatedAttributes.builder().setForRemoval(true).setSince("0.17")
                             .setDescription(StdMsgs.useMsg("--input-exclude")).get())
@@ -274,7 +274,7 @@ public enum Arg {
     /**
      * Excludes files based on the contents of a file.
      */
-    EXCLUDE_FILE(new OptionGroup()
+    EXCLUDE_FILE(new UpdatableOptionGroup()
             .addOption(Option.builder("E").longOpt("exclude-file")
                     .argName("File").hasArg().type(File.class)
                     .converter(Converters.FILE_CONVERTER)
@@ -290,7 +290,7 @@ public enum Arg {
     /**
      * Excludes files based on standard groupings.
      */
-    EXCLUDE_STD(new OptionGroup()
+    EXCLUDE_STD(new UpdatableOptionGroup()
             .addOption(Option.builder().longOpt("input-exclude-std").argName("StandardCollection")
                     .hasArgs().converter(s -> StandardCollection.valueOf(s.toUpperCase()))
                     .desc("Excludes files defined in standard collections based on commonly occurring groups. " +
@@ -302,7 +302,7 @@ public enum Arg {
     /**
      * Excludes files if they are smaller than the given threshold.
      */
-    EXCLUDE_SIZE(new OptionGroup()
+    EXCLUDE_SIZE(new UpdatableOptionGroup()
             .addOption(Option.builder().longOpt("input-exclude-size").argName("Integer")
                     .hasArg().type(Integer.class)
                     .desc("Excludes files with sizes less than the number of bytes specified.")
@@ -311,7 +311,7 @@ public enum Arg {
     /**
      * Excludes files by expression.
      */
-    INCLUDE(new OptionGroup()
+    INCLUDE(new UpdatableOptionGroup()
             .addOption(Option.builder().longOpt("input-include").hasArgs().argName("Expression")
                     .desc("Includes files matching <Expression>. Will override excluded files.")
                     .build())
@@ -325,7 +325,7 @@ public enum Arg {
     /**
      * Includes files based on the contents of a file.
      */
-    INCLUDE_FILE(new OptionGroup()
+    INCLUDE_FILE(new UpdatableOptionGroup()
             .addOption(Option.builder().longOpt("input-include-file")
                     .argName("File").hasArg().type(File.class)
                     .converter(Converters.FILE_CONVERTER)
@@ -342,7 +342,7 @@ public enum Arg {
     /**
      * Includes files based on standard groups.
      */
-    INCLUDE_STD(new OptionGroup()
+    INCLUDE_STD(new UpdatableOptionGroup()
             .addOption(Option.builder().longOpt("input-include-std").argName("StandardCollection")
                     .hasArgs().converter(s -> StandardCollection.valueOf(s.toUpperCase()))
                     .desc("Includes files defined in standard collections based on commonly occurring groups. " +
@@ -359,7 +359,7 @@ public enum Arg {
     /**
      * Excludes files based on SCM exclusion file processing.
      */
-    EXCLUDE_PARSE_SCM(new OptionGroup()
+    EXCLUDE_PARSE_SCM(new UpdatableOptionGroup()
             .addOption(Option.builder().longOpt("input-exclude-parsed-scm")
                     .argName("StandardCollection")
                     .hasArgs().converter(s -> StandardCollection.valueOf(s.toUpperCase()))
@@ -372,7 +372,7 @@ public enum Arg {
     /**
      * Stop processing an input stream and declare an input file.
      */
-    DIR(new OptionGroup().addOption(Option.builder().option("d").longOpt("dir").hasArg()
+    DIR(new UpdatableOptionGroup().addOption(Option.builder().option("d").longOpt("dir").hasArg()
                     .type(File.class)
             .desc("Used to indicate end of list when using options that take multiple arguments.").argName("DirOrArchive")
             .deprecated(DeprecatedAttributes.builder().setForRemoval(true).setSince("0.17")
@@ -382,7 +382,7 @@ public enum Arg {
     /**
      * Defines the stylesheet to use.
      */
-    OUTPUT_STYLE(new OptionGroup()
+    OUTPUT_STYLE(new UpdatableOptionGroup()
             .addOption(Option.builder().longOpt("output-style").hasArg().argName("StyleSheet")
                     .desc("XSLT stylesheet to use when creating the report. "
                             + "Either an external xsl file may be specified or one of the internal named sheets.")
@@ -402,7 +402,7 @@ public enum Arg {
     /**
      * Specifies the license definitions that should be included in the output.
      */
-    OUTPUT_LICENSES(new OptionGroup()
+    OUTPUT_LICENSES(new UpdatableOptionGroup()
             .addOption(Option.builder().longOpt("output-licenses").hasArg().argName("LicenseFilter")
                     .desc("List the defined licenses.")
                     .converter(s -> LicenseSetFactory.LicenseFilter.valueOf(s.toUpperCase()))
@@ -416,7 +416,7 @@ public enum Arg {
     /**
      * Specifies the license families that should be included in the output.
      */
-    OUTPUT_FAMILIES(new OptionGroup()
+    OUTPUT_FAMILIES(new UpdatableOptionGroup()
             .addOption(Option.builder().longOpt("output-families").hasArg().argName("LicenseFilter")
                     .desc("List the defined license families.")
                     .converter(s -> LicenseSetFactory.LicenseFilter.valueOf(s.toUpperCase()))
@@ -430,7 +430,7 @@ public enum Arg {
     /**
      * Specifies the log level to log messages at.
      */
-    LOG_LEVEL(new OptionGroup().addOption(Option.builder().longOpt("log-level")
+    LOG_LEVEL(new UpdatableOptionGroup().addOption(Option.builder().longOpt("log-level")
             .hasArg().argName("LogLevel")
             .desc("Sets the log level.")
             .converter(s -> Log.Level.valueOf(s.toUpperCase()))
@@ -439,14 +439,14 @@ public enum Arg {
     /**
      * Specifies that the run should not perform any updates to files.
      */
-    DRY_RUN(new OptionGroup().addOption(Option.builder().longOpt("dry-run")
+    DRY_RUN(new UpdatableOptionGroup().addOption(Option.builder().longOpt("dry-run")
             .desc("If set do not update the files but generate the reports.")
             .build())),
 
     /**
      * Specifies where the output should be written.
      */
-    OUTPUT_FILE(new OptionGroup()
+    OUTPUT_FILE(new UpdatableOptionGroup()
             .addOption(Option.builder().option("o").longOpt("out").hasArg().argName("File")
                     .desc("Define the output file where to write a report to.")
                     .deprecated(DeprecatedAttributes.builder().setSince("0.17").setForRemoval(true).setDescription(StdMsgs.useMsg("--output-file")).get())
@@ -462,7 +462,7 @@ public enum Arg {
     /**
      * Specifies the level of reporting detail for archive files.
      */
-    OUTPUT_ARCHIVE(new OptionGroup()
+    OUTPUT_ARCHIVE(new UpdatableOptionGroup()
             .addOption(Option.builder().longOpt("output-archive").hasArg().argName("ProcessingType")
                     .desc("Specifies the level of detail in ARCHIVE file reporting.")
                     .converter(s -> ReportConfiguration.Processing.valueOf(s.toUpperCase()))
@@ -471,7 +471,7 @@ public enum Arg {
     /**
      * Specifies the level of reporting detail for standard files.
      */
-    OUTPUT_STANDARD(new OptionGroup()
+    OUTPUT_STANDARD(new UpdatableOptionGroup()
             .addOption(Option.builder().longOpt("output-standard").hasArg().argName("ProcessingType")
                     .desc("Specifies the level of detail in STANDARD file reporting.")
                     .converter(s -> ReportConfiguration.Processing.valueOf(s.toUpperCase()))
@@ -480,19 +480,19 @@ public enum Arg {
     /**
      * Provide license definition listing of registered licenses.
      */
-    HELP_LICENSES(new OptionGroup()
+    HELP_LICENSES(new UpdatableOptionGroup()
             .addOption(Option.builder().longOpt("help-licenses") //
                     .desc("Print information about registered licenses.").build()));
 
     /** The option group for the argument */
-    private final OptionGroup group;
+    private final UpdatableOptionGroup group;
 
     /**
      * Creates an Arg from an Option group.
      *
      * @param group The option group.
      */
-    Arg(final OptionGroup group) {
+    Arg(final UpdatableOptionGroup group) {
         this.group = group;
     }
 
@@ -503,6 +503,14 @@ public enum Arg {
      */
     public boolean isSelected() {
         return group.getSelected() != null;
+    }
+
+    /**
+     * Determines if all the options have been removed from this argument.
+     * @return {@code true} if all the options have been removed from this argument.
+     */
+    public boolean isEmpty() {
+        return this.group().getOptions().isEmpty();
     }
 
     /**
@@ -540,7 +548,7 @@ public enum Arg {
 
     /**
      * Gets the default value for this arg.
-     * @return default value of this arg.
+     * @return default value of this arg or {@code null} if not set.
      */
     public String defaultValue() {
         return DEFAULT_VALUES.get(this);
@@ -577,12 +585,11 @@ public enum Arg {
      * Gets the full set of options.
      * @return  the full set of options for this Arg.
      */
-    public static Options getOptions(final Options additionalOptions) {
+    public static Options getOptions() {
         Options options = new Options();
         for (Arg arg : Arg.values()) {
             options.addOptionGroup(arg.group);
         }
-        options.addOptions(additionalOptions);
         return options;
     }
 
@@ -944,14 +951,6 @@ public enum Arg {
         return commandLine.getParsedOptionValue(this.getSelected());
     }
 
-    private String getOptionValue(final CommandLine commandLine) {
-        return commandLine.getOptionValue(this.getSelected());
-    }
-
-    private String[] getOptionValues(final CommandLine commandLine) {
-        return commandLine.getOptionValues(this.getSelected());
-    }
-
     private <T> T[] getParsedOptionValues(final CommandLine commandLine)  {
         Option option = getSelected();
         try {
@@ -993,7 +992,6 @@ public enum Arg {
     private static final Map<Arg, String> DEFAULT_VALUES = new HashMap<>();
 
     static {
-        DEFAULT_VALUES.put(OUTPUT_FILE, "System.out");
         DEFAULT_VALUES.put(LOG_LEVEL, Log.Level.WARN.name());
         DEFAULT_VALUES.put(OUTPUT_ARCHIVE, Defaults.ARCHIVE_PROCESSING.name());
         DEFAULT_VALUES.put(OUTPUT_STANDARD, Defaults.STANDARD_PROCESSING.name());

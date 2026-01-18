@@ -35,7 +35,7 @@ public class XMLConfigurationWriterTest {
         config.listLicenses(LicenseFilter.ALL);
         XMLConfigurationWriter underTest = new XMLConfigurationWriter(config);
         StringWriter writer = new StringWriter();
-        underTest.write(writer);
+        underTest.writeFamilyInfo(writer);
         writer.flush();
         System.out.println(writer);
         XMLConfigurationReader reader = new XMLConfigurationReader();

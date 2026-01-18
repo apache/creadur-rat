@@ -24,9 +24,9 @@ import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.rat.DeprecationReporter;
-import org.apache.rat.OptionCollection;
 import org.apache.rat.ReportConfiguration;
 import org.apache.rat.document.DocumentName;
+import org.apache.rat.testhelpers.BaseOptionCollection;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
@@ -37,7 +37,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class ArgTests {
 
     private CommandLine createCommandLine(String[] args) throws ParseException {
-        Options opts = OptionCollection.buildOptions(new Options());
+        Options opts = new BaseOptionCollection().getOptions();
         return DefaultParser.builder().setDeprecatedHandler(DeprecationReporter.getLogReporter())
                 .setAllowPartialMatching(true).build().parse(opts, args);
     }

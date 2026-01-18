@@ -51,7 +51,6 @@ import javax.xml.xpath.XPathFactory;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.Option;
-import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.io.FileUtils;
 import org.apache.rat.api.Document.Type;
@@ -63,6 +62,7 @@ import org.apache.rat.document.DocumentName;
 import org.apache.rat.license.ILicenseFamily;
 import org.apache.rat.report.claim.ClaimStatistic;
 import org.apache.rat.test.utils.Resources;
+import org.apache.rat.testhelpers.BaseOptionCollection;
 import org.apache.rat.testhelpers.TextUtils;
 import org.apache.rat.testhelpers.XmlUtils;
 import org.apache.rat.testhelpers.data.ReportTestDataProvider;
@@ -85,18 +85,20 @@ public class ReporterTest {
     @TempDir
     File tempDirectory;
     final String basedir;
+    private final OptionCollectionParser collectionParser;
 
     ReporterTest() throws URISyntaxException {
         basedir = Resources.getExampleResource("exampleData").getPath();
+        collectionParser = new OptionCollectionParser(new BaseOptionCollection());
     }
 
     @Test
     public void testExecute() throws RatException, ParseException {
         File output = new File(tempDirectory, "testExecute");
-
-        CommandLine cl = new DefaultParser().parse(OptionCollection.buildOptions(new Options()), new String[]{"--output-style", "xml", "--output-file", output.getPath(), basedir});
+        BaseOptionCollection optionCollection = new BaseOptionCollection();
+        CommandLine cl = new DefaultParser().parse(optionCollection.getOptions(), new String[]{"--output-style", "xml", "--output-file", output.getPath(), basedir});
         ArgumentContext ctxt = new ArgumentContext(new File("."), cl);
-        ReportConfiguration config = OptionCollection.populateConfiguration(ctxt);
+        ReportConfiguration config = collectionParser.populateConfiguration(ctxt);
         ClaimStatistic statistic = new Reporter(config).execute().getStatistic();
 
         assertThat(statistic.getCounter(Type.ARCHIVE)).isEqualTo(1);
@@ -148,10 +150,11 @@ public class ReporterTest {
     @Test
     public void testOutputOption() throws Exception {
         File output = new File(tempDirectory, "test");
-        CommandLine commandLine = new DefaultParser().parse(OptionCollection.buildOptions(new Options()), new String[]{"--output-file", output.getCanonicalPath(), basedir});
+        BaseOptionCollection optionCollection = new BaseOptionCollection();
+        CommandLine commandLine = new DefaultParser().parse(optionCollection.getOptions(), new String[]{"--output-file", output.getCanonicalPath(), basedir});
         ArgumentContext ctxt = new ArgumentContext(new File("."), commandLine);
 
-        ReportConfiguration config = OptionCollection.populateConfiguration(ctxt);
+        ReportConfiguration config = collectionParser.populateConfiguration(ctxt);
         new Reporter(config).execute().format(config);
         assertThat(output.exists()).isTrue();
         String content = FileUtils.readFileToString(output, StandardCharsets.UTF_8);
@@ -163,14 +166,15 @@ public class ReporterTest {
     @Test
     public void testDefaultOutput() throws Exception {
         File output = new File(tempDirectory, "testDefaultOutput");
+        BaseOptionCollection optionCollection = new BaseOptionCollection();
 
         PrintStream origin = System.out;
         try (PrintStream out = new PrintStream(output)) {
             System.setOut(out);
-            CommandLine commandLine = new DefaultParser().parse(OptionCollection.buildOptions(new Options()), new String[]{basedir});
+            CommandLine commandLine = new DefaultParser().parse(optionCollection.getOptions(), new String[]{basedir});
             ArgumentContext ctxt = new ArgumentContext(new File("."), commandLine);
 
-            ReportConfiguration config = OptionCollection.populateConfiguration(ctxt);
+            ReportConfiguration config = collectionParser.populateConfiguration(ctxt);
             new Reporter(config).execute().format(config);
         } finally {
             System.setOut(origin);
@@ -191,6 +195,7 @@ public class ReporterTest {
     @Test
     public void testXMLOutput() throws Exception {
         Map<String, Map<String, String>> expected = new HashMap<>();
+        BaseOptionCollection optionCollection = new BaseOptionCollection();
         expected.put("/.hiddenDirectory", mapOf("isDirectory", "true", "mediaType", "application/octet-stream",
                 "type", "IGNORED"));
         expected.put("/ILoggerFactory.java", mapOf("encoding", "ISO-8859-1", "mediaType", "text/x-java-source",
@@ -220,10 +225,10 @@ public class ReporterTest {
                 "type", "STANDARD"));
 
         File output = new File(tempDirectory, "testXMLOutput");
-        CommandLine commandLine = new DefaultParser().parse(OptionCollection.buildOptions(new Options()), new String[]{"--output-style", "xml", "--output-file", output.getPath(), basedir});
+        CommandLine commandLine = new DefaultParser().parse(optionCollection.getOptions(), new String[]{"--output-style", "xml", "--output-file", output.getPath(), basedir});
         ArgumentContext ctxt = new ArgumentContext(new File("."), commandLine);
 
-        ReportConfiguration config = OptionCollection.populateConfiguration(ctxt);
+        ReportConfiguration config = collectionParser.populateConfiguration(ctxt);
         new Reporter(config).execute().format(config);
 
         assertThat(output).exists();
@@ -504,9 +509,9 @@ public class ReporterTest {
     }
 
     static Stream<Arguments> getTestData() {
-        List<Option> upsupportedTests = new ArrayList<>(Arg.OUTPUT_STYLE.group().getOptions());
-        upsupportedTests.addAll(Arg.OUTPUT_FILE.group().getOptions());
-        return new ReportTestDataProvider().getOptionTests(upsupportedTests).stream().map(testData ->
+        List<Option> unsupportedOptions = new ArrayList<>(Arg.OUTPUT_STYLE.group().getOptions());
+        unsupportedOptions.addAll(Arg.OUTPUT_FILE.group().getOptions());
+        return new ReportTestDataProvider().getOptionTests(new BaseOptionCollection(unsupportedOptions)).stream().map(testData ->
                 Arguments.of(testData.getTestName(), testData));
     }
 
@@ -515,9 +520,9 @@ public class ReporterTest {
     void testReportData(String name, TestData test) throws Exception {
         Path tempPath = tempDirectory.toPath();
         Path basePath = tempPath.resolve(test.getTestName());
-        org.apache.rat.testhelpers.FileUtils.mkDir(basePath.toFile());
+        org.apache.rat.utils.FileUtils.mkDir(basePath.toFile());
         test.setupFiles(basePath);
-        ArgumentContext ctxt = OptionCollection.parseCommands(basePath.toFile(),
+        ArgumentContext ctxt = collectionParser.parseCommands(basePath.toFile(),
                 test.getCommandLine(basePath.toString()));
         if (test.expectingException()) {
             assertThatThrownBy(() -> new Reporter(ctxt.getConfiguration()).execute()).as("Expected throws from " + name)

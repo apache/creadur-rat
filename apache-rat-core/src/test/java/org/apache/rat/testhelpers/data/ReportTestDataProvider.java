@@ -28,28 +28,21 @@ import java.io.OutputStream;
 import java.io.PrintStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-import java.util.TreeMap;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 import org.apache.commons.cli.Option;
-import org.apache.commons.cli.Options;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.apache.rat.OptionCollection;
+import org.apache.rat.OptionCollectionParser;
 import org.apache.rat.ReportConfiguration;
 import org.apache.rat.api.RatException;
 import org.apache.rat.commandline.Arg;
@@ -60,7 +53,7 @@ import org.apache.rat.document.DocumentName;
 import org.apache.rat.license.LicenseSetFactory;
 import org.apache.rat.report.claim.ClaimStatistic;
 import org.apache.rat.report.xml.writer.XmlWriter;
-import org.apache.rat.testhelpers.FileUtils;
+import org.apache.rat.utils.FileUtils;
 import org.apache.rat.testhelpers.TestingLog;
 import org.apache.rat.testhelpers.TextUtils;
 import org.apache.rat.testhelpers.XmlUtils;
@@ -68,7 +61,7 @@ import org.apache.rat.utils.DefaultLog;
 import org.apache.rat.utils.Log;
 import org.w3c.dom.Document;
 
-import static org.apache.rat.testhelpers.FileUtils.writeFile;
+import static org.apache.rat.utils.FileUtils.writeFile;
 import static org.apache.rat.testhelpers.data.DataUtils.NO_SETUP;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Fail.fail;
@@ -76,15 +69,13 @@ import static org.assertj.core.api.Fail.fail;
 /**
  * Generates a list of TestData for executing the Report.
  * Use of this interface ensures consistent testing across the UIs. Each method
- * tests an Option from {@link OptionCollection} that must be implemented in the UI.
+ * tests an Option from {@link OptionCollectionParser} that must be implemented in the UI.
  * This differes from the {@link OptionTestDataProvider} in that tests from this set
  * expect that execptions will be thrown during execution, and tests the xml output.
  */
-public class ReportTestDataProvider {
+public class ReportTestDataProvider extends AbstractTestDataProvider {
 
     public static final RatException NO_LICENSES_EXCEPTION = new RatException("At least one license must be defined");
-
-    public final List<ImmutablePair<Option, String[]>> NO_OPTIONS = Collections.singletonList(ImmutablePair.nullPair());
 
     private final XPath xpath = XPathFactory.newInstance().newXPath();
 
@@ -93,76 +84,6 @@ public class ReportTestDataProvider {
         File ratDir = new File(baseDir, ".rat");
         FileUtils.mkDir(ratDir);
     };
-
-    /**
-     * Generates a map of TestData indexed by the testName
-     * @param unsupportedTests Options that are not supported by the item under test.
-     * @return the map of testName to Test Data.
-     * @see #getOptionTests(Collection)
-     */
-    public Map<String, TestData> getOptionTestMap(Collection<Option> unsupportedTests) {
-        Map<String, TestData> map = new TreeMap<>();
-        for (TestData test : getOptionTests(unsupportedTests)) {
-            map.put(test.getTestName(), test);
-        }
-        return map;
-    }
-
-    /**
-     * Generates a list of test data for Option testing.
-     * This is different from UI testing as this is to test
-     * that the command line is properly parsed into a configuration.
-     * @param unsupportedOptions a collection of options that are not supported by the item under test.
-     * @return a list of TestData for the tests.
-     */
-    public List<TestData> getOptionTests(final Collection<Option> unsupportedOptions) {
-        List<TestData> result = new ArrayList<>();
-        result.addAll(configTest());
-        result.addAll(configurationNoDefaultsTest());
-        result.addAll(counterMinTest());
-        result.addAll(counterMaxTest());
-        result.addAll(dryRunTest());
-        result.addAll(editCopyrightTest());
-        result.addAll(editLicenseTest());
-        result.addAll(editOverwriteTest());
-        result.addAll(helpLicenses());
-        result.addAll(inputExcludeTest());
-        result.addAll(inputExcludeFileTest());
-        result.addAll(inputExcludeParsedScmTest());
-        result.addAll(inputExcludeStdTest());
-        result.addAll(inputExcludeSizeTest());
-        result.addAll(inputIncludeTest());
-        result.addAll(inputIncludeFileTest());
-        result.addAll(inputIncludeStdTest());
-        result.addAll(inputSourceTest());
-        result.addAll(licenseFamiliesApprovedTest());
-        result.addAll(licenseFamiliesApprovedFileTest());
-        result.addAll(licenseFamiliesDeniedTest());
-        result.addAll(licenseFamiliesDeniedFileTest());
-        result.addAll(licensesApprovedTest());
-        result.addAll(licensesApprovedFileTest());
-        result.addAll(licensesDeniedTest());
-        result.addAll(licensesDeniedFileTest());
-        result.addAll(logLevelTest());
-        result.addAll(outputArchiveTest());
-        result.addAll(outputFamiliesTest());
-        result.addAll(outputFileTest());
-        result.addAll(outputLicensesTest());
-        result.addAll(outputStandardTest());
-        result.addAll(outputStyleTest());
-        validate(result);
-        result.removeIf(test -> unsupportedOptions.contains(test.getOption()));
-        result.sort(Comparator.comparing(TestData::getTestName));
-        return result;
-    }
-
-    private void validate(List<TestData> result) {
-        Set<Option> options = new HashSet<>(Arg.getOptions(new Options()).getOptions());
-        result.forEach(testData -> options.remove(testData.getOption()));
-        // TODO fix this once deprecated options are removed
-        options.forEach(opt -> DefaultLog.getInstance().warn("Option " + opt.getKey() + " was not tested."));
-        //assertThat(options).describedAs("All options are not accounted for.").isEmpty();
-    }
 
     private void assertStandardFile(Document document, String fname) {
         try {
@@ -219,25 +140,21 @@ public class ReportTestDataProvider {
         return Arrays.asList(test1, test2);
     }
 
-    private List<TestData> excludeFileTest(final Option option) {
+    protected void inputExcludeFileTest(final Set<TestData> result, final Option option) {
         Consumer<Path> setup = mkRat.andThen(baseDir -> {
             File dir = baseDir.resolve(".rat").toFile();
-            writeFile(dir, "exclude.txt", Arrays.asList(OptionTestDataProvider.EXCLUDE_ARGS));
+            writeFile(dir, "exclude.txt", Arrays.asList(AbstractTestDataProvider.EXCLUDE_ARGS));
         });
         Supplier<String[]> args = () -> new String[]{".rat/exclude.txt"};
-        return execExcludeTest(option, args, setup);
+        result.addAll(execExcludeTest(option, args, setup));
     }
 
-    protected List<TestData> inputExcludeFileTest() {
-        return excludeFileTest(Arg.EXCLUDE_FILE.find("input-exclude-file"));
+
+    protected void inputExcludeTest(final Set<TestData> result, final Option option) {
+        result.addAll(execExcludeTest(option, () -> AbstractTestDataProvider.EXCLUDE_ARGS, x -> {}));
     }
 
-    protected List<TestData> inputExcludeTest() {
-        return execExcludeTest(Arg.EXCLUDE.find("input-exclude"), () -> OptionTestDataProvider.EXCLUDE_ARGS, x -> {});
-    }
-
-    protected List<TestData> inputExcludeStdTest() {
-        Option option = Arg.EXCLUDE_STD.find("input-exclude-std");
+    protected void inputExcludeStdTest(final Set<TestData> result, final Option option) {
         String[] args = {StandardCollection.MAVEN.name()};
         String[] defaultExcluded = {"afile~", ".#afile", "%afile%", "._afile"};
         String[] defaultIncluded = {"afile~more", "what.#afile", "%afile%withMore", "well._afile"};
@@ -252,7 +169,7 @@ public class ReportTestDataProvider {
             }
             writeFile(baseDir, mavenFile);
         };
-        TestData test1 = new TestData(DataUtils.asDirName(option), Collections.singletonList(ImmutablePair.nullPair()),
+        result.add(new TestData(DataUtils.asDirName(option), Collections.singletonList(ImmutablePair.nullPair()),
                 setup,
                 validatorData -> {
                     assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(defaultIncluded.length + 1);
@@ -264,10 +181,10 @@ public class ReportTestDataProvider {
                         assertIgnoredFile(validatorData.getDocument(), fileName);
                     }
                     assertStandardFile(validatorData.getDocument(), mavenFile);
-                });
+                }));
 
 
-        TestData test2 = new TestData("", Collections.singletonList(ImmutablePair.of(option, args)),
+        result.add(new TestData("", Collections.singletonList(ImmutablePair.of(option, args)),
                 setup,
                 validatorData -> {
                     assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(defaultIncluded.length);
@@ -279,15 +196,10 @@ public class ReportTestDataProvider {
                         assertIgnoredFile(validatorData.getDocument(), fileName);
                     }
                     assertIgnoredFile(validatorData.getDocument(), mavenFile);
-                });
-        return Arrays.asList(test1, test2);
+                }));
     }
 
-    protected List<TestData> inputExcludeParsedScmTest() {
-        Option option = Arg.EXCLUDE_PARSE_SCM.find("input-exclude-parsed-scm");
-
-
-
+    protected void inputExcludeParsedScmTest(final Set<TestData> result, final Option option) {
         Consumer<Path> setup = basePath -> {
             File baseDir = basePath.toFile();
             String[] lines = {
@@ -324,28 +236,24 @@ public class ReportTestDataProvider {
             FileUtils.writeFile(dir, "red_fish");
         };
 
-        TestData test1 = new TestData(DataUtils.asDirName(option), Collections.singletonList(ImmutablePair.nullPair()),
-            setup,
-            validatorData -> {
-                assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(11);
-                // .gitignore is ignored by default as it is hidden
-                assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.IGNORED)).isEqualTo(0);
-            });
+        result.add(new TestData(DataUtils.asDirName(option), Collections.singletonList(ImmutablePair.nullPair()),
+                setup,
+                validatorData -> {
+                    assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(11);
+                    // .gitignore is ignored by default as it is hidden
+                    assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.IGNORED)).isEqualTo(0);
+                }));
 
-    TestData test2 = new TestData("GIT", Collections.singletonList(ImmutablePair.of(option, new String[] {"GIT"})),
-            setup,
-            validatorData -> {
-                assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(3);
-                // .gitignore is ignored by default as it is hidden
-                assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.IGNORED)).isEqualTo(8);
-            });
+        result.add(new TestData("GIT", Collections.singletonList(ImmutablePair.of(option, new String[]{"GIT"})),
+                setup,
+                validatorData -> {
+                    assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(3);
+                    // .gitignore is ignored by default as it is hidden
+                    assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.IGNORED)).isEqualTo(8);
+                }));
+    }
 
-    return Arrays.asList(test1, test2);
-
-}
-
-    private List<TestData> inputExcludeSizeTest() {
-        Option option = Arg.EXCLUDE_SIZE.option();
+    protected void inputExcludeSizeTest(final Set<TestData> result, final Option option) {
         String[] notExcluded = {"Hello.txt", "HelloWorld.txt"};
         String[] excluded = {"Hi.txt"};
 
@@ -356,7 +264,7 @@ public class ReportTestDataProvider {
             writeFile(baseDir, "HelloWorld.txt", Collections.singletonList("HelloWorld"));
         };
 
-        TestData test1 = new TestData(DataUtils.asDirName(option), Collections.singletonList(ImmutablePair.of(null, null)),
+        result.add(new TestData(DataUtils.asDirName(option), Collections.singletonList(ImmutablePair.of(null, null)),
                 setup,
                 validatorData -> {
                     assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(3);
@@ -367,9 +275,9 @@ public class ReportTestDataProvider {
                     for (String fname : notExcluded) {
                         assertStandardFile(validatorData.getDocument(), fname);
                     }
-                });
+                }));
 
-        TestData test2 = new TestData("", Collections.singletonList(ImmutablePair.of(option, new String[]{"5"})),
+        result.add(new TestData("", Collections.singletonList(ImmutablePair.of(option, new String[]{"5"})),
                 setup,
                 validatorData -> {
                     assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(2);
@@ -380,8 +288,7 @@ public class ReportTestDataProvider {
                     for (String fname : notExcluded) {
                         assertStandardFile(validatorData.getDocument(), fname);
                     }
-                });
-        return Arrays.asList(test1, test2);
+                }));
     }
 
     // include tests
@@ -404,7 +311,7 @@ public class ReportTestDataProvider {
                 });
 
         // verify exclude removes the files
-        TestData test2 = new TestData(DataUtils.asDirName(option), Collections.singletonList(ImmutablePair.of(excludeOption, OptionTestDataProvider.EXCLUDE_ARGS)),
+        TestData test2 = new TestData(DataUtils.asDirName(option), Collections.singletonList(ImmutablePair.of(excludeOption, AbstractTestDataProvider.EXCLUDE_ARGS)),
                 setup,
                 validatorData -> {
                     assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(1);
@@ -412,7 +319,7 @@ public class ReportTestDataProvider {
                     assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.IGNORED)).isEqualTo(4);
                 });
 
-        TestData test3 = new TestData("", Arrays.asList(ImmutablePair.of(option, args), ImmutablePair.of(excludeOption, OptionTestDataProvider.EXCLUDE_ARGS)),
+        TestData test3 = new TestData("", Arrays.asList(ImmutablePair.of(option, args), ImmutablePair.of(excludeOption, AbstractTestDataProvider.EXCLUDE_ARGS)),
                 setup,
                 validatorData -> {
                     assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(3);
@@ -422,25 +329,20 @@ public class ReportTestDataProvider {
         return Arrays.asList(test1, test2, test3);
     }
 
-    private List<TestData> includeFileTest(final Option option) {
+    protected void inputIncludeFileTest(final Set<TestData> result, final Option option) {
         Consumer<Path> setup = mkRat.andThen(basePath -> {
             File dir = basePath.resolve(".rat").toFile();
-            writeFile(dir, "include.txt", Arrays.asList(OptionTestDataProvider.INCLUDE_ARGS));
+            writeFile(dir, "include.txt", Arrays.asList(AbstractTestDataProvider.INCLUDE_ARGS));
         });
-        return execIncludeTest(option, new String[]{".rat/include.txt"}, setup);
-    }
-
-    protected List<TestData> inputIncludeFileTest() {
-        return includeFileTest(Arg.INCLUDE_FILE.find("input-include-file"));
+        result.addAll(execIncludeTest(option, new String[]{".rat/include.txt"}, setup));
     }
 
 
-    protected List<TestData> inputIncludeTest() {
-        return execIncludeTest(Arg.INCLUDE.find("input-include"), OptionTestDataProvider.INCLUDE_ARGS, mkRat);
+    protected void inputIncludeTest(final Set<TestData> result, final Option option) {
+        result.addAll(execIncludeTest(option, AbstractTestDataProvider.INCLUDE_ARGS, mkRat));
     }
 
-    protected List<TestData> inputIncludeStdTest() {
-        Option option = Arg.INCLUDE_STD.find("input-include-std");
+    protected void inputIncludeStdTest(final Set<TestData> result, final Option option) {
         Consumer<Path> setup = basePath -> {
             File baseDir = basePath.toFile();
             writeFile(baseDir, "afile~more");
@@ -456,47 +358,68 @@ public class ReportTestDataProvider {
             FileUtils.mkDir(hiddenDir);
             writeFile(hiddenDir, "aFile", "File in hidden directory");
         };
-        ImmutablePair<Option, String[]> excludes = ImmutablePair.of(Arg.EXCLUDE.find("input-exclude"),
+        if (Arg.EXCLUDE.isEmpty()) {
+            throw new RuntimeException(String.format("Can not test %s if there are no exclude file options supported", option.getKey()));
+        }
+        ImmutablePair<Option, String[]> excludes = ImmutablePair.of(Arg.EXCLUDE.option(),
                 new String[]{"*~more", "*~"});
 
-        TestData test1 = new TestData("includeStdValidation", Collections.singletonList(excludes),
+
+        result.add(new TestData("includeStdValidation", Collections.singletonList(excludes),
                 setup,
                 validatorData -> {
                     assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(4);
                     assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.IGNORED)).isEqualTo(6);
-                });
+                }));
 
-        TestData test2 = new TestData(StandardCollection.MISC.name().toLowerCase(Locale.ROOT), Arrays.asList(ImmutablePair.of(option, new String[]{StandardCollection.MISC.name()}), excludes),
-                setup,
-                validatorData -> {
-                    assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(8);
-                    assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.IGNORED)).isEqualTo(2);
-                });
+        if (!option.hasArg()) {
+            if (option.getKey().equals("scan-hidden-directories")) {
+                result.add(new TestData("",
+                        Arrays.asList(ImmutablePair.of(option, null), excludes),
+                        setup,
+                        validatorData -> {
+                            assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(5);
+                            assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.IGNORED)).isEqualTo(5);
+                            assertIgnoredFile(validatorData.getDocument(), "._afile");
+                            assertStandardFile(validatorData.getDocument(), ".hiddenDir/aFile");
+                        }));
+            } else {
+                throw new RuntimeException("Unknown option: " + option.getKey());
+            }
+        } else {
+            result.add(new TestData(StandardCollection.MISC.name().toLowerCase(Locale.ROOT), Arrays.asList(ImmutablePair.of(option, new String[]{StandardCollection.MISC.name()}), excludes),
+                    setup,
+                    validatorData -> {
 
-        TestData test3 = new TestData(StandardCollection.HIDDEN_FILE.name().toLowerCase(Locale.ROOT), Arrays.asList(ImmutablePair.of(option, new String[]{StandardCollection.HIDDEN_FILE.name()}), excludes),
-                setup,
-                validatorData -> {
-                    assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.STANDARDS))
-                            .isEqualTo(6);
-                    assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.IGNORED))
-                            .isEqualTo(4);
-                    assertStandardFile(validatorData.getDocument(), "._afile");
-                    assertIgnoredFile(validatorData.getDocument(), ".hiddenDir");
-                });
-        TestData test4 = new TestData(StandardCollection.HIDDEN_DIR.name().toLowerCase(Locale.ROOT),
-                Arrays.asList(ImmutablePair.of(option, new String[]{StandardCollection.HIDDEN_DIR.name()}), excludes),
-                setup,
-                validatorData -> {
-                    assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(5);
-                    assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.IGNORED)).isEqualTo(5);
-                    assertIgnoredFile(validatorData.getDocument(), "._afile");
-                    assertStandardFile(validatorData.getDocument(), ".hiddenDir/aFile");
-                });
-        return Arrays.asList(test1, test2, test3, test4);
+                        assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(8);
+                        assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.IGNORED)).isEqualTo(2);
+                    }));
+
+            result.add(new TestData(StandardCollection.HIDDEN_FILE.name().toLowerCase(Locale.ROOT),
+                    Arrays.asList(ImmutablePair.of(option, new String[]{StandardCollection.HIDDEN_FILE.name()}), excludes),
+                    setup,
+                    validatorData -> {
+                        assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.STANDARDS))
+                                .isEqualTo(6);
+                        assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.IGNORED))
+                                .isEqualTo(4);
+                        assertStandardFile(validatorData.getDocument(), "._afile");
+                        assertIgnoredFile(validatorData.getDocument(), ".hiddenDir");
+                    }));
+
+            result.add(new TestData(StandardCollection.HIDDEN_DIR.name().toLowerCase(Locale.ROOT),
+                    Arrays.asList(ImmutablePair.of(option, new String[]{StandardCollection.HIDDEN_DIR.name()}), excludes),
+                    setup,
+                    validatorData -> {
+                        assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(5);
+                        assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.IGNORED)).isEqualTo(5);
+                        assertIgnoredFile(validatorData.getDocument(), "._afile");
+                        assertStandardFile(validatorData.getDocument(), ".hiddenDir/aFile");
+                    }));
+        }
     }
 
-    protected List<TestData> inputSourceTest() {
-        Option option = Arg.SOURCE.find("input-source");
+    protected void inputSourceTest(final Set<TestData> result, final Option option) {
         Consumer<Path> setup = basePath -> {
             File baseDir = basePath.toFile();
             writeFile(baseDir, "codefile");
@@ -504,20 +427,19 @@ public class ReportTestDataProvider {
             writeFile(baseDir, "notcodeFile");
         };
 
-        TestData test1 = new TestData(DataUtils.asDirName(option), NO_OPTIONS,
+        result.add(new TestData(DataUtils.asDirName(option), NO_OPTIONS,
                 setup,
                 validatorData -> {
                     assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(3);
                     assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.IGNORED)).isEqualTo(0);
-                });
+                }));
 
-        TestData test2 = new TestData("", Collections.singletonList(ImmutablePair.of(option, new String[]{"intput.txt"})),
+        result.add(new TestData("", Collections.singletonList(ImmutablePair.of(option, new String[]{"intput.txt"})),
                 setup,
                 validatorData -> {
                     assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(1);
                     assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.IGNORED)).isEqualTo(0);
-                });
-        return Arrays.asList(test1, test2);
+                }));
     }
 
     // LICENSE tests
@@ -559,13 +481,13 @@ public class ReportTestDataProvider {
         return Arrays.asList(test1, test2, test3);
     }
 
-    protected List<TestData> helpLicenses() {
+    protected void helpLicenses(final Set<TestData> result, final Option option) {
         PrintStream origin = System.out;
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         PrintStream out = new PrintStream(baos);
 
-        TestData test1 = new TestData("stdOut",
-                Collections.singletonList(ImmutablePair.of(Arg.HELP_LICENSES.option(), null)),
+        result.add( new TestData("stdOut",
+                Collections.singletonList(ImmutablePair.of(option, null)),
                 basePath -> System.setOut(out),
                 validatorData -> {
                     System.setOut(origin);
@@ -573,20 +495,17 @@ public class ReportTestDataProvider {
                     TextUtils.assertContains("====== Licenses ======", txt);
                     TextUtils.assertContains("====== Defined Matchers ======", txt);
                     TextUtils.assertContains("====== Defined Families ======", txt);
-                });
-        return Collections.singletonList(test1);
+                }));
     }
 
-    protected List<TestData> licensesApprovedFileTest() {
-        return execLicensesApprovedTest(Arg.LICENSES_APPROVED_FILE.find("licenses-approved-file"),
-                new String[]{".rat/licensesApproved.txt"},
+    protected void licensesApprovedFileTest(final Set<TestData> result, final Option option) {
+        result.addAll(execLicensesApprovedTest(option, new String[]{".rat/licensesApproved.txt"},
                 mkRat.andThen(
-                        basePath -> writeFile(basePath.resolve(".rat").toFile(), "licensesApproved.txt", List.of("catz"))));
+                        basePath -> writeFile(basePath.resolve(".rat").toFile(), "licensesApproved.txt", List.of("catz")))));
     }
 
-    protected List<TestData> licensesApprovedTest() {
-        return execLicensesApprovedTest(Arg.LICENSES_APPROVED.find("licenses-approved"),
-                new String[]{"catz"}, NO_SETUP);
+    protected void licensesApprovedTest(final Set<TestData> result, final Option option) {
+        result.addAll(execLicensesApprovedTest(option, new String[]{"catz"}, NO_SETUP));
     }
 
     private List<TestData> execLicensesDeniedTest(final Option option, final String[] args, Consumer<Path> setupFiles) {
@@ -607,14 +526,13 @@ public class ReportTestDataProvider {
         return Collections.singletonList(test1);
     }
 
-    protected List<TestData> licensesDeniedTest() {
-        return execLicensesDeniedTest(Arg.LICENSES_DENIED.find("licenses-denied"), new String[]{"ILLUMOS"}, NO_SETUP);
+    protected void licensesDeniedTest(final Set<TestData> result, final Option option) {
+        result.addAll(execLicensesDeniedTest(option, new String[]{"ILLUMOS"}, NO_SETUP));
     }
 
-    protected List<TestData> licensesDeniedFileTest() {
-        return execLicensesDeniedTest(Arg.LICENSES_DENIED_FILE.find("licenses-denied-file"),
-                new String[]{"licensesDenied.txt"},
-                (basePath) -> writeFile(basePath.toFile(), "licensesDenied.txt", Collections.singletonList("ILLUMOS")));
+    protected void licensesDeniedFileTest(final Set<TestData> result, final Option option) {
+        result.addAll(execLicensesDeniedTest(option, new String[]{"licensesDenied.txt"},
+                (basePath) -> writeFile(basePath.toFile(), "licensesDenied.txt", Collections.singletonList("ILLUMOS"))));
     }
 
     private List<TestData> execLicenseFamiliesApprovedTest(final Option option, final String[] args, Consumer<Path> extraSetup) {
@@ -656,19 +574,16 @@ public class ReportTestDataProvider {
         return Arrays.asList(test1, test2, test3);
     }
 
-    protected List<TestData> licenseFamiliesApprovedFileTest() {
-        return execLicenseFamiliesApprovedTest(Arg.FAMILIES_APPROVED_FILE.find("license-families-approved-file"),
-                new String[]{".rat/familiesApproved.txt"},
-                mkRat.andThen( basePath -> writeFile(basePath.resolve(".rat").toFile(), "familiesApproved.txt", Collections.singletonList("catz"))));
+    protected void licenseFamiliesApprovedFileTest(final Set<TestData> result, final Option option) {
+        result.addAll(execLicenseFamiliesApprovedTest(option, new String[]{".rat/familiesApproved.txt"},
+                mkRat.andThen( basePath -> writeFile(basePath.resolve(".rat").toFile(), "familiesApproved.txt", Collections.singletonList("catz")))));
     }
 
-    protected List<TestData> licenseFamiliesApprovedTest() {
-        return execLicenseFamiliesApprovedTest(Arg.FAMILIES_APPROVED.find("license-families-approved"),
-                new String[]{"catz"}, NO_SETUP);
+    protected void licenseFamiliesApprovedTest(final Set<TestData> result, final Option option) {
+        result.addAll(execLicenseFamiliesApprovedTest(option, new String[]{"catz"}, NO_SETUP));
     }
 
     private List<TestData> execLicenseFamiliesDeniedTest(final Option option, final String[] args, Consumer<Path> extraSetup) {
-
         Consumer<Path> setup = extraSetup.andThen(
                 basePath -> {
                     File baseDir = basePath.toFile();
@@ -694,22 +609,18 @@ public class ReportTestDataProvider {
         return Arrays.asList(test1, test2);
     }
 
-    protected List<TestData> licenseFamiliesDeniedFileTest() {
-        return execLicenseFamiliesDeniedTest(Arg.FAMILIES_DENIED_FILE.find("license-families-denied-file"),
-                new String[]{".rat/familiesDenied.txt"},
+    protected void licenseFamiliesDeniedFileTest(final Set<TestData> result, final Option option) {
+        result.addAll(execLicenseFamiliesDeniedTest(option, new String[]{".rat/familiesDenied.txt"},
                 mkRat.andThen(
-        baseDir -> writeFile(baseDir.resolve(".rat").toFile(), "familiesDenied.txt", Collections.singletonList("BSD-3"))));
+        baseDir -> writeFile(baseDir.resolve(".rat").toFile(), "familiesDenied.txt", Collections.singletonList("BSD-3")))));
     }
 
-    protected List<TestData> licenseFamiliesDeniedTest() {
-        return execLicenseFamiliesDeniedTest(Arg.FAMILIES_DENIED.find("license-families-denied"),
-                new String[]{"BSD-3"}, NO_SETUP);
+    protected void licenseFamiliesDeniedTest(final Set<TestData> result, final Option option) {
+        result.addAll(execLicenseFamiliesDeniedTest(option, new String[]{"BSD-3"}, NO_SETUP));
     }
 
-    protected List<TestData> counterMaxTest() {
-        Option option = Arg.COUNTER_MAX.option();
-
-        TestData test1 = new TestData(DataUtils.asDirName(option), Collections.singletonList(ImmutablePair.of(null, null)),
+    protected void counterMaxTest(final Set<TestData> result, final Option option) {
+       result.add(new TestData(DataUtils.asDirName(option), Collections.singletonList(ImmutablePair.of(null, null)),
                 basePath -> {
                     File baseDir = basePath.toFile();
                     writeFile(baseDir, "Test.java", Arrays.asList("/*\n", "SPDX-License-Identifier: Unapproved\n",
@@ -719,10 +630,9 @@ public class ReportTestDataProvider {
                     ClaimStatistic claimStatistic = validatorData.getStatistic();
                     ClaimValidator validator = validatorData.getConfiguration().getClaimValidator();
                     assertThat(validator.listIssues(claimStatistic)).containsExactly("UNAPPROVED");
-                });
+                }));
 
-
-        TestData test2 = new TestData("Unapproved1", Collections.singletonList(ImmutablePair.of(option, new String[]{"Unapproved:1"})),
+        result.add(new TestData("Unapproved1", Collections.singletonList(ImmutablePair.of(option, new String[]{"Unapproved:1"})),
                 basePath -> {
                     File baseDir = basePath.toFile();
                     writeFile(baseDir, "Test.java", Arrays.asList("/*\n", "SPDX-License-Identifier: Unapproved\n",
@@ -732,14 +642,11 @@ public class ReportTestDataProvider {
                     ClaimStatistic claimStatistic = validatorData.getStatistic();
                     ClaimValidator validator = validatorData.getConfiguration().getClaimValidator();
                     assertThat(validator.listIssues(claimStatistic)).isEmpty();
-                });
-        return Arrays.asList(test1, test2);
+                }));
     }
 
-    protected List<TestData> counterMinTest() {
-        Option option = Arg.COUNTER_MIN.option();
-
-        TestData test1 = new TestData(DataUtils.asDirName(option), NO_OPTIONS,
+    protected void counterMinTest(final Set<TestData> result, final Option option) {
+        result.add(new TestData(DataUtils.asDirName(option), NO_OPTIONS,
                 basePath -> {
                     File baseDir = basePath.toFile();
                     writeFile(baseDir, "Test.java", Arrays.asList("/*\n", "SPDX-License-Identifier: Unapproved\n",
@@ -749,9 +656,9 @@ public class ReportTestDataProvider {
                     ClaimStatistic claimStatistic = validatorData.getStatistic();
                     ClaimValidator validator = validatorData.getConfiguration().getClaimValidator();
                     assertThat(validator.listIssues(claimStatistic)).containsExactly("UNAPPROVED");
-                });
+                }));
 
-        TestData test2 = new TestData("", Collections.singletonList(ImmutablePair.of(option, new String[]{"Unapproved:1"})),
+        result.add(new TestData("", Collections.singletonList(ImmutablePair.of(option, new String[]{"Unapproved:1"})),
                 basePath -> {
                     File baseDir = basePath.toFile();
                     writeFile(baseDir, "Test.java", Arrays.asList("/*\n", "SPDX-License-Identifier: Unapproved\n",
@@ -761,11 +668,15 @@ public class ReportTestDataProvider {
                     ClaimStatistic claimStatistic = validatorData.getStatistic();
                     ClaimValidator validator = validatorData.getConfiguration().getClaimValidator();
                     assertThat(validator.listIssues(claimStatistic)).isEmpty();
-                });
-        return Arrays.asList(test1, test2);
+                }));
     }
 
-    private List<TestData> configTest(final Option option) {
+    /**
+     * Add results to the result list.
+     * @param result the result list.
+     * @param option configuration option we are testing.
+     */
+    protected void configTest(final Set<TestData> result, final Option option) {
         Consumer<Path> setup = mkRat.andThen( basePath -> {
             Path ratDir = basePath.resolve(".rat");
             Path oneXml = ratDir.resolve("One.xml");
@@ -782,38 +693,35 @@ public class ReportTestDataProvider {
 
         ImmutablePair<Option, String[]> underTest = ImmutablePair.of(option, args);
 
-        TestData test1 = new TestData(DataUtils.asDirName(option), NO_OPTIONS,
+        result.add(new TestData(DataUtils.asDirName(option), NO_OPTIONS,
                 setup,
                 validatorData -> {
                     assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(2);
                     assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.APPROVED)).isEqualTo(1);
                     assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.UNAPPROVED)).isEqualTo(1);
-                });
+                }));
 
-        TestData test2 = new TestData("withDefaults", Collections.singletonList(underTest),
+        result.add(new TestData("withDefaults", Collections.singletonList(underTest),
             setup,
             validatorData -> {
                 assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(2);
                 assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.APPROVED)).isEqualTo(2);
                 assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.UNAPPROVED)).isEqualTo(0);
-            });
+            }));
 
-        TestData test3 = new TestData("noDefaults", Arrays.asList(underTest,
-                ImmutablePair.of(Arg.CONFIGURATION_NO_DEFAULTS.find("configuration-no-defaults"), null)),
-            setup,
-            validatorData -> {
-                assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(2);
-                assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.APPROVED)).isEqualTo(1);
-                assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.UNAPPROVED)).isEqualTo(1);
-            });
-        return Arrays.asList(test1, test2, test3);
+        if (!Arg.CONFIGURATION_NO_DEFAULTS.isEmpty()) {
+            result.add(new TestData("noDefaults", Arrays.asList(underTest,
+                    ImmutablePair.of(Arg.CONFIGURATION_NO_DEFAULTS.find("configuration-no-defaults"), null)),
+                    setup,
+                    validatorData -> {
+                        assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(2);
+                        assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.APPROVED)).isEqualTo(1);
+                        assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.UNAPPROVED)).isEqualTo(1);
+                    }));
+        }
     }
 
-    protected List<TestData> configTest() {
-        return configTest(Arg.CONFIGURATION.find("config"));
-    }
-
-    private List<TestData> noDefaultsTest(final Option option) {
+    protected void configurationNoDefaultsTest(final Set<TestData> result, final Option option) {
         TestData test1 = new TestData("", Collections.singletonList(ImmutablePair.of(option, null)),
                 basePath -> {
                     File baseDir = basePath.toFile();
@@ -822,34 +730,31 @@ public class ReportTestDataProvider {
                 },
                 validatorData -> assertThat(validatorData.getConfiguration().getLicenses(LicenseSetFactory.LicenseFilter.ALL)).isEmpty());
         test1.setException(NO_LICENSES_EXCEPTION);
-        return Collections.singletonList(test1);
+        result.add(test1);
     }
 
-    protected List<TestData> configurationNoDefaultsTest() {
-        return noDefaultsTest(Arg.CONFIGURATION_NO_DEFAULTS.find("configuration-no-defaults"));
-    }
-
-    protected List<TestData> dryRunTest() {
-        Option option = Arg.DRY_RUN.find("dry-run");
-        TestData test1 = new TestData("stdRun", Collections.singletonList(ImmutablePair.of(option, null)),
+    protected void dryRunTest(final Set<TestData> result, final Option option) {
+        result.add(new TestData("stdRun", Collections.singletonList(ImmutablePair.of(option, null)),
                 NO_SETUP,
-                validatorData -> assertThat(validatorData.getConfiguration().isDryRun()).isTrue());
+                validatorData -> assertThat(validatorData.getConfiguration().isDryRun()).isTrue()));
 
-        TestData test2 = new TestData(DataUtils.asDirName(option), NO_OPTIONS,
+        result.add(new TestData(DataUtils.asDirName(option), NO_OPTIONS,
                 NO_SETUP,
-                validatorData -> assertThat(validatorData.getConfiguration().isDryRun()).isFalse());
-        return Arrays.asList(test1, test2);
+                validatorData -> assertThat(validatorData.getConfiguration().isDryRun()).isFalse()));
     }
 
-    private List<TestData> editCopyrightTest(final Option option) {
+    protected void editCopyrightTest(final Set<TestData> result, final Option option) {
         Consumer<Path> setup = basePath -> {
             File baseDir = basePath.toFile();
             writeFile(baseDir, "Missing.java", Arrays.asList("/* no license */\n\n", "class Test {}\n"));
         };
         ImmutablePair<Option, String[]> copyright = ImmutablePair.of(option, new String[]{"MyCopyright"});
-        ImmutablePair<Option, String[]> editLicense = ImmutablePair.of(Arg.EDIT_ADD.find("edit-license"), null);
+        if (Arg.EDIT_ADD.isEmpty()) {
+            throw new RuntimeException("Can not execute copyright tests without an EDIT_ADD option avialable");
+        }
+        ImmutablePair<Option, String[]> editLicense = ImmutablePair.of(Arg.EDIT_ADD.option(), null);
 
-        TestData test1 = new TestData("noEditLicense", Collections.singletonList(copyright),
+        result.add(new TestData("noEditLicense", Collections.singletonList(copyright),
                 setup,
                 validatorData -> {
                     try {
@@ -858,9 +763,9 @@ public class ReportTestDataProvider {
                     } catch (IOException ex) {
                         throw new RuntimeException(ex);
                     }
-                });
+                }));
 
-        TestData test2 = new TestData(DataUtils.asDirName(editLicense.getLeft()), Arrays.asList(copyright, editLicense),
+        result.add(new TestData(DataUtils.asDirName(editLicense.getLeft()), Arrays.asList(copyright, editLicense),
                 setup,
                 validatorData -> {
                     try {
@@ -872,41 +777,42 @@ public class ReportTestDataProvider {
                     } catch (IOException ex) {
                         throw new RuntimeException(ex);
                     }
-                });
-        Option dryRun = Arg.DRY_RUN.option();
-        TestData test3 = new TestData(DataUtils.asDirName(dryRun),
-                Arrays.asList(copyright, ImmutablePair.of(dryRun, null), editLicense),
-                setup,
-                validatorData -> {
-                    try {
-                        String actualText = TextUtils.readFile(validatorData.getBaseDir().resolve("Missing.java").toFile());
-                        TextUtils.assertNotContains("MyCopyright", actualText);
-                    } catch (IOException ex) {
-                        throw new RuntimeException(ex);
-                    }
-                    assertThat(validatorData.getBaseDir().resolve("Missing.java.new")).doesNotExist();
-                });
-        Option overwrite = Arg.EDIT_OVERWRITE.option();
-        TestData test4 = new TestData(DataUtils.asDirName(overwrite), Arrays.asList(copyright, editLicense, ImmutablePair.of(overwrite, null)),
-                setup,
-                validatorData -> {
-                    try {
-                        String actualText = TextUtils.readFile(validatorData.getBaseDir().resolve("Missing.java").toFile());
-                        TextUtils.assertContains("MyCopyright", actualText);
+                }));
+
+        if (!Arg.DRY_RUN.isEmpty()) {
+            Option dryRun = Arg.DRY_RUN.option();
+            result.add(new TestData(DataUtils.asDirName(dryRun),
+                    Arrays.asList(copyright, ImmutablePair.of(dryRun, null), editLicense),
+                    setup,
+                    validatorData -> {
+                        try {
+                            String actualText = TextUtils.readFile(validatorData.getBaseDir().resolve("Missing.java").toFile());
+                            TextUtils.assertNotContains("MyCopyright", actualText);
+                        } catch (IOException ex) {
+                            throw new RuntimeException(ex);
+                        }
                         assertThat(validatorData.getBaseDir().resolve("Missing.java.new")).doesNotExist();
-                    } catch (IOException ex) {
-                        throw new RuntimeException(ex);
-                    }
-                });
-        return Arrays.asList(test1, test2, test3, test4);
+                    }));
+        }
+
+        if (!Arg.EDIT_OVERWRITE.isEmpty()) {
+            Option overwrite = Arg.EDIT_OVERWRITE.option();
+            result.add(new TestData(DataUtils.asDirName(overwrite), Arrays.asList(copyright, editLicense, ImmutablePair.of(overwrite, null)),
+                    setup,
+                    validatorData -> {
+                        try {
+                            String actualText = TextUtils.readFile(validatorData.getBaseDir().resolve("Missing.java").toFile());
+                            TextUtils.assertContains("MyCopyright", actualText);
+                            assertThat(validatorData.getBaseDir().resolve("Missing.java.new")).doesNotExist();
+                        } catch (IOException ex) {
+                            throw new RuntimeException(ex);
+                        }
+                    }));
+        }
     }
 
-    protected List<TestData> editCopyrightTest() {
-        return editCopyrightTest(Arg.EDIT_COPYRIGHT.find("edit-copyright"));
-    }
-
-    private List<TestData> editLicenseTest(final Option option) {
-        TestData test1 = new TestData("", Collections.singletonList(ImmutablePair.of(option, null)),
+    protected void editLicenseTest(final Set<TestData> result, final Option option) {
+        result.add(new TestData("", Collections.singletonList(ImmutablePair.of(option, null)),
             basePath -> {
                 File baseDir = basePath.toFile();
                 writeFile(baseDir, "NoLicense.java", "class NoLicense {}");
@@ -944,33 +850,24 @@ public class ReportTestDataProvider {
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
-                });
-        return Collections.singletonList(test1);
+                }));
     }
 
-    protected List<TestData> editLicenseTest() {
-        return editLicenseTest(Arg.EDIT_ADD.find("edit-license"));
-    }
-
-    private List<TestData>  overwriteTest(final Option option) {
-        TestData test1 = new TestData("noEditLicense", Collections.singletonList(ImmutablePair.of(option, null)),
+    protected void editOverwriteTest(final Set<TestData> result, final Option option) {
+        result.add(new TestData("noEditLicense", Collections.singletonList(ImmutablePair.of(option, null)),
                 NO_SETUP,
                 validatorData -> assertThat(validatorData.getConfiguration().isAddingLicensesForced())
-                        .describedAs("Without edit-license should be false").isFalse());
+                        .describedAs("Without edit-license should be false").isFalse()));
 
-        TestData test = new TestData("", Arrays.asList(ImmutablePair.of(option, null),
-                ImmutablePair.of(Arg.EDIT_ADD.find("edit-license"), null)),
-                NO_SETUP,
-                validatorData -> assertThat(validatorData.getConfiguration().isAddingLicensesForced()).isTrue());
-        return Arrays.asList(test1, test);
+        if (!Arg.EDIT_ADD.isEmpty()) {
+            result.add(new TestData("", Arrays.asList(ImmutablePair.of(option, null),
+                    ImmutablePair.of(Arg.EDIT_ADD.find("edit-license"), null)),
+                    NO_SETUP,
+                    validatorData -> assertThat(validatorData.getConfiguration().isAddingLicensesForced()).isTrue()));
+        }
     }
 
-    protected List<TestData> editOverwriteTest() {
-        return overwriteTest(Arg.EDIT_OVERWRITE.find("edit-overwrite"));
-    }
-
-    protected List<TestData> logLevelTest() {
-        final Option option = Arg.LOG_LEVEL.find("log-level");
+    protected void logLevelTest(final Set<TestData> result, final Option option) {
         final TestingLog testingLog = new TestingLog();
 
         Consumer<Path> setup = basePath -> {
@@ -978,7 +875,7 @@ public class ReportTestDataProvider {
             testingLog.clear();
         };
 
-        TestData test1 = new TestData(Log.Level.INFO.name(),
+        result.add(new TestData(Log.Level.INFO.name(),
                 Collections.singletonList(ImmutablePair.of(option, new String[]{Log.Level.INFO.name()})),
                 setup,
                 validatorData -> {
@@ -987,10 +884,9 @@ public class ReportTestDataProvider {
                     } finally {
                         DefaultLog.setInstance(null);
                     }
-                });
+                }));
 
-
-        TestData test2 = new TestData(Log.Level.DEBUG.name(),
+        result.add(new TestData(Log.Level.DEBUG.name(),
                 Collections.singletonList(ImmutablePair.of(option, new String[]{Log.Level.DEBUG.name()})),
                 setup,
                 validatorData -> {
@@ -999,15 +895,12 @@ public class ReportTestDataProvider {
                     } finally {
                         DefaultLog.setInstance(null);
                     }
-                });
-
-        return Arrays.asList(test1, test2);
+                }));
     }
 
-    private List<TestData> archiveTest(final Option option) {
-        List<TestData> result = new ArrayList<>();
+    protected void outputArchiveTest(final Set<TestData> result, final Option option) {
         for (ReportConfiguration.Processing processing : ReportConfiguration.Processing.values()) {
-            TestData test = new TestData(processing.name().toLowerCase(Locale.ROOT),
+            result.add(new TestData(processing.name().toLowerCase(Locale.ROOT),
                     Collections.singletonList(ImmutablePair.of(option, new String[]{processing.name()})),
                     basePath -> {
                         File localArchive = new File(basePath.toFile(), "dummy.jar");
@@ -1042,20 +935,14 @@ public class ReportTestDataProvider {
                         } catch (XPathExpressionException e) {
                             throw new RuntimeException(e);
                         }
-                    });
-            result.add(test);
+                    })
+            );
         }
-        return result;
     }
 
-    protected List<TestData> outputArchiveTest() {
-        return archiveTest(Arg.OUTPUT_ARCHIVE.find("output-archive"));
-    }
-
-    private List<TestData> listFamilies(final Option option) {
-        List<TestData> result = new ArrayList<>();
+    protected void outputFamiliesTest(final Set<TestData> result, final Option option) {
         for (LicenseSetFactory.LicenseFilter filter : LicenseSetFactory.LicenseFilter.values()) {
-            TestData test = new TestData(filter.name().toLowerCase(Locale.ROOT),
+            result.add(new TestData(filter.name().toLowerCase(Locale.ROOT),
                     Collections.singletonList(ImmutablePair.of(option, new String[]{filter.name()})),
                     NO_SETUP,
                     validatorData -> {
@@ -1080,19 +967,13 @@ public class ReportTestDataProvider {
                         } catch (XPathExpressionException e) {
                             throw new RuntimeException(e);
                         }
-                    });
-            result.add(test);
+                    })
+            );
         }
-        return result;
     }
 
-
-    protected List<TestData> outputFamiliesTest() {
-        return listFamilies(Arg.OUTPUT_FAMILIES.find("output-families"));
-    }
-
-    private List<TestData> outTest(final Option option) {
-        TestData test1 = new TestData("", Collections.singletonList(ImmutablePair.of(option, new String[]{"outexample"})),
+    protected void outputFileTest(final Set<TestData> result, final Option option) {
+        result.add(new TestData("", Collections.singletonList(ImmutablePair.of(option, new String[]{"outexample"})),
                 basePath -> {
                     File baseDir = basePath.toFile();
                     writeFile(baseDir, "apl.txt", "SPDX-License-Identifier: Apache-2.0");
@@ -1101,27 +982,23 @@ public class ReportTestDataProvider {
                     assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(1);
                     assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.APPROVED)).isEqualTo(1);
                     assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.UNAPPROVED)).isEqualTo(0);
-
                     File outFile = validatorData.getBaseDir().resolve("outexample").toFile();
+
                     try {
+                        validatorData.getOutput().format(validatorData.getConfiguration());
                         String actualText = TextUtils.readFile(outFile);
                         TextUtils.assertContainsExactly(1, "Apache License 2.0: 1 ", actualText);
                         TextUtils.assertContainsExactly(1, "STANDARD: 1 ", actualText);
-                    } catch (IOException e) {
+                    } catch (IOException | RatException e) {
                         throw new RuntimeException(e);
                     }
-                });
-        return Collections.singletonList(test1);
+                })
+        );
     }
 
-    protected List<TestData> outputFileTest() {
-        return outTest(Arg.OUTPUT_FILE.find("output-file"));
-    }
-
-    private List<TestData> listLicenses(final Option option) {
-        List<TestData> result = new ArrayList<>();
+    protected void outputLicensesTest(final Set<TestData> result, final Option option) {
         for (LicenseSetFactory.LicenseFilter filter : LicenseSetFactory.LicenseFilter.values()) {
-            TestData test = new TestData(filter.name(), Collections.singletonList(ImmutablePair.of(option, new String[]{filter.name()})),
+            result.add(new TestData(filter.name(), Collections.singletonList(ImmutablePair.of(option, new String[]{filter.name()})),
                     NO_SETUP,
                     validatorData -> {
                         Document document = validatorData.getDocument();
@@ -1145,20 +1022,14 @@ public class ReportTestDataProvider {
                         } catch (XPathExpressionException e) {
                             throw new RuntimeException(e);
                         }
-                    });
-            result.add(test);
+                    }));
         }
-        return result;
     }
 
-    protected List<TestData> outputLicensesTest() {
-        return listLicenses(Arg.OUTPUT_LICENSES.find("output-licenses"));
-    }
 
-    private List<TestData> standardTest(final Option option) {
-        List<TestData> result = new ArrayList<>();
+    protected void outputStandardTest(final Set<TestData> result, final Option option) {
         for (ReportConfiguration.Processing proc : ReportConfiguration.Processing.values()) {
-            TestData test = new TestData(proc.name().toLowerCase(Locale.ROOT), Collections.singletonList(ImmutablePair.of(option, new String[]{proc.name()})),
+            result.add(new TestData(proc.name().toLowerCase(Locale.ROOT), Collections.singletonList(ImmutablePair.of(option, new String[]{proc.name()})),
                     basePath -> {
                         File baseDir = basePath.toFile();
                         writeFile(baseDir, "Test.java", Arrays.asList("/*\n", "SPDX-License-Identifier: Apache-2.0\n",
@@ -1192,20 +1063,12 @@ public class ReportTestDataProvider {
                         } catch (XPathExpressionException ex) {
                             throw new RuntimeException(ex);
                         }
-                    });
-            result.add(test);
+                    }));
         }
-        return result;
     }
 
-    protected List<TestData> outputStandardTest() {
-        return standardTest(Arg.OUTPUT_STANDARD.find("output-standard"));
-    }
 
-    private List<TestData> styleSheetTest(final Option option) {
-        List<TestData> result = new ArrayList<>();
-        ImmutablePair<Option, String[]> outOption = ImmutablePair.of(Arg.OUTPUT_FILE.option(), new String[]{"outputFile"});
-
+    protected void outputStyleTest(final Set<TestData> result, final Option option) {
         Consumer<Path> createFile = basePath -> {
             File baseDir = basePath.toFile();
             writeFile(baseDir, "Test.java", Arrays.asList("/*\n", "SPDX-License-Identifier: Apache-2.0\n",
@@ -1213,84 +1076,98 @@ public class ReportTestDataProvider {
             writeFile(baseDir, "Missing.java", Arrays.asList("/* no license */\n\n", "class Test {}\n"));
         };
 
-        for (StyleSheets sheet : StyleSheets.values()) {
-            TestData test = new TestData(sheet.name().toLowerCase(Locale.ROOT), Arrays.asList(ImmutablePair.of(option, new String[]{sheet.arg()}),
-                    outOption),
-                    createFile,
-                    validatorData -> {
-                        try (InputStream expected = sheet.getStyleSheet().get();
-                             InputStream actual = validatorData.getConfiguration().getStyleSheet().get()) {
-                            assertThat(IOUtils.contentEquals(expected, actual)).as(() -> String.format("'%s' does not match", sheet)).isTrue();
-
-                            String actualText = TextUtils.readFile(validatorData.getBaseDir().resolve("outputFile").toFile());
-                            switch (sheet) {
-                                case MISSING_HEADERS:
-                                    TextUtils.assertContainsExactly(1, "Files with missing headers:" + System.lineSeparator() +
-                                            "  /Missing.java", actualText);
-                                    break;
-                                case PLAIN:
-                                    TextUtils.assertContainsExactly(1, "Unknown license: 1 ", actualText);
-                                    TextUtils.assertContainsExactly(1, "?????: 1 ", actualText);
-                                    break;
-                                case XML:
-                                    TextUtils.assertContainsExactly(1, "<resource encoding=\"ISO-8859-1\" mediaType=\"text/x-java-source\" name=\"/Test.java\" type=\"STANDARD\">", actualText);
-                                    TextUtils.assertContainsExactly(1, "<resource encoding=\"ISO-8859-2\" mediaType=\"text/x-java-source\" name=\"/Missing.java\" type=\"STANDARD\">", actualText);
-                                    break;
-                                case UNAPPROVED_LICENSES:
-                                    TextUtils.assertContainsExactly(1, "Files with unapproved licenses:" + System.lineSeparator() + "  /Missing.java", actualText);
-                                    break;
-                                case XHTML5:
-                                    TextUtils.assertPatternInTarget("<td>Approved<\\/td>\\s+<td>1<\\/td>\\s+<td>A count of approved licenses.<\\/td>", actualText);
-                                    break;
-                                default:
-                                    fail("No test for stylesheet " + sheet);
-                                    break;
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        if (!option.hasArg()) {
+            if (option.getLongOpt().equals("xml")) {
+                result.add(new TestData("", Collections.singletonList(ImmutablePair.of(option, null)),
+                        createFile,
+                        validatorData -> {
+                            try (InputStream expected = StyleSheets.XML.getStyleSheet().get();
+                                 InputStream actual = validatorData.getConfiguration().getStyleSheet().get()) {
+                                assertThat(IOUtils.contentEquals(expected, actual)).as(() -> String.format("'%s' does not match", StyleSheets.XML)).isTrue();
+                                baos.reset();
+                                validatorData.getOutput().format(validatorData.getConfiguration().getStyleSheet(), () -> baos);
+                                String actualText = baos.toString();
+                                TextUtils.assertContainsExactly(1, "<resource encoding=\"ISO-8859-1\" mediaType=\"text/x-java-source\" name=\"/Test.java\" type=\"STANDARD\">", actualText);
+                                TextUtils.assertContainsExactly(1, "<resource encoding=\"ISO-8859-2\" mediaType=\"text/x-java-source\" name=\"/Missing.java\" type=\"STANDARD\">", actualText);
+                            } catch (IOException | RatException e) {
+                                throw new RuntimeException(e);
                             }
+                        }));
+            }
+        } else {
+            for (StyleSheets sheet : StyleSheets.values()) {
+                result.add(new TestData(sheet.name().toLowerCase(Locale.ROOT), Collections.singletonList(ImmutablePair.of(option, new String[]{sheet.arg()})),
+                        createFile,
+                        validatorData -> {
+                            try (InputStream expected = sheet.getStyleSheet().get();
+                                 InputStream actual = validatorData.getConfiguration().getStyleSheet().get()) {
+                                assertThat(IOUtils.contentEquals(expected, actual)).as(() -> String.format("'%s' does not match", sheet)).isTrue();
+                                baos.reset();
+                                validatorData.getOutput().format(validatorData.getConfiguration().getStyleSheet(), () -> baos);
+                                String actualText = baos.toString();
+                                switch (sheet) {
+                                    case MISSING_HEADERS:
+                                        TextUtils.assertContainsExactly(1, "Files with missing headers:" + System.lineSeparator() +
+                                                "  /Missing.java", actualText);
+                                        break;
+                                    case PLAIN:
+                                        TextUtils.assertContainsExactly(1, "Unknown license: 1 ", actualText);
+                                        TextUtils.assertContainsExactly(1, "?????: 1 ", actualText);
+                                        break;
+                                    case XML:
+                                        TextUtils.assertContainsExactly(1, "<resource encoding=\"ISO-8859-1\" mediaType=\"text/x-java-source\" name=\"/Test.java\" type=\"STANDARD\">", actualText);
+                                        TextUtils.assertContainsExactly(1, "<resource encoding=\"ISO-8859-2\" mediaType=\"text/x-java-source\" name=\"/Missing.java\" type=\"STANDARD\">", actualText);
+                                        break;
+                                    case UNAPPROVED_LICENSES:
+                                        TextUtils.assertContainsExactly(1, "Files with unapproved licenses:" + System.lineSeparator() + "  /Missing.java", actualText);
+                                        break;
+                                    case XHTML5:
+                                        TextUtils.assertPatternInTarget("<td>Approved<\\/td>\\s+<td>1<\\/td>\\s+<td>A count of approved licenses.<\\/td>", actualText);
+                                        break;
+                                    default:
+                                        fail("No test for stylesheet " + sheet);
+                                        break;
+                                }
+                            } catch (IOException | RatException e) {
+                                throw new RuntimeException(e);
+                            }
+                        }));
+            }
+
+            result.add(new TestData("fileStyleSheet",
+                    Collections.singletonList(ImmutablePair.of(option, new String[]{"fileStyleSheet.xslt"})),
+                    basePath -> {
+                        DocumentName name = DocumentName.builder().setName("fileStyleSheet.xslt")
+                                .setBaseName(basePath.toString()).build();
+                        try (FileWriter fileWriter = new FileWriter(new File(name.getBaseName(), name.getName()));
+                             XmlWriter writer = new XmlWriter(fileWriter)) {
+                            writer.startDocument()
+                                    .comment(DataUtils.ASF_TEXT)
+                                    .openElement("xsl:stylesheet")
+                                    .attribute("version", "1.0")
+                                    .attribute("xmlns:xsl", "http://www.w3.org/1999/XSL/Transform")
+                                    .openElement("xsl:template")
+                                    .attribute("match", "@*|node()")
+                                    .content("Hello World")
+                                    .closeDocument();
                         } catch (IOException e) {
+                            fail(e.getMessage(), e);
+                        }
+                    },
+
+                    validatorData -> {
+                        try (InputStream expected = StyleSheets.getStyleSheet("fileStyleSheet.xslt", validatorData.getBaseName()).get();
+                             InputStream actual = validatorData.getConfiguration().getStyleSheet().get()) {
+                            assertThat(IOUtils.contentEquals(expected, actual)).as(() -> "'fileStyleSheet.xslt' does not match").isTrue();
+                            baos.reset();
+                            validatorData.getOutput().format(validatorData.getConfiguration().getStyleSheet(), () -> baos);
+                            String actualText = baos.toString();
+                            TextUtils.assertContainsExactly(1, "Hello World", actualText);
+                        } catch (IOException | RatException e) {
                             throw new RuntimeException(e);
                         }
-                    });
-            result.add(test);
+                    }));
         }
-
-        TestData test = new TestData("fileStyleSheet",
-                Arrays.asList(ImmutablePair.of(option, new String[]{"fileStyleSheet.xslt"}), outOption),
-                basePath -> {
-                    DocumentName name = DocumentName.builder().setName("fileStyleSheet.xslt")
-                            .setBaseName(basePath.toString()).build();
-                    try (FileWriter fileWriter = new FileWriter(new File(name.getBaseName(), name.getName()));
-                         XmlWriter writer = new XmlWriter(fileWriter)) {
-                        writer.startDocument()
-                                .comment(DataUtils.ASF_TEXT)
-                                .openElement("xsl:stylesheet")
-                                .attribute("version", "1.0")
-                                .attribute("xmlns:xsl", "http://www.w3.org/1999/XSL/Transform")
-                                .openElement("xsl:template")
-                                .attribute("match", "@*|node()")
-                                .content("Hello World")
-                                .closeDocument();
-                    } catch (IOException e) {
-                        fail(e.getMessage(), e);
-                    }
-                },
-
-                validatorData -> {
-                    try (InputStream expected = StyleSheets.getStyleSheet("fileStyleSheet.xslt", validatorData.getBaseName()).get();
-                         InputStream actual = validatorData.getConfiguration().getStyleSheet().get()) {
-                        assertThat(IOUtils.contentEquals(expected, actual)).as(() -> "'fileStyleSheet.xslt' does not match").isTrue();
-
-                        String actualText = TextUtils.readFile(validatorData.getBaseDir().resolve("outputFile").toFile());
-                        TextUtils.assertContainsExactly(1, "Hello World", actualText);
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
-                });
-        result.add(test);
-        return result;
     }
-
-    protected List<TestData> outputStyleTest() {
-        return styleSheetTest(Arg.OUTPUT_STYLE.find("output-style"));
-    }
-
 }

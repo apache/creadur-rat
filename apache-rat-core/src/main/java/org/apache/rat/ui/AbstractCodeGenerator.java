@@ -33,7 +33,7 @@ import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.runtime.RuntimeConstants;
 
 import static java.lang.String.format;
-import static org.apache.rat.OptionCollection.ArgumentType.NONE;
+import static org.apache.rat.OptionCollectionParser.ArgumentType.NONE;
 
 /**
  * Generates the ${code org.apache.rat.maven.AbstractMaven} source code.

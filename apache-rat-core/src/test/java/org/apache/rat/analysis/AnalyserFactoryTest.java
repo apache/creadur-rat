@@ -29,8 +29,6 @@ import java.io.OutputStream;
 import java.io.StringWriter;
 
 import java.net.URISyntaxException;
-import java.net.URL;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
@@ -47,7 +45,7 @@ import org.apache.rat.document.RatDocumentAnalysisException;
 import org.apache.rat.report.claim.SimpleXmlClaimReporter;
 import org.apache.rat.report.xml.writer.XmlWriter;
 import org.apache.rat.test.utils.Resources;
-import org.apache.rat.testhelpers.FileUtils;
+import org.apache.rat.utils.FileUtils;
 import org.apache.rat.testhelpers.TestingDocument;
 import org.apache.rat.testhelpers.TestingDocumentAnalyser;
 import org.apache.rat.testhelpers.TextUtils;

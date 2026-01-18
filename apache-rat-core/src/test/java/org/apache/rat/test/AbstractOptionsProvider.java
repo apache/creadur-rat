@@ -170,7 +170,7 @@ package org.apache.rat.test; ///*
 //    }
 //
 //    protected File writeFile(final String name, final Iterable<String> lines) {
-//        return org.apache.rat.testhelpers.FileUtils.writeFile(baseDir, name, lines);
+//        return org.apache.rat.utils.FileUtils.writeFile(baseDir, name, lines);
 //    }
 //
 //    final protected DocumentName mkDocName(final String name) {

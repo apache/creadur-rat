@@ -47,7 +47,7 @@ public class ConfigurationReport implements RatReport {
     @Override
     public void startReport() throws RatException {
         if (configuration.listFamilies() != LicenseFilter.NONE || configuration.listLicenses() != LicenseFilter.NONE) {
-            new XMLConfigurationWriter(configuration).write(writer);
+            new XMLConfigurationWriter(configuration).writeFamilyInfo(writer);
         }
     }
 }

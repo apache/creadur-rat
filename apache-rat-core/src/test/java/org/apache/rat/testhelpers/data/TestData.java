@@ -34,7 +34,7 @@ import org.apache.rat.utils.CasedString;
 /**
  * The definition of a test.
  */
-public final class TestData {
+public final class TestData implements Comparable<TestData> {
     /** if set, the expected exception from the test. */
     private Exception expectedException;
     /** The sub name of the test */
@@ -136,7 +136,11 @@ public final class TestData {
         final boolean[] lastWasMultiArg = {false};
         commandLine.forEach(pair -> {
             if (pair.getKey() != null) {
-                args.add("--" + pair.getKey().getLongOpt());
+                if (pair.getKey().hasLongOpt()) {
+                    args.add("--" + pair.getKey().getLongOpt());
+                } else {
+                    args.add("-" + pair.getKey().getOpt());
+                }
                 if (pair.getValue() != null) {
                     args.addAll(Arrays.asList(pair.getValue()));
                 }
@@ -202,16 +206,19 @@ public final class TestData {
      * @return the unique Java class name
      */
     public String getClassName() {
-        String result = null;
         if (getOption() == null) {
-            result = name + "_DefaultTest";
+            return WordUtils.capitalize(name) + "_DefaultTest";
         } else {
             List<String> parts = new ArrayList<>(Arrays.asList(new CasedString(CasedString.StringCase.KEBAB, ArgumentTracker.extractKey(getOption())).getSegments()));
             if (!name.isEmpty()) {
                 parts.addAll(Arrays.asList(new CasedString(CasedString.StringCase.CAMEL, name).getSegments()));
             }
-            result = CasedString.StringCase.CAMEL.assemble(parts.toArray(new String[0]));
+            return CasedString.StringCase.PASCAL.assemble(parts.toArray(new String[0]));
         }
-        return WordUtils.capitalize(result);
+    }
+
+    @Override
+    public int compareTo(TestData other) {
+        return getTestName().compareTo(other.getTestName());
     }
 }
