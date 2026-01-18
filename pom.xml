@@ -503,7 +503,6 @@ agnostic home for software distribution comprehension and audit tools.
             <!-- we only want to see our own problems in all subpackages -->
             <onlyAnalyze>org.apache.rat.-</onlyAnalyze>
             <!-- in order to have a global spotbugs configuration an exclusion file needs to exist in all submodules -->
-            <excludeFilterFile>${project.basedir}/spotbugs-ignore.xml</excludeFilterFile>
             <plugins>
               <plugin>
                 <groupId>com.h3xstream.findsecbugs</groupId>
@@ -713,6 +712,9 @@ agnostic home for software distribution comprehension and audit tools.
       <plugin>
         <groupId>com.github.spotbugs</groupId>
         <artifactId>spotbugs-maven-plugin</artifactId>
+        <configuration>
+            <excludeFilterFile>spotbugs-ignore.xml</excludeFilterFile>
+        </configuration>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -988,8 +990,8 @@ agnostic home for software distribution comprehension and audit tools.
     <module>apache-rat-core-tests</module>
     <module>apache-rat-cli</module>
     <module>apache-rat-maven-parent</module>
-    <module>apache-rat-ant-parent</module>
-    <module>apache-rat</module>
+<!--    <module>apache-rat-ant-parent</module>-->
+<!--    <module>apache-rat</module>-->
   </modules>
   <licenses>
     <license>

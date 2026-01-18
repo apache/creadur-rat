@@ -25,10 +25,10 @@ import java.util.Map;
 import java.util.stream.Stream;
 import org.apache.commons.cli.Option;
 import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.apache.rat.OptionCollection;
+import org.apache.rat.OptionCollectionParser;
 import org.apache.rat.Reporter;
 import org.apache.rat.commandline.Arg;
-import org.apache.rat.testhelpers.FileUtils;
+import org.apache.rat.utils.FileUtils;
 import org.apache.rat.testhelpers.TextUtils;
 import org.apache.rat.testhelpers.data.DataUtils;
 import org.apache.rat.testhelpers.data.ReportTestDataProvider;
@@ -53,6 +53,8 @@ public class ReportTest {
 
     private static final ReportTestDataProvider reportTestDataProvider = new ReportTestDataProvider();
 
+    private static final CLIOptionCollection cliCollection = new CLIOptionCollection();
+
     /**
      * This method is a known workaround for
      * {@link <a href="https://github.com/junit-team/junit5/issues/2811">junit 5 issue #2811</a> }.
@@ -65,14 +67,14 @@ public class ReportTest {
 
 
     static Stream<Arguments> getTestData() {
-        Map<String, TestData> tests = reportTestDataProvider.getOptionTestMap(Collections.emptyList());
-        TestData test = new TestData("", Arrays.asList(ImmutablePair.of(CLIOption.HELP, new String[]{}),
+        Map<String, TestData> tests = reportTestDataProvider.getOptionTestMap(cliCollection);
+        TestData test = new TestData("", Arrays.asList(ImmutablePair.of(CLIOptionCollection.HELP, new String[]{}),
                 ImmutablePair.of(Arg.OUTPUT_FILE.option(), new String[]{"helpText"})),
                 DataUtils.NO_SETUP,
                 validatorData -> {
                     try {
                         String result = TextUtils.readFile(validatorData.getBaseDir().resolve("helpText").toFile());
-                        for (Option option : OptionCollection.buildOptions(CLIOption.ADDITIONAL_OPTIONS).getOptions()) {
+                        for (Option option : cliCollection.getOptions().getOptions()) {
                             if (option.getOpt() != null) {
                                 TextUtils.assertContains("-" + option.getOpt() + (option.getLongOpt() == null ? " " : ","), result);
                             }
@@ -99,14 +101,15 @@ public class ReportTest {
     @ParameterizedTest( name = "{index} {0}")
     @MethodSource("getTestData")
     void testOptionsUpdateConfig(String name, TestData test) throws Exception {
+        CLIOptionCollection optionCollection = new CLIOptionCollection();
         Path basePath = testPath.resolve(test.getTestName());
         FileUtils.mkDir(basePath.toFile());
         test.setupFiles(basePath);
         if (test.getExpectedException() != null) {
-            assertThatThrownBy(() -> Report.generateReport(basePath.toFile(), test.getCommandLine(basePath.toString()))
+            assertThatThrownBy(() -> Report.generateReport(optionCollection, basePath.toFile(), test.getCommandLine(basePath.toString()))
                     ).hasMessageContaining(test.getExpectedException().getMessage());
         } else {
-            Reporter.Output result = Report.generateReport(basePath.toFile(), test.getCommandLine(basePath.toString()));
+            Reporter.Output result = Report.generateReport(optionCollection, basePath.toFile(), test.getCommandLine(basePath.toString()));
             ValidatorData data = new ValidatorData(result, basePath.toString());
             test.getValidator().accept(data);
         }

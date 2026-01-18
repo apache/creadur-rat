@@ -23,8 +23,9 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 
+import org.apache.commons.cli.Options;
 import org.apache.commons.io.function.IOSupplier;
-import org.apache.rat.OptionCollection;
+import org.apache.rat.OptionCollectionParser;
 import org.apache.rat.ReportConfiguration;
 import org.apache.rat.Reporter;
 import org.apache.rat.VersionInfo;
@@ -49,6 +50,7 @@ public final class Report {
      */
     public static void main(final String[] args) throws Exception {
         VersionInfo versionInfo = new VersionInfo(Report.class);
+        CLIOptionCollection optionCollection = new CLIOptionCollection();
         DefaultLog.getInstance().info(String.format("%s %s on %s %s (%s)",
                 versionInfo.getTitle(), versionInfo.getVersion(), versionInfo.getSpecTitle(), versionInfo.getSpecVersion(),
                 versionInfo.getSpecVendor()));
@@ -59,7 +61,7 @@ public final class Report {
             System.exit(0);
         }
 
-        Reporter.Output result = generateReport(new File("."), args);
+        Reporter.Output result = generateReport(optionCollection, new File("."), args);
         if (result != null) {
             result.writeSummary(DefaultLog.getInstance().asWriter());
 
@@ -76,10 +78,10 @@ public final class Report {
      * Prints the usage message on the specified output stream.
      * @param out The OutputStream supplier
      */
-    private static void printUsage(final IOSupplier<OutputStream> out) {
+    private static void printUsage(final Options options, final IOSupplier<OutputStream> out) {
         try (OutputStream stream = out.get();
              PrintWriter writer = new PrintWriter(stream)) {
-            new Help(writer).printUsage(OptionCollection.buildOptions(CLIOption.ADDITIONAL_OPTIONS));
+            new Help(writer).printUsage(options);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -92,17 +94,18 @@ public final class Report {
      * @return The Client output.
      * @throws Exception on error.
      */
-    static Reporter.Output generateReport(final File workingDirectory, final String[] args) throws Exception {
+    static Reporter.Output generateReport(final CLIOptionCollection optionCollection, final File workingDirectory, final String[] args) throws Exception {
         Reporter.Output output = null;
-        ArgumentContext argumentContext = OptionCollection.parseCommands(workingDirectory, args, CLIOption.ADDITIONAL_OPTIONS);
+        OptionCollectionParser optionParser = new OptionCollectionParser(optionCollection);
+        ArgumentContext argumentContext = optionParser.parseCommands(workingDirectory, args);
         ReportConfiguration configuration = argumentContext.getConfiguration();
         if (configuration != null) {
-            if (argumentContext.getCommandLine().hasOption(CLIOption.HELP)) {
-                printUsage(argumentContext.getConfiguration().getOutput());
+            if (argumentContext.getCommandLine().hasOption(CLIOptionCollection.HELP)) {
+                printUsage(optionCollection.getOptions(), argumentContext.getConfiguration().getOutput());
             } else if (!configuration.hasSource()) {
                     String msg = "No directories or files specified for scanning. Did you forget to close a multi-argument option?";
                     DefaultLog.getInstance().error(msg);
-                    printUsage(argumentContext.getConfiguration().getOutput());
+                    printUsage(optionCollection.getOptions(), argumentContext.getConfiguration().getOutput());
             } else {
                 configuration.validate();
                 Reporter reporter = new Reporter(configuration);

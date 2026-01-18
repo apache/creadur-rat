@@ -80,7 +80,9 @@ public class OptionTestDataProvider extends AbstractTestDataProvider {
     public Map<String, TestData> getUITestMap(final AbstractOptionCollection<?> optionCollection) {
         final ConfigurationException noLicenses = new ConfigurationException("At least one license must be defined");
         Map<String, TestData> result = getOptionTestMap(optionCollection);
-        result.get("configuration-no-defaults").setException(noLicenses);
+        for (Option option : Arg.CONFIGURATION_NO_DEFAULTS.group().getOptions()) {
+            result.get(option.getLongOpt()).setException(noLicenses);
+        }
         result.get("licenses-approved/withoutDefaults").setException(noLicenses);
         result.get("licenses-approved-file/withoutDefaults").setException(noLicenses);
         result.get("license-families-approved/withoutDefaults").setException(noLicenses);

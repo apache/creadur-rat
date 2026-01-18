@@ -24,7 +24,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.cli.Options;
-import org.apache.rat.OptionCollection;
+import org.apache.rat.OptionCollectionParser;
 import org.apache.rat.config.exclusion.StandardCollection;
 import org.apache.rat.help.AbstractHelp;
 
@@ -98,8 +98,8 @@ public class Help extends AbstractHelp {
     public String printArgumentTypes() {
         String argumentPadding = createPadding(helpFormatter.getLeftPadding() + HELP_PADDING);
 
-        for (OptionCollection.ArgumentType argType : OptionCollection.ArgumentType.values()) {
-            if (argType != OptionCollection.ArgumentType.NONE) {
+        for (OptionCollectionParser.ArgumentType argType : OptionCollectionParser.ArgumentType.values()) {
+            if (argType != OptionCollectionParser.ArgumentType.NONE) {
                 writer.format("%n<%s>%n", argType.getDisplayName());
                 helpFormatter.printWrapped(writer, helpFormatter.getWidth(), helpFormatter.getLeftPadding() + HELP_PADDING + HELP_PADDING,
                         argumentPadding + argType.description().get());

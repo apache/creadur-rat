@@ -22,8 +22,7 @@ import java.nio.file.Path;
 import java.util.stream.Stream;
 
 import org.apache.rat.Reporter;
-import org.apache.rat.api.RatException;
-import org.apache.rat.testhelpers.FileUtils;
+import org.apache.rat.utils.FileUtils;
 import org.apache.rat.testhelpers.data.OptionTestDataProvider;
 
 import org.apache.rat.testhelpers.data.TestData;
@@ -37,7 +36,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 
@@ -59,7 +57,7 @@ public class ReportOptionsTest {
 
 
     static Stream<Arguments> getTestData() {
-        return optionTestDataProvider.getUITestMap().values().stream().map(testData ->
+        return optionTestDataProvider.getUITestMap(new CLIOptionCollection()).values().stream().map(testData ->
                 Arguments.of(testData.getTestName(), testData));
         // TODO add help test
     }
@@ -72,13 +70,14 @@ public class ReportOptionsTest {
     @MethodSource("getTestData")
     void testOptionsUpdateConfig(String name, TestData test) throws Exception {
         Path basePath = testPath.resolve(test.getTestName());
+        CLIOptionCollection optionCollection = new CLIOptionCollection();
         FileUtils.mkDir(basePath.toFile());
         test.setupFiles(basePath);
         if (test.getExpectedException() != null) {
-            assertThatThrownBy(() -> Report.generateReport(basePath.toFile(), test.getCommandLine(basePath.toString()))
+            assertThatThrownBy(() -> Report.generateReport(optionCollection, basePath.toFile(), test.getCommandLine(basePath.toString()))
                     ).hasMessageContaining(test.getExpectedException().getMessage());
         } else {
-            Reporter.Output result = Report.generateReport(basePath.toFile(), test.getCommandLine(basePath.toString()));
+            Reporter.Output result = Report.generateReport(optionCollection, basePath.toFile(), test.getCommandLine(basePath.toString()));
             ValidatorData data = new ValidatorData(result, basePath.toString());
             test.getValidator().accept(data);
         }
