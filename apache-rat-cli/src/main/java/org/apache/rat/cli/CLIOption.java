@@ -19,7 +19,6 @@
 package org.apache.rat.cli;
 
 import org.apache.commons.cli.Option;
-import org.apache.commons.cli.Options;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.rat.ui.AbstractOption;
 import org.apache.rat.ui.ArgumentTracker;
@@ -27,19 +26,10 @@ import org.apache.rat.ui.ArgumentTracker;
 /**
  * The CLI option definition.
  */
-public class CLIOption extends AbstractOption<CLIOption> {
+public final class CLIOption extends AbstractOption<CLIOption> {
 
-    /** The Help option */
-    static final Option HELP = new Option("?", "help", false, "Print help for the RAT command line interface and exit.");
-    /** The additional options */
-    static final Options ADDITIONAL_OPTIONS = new Options();
-
-    static {
-        ADDITIONAL_OPTIONS.addOption(HELP);
-    }
-
-    public CLIOption(final Option option) {
-        super(option, ArgumentTracker.extractKey(option));
+    public CLIOption(final CLIOptionCollection collection, final Option option) {
+        super(collection, option, ArgumentTracker.extractKey(option));
     }
 
     @Override
@@ -59,11 +49,6 @@ public class CLIOption extends AbstractOption<CLIOption> {
     @Override
     protected String cleanupName(final Option option) {
         return ArgumentTracker.extractKey(option);
-    }
-
-    @Override
-    public Options getAdditionalOptions() {
-        return ADDITIONAL_OPTIONS;
     }
 
     @Override

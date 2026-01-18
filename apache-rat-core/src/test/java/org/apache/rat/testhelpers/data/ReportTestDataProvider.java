@@ -985,11 +985,10 @@ public class ReportTestDataProvider extends AbstractTestDataProvider {
                     File outFile = validatorData.getBaseDir().resolve("outexample").toFile();
 
                     try {
-                        validatorData.getOutput().format(validatorData.getConfiguration());
                         String actualText = TextUtils.readFile(outFile);
                         TextUtils.assertContainsExactly(1, "Apache License 2.0: 1 ", actualText);
                         TextUtils.assertContainsExactly(1, "STANDARD: 1 ", actualText);
-                    } catch (IOException | RatException e) {
+                    } catch (IOException e) {
                         throw new RuntimeException(e);
                     }
                 })

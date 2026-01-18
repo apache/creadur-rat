@@ -534,6 +534,7 @@ public class ReporterTest {
             Reporter.Output output = ctxt.getConfiguration() != null ? new Reporter(ctxt.getConfiguration()).execute() :
                     Reporter.Output.builder().build();
             ValidatorData data = new ValidatorData(output, basePath.toString());
+            data.getOutput().format(data.getConfiguration());
             test.getValidator().accept(data);
         }
     }

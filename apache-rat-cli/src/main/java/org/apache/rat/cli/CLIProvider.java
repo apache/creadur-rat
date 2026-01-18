@@ -18,7 +18,6 @@
  */
 package org.apache.rat.cli;
 
-import org.apache.rat.ui.OptionFactory;
 import org.apache.rat.ui.UI;
 import org.apache.rat.ui.spi.UIProvider;
 
@@ -36,8 +35,8 @@ public class CLIProvider implements UIProvider {
         }
 
         @Override
-        public OptionFactory.Config<CLIOption> getFactoryConfig() {
-            return new OptionFactory.Config<>(null, CLIOption::new, CLIOption.ADDITIONAL_OPTIONS);
+        public CLIOptionCollection getOptionCollection() {
+            return new CLIOptionCollection();
         }
     }
 }

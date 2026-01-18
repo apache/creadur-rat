@@ -24,7 +24,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
-import org.apache.rat.OptionCollection;
+import org.apache.rat.OptionCollectionParser;
 import org.apache.rat.testhelpers.TextUtils;
 import org.junit.jupiter.api.Test;
 
@@ -33,9 +33,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class HelpTest {
+    private CLIOptionCollection cliCollection = new CLIOptionCollection();
+
     @Test
     public void verifyAllOptionsListed() {
-        Options opts = OptionCollection.buildOptions(CLIOption.ADDITIONAL_OPTIONS);
+        Options opts = cliCollection.getOptions();
         StringWriter out = new StringWriter();
         new Help(out).printUsage(opts);
 
@@ -55,8 +57,8 @@ public class HelpTest {
 
     @Test
     public void verifyArgumentsListed() {
-        Options opts = OptionCollection.buildOptions(CLIOption.ADDITIONAL_OPTIONS);
-        Set<String> argTypes = Arrays.stream(OptionCollection.ArgumentType.values()).map(OptionCollection.ArgumentType::getDisplayName).collect(Collectors.toSet());
+        Options opts = cliCollection.getOptions();
+        Set<String> argTypes = Arrays.stream(OptionCollectionParser.ArgumentType.values()).map(OptionCollectionParser.ArgumentType::getDisplayName).collect(Collectors.toSet());
         StringWriter out = new StringWriter();
         new Help(out).printUsage(opts);
         String result = out.toString();
