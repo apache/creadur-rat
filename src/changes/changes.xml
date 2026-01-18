@@ -68,6 +68,9 @@ in order to be properly linked in site reports.
     </release>
     -->
     <release version="1.0.0" date="xxxx-yy-zz" description="Current SNAPSHOT - release to be done">
+      <action issue="RAT-533" type="fix" dev="pottlinger" due-to="Ryan Schmitt">
+        Reduce sample size of charset detection from 12000 to 256 byte (Tika) to increase I/O performance of RAT scane.s
+      </action>
       <action issue="RAT-531" type="fix" dev="pottlinger" due-to="huangxiaoping">
         Fix NPE that license families is null if licenses are defined manually, reported by huangxiaoping from Hudi.
       </action>

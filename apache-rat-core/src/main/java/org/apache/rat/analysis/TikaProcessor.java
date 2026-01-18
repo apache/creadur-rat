@@ -165,7 +165,8 @@ public final class TikaProcessor {
      * @throws UnsupportedCharsetException on unsupported charset.
      */
     private static Charset detectCharset(final InputStream stream, final DocumentName documentName) throws IOException, UnsupportedCharsetException {
-        CharsetDetector encodingDetector = new CharsetDetector();
+        final int bytesForCharsetDetection = 256;
+        CharsetDetector encodingDetector = new CharsetDetector(bytesForCharsetDetection);
         encodingDetector.setText(stream);
         CharsetMatch charsetMatch = encodingDetector.detect();
         if (charsetMatch != null) {
