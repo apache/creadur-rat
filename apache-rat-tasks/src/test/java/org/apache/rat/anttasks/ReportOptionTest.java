@@ -38,6 +38,7 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.condition.EnabledIf;
 import org.junit.jupiter.api.condition.EnabledOnOs;
 import org.junit.jupiter.api.condition.OS;
+import org.junit.jupiter.api.io.CleanupMode;
 import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ArgumentsProvider;
@@ -56,7 +57,8 @@ import static org.junit.jupiter.api.Assertions.fail;
  * Tests to ensure the option setting works correctly.
  */
 public class ReportOptionTest  {
-    @TempDir
+    // RAT-475: Do no cleanup in order to prevent random build failures on ASF-Linux/GitHub nodes
+    @TempDir(cleanup = CleanupMode.NEVER)
     static Path testPath;
 
     static ReportConfiguration reportConfiguration;
@@ -90,7 +92,6 @@ public class ReportOptionTest  {
 
     @ParameterizedTest
     @ArgumentsSource(AntOptionsProvider.class)
-    // RAT-475: let's see how things evolve on GHA - @DisabledIf("isGitHubLinuxOrWindowsWithJava8")
     public void testOptionsUpdateConfig(String name, OptionCollectionTest.OptionTest test) {
         DefaultLog.getInstance().info("Running " + name);
         try {
