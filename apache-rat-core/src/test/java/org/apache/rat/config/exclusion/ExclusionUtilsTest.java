@@ -22,8 +22,7 @@ import org.apache.rat.ConfigurationException;
 import org.apache.rat.utils.ExtendedIterator;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.EnabledOnOs;
-import org.junit.jupiter.api.condition.OS;
+import org.junit.jupiter.api.io.CleanupMode;
 import org.junit.jupiter.api.io.TempDir;
 
 import java.io.FileWriter;
@@ -43,7 +42,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ExclusionUtilsTest {
 
-    @TempDir
+    @TempDir(cleanup = CleanupMode.NEVER)
     private File testDir;
 
     private final int fileCount = 0;
@@ -58,16 +57,6 @@ public class ExclusionUtilsTest {
     private static final String[] NOT_COMMENTS = {
             "This is a  normal line", "**/ignoreMe/*", "C:\\No Space In FileNames Please"
     };
-
-    /**
-     * This method is a known workaround for
-     * {@link <a href="https://github.com/junit-team/junit5/issues/2811">junit 5 issue #2811</a> }.
-     */
-    @AfterEach
-    @EnabledOnOs(OS.WINDOWS)
-    void cleanUp() {
-        System.gc();
-    }
 
     private File createFile(Iterable<String> contents) {
         File f = new File(testDir, "file" + fileCount);

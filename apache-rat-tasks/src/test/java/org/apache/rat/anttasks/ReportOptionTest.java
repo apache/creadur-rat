@@ -80,16 +80,6 @@ public class ReportOptionTest  {
         AbstractConfigurationOptionsProvider.preserveData(testPath.toFile(), "optionTest");
     }
 
-    @AfterAll
-    // hacky workaround for windows bug described in RAT-475, try to force resource cleanup via GC
-    @EnabledOnOs(OS.WINDOWS)
-    // GC is also enabled on GitHubAction runs as its JDK is configured to do I/O stuff lazily, thus a GC forces all resources to be closed
-    // Failures happen on ASF Jenkins as well, therefore we call the workaround under linux as well
-    @EnabledIf("isRunningOnGitHubActionOrLinux")
-    static void cleanup() {
-        System.gc();
-    }
-
     @ParameterizedTest
     @ArgumentsSource(AntOptionsProvider.class)
     public void testOptionsUpdateConfig(String name, OptionCollectionTest.OptionTest test) {
