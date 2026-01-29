@@ -33,4 +33,4 @@ jobs:
       - name: Build and analyze at ASF-sonarcloud
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: ./mvnw -X -e verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=apache_creadur-rat -Dsonar.token=${SONAR_TOKEN}
+        run: ./mvnw -X -e verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=apache_creadur-rat -Dsonar.organization=apache -Dsonar.token=${SONAR_TOKEN}
