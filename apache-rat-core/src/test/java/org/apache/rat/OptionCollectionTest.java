@@ -46,8 +46,7 @@ import org.apache.rat.utils.Log;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.EnabledOnOs;
-import org.junit.jupiter.api.condition.OS;
+import org.junit.jupiter.api.io.CleanupMode;
 import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ArgumentsProvider;
@@ -67,7 +66,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Fail.fail;
 
 public class OptionCollectionTest {
-    @TempDir
+    @TempDir(cleanup = CleanupMode.NEVER)
     static Path testPath;
 
     @AfterAll
@@ -164,16 +163,6 @@ public class OptionCollectionTest {
             }
         }
         return result;
-    }
-
-    /**
-     * This method is a known workaround for
-     * {@link <a href="https://github.com/junit-team/junit5/issues/2811">junit 5 issue #2811</a> }.
-     */
-    @AfterEach
-    @EnabledOnOs(OS.WINDOWS)
-    void cleanUp() {
-        System.gc();
     }
 
     @Test

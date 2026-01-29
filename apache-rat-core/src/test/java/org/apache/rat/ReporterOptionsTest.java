@@ -35,8 +35,7 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.EnabledOnOs;
-import org.junit.jupiter.api.condition.OS;
+import org.junit.jupiter.api.io.CleanupMode;
 import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ArgumentsSource;
@@ -46,22 +45,12 @@ import static org.assertj.core.api.Fail.fail;
 
 public final class ReporterOptionsTest {
 
-    @TempDir
+    @TempDir(cleanup = CleanupMode.NEVER)
     static Path testPath;
 
     @AfterAll
     static void preserveData() {
         AbstractConfigurationOptionsProvider.preserveData(testPath.toFile(), "reporterOptionsTest");
-    }
-
-    /**
-     * This method is a known workaround for
-     * {@link <a href="https://github.com/junit-team/junit5/issues/2811">junit 5 issue #2811</a> }.
-     */
-    @AfterEach
-    @EnabledOnOs(OS.WINDOWS)
-    void cleanUp() {
-        System.gc();
     }
 
     @BeforeEach

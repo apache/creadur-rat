@@ -29,6 +29,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.condition.EnabledOnOs;
 import org.junit.jupiter.api.condition.OS;
+import org.junit.jupiter.api.io.CleanupMode;
 import org.junit.jupiter.api.io.TempDir;
 
 import java.io.File;
@@ -44,7 +45,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 public class AbstractIgnoreBuilderTest {
 
-    @TempDir
+    @TempDir(cleanup = CleanupMode.NEVER)
     protected Path tmpPath;
     protected DocumentName baseName;
 
@@ -57,16 +58,6 @@ public class AbstractIgnoreBuilderTest {
     @EnabledOnOs(OS.WINDOWS)
     void reset() {
         baseName = null;
-    }
-
-    /**
-     * This method is a known workaround for
-     * {@link <a href="https://github.com/junit-team/junit5/issues/2811">junit 5 issue #2811</a> }.
-     */
-    @AfterEach
-    @EnabledOnOs(OS.WINDOWS)
-    void cleanUp() {
-        System.gc();
     }
 
     /**
