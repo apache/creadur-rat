@@ -32,14 +32,6 @@ jobs:
           path: ~/.m2
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
-      - name: Debug Globally Configured Secret
-        run: |
-          if [ -z "${{ secrets.SONARCLOUD_TOKEN }}" ]; then
-            echo "SECRET IS EMPTY"
-            exit 1
-          else
-            echo "SECRET IS DEFINED"
-          fi
       - name: Build and analyze at ASF-sonarcloud
         env:
           SONAR_TOKEN: ${{ secrets.SONARCLOUD_TOKEN }}
