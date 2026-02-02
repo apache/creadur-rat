@@ -1,13 +1,14 @@
 name: SonarQube
 on:
   push:
-# RAT-293: Do not add any branches here as secrets are not visible in branches except master:
-#    branches:
-#      - master
+# RAT-293: Global secrets are not visible on dependabot runs thus block if triggered by Dependabot
+    branches:
+      - master
   pull_request:
     types: [opened, synchronize, reopened]
 jobs:
   build:
+    if: github.actor != 'dependabot[bot]
     name: Build and analyze
     runs-on: ubuntu-latest
     steps:
