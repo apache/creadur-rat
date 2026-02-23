@@ -672,7 +672,7 @@ agnostic home for software distribution comprehension and audit tools.
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-surefire-plugin</artifactId>
-          <version>3.5.4</version>
+          <version>3.5.5</version>
           <configuration>
             <forkCount>1</forkCount>
             <!-- RAT-293: We need to append to the existing arguments in order for code coverage to work -->
