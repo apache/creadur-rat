@@ -61,4 +61,8 @@
   <suppress checks="[a-zA-Z0-9]*"
             files="src[/\\]main[/\\]java[/\\]org[/\\]apache[/\\]rat[/\\]anttasks[/\\]BaseAntTask.java" />
 
+  <!-- Gradle plugin has spotless incl spotless checks,
+       which has no equivalent to checkstyle's ImportOrderOption for static imports. -->
+  <suppress checks="ImportOrder"
+            files="src[/\\]main[/\\]java[/\\]org[/\\]apache[/\\]rat[/\\]gradle[/\\]*" />
 </suppressions>
