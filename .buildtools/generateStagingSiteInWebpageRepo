@@ -19,7 +19,7 @@
 ./mvnw -B package site site:stage
 
 # DEVHINT: with trailing slash please!
-targetDirectory=../creadur-site/rat100/
+targetDirectory=../creadur-site/rat018/
 
 echo "Copying site resources into asf-site repo under $targetDirectory"
 cp -rvf target/staging/* $targetDirectory > /dev/null
