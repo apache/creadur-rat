@@ -41,6 +41,7 @@ import javax.xml.transform.stream.StreamSource;
 
 import org.apache.commons.io.function.IOSupplier;
 import org.apache.rat.api.RatException;
+import org.apache.rat.document.DocumentName;
 import org.apache.rat.license.LicenseSetFactory.LicenseFilter;
 import org.apache.rat.report.RatReport;
 import org.apache.rat.report.claim.ClaimStatistic;
@@ -243,7 +244,7 @@ public class Reporter {
                 return this;
             }
 
-            public Builder document(final File documentFile) {
+            public Builder document(final String fileName, final DocumentName workingDirectory) {
                 DocumentBuilder builder;
                 try {
                     builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
@@ -251,10 +252,11 @@ public class Reporter {
                     throw new ConfigurationException("Unable to create DOM builder", e);
                 }
 
-                try (InputStream inputStream = new FileInputStream(documentFile)) {
+                File inputFile = workingDirectory.resolve(fileName).asFile();
+                try (InputStream inputStream = new FileInputStream(inputFile)) {
                     this.document = builder.parse(inputStream);
                 } catch (SAXException | IOException e) {
-                    throw new ConfigurationException("Unable to read file: " + documentFile, e);
+                    throw new ConfigurationException("Unable to read file: " + inputFile, e);
                 }
                 return this;
             }
@@ -268,14 +270,15 @@ public class Reporter {
                 return this;
             }
 
-            public Builder statistic(final File statisticFile) {
+            public Builder statistic(final String fileName, final DocumentName workingDirectory) {
+                File sourceFile = workingDirectory.resolve(fileName).asFile();
                 try {
                     ClaimStatistic statistic = new ClaimStatistic();
-                    statistic.serde().deserialize(() -> new FileInputStream(statisticFile));
+                    statistic.serde().deserialize(() -> new FileInputStream(sourceFile));
                     this.statistic = statistic;
                     return this;
                 } catch (IOException e) {
-                    throw new ConfigurationException("Unable to read file: " + statisticFile, e);
+                    throw new ConfigurationException("Unable to read file: " + sourceFile, e);
                 }
             }
 
@@ -284,10 +287,11 @@ public class Reporter {
                 return this;
             }
 
-            public Builder configuration(final File configurationFile) {
+            public Builder configuration(final String fileName, final DocumentName workingDirectory) {
+                File configurationFile = workingDirectory.resolve(fileName).asFile();
                 try {
                     ReportConfiguration config = new ReportConfiguration();
-                    config.serde().deserialize(() -> new FileInputStream(configurationFile));
+                    config.serde().deserialize(() -> new FileInputStream(configurationFile), workingDirectory);
                     this.configuration = config;
                     return this;
                 } catch (IOException e) {
