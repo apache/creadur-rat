@@ -81,6 +81,8 @@ import org.xml.sax.SAXException;
  */
 public class ReportConfiguration {
 
+    /** The IODescriptor for System.out */
+    public static final IODescriptor<OutputStream> SYSTEM_OUT = new  IODescriptor<>("System.out", () -> CloseShieldOutputStream.wrap(System.out));
     /**
      * The styles of processing for various categories of documents.
      */
@@ -130,11 +132,11 @@ public class ReportConfiguration {
     /**
      * The IOSupplier that provides the output stream to write the report to.
      */
-    private IOSupplier<OutputStream> out;
+    private IODescriptor<OutputStream> out;
     /**
      * The IOSupplier that provides the stylesheet to style the XML output.
      */
-    private IOSupplier<InputStream> styleSheet;
+    private IODescriptor<InputStream> styleSheet;
 
     /**
      * A list of files to read file names from.
@@ -458,6 +460,15 @@ public class ReportConfiguration {
      * the report with.
      */
     public IOSupplier<InputStream> getStyleSheet() {
+        return styleSheet.ioSupplier();
+    }
+
+    /**
+     * Gets the IODescriptor of the style sheet.
+     * @return the Supplier of the InputStream that is the XSLT style sheet to style
+     * the report with.
+     */
+    public IODescriptor<InputStream> getStyleSheetDescriptor() {
         return styleSheet;
     }
 
@@ -467,7 +478,7 @@ public class ReportConfiguration {
      * multiple times.
      * @param styleSheet the XSLT style sheet to style the report with.
      */
-    public void setStyleSheet(final IOSupplier<InputStream> styleSheet) {
+    public void setStyleSheet(final IODescriptor<InputStream> styleSheet) {
         this.styleSheet = styleSheet;
     }
 
@@ -479,7 +490,7 @@ public class ReportConfiguration {
      */
     public void setFrom(final Defaults defaults) {
         licenseSetFactory.add(defaults.getLicenseSetFactory());
-        if (getStyleSheet() == null) {
+        if (getStyleSheetDescriptor() == null) {
             setStyleSheet(StyleSheets.PLAIN.getStyleSheet());
         }
         defaults.getStandardExclusion().forEach(this::addExcludedCollection);
@@ -515,7 +526,7 @@ public class ReportConfiguration {
      */
     public void setStyleSheet(final URL styleSheet) {
         Objects.requireNonNull(styleSheet, "Stylesheet file must not be null");
-        setStyleSheet(styleSheet::openStream);
+        setStyleSheet(new IODescriptor<>(styleSheet.toString(), styleSheet::openStream));
     }
 
     /**
@@ -526,7 +537,7 @@ public class ReportConfiguration {
      * @param out The OutputStream supplier that provides the output stream to write
      * the report to. A null value will use System.out.
      */
-    public void setOut(final IOSupplier<OutputStream> out) {
+    public void setOut(final IODescriptor<OutputStream> out) {
         this.out = out;
     }
 
@@ -534,7 +545,7 @@ public class ReportConfiguration {
      * Sets the OutputStream supplier to use the specified file. The file may be
      * opened and closed several times. File is deleted first and then may be
      * repeatedly opened in append mode.
-     * @see #setOut(IOSupplier)
+     * @see #setOut(IODescriptor)
      * @param file The file to create the supplier with.
      */
     public void setOut(final File file) {
@@ -550,7 +561,7 @@ public class ReportConfiguration {
         if (!parent.mkdirs() && !parent.isDirectory()) {
             DefaultLog.getInstance().warn("Unable to create directory: " + file.getParentFile());
         }
-        setOut(() -> new FileOutputStream(file, true));
+        setOut(new IODescriptor<>(file.toString(), () -> new FileOutputStream(file, true)));
     }
 
     /**
@@ -559,7 +570,15 @@ public class ReportConfiguration {
      * @return The supplier of the output stream to write the report to.
      */
     public IOSupplier<OutputStream> getOutput() {
-        return out == null ? () -> CloseShieldOutputStream.wrap(System.out) : out;
+        return getOutputDescriptor().ioSupplier();
+    }
+
+    /**
+     * Returns the output IODescriptor.
+     * @return The IODescriptor of the output stream to write the report to.
+     */
+    public IODescriptor<OutputStream> getOutputDescriptor() {
+        return out == null ? SYSTEM_OUT : out;
     }
 
     /**
@@ -870,7 +889,9 @@ public class ReportConfiguration {
                         .attribute("listLicenses", listLicenses.name())
                         .attribute("dryRun", Boolean.toString(dryRun))
                         .attribute("archiveProcessing", getArchiveProcessing().name())
-                        .attribute("standardProcessing", getStandardProcessing().name());
+                        .attribute("standardProcessing", getStandardProcessing().name())
+                        .attribute("stylesheet", styleSheet.name())
+                        .attribute("output", out.name());
                 if (StringUtils.isNotEmpty(copyrightMessage)) {
                     writer.openElement("copyrightMessage").content(copyrightMessage).closeElement();
                 }
@@ -903,7 +924,7 @@ public class ReportConfiguration {
             }
         }
 
-        public void deserialize(final IOSupplier<InputStream> inputStreamSupplier) throws IOException {
+        public void deserialize(final IOSupplier<InputStream> inputStreamSupplier, final DocumentName workingDirectory) throws IOException {
             DocumentBuilder builder;
             try {
                 builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
@@ -927,6 +948,18 @@ public class ReportConfiguration {
             dryRun = Boolean.parseBoolean(attributes.get("dryRun"));
             archiveProcessing = Processing.valueOf(attributes.get("archiveProcessing"));
             standardProcessing = Processing.valueOf(attributes.get("standardProcessing"));
+            String styleName = attributes.get("stylesheet");
+            if (styleName != null) {
+                styleSheet = StyleSheets.getStyleSheet(styleName, workingDirectory);
+            }
+            String outputName = attributes.get("output");
+            if (outputName != null) {
+                if (outputName.equals(ReportConfiguration.SYSTEM_OUT.name())) {
+                    out = ReportConfiguration.SYSTEM_OUT;
+                } else {
+                    out = IODescriptor.output(outputName, workingDirectory);
+                }
+            }
 
             XMLConfigurationReader.nodeListConsumer(document.getElementsByTagName("source"), lNode -> {
                 Map<String, String> nAttributes = XMLConfigurationReader.attributes(lNode);
@@ -951,11 +984,23 @@ public class ReportConfiguration {
         }
     }
 
-
     private record DeserializedReportable(DocumentName name) implements IReportable {
         @Override
         public void run(final RatReport report) throws RatException {
             throw new RatException("Attempt to run a deserialized reportable");
         }
     }
+
+    public record IODescriptor<T>(String name, IOSupplier<T> ioSupplier) {
+        /**
+         * Creates an output IODescriptor for the file name within the working directory.
+         * @param name the name of the file to open.
+         * @param workingDirectory the working directory for the file.
+         * @return the Output IODescriptor.
+         */
+        static IODescriptor<OutputStream> output(final String name, final DocumentName workingDirectory) {
+            DocumentName docName = workingDirectory.resolve(name);
+            return new IODescriptor<OutputStream>(name, () -> new FileOutputStream(docName.asFile()));
+        }
+    };
 }
