@@ -21,12 +21,12 @@ content = new File(basedir, 'build.log').text
 // verify debug output
 assert content.contains('BUILD SUCCESS')
 assert ! content.contains('[WARNING] No resources included')
-assert content.contains('Adding [MAVEN] to input-exclude-std')
+assert content.contains('input-exclude-std MAVEN')
 assert content.contains('Excluding MAVEN collection.')
 
 // Report is in apache-rat-plugin/target/invoker-reports
 // Make sure that report is generated completely
-report = new File(basedir, 'target/site/rat-report.html').text
+report = new File(basedir, 'target/rat.txt').text
 assert TextUtils.isMatching("^  /verify.groovy\\s+S ", report)
 assert TextUtils.isMatching("^  /pom.xml\\s+S ", report)
 assert TextUtils.isMatching("^  /target\\s+I\\s+application/octet-stream\\s+\\(directory\\)", report)

@@ -28,6 +28,7 @@ import java.util.function.Consumer;
 import org.apache.commons.cli.Option;
 import org.apache.rat.report.xml.writer.XmlWriter;
 import org.apache.rat.utils.CasedString;
+import org.apache.rat.utils.DefaultLog;
 
 public class DataUtils {
     /**
@@ -58,7 +59,9 @@ public class DataUtils {
     /**
      * A setup that does nothing.
      */
-    public static final Consumer<Path> NO_SETUP = basePath -> {};
+    public static final Consumer<Path> NO_SETUP = basePath -> {
+        DefaultLog.getInstance().warn("no setup for " + basePath);
+    };
 
     public static final Consumer<ValidatorData> NO_VALIDATOR = validatorData -> {};
 

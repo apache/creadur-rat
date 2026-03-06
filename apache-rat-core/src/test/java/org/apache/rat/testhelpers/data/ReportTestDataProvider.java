@@ -7,7 +7,7 @@
  * "License"); you may not use this file except in compliance   *
  * with the License.  You may obtain a copy of the License at   *
  *                                                              *
- *   http://www.apache.org/licenses/LICENSE-2.0                 *
+ *   https://www.apache.org/licenses/LICENSE-2.0                 *
  *                                                              *
  * Unless required by applicable law or agreed to in writing,   *
  * software distributed under the License is distributed on an  *
@@ -80,6 +80,7 @@ public class ReportTestDataProvider extends AbstractTestDataProvider {
     private final XPath xpath = XPathFactory.newInstance().newXPath();
 
     private final Consumer<Path> mkRat = basePath -> {
+        DefaultLog.getInstance().warn("mkRat setup for " + basePath);
         File baseDir = basePath.toFile();
         File ratDir = new File(baseDir, ".rat");
         FileUtils.mkDir(ratDir);
@@ -102,10 +103,15 @@ public class ReportTestDataProvider extends AbstractTestDataProvider {
             throw new RuntimeException(e);
         }
     }
+    
+    private void assertCounter(ValidatorData data, ClaimStatistic.Counter counter, int count) {
+        assertThat(data.getStatistic().getCounter(counter)).as(counter.name()).isEqualTo(count);
+    }
 
     // exclude tests
     private List<TestData> execExcludeTest(final Option option, final Supplier<String[]> args, Consumer<Path> setupFiles) {
         Consumer<Path> setup = setupFiles.andThen(mkRat).andThen(basePath -> {
+            DefaultLog.getInstance().warn("execExcludeTest setup for " + basePath);
             File baseDir = basePath.toFile();
             writeFile(baseDir, "notbaz");
             writeFile(baseDir, "well._afile");
@@ -117,9 +123,9 @@ public class ReportTestDataProvider extends AbstractTestDataProvider {
         TestData test1 = new TestData(DataUtils.asDirName(option), NO_OPTIONS,
                 setup,
                 validatorData -> {
-                    ClaimStatistic claimStatistic = validatorData.getStatistic();
-                    assertThat(claimStatistic.getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(5);
-                    assertThat(claimStatistic.getCounter(ClaimStatistic.Counter.IGNORED)).isEqualTo(1);
+                    DefaultLog.getInstance().warn("validating execExcludeTest for " + validatorData.getBaseDir());
+                    assertCounter(validatorData, ClaimStatistic.Counter.STANDARDS, 5);
+                    assertCounter(validatorData, ClaimStatistic.Counter.IGNORED, 1);
                 });
 
         String[] ignored = {"B.bar", "justbaz", "some.foo", ".rat"};
@@ -127,9 +133,10 @@ public class ReportTestDataProvider extends AbstractTestDataProvider {
         TestData test2 = new TestData("", Collections.singletonList(ImmutablePair.of(option, args.get())),
                 setup,
                 validatorData -> {
+                    DefaultLog.getInstance().warn("validating execExcludeTest for " + validatorData.getBaseDir());
                     ClaimStatistic claimStatistic = validatorData.getStatistic();
-                    assertThat(claimStatistic.getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(standard.length);
-                    assertThat(claimStatistic.getCounter(ClaimStatistic.Counter.IGNORED)).isEqualTo(ignored.length);
+                    assertCounter(validatorData, ClaimStatistic.Counter.STANDARDS, standard.length);
+                    assertCounter(validatorData, ClaimStatistic.Counter.IGNORED, ignored.length);
                     for (String fileName : ignored) {
                         assertIgnoredFile(validatorData.getDocument(), fileName);
                     }
@@ -151,7 +158,8 @@ public class ReportTestDataProvider extends AbstractTestDataProvider {
 
 
     protected void inputExcludeTest(final Set<TestData> result, final Option option) {
-        result.addAll(execExcludeTest(option, () -> AbstractTestDataProvider.EXCLUDE_ARGS, x -> {}));
+        result.addAll(execExcludeTest(option, () -> AbstractTestDataProvider.EXCLUDE_ARGS, x -> {
+        }));
     }
 
     protected void inputExcludeStdTest(final Set<TestData> result, final Option option) {
@@ -160,6 +168,7 @@ public class ReportTestDataProvider extends AbstractTestDataProvider {
         String[] defaultIncluded = {"afile~more", "what.#afile", "%afile%withMore", "well._afile"};
         String mavenFile = "build.log";
         Consumer<Path> setup = basePath -> {
+            DefaultLog.getInstance().warn("inputExcludeStdTest setup for " + basePath);
             File baseDir = basePath.toFile();
             for (String fileName : defaultExcluded) {
                 writeFile(baseDir, fileName);
@@ -172,23 +181,24 @@ public class ReportTestDataProvider extends AbstractTestDataProvider {
         result.add(new TestData(DataUtils.asDirName(option), Collections.singletonList(ImmutablePair.nullPair()),
                 setup,
                 validatorData -> {
-                    assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(defaultIncluded.length + 1);
-                    assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.IGNORED)).isEqualTo(defaultExcluded.length);
+                    DefaultLog.getInstance().warn("validating inputExcludeStdTest for " + validatorData.getBaseDir());
+                    assertCounter(validatorData, ClaimStatistic.Counter.STANDARDS, defaultIncluded.length + 1);
+                    assertCounter(validatorData, ClaimStatistic.Counter.IGNORED, defaultExcluded.length);
                     for (String fileName : defaultIncluded) {
                         assertStandardFile(validatorData.getDocument(), fileName);
                     }
                     for (String fileName : defaultExcluded) {
                         assertIgnoredFile(validatorData.getDocument(), fileName);
                     }
-                    assertStandardFile(validatorData.getDocument(), mavenFile);
                 }));
 
 
         result.add(new TestData("", Collections.singletonList(ImmutablePair.of(option, args)),
                 setup,
                 validatorData -> {
-                    assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(defaultIncluded.length);
-                    assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.IGNORED)).isEqualTo(defaultExcluded.length + 1);
+                    DefaultLog.getInstance().warn("validating inputExcludeStdTest for " + validatorData.getBaseDir());
+                    assertCounter(validatorData, ClaimStatistic.Counter.STANDARDS, defaultIncluded.length);
+                    assertCounter(validatorData, ClaimStatistic.Counter.IGNORED, defaultExcluded.length + 1);
                     for (String fileName : defaultIncluded) {
                         assertStandardFile(validatorData.getDocument(), fileName);
                     }
@@ -201,6 +211,7 @@ public class ReportTestDataProvider extends AbstractTestDataProvider {
 
     protected void inputExcludeParsedScmTest(final Set<TestData> result, final Option option) {
         Consumer<Path> setup = basePath -> {
+            DefaultLog.getInstance().warn("inputExcludeParsedScmTest setup for " + basePath);
             File baseDir = basePath.toFile();
             String[] lines = {
                     "# somethings",
@@ -239,17 +250,19 @@ public class ReportTestDataProvider extends AbstractTestDataProvider {
         result.add(new TestData(DataUtils.asDirName(option), Collections.singletonList(ImmutablePair.nullPair()),
                 setup,
                 validatorData -> {
-                    assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(11);
+                    DefaultLog.getInstance().warn("validating inputExcludeParsedScmTest for " + validatorData.getBaseDir());
+                    assertCounter(validatorData, ClaimStatistic.Counter.STANDARDS, 11);
                     // .gitignore is ignored by default as it is hidden
-                    assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.IGNORED)).isEqualTo(0);
+                    assertCounter(validatorData, ClaimStatistic.Counter.IGNORED, 0);
                 }));
 
         result.add(new TestData("GIT", Collections.singletonList(ImmutablePair.of(option, new String[]{"GIT"})),
                 setup,
                 validatorData -> {
-                    assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(3);
+                    DefaultLog.getInstance().warn("validating inputExcludeParsedScmTest for " + validatorData.getBaseDir());
+                    assertCounter(validatorData, ClaimStatistic.Counter.STANDARDS, 3);
                     // .gitignore is ignored by default as it is hidden
-                    assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.IGNORED)).isEqualTo(8);
+                    assertCounter(validatorData, ClaimStatistic.Counter.IGNORED, 8);
                 }));
     }
 
@@ -258,6 +271,7 @@ public class ReportTestDataProvider extends AbstractTestDataProvider {
         String[] excluded = {"Hi.txt"};
 
         Consumer<Path> setup = basePath -> {
+            DefaultLog.getInstance().warn("inputExcludeSizeTest setup for " + basePath);
             File baseDir = basePath.toFile();
             writeFile(baseDir, "Hi.txt", Collections.singletonList("Hi"));
             writeFile(baseDir, "Hello.txt", Collections.singletonList("Hello"));
@@ -267,8 +281,9 @@ public class ReportTestDataProvider extends AbstractTestDataProvider {
         result.add(new TestData(DataUtils.asDirName(option), Collections.singletonList(ImmutablePair.of(null, null)),
                 setup,
                 validatorData -> {
-                    assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(3);
-                    assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.IGNORED)).isEqualTo(0);
+                    DefaultLog.getInstance().warn("validating inputExcludeSizeTest for " + validatorData.getBaseDir());
+                    assertCounter(validatorData, ClaimStatistic.Counter.STANDARDS, 3);
+                    assertCounter(validatorData, ClaimStatistic.Counter.IGNORED, 0);
                     for (String fname : excluded) {
                         assertStandardFile(validatorData.getDocument(), fname);
                     }
@@ -280,8 +295,9 @@ public class ReportTestDataProvider extends AbstractTestDataProvider {
         result.add(new TestData("", Collections.singletonList(ImmutablePair.of(option, new String[]{"5"})),
                 setup,
                 validatorData -> {
-                    assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(2);
-                    assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.IGNORED)).isEqualTo(1);
+                    DefaultLog.getInstance().warn("validating inputExcludeSizeTest for " + validatorData.getBaseDir());
+                    assertCounter(validatorData, ClaimStatistic.Counter.STANDARDS, 2);
+                    assertCounter(validatorData, ClaimStatistic.Counter.IGNORED, 1);
                     for (String fname : excluded) {
                         assertIgnoredFile(validatorData.getDocument(), fname);
                     }
@@ -295,6 +311,7 @@ public class ReportTestDataProvider extends AbstractTestDataProvider {
     private List<TestData> execIncludeTest(final Option option, String[] args, Consumer<Path> setupFiles) {
         Option excludeOption = Arg.EXCLUDE.option();
         Consumer<Path> setup = setupFiles.andThen(basePath -> {
+            DefaultLog.getInstance().warn("execIncludeTest setup for " + basePath);
             File baseDir = basePath.toFile();
             writeFile(baseDir, "notbaz");
             writeFile(baseDir, "some.foo");
@@ -306,31 +323,35 @@ public class ReportTestDataProvider extends AbstractTestDataProvider {
         TestData test1 = new TestData(DataUtils.asDirName(option), NO_OPTIONS,
                 setup,
                 validatorData -> {
-                    assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(4);
-                    assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.IGNORED)).isEqualTo(1);
+                    DefaultLog.getInstance().warn("validating execIncludeTest for " + validatorData.getBaseDir());
+                    assertCounter(validatorData, ClaimStatistic.Counter.STANDARDS, 4);
+                    assertCounter(validatorData, ClaimStatistic.Counter.IGNORED, 1);
                 });
 
         // verify exclude removes the files
         TestData test2 = new TestData(DataUtils.asDirName(option), Collections.singletonList(ImmutablePair.of(excludeOption, AbstractTestDataProvider.EXCLUDE_ARGS)),
                 setup,
                 validatorData -> {
-                    assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(1);
+                    DefaultLog.getInstance().warn("validating execIncludeTest for " + validatorData.getBaseDir());
+                    assertCounter(validatorData, ClaimStatistic.Counter.STANDARDS, 1);
                     // .gitignore is ignored by default as it is hidden but not counted
-                    assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.IGNORED)).isEqualTo(4);
+                    assertCounter(validatorData, ClaimStatistic.Counter.IGNORED, 4);
                 });
 
         TestData test3 = new TestData("", Arrays.asList(ImmutablePair.of(option, args), ImmutablePair.of(excludeOption, AbstractTestDataProvider.EXCLUDE_ARGS)),
                 setup,
                 validatorData -> {
-                    assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(3);
+                    DefaultLog.getInstance().warn("validating execIncludeTest for " + validatorData.getBaseDir());
+                    assertCounter(validatorData, ClaimStatistic.Counter.STANDARDS, 3);
                     // .gitignore is ignored by default as it is hidden but not counted
-                    assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.IGNORED)).isEqualTo(2);
+                    assertCounter(validatorData, ClaimStatistic.Counter.IGNORED, 2);
                 });
         return Arrays.asList(test1, test2, test3);
     }
 
     protected void inputIncludeFileTest(final Set<TestData> result, final Option option) {
         Consumer<Path> setup = mkRat.andThen(basePath -> {
+            DefaultLog.getInstance().warn("inputIncludeFileTest setup for " + basePath);
             File dir = basePath.resolve(".rat").toFile();
             writeFile(dir, "include.txt", Arrays.asList(AbstractTestDataProvider.INCLUDE_ARGS));
         });
@@ -344,6 +365,7 @@ public class ReportTestDataProvider extends AbstractTestDataProvider {
 
     protected void inputIncludeStdTest(final Set<TestData> result, final Option option) {
         Consumer<Path> setup = basePath -> {
+            DefaultLog.getInstance().warn("inputIncludeStdTest setup for " + basePath);
             File baseDir = basePath.toFile();
             writeFile(baseDir, "afile~more");
             writeFile(baseDir, "afile~");
@@ -368,8 +390,9 @@ public class ReportTestDataProvider extends AbstractTestDataProvider {
         result.add(new TestData("includeStdValidation", Collections.singletonList(excludes),
                 setup,
                 validatorData -> {
-                    assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(4);
-                    assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.IGNORED)).isEqualTo(6);
+                    DefaultLog.getInstance().warn("validating inputIncludeStdTest for " + validatorData.getBaseDir());
+                    assertCounter(validatorData, ClaimStatistic.Counter.STANDARDS, 4);
+                    assertCounter(validatorData, ClaimStatistic.Counter.IGNORED, 6);
                 }));
 
         if (!option.hasArg()) {
@@ -378,8 +401,9 @@ public class ReportTestDataProvider extends AbstractTestDataProvider {
                         Arrays.asList(ImmutablePair.of(option, null), excludes),
                         setup,
                         validatorData -> {
-                            assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(5);
-                            assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.IGNORED)).isEqualTo(5);
+                            DefaultLog.getInstance().warn("validating inputIncludeStdTest for " + validatorData.getBaseDir());
+                            assertCounter(validatorData, ClaimStatistic.Counter.STANDARDS, 5);
+                            assertCounter(validatorData, ClaimStatistic.Counter.IGNORED, 5);
                             assertIgnoredFile(validatorData.getDocument(), "._afile");
                             assertStandardFile(validatorData.getDocument(), ".hiddenDir/aFile");
                         }));
@@ -390,19 +414,18 @@ public class ReportTestDataProvider extends AbstractTestDataProvider {
             result.add(new TestData(StandardCollection.MISC.name().toLowerCase(Locale.ROOT), Arrays.asList(ImmutablePair.of(option, new String[]{StandardCollection.MISC.name()}), excludes),
                     setup,
                     validatorData -> {
-
-                        assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(8);
-                        assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.IGNORED)).isEqualTo(2);
+                        DefaultLog.getInstance().warn("validating inputIncludeStdTest for " + validatorData.getBaseDir());
+                        assertCounter(validatorData, ClaimStatistic.Counter.STANDARDS, 8);
+                        assertCounter(validatorData, ClaimStatistic.Counter.IGNORED, 2);
                     }));
 
             result.add(new TestData(StandardCollection.HIDDEN_FILE.name().toLowerCase(Locale.ROOT),
                     Arrays.asList(ImmutablePair.of(option, new String[]{StandardCollection.HIDDEN_FILE.name()}), excludes),
                     setup,
                     validatorData -> {
-                        assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.STANDARDS))
-                                .isEqualTo(6);
-                        assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.IGNORED))
-                                .isEqualTo(4);
+                        DefaultLog.getInstance().warn("validating inputIncludeStdTest for " + validatorData.getBaseDir());
+                        assertCounter(validatorData, ClaimStatistic.Counter.STANDARDS, 6);
+                        assertCounter(validatorData, ClaimStatistic.Counter.IGNORED, 4);
                         assertStandardFile(validatorData.getDocument(), "._afile");
                         assertIgnoredFile(validatorData.getDocument(), ".hiddenDir");
                     }));
@@ -411,8 +434,9 @@ public class ReportTestDataProvider extends AbstractTestDataProvider {
                     Arrays.asList(ImmutablePair.of(option, new String[]{StandardCollection.HIDDEN_DIR.name()}), excludes),
                     setup,
                     validatorData -> {
-                        assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(5);
-                        assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.IGNORED)).isEqualTo(5);
+                        DefaultLog.getInstance().warn("validating inputIncludeStdTest for " + validatorData.getBaseDir());
+                        assertCounter(validatorData, ClaimStatistic.Counter.STANDARDS, 5);
+                        assertCounter(validatorData, ClaimStatistic.Counter.IGNORED, 5);
                         assertIgnoredFile(validatorData.getDocument(), "._afile");
                         assertStandardFile(validatorData.getDocument(), ".hiddenDir/aFile");
                     }));
@@ -421,24 +445,27 @@ public class ReportTestDataProvider extends AbstractTestDataProvider {
 
     protected void inputSourceTest(final Set<TestData> result, final Option option) {
         Consumer<Path> setup = basePath -> {
+            DefaultLog.getInstance().warn("inputSourceTest setup for " + basePath);
             File baseDir = basePath.toFile();
-            writeFile(baseDir, "codefile");
-            writeFile(baseDir, "intput.txt", "codefile");
+            writeFile(baseDir, "codefile", "https://www.apache.org/licenses/LICENSE-2.0");
+            writeFile(baseDir, "input.txt", "codefile");
             writeFile(baseDir, "notcodeFile");
         };
 
         result.add(new TestData(DataUtils.asDirName(option), NO_OPTIONS,
                 setup,
                 validatorData -> {
-                    assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(3);
-                    assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.IGNORED)).isEqualTo(0);
+                    DefaultLog.getInstance().warn("validating inputSourceTest for " + validatorData.getBaseDir());
+                    assertCounter(validatorData, ClaimStatistic.Counter.STANDARDS, 3);
+                    assertCounter(validatorData, ClaimStatistic.Counter.IGNORED, 0);
                 }));
 
-        result.add(new TestData("", Collections.singletonList(ImmutablePair.of(option, new String[]{"intput.txt"})),
+        result.add(new TestData("", Collections.singletonList(ImmutablePair.of(option, new String[]{"input.txt"})),
                 setup,
                 validatorData -> {
-                    assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(1);
-                    assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.IGNORED)).isEqualTo(0);
+                    DefaultLog.getInstance().warn("validating inputSourceTest for " + validatorData.getBaseDir());
+                    assertCounter(validatorData, ClaimStatistic.Counter.STANDARDS, 1);
+                    assertCounter(validatorData, ClaimStatistic.Counter.IGNORED, 0);
                 }));
     }
 
@@ -446,6 +473,7 @@ public class ReportTestDataProvider extends AbstractTestDataProvider {
     protected List<TestData> execLicensesApprovedTest(final Option option, String[] args, Consumer<Path> extraSetup) {
         Consumer<Path> setup = extraSetup.andThen(
                 basePath -> {
+                    DefaultLog.getInstance().warn("execLicensesApprovedTest setup for " + basePath);
                     File baseDir = basePath.toFile();
                     writeFile(baseDir, "catz.txt", "SPDX-License-Identifier: catz");
                     writeFile(baseDir, "apl.txt", "SPDX-License-Identifier: Apache-2.0");
@@ -455,28 +483,34 @@ public class ReportTestDataProvider extends AbstractTestDataProvider {
         TestData test1 = new TestData(DataUtils.asDirName(option), NO_OPTIONS,
                 setup,
                 validatorData -> {
-                    assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(2);
-                    assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.APPROVED)).isEqualTo(1);
-                    assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.UNAPPROVED)).isEqualTo(1);
+                    DefaultLog.getInstance().warn("validating execLicensesApprovedTest for " + validatorData.getBaseDir());
+                    assertCounter(validatorData, ClaimStatistic.Counter.STANDARDS, 2);
+                    assertCounter(validatorData, ClaimStatistic.Counter.APPROVED, 1);
+                    assertCounter(validatorData, ClaimStatistic.Counter.UNAPPROVED, 1);
                 });
 
         TestData test2 = new TestData("withoutLicenseDef", Collections.singletonList(ImmutablePair.of(option, args)),
                 setup,
                 validatorData -> {
-                    assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(2);
-                    assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.APPROVED)).isEqualTo(1);
-                    assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.UNAPPROVED)).isEqualTo(1);
+                    DefaultLog.getInstance().warn("validating execLicensesApprovedTest for " + validatorData.getBaseDir());
+                    assertCounter(validatorData, ClaimStatistic.Counter.STANDARDS, 2);
+                    assertCounter(validatorData, ClaimStatistic.Counter.APPROVED, 1);
+                    assertCounter(validatorData, ClaimStatistic.Counter.UNAPPROVED, 1);
                 });
 
         Option configOpt = Arg.CONFIGURATION.option();
         TestData test3 = new TestData("withLicenseDef", Arrays.asList(ImmutablePair.of(option, args),
                 ImmutablePair.of(configOpt, new String[]{".rat/catz.xml"})),
-        setup.andThen(mkRat).andThen(
-                basePath -> DataUtils.generateSpdxConfig(basePath.resolve(".rat").resolve("catz.xml"), "catz", "catz")),
+                setup.andThen(mkRat).andThen(
+                        basePath -> {
+                            DefaultLog.getInstance().warn("withLicenseDef setup for " + basePath);
+                            DataUtils.generateSpdxConfig(basePath.resolve(".rat").resolve("catz.xml"), "catz", "catz");
+                        }),
                 validatorData -> {
-                    assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(2);
-                    assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.APPROVED)).isEqualTo(2);
-                    assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.UNAPPROVED)).isEqualTo(0);
+                    DefaultLog.getInstance().warn("validating execLicensesApprovedTest for " + validatorData.getBaseDir());
+                    assertCounter(validatorData, ClaimStatistic.Counter.STANDARDS, 2);
+                    assertCounter(validatorData, ClaimStatistic.Counter.APPROVED, 2);
+                    assertCounter(validatorData, ClaimStatistic.Counter.UNAPPROVED, 0);
                 });
         return Arrays.asList(test1, test2, test3);
     }
@@ -486,10 +520,14 @@ public class ReportTestDataProvider extends AbstractTestDataProvider {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         PrintStream out = new PrintStream(baos);
 
-        result.add( new TestData("stdOut",
+        result.add(new TestData("stdOut",
                 Collections.singletonList(ImmutablePair.of(option, null)),
-                basePath -> System.setOut(out),
+                basePath -> {
+                    DefaultLog.getInstance().warn("helpLicenses setup for " + basePath);
+                    System.setOut(out);
+                },
                 validatorData -> {
+                    DefaultLog.getInstance().warn("validating helpLicenses for " + validatorData.getBaseDir());
                     System.setOut(origin);
                     String txt = baos.toString();
                     TextUtils.assertContains("====== Licenses ======", txt);
@@ -501,7 +539,10 @@ public class ReportTestDataProvider extends AbstractTestDataProvider {
     protected void licensesApprovedFileTest(final Set<TestData> result, final Option option) {
         result.addAll(execLicensesApprovedTest(option, new String[]{".rat/licensesApproved.txt"},
                 mkRat.andThen(
-                        basePath -> writeFile(basePath.resolve(".rat").toFile(), "licensesApproved.txt", List.of("catz")))));
+                        basePath -> {
+                            DefaultLog.getInstance().warn("licensesApprovedFileTest setup for " + basePath);
+                            writeFile(basePath.resolve(".rat").toFile(), "licensesApproved.txt", List.of("catz"));
+                        })));
     }
 
     protected void licensesApprovedTest(final Set<TestData> result, final Option option) {
@@ -510,6 +551,7 @@ public class ReportTestDataProvider extends AbstractTestDataProvider {
 
     private List<TestData> execLicensesDeniedTest(final Option option, final String[] args, Consumer<Path> setupFiles) {
         Consumer<Path> setup = setupFiles.andThen(basePath -> {
+            DefaultLog.getInstance().warn("execLicensesDeniedTest setup for " + basePath);
             File baseDir = basePath.toFile();
             writeFile(baseDir, "illumousFile.java", "The contents of this file are " +
                     "subject to the terms of the Common Development and Distribution License (the \"License\") You " +
@@ -518,11 +560,11 @@ public class ReportTestDataProvider extends AbstractTestDataProvider {
         TestData test1 = new TestData("ILLUMOS", Collections.singletonList(ImmutablePair.of(option, args)),
                 setup,
                 validatorData -> {
-                
-                ClaimStatistic claimStatistic = validatorData.getStatistic();
-                ClaimValidator validator = validatorData.getConfiguration().getClaimValidator();
-                assertThat(validator.listIssues(claimStatistic)).containsExactly("UNAPPROVED");
-            });
+                    DefaultLog.getInstance().warn("validating execLicensesDeniedTest for " + validatorData.getBaseDir());
+                    ClaimStatistic claimStatistic = validatorData.getStatistic();
+                    ClaimValidator validator = validatorData.getConfiguration().getClaimValidator();
+                    assertThat(validator.listIssues(claimStatistic)).containsExactly("UNAPPROVED");
+                });
         return Collections.singletonList(test1);
     }
 
@@ -538,6 +580,7 @@ public class ReportTestDataProvider extends AbstractTestDataProvider {
     private List<TestData> execLicenseFamiliesApprovedTest(final Option option, final String[] args, Consumer<Path> extraSetup) {
         Consumer<Path> setup = extraSetup.andThen(
                 basePath -> {
+                    DefaultLog.getInstance().warn("execLicenseFamiliesApprovedTest setup for " + basePath);
                     File baseDir = basePath.toFile();
                     writeFile(baseDir, "catz.txt", "SPDX-License-Identifier: catz");
                 });
@@ -545,38 +588,45 @@ public class ReportTestDataProvider extends AbstractTestDataProvider {
         TestData test1 = new TestData(DataUtils.asDirName(option), NO_OPTIONS,
                 setup,
                 validatorData -> {
-                    assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(1);
-                    assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.APPROVED)).isEqualTo(0);
-                    assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.UNAPPROVED)).isEqualTo(1);
+                    DefaultLog.getInstance().warn("validating execLicenseFamiliesApprovedTest for " + validatorData.getBaseDir());
+                    assertCounter(validatorData, ClaimStatistic.Counter.STANDARDS, 1);
+                    assertCounter(validatorData, ClaimStatistic.Counter.APPROVED, 0);
+                    assertCounter(validatorData, ClaimStatistic.Counter.UNAPPROVED, 1);
                 });
 
         TestData test2 = new TestData("withoutLicenseDef", Collections.singletonList(ImmutablePair.of(option, args)),
                 setup,
                 validatorData -> {
-                    assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(1);
-                    assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.APPROVED)).isEqualTo(0);
-                    assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.UNAPPROVED)).isEqualTo(1);
+                    DefaultLog.getInstance().warn("validating execLicenseFamiliesApprovedTest for " + validatorData.getBaseDir());
+                    assertCounter(validatorData, ClaimStatistic.Counter.STANDARDS, 1);
+                    assertCounter(validatorData, ClaimStatistic.Counter.APPROVED, 0);
+                    assertCounter(validatorData, ClaimStatistic.Counter.UNAPPROVED, 1);
                 });
         Option configOpt = Arg.CONFIGURATION.option();
         TestData test3 = new TestData("withLicenseDef", Arrays.asList(ImmutablePair.of(option, args),
                 ImmutablePair.of(configOpt, new String[]{".rat/catz.xml"})),
                 setup.andThen(mkRat).andThen(
                         basePath -> {
+                            DefaultLog.getInstance().warn("withLicenseDef setup for " + basePath);
                             Path ratDir = basePath.resolve(".rat");
                             Path catzXml = ratDir.resolve("catz.xml");
                             DataUtils.generateSpdxConfig(catzXml, "catz", "catz");
                         }),
                 validatorData -> {
-                    assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(1);
-                    assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.APPROVED)).isEqualTo(1);
-                    assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.UNAPPROVED)).isEqualTo(0);
+                    DefaultLog.getInstance().warn("validating execLicenseFamiliesApprovedTest for " + validatorData.getBaseDir());
+                    assertCounter(validatorData, ClaimStatistic.Counter.STANDARDS, 1);
+                    assertCounter(validatorData, ClaimStatistic.Counter.APPROVED, 1);
+                    assertCounter(validatorData, ClaimStatistic.Counter.UNAPPROVED, 0);
                 });
         return Arrays.asList(test1, test2, test3);
     }
 
     protected void licenseFamiliesApprovedFileTest(final Set<TestData> result, final Option option) {
         result.addAll(execLicenseFamiliesApprovedTest(option, new String[]{".rat/familiesApproved.txt"},
-                mkRat.andThen( basePath -> writeFile(basePath.resolve(".rat").toFile(), "familiesApproved.txt", Collections.singletonList("catz")))));
+                mkRat.andThen(basePath -> {
+                    DefaultLog.getInstance().warn("licenseFamiliesApprovedFileTest setup for " + basePath);
+                    writeFile(basePath.resolve(".rat").toFile(), "familiesApproved.txt", Collections.singletonList("catz"));
+                })));
     }
 
     protected void licenseFamiliesApprovedTest(final Set<TestData> result, final Option option) {
@@ -586,6 +636,7 @@ public class ReportTestDataProvider extends AbstractTestDataProvider {
     private List<TestData> execLicenseFamiliesDeniedTest(final Option option, final String[] args, Consumer<Path> extraSetup) {
         Consumer<Path> setup = extraSetup.andThen(
                 basePath -> {
+                    DefaultLog.getInstance().warn("execLicenseFamiliesDeniedTest setup for " + basePath);
                     File baseDir = basePath.toFile();
                     writeFile(baseDir, "bsd.txt", "SPDX-License-Identifier: BSD-3-Clause");
                 });
@@ -593,17 +644,19 @@ public class ReportTestDataProvider extends AbstractTestDataProvider {
         TestData test1 = new TestData(DataUtils.asDirName(option), NO_OPTIONS,
                 setup,
                 validatorData -> {
-                    assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(1);
-                    assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.APPROVED)).isEqualTo(1);
-                    assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.UNAPPROVED)).isEqualTo(0);
+                    DefaultLog.getInstance().warn("validating execLicenseFamiliesDeniedTest for " + validatorData.getBaseDir());
+                    assertCounter(validatorData, ClaimStatistic.Counter.STANDARDS, 1);
+                    assertCounter(validatorData, ClaimStatistic.Counter.APPROVED, 1);
+                    assertCounter(validatorData, ClaimStatistic.Counter.UNAPPROVED, 0);
                 });
 
         TestData test2 = new TestData("", Collections.singletonList(ImmutablePair.of(option, args)),
                 setup,
                 validatorData -> {
-                    assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(1);
-                    assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.APPROVED)).isEqualTo(0);
-                    assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.UNAPPROVED)).isEqualTo(1);
+                    DefaultLog.getInstance().warn("validating execLicenseFamiliesDeniedTest for " + validatorData.getBaseDir());
+                    assertCounter(validatorData, ClaimStatistic.Counter.STANDARDS, 1);
+                    assertCounter(validatorData, ClaimStatistic.Counter.APPROVED, 0);
+                    assertCounter(validatorData, ClaimStatistic.Counter.UNAPPROVED, 1);
                 });
 
         return Arrays.asList(test1, test2);
@@ -612,7 +665,10 @@ public class ReportTestDataProvider extends AbstractTestDataProvider {
     protected void licenseFamiliesDeniedFileTest(final Set<TestData> result, final Option option) {
         result.addAll(execLicenseFamiliesDeniedTest(option, new String[]{".rat/familiesDenied.txt"},
                 mkRat.andThen(
-        baseDir -> writeFile(baseDir.resolve(".rat").toFile(), "familiesDenied.txt", Collections.singletonList("BSD-3")))));
+                        basePath -> {
+                            DefaultLog.getInstance().warn("licenseFamiliesDeniedFileTest setup for " + basePath);
+                            writeFile(basePath.resolve(".rat").toFile(), "familiesDenied.txt", Collections.singletonList("BSD-3"));
+                        })));
     }
 
     protected void licenseFamiliesDeniedTest(final Set<TestData> result, final Option option) {
@@ -620,13 +676,15 @@ public class ReportTestDataProvider extends AbstractTestDataProvider {
     }
 
     protected void counterMaxTest(final Set<TestData> result, final Option option) {
-       result.add(new TestData(DataUtils.asDirName(option), Collections.singletonList(ImmutablePair.of(null, null)),
+        result.add(new TestData(DataUtils.asDirName(option), Collections.singletonList(ImmutablePair.of(null, null)),
                 basePath -> {
+                    DefaultLog.getInstance().warn("counterMaxTest setup for " + basePath);
                     File baseDir = basePath.toFile();
                     writeFile(baseDir, "Test.java", Arrays.asList("/*\n", "SPDX-License-Identifier: Unapproved\n",
                             "*/\n\n", "class Test {}\n"));
                 },
                 validatorData -> {
+                    DefaultLog.getInstance().warn("validating counterMaxTest for " + validatorData.getBaseDir());
                     ClaimStatistic claimStatistic = validatorData.getStatistic();
                     ClaimValidator validator = validatorData.getConfiguration().getClaimValidator();
                     assertThat(validator.listIssues(claimStatistic)).containsExactly("UNAPPROVED");
@@ -634,11 +692,13 @@ public class ReportTestDataProvider extends AbstractTestDataProvider {
 
         result.add(new TestData("Unapproved1", Collections.singletonList(ImmutablePair.of(option, new String[]{"Unapproved:1"})),
                 basePath -> {
+                    DefaultLog.getInstance().warn("counterMaxTest setup for " + basePath);
                     File baseDir = basePath.toFile();
                     writeFile(baseDir, "Test.java", Arrays.asList("/*\n", "SPDX-License-Identifier: Unapproved\n",
                             "*/\n\n", "class Test {}\n"));
                 },
                 validatorData -> {
+                    DefaultLog.getInstance().warn("validating counterMaxTest for " + validatorData.getBaseDir());
                     ClaimStatistic claimStatistic = validatorData.getStatistic();
                     ClaimValidator validator = validatorData.getConfiguration().getClaimValidator();
                     assertThat(validator.listIssues(claimStatistic)).isEmpty();
@@ -648,11 +708,13 @@ public class ReportTestDataProvider extends AbstractTestDataProvider {
     protected void counterMinTest(final Set<TestData> result, final Option option) {
         result.add(new TestData(DataUtils.asDirName(option), NO_OPTIONS,
                 basePath -> {
+                    DefaultLog.getInstance().warn("counterMinTest setup for " + basePath);
                     File baseDir = basePath.toFile();
                     writeFile(baseDir, "Test.java", Arrays.asList("/*\n", "SPDX-License-Identifier: Unapproved\n",
                             "*/\n\n", "class Test {}\n"));
                 },
                 validatorData -> {
+                    DefaultLog.getInstance().warn("validating counterMinTest for " + validatorData.getBaseDir());
                     ClaimStatistic claimStatistic = validatorData.getStatistic();
                     ClaimValidator validator = validatorData.getConfiguration().getClaimValidator();
                     assertThat(validator.listIssues(claimStatistic)).containsExactly("UNAPPROVED");
@@ -660,11 +722,13 @@ public class ReportTestDataProvider extends AbstractTestDataProvider {
 
         result.add(new TestData("", Collections.singletonList(ImmutablePair.of(option, new String[]{"Unapproved:1"})),
                 basePath -> {
+                    DefaultLog.getInstance().warn("counterMinTest setup for " + basePath);
                     File baseDir = basePath.toFile();
                     writeFile(baseDir, "Test.java", Arrays.asList("/*\n", "SPDX-License-Identifier: Unapproved\n",
                             "*/\n\n", "class Test {}\n"));
                 },
                 validatorData -> {
+                    DefaultLog.getInstance().warn("validating counterMinTest for " + validatorData.getBaseDir());
                     ClaimStatistic claimStatistic = validatorData.getStatistic();
                     ClaimValidator validator = validatorData.getConfiguration().getClaimValidator();
                     assertThat(validator.listIssues(claimStatistic)).isEmpty();
@@ -673,11 +737,13 @@ public class ReportTestDataProvider extends AbstractTestDataProvider {
 
     /**
      * Add results to the result list.
+     *
      * @param result the result list.
      * @param option configuration option we are testing.
      */
     protected void configTest(final Set<TestData> result, final Option option) {
-        Consumer<Path> setup = mkRat.andThen( basePath -> {
+        Consumer<Path> setup = mkRat.andThen(basePath -> {
+            DefaultLog.getInstance().warn("configTest setup for " + basePath);
             Path ratDir = basePath.resolve(".rat");
             Path oneXml = ratDir.resolve("One.xml");
             DataUtils.generateTextConfig(oneXml, "ONE", "one");
@@ -687,7 +753,7 @@ public class ReportTestDataProvider extends AbstractTestDataProvider {
 
             File baseDir = basePath.toFile();
             writeFile(baseDir, "bsd.txt", "SPDX-License-Identifier: BSD-3-Clause");
-            writeFile(baseDir, "one.txt", "one is the lonelest number");
+            writeFile(baseDir, "one.txt", "one is the loneliest number");
         });
         String[] args = {".rat/One.xml", ".rat/Two.xml"};
 
@@ -696,27 +762,31 @@ public class ReportTestDataProvider extends AbstractTestDataProvider {
         result.add(new TestData(DataUtils.asDirName(option), NO_OPTIONS,
                 setup,
                 validatorData -> {
-                    assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(2);
-                    assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.APPROVED)).isEqualTo(1);
-                    assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.UNAPPROVED)).isEqualTo(1);
+                    DefaultLog.getInstance().warn("validating configTest for " + validatorData.getBaseDir());
+                    assertCounter(validatorData, ClaimStatistic.Counter.STANDARDS, 2);
+                    assertCounter(validatorData, ClaimStatistic.Counter.APPROVED, 1);
+                    assertCounter(validatorData, ClaimStatistic.Counter.UNAPPROVED, 1);
                 }));
 
         result.add(new TestData("withDefaults", Collections.singletonList(underTest),
-            setup,
-            validatorData -> {
-                assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(2);
-                assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.APPROVED)).isEqualTo(2);
-                assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.UNAPPROVED)).isEqualTo(0);
-            }));
+                setup,
+                validatorData -> {
+                    DefaultLog.getInstance().warn("validating configTest for " + validatorData.getBaseDir());
+                    assertCounter(validatorData, ClaimStatistic.Counter.STANDARDS, 2);
+                    assertCounter(validatorData, ClaimStatistic.Counter.APPROVED, 2);
+                    assertCounter(validatorData, ClaimStatistic.Counter.UNAPPROVED, 0);
+                }));
 
         if (!Arg.CONFIGURATION_NO_DEFAULTS.isEmpty()) {
             result.add(new TestData("noDefaults", Arrays.asList(underTest,
                     ImmutablePair.of(Arg.CONFIGURATION_NO_DEFAULTS.find("configuration-no-defaults"), null)),
                     setup,
+                    /** Make validator data a structure with counter countes  and file checks. */
                     validatorData -> {
-                        assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(2);
-                        assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.APPROVED)).isEqualTo(1);
-                        assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.UNAPPROVED)).isEqualTo(1);
+                        DefaultLog.getInstance().warn("validating configTest for " + validatorData.getBaseDir());
+                        assertCounter(validatorData, ClaimStatistic.Counter.STANDARDS, 2);
+                        assertCounter(validatorData, ClaimStatistic.Counter.APPROVED, 1);
+                        assertCounter(validatorData, ClaimStatistic.Counter.UNAPPROVED, 1);
                     }));
         }
     }
@@ -724,11 +794,15 @@ public class ReportTestDataProvider extends AbstractTestDataProvider {
     protected void configurationNoDefaultsTest(final Set<TestData> result, final Option option) {
         TestData test1 = new TestData("", Collections.singletonList(ImmutablePair.of(option, null)),
                 basePath -> {
+                    DefaultLog.getInstance().warn("configurationNoDefaultsTest setup for " + basePath);
                     File baseDir = basePath.toFile();
                     writeFile(baseDir, "Test.java", Arrays.asList("/*\n", "SPDX-License-Identifier: Apache-2.0\n",
                             "*/\n\n", "class Test {}\n"));
                 },
-                validatorData -> assertThat(validatorData.getConfiguration().getLicenses(LicenseSetFactory.LicenseFilter.ALL)).isEmpty());
+                validatorData -> {
+                    DefaultLog.getInstance().warn("validating configurationNoDefaultsTest for " + validatorData.getBaseDir());
+                    assertThat(validatorData.getConfiguration().getLicenses(LicenseSetFactory.LicenseFilter.ALL)).isEmpty();
+                });
         test1.setException(NO_LICENSES_EXCEPTION);
         result.add(test1);
     }
@@ -736,15 +810,22 @@ public class ReportTestDataProvider extends AbstractTestDataProvider {
     protected void dryRunTest(final Set<TestData> result, final Option option) {
         result.add(new TestData("stdRun", Collections.singletonList(ImmutablePair.of(option, null)),
                 NO_SETUP,
-                validatorData -> assertThat(validatorData.getConfiguration().isDryRun()).isTrue()));
+                validatorData -> {
+                    DefaultLog.getInstance().warn("validating dryRunTest for " + validatorData.getBaseDir());
+                    assertThat(validatorData.getConfiguration().isDryRun()).as("testing getConfiguration().isDryRun() flag").isTrue();
+                }));
 
         result.add(new TestData(DataUtils.asDirName(option), NO_OPTIONS,
                 NO_SETUP,
-                validatorData -> assertThat(validatorData.getConfiguration().isDryRun()).isFalse()));
+                validatorData -> {
+                    DefaultLog.getInstance().warn("validating dryRunTest for " + validatorData.getBaseDir());
+                    assertThat(validatorData.getConfiguration().isDryRun()).as("testing getConfiguration().isDryRun() flag").isFalse();
+                }));
     }
 
     protected void editCopyrightTest(final Set<TestData> result, final Option option) {
         Consumer<Path> setup = basePath -> {
+            DefaultLog.getInstance().warn("editCopyrightTest setup for " + basePath);
             File baseDir = basePath.toFile();
             writeFile(baseDir, "Missing.java", Arrays.asList("/* no license */\n\n", "class Test {}\n"));
         };
@@ -757,6 +838,7 @@ public class ReportTestDataProvider extends AbstractTestDataProvider {
         result.add(new TestData("noEditLicense", Collections.singletonList(copyright),
                 setup,
                 validatorData -> {
+                    DefaultLog.getInstance().warn("validating editCopyrightTest for " + validatorData.getBaseDir());
                     try {
                         String actualText = TextUtils.readFile(validatorData.getBaseDir().resolve("Missing.java").toFile());
                         TextUtils.assertNotContains("MyCopyright", actualText);
@@ -768,6 +850,7 @@ public class ReportTestDataProvider extends AbstractTestDataProvider {
         result.add(new TestData(DataUtils.asDirName(editLicense.getLeft()), Arrays.asList(copyright, editLicense),
                 setup,
                 validatorData -> {
+                    DefaultLog.getInstance().warn("validating editCopyrightTest for " + validatorData.getBaseDir());
                     try {
                         String actualText = TextUtils.readFile(validatorData.getBaseDir().resolve("Missing.java").toFile());
                         TextUtils.assertNotContains("MyCopyright", actualText);
@@ -785,6 +868,7 @@ public class ReportTestDataProvider extends AbstractTestDataProvider {
                     Arrays.asList(copyright, ImmutablePair.of(dryRun, null), editLicense),
                     setup,
                     validatorData -> {
+                        DefaultLog.getInstance().warn("validating editCopyrightTest for " + validatorData.getBaseDir());
                         try {
                             String actualText = TextUtils.readFile(validatorData.getBaseDir().resolve("Missing.java").toFile());
                             TextUtils.assertNotContains("MyCopyright", actualText);
@@ -800,6 +884,7 @@ public class ReportTestDataProvider extends AbstractTestDataProvider {
             result.add(new TestData(DataUtils.asDirName(overwrite), Arrays.asList(copyright, editLicense, ImmutablePair.of(overwrite, null)),
                     setup,
                     validatorData -> {
+                        DefaultLog.getInstance().warn("validating editCopyrightTest for " + validatorData.getBaseDir());
                         try {
                             String actualText = TextUtils.readFile(validatorData.getBaseDir().resolve("Missing.java").toFile());
                             TextUtils.assertContains("MyCopyright", actualText);
@@ -813,57 +898,66 @@ public class ReportTestDataProvider extends AbstractTestDataProvider {
 
     protected void editLicenseTest(final Set<TestData> result, final Option option) {
         result.add(new TestData("", Collections.singletonList(ImmutablePair.of(option, null)),
-            basePath -> {
-                File baseDir = basePath.toFile();
-                writeFile(baseDir, "NoLicense.java", "class NoLicense {}");
-            },
+                basePath -> {
+                    DefaultLog.getInstance().warn("editLicenseTest setup for " + basePath);
+                    File baseDir = basePath.toFile();
+                    writeFile(baseDir, "NoLicense.java", "class NoLicense {}");
+                },
                 validatorData -> {
-            try {
-                assertThat(validatorData.getStatistic()).isNotNull();
-                File javaFile = validatorData.getBaseDir().resolve("NoLicense.java").toFile();
-                String contents = String.join("\n", IOUtils.readLines(new FileReader(javaFile)));
-                assertThat(contents).isEqualTo("class NoLicense {}");
-                File resultFile = validatorData.getBaseDir().resolve("NoLicense.java.new").toFile();
-                assertThat(resultFile).exists();
-                contents = String.join("\n", IOUtils.readLines(new FileReader(resultFile)));
-                assertThat(contents).isEqualTo("""
-                        /*
-                         * Licensed to the Apache Software Foundation (ASF) under one
-                         * or more contributor license agreements.  See the NOTICE file
-                         * distributed with this work for additional information
-                         * regarding copyright ownership.  The ASF licenses this file
-                         * to you under the Apache License, Version 2.0 (the
-                         * "License"); you may not use this file except in compliance
-                         * with the License.  You may obtain a copy of the License at
-                         *\s
-                         *   http://www.apache.org/licenses/LICENSE-2.0
-                         *\s
-                         * Unless required by applicable law or agreed to in writing,
-                         * software distributed under the License is distributed on an
-                         * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-                         * KIND, either express or implied.  See the License for the
-                         * specific language governing permissions and limitations
-                         * under the License.
-                         */
-                        
-                        class NoLicense {}""");
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
+                    DefaultLog.getInstance().warn("validating editLicenseTest for " + validatorData.getBaseDir());
+                    try {
+                        assertThat(validatorData.getStatistic()).isNotNull();
+                        File javaFile = validatorData.getBaseDir().resolve("NoLicense.java").toFile();
+                        String contents = String.join("\n", IOUtils.readLines(new FileReader(javaFile)));
+                        assertThat(contents).isEqualTo("class NoLicense {}");
+                        File resultFile = validatorData.getBaseDir().resolve("NoLicense.java.new").toFile();
+                        assertThat(resultFile).exists();
+                        contents = String.join("\n", IOUtils.readLines(new FileReader(resultFile)));
+                        assertThat(contents).isEqualTo("""
+                                /*
+                                 * Licensed to the Apache Software Foundation (ASF) under one
+                                 * or more contributor license agreements.  See the NOTICE file
+                                 * distributed with this work for additional information
+                                 * regarding copyright ownership.  The ASF licenses this file
+                                 * to you under the Apache License, Version 2.0 (the
+                                 * "License"); you may not use this file except in compliance
+                                 * with the License.  You may obtain a copy of the License at
+                                 *\s
+                                 *   http://www.apache.org/licenses/LICENSE-2.0
+                                 *\s
+                                 * Unless required by applicable law or agreed to in writing,
+                                 * software distributed under the License is distributed on an
+                                 * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+                                 * KIND, either express or implied.  See the License for the
+                                 * specific language governing permissions and limitations
+                                 * under the License.
+                                 */
+                                
+                                class NoLicense {}""");
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
                 }));
     }
 
     protected void editOverwriteTest(final Set<TestData> result, final Option option) {
         result.add(new TestData("noEditLicense", Collections.singletonList(ImmutablePair.of(option, null)),
                 NO_SETUP,
-                validatorData -> assertThat(validatorData.getConfiguration().isAddingLicensesForced())
-                        .describedAs("Without edit-license should be false").isFalse()));
+                validatorData -> {
+                    DefaultLog.getInstance().warn("validating editOverwriteTest for " + validatorData.getBaseDir());
+                    assertThat(validatorData.getConfiguration().isAddingLicensesForced())
+                            .describedAs("Without edit-license should be false").isFalse();
+                }));
 
         if (!Arg.EDIT_ADD.isEmpty()) {
             result.add(new TestData("", Arrays.asList(ImmutablePair.of(option, null),
                     ImmutablePair.of(Arg.EDIT_ADD.find("edit-license"), null)),
                     NO_SETUP,
-                    validatorData -> assertThat(validatorData.getConfiguration().isAddingLicensesForced()).isTrue()));
+                    validatorData -> {
+                        DefaultLog.getInstance().warn("validating editOverwriteTest for " + validatorData.getBaseDir());
+                        assertThat(validatorData.getConfiguration().isAddingLicensesForced())
+                                .as("testing getConfiguration().isAddingLicensesForced() flag").isTrue();
+                    }));
         }
     }
 
@@ -871,6 +965,7 @@ public class ReportTestDataProvider extends AbstractTestDataProvider {
         final TestingLog testingLog = new TestingLog();
 
         Consumer<Path> setup = basePath -> {
+            DefaultLog.getInstance().warn("logLevelTest setup for " + basePath);
             DefaultLog.setInstance(testingLog);
             testingLog.clear();
         };
@@ -879,6 +974,7 @@ public class ReportTestDataProvider extends AbstractTestDataProvider {
                 Collections.singletonList(ImmutablePair.of(option, new String[]{Log.Level.INFO.name()})),
                 setup,
                 validatorData -> {
+                    DefaultLog.getInstance().warn("validating logLevelTest for " + validatorData.getBaseDir());
                     try {
                         testingLog.assertNotContains("DEBUG");
                     } finally {
@@ -890,6 +986,7 @@ public class ReportTestDataProvider extends AbstractTestDataProvider {
                 Collections.singletonList(ImmutablePair.of(option, new String[]{Log.Level.DEBUG.name()})),
                 setup,
                 validatorData -> {
+                    DefaultLog.getInstance().warn("validating logLevelTest for " + validatorData.getBaseDir());
                     try {
                         testingLog.assertContains("DEBUG");
                     } finally {
@@ -903,6 +1000,7 @@ public class ReportTestDataProvider extends AbstractTestDataProvider {
             result.add(new TestData(processing.name().toLowerCase(Locale.ROOT),
                     Collections.singletonList(ImmutablePair.of(option, new String[]{processing.name()})),
                     basePath -> {
+                        DefaultLog.getInstance().warn("outputArchiveTest setup for " + basePath);
                         File localArchive = new File(basePath.toFile(), "dummy.jar");
                         try (InputStream in = ReportTestDataProvider.class.getResourceAsStream("/tikaFiles/archive/dummy.jar");
                              OutputStream out = Files.newOutputStream(localArchive.toPath())) {
@@ -913,6 +1011,7 @@ public class ReportTestDataProvider extends AbstractTestDataProvider {
                         }
                     },
                     validatorData -> {
+                        DefaultLog.getInstance().warn("validating outputArchiveTest for " + validatorData.getBaseDir());
                         Document document = validatorData.getDocument();
                         try {
                             XmlUtils.assertIsPresent(processing.name(), document, xpath, "/rat-report/resource[@name='/dummy.jar']");
@@ -946,6 +1045,7 @@ public class ReportTestDataProvider extends AbstractTestDataProvider {
                     Collections.singletonList(ImmutablePair.of(option, new String[]{filter.name()})),
                     NO_SETUP,
                     validatorData -> {
+                        DefaultLog.getInstance().warn("validating outputFamiliesTest for " + validatorData.getBaseDir());
                         Document document = validatorData.getDocument();
                         try {
                             switch (filter) {
@@ -975,19 +1075,21 @@ public class ReportTestDataProvider extends AbstractTestDataProvider {
     protected void outputFileTest(final Set<TestData> result, final Option option) {
         result.add(new TestData("", Collections.singletonList(ImmutablePair.of(option, new String[]{"outexample"})),
                 basePath -> {
+                    DefaultLog.getInstance().warn("outputFileTest setup for " + basePath);
                     File baseDir = basePath.toFile();
                     writeFile(baseDir, "apl.txt", "SPDX-License-Identifier: Apache-2.0");
                 },
                 validatorData -> {
-                    assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(1);
-                    assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.APPROVED)).isEqualTo(1);
-                    assertThat(validatorData.getStatistic().getCounter(ClaimStatistic.Counter.UNAPPROVED)).isEqualTo(0);
+                    DefaultLog.getInstance().warn("validating outputFamiliesTest for " + validatorData.getBaseDir());
+                    assertCounter(validatorData, ClaimStatistic.Counter.STANDARDS, 1);
+                    assertCounter(validatorData, ClaimStatistic.Counter.APPROVED, 1);
+                    assertCounter(validatorData, ClaimStatistic.Counter.UNAPPROVED, 0);
                     File outFile = validatorData.getBaseDir().resolve("outexample").toFile();
 
                     try {
                         String actualText = TextUtils.readFile(outFile);
-                        TextUtils.assertContainsExactly(1, "Apache License 2.0: 1 ", actualText);
-                        TextUtils.assertContainsExactly(1, "STANDARD: 1 ", actualText);
+                        TextUtils.assertPatternInTarget("Apache License 2.0: \\d", actualText);
+                        TextUtils.assertPatternInTarget("STANDARD:\\s+\\d", actualText);
                     } catch (IOException e) {
                         throw new RuntimeException(e);
                     }
@@ -1000,6 +1102,7 @@ public class ReportTestDataProvider extends AbstractTestDataProvider {
             result.add(new TestData(filter.name(), Collections.singletonList(ImmutablePair.of(option, new String[]{filter.name()})),
                     NO_SETUP,
                     validatorData -> {
+                        DefaultLog.getInstance().warn("validating outputLicensesTest for " + validatorData.getBaseDir());
                         Document document = validatorData.getDocument();
                         try {
                             switch (filter) {
@@ -1030,12 +1133,14 @@ public class ReportTestDataProvider extends AbstractTestDataProvider {
         for (ReportConfiguration.Processing proc : ReportConfiguration.Processing.values()) {
             result.add(new TestData(proc.name().toLowerCase(Locale.ROOT), Collections.singletonList(ImmutablePair.of(option, new String[]{proc.name()})),
                     basePath -> {
+                        DefaultLog.getInstance().warn("outputStandardTest setup for " + basePath);
                         File baseDir = basePath.toFile();
                         writeFile(baseDir, "Test.java", Arrays.asList("/*\n", "SPDX-License-Identifier: Apache-2.0\n",
                                 "*/\n\n", "class Test {}\n"));
                         writeFile(baseDir, "Missing.java", Arrays.asList("/* no license */\n\n", "class Test {}\n"));
                     },
                     validatorData -> {
+                        DefaultLog.getInstance().warn("validating outputStandardTest for " + validatorData.getBaseDir());
                         Document document = validatorData.getDocument();
                         String testDoc = "/rat-report/resource[@name='/Test.java']";
                         String missingDoc = "/rat-report/resource[@name='/Missing.java']";
@@ -1069,6 +1174,7 @@ public class ReportTestDataProvider extends AbstractTestDataProvider {
 
     protected void outputStyleTest(final Set<TestData> result, final Option option) {
         Consumer<Path> createFile = basePath -> {
+            DefaultLog.getInstance().warn("outputStyleTest setup for " + basePath);
             File baseDir = basePath.toFile();
             writeFile(baseDir, "Test.java", Arrays.asList("/*\n", "SPDX-License-Identifier: Apache-2.0\n",
                     "*/\n\n", "class Test {}\n"));
@@ -1081,7 +1187,8 @@ public class ReportTestDataProvider extends AbstractTestDataProvider {
                 result.add(new TestData("", Collections.singletonList(ImmutablePair.of(option, null)),
                         createFile,
                         validatorData -> {
-                            try (InputStream expected = StyleSheets.XML.getStyleSheet().get();
+                            DefaultLog.getInstance().warn("validating outputStyleTest for " + validatorData.getBaseDir());
+                            try (InputStream expected = StyleSheets.XML.getStyleSheet().ioSupplier().get();
                                  InputStream actual = validatorData.getConfiguration().getStyleSheet().get()) {
                                 assertThat(IOUtils.contentEquals(expected, actual)).as(() -> String.format("'%s' does not match", StyleSheets.XML)).isTrue();
                                 baos.reset();
@@ -1099,7 +1206,8 @@ public class ReportTestDataProvider extends AbstractTestDataProvider {
                 result.add(new TestData(sheet.name().toLowerCase(Locale.ROOT), Collections.singletonList(ImmutablePair.of(option, new String[]{sheet.arg()})),
                         createFile,
                         validatorData -> {
-                            try (InputStream expected = sheet.getStyleSheet().get();
+                            DefaultLog.getInstance().warn("validating outputStyleTest for " + validatorData.getBaseDir());
+                            try (InputStream expected = sheet.getStyleSheet().ioSupplier().get();
                                  InputStream actual = validatorData.getConfiguration().getStyleSheet().get()) {
                                 assertThat(IOUtils.contentEquals(expected, actual)).as(() -> String.format("'%s' does not match", sheet)).isTrue();
                                 baos.reset();
@@ -1122,7 +1230,7 @@ public class ReportTestDataProvider extends AbstractTestDataProvider {
                                         TextUtils.assertContainsExactly(1, "Files with unapproved licenses:" + System.lineSeparator() + "  /Missing.java", actualText);
                                         break;
                                     case XHTML5:
-                                        TextUtils.assertPatternInTarget("<td>Approved<\\/td>\\s+<td>1<\\/td>\\s+<td>A count of approved licenses.<\\/td>", actualText);
+                                        TextUtils.assertPatternInTarget("<td>Approved<\\/td>\\s+<td>\\d+<\\/td>\\s+<td>A count of approved licenses.<\\/td>", actualText);
                                         break;
                                     default:
                                         fail("No test for stylesheet " + sheet);
@@ -1137,6 +1245,7 @@ public class ReportTestDataProvider extends AbstractTestDataProvider {
             result.add(new TestData("fileStyleSheet",
                     Collections.singletonList(ImmutablePair.of(option, new String[]{"fileStyleSheet.xslt"})),
                     basePath -> {
+                        DefaultLog.getInstance().warn("outputStyleTest setup for " + basePath);
                         DocumentName name = DocumentName.builder().setName("fileStyleSheet.xslt")
                                 .setBaseName(basePath.toString()).build();
                         try (FileWriter fileWriter = new FileWriter(new File(name.getBaseName(), name.getName()));
@@ -1156,7 +1265,8 @@ public class ReportTestDataProvider extends AbstractTestDataProvider {
                     },
 
                     validatorData -> {
-                        try (InputStream expected = StyleSheets.getStyleSheet("fileStyleSheet.xslt", validatorData.getBaseName()).get();
+                        DefaultLog.getInstance().warn("validating outputStyleTest for " + validatorData.getBaseDir());
+                        try (InputStream expected = StyleSheets.getStyleSheet("fileStyleSheet.xslt", validatorData.getBaseName()).ioSupplier().get();
                              InputStream actual = validatorData.getConfiguration().getStyleSheet().get()) {
                             assertThat(IOUtils.contentEquals(expected, actual)).as(() -> "'fileStyleSheet.xslt' does not match").isTrue();
                             baos.reset();

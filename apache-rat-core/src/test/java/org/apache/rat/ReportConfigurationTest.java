@@ -458,7 +458,7 @@ public class ReportConfigurationTest {
         assertThat(underTest.getWriter()).isNotNull();
 
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        underTest.setOut(() -> stream);
+        underTest.setOut(new ReportConfiguration.IODescriptor<>("outputTest", () -> stream));
         assertThat(underTest.getOutput().get()).isEqualTo(stream);
         PrintWriter writer = underTest.getWriter().get();
         assertThat(writer).isNotNull();
@@ -482,9 +482,9 @@ public class ReportConfigurationTest {
         URL url = this.getClass().getResource("ReportConfigurationTestFile");
         assertThat(url).isNotNull();
 
-        assertThat(underTest.getStyleSheet()).isNull();
+        assertThat(underTest.getStyleSheetDescriptor()).isNull();
         InputStream stream = mock(InputStream.class);
-        underTest.setStyleSheet(() -> stream);
+        underTest.setStyleSheet(new ReportConfiguration.IODescriptor<>("stylesheetTest", () -> stream));
         assertThat(underTest.getStyleSheet().get()).isEqualTo(stream);
 
         File file = mock(File.class);
@@ -547,7 +547,7 @@ public class ReportConfigurationTest {
     public void testSetOut() throws IOException {
         ReportConfiguration config = new ReportConfiguration();
         try (OutputStreamInterceptor osi = new OutputStreamInterceptor()) {
-            config.setOut(() -> osi);
+            config.setOut(new ReportConfiguration.IODescriptor<>("testSetOut", () -> osi));
             assertThat(osi.closeCount).isEqualTo(0);
             try (OutputStream os = config.getOutput().get()) {
                 assertThat(os).isNotNull();

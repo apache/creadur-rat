@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import TextUtils
+import org.apache.rat.testhelpers.TextUtils
 
 content = new File(basedir, 'build.log').text
 
@@ -22,6 +22,6 @@ assert content.contains('BUILD SUCCESS')
 
 assert ! content.contains('[WARNING] No resources included')
 
-report = new File(basedir, 'target/site/rat-report.html').text
+report = new File(basedir, 'target/rat.txt').text
 assert TextUtils.isMatching("^  /pom.xml\\s+S ", report)
 assert report.contains('AL       AL2.0         Apache License 2.0')

@@ -40,6 +40,9 @@
             <exclude>MAVEN</exclude>
             <exclude>IDEA</exclude>
           </inputExcludeStds>
+          <counterMaxs>
+            <counterPattern>Unapproved:1</counterPattern>
+          </counterMaxs>
         </configuration>
       </plugin>
     </plugins>

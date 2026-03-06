@@ -20,16 +20,20 @@ package org.apache.rat.testhelpers.data;
 
 
 import com.google.common.collect.ImmutableList;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
+import java.util.stream.Stream;
 import org.apache.commons.cli.Option;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.rat.OptionCollectionParser;
 import org.apache.rat.commandline.Arg;
 import org.apache.rat.ui.AbstractOptionCollection;
+import org.apache.rat.ui.ArgumentTracker;
 import org.apache.rat.utils.DefaultLog;
 
 /**
@@ -69,43 +73,45 @@ public abstract class AbstractTestDataProvider {
      */
     public final Set<TestData> getOptionTests(final AbstractOptionCollection<?> optionCollection) {
         // the optionCollection establishes any changes to the Arg values.
+        List<Option> unsupportedOptions = new ArrayList<>(optionCollection.getUnsupportedOptions().getOptions());
         Set<TestData> result = new TreeSet<>();
         for (Arg arg : Arg.values()) {
             if (!arg.isEmpty()) {
+                Stream<Option> options = arg.group().getOptions().stream().filter(opt -> !unsupportedOptions.contains(opt));
                 switch (arg) {
-                    case CONFIGURATION -> arg.group().getOptions().forEach(opt -> configTest(result, opt));
-                    case CONFIGURATION_NO_DEFAULTS -> arg.group().getOptions().forEach(opt -> configurationNoDefaultsTest(result, opt));
-                    case COUNTER_MIN -> arg.group().getOptions().forEach(opt -> counterMinTest(result, opt));
-                    case COUNTER_MAX -> arg.group().getOptions().forEach(opt -> counterMaxTest(result, opt));
-                    case DRY_RUN -> arg.group().getOptions().forEach(opt -> dryRunTest(result, opt));
-                    case EDIT_COPYRIGHT -> arg.group().getOptions().forEach(opt -> editCopyrightTest(result, opt));
-                    case EDIT_ADD -> arg.group().getOptions().forEach(opt -> editLicenseTest(result, opt));
-                    case EDIT_OVERWRITE -> arg.group().getOptions().forEach(opt -> editOverwriteTest(result, opt));
-                    case HELP_LICENSES -> arg.group().getOptions().forEach(opt -> helpLicenses(result, opt));
-                    case EXCLUDE -> arg.group().getOptions().forEach(opt -> inputExcludeTest(result, opt));
-                    case EXCLUDE_FILE -> arg.group().getOptions().forEach(opt -> inputExcludeFileTest(result, opt));
-                    case EXCLUDE_PARSE_SCM -> arg.group().getOptions().forEach(opt -> inputExcludeParsedScmTest(result, opt));
-                    case EXCLUDE_STD -> arg.group().getOptions().forEach(opt -> inputExcludeStdTest(result, opt));
-                    case EXCLUDE_SIZE -> arg.group().getOptions().forEach(opt -> inputExcludeSizeTest(result, opt));
-                    case INCLUDE -> arg.group().getOptions().forEach(opt -> inputIncludeTest(result, opt));
-                    case INCLUDE_FILE -> arg.group().getOptions().forEach(opt -> inputIncludeFileTest(result, opt));
-                    case INCLUDE_STD -> arg.group().getOptions().forEach(opt -> inputIncludeStdTest(result, opt));
-                    case SOURCE -> arg.group().getOptions().forEach(opt -> inputSourceTest(result, opt));
-                    case FAMILIES_APPROVED -> arg.group().getOptions().forEach(opt -> licenseFamiliesApprovedTest(result, opt));
-                    case FAMILIES_APPROVED_FILE -> arg.group().getOptions().forEach(opt -> licenseFamiliesApprovedFileTest(result, opt));
-                    case FAMILIES_DENIED -> arg.group().getOptions().forEach(opt -> licenseFamiliesDeniedTest(result, opt));
-                    case FAMILIES_DENIED_FILE -> arg.group().getOptions().forEach(opt -> licenseFamiliesDeniedFileTest(result, opt));
-                    case LICENSES_APPROVED -> arg.group().getOptions().forEach(opt -> licensesApprovedTest(result, opt));
-                    case LICENSES_APPROVED_FILE -> arg.group().getOptions().forEach(opt -> licensesApprovedFileTest(result, opt));
-                    case LICENSES_DENIED -> arg.group().getOptions().forEach(opt -> licensesDeniedTest(result, opt));
-                    case LICENSES_DENIED_FILE -> arg.group().getOptions().forEach(opt -> licensesDeniedFileTest(result, opt));
-                    case LOG_LEVEL -> arg.group().getOptions().forEach(opt -> logLevelTest(result, opt));
-                    case OUTPUT_ARCHIVE -> arg.group().getOptions().forEach(opt -> outputArchiveTest(result, opt));
-                    case OUTPUT_FAMILIES -> arg.group().getOptions().forEach(opt -> outputFamiliesTest(result, opt));
-                    case OUTPUT_FILE -> arg.group().getOptions().forEach(opt -> outputFileTest(result, opt));
-                    case OUTPUT_LICENSES -> arg.group().getOptions().forEach(opt -> outputLicensesTest(result, opt));
-                    case OUTPUT_STANDARD -> arg.group().getOptions().forEach(opt -> outputStandardTest(result, opt));
-                    case OUTPUT_STYLE -> arg.group().getOptions().forEach(opt -> outputStyleTest(result, opt));
+                    case CONFIGURATION -> options.forEach(opt -> configTest(result, opt));
+                    case CONFIGURATION_NO_DEFAULTS -> options.forEach(opt -> configurationNoDefaultsTest(result, opt));
+                    case COUNTER_MIN -> options.forEach(opt -> counterMinTest(result, opt));
+                    case COUNTER_MAX -> options.forEach(opt -> counterMaxTest(result, opt));
+                    case DRY_RUN -> options.forEach(opt -> dryRunTest(result, opt));
+                    case EDIT_COPYRIGHT -> options.forEach(opt -> editCopyrightTest(result, opt));
+                    case EDIT_ADD -> options.forEach(opt -> editLicenseTest(result, opt));
+                    case EDIT_OVERWRITE -> options.forEach(opt -> editOverwriteTest(result, opt));
+                    case HELP_LICENSES -> options.forEach(opt -> helpLicenses(result, opt));
+                    case EXCLUDE -> options.forEach(opt -> inputExcludeTest(result, opt));
+                    case EXCLUDE_FILE -> options.forEach(opt -> inputExcludeFileTest(result, opt));
+                    case EXCLUDE_PARSE_SCM -> options.forEach(opt -> inputExcludeParsedScmTest(result, opt));
+                    case EXCLUDE_STD -> options.forEach(opt -> inputExcludeStdTest(result, opt));
+                    case EXCLUDE_SIZE -> options.forEach(opt -> inputExcludeSizeTest(result, opt));
+                    case INCLUDE -> options.forEach(opt -> inputIncludeTest(result, opt));
+                    case INCLUDE_FILE -> options.forEach(opt -> inputIncludeFileTest(result, opt));
+                    case INCLUDE_STD -> options.forEach(opt -> inputIncludeStdTest(result, opt));
+                    case SOURCE -> options.forEach(opt -> inputSourceTest(result, opt));
+                    case FAMILIES_APPROVED -> options.forEach(opt -> licenseFamiliesApprovedTest(result, opt));
+                    case FAMILIES_APPROVED_FILE -> options.forEach(opt -> licenseFamiliesApprovedFileTest(result, opt));
+                    case FAMILIES_DENIED -> options.forEach(opt -> licenseFamiliesDeniedTest(result, opt));
+                    case FAMILIES_DENIED_FILE -> options.forEach(opt -> licenseFamiliesDeniedFileTest(result, opt));
+                    case LICENSES_APPROVED -> options.forEach(opt -> licensesApprovedTest(result, opt));
+                    case LICENSES_APPROVED_FILE -> options.forEach(opt -> licensesApprovedFileTest(result, opt));
+                    case LICENSES_DENIED -> options.forEach(opt -> licensesDeniedTest(result, opt));
+                    case LICENSES_DENIED_FILE -> options.forEach(opt -> licensesDeniedFileTest(result, opt));
+                    case LOG_LEVEL -> options.forEach(opt -> logLevelTest(result, opt));
+                    case OUTPUT_ARCHIVE -> options.forEach(opt -> outputArchiveTest(result, opt));
+                    case OUTPUT_FAMILIES -> options.forEach(opt -> outputFamiliesTest(result, opt));
+                    case OUTPUT_FILE -> options.forEach(opt -> outputFileTest(result, opt));
+                    case OUTPUT_LICENSES -> options.forEach(opt -> outputLicensesTest(result, opt));
+                    case OUTPUT_STANDARD -> options.forEach(opt -> outputStandardTest(result, opt));
+                    case OUTPUT_STYLE -> options.forEach(opt -> outputStyleTest(result, opt));
                 }
             }
         }
@@ -117,7 +123,7 @@ public abstract class AbstractTestDataProvider {
         Set<Option> options = new HashSet<>(Arg.getOptions().getOptions());
         result.forEach(testData -> options.remove(testData.getOption()));
         // TODO fix this once deprecated options are removed
-        options.forEach(opt -> DefaultLog.getInstance().warn("Option " + opt.getKey() + " was not tested."));
+        options.forEach(opt -> DefaultLog.getInstance().warn("Option " + ArgumentTracker.extractKey(opt) + " was not tested."));
         //assertThat(options).describedAs("All options are not accounted for.").isEmpty();
     }
 

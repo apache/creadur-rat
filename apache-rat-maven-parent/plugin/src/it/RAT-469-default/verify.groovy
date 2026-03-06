@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import TextUtils
+import org.apache.rat.testhelpers.TextUtils
 
 content = new File(basedir, 'build.log').text
 
@@ -25,7 +25,7 @@ assert content.contains('[DEBUG] Processing exclude file from STANDARD_SCMS.') /
 assert ! content.contains('[WARNING] No resources included')
 
 // Report is in apache-rat-plugin/target/invoker-reports
-report = new File(basedir, 'target/site/rat-report.html').text
+report = new File(basedir, 'target/rat.txt').text
 assert TextUtils.isMatching("^  /verify.groovy\\s+S ", report)
 assert TextUtils.isMatching("^! /pom.xml\\s+S ", report)
 

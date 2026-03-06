@@ -466,7 +466,7 @@ public class ReporterTest {
                 "Generated at: ";
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         ReportConfiguration configuration = initializeConfiguration();
-        configuration.setOut(() -> out);
+        configuration.setOut(new ReportConfiguration.IODescriptor<>("plainReportTest", () -> out));
         new Reporter(configuration).execute().format(configuration);
 
         String document = out.toString();
@@ -481,7 +481,7 @@ public class ReporterTest {
     public void unapprovedLicensesReportTest() throws Exception {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         ReportConfiguration configuration = initializeConfiguration();
-        configuration.setOut(() -> out);
+        configuration.setOut(new ReportConfiguration.IODescriptor<>("unapprovedLicensesReportTest", () -> out));
         configuration.setStyleSheet(this.getClass().getResource("/org/apache/rat/unapproved-licenses.xsl"));
         new Reporter(configuration).execute().format(configuration);
 

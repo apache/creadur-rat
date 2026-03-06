@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import org.apache.rat.core.Reporter;
+import org.apache.rat.Reporter;
 import org.apache.rat.testhelpers.data.ValidatorData;
 
 documentFile = new File(basedir, "target/RAT/rat.xml")
@@ -38,7 +38,7 @@ assert content.contains('[DEBUG] Processing exclude file from STANDARD_SCMS.') /
 assert ! content.contains('[WARNING] No resources included')
 
 // Report is in apache-rat-plugin/target/invoker-reports
-report = new File(basedir, 'target/site/rat-report.html').text
+report = new File(basedir, 'target/rat.txt').text
 assert TextUtils.isMatching("^  /verify.groovy\\s+S ", report)
 assert TextUtils.isMatching("^! /pom.xml\\s+S ", report)
 

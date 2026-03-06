@@ -643,7 +643,7 @@ setup,
             result.add(new TestData("", Collections.singletonList(ImmutablePair.of(option, null)),
                     DataUtils.NO_SETUP,
                     validatorData -> {
-                        try (InputStream expected = StyleSheets.XML.getStyleSheet().get();
+                        try (InputStream expected = StyleSheets.XML.getStyleSheet().ioSupplier().get();
                              InputStream actual = validatorData.getConfiguration().getStyleSheet().get()) {
                             assertThat(IOUtils.contentEquals(expected, actual)).as(() -> String.format("'%s' does not match", StyleSheets.XML)).isTrue();
                         } catch (IOException e) {
@@ -655,7 +655,7 @@ setup,
                 result.add(new TestData(sheet.name(), Collections.singletonList(ImmutablePair.of(option, new String[]{sheet.arg()})),
                         DataUtils.NO_SETUP,
                         validatorData -> {
-                            try (InputStream expected = sheet.getStyleSheet().get();
+                            try (InputStream expected = sheet.getStyleSheet().ioSupplier().get();
                                  InputStream actual = validatorData.getConfiguration().getStyleSheet().get()) {
                                 assertThat(IOUtils.contentEquals(expected, actual)).as(() -> String.format("'%s' does not match", sheet)).isTrue();
                             } catch (IOException e) {
@@ -686,7 +686,7 @@ setup,
                     },
 
                     validatorData -> {
-                        try (InputStream expected = StyleSheets.getStyleSheet("fileStyleSheet.xslt", validatorData.getBaseName()).get();
+                        try (InputStream expected = StyleSheets.getStyleSheet("fileStyleSheet.xslt", validatorData.getBaseName()).ioSupplier().get();
                              InputStream actual = validatorData.getConfiguration().getStyleSheet().get()) {
                             assertThat(IOUtils.contentEquals(expected, actual)).as(() -> "'fileStyleSheet.xslt' does not match").isTrue();
                         } catch (IOException e) {

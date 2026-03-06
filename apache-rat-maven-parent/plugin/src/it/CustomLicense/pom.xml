@@ -28,7 +28,9 @@
         <version>@pom.version@</version>
         <configuration>
           <outputStyle>xml</outputStyle>
-          <config>.rat/customConfig.xml</config>
+          <configs>
+            <config>.rat/customConfig.xml</config>
+          </configs>
           <inputExcludes>
             <exclude>.rat/**</exclude>
             <exclude>pom.xml</exclude>

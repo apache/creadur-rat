@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import XmlUtils
+import org.apache.rat.testhelpers.XmlUtils
 import org.w3c.dom.Document
 
 import javax.xml.xpath.XPath

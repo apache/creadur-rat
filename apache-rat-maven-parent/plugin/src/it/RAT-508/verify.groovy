@@ -19,8 +19,8 @@ import org.apache.rat.testhelpers.TextUtils
 content = new File(basedir, 'build.log').text
 
 // verify debug output
-assert content.contains('input-exclude-std ALL')
-assert content.contains('Adding [MAVEN] to input-exclude-std')
+assert content.contains('input-exclude-std MAVEN, ALL')
+assert content.contains('Adding [ALL] to input-exclude-std')
 assert content.contains('Including patterns: pom.xml')
 
 assert content.contains('BUILD SUCCESS')
@@ -28,7 +28,7 @@ assert ! content.contains('[WARNING] No resources included')
 
 // Report is in apache-rat-plugin/target/invoker-reports
 // Make sure that report is generated completely
-report = new File(basedir, 'target/site/rat-report.html').text
+report = new File(basedir, 'target/rat.txt').text
 assert TextUtils.isMatching("^  /verify.groovy\\s+S ", report)
 assert TextUtils.isMatching("^  /pom.xml\\s+S ", report)
 
