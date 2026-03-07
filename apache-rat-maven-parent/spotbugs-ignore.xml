@@ -16,5 +16,8 @@
   limitations under the License.
 -->
 <FindBugsFilter>
-
+    <Match>
+        <Class name="org.apache.rat.plugin.HelpMojo"/>
+        <Bug pattern='XXE_DOCUMENT'/>
+    </Match>
 </FindBugsFilter>

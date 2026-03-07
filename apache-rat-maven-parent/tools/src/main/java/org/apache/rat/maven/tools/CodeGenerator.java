@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.rat.maven;
+package org.apache.rat.maven.tools;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -25,6 +25,9 @@ import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.Arrays;
+import java.util.Comparator;
+import java.util.Map;
+import java.util.TreeMap;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.DefaultParser;
@@ -35,16 +38,17 @@ import org.apache.commons.cli.ParseException;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.WordUtils;
 import org.apache.rat.DeprecationReporter;
-import org.apache.rat.testhelpers.FileUtils;
-import org.apache.rat.ui.OptionFactory;
+import org.apache.rat.OptionCollectionParser;
+import org.apache.rat.maven.MavenOption;
+import org.apache.rat.maven.MavenOptionCollection;
 import org.apache.rat.utils.CasedString;
+import org.apache.rat.utils.FileUtils;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.runtime.RuntimeConstants;
 
 import static java.lang.String.format;
-import static org.apache.rat.OptionCollection.ArgumentType.NONE;
 
 /**
  * Generates the ${code org.apache.rat.maven.AbstractMaven} source code.
@@ -54,6 +58,8 @@ public final class CodeGenerator {
     private static final String SYNTAX = String.format("java -cp ... %s [options]", CodeGenerator.class.getName());
     /** The package name for this AbstractMaven file */
     private final CasedString packageName = new CasedString(CasedString.StringCase.DOT, "org.apache.rat.maven");
+    /** The maven option collection */
+    private final MavenOptionCollection mavenOptionCollection = new MavenOptionCollection();
     /** The base source directory */
     private final String baseDirectory;
     /** The template for the methods within {@code AbstractMaven}. */
@@ -65,7 +71,7 @@ public final class CodeGenerator {
      * private constructor.
      * @param baseDirectory The base source directory.
      */
-    private CodeGenerator(final String baseDirectory) {
+    CodeGenerator(final String baseDirectory) {
         this.baseDirectory = baseDirectory;
 
         final VelocityEngine velocityEngine = new VelocityEngine();
@@ -120,9 +126,9 @@ public final class CodeGenerator {
      * @throws IOException on IO error
      */
     private void execute() throws IOException {
-        final String methods = gatherMethods();
+        final Map<MavenOption, String> methods = gatherMethods();
         final VelocityContext context = new VelocityContext();
-        context.put("methods", methods);
+        context.put("methods", String.join("\n\n", methods.values()));
         File javaFile = Path.of(baseDirectory).resolve(packageName.toCase(CasedString.StringCase.SLASH))
                 .resolve("AbstractMaven.java").toFile();
         FileUtils.mkDir(javaFile.getParentFile());
@@ -139,12 +145,16 @@ public final class CodeGenerator {
     private String createDesc(final MavenOption mavenOption) {
         String desc = mavenOption.getDescription();
         if (desc == null) {
-            throw new IllegalStateException(format("Description for %s may not be null", mavenOption.getName()));
+            if (!mavenOption.isDeprecated()) {
+                throw new IllegalStateException(format("Description for %s may not be null", mavenOption.getName()));
+            }
+            desc = "";
+        } else {
+            if (!desc.contains(".")) {
+                throw new IllegalStateException(format("First sentence of description for %s must end with a '.'", mavenOption.getName()));
+            }
         }
-        if (!desc.contains(".")) {
-            throw new IllegalStateException(format("First sentence of description for %s must end with a '.'", mavenOption.getName()));
-        }
-        if (mavenOption.getArgType() != NONE) {
+        if (mavenOption.getArgType() != OptionCollectionParser.ArgumentType.NONE) {
             desc = format("%s Argument%s should be %s%s. (See Argument Types for clarification)", desc, mavenOption.hasArgs() ? "s" : "",
                     mavenOption.hasArgs() ? "" : "a ", mavenOption.getArgName());
         }
@@ -166,16 +176,16 @@ public final class CodeGenerator {
         }
     }
 
-    /**
-     * Gets method name for the method in {@code AbstractMaven.java}.
-     * @param mavenOption the maven option generating the method.
-     * @return the method name description for the method in {@code AbstractMaven.java}.
-     */
-    private String createMethodName(final MavenOption mavenOption) {
-        String fname = WordUtils.capitalize(mavenOption.getName());
-        return (mavenOption.hasArgs() && !(fname.endsWith("s") || fname.endsWith("Approved") || fname.endsWith("Denied"))) ?
-                fname + "s" : fname;
-    }
+//    /**
+//     * Gets method name for the method in {@code AbstractMaven.java}.
+//     * @param mavenOption the maven option generating the method.
+//     * @return the method name description for the method in {@code AbstractMaven.java}.
+//     */
+//    private String createMethodName(final MavenOption mavenOption) {
+//        String fname = mavenOption.getMethodName();
+//        return (mavenOption.hasArgs() && !(fname.endsWith("s") || fname.endsWith("Approved") || fname.endsWith("Denied"))) ?
+//                fname + "s" : fname;
+//    }
 
     /**
      * Gets parameter annotation for the method in {@code AbstractMaven.java}.
@@ -204,21 +214,22 @@ public final class CodeGenerator {
      * Gathers all method definitions into a single string.
      * @return the definition of all the methods.
      */
-    private String gatherMethods() {
+    Map<MavenOption, String> gatherMethods() {
+        final Map<MavenOption, String> methods = new TreeMap<>(Comparator.comparing(MavenOption::getName));
         final VelocityContext context = new VelocityContext();
-        final StringWriter methodWriter = new StringWriter();
-        for (MavenOption mavenOption : OptionFactory.getOptions(MavenOption.FACTORY_CONFIG).toList()) {
+        mavenOptionCollection.getMappedOptions().forEach(mavenOption -> {
+            final StringWriter methodWriter = new StringWriter();
             context.put("option", mavenOption);
             String desc = createDesc(mavenOption);
             context.put("desc", desc);
             context.put("argDesc", createArgDesc(mavenOption, desc));
-            String functionName = createMethodName(mavenOption);
-            context.put("fname", functionName);
+            context.put("fname", mavenOption.getMethodName());
             context.put("parameterAnnotation", createParameterAnnotation(mavenOption, mavenOption.getName()));
             context.put("args", (mavenOption.hasArg() ? "String" : "boolean") + (mavenOption.hasArgs() ? "[]" : ""));
-
             methodTemplate.merge(context, methodWriter);
-        }
-        return methodWriter.toString();
+
+            methods.put(mavenOption, methodWriter.toString());
+        });
+        return methods;
     }
 }

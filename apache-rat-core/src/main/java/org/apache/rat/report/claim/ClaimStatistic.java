@@ -157,6 +157,15 @@ public class ClaimStatistic {
     }
 
     /**
+     * Increments the counts for the counter.
+     * @param counter the counter to increment.
+     * @param value the value to increment the counter by.
+     */
+    public void setCounter(final Counter counter, final int value) {
+        counterMap.put(counter, new IntCounter().increment(value));
+    }
+
+    /**
      * Gets the counts for the Document.Type.
      * @param documentType the Document.Type to get the counter for.
      * @return the number times the Document.Type was seen.
@@ -391,7 +400,7 @@ public class ClaimStatistic {
             XMLConfigurationReader.nodeListConsumer(document.getElementsByTagName("counter"), node -> {
                 Map<String, String> attributes = XMLConfigurationReader.attributes(node);
                 Counter type = Counter.valueOf(attributes.get("name"));
-                incCounter(type, Integer.parseInt(attributes.get("count")));
+                setCounter(type, Integer.parseInt(attributes.get("count")));
             });
         }
     }

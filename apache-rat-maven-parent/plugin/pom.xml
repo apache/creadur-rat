@@ -32,6 +32,7 @@
     <maven>${mavenMinVersion}</maven>
   </prerequisites>
   <properties>
+    <coreVersion>1.0.0-SNAPSHOT</coreVersion>
     <currentVersion>${project.version}</currentVersion>
     <doxiaVersion>2.0.0</doxiaVersion>
   </properties>
@@ -189,32 +190,32 @@
             </goals>
             <phase>generate-sources</phase>
             <configuration>
-              <mainClass>org.apache.rat.maven.CodeGenerator</mainClass>
+              <mainClass>org.apache.rat.maven.tools.CodeGenerator</mainClass>
               <arguments>
                 <argument>-p</argument>
                 <argument>${project.build.sourceDirectory}</argument>
               </arguments>
             </configuration>
           </execution>
-          <execution>
-            <id>generate-rat-tests</id>
-            <goals>
-              <goal>java</goal>
-            </goals>
-            <phase>generate-test-sources</phase>
-            <configuration>
-              <skip>true</skip>
-              <mainClass>org.apache.rat.maven.TestGenerator</mainClass>
-              <arguments>
-                <argument>-t</argument>
-                <argument>${project.build.testSourceDirectory}</argument>
-                <argument>-r</argument>
-                <argument>${project.build.testSourceDirectory}/../resources</argument>
-                <argument>-p</argument>
-                <argument>org.apache.rat.maven</argument>
-              </arguments>
-            </configuration>
-          </execution>
+<!--          <execution>-->
+<!--            <id>generate-rat-tests</id>-->
+<!--            <goals>-->
+<!--              <goal>java</goal>-->
+<!--            </goals>-->
+<!--            <phase>generate-test-sources</phase>-->
+<!--            <configuration>-->
+<!--              <skip>true</skip>-->
+<!--              <mainClass>org.apache.rat.maven.tools.TestGenerator</mainClass>-->
+<!--              <arguments>-->
+<!--                <argument>-t</argument>-->
+<!--                <argument>${project.build.testSourceDirectory}</argument>-->
+<!--                <argument>-r</argument>-->
+<!--                <argument>${project.build.testSourceDirectory}/../resources</argument>-->
+<!--                <argument>-p</argument>-->
+<!--                <argument>org.apache.rat.maven</argument>-->
+<!--              </arguments>-->
+<!--            </configuration>-->
+<!--          </execution>-->
           <execution>
             <id>Initial site generation</id>
             <phase>pre-site</phase>
@@ -249,6 +250,8 @@
           <cloneProjectsTo>${project.build.directory}/invoker_target</cloneProjectsTo>
           <localRepositoryPath>${project.build.directory}/local-repo</localRepositoryPath>
           <addTestClassPath>true</addTestClassPath>
+<!--          <extraArtifacts>org.apache.rat:apache-rat-core-tests:${coreVerson}:jar-->
+<!--            </extraArtifacts>-->
           <settingsFile>src/it/settings.xml</settingsFile>
           <postBuildHookScript>verify</postBuildHookScript>
         </configuration>
@@ -329,6 +332,7 @@
     <dependency>
       <groupId>org.apache.rat</groupId>
       <artifactId>apache-rat-core</artifactId>
+      <version>${coreVersion}</version>
     </dependency>
     <!-- rat tools in test scope so that it does not get bundled into the plugin -->
 <!--    <dependency>-->
@@ -339,6 +343,7 @@
     <dependency>
       <groupId>org.apache.rat</groupId>
       <artifactId>apache-rat-core-tests</artifactId>
+      <version>${coreVersion}</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
@@ -360,6 +365,11 @@
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter-params</artifactId>
       <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven.shared</groupId>
+      <artifactId>maven-invoker</artifactId>
+      <version>3.3.0</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven.plugin-tools</groupId>

@@ -17,6 +17,6 @@
  * under the License.
  */
 /**
- * RAT Maven plugin tools.
+ * RAT Maven plugin and tools shared files.
  */
 package org.apache.rat.maven;

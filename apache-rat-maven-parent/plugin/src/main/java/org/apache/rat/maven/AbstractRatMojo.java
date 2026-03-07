@@ -24,20 +24,20 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.ParseException;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
-import org.apache.rat.OptionCollection;
+import org.apache.rat.OptionCollectionParser;
 import org.apache.rat.ReportConfiguration;
 import org.apache.rat.commandline.Arg;
 import org.apache.rat.commandline.ArgumentContext;
 import org.apache.rat.document.DocumentName;
 import org.apache.rat.document.FileDocument;
 import org.apache.rat.license.ILicense;
+import org.apache.rat.ui.ArgumentTracker;
 import org.apache.rat.utils.DefaultLog;
 import org.apache.rat.utils.Log;
 import org.apache.rat.walker.DirectoryWalker;
@@ -121,12 +121,7 @@ public abstract class AbstractRatMojo extends AbstractMaven {
     protected List<String> getValues(final Arg arg) {
         List<String> result = new ArrayList<>();
         for (Option option : arg.group().getOptions()) {
-            if (option.getLongOpt() != null) {
-                List<String> args = argumentTracker.getArg(option.getLongOpt());
-                if (args != null) {
-                    result.addAll(args);
-                }
-            }
+            argumentTracker.getArg(ArgumentTracker.extractKey(option)).ifPresent(result::addAll);
         }
         return result;
     }
@@ -236,13 +231,12 @@ public abstract class AbstractRatMojo extends AbstractMaven {
 
     protected ReportConfiguration getConfiguration() throws MojoExecutionException {
         Log log = DefaultLog.getInstance();
+        OptionCollectionParser optionParser = new OptionCollectionParser(mavenOptionCollection);
         if (reportConfiguration == null) {
             try {
                 if (getLog().isDebugEnabled()) {
                     log.debug("Start BaseRatMojo Configuration options");
-                    for (Map.Entry<String, List<String>> entry : argumentTracker.entrySet()) {
-                        log.debug(format(" * %s %s", entry.getKey(), String.join(", ", entry.getValue())));
-                    }
+                    argumentTracker.apply((k, v) -> log.debug(format(" * %s %s", k, String.join(", ", v))));
                     log.debug("End BaseRatMojo Configuration options");
                 }
 
@@ -250,11 +244,12 @@ public abstract class AbstractRatMojo extends AbstractMaven {
                 removeKey(Arg.HELP_LICENSES);
                 setIncludeExclude();
 
-                ArgumentContext ctxt = OptionCollection.parseCommands(basedir, argumentTracker.args().toArray(new String[0]));
+                ArgumentContext ctxt = optionParser.parseCommands(basedir, argumentTracker.args().toArray(new String[0]));
                 DocumentName dirName = DocumentName.builder(basedir).build();
-                ctxt.getConfiguration().addSource(new DirectoryWalker(new FileDocument(dirName, basedir,
-                        ctxt.getConfiguration().getDocumentExcluder(dirName))));
-
+                if (argumentTracker.getArg(ArgumentTracker.extractKey(Arg.SOURCE.option())).isEmpty()) {
+                    ctxt.getConfiguration().addSource(new DirectoryWalker(new FileDocument(dirName, basedir,
+                            ctxt.getConfiguration().getDocumentExcluder(dirName))));
+                }
                 if (helpLicenses) {
                     new org.apache.rat.help.Licenses(ctxt.getConfiguration(), new PrintWriter(log.asWriter())).printHelp();
                 }

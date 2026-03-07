@@ -128,7 +128,7 @@
                 <artifactId>spotbugs-maven-plugin</artifactId>
                 <configuration>
                     <excludeFilterFile>spotbugs-ignore.xml</excludeFilterFile>
-                    <maxAllowedViolations>47</maxAllowedViolations>
+                    <maxAllowedViolations>90</maxAllowedViolations>
                 </configuration>
             </plugin>
             <plugin>

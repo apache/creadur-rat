@@ -41,11 +41,14 @@ import org.apache.rat.Reporter;
 import org.apache.rat.api.RatException;
 import org.apache.rat.commandline.Arg;
 import org.apache.rat.commandline.StyleSheets;
+import org.apache.rat.document.DocumentName;
 import org.apache.rat.license.LicenseSetFactory.LicenseFilter;
 import org.apache.rat.report.claim.ClaimStatistic;
 import org.apache.rat.ui.ArgumentTracker;
 import org.apache.rat.utils.DefaultLog;
 import org.apache.rat.utils.FileUtils;
+
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 import static java.lang.String.format;
 
@@ -67,6 +70,7 @@ public final class RatCheckMojo extends AbstractRatMojo {
         super();
     }
 
+    @SuppressFBWarnings("EI_EXPOSE_REP")
     public Reporter.Output getOutput() {
         return output;
     }
@@ -101,6 +105,12 @@ public final class RatCheckMojo extends AbstractRatMojo {
         if (skip) {
             getLog().info("RAT will not execute since it is configured to be skipped via system property 'rat.skip'.");
             return;
+        }
+
+        if (getLog().isDebugEnabled()) {
+            getLog().debug("ARG list -->");
+            argumentTracker.args().forEach(getLog()::debug);
+            getLog().debug("<-- ARG list");
         }
 
         if (getValues(Arg.OUTPUT_FILE).isEmpty()) {
@@ -143,7 +153,7 @@ public final class RatCheckMojo extends AbstractRatMojo {
         FileUtils.mkDir(ratPath.toFile());
         Path xmlPath = ratPath.resolve("rat.xml");
         IOSupplier<OutputStream> outputStream = () -> Files.newOutputStream(xmlPath);
-        final IOSupplier<InputStream> stylesheet = StyleSheets.XML.getStyleSheet();
+        final IOSupplier<InputStream> stylesheet = StyleSheets.XML.getStyleSheet().ioSupplier();
         try {
             output.format(stylesheet, outputStream);
         } catch (RatException e) {
@@ -169,7 +179,7 @@ public final class RatCheckMojo extends AbstractRatMojo {
                     !config.getClaimValidator().isValid(ClaimStatistic.Counter.UNAPPROVED, statistics.getCounter(ClaimStatistic.Counter.UNAPPROVED))) {
                 try {
                     ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                    output.format(StyleSheets.UNAPPROVED_LICENSES.getStyleSheet(), () -> baos);
+                    output.format(StyleSheets.UNAPPROVED_LICENSES.getStyleSheet().ioSupplier(), () -> baos);
                     getLog().warn(baos.toString(StandardCharsets.UTF_8));
                 } catch (RuntimeException rte) {
                     throw rte;
@@ -202,7 +212,8 @@ public final class RatCheckMojo extends AbstractRatMojo {
     public File getRatTxtFile() throws MojoFailureException {
         List<String> args = getValues(Arg.OUTPUT_FILE);
         if (args != null) {
-            return new File(args.get(0));
+            DocumentName workDir = DocumentName.builder(basedir).build();
+            return workDir.resolve(args.get(0)).asFile();
         }
         throw new MojoFailureException("No output file specified");
     }

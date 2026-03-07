@@ -19,15 +19,11 @@
 
 package org.apache.rat.maven;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.rat.commandline.Arg;
 import org.apache.rat.config.exclusion.StandardCollection;
 import org.apache.rat.ui.ArgumentTracker;
-import org.apache.rat.ui.OptionFactory;
 
 /**
  * Generated class to provide Maven support for standard RAT command line options
@@ -37,10 +33,12 @@ import org.apache.rat.ui.OptionFactory;
 public abstract class AbstractMaven extends AbstractMojo {
     /** The arguments that have been set */
     protected final ArgumentTracker argumentTracker;
+    /** The collection of Maven options */
+    protected final MavenOptionCollection mavenOptionCollection;
 
     protected AbstractMaven() {
-        List<MavenOption> mavenList = OptionFactory.getOptions(MavenOption.FACTORY_CONFIG).collect(Collectors.toList());
-        argumentTracker = new ArgumentTracker(mavenList);
+        mavenOptionCollection = new MavenOptionCollection();
+        argumentTracker = new ArgumentTracker(mavenOptionCollection.getMappedOptions().toList());
         argumentTracker.addArg(ArgumentTracker.extractKey(Arg.EXCLUDE_STD.option()), StandardCollection.MAVEN.name());
     }
 

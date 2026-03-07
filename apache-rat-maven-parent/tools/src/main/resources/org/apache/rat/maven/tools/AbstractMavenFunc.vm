@@ -17,7 +17,9 @@
  * under the License.
  *#
     /**
+#if (${desc} != "")
      * ${desc}
+#end
      * @param ${option.getName} ${argDesc}
 #if (${option.isDeprecated})
      * @deprecated ${option.getDeprecated}
@@ -27,7 +29,7 @@
     @Deprecated
 #end
     ${parameterAnnotation}
-    public void set${fname}(final ${args} ${option.getName}) {
+    public void ${fname}(final ${args} ${option.getName}) {
 #if (${option.hasArg})
   #if (${option.hasArgs})
         argumentTracker.addArg("${option.keyValue}", ${option.getName});

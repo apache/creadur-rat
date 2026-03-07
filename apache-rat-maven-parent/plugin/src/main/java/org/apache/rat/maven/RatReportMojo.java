@@ -68,6 +68,8 @@ import org.eclipse.aether.repository.ArtifactRepository;
 import org.eclipse.aether.repository.RemoteRepository;
 import org.xml.sax.SAXException;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 import static org.apache.maven.shared.utils.logging.MessageUtils.buffer;
 
 /**
@@ -139,6 +141,7 @@ public class RatReportMojo extends AbstractRatMojo implements MavenMultiPageRepo
      * @throws MojoExecutionException if an error occurs when generating the report
      * @see org.apache.maven.plugin.Mojo#execute()
      */
+    @SuppressFBWarnings("PATH_TRAVERSAL_IN")
     @Override
     public void execute() throws MojoExecutionException {
         if (!canGenerateReport()) {
@@ -245,6 +248,7 @@ public class RatReportMojo extends AbstractRatMojo implements MavenMultiPageRepo
      * @param locale the wanted locale to generate the report, could be null.
      * @throws MavenReportException if any
      */
+    @SuppressFBWarnings("EI_EXPOSE_REP2")
     @Override
     public void generate(final Sink sink, final SinkFactory sinkFactory, final Locale locale) throws MavenReportException {
         if (!canGenerateReport()) {
@@ -266,6 +270,7 @@ public class RatReportMojo extends AbstractRatMojo implements MavenMultiPageRepo
         }
     }
 
+    @SuppressFBWarnings("PATH_TRAVERSAL_IN")
     private void generateReportManually(final Locale locale) throws MavenReportException {
         try {
             File outputDir = new File(getOutputDirectory());
@@ -319,12 +324,12 @@ public class RatReportMojo extends AbstractRatMojo implements MavenMultiPageRepo
         return CATEGORY_PROJECT_REPORTS;
     }
 
+    @SuppressFBWarnings("PATH_TRAVERSAL_IN")
     @Override
     public File getReportOutputDirectory() {
         if (reportOutputDirectory == null) {
             reportOutputDirectory = new File(getOutputDirectory());
         }
-
         return reportOutputDirectory;
     }
 
@@ -334,6 +339,7 @@ public class RatReportMojo extends AbstractRatMojo implements MavenMultiPageRepo
         this.outputDirectory = reportOutputDirectory;
     }
 
+    @SuppressFBWarnings("PATH_TRAVERSAL_IN")
     protected String getOutputDirectory() {
         if (outputDirectory == null) {
             outputDirectory = new File(getProject().getModel().getReporting().getOutputDirectory());
@@ -369,14 +375,7 @@ public class RatReportMojo extends AbstractRatMojo implements MavenMultiPageRepo
      * Actions when closing the report.
      */
     protected void closeReport() {
-        getSink().close();
-    }
-
-    /**
-     * @return the sink used
-     */
-    public Sink getSink() {
-        return sink;
+        sink.close();
     }
 
     /**
@@ -400,6 +399,7 @@ public class RatReportMojo extends AbstractRatMojo implements MavenMultiPageRepo
         return !skip;
     }
 
+    @SuppressFBWarnings("XXE_DOCUMENT")
     Reporter.Output readReportFile() throws MavenReportException {
         File f = new File(outputDirectory, "RAT/rat.xml");
         try (InputStream inputStream = new FileInputStream(f)) {
@@ -440,7 +440,7 @@ public class RatReportMojo extends AbstractRatMojo implements MavenMultiPageRepo
         sink.link_();
         File f = new File(outputDirectory, ".rat.xhtml5");
         try {
-            readReportFile().format(StyleSheets.XHTML5.getStyleSheet(), () -> Files.newOutputStream(f.toPath()));
+            readReportFile().format(StyleSheets.XHTML5.getStyleSheet().ioSupplier(), () -> Files.newOutputStream(f.toPath()));
             try (Reader reader = new InputStreamReader(Files.newInputStream(f.toPath()), StandardCharsets.UTF_8)) {
                 new Xhtml5Parser().parse(reader, sink);
             }

@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
@@ -154,8 +155,8 @@ public final class ArgumentTracker {
      * @param key the key for the map.
      * @return the list of values for the key or {@code null} if not set.
      */
-    public List<String> getArg(final String key) {
-        return args.get(key);
+    public Optional<List<String>> getArg(final String key) {
+        return Optional.ofNullable(args.get(key));
     }
 
     /**

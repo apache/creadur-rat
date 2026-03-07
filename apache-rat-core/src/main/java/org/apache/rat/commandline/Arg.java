@@ -21,7 +21,6 @@ package org.apache.rat.commandline;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.lang.reflect.Array;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -40,7 +39,6 @@ import org.apache.commons.cli.OptionGroup;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.io.function.IOSupplier;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.rat.ConfigurationException;
 import org.apache.rat.Defaults;
@@ -876,7 +874,7 @@ public enum Arg {
                 context.getConfiguration().setOut(file);
             } catch (ParseException e) {
                 context.logParseException(e, OUTPUT_FILE.getSelected(), "System.out");
-                context.getConfiguration().setOut((IOSupplier<OutputStream>) null);
+                context.getConfiguration().setOut(ReportConfiguration.SYSTEM_OUT);
             }
         }
 

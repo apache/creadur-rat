@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.rat.maven;
+package org.apache.rat.maven.tools;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -27,6 +27,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Locale;
+import java.util.Properties;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.DefaultParser;
@@ -35,13 +36,15 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.lang3.tuple.Pair;
-import org.apache.commons.text.WordUtils;
 import org.apache.rat.DeprecationReporter;
 import org.apache.rat.VersionInfo;
-import org.apache.rat.testhelpers.FileUtils;
+import org.apache.rat.maven.MavenOption;
+import org.apache.rat.maven.MavenOptionCollection;
+import org.apache.rat.maven.PropertyReader;
 import org.apache.rat.testhelpers.data.ReportTestDataProvider;
 import org.apache.rat.testhelpers.data.TestData;
 import org.apache.rat.utils.CasedString;
+import org.apache.rat.utils.FileUtils;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
@@ -56,25 +59,22 @@ public final class TestGenerator {
     /** They syntax for this command */
     private static final String SYNTAX = String.format("java -cp ... %s [options]", TestGenerator.class.getName());
     /** The package name as a cased string */
-    private final CasedString packageName;
+    private CasedString packageName;
     /** The resource directory where the test resources will be written */
-    private final Path resourceDirectory;
+    private Path resourceDirectory;
     /** The directory where the test classes will be written*/
-    private final Path testDirectory;
+    private Path testDirectory;
     /** The template for the pom.xml files */
     private final Template pomTemplate;
     /** The template for the test class file */
     private final Template javaTemplate;
     /** The template for the methods within the test class */
     private final Template methodTemplate;
+    /** The Maven properties */
+    private final Properties properties;
 
-
-    @SuppressFBWarnings("PATH_TRAVERSAL_IN")
-    private TestGenerator(final String packageName, final String resourceDirectory, final String testDirectory) {
-        this.packageName = new CasedString(CasedString.StringCase.DOT, packageName);
-        this.resourceDirectory = Paths.get(resourceDirectory);
-        this.testDirectory = Paths.get(testDirectory).resolve(this.packageName.toCase(CasedString.StringCase.SLASH));
-
+    public TestGenerator() throws IOException {
+        properties = PropertyReader.read("app.properties");
         VelocityEngine velocityEngine = new VelocityEngine();
         velocityEngine.setProperty(RuntimeConstants.RESOURCE_LOADER, "classpath");
         velocityEngine.setProperty("classpath.resource.loader.class", "org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader");
@@ -89,6 +89,14 @@ public final class TestGenerator {
         javaTemplate = velocityEngine.getTemplate(CasedString.StringCase.SLASH.assemble(nameParts));
         nameParts[nameParts.length - 1] = "TestMethod.vm";
         methodTemplate = velocityEngine.getTemplate(CasedString.StringCase.SLASH.assemble(nameParts));
+    }
+
+    @SuppressFBWarnings("PATH_TRAVERSAL_IN")
+    TestGenerator(final String packageName, final String resourceDirectory, final String testDirectory) throws IOException {
+        this();
+        this.packageName = new CasedString(CasedString.StringCase.DOT, packageName);
+        this.resourceDirectory = Paths.get(resourceDirectory);
+        this.testDirectory = Paths.get(testDirectory).resolve(this.packageName.toCase(CasedString.StringCase.SLASH));
     }
 
     /**
@@ -146,15 +154,23 @@ public final class TestGenerator {
      * Execute the generation.
      * @throws IOException on IO error.
      */
-    private void execute() throws IOException {
+    void execute() throws IOException {
         VelocityContext context = new VelocityContext();
         context.put("packageName", packageName.toString());
 
         final VersionInfo versionInfo = new VersionInfo(TestGenerator.class);
-        context.put("rat_version", versionInfo.getSpecVersion());
+        context.put("rat_version", ratVersion());
         context.put("plugin_version", versionInfo.getVersion());
         context.put("tests", writeTestPoms(context));
         writeTestFiles(context);
+    }
+
+    public String ratVersion() {
+        return properties.getProperty("rat.version");
+    }
+
+    public String pluginVersion() {
+        return properties.getProperty("rat.plugin.version");
     }
 
     /**
@@ -170,6 +186,26 @@ public final class TestGenerator {
         }
     }
 
+    public String buildPom(final MavenOptionCollection optionCollection, final TestData testData) {
+        final VelocityContext context =  new VelocityContext();
+        CasedString casedTestName = new CasedString(CasedString.StringCase.CAMEL, testData.getClassName());
+        context.put("artifactId", casedTestName.toCase(CasedString.StringCase.KEBAB).toLowerCase(Locale.ROOT));
+        context.put("testName", testData.getTestName());
+        context.put("rat_version", ratVersion());
+        context.put("plugin_version", pluginVersion());
+        StringBuilder configuration = new StringBuilder();
+        for (Pair<Option, String[]> pair : testData.getArgs()) {
+            if (pair.getKey() != null) {
+                MavenOption option = optionCollection.getMappedOption(pair.getKey());
+                configuration.append(option.getExample(pair.getRight())).append(System.lineSeparator());
+            }
+        }
+        context.put("rat_configuration", configuration.toString());
+        StringWriter writer = new StringWriter();
+            pomTemplate.merge(context, writer);
+        return writer.toString();
+    }
+
     /**
      * Write the test poms for all the supported options.
      * Generates method definitions (one for each pom file) to be included in {@code MavenTest.java}.
@@ -178,11 +214,12 @@ public final class TestGenerator {
      * @throws IOException on IO error
      */
     private String writeTestPoms(final VelocityContext context) throws IOException {
-
+        MavenOptionCollection optionCollection = new MavenOptionCollection();
         StringWriter funcCode = new StringWriter();
 
-        for (final TestData testData : new ReportTestDataProvider().getOptionTests(MavenOption.UNSUPPORTED_SET)) {
-            context.put("option", testData.getOption());
+        for (final TestData testData : new ReportTestDataProvider().getOptionTests(optionCollection)) {
+            String config = buildPom(optionCollection, testData);
+            //context.put("option", testData.getOption());
             // relative directory to test resources.
             Path testDir = Paths.get("src/test/resources").resolve(packageName.toCase(CasedString.StringCase.SLASH))
                     .resolve("stubs").resolve(testData.getTestName());
@@ -194,26 +231,14 @@ public final class TestGenerator {
             Path testPath = resourcePath().resolve(testData.getTestName());
             context.put("baseDir", testPath.toFile().getAbsolutePath());
             FileUtils.mkDir(testPath.toFile());
-            CasedString casedTestName = new CasedString(CasedString.StringCase.CAMEL, testData.getClassName());
-            context.put("artifactId", casedTestName.toCase(CasedString.StringCase.KEBAB).toLowerCase(Locale.ROOT));
+            //CasedString casedTestName = new CasedString(CasedString.StringCase.CAMEL, testData.getClassName());
             context.put("testName", testData.getTestName());
-            context.put("stubName", testData.getClassName());
-            context.put("funcName", WordUtils.uncapitalize(testData.getClassName()));
-
-            StringBuilder configuration = new StringBuilder();
-            for (Pair<Option, String[]> pair : testData.getArgs()) {
-                if (pair.getKey() != null) {
-                    MavenOption option = new MavenOption(pair.getKey());
-                    configuration.append(option.getExample(pair.getRight())).append(System.lineSeparator());
-                }
-            }
-            context.put("rat_configuration", configuration.toString());
+            methodTemplate.merge(context, funcCode);
 
             File pomFile = testPath.resolve("pom.xml").toFile();
             try (FileWriter writer = new FileWriter(pomFile, StandardCharsets.UTF_8)) {
-                pomTemplate.merge(context, writer);
+                writer.append(buildPom(optionCollection, testData));
             }
-            methodTemplate.merge(context, funcCode);
         }
         return funcCode.toString();
     }
