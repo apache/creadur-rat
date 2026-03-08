@@ -26,6 +26,7 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
+import javax.xml.XMLConstants;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
@@ -48,7 +49,6 @@ import org.w3c.dom.Document;
  */
 @SuppressWarnings({"checkstyle:MagicNumber", "checkstyle:JavadocVariable"})
 public final class XmlWriter implements IXmlWriter {
-    private static final String DISALLOW_XXE = "http://apache.org/xml/features/disallow-doctype-decl";
     private static final String XML_INDENT = "{http://xml.apache.org/xslt}indent-amount";
     private final Appendable appendable;
     private final ArrayDeque<CharSequence> elementNames;
@@ -327,7 +327,9 @@ public final class XmlWriter implements IXmlWriter {
         currentAttributes.clear();
         try {
             TransformerFactory factory = TransformerFactory.newInstance();
-            factory.setFeature(DISALLOW_XXE, true);
+            factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+            factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
+            factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_STYLESHEET, "");
             Transformer transformer = factory.newTransformer();
             transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
             transformer.setOutputProperty(OutputKeys.METHOD, "xml");

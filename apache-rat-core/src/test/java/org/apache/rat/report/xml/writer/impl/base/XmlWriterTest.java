@@ -18,17 +18,24 @@
  */ 
 package org.apache.rat.report.xml.writer.impl.base;
 
+import jdk.dynalink.Operation;
 import org.apache.rat.report.xml.writer.InvalidXmlException;
 import org.apache.rat.report.xml.writer.OperationNotAllowedException;
 import org.apache.rat.report.xml.writer.XmlWriter;
+import org.apache.rat.testhelpers.XmlUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.w3c.dom.Document;
 
+import java.io.ByteArrayInputStream;
 import java.io.StringWriter;
+import java.nio.charset.StandardCharsets;
+import java.util.NoSuchElementException;
 
 import static org.assertj.core.api.Assertions.fail;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class XmlWriterTest {
@@ -493,5 +500,50 @@ public class XmlWriterTest {
         } catch (InvalidXmlException e) {
             // Each attribute may only be written once
         }
+    }
+
+    @Test
+    public void writeCDataBeforeElement() throws Exception {
+        assertThrows(OperationNotAllowedException.class, () -> writer.startDocument().cdata("Just cdata").closeDocument());
+    }
+
+    @Test
+    public void writeCData() throws Exception {
+        writer.startDocument().openElement("test").cdata("Just cdata").closeDocument();
+        assertEquals("<?xml version='1.0'?><test><![CDATA[ Just cdata ]]></test>", out.toString());
+    }
+
+    @Test
+    public void writeCDataEmbeddedCData() throws Exception {
+        writer.startDocument().openElement("test").cdata("Some <![CDATA[ cdata ]]> text").closeDocument();
+        assertEquals("<?xml version='1.0'?><test><![CDATA[ Some \\u3C![CDATA[ cdata {rat:CDATA close} text ]]></test>", out.toString());
+    }
+
+    @Test
+    public void closeElementBeforeOpened() throws Exception {
+        assertThrows(NoSuchElementException.class, () -> writer.startDocument().openElement("test").closeElement("missing"));
+    }
+
+    @Test
+    public void closeElement() throws Exception {
+        writer.startDocument().openElement("root").openElement("hello").openElement("world").content("hello world").closeElement("hello").openElement("test").closeDocument();
+        assertEquals("<?xml version='1.0'?><root><hello><world>hello world</world></hello><test/></root>", out.toString());
+    }
+
+    @Test
+    public void append() throws Exception {
+        String expected = """
+                <?xml version='1.0'?><base>
+                <root>
+                    <hello>
+                        <world>hello world</world>
+                    </hello>
+                    <test/>
+                </root>
+                </base>""";
+        byte[] rawDocument = "<?xml version='1.0'?><root><hello><world>hello world</world></hello><test/></root>".getBytes(StandardCharsets.UTF_8);
+        Document document = XmlUtils.toDom(new ByteArrayInputStream(rawDocument));
+        writer.startDocument().openElement("base").append(document).closeDocument();
+        assertEquals(expected, out.toString());
     }
 }
