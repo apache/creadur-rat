@@ -34,7 +34,7 @@ import org.apache.commons.text.WordUtils;
  * Handles converting from one string case to another (e.g. camel case to snake case).
  * @since 0.17
  */
-public class CasedString {
+public final class CasedString {
     /** The segments of the cased string */
     private final String[] segments;
     /** The case of the string as parsed */
@@ -89,7 +89,7 @@ public class CasedString {
      * @return this cased string in the desired case.
      */
     public String toCase(final StringCase stringCase) {
-        return this.segments == CasedString.StringCase.NULL_SEGMENT ? null : (String) stringCase.assemble(this.getSegments());
+        return this.segments == CasedString.StringCase.NULL_SEGMENT ? null : stringCase.assemble(this.getSegments());
     }
 
     @Override
@@ -97,10 +97,22 @@ public class CasedString {
         return this.toCase(this.stringCase);
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        CasedString that = (CasedString) o;
+        return Objects.deepEquals(getSegments(), that.getSegments()) && Objects.equals(stringCase, that.stringCase);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(Arrays.hashCode(getSegments()), stringCase);
+    }
+
     /**
      * The definition of a String case.
      */
-    public static class StringCase {
+    public final static class StringCase {
         /** The camel case.  Example: "HelloWorld"*/
         public static final StringCase CAMEL;
         /** The pascal case.  Example: "helloWorld" */
@@ -226,9 +238,10 @@ public class CasedString {
                     lst.add(sb.toString());
                 }
 
-                return (String[]) lst.stream().map(this.postProcess).filter(Objects::nonNull).toArray(String[]::new);
+                return lst.stream().map(this.postProcess).filter(Objects::nonNull).toArray(String[]::new);
             }
         }
+
 
         static {
             CAMEL = new StringCase("CAMEL", Character::isUpperCase, true, CasedString.PASCAL_JOINER.andThen(WordUtils::uncapitalize),
