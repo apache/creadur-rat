@@ -25,7 +25,6 @@ import java.util.Locale;
 import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.Predicate;
-import java.util.function.UnaryOperator;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.WordUtils;
@@ -34,26 +33,22 @@ import org.apache.commons.text.WordUtils;
  * Handles converting from one string case to another (e.g. camel case to snake case).
  * @since 0.17
  */
-public final class CasedString {
+public class CasedString {
     /** The segments of the cased string */
     private final String[] segments;
     /** The case of the string as parsed */
     private final StringCase stringCase;
-
-    /**
-     * A method to join camel string fragments together.
-     */
-    private static final Function<String[], String> CAMEL_JOINER = a -> {
-        StringBuilder sb = new StringBuilder(a[0].toLowerCase(Locale.ROOT));
-
-        for (int i = 1; i < a.length; i++) {
-            sb.append(WordUtils.capitalize(a[i].toLowerCase(Locale.ROOT)));
-        }
+    /** A joiner used for the pascal and camel cases. */
+    private static final Function<String[], String> PASCAL_JOINER = strings -> {
+        StringBuilder sb = new StringBuilder();
+        Arrays.stream(strings).map(s -> s == null ? "" : s).forEach(token -> sb.append(WordUtils.capitalize(token.toLowerCase(Locale.ROOT))));
         return sb.toString();
     };
 
     /**
-     * An enumeration of supported string cases.  These cases tag strings as having a specific format.
+     * Creates a cased string by parsing the string argument for the specific case.
+     * @param stringCase the case of the string being parsed.
+     * @param string the string to parse.
      */
     public CasedString(final StringCase stringCase, final String string) {
         this.segments = string == null ? CasedString.StringCase.NULL_SEGMENT : stringCase.getSegments(string.trim());
@@ -61,7 +56,7 @@ public final class CasedString {
     }
 
     /**
-     * Creates a cased string of the specified case and segments.
+     * Creates a cased string of the specified case and segments
      * @param stringCase the case of the string.
      * @param segments the segments of the string.
      */
@@ -93,7 +88,7 @@ public final class CasedString {
      * @return this cased string in the desired case.
      */
     public String toCase(final StringCase stringCase) {
-        return this.segments == CasedString.StringCase.NULL_SEGMENT ? null : stringCase.assemble(this.getSegments());
+        return this.segments == CasedString.StringCase.NULL_SEGMENT ? null : (String) stringCase.assemble(this.getSegments());
     }
 
     @Override
@@ -101,27 +96,13 @@ public final class CasedString {
         return this.toCase(this.stringCase);
     }
 
-    @Override
-    public boolean equals(final Object o) {
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        CasedString that = (CasedString) o;
-        return Objects.deepEquals(getSegments(), that.getSegments()) && Objects.equals(stringCase, that.stringCase);
-    }
-
-    @Override
-    public int hashCode() {
-        return Arrays.hashCode(getSegments());
-    }
-
     /**
-     * The definition of a string case.
+     * The definition of a String case.
      */
-    public static final class StringCase {
-        /** The camel case. Example: "HelloWorld"*/
+    public static class StringCase {
+        /** The camel case.  Example: "HelloWorld"*/
         public static final StringCase CAMEL;
-        /** The pascal case. Example: "helloWorld" */
+        /** The pascal case.  Example: "helloWorld" */
         public static final StringCase PASCAL;
         /** The Snake case. Example: "hello_world" */
         public static final StringCase SNAKE;
@@ -129,29 +110,29 @@ public final class CasedString {
         public static final StringCase KEBAB;
         /** The phrase case. Example: "hello world" */
         public static final StringCase PHRASE;
-        /** The dot case. Example: "hello.world" */
+        /** The dot case.  Example: "hello.world" */
         public static final StringCase DOT;
         /** The slash case. Example: "hello/world" */
         public static final StringCase SLASH;
         /** A marker for the parsing of a NULL string. */
-        static final String[] NULL_SEGMENT;
+        private static final String[] NULL_SEGMENT;
         /** An empty segment marker. */
-        static final String[] EMPTY_SEGMENT;
+        private static final String[] EMPTY_SEGMENT;
         /** The name of this case */
         private final String name;
-        /** The predicate that determines if a character is a splitter character. A splitter character
+        /** The predicate that determines if a character is a spliter character.  A splitter character
          * is the character that signals the start of a new segment.
          */
         private final Predicate<Character> splitter;
         /**
-         * If {@code true}, the splitter character is preserved as part of the subsequent section otherwise,
-         * the splitter character is discarded.
+         * If {@code true} the spliter character is preserved as part of the subsequent section otherwise,
+         * the spliter character is discarded.
          */
         private final boolean preserveSplit;
         /** The function that converts segments into the String representation */
         private final Function<String[], String> joiner;
         /** A function to provide post-processing on the joined string */
-        private final UnaryOperator<String> postProcess;
+        private final Function<String, String> postProcess;
 
         /**
          * Constructs a StringCase
@@ -161,7 +142,7 @@ public final class CasedString {
          * @param joiner the joiner to assemble the String from the segments.
          */
         public StringCase(final String name, final Predicate<Character> splitter, final boolean preserveSplit, final Function<String[], String> joiner) {
-            this(name, splitter, preserveSplit, joiner, UnaryOperator.identity());
+            this(name, splitter, preserveSplit, joiner, Function.identity());
         }
 
         /**
@@ -182,7 +163,7 @@ public final class CasedString {
          * @param postProcess the post-process applied to the segments after the splitter has created them.
          */
         public StringCase(final String name, final Predicate<Character> splitter, final boolean preserveSplit, final Function<String[], String> joiner,
-                          final UnaryOperator<String> postProcess) {
+                          final Function<String, String> postProcess) {
             this.name = name;
             this.splitter = splitter;
             this.preserveSplit = preserveSplit;
@@ -211,7 +192,7 @@ public final class CasedString {
          * @return the complete String.
          */
         public String assemble(final String[] segments) {
-            return this.joiner.apply(segments);
+            return (String) this.joiner.apply(segments);
         }
 
         /**
@@ -225,7 +206,7 @@ public final class CasedString {
             } else if (string.isEmpty()) {
                 return EMPTY_SEGMENT;
             } else {
-                List<String> lst = new ArrayList<>();
+                List<String> lst = new ArrayList();
                 StringBuilder sb = new StringBuilder();
 
                 for (char c : string.toCharArray()) {
@@ -244,15 +225,14 @@ public final class CasedString {
                     lst.add(sb.toString());
                 }
 
-                return lst.stream().map(this.postProcess).filter(Objects::nonNull).toArray(String[]::new);
+                return (String[]) lst.stream().map(this.postProcess).filter(Objects::nonNull).toArray(String[]::new);
             }
         }
 
-
         static {
-            CAMEL = new StringCase("CAMEL", Character::isUpperCase, true, CasedString.CAMEL_JOINER,
+            CAMEL = new StringCase("CAMEL", Character::isUpperCase, true, CasedString.PASCAL_JOINER.andThen(WordUtils::uncapitalize),
                     x -> (String) StringUtils.defaultIfEmpty(x, (CharSequence) null));
-            PASCAL = new StringCase("PASCAL", Character::isUpperCase, true, CasedString.CAMEL_JOINER.andThen(WordUtils::uncapitalize),
+            PASCAL = new StringCase("PASCAL", Character::isUpperCase, true, CasedString.PASCAL_JOINER,
                     x -> (String) StringUtils.defaultIfEmpty(x, (CharSequence) null));
             SNAKE = new StringCase("SNAKE", '_');
             KEBAB = new StringCase("KEBAB", '-');
