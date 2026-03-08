@@ -45,8 +45,6 @@ import java.util.Arrays;
  *
  * @version $Id$
  */
-@SuppressWarnings({"checkstyle:MagicNumber", "checkstyle:ParenPad", "checkstyle:FinalParameters", "checkstyle:JavadocVariable",
-        "checkstyle:RegexpSingleline", "checkstyle:UnnecessaryParentheses"})
 public final class XMLChar {
 
     private XMLChar() {
