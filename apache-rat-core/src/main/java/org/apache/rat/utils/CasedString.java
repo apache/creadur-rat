@@ -34,11 +34,14 @@ import org.apache.commons.text.WordUtils;
  * @since 0.17
  */
 public class CasedString {
-    private final String[] parts;
+    /** The segments of the cased string */
+    private final String[] segments;
+    /** The case of the string as parsed */
     private final StringCase stringCase;
-    private static final Function<String[], String> PASCAL_JOINER = (strings) -> {
+    /** A joiner used for the pascal and camel cases. */
+    private static final Function<String[], String> PASCAL_JOINER = strings -> {
         StringBuilder sb = new StringBuilder();
-        Arrays.stream(strings).map((s) -> s == null ? "" : s).forEach((token) -> sb.append(WordUtils.capitalize(token.toLowerCase(Locale.ROOT))));
+        Arrays.stream(strings).map(s -> s == null ? "" : s).forEach(token -> sb.append(WordUtils.capitalize(token.toLowerCase(Locale.ROOT))));
         return sb.toString();
     };
 
@@ -47,8 +50,8 @@ public class CasedString {
      * @param stringCase the case of the string being parsed.
      * @param string the string to parse.
      */
-    public CasedString(StringCase stringCase, String string) {
-        this.parts = string == null ? CasedString.StringCase.NULL_SEGMENT : stringCase.getSegments(string.trim());
+    public CasedString(final StringCase stringCase, final String string) {
+        this.segments = string == null ? CasedString.StringCase.NULL_SEGMENT : stringCase.getSegments(string.trim());
         this.stringCase = stringCase;
     }
 
@@ -57,8 +60,8 @@ public class CasedString {
      * @param stringCase the case of the string.
      * @param segments the segments of the string.
      */
-    public CasedString(StringCase stringCase, String[] segments) {
-        this.parts = segments;
+    public CasedString(final StringCase stringCase, final String[] segments) {
+        this.segments = segments;
         this.stringCase = stringCase;
     }
 
@@ -67,8 +70,8 @@ public class CasedString {
      * @param stringCase the desired format.
      * @return the new CasedString.
      */
-    public CasedString as(StringCase stringCase) {
-        return stringCase.name.equals(this.stringCase.name) ? this : new CasedString(stringCase, (String[])Arrays.copyOf(this.parts, this.parts.length));
+    public CasedString as(final StringCase stringCase) {
+        return stringCase.name.equals(this.stringCase.name) ? this : new CasedString(stringCase, (String[]) Arrays.copyOf(this.segments, this.segments.length));
     }
 
     /**
@@ -76,7 +79,7 @@ public class CasedString {
      * @return the segments of this cased string.
      */
     public String[] getSegments() {
-        return this.parts;
+        return this.segments;
     }
 
     /**
@@ -84,8 +87,8 @@ public class CasedString {
      * @param stringCase the desired case.
      * @return this cased string in the desired case.
      */
-    public String toCase(StringCase stringCase) {
-        return this.parts == CasedString.StringCase.NULL_SEGMENT ? null : (String)stringCase.assemble(this.getSegments());
+    public String toCase(final StringCase stringCase) {
+        return this.segments == CasedString.StringCase.NULL_SEGMENT ? null : (String) stringCase.assemble(this.getSegments());
     }
 
     @Override
@@ -138,7 +141,7 @@ public class CasedString {
          * @param preserveSplit the preserveSplit flag.
          * @param joiner the joiner to assemble the String from the segments.
          */
-        public StringCase(String name, Predicate<Character> splitter, boolean preserveSplit, Function<String[], String> joiner) {
+        public StringCase(final String name, final Predicate<Character> splitter, final boolean preserveSplit, final Function<String[], String> joiner) {
             this(name, splitter, preserveSplit, joiner, Function.identity());
         }
 
@@ -147,8 +150,8 @@ public class CasedString {
          * @param name the name of the case.
          * @param delimiter the delimter between segments.
          */
-        public StringCase(String name, char delimiter) {
-            this(name, (c) -> c == delimiter, false, simpleJoiner(delimiter));
+        public StringCase(final String name, final char delimiter) {
+            this(name, c -> c == delimiter, false, simpleJoiner(delimiter));
         }
 
         /**
@@ -157,9 +160,10 @@ public class CasedString {
          * @param splitter the splitter to detect segments.
          * @param preserveSplit the flag to preserve the splitter character.
          * @param joiner the joiner to assemble a String from segments.
-         * @param postProcess the post-process applied to the string from the joiner.
+         * @param postProcess the post-process applied to the segments after the splitter has created them.
          */
-        public StringCase(String name, Predicate<Character> splitter, boolean preserveSplit, Function<String[], String> joiner, Function<String, String> postProcess) {
+        public StringCase(final String name, final Predicate<Character> splitter, final boolean preserveSplit, final Function<String[], String> joiner,
+                          final Function<String, String> postProcess) {
             this.name = name;
             this.splitter = splitter;
             this.preserveSplit = preserveSplit;
@@ -173,8 +177,8 @@ public class CasedString {
          * @param delimiter the delimiter to use between the segments.
          * @return the assembled string.
          */
-        public static Function<String[], String> simpleJoiner(char delimiter) {
-            return (s) -> String.join(String.valueOf(delimiter), (CharSequence[])Arrays.stream(s).filter(Objects::nonNull).toArray(String[]::new));
+        public static Function<String[], String> simpleJoiner(final char delimiter) {
+            return s -> String.join(String.valueOf(delimiter), (CharSequence[]) Arrays.stream(s).filter(Objects::nonNull).toArray(String[]::new));
         }
 
         @Override
@@ -187,8 +191,8 @@ public class CasedString {
          * @param segments the segments to assemble.
          * @return the complete String.
          */
-        public String assemble(String[] segments) {
-            return (String)this.joiner.apply(segments);
+        public String assemble(final String[] segments) {
+            return (String) this.joiner.apply(segments);
         }
 
         /**
@@ -196,7 +200,7 @@ public class CasedString {
          * @param string the string to parse
          * @return the segments from the string.
          */
-        public String[] getSegments(String string) {
+        public String[] getSegments(final String string) {
             if (string == null) {
                 return NULL_SEGMENT;
             } else if (string.isEmpty()) {
@@ -205,7 +209,7 @@ public class CasedString {
                 List<String> lst = new ArrayList();
                 StringBuilder sb = new StringBuilder();
 
-                for(char c : string.toCharArray()) {
+                for (char c : string.toCharArray()) {
                     if (this.splitter.test(c)) {
                         lst.add(sb.toString());
                         sb.setLength(0);
@@ -221,13 +225,15 @@ public class CasedString {
                     lst.add(sb.toString());
                 }
 
-                return (String[])lst.stream().map(this.postProcess).filter(Objects::nonNull).toArray(String[]::new);
+                return (String[]) lst.stream().map(this.postProcess).filter(Objects::nonNull).toArray(String[]::new);
             }
         }
 
         static {
-            CAMEL = new StringCase("CAMEL", Character::isUpperCase, true, CasedString.PASCAL_JOINER.andThen(WordUtils::uncapitalize), (x) -> (String)StringUtils.defaultIfEmpty(x, (CharSequence)null));
-            PASCAL = new StringCase("PASCAL", Character::isUpperCase, true, CasedString.PASCAL_JOINER, (x) -> (String)StringUtils.defaultIfEmpty(x, (CharSequence)null));
+            CAMEL = new StringCase("CAMEL", Character::isUpperCase, true, CasedString.PASCAL_JOINER.andThen(WordUtils::uncapitalize),
+                    x -> (String) StringUtils.defaultIfEmpty(x, (CharSequence) null));
+            PASCAL = new StringCase("PASCAL", Character::isUpperCase, true, CasedString.PASCAL_JOINER,
+                    x -> (String) StringUtils.defaultIfEmpty(x, (CharSequence) null));
             SNAKE = new StringCase("SNAKE", '_');
             KEBAB = new StringCase("KEBAB", '-');
             PHRASE = new StringCase("PHRASE", Character::isWhitespace, false, simpleJoiner(' '));
