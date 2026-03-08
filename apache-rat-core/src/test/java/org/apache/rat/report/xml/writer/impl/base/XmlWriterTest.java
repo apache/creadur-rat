@@ -31,11 +31,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-
 public class XmlWriterTest {
 
-    private static final char[] ZERO_CHAR = {(char)0};
-    
     private XmlWriter writer;
     private StringWriter out;
     

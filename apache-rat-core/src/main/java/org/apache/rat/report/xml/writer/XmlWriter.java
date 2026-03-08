@@ -325,11 +325,10 @@ public final class XmlWriter implements IXmlWriter {
         maybeCloseElement();
         appendable.append(System.lineSeparator());
         currentAttributes.clear();
-        TransformerFactory factory = TransformerFactory.newInstance();
-        Transformer transformer;
         try {
+            TransformerFactory factory = TransformerFactory.newInstance();
             factory.setFeature(DISALLOW_XXE, true);
-            transformer = factory.newTransformer();
+            Transformer transformer = factory.newTransformer();
             transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
             transformer.setOutputProperty(OutputKeys.METHOD, "xml");
             transformer.setOutputProperty(OutputKeys.INDENT, "yes");
