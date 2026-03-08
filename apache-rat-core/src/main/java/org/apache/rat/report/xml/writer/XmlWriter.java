@@ -49,7 +49,7 @@ import org.w3c.dom.Document;
 @SuppressWarnings({"checkstyle:MagicNumber", "checkstyle:JavadocVariable"})
 public final class XmlWriter implements IXmlWriter {
     private static final String DISALLOW_XXE = "http://apache.org/xml/features/disallow-doctype-decl";
-    private static final String XML_INDENT= "{http://xml.apache.org/xslt}indent-amount";
+    private static final String XML_INDENT = "{http://xml.apache.org/xslt}indent-amount";
     private final Appendable appendable;
     private final ArrayDeque<CharSequence> elementNames;
     private final Set<CharSequence> currentAttributes = new HashSet<>();
