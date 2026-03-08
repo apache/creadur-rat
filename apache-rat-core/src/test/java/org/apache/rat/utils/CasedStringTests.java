@@ -18,6 +18,7 @@
  */
 package org.apache.rat.utils;
 
+import org.junit.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -28,7 +29,7 @@ import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class CasedStringTests {
+public class CasedStringTests {
 
     @MethodSource("testSegmentationData")
     @ParameterizedTest
@@ -222,5 +223,13 @@ class CasedStringTests {
         lst.add(Arguments.of(underTest, doubleNull, "one/two"));
 
         return lst.stream();
+    }
+
+    @Test
+    public void asTest() {
+        CasedString underTest = new CasedString(CasedString.StringCase.CAMEL, "camelCase");
+        assertThat(underTest.as(CasedString.StringCase.CAMEL)).isEqualTo(underTest);
+        CasedString expected = new CasedString(CasedString.StringCase.KEBAB, "camel-Case");
+        assertThat(underTest.as(CasedString.StringCase.KEBAB)).isEqualTo(expected);
     }
 }
