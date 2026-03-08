@@ -39,17 +39,21 @@ public final class CasedString {
     private final String[] segments;
     /** The case of the string as parsed */
     private final StringCase stringCase;
-    /** A joiner used for the pascal and camel cases. */
-    private static final Function<String[], String> CAMEL_JOINER = strings -> {
-        StringBuilder sb = new StringBuilder();
-        Arrays.stream(strings).map(s -> s == null ? "" : s).forEach(token -> sb.append(WordUtils.capitalize(token.toLowerCase(Locale.ROOT))));
+
+    /**
+     * A method to join camel string fragments together.
+     */
+    private static final Function<String[], String> CAMEL_JOINER = a -> {
+        StringBuilder sb = new StringBuilder(a[0].toLowerCase(Locale.ROOT));
+
+        for (int i = 1; i < a.length; i++) {
+            sb.append(WordUtils.capitalize(a[i].toLowerCase(Locale.ROOT)));
+        }
         return sb.toString();
     };
 
     /**
-     * Creates a cased string by parsing the string argument for the specific case.
-     * @param stringCase the case of the string being parsed.
-     * @param string the string to parse.
+     * An enumeration of supported string cases.  These cases tag strings as having a specific format.
      */
     public CasedString(final StringCase stringCase, final String string) {
         this.segments = string == null ? CasedString.StringCase.NULL_SEGMENT : stringCase.getSegments(string.trim());
