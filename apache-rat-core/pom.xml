@@ -26,6 +26,9 @@
   <packaging>jar</packaging>
   <name>Apache Creadur RAT::Core</name>
   <description>The core functionality of RAT that is used by all clients.</description>
+  <properties>
+    <sonar.exclusions>src/main/java/org/apache/rat/report/xml/writer/XMLChar.java</sonar.exclusions>
+  </properties>
   <build>
     <resources>
       <resource>
