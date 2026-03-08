@@ -48,7 +48,8 @@ import org.w3c.dom.Document;
  */
 @SuppressWarnings({"checkstyle:MagicNumber", "checkstyle:JavadocVariable"})
 public final class XmlWriter implements IXmlWriter {
-
+    private static final String DISALLOW_XXE = "http://apache.org/xml/features/disallow-doctype-decl";
+    private static final String XML_INDENT= "{http://xml.apache.org/xslt}indent-amount";
     private final Appendable appendable;
     private final ArrayDeque<CharSequence> elementNames;
     private final Set<CharSequence> currentAttributes = new HashSet<>();
@@ -324,15 +325,16 @@ public final class XmlWriter implements IXmlWriter {
         maybeCloseElement();
         appendable.append(System.lineSeparator());
         currentAttributes.clear();
-        TransformerFactory tf = TransformerFactory.newInstance();
+        TransformerFactory factory = TransformerFactory.newInstance();
         Transformer transformer;
         try {
-            transformer = tf.newTransformer();
+            factory.setFeature(DISALLOW_XXE, true);
+            transformer = factory.newTransformer();
             transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
             transformer.setOutputProperty(OutputKeys.METHOD, "xml");
             transformer.setOutputProperty(OutputKeys.INDENT, "yes");
             transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
-            transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
+            transformer.setOutputProperty(XML_INDENT, "4");
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             transformer.transform(new DOMSource(document),
                     new StreamResult(baos));

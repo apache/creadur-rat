@@ -21,8 +21,6 @@ package org.apache.rat.report.xml.writer;
 
 import java.util.Arrays;
 
-@SuppressWarnings({"checkstyle:MagicNumber", "checkstyle:ParenPad", "checkstyle:FinalParameters", "checkstyle:JavadocVariable",
-        "checkstyle:RegexpSingleline", "checkstyle:UnnecessaryParentheses"})
 /**
  * This class defines the basic XML character properties. The data
  * in this class can be used to verify that a character is a valid
@@ -47,6 +45,8 @@ import java.util.Arrays;
  *
  * @version $Id$
  */
+@SuppressWarnings({"checkstyle:MagicNumber", "checkstyle:ParenPad", "checkstyle:FinalParameters", "checkstyle:JavadocVariable",
+        "checkstyle:RegexpSingleline", "checkstyle:UnnecessaryParentheses"})
 public final class XMLChar {
 
     private XMLChar() {
