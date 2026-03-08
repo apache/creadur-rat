@@ -10,202 +10,201 @@ import java.util.Locale;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
-public class CasedStringTests {
+public class CasedStringTest {
 
+	@MethodSource("testSegmentationData")
+	@ParameterizedTest
+	void testSegmentation(String pattern, CasedString.StringCase stringCase, String[] expected) {
+		CasedString casedString = new CasedString(stringCase, pattern);
+		assertThat(casedString.getSegments()).isEqualTo(expected);
+	}
 
-    @Test
+	static Stream<Arguments> testSegmentationData() {
+		List<Arguments> lst = new ArrayList<>();
+		lst.add(Arguments.of("CamelCase", CasedString.StringCase.CAMEL, new String[]{"Camel", "Case"}));
+		lst.add(Arguments.of("CamelPMDCase", CasedString.StringCase.CAMEL,
+				new String[]{"Camel", "P", "M", "D", "Case"}));
+		lst.add(Arguments.of("camelCase", CasedString.StringCase.CAMEL, new String[]{"camel", "Case"}));
+		lst.add(Arguments.of("camelPMDCase", CasedString.StringCase.CAMEL,
+				new String[]{"camel", "P", "M", "D", "Case"}));
+		lst.add(Arguments.of("PascalCase", CasedString.StringCase.PASCAL, new String[]{"Pascal", "Case"}));
+		lst.add(Arguments.of("PascalPMDCase", CasedString.StringCase.PASCAL,
+				new String[]{"Pascal", "P", "M", "D", "Case"}));
+		lst.add(Arguments.of("pascalCase", CasedString.StringCase.PASCAL, new String[]{"pascal", "Case"}));
+		lst.add(Arguments.of("pascalPMDCase", CasedString.StringCase.PASCAL,
+				new String[]{"pascal", "P", "M", "D", "Case"}));
+		lst.add(Arguments.of("snake_case", CasedString.StringCase.SNAKE, new String[]{"snake", "case"}));
+		lst.add(Arguments.of("snake_Case", CasedString.StringCase.SNAKE, new String[]{"snake", "Case"}));
+		lst.add(Arguments.of("snake__Case", CasedString.StringCase.SNAKE, new String[]{"snake", "", "Case"}));
+		lst.add(Arguments.of("kebab-case", CasedString.StringCase.KEBAB, new String[]{"kebab", "case"}));
+		lst.add(Arguments.of("kebab-Case", CasedString.StringCase.KEBAB, new String[]{"kebab", "Case"}));
+		lst.add(Arguments.of("kebab--case", CasedString.StringCase.KEBAB, new String[]{"kebab", "", "case"}));
+		lst.add(Arguments.of("phrase case", CasedString.StringCase.PHRASE, new String[]{"phrase", "case"}));
+		lst.add(Arguments.of("phrase Case", CasedString.StringCase.PHRASE, new String[]{"phrase", "Case"}));
+		lst.add(Arguments.of("phrase  case", CasedString.StringCase.PHRASE, new String[]{"phrase", "", "case"}));
+		lst.add(Arguments.of("dot.case", CasedString.StringCase.DOT, new String[]{"dot", "case"}));
+		lst.add(Arguments.of("dot..case", CasedString.StringCase.DOT, new String[]{"dot", "", "case"}));
+		lst.add(Arguments.of("dot.Case", CasedString.StringCase.DOT, new String[]{"dot", "Case"}));
+		return lst.stream();
+	}
 
+	@MethodSource("testToCaseData")
+	@ParameterizedTest(name = "{index} {0} {1}")
+	void testToCase(CasedString casedString, CasedString.StringCase stringCase, String expected) {
+		assertThat(casedString.toCase(stringCase)).isEqualTo(expected);
+	}
 
-    /**
-     * Handles converting from one string case to another (e.g. camel case to snake case).
-     * @since 0.17
-     */
-    public class CasedString {
-        /** the string of the cased format. */
-        private final String[] parts;
-        /** the case of the string. */
-        private final org.apache.rat.utils.CasedString.StringCase stringCase;
+	static Stream<Arguments> testToCaseData() {
+		List<Arguments> lst = new ArrayList<>();
 
-        /**
-         * A method to join pascal string fragments together.
-         */
-        private static final Function<String[], String> PASCAL_JOINER = strings -> {
-            StringBuilder sb = new StringBuilder();
-            Arrays.stream(strings).forEach(token -> sb.append(WordUtils.capitalize(token.toLowerCase(Locale.ROOT))));
-            return sb.toString();
-        };
+		CasedString underTest = new CasedString(CasedString.StringCase.CAMEL, "camelCase");
+		lst.add(Arguments.of(underTest, CasedString.StringCase.CAMEL, "camelCase"));
+		lst.add(Arguments.of(underTest, CasedString.StringCase.SNAKE, "camel_Case"));
+		lst.add(Arguments.of(underTest, CasedString.StringCase.KEBAB, "camel-Case"));
+		lst.add(Arguments.of(underTest, CasedString.StringCase.PHRASE, "camel Case"));
+		lst.add(Arguments.of(underTest, CasedString.StringCase.DOT, "camel.Case"));
+		lst.add(Arguments.of(underTest, CasedString.StringCase.PASCAL, "CamelCase"));
 
+		underTest = new CasedString(CasedString.StringCase.SNAKE, "snake_case");
+		lst.add(Arguments.of(underTest, CasedString.StringCase.CAMEL, "snakeCase"));
+		lst.add(Arguments.of(underTest, CasedString.StringCase.SNAKE, "snake_case"));
+		lst.add(Arguments.of(underTest, CasedString.StringCase.KEBAB, "snake-case"));
+		lst.add(Arguments.of(underTest, CasedString.StringCase.PHRASE, "snake case"));
+		lst.add(Arguments.of(underTest, CasedString.StringCase.DOT, "snake.case"));
+		lst.add(Arguments.of(underTest, CasedString.StringCase.PASCAL, "SnakeCase"));
 
-        /**
-         * An enumeration of supported string cases.  These cases tag strings as having a specific format.
-         */
-        public enum StringCase {
-            /**
-             * Camel case tags strings like 'CamelCase' or 'camelCase'. This conversion forces the first character to
-             * lower case. If the first character is desired to be upper case use PASCAL case instead.
-             */
-            CAMEL(Character::isUpperCase, true, PASCAL_JOINER.andThen(WordUtils::uncapitalize)),
-            /**
-             * Camel case tags strings like 'PascalCase' or 'pascalCase'. This conversion forces the first character to
-             * upper case. If the first character is desired to be lower case use CAMEL case instead.
-             */
-            PASCAL(Character::isUpperCase, true, PASCAL_JOINER),
-            /**
-             * Snake case tags strings like 'Snake_Case'.  This conversion does not change the capitalization of any characters
-             * in the string.  If specific capitalization is required use {@link String#toUpperCase()}, {@link String#toLowerCase()},
-             * or the commons-text methods {@link WordUtils#capitalize(String)}, or {@link WordUtils#uncapitalize(String)} as required.
-             */
-            SNAKE(c -> c == '_', false, a -> String.join("_", a)),
-            /**
-             * Kebab case tags strings like 'kebab-case'.  This conversion does not change the capitalization of any characters
-             * in the string.  If specific capitalization is required use {@link String#toUpperCase()}, {@link String#toLowerCase()},
-             *          * or the commons-text methods {@link WordUtils#capitalize(String)}, or {@link WordUtils#uncapitalize(String)} as required.
-             */
-            KEBAB(c -> c == '-', false, a -> String.join("-", a)),
+		underTest = new CasedString(CasedString.StringCase.KEBAB, "kebab-case");
+		lst.add(Arguments.of(underTest, CasedString.StringCase.CAMEL, "kebabCase"));
+		lst.add(Arguments.of(underTest, CasedString.StringCase.SNAKE, "kebab_case"));
+		lst.add(Arguments.of(underTest, CasedString.StringCase.KEBAB, "kebab-case"));
+		lst.add(Arguments.of(underTest, CasedString.StringCase.PHRASE, "kebab case"));
+		lst.add(Arguments.of(underTest, CasedString.StringCase.DOT, "kebab.case"));
+		lst.add(Arguments.of(underTest, CasedString.StringCase.PASCAL, "KebabCase"));
 
-            /**
-             * Phrase case tags phrases of words like 'phrase case'. This conversion does not change the capitalization of any characters
-             * in the string.  If specific capitalization is required use {@link String#toUpperCase()}, {@link String#toLowerCase()},
-             *          * or the commons-text methods {@link WordUtils#capitalize(String)}, or {@link WordUtils#uncapitalize(String)} as required.
-             */
-            PHRASE(Character::isWhitespace, false, a -> String.join(" ", a)),
+		underTest = new CasedString(CasedString.StringCase.PHRASE, "phrase case");
+		lst.add(Arguments.of(underTest, CasedString.StringCase.CAMEL, "phraseCase"));
+		lst.add(Arguments.of(underTest, CasedString.StringCase.SNAKE, "phrase_case"));
+		lst.add(Arguments.of(underTest, CasedString.StringCase.KEBAB, "phrase-case"));
+		lst.add(Arguments.of(underTest, CasedString.StringCase.PHRASE, "phrase case"));
+		lst.add(Arguments.of(underTest, CasedString.StringCase.DOT, "phrase.case"));
+		lst.add(Arguments.of(underTest, CasedString.StringCase.PASCAL, "PhraseCase"));
 
-            /**
-             * Dot case tags phrases of words like 'phrase.case'. This conversion does not change the capitalization of any characters
-             * in the string.  If specific capitalization is required use {@link String#toUpperCase()}, {@link String#toLowerCase()},
-             *          * or the commons-text methods {@link WordUtils#capitalize(String)}, or {@link WordUtils#uncapitalize(String)} as required.
-             */
-            DOT(c -> c == '.', false, a -> String.join(".", a)),
+		underTest = new CasedString(CasedString.StringCase.DOT, "dot.case");
+		lst.add(Arguments.of(underTest, CasedString.StringCase.CAMEL, "dotCase"));
+		lst.add(Arguments.of(underTest, CasedString.StringCase.SNAKE, "dot_case"));
+		lst.add(Arguments.of(underTest, CasedString.StringCase.KEBAB, "dot-case"));
+		lst.add(Arguments.of(underTest, CasedString.StringCase.PHRASE, "dot case"));
+		lst.add(Arguments.of(underTest, CasedString.StringCase.DOT, "dot.case"));
+		lst.add(Arguments.of(underTest, CasedString.StringCase.PASCAL, "DotCase"));
 
-            /**
-             * Slash case tags phrases of words like 'phrase.case'. This conversion does not change the capitalization of any characters
-             * in the string.  If specific capitalization is required use {@link String#toUpperCase()}, {@link String#toLowerCase()},
-             *          * or the commons-text methods {@link WordUtils#capitalize(String)}, or {@link WordUtils#uncapitalize(String)} as required.
-             */
-            SLASH(c -> c == '/', false, a -> String.join("/", a));
+		underTest = new CasedString(CasedString.StringCase.PASCAL, "PascalCase");
+		lst.add(Arguments.of(underTest, CasedString.StringCase.CAMEL, "pascalCase"));
+		lst.add(Arguments.of(underTest, CasedString.StringCase.SNAKE, "Pascal_Case"));
+		lst.add(Arguments.of(underTest, CasedString.StringCase.KEBAB, "Pascal-Case"));
+		lst.add(Arguments.of(underTest, CasedString.StringCase.PHRASE, "Pascal Case"));
+		lst.add(Arguments.of(underTest, CasedString.StringCase.DOT, "Pascal.Case"));
+		lst.add(Arguments.of(underTest, CasedString.StringCase.PASCAL, "PascalCase"));
 
+		underTest = new CasedString(CasedString.StringCase.DOT, "one..two");
+		lst.add(Arguments.of(underTest, CasedString.StringCase.CAMEL, "oneTwo"));
+		lst.add(Arguments.of(underTest, CasedString.StringCase.SNAKE, "one__two"));
+		lst.add(Arguments.of(underTest, CasedString.StringCase.KEBAB, "one--two"));
+		lst.add(Arguments.of(underTest, CasedString.StringCase.PHRASE, "one  two"));
+		lst.add(Arguments.of(underTest, CasedString.StringCase.DOT, "one..two"));
+		lst.add(Arguments.of(underTest, CasedString.StringCase.PASCAL, "OneTwo"));
 
-            /** The segment value for a null string */
-            private static final String[] NULL_SEGMENT = new String[0];
-            /** The segment value for an empty string */
-            private static final String[] EMPTY_SEGMENT = {""};
+		return lst.stream();
+	}
 
-            /** test for split position character. */
-            private final Predicate<Character> splitter;
-            /** if {@code true} split position character will be preserved in following segment. */
-            private final boolean preserveSplit;
-            /** a function to joining the segments into this case type. */
-            private final Function<String[], String> joiner;
+	@MethodSource("testAssembleData")
+	@ParameterizedTest(name = "{index} {0} {1}")
+	void testAssemble(CasedString.StringCase underTest, String[] data, String expected) {
+		assertThat(underTest.assemble(data)).isEqualTo(expected);
+	}
 
-            /**
-             * Defines a String Case.
-             * @param splitter The predicate that determines when a new word in the cased string begins.
-             * @param preserveSplit if {@code true} the character that the splitter detected is preserved as the first character of the new word.
-             * @param joiner The function to merge a list of strings into the cased String.
-             */
-            StringCase(final Predicate<Character> splitter, final boolean preserveSplit, final Function<String[], String> joiner) {
-                this.splitter = splitter;
-                this.preserveSplit = preserveSplit;
-                this.joiner = joiner;
-            }
+	static Stream<Arguments> testAssembleData() {
+		List<Arguments> lst = new ArrayList<>();
+		String[] emptyFirst = {"", "one", "two"};
+		String[] emptyMiddle = {"one", "", "two"};
+		String[] emptyEnd = {"one", "two", ""};
+		String[] nullFirst = {null, "one", "two"};
+		String[] nullMiddle = {"one", null, "two"};
+		String[] nullEnd = {"one", "two", null};
+		String[] doubleEmpty = {"one", "", "", "two"};
+		String[] doubleNull = {"one", null, null, "two"};
 
-            /**
-             * Creates a cased string from a collection of segments.
-             * @param segments the segments to create the CasedString from.
-             * @return a CasedString
-             */
-            public String assemble(final String[] segments) {
-                return segments.length == 0 ? null : this.joiner.apply(segments);
-            }
+		CasedString.StringCase underTest = CasedString.StringCase.CAMEL;
+		lst.add(Arguments.of(underTest, emptyFirst, "oneTwo"));
+		lst.add(Arguments.of(underTest, emptyMiddle, "oneTwo"));
+		lst.add(Arguments.of(underTest, emptyEnd, "oneTwo"));
+		lst.add(Arguments.of(underTest, nullFirst, "oneTwo"));
+		lst.add(Arguments.of(underTest, nullMiddle, "oneTwo"));
+		lst.add(Arguments.of(underTest, nullEnd, "oneTwo"));
+		lst.add(Arguments.of(underTest, doubleEmpty, "oneTwo"));
+		lst.add(Arguments.of(underTest, doubleNull, "oneTwo"));
 
-            /**
-             * Returns an array of each of the segments in this CasedString.  Segments are defined as the strings between
-             * the separators in the CasedString. For the CAMEL case the segments are determined by the presence of a capital letter.
-             * @return the array of Strings that are segments of the cased string.
-             */
-            public String[] getSegments(final String string) {
-                if (string == null) {
-                    return NULL_SEGMENT;
-                }
-                if (string.isEmpty()) {
-                    return EMPTY_SEGMENT;
-                }
-                List<String> lst = new ArrayList<>();
-                StringBuilder sb = new StringBuilder();
-                for (char c : string.toCharArray()) {
-                    if (splitter.test(c)) {
-                        if (!sb.isEmpty()) {
-                            lst.add(sb.toString());
-                            sb.setLength(0);
-                        }
-                        if (preserveSplit) {
-                            sb.append(c);
-                        }
-                    } else {
-                        sb.append(c);
-                    }
-                }
-                if (!sb.isEmpty()) {
-                    lst.add(sb.toString());
-                }
-                return lst.toArray(new String[0]);
-            }
-        }
+		underTest = CasedString.StringCase.PASCAL;
+		lst.add(Arguments.of(underTest, emptyFirst, "OneTwo"));
+		lst.add(Arguments.of(underTest, emptyMiddle, "OneTwo"));
+		lst.add(Arguments.of(underTest, emptyEnd, "OneTwo"));
+		lst.add(Arguments.of(underTest, nullFirst, "OneTwo"));
+		lst.add(Arguments.of(underTest, nullMiddle, "OneTwo"));
+		lst.add(Arguments.of(underTest, nullEnd, "OneTwo"));
+		lst.add(Arguments.of(underTest, doubleEmpty, "OneTwo"));
+		lst.add(Arguments.of(underTest, doubleNull, "OneTwo"));
 
-        /**
-         * A representation of a cased string and the identified case of that string.
-         * @param stringCase The {@code StringCase} that the {@code string} argument is in.
-         * @param string The string.
-         */
-        public CasedString(final org.apache.rat.utils.CasedString.StringCase stringCase, final String string) {
-            this.parts = string == null ? org.apache.rat.utils.CasedString.StringCase.NULL_SEGMENT : stringCase.getSegments(string.trim());
-            this.stringCase = stringCase;
-        }
+		underTest = CasedString.StringCase.SNAKE;
+		lst.add(Arguments.of(underTest, emptyFirst, "_one_two"));
+		lst.add(Arguments.of(underTest, emptyMiddle, "one__two"));
+		lst.add(Arguments.of(underTest, emptyEnd, "one_two_"));
+		lst.add(Arguments.of(underTest, nullFirst, "one_two"));
+		lst.add(Arguments.of(underTest, nullMiddle, "one_two"));
+		lst.add(Arguments.of(underTest, nullEnd, "one_two"));
+		lst.add(Arguments.of(underTest, doubleEmpty, "one___two"));
+		lst.add(Arguments.of(underTest, doubleNull, "one_two"));
 
-        /**
-         * A representation of a cased string and the identified case of that string.
-         * @param stringCase The {@code StringCase} that the {@code string} argument is in.
-         * @param parts The string parts.
-         */
-        public CasedString(final org.apache.rat.utils.CasedString.StringCase stringCase, final String[] parts) {
-            this.parts = parts;
-            this.stringCase = stringCase;
-        }
+		underTest = CasedString.StringCase.KEBAB;
+		lst.add(Arguments.of(underTest, emptyFirst, "-one-two"));
+		lst.add(Arguments.of(underTest, emptyMiddle, "one--two"));
+		lst.add(Arguments.of(underTest, emptyEnd, "one-two-"));
+		lst.add(Arguments.of(underTest, nullFirst, "one-two"));
+		lst.add(Arguments.of(underTest, nullMiddle, "one-two"));
+		lst.add(Arguments.of(underTest, nullEnd, "one-two"));
+		lst.add(Arguments.of(underTest, doubleEmpty, "one---two"));
+		lst.add(Arguments.of(underTest, doubleNull, "one-two"));
 
-        public org.apache.rat.utils.CasedString as(final org.apache.rat.utils.CasedString.StringCase stringCase) {
-            if (stringCase == this.stringCase) {
-                return this;
-            }
-            return new org.apache.rat.utils.CasedString(stringCase, Arrays.copyOf(this.parts, this.parts.length));
-        }
+		underTest = CasedString.StringCase.PHRASE;
+		lst.add(Arguments.of(underTest, emptyFirst, " one two"));
+		lst.add(Arguments.of(underTest, emptyMiddle, "one  two"));
+		lst.add(Arguments.of(underTest, emptyEnd, "one two "));
+		lst.add(Arguments.of(underTest, nullFirst, "one two"));
+		lst.add(Arguments.of(underTest, nullMiddle, "one two"));
+		lst.add(Arguments.of(underTest, nullEnd, "one two"));
+		lst.add(Arguments.of(underTest, doubleEmpty, "one   two"));
+		lst.add(Arguments.of(underTest, doubleNull, "one two"));
 
-        /**
-         * Returns an array of each of the segments in this CasedString.  Segments are defined as the strings between
-         * the separators in the CasedString.  For the CAMEL case the segments are determined by the presence of a capital letter.
-         * @return the array of Strings that are segments of the cased string.
-         */
-        public String[] getSegments() {
-            return parts;
-        }
+		underTest = CasedString.StringCase.DOT;
+		lst.add(Arguments.of(underTest, emptyFirst, ".one.two"));
+		lst.add(Arguments.of(underTest, emptyMiddle, "one..two"));
+		lst.add(Arguments.of(underTest, emptyEnd, "one.two."));
+		lst.add(Arguments.of(underTest, nullFirst, "one.two"));
+		lst.add(Arguments.of(underTest, nullMiddle, "one.two"));
+		lst.add(Arguments.of(underTest, nullEnd, "one.two"));
+		lst.add(Arguments.of(underTest, doubleEmpty, "one...two"));
+		lst.add(Arguments.of(underTest, doubleNull, "one.two"));
 
-        /**
-         * Converts this cased string into a {@code String} of another format.
-         * The upper/lower case of the characters within the string are not modified.
-         * @param stringCase The format to convert to.
-         * @return the String current string represented in the new format.
-         */
-        public String toCase(final org.apache.rat.utils.CasedString.StringCase stringCase) {
-            return parts == org.apache.rat.utils.CasedString.StringCase.NULL_SEGMENT ? null : stringCase.joiner.apply(getSegments());
-        }
+		underTest = CasedString.StringCase.SLASH;
+		lst.add(Arguments.of(underTest, emptyFirst, "/one/two"));
+		lst.add(Arguments.of(underTest, emptyMiddle, "one//two"));
+		lst.add(Arguments.of(underTest, emptyEnd, "one/two/"));
+		lst.add(Arguments.of(underTest, nullFirst, "one/two"));
+		lst.add(Arguments.of(underTest, nullMiddle, "one/two"));
+		lst.add(Arguments.of(underTest, nullEnd, "one/two"));
+		lst.add(Arguments.of(underTest, doubleEmpty, "one///two"));
+		lst.add(Arguments.of(underTest, doubleNull, "one/two"));
 
-        /**
-         * Returns the string representation provided in the constructor.
-         * @return the string representation.
-         */
-        @Override
-        public String toString() {
-            return toCase(stringCase);
-        }
-    }
-
+		return lst.stream();
+	}
 }
+
+
