@@ -94,10 +94,9 @@ public class Reporter {
                         report.startReport();
                         configuration.getSources().build().run(report);
                         report.endReport();
-
-                        InputStream inputStream = new ByteArrayInputStream(outputStream.toByteArray());
-                        document = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(inputStream);
                     }
+                    InputStream inputStream = new ByteArrayInputStream(outputStream.toByteArray());
+                    document = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(inputStream);
                 } else {
                     document = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
                     statistic = new ClaimStatistic();
