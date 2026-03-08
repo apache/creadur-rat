@@ -25,6 +25,7 @@ import java.util.Locale;
 import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.function.UnaryOperator;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.WordUtils;
@@ -132,7 +133,7 @@ public class CasedString {
         /** The function that converts segments into the String representation */
         private final Function<String[], String> joiner;
         /** A function to provide post-processing on the joined string */
-        private final Function<String, String> postProcess;
+        private final UnaryOperator<String> postProcess;
 
         /**
          * Constructs a StringCase
@@ -142,7 +143,7 @@ public class CasedString {
          * @param joiner the joiner to assemble the String from the segments.
          */
         public StringCase(final String name, final Predicate<Character> splitter, final boolean preserveSplit, final Function<String[], String> joiner) {
-            this(name, splitter, preserveSplit, joiner, Function.identity());
+            this(name, splitter, preserveSplit, joiner, UnaryOperator.identity());
         }
 
         /**
@@ -163,7 +164,7 @@ public class CasedString {
          * @param postProcess the post-process applied to the segments after the splitter has created them.
          */
         public StringCase(final String name, final Predicate<Character> splitter, final boolean preserveSplit, final Function<String[], String> joiner,
-                          final Function<String, String> postProcess) {
+                          final UnaryOperator<String> postProcess) {
             this.name = name;
             this.splitter = splitter;
             this.preserveSplit = preserveSplit;
@@ -192,7 +193,7 @@ public class CasedString {
          * @return the complete String.
          */
         public String assemble(final String[] segments) {
-            return (String) this.joiner.apply(segments);
+            return this.joiner.apply(segments);
         }
 
         /**
@@ -206,7 +207,7 @@ public class CasedString {
             } else if (string.isEmpty()) {
                 return EMPTY_SEGMENT;
             } else {
-                List<String> lst = new ArrayList();
+                List<String> lst = new ArrayList<>();
                 StringBuilder sb = new StringBuilder();
 
                 for (char c : string.toCharArray()) {
