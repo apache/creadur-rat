@@ -98,8 +98,10 @@ public final class CasedString {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (o == null || getClass() != o.getClass()) return false;
+    public boolean equals(final Object o) {
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         CasedString that = (CasedString) o;
         return Objects.deepEquals(getSegments(), that.getSegments()) && Objects.equals(stringCase, that.stringCase);
     }
@@ -112,7 +114,7 @@ public final class CasedString {
     /**
      * The definition of a String case.
      */
-    public final static class StringCase {
+    public static final class StringCase {
         /** The camel case.  Example: "HelloWorld"*/
         public static final StringCase CAMEL;
         /** The pascal case.  Example: "helloWorld" */
