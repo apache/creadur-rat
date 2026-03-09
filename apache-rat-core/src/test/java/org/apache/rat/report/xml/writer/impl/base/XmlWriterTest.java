@@ -532,15 +532,15 @@ public class XmlWriterTest {
 
     @Test
     public void append() throws Exception {
-        String expected = """
-                <?xml version='1.0'?><base>
-                <root>
-                    <hello>
-                        <world>hello world</world>
-                    </hello>
-                    <test/>
-                </root>
-                </base>""";
+        // ensure proper line endings
+        String expected = String.format("<?xml version='1.0'?><base>%n" +
+                "<root>%n" +
+                "    <hello>%n" +
+                "        <world>hello world</world>%n" +
+                "    </hello>%n" +
+                "    <test/>%n" +
+                "</root>%n" +
+                "</base>");
         byte[] rawDocument = "<?xml version='1.0'?><root><hello><world>hello world</world></hello><test/></root>".getBytes(StandardCharsets.UTF_8);
         Document document = XmlUtils.toDom(new ByteArrayInputStream(rawDocument));
         writer.startDocument().openElement("base").append(document).closeDocument();
