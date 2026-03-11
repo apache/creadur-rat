@@ -1,3 +1,88 @@
+RAT 0.18
+========
+This intermediate release addresses a severe performance issue encountered during RAT runs in version 0.17.
+The issue has been resolved by reducing the sample size used for Tika charset detection
+from 12,000 bytes to 256 bytes (thanks to Ryan Schmitt).
+
+In addition, the Java language level required to build RAT has been raised to 17.
+However, we recommend using at least JDK 21 due to a Javadoc issue affecting certain JDK versions (tracked under RAT-497).
+RAT now also uses UTF-8 as its default character set.
+
+These changes allowed us to adopt more modern language features, resolve numerous CVEs in dependent plugins and libraries,
+and integrate with SonarCloud’s code analysis.
+
+This release also includes a range of bug fixes, minor improvements, and dependency updates.
+Furthermore, RAT’s generated report is now produced in XHTML5, and excessive INFO-level logging in the Maven plugin has been reduced.
+
+Many thanks to all contributors and to our users for their valuable feedback.
+
+Changes in this version include:
+
+New features:
+o RAT-440:  Upgrade to doxia 2.0.0 and generate XHTML5 reports during RAT runs (fixes multiple CVEs implicitly).
+            Thanks to guptas6est.
+o RAT-475, RAT-533: Speedup tests and avoid garbage collection workaround by changing to CleanupMode.NONE in jUnit's TempDir usages.
+            Thanks to Ryan Schmitt.
+o RAT-293:  Add integration of RAT into SonarCloud analysis now that JDK8 is dropped
+            and generate a test coverage report with JaCoCo.
+o RAT-478:  Due to the switch to Java17 language level we use UTF-8 as default charset to process configuration
+            and exclusion configuration files within RAT.
+o RAT-478:  Switch to Java17 language level in Creadur RAT. Due to RAT-497 we cannot generate Javadocs/the site
+            with JDK17, thus use JDK21 to build the project.
+o RAT-524:  Fixes case-sensitive detection time of underlying file system and removed MAVEN StandardCollection
+            from default Maven processing to improve overall processing time.
+o RAT-504:  Provide a migration guide to specific RAT versions for downstream users.
+o RAT-513:  Introduce new standard exclusion collection for Gradle projects. Thanks to Robert Stupp.
+o RAT-501:  Changed '/.externalToolBuilders' to '/.externalToolBuilders/**' in the ECLIPSE standard exclusion list
+            and added '**/bin/**' to ignore generated binary folders in Eclipse IDE. Thanks to pottlinger.
+
+Fixed Bugs:
+o RAT-533:  Reduce sample size of charset detection from 12000 to 256 byte (Tika) to increase I/O performance of RAT scans.
+            Thanks to Ryan Schmitt.
+o RAT-531:  Fix NPE that license families is null if licenses are defined manually, reported by huangxiaoping from Hudi.
+            Thanks to huangxiaoping.
+o RAT-512:  Bugfix to mark PDF files as binary instead of standard files as they do not contain licenses.
+            Thanks to Niels Basjes.
+o RAT-526:  New version of maven-resources-plugin does not by default include hidden files, adapt our test setup accordingly.
+o RAT-490:  Update commons-lang3 to 3.20.0 to avoid deprecation warnings when building with JDK25
+            (Use of the three-letter time zone ID 'ACT' is deprecated and it will be removed in a future release).
+            Thanks to Lenny Primark.
+o RAT-497:  Fix javadoc generation problem with JDK17 (javadoc:javadoc) by removing reference to method itself and
+            fix other javadoc errors in IXmlWriter, but combined javadoc/site build still fails with certain JDK versions.
+o RAT-500:  Do not throw an exception if no arguments are provided in CLI, encourage to use --help instead.
+o RAT-507:  Fix CopyrightMatcher parsing issues if input contains non-space or formatting characters.
+o RAT-501:  Fix pom configuration issues from migration to using RAT 0.17.
+
+Changes:
+o RAT-498:  Update assertj from 3.27.6 to 4.0.0-M1 and use bom for dependency management.
+o RAT-498:  Update plexus-utils from 3.5.1 to 3.6.0.
+o RAT-498:  Update exec-maven-plugin from 3.6.1 to 3.6.3.
+o RAT-498:  Update junit from 5.13.4 to 6.1.0-M1.
+o RAT-498:  Update mockito from 4.11.0 to 5.22.0 and use bom for dependency management.
+o RAT-498:  Update tika from 2.9.4 to 3.2.3 due to CVE-2025-66516.
+o RAT-508:  Removed excess INFO logging in Maven plugin.
+            Run with -X or use the verbose option in order to see output on debug level.
+            Thanks to Gary D. Gregory.
+o RAT-498:  Update Maven wrapper to v3.9.13.
+o RAT-498:  Update org.codehaus.plexus:plexus-testing from 1.6.0 to 2.1.0. Thanks to dependabot.
+o RAT-498:  Update maven-antrun-plugin from 3.1.0 to 3.2.0. Thanks to dependabot.
+o RAT-498:  Update actions/upload-artifact from 4 to 7. Thanks to dependabot.
+o RAT-498:  Update maven-plugin-annotations, maven-plugin-plugin and maven-plugin-report-plugin from 3.15.1 to 3.15.2. Thanks to dependabot.
+o RAT-498:  Update plugin-testing-harness from 3.3.0 to 3.5.1. Thanks to dependabot.
+o RAT-498:  Update develocity-maven-extension from 2.2 to 2.3.4. Thanks to dependabot.
+o RAT-498:  Update commons-io from 2.20.0 to 2.21.0. Thanks to dependabot.
+o RAT-498:  Update actions/checkout from 5 to 6. Thanks to dependabot.
+o RAT-498:  Update taglist-maven-plugin from 3.2.1 to 3.2.2. Thanks to dependabot.
+o RAT-498:  Update maven-resources-plugin from 3.3.1 to 3.5.0. Thanks to dependabot.
+o RAT-498:  Update commons-text from 1.14.0 to 1.15.0. Thanks to dependabot.
+o RAT-498:  Update actions/cache from 4 to 5. Thanks to dependabot.
+o RAT-498:  Update ASF parent pom org.apache:apache from 35 to 37 and minimum required Maven version set to 3.9. Thanks to dependabot.
+o RAT-498:  Update animal-sniffer-plugin from 1.26 to 1.27. Thanks to dependabot.
+o RAT-498:  Update maven-compiler-plugin from 3.14.1 to 3.15.0. Thanks to dependabot.
+o RAT-498:  Update maven-dependency-plugin from 3.9.0 to 3.10.0. Thanks to dependabot.
+o RAT-498:  Update maven-surefire-plugin from 3.5.4 to 3.5.5. Thanks to dependabot.
+o RAT-498:  Update maven-failsafe-plugin from 3.5.4 to 3.5.5. Thanks to dependabot.
+
 RAT 0.17
 ========
 Apart from many dependency updates and multiple bugfixes, this release brings
