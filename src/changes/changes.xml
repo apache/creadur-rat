@@ -68,10 +68,21 @@ in order to be properly linked in site reports.
     </release>
     -->
     <release version="0.18" date="2026-03-11" description=
-"This is an intermediate release addressing performance issues during RAT runs.
-Furthermore
+"This intermediate release addresses a severe performance issue encountered during RAT runs in version 0.17.
+The issue has been resolved by reducing the sample size used for Tika charset detection
+from 12,000 bytes to 256 bytes (thanks to Ryan Schmitt).
 
-Current SNAPSHOT - release to be done">
+In addition, the Java language level required to build RAT has been raised to 17.
+However, we recommend using at least JDK 21 due to a Javadoc issue affecting certain JDK versions (tracked under RAT-497).
+RAT now also uses UTF-8 as its default character set.
+
+These changes allowed us to adopt more modern language features,
+resolve numerous CVEs in dependent plugins and libraries, and integrate with SonarCloud’s code analysis.
+
+This release also includes a range of bug fixes, minor improvements, and dependency updates.
+Furthermore, RAT’s generated report is now produced in XHTML5, and excessive INFO-level logging in the Maven plugin has been reduced.
+
+Many thanks to all contributors and to our users for their valuable feedback.">
       <action issue="RAT-440" type="add" dev="pottlinger" due-to="guptas6est">
         Upgrade to doxia 2.0.0 and generate XHTML5 reports during RAT runs (fixes multiple CVEs implicitly).
       </action>
@@ -121,16 +132,16 @@ Current SNAPSHOT - release to be done">
         Removed excess INFO logging in Maven plugin. Run with -X or use the verbose option in order to see output on debug level.
       </action>  
       <action issue="RAT-498" type="update" dev="pottlinger">
-        Update Maven wrapper to v3.9.12.
+        Update Maven wrapper to v3.9.13.
       </action>
       <action issue="RAT-526" type="fix" dev="claudenw">
-        New version of maven-resources-plugin does not by default include hiden files, adapt our test setup accordingly.
+        New version of maven-resources-plugin does not by default include hidden files, adapt our test setup accordingly.
       </action>
       <action issue="RAT-490" type="fix" dev="pottlinger" due-to="Lenny Primark">
-        Update commons-lang3 to 3.20.0 to avoid deprecation warnings when building with JDK25 (Use of the three-letter time zone ID 'ACT' is deprecated and it will be removed in a future release). RAT itself cannot be built with JDK25 yet.
+        Update commons-lang3 to 3.20.0 to avoid deprecation warnings when building with JDK25 (Use of the three-letter time zone ID 'ACT' is deprecated and it will be removed in a future release).
       </action>
       <action issue="RAT-497" type="fix" dev="pottlinger">
-        Fix javadoc generation problem with JDK17 (javadoc:javadoc) by removing reference to method itself and fix other javadoc errors in IXmlWriter, but combined javadoc/site build still fails.
+        Fix javadoc generation problem with JDK17 (javadoc:javadoc) by removing reference to method itself and fix other javadoc errors in IXmlWriter, but combined javadoc/site build still fails with certain JDK versions.
       </action>
       <action issue="RAT-504" type="add" dev="pottlinger">
         Provide a migration guide to specific RAT versions for downstream users.
