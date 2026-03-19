@@ -68,7 +68,7 @@
             </goals>
             <configuration>
               <outputDirectory>${basedir}/src/site/apt</outputDirectory>
-              <overwrite>true</overwrite>
+              <changeDetection>always</changeDetection>
               <resources>
                 <resource>
                   <!-- target/classes/org/apache/rat/generation-keywords.txt -->
