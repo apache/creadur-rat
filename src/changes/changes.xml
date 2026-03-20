@@ -61,12 +61,23 @@ in order to be properly linked in site reports.
     <author email="dev@creadur.apache.org">Apache Creadur RAT developers</author>
   </properties>
   <body>
-    <!--release version="1.0.0-SNAPSHOT" date="xxxx-yy-zz" description="Current SNAPSHOT - release to be done">
+    <!--Template: release version="1.0.0-SNAPSHOT" date="xxxx-yy-zz" description="Current SNAPSHOT - release to be done">
       <action issue="RAT-532" type="update" dev="pottlinger" due-to="dependabot">
         TODO/TBD: collect all dependabot updates for release 1.0.0.
       </action>
     </release>
     -->
+    <release version="1.0.0-SNAPSHOT" date="xxxx-yy-zz" description="Current SNAPSHOT - release to be done">
+      <action issue="RAT-532" type="update" dev="pottlinger" due-to="dependabot">
+        TODO/TBD: collect all dependabot updates for release 1.0.0.
+      </action>
+      <action issue="RAT-532" type="update" dev="pottlinger" due-to="dependabot">
+        TODO/TBD: collect all dependabot updates for release 1.0.0.
+      </action>
+      <action issue="RAT-532" type="update" dev="pottlinger" due-to="dependabot">
+        TODO/TBD: collect all dependabot updates for release 1.0.0.
+      </action>
+    </release>
     <release version="0.18" date="2026-03-11" description=
 "This intermediate release addresses a severe performance issue encountered during RAT runs in version 0.17.
 The issue has been resolved by reducing the sample size used for Tika charset detection
@@ -130,7 +141,7 @@ Many thanks to all contributors and to our users for their valuable feedback.">
       </action>
       <action issue="RAT-508" type="update" dev="claudenw" due-to="Gary D. Gregory">
         Removed excess INFO logging in Maven plugin. Run with -X or use the verbose option in order to see output on debug level.
-      </action>  
+      </action>
       <action issue="RAT-498" type="update" dev="pottlinger">
         Update Maven wrapper to v3.9.13.
       </action>
