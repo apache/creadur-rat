@@ -694,7 +694,7 @@ agnostic home for software distribution comprehension and audit tools.
                     </goals>
                   </pluginExecutionFilter>
                   <action>
-                    <ignore />
+                    <ignore/>
                   </action>
                 </pluginExecution>
               </pluginExecutions>
@@ -781,7 +781,7 @@ agnostic home for software distribution comprehension and audit tools.
             </goals>
             <configuration>
               <target>
-                <copy file="RELEASE_NOTES.txt" todir="${project.build.directory}/site/" failonerror="false" />
+                <copy file="RELEASE_NOTES.txt" todir="${project.build.directory}/site/" failonerror="false"/>
               </target>
             </configuration>
           </execution>
@@ -800,7 +800,7 @@ agnostic home for software distribution comprehension and audit tools.
             <configuration>
               <skip>true</skip>
               <rules>
-                <NoPackageCyclesRule implementation="org.apache.axiom.buildutils.enforcer.NoPackageCyclesEnforcerRule" />
+                <NoPackageCyclesRule implementation="org.apache.axiom.buildutils.enforcer.NoPackageCyclesEnforcerRule"/>
               </rules>
             </configuration>
           </execution>
@@ -1088,6 +1088,27 @@ agnostic home for software distribution comprehension and audit tools.
                 </goals>
                 <configuration>
                   <skipAssembly>true</skipAssembly>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+          <!-- calculate checksums of source release for Apache dist area -->
+          <plugin>
+            <groupId>net.nicoulaj.maven.plugins</groupId>
+            <artifactId>checksum-maven-plugin</artifactId>
+            <version>1.11</version>
+            <executions>
+              <execution>
+                <id>source-release-checksum</id>
+                <goals>
+                  <goal>artifacts</goal>
+                </goals>
+                <configuration>
+                  <includeClassifiers>bin,src</includeClassifiers>
+                  <algorithms>
+                    <algorithm>SHA-256</algorithm>
+                    <algorithm>SHA-512</algorithm>
+                  </algorithms>
                 </configuration>
               </execution>
             </executions>
