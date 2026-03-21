@@ -46,9 +46,8 @@ agnostic home for software distribution comprehension and audit tools.
     <sonar.organization>apache</sonar.organization>
     <sonar.host.url>https://sonarcloud.io</sonar.host.url>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <!-- taken from https://maven.apache.org/guides/mini/guide-reproducible-builds.html -->
-    <!-- MSITE-1018, RAT-397: nil out timestamp in order to get current build timestamp -->
-    <project.build.outputTimestamp>a</project.build.outputTimestamp>
+    <!-- taken from https://maven.apache.org/guides/mini/guide-reproducible-builds.html, updated by maven-release-plugin -->
+    <project.build.outputTimestamp>2026-03-11T23:25:45Z</project.build.outputTimestamp>
     <ant.version>1.10.15</ant.version>
     <assertj.version>4.0.0-M1</assertj.version>
     <javaVersion>17</javaVersion>
@@ -614,6 +613,10 @@ agnostic home for software distribution comprehension and audit tools.
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-site-plugin</artifactId>
           <version>3.21.0</version>
+          <configuration>
+            <!-- RAT-536 keep site generation timestamp instead of release timestamp -->
+            <outputTimestamp>x</outputTimestamp>
+          </configuration>
         </plugin>
         <plugin>
           <groupId>org.apache.rat</groupId>
