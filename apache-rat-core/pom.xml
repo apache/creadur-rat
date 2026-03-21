@@ -144,7 +144,7 @@
             </goals>
             <configuration>
               <outputDirectory>${project.build.outputDirectory}/META-INF</outputDirectory>
-              <overwrite>true</overwrite>
+              <changeDetection>always</changeDetection>
               <resources>
                 <resource>
                   <directory>${project.basedir}/..</directory>
@@ -163,7 +163,7 @@
             </goals>
             <configuration>
               <outputDirectory>${project.build.testOutputDirectory}/examples</outputDirectory>
-              <overwrite>true</overwrite>
+              <changeDetection>always</changeDetection>
               <resources>
                 <resource>
                   <directory>../apache-rat-testdata/src/main/resources/examples</directory>
