@@ -68,8 +68,11 @@ in order to be properly linked in site reports.
     </release>
     -->
     <release version="1.0.0-SNAPSHOT" date="xxxx-yy-zz" description="Current SNAPSHOT - release to be done">
-      <action issue="RAT-532" type="update" dev="pottlinger" due-to="dependabot">
-        TODO/TBD: collect all dependabot updates for release 1.0.0.
+      <action issue="RAT-534" type="fix" dev="pottlinger" due-to="claudenw">
+        Generate SHA256 and SHA512 hashes during release builds.
+      </action>
+      <action issue="RAT-535" type="fix" dev="pottlinger">
+        Fix build warning about deprecated configuration element to configure overwrite of resources during maven-resource plugin executions.
       </action>
       <action issue="RAT-532" type="update" dev="pottlinger" due-to="dependabot">
         TODO/TBD: collect all dependabot updates for release 1.0.0.
