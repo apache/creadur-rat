@@ -128,8 +128,8 @@ public final class XmlWriter implements IXmlWriter {
         maybeCloseElement();
         appendable.append("<!-- ");
         writeEscaped(text, false);
-         appendable.append(" -->");
-         return this;
+        appendable.append(" -->");
+        return this;
     }
 
     /**
