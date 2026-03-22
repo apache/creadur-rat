@@ -47,7 +47,6 @@ import org.w3c.dom.Document;
  */
 @SuppressWarnings({"checkstyle:MagicNumber", "checkstyle:JavadocVariable"})
 public final class XmlWriter implements IXmlWriter {
-    private static final String XML_INDENT = "{http://xml.apache.org/xslt}indent-amount";
     private final Appendable appendable;
     private final ArrayDeque<CharSequence> elementNames;
     private final Set<CharSequence> currentAttributes = new HashSet<>();
@@ -312,8 +311,8 @@ public final class XmlWriter implements IXmlWriter {
     @Override
     public void close() throws IOException {
         closeDocument();
-        if (appendable instanceof Closeable) {
-            ((Closeable) appendable).close();
+        if (appendable instanceof Closeable closeable) {
+            closeable.close();
         }
     }
 
