@@ -7,7 +7,7 @@
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
- *   https://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
@@ -16,19 +16,21 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.rat.documentation.options;
+package org.apache.rat;
 
 import org.apache.commons.cli.Option;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.rat.ui.ArgumentTracker;
+import org.apache.rat.ui.UIOption;
+import org.apache.rat.ui.UIOptionCollection;
 
-public class CLIOption extends AbstractOption {
+/**
+ * The CLI option definition.
+ */
+public final class CLIOption extends UIOption<CLIOption> {
 
-    public static String createName(final Option option) {
-        return StringUtils.defaultIfBlank(option.getLongOpt(), option.getOpt());
-    }
-
-    public CLIOption(final Option option) {
-        super(option, createName(option));
+    public CLIOption(final UIOptionCollection<CLIOption> collection, final Option option) {
+        super(collection, option, ArgumentTracker.extractKey(option));
     }
 
     @Override
@@ -47,7 +49,7 @@ public class CLIOption extends AbstractOption {
 
     @Override
     protected String cleanupName(final Option option) {
-        return createName(option);
+        return ArgumentTracker.extractKey(option);
     }
 
     @Override

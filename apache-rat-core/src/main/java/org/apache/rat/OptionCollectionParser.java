@@ -21,14 +21,11 @@ package org.apache.rat;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.Serial;
 import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Comparator;
-import java.util.Map;
-import java.util.TreeMap;
-import java.util.function.Consumer;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
@@ -49,48 +46,31 @@ import org.apache.rat.help.Licenses;
 import org.apache.rat.license.LicenseSetFactory;
 import org.apache.rat.report.IReportable;
 import org.apache.rat.report.claim.ClaimStatistic;
+import org.apache.rat.ui.UIOptionCollection;
 import org.apache.rat.utils.DefaultLog;
 import org.apache.rat.utils.Log.Level;
 import org.apache.rat.walker.ArchiveWalker;
 import org.apache.rat.walker.DirectoryWalker;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 import static java.lang.String.format;
 
 /**
- * The collection of standard options for the CLI as well as utility methods to manage them and methods to create the
- * ReportConfiguration from the options and an array of arguments.
+ * Uses the AbstractOptionCollection to parse the command line options.
+ * contains utility methods to ReportConfiguration from the options and an array of arguments.
  */
-public final class OptionCollection {
+@SuppressFBWarnings("EI_EXPOSE_REP2")
+public final class OptionCollectionParser {
+    /** The OptionCollection that we are working with */
+    private final UIOptionCollection<?> uiOptionCollection;
 
-    private OptionCollection() {
-        // do not instantiate
+    public OptionCollectionParser(final UIOptionCollection<?> optionCollection) {
+        this.uiOptionCollection = optionCollection;
     }
 
     /** The Option comparator to sort the help */
     public static final Comparator<Option> OPTION_COMPARATOR = new OptionComparator();
-
-    /** The Help option */
-    public static final Option HELP = new Option("?", "help", false, "Print help for the RAT command line interface and exit.");
-
-    /** A mapping of {@code argName(value)} values to a description of those values. */
-    @Deprecated
-    private static final Map<String, Supplier<String>> ARGUMENT_TYPES;
-    static {
-        ARGUMENT_TYPES = new TreeMap<>();
-        for (ArgumentType argType : ArgumentType.values()) {
-            ARGUMENT_TYPES.put(argType.getDisplayName(), argType.description);
-        }
-    }
-
-    /**
-     * Gets the mapping of {@code argName(value)} values to a description of those values.
-     * @return the mapping of {@code argName(value)} values to a description of those values.
-     * @deprecated use {@link ArgumentType}
-     */
-    @Deprecated
-    public static Map<String, Supplier<String>> getArgumentTypes() {
-        return Collections.unmodifiableMap(ARGUMENT_TYPES);
-    }
 
     /**
      * Join a collection of objects together as a comma separated list of their string values.
@@ -106,12 +86,32 @@ public final class OptionCollection {
      *
      * @param workingDirectory The directory to resolve relative file names against.
      * @param args the arguments to parse
-     * @param helpCmd the help command to run when necessary.
-     * @return a ReportConfiguration or {@code null} if Help was printed.
+     * @return the ArgumentContext for the process.
      * @throws IOException on error.
+     * @throws ParseException on option parsing error.
      */
-    public static ReportConfiguration parseCommands(final File workingDirectory, final String[] args, final Consumer<Options> helpCmd) throws IOException {
-        return parseCommands(workingDirectory, args, helpCmd, false);
+    public ArgumentContext parseCommands(final File workingDirectory, final String[] args)
+            throws IOException, ParseException {
+        return parseCommands(workingDirectory, args, uiOptionCollection.getOptions());
+    }
+
+    /**
+     * Parse the options into the command line.
+     * @param opts the option definitions.
+     * @param args the argument to apply the definitions to.
+     * @return the CommandLine
+     * @throws ParseException on option parsing error.
+     */
+    //@VisibleForTesting
+    CommandLine parseCommandLine(final Options opts, final String[] args) throws ParseException {
+        try {
+            return DefaultParser.builder().setDeprecatedHandler(DeprecationReporter.getLogReporter())
+                    .setAllowPartialMatching(true).build().parse(opts, args);
+        } catch (ParseException e) {
+            DefaultLog.getInstance().error(e.getMessage());
+            DefaultLog.getInstance().error("Please use the \"--help\" option to see a list of valid commands and options.", e);
+            throw e;
+        }
     }
 
     /**
@@ -119,49 +119,25 @@ public final class OptionCollection {
      *
      * @param workingDirectory The directory to resolve relative file names against.
      * @param args the arguments to parse.
-     * @param helpCmd the help command to run when necessary.
-     * @param noArgs If {@code true} then the commands do not need extra arguments.
-     * @return a ReportConfiguration or {@code null} if Help was printed.
+     * @param options An Options object containing Apache command line options.
+     * @return the ArgumentContext for the process.
      * @throws IOException on error.
+     * @throws ParseException on option parsing error.
      */
-    public static ReportConfiguration parseCommands(final File workingDirectory, final String[] args,
-                                                    final Consumer<Options> helpCmd, final boolean noArgs) throws IOException {
+    private ArgumentContext parseCommands(final File workingDirectory, final String[] args,
+                                                                       final Options options) throws IOException, ParseException {
 
-        Options opts = buildOptions();
-        CommandLine commandLine;
-        try {
-            commandLine = DefaultParser.builder().setDeprecatedHandler(DeprecationReporter.getLogReporter())
-                    .setAllowPartialMatching(true).build().parse(opts, args);
-        } catch (ParseException e) {
-            DefaultLog.getInstance().error(e.getMessage());
-            DefaultLog.getInstance().error("Please use the \"--help\" option to see a list of valid commands and options.", e);
-            System.exit(1);
-            return null; // dummy return (won't be reached) to avoid Eclipse complaint about possible NPE
-            // for "commandLine"
-        }
-
+        CommandLine commandLine = parseCommandLine(options, args);
         ArgumentContext argumentContext = new ArgumentContext(workingDirectory, commandLine);
-        Arg.processLogLevel(argumentContext, CLIOptionCollection.INSTANCE);
-
-        if (commandLine.hasOption(HELP)) {
-            helpCmd.accept(opts);
-            return null;
+        Arg.processLogLevel(argumentContext, uiOptionCollection);
+        populateConfiguration(argumentContext);
+        if (uiOptionCollection.isSelected(Arg.HELP_LICENSES)) {
+            new Licenses(argumentContext.getConfiguration(),
+                    new PrintWriter(argumentContext.getConfiguration().getOutput().get(),
+                            false, StandardCharsets.UTF_8)).printHelp();
         }
 
-        if (commandLine.hasOption(Arg.HELP_LICENSES.option())) {
-            new Licenses(createConfiguration(argumentContext), new PrintWriter(System.out, false, StandardCharsets.UTF_8)).printHelp();
-            return null;
-        }
-
-        ReportConfiguration configuration = createConfiguration(argumentContext);
-        if (!noArgs && !configuration.hasSource()) {
-            String msg = "No directories or files specified for scanning. Did you forget to close a multi-argument option?";
-            DefaultLog.getInstance().error(msg);
-            helpCmd.accept(opts);
-            return null;
-        }
-
-        return configuration;
+        return argumentContext;
     }
 
     /**
@@ -170,37 +146,20 @@ public final class OptionCollection {
      * You probably want one of the {@code ParseCommands} methods.
      * @param argumentContext The context to execute in.
      * @return a ReportConfiguration
-     * @see #parseCommands(File, String[], Consumer)
-     * @see #parseCommands(File, String[], Consumer, boolean)
      */
-    static ReportConfiguration createConfiguration(final ArgumentContext argumentContext) {
-        argumentContext.processArgs(CLIOptionCollection.INSTANCE);
+    private ReportConfiguration populateConfiguration(final ArgumentContext argumentContext) {
+        argumentContext.processArgs(uiOptionCollection);
         final ReportConfiguration configuration = argumentContext.getConfiguration();
         final CommandLine commandLine = argumentContext.getCommandLine();
-        if (CLIOptionCollection.INSTANCE.isSelected(Arg.DIR)) {
-            try {
-                configuration.addSource(getReportable(commandLine.getParsedOptionValue(
-                        CLIOptionCollection.INSTANCE.getSelected(Arg.DIR).get()), configuration));
-            } catch (ParseException e) {
-                throw new ConfigurationException("Unable to set parse " + CLIOptionCollection.INSTANCE.getSelected(Arg.DIR).get(), e);
-            }
-        }
-        for (String s : commandLine.getArgs()) {
-            IReportable reportable = getReportable(new File(s), configuration);
-            if (reportable != null) {
-                configuration.addSource(reportable);
+        if (!configuration.hasSource()) {
+            for (String s : commandLine.getArgs()) {
+                IReportable reportable = getReportable(new File(s), configuration);
+                if (reportable != null) {
+                    configuration.addSource(reportable);
+                }
             }
         }
         return configuration;
-    }
-
-    /**
-     * Create an {@code Options} object from the list of defined Options.
-     * Mutually exclusive options must be listed in an OptionGroup.
-     * @return the Options comprised of the Options defined in this class.
-     */
-    public static Options buildOptions() {
-        return Arg.getOptions().addOption(HELP);
     }
 
     /**
@@ -211,7 +170,7 @@ public final class OptionCollection {
      * @param config the ReportConfiguration.
      * @return the IReportable instance containing the files.
      */
-    static IReportable getReportable(final File base, final ReportConfiguration config) {
+    IReportable getReportable(final File base, final ReportConfiguration config) {
         File absBase = base.getAbsoluteFile();
         DocumentName documentName = DocumentName.builder(absBase).build();
         if (!absBase.exists()) {
@@ -238,6 +197,7 @@ public final class OptionCollection {
      */
     private static final class OptionComparator implements Comparator<Option>, Serializable {
         /** The serial version UID.  */
+        @Serial
         private static final long serialVersionUID = 5305467873966684014L;
 
         private String getKey(final Option opt) {
@@ -301,7 +261,7 @@ public final class OptionCollection {
         /**
          * A style sheet.
          */
-        STYLESHEET("StyleSheet", () -> format("Either an external xsl file or one of the internal named sheets. Internal sheets are: %n%s",
+        STYLESHEET("StyleSheet", () -> format("Either an external XSLT file or one of the internal named sheets. Internal sheets are: %n%s",
                 Arrays.stream(StyleSheets.values())
                         .map(v -> format("\t%s: %s%n", v.arg(), v.desc()))
                         .collect(Collectors.joining(System.lineSeparator())))),
