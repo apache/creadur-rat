@@ -43,7 +43,7 @@ public class XmlElements {
      */
     private static String normalizeName(final String name) {
         CasedString casedName = new CasedString(CasedString.StringCase.SNAKE, name.toLowerCase(Locale.ROOT));
-       return casedName.toCase(CasedString.StringCase.CAMEL);
+       return casedName.toCase(CasedString.StringCase.PASCAL);
     }
 
     /**
