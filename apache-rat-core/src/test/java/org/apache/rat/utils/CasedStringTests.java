@@ -240,7 +240,7 @@ class CasedStringTests {
         CasedString s1 = new CasedString(CasedString.StringCase.KEBAB, "the-test-string");
         CasedString s2 = new CasedString(CasedString.StringCase.DOT, "the.test.string");
         CasedString s3 = new CasedString(CasedString.StringCase.SLASH, "the/test/String");
-        assertThat(s1.hashCode()).isEqualTo(s2.hashCode());
+        assertThat(s1).hasSameHashCodeAs(s2);
         assertThat(s1.hashCode()).isNotEqualTo(s3.hashCode());
     }
 
@@ -260,37 +260,37 @@ class CasedStringTests {
         assertThat(nullValue.toString()).isNull();
         assertThat(nullValue.as(CasedString.StringCase.DOT).getSegments()).isEqualTo(CasedString.StringCase.NULL_SEGMENT);
         assertThat(nullValue.toCase(CasedString.StringCase.DOT)).isNull();
-        assertThat(nullValue).isEqualTo(new CasedString(CasedString.StringCase.CAMEL, (String) null));
-        assertThat(nullValue).isNotEqualTo(new CasedString(CasedString.StringCase.CAMEL, ""));
+        assertThat(nullValue).isEqualTo(new CasedString(CasedString.StringCase.CAMEL, (String) null))
+                        .isNotEqualTo(new CasedString(CasedString.StringCase.CAMEL, ""));
     }
 
     @Test
     void testEmptyString() {
         CasedString emptyValue = new CasedString(CasedString.StringCase.CAMEL, "");
         assertThat(emptyValue.getSegments()).isEqualTo(CasedString.StringCase.EMPTY_SEGMENT);
-        assertThat(emptyValue.toString()).isEqualTo("");
+        assertThat(emptyValue.toString()).isEmpty();
         assertThat(emptyValue.as(CasedString.StringCase.DOT).getSegments()).isEqualTo(CasedString.StringCase.EMPTY_SEGMENT);
-        assertThat(emptyValue.toCase(CasedString.StringCase.DOT)).isEqualTo("");
-        assertThat(emptyValue).isEqualTo(new CasedString(CasedString.StringCase.CAMEL, ""));
-        assertThat(emptyValue).isNotEqualTo(new CasedString(CasedString.StringCase.CAMEL, (String)null));
+        assertThat(emptyValue.toCase(CasedString.StringCase.DOT)).isEmpty();
+        assertThat(emptyValue).isEqualTo(new CasedString(CasedString.StringCase.CAMEL, ""))
+                .isNotEqualTo(new CasedString(CasedString.StringCase.CAMEL, (String)null));
     }
 
     @Test
     void testCamel() {
         CasedString underTest = new CasedString(CasedString.StringCase.CAMEL, "camelCase");
-        assertThat(underTest.toString()).isEqualTo("CamelCase");
+        assertThat(underTest).hasToString("CamelCase");
         assertThat(underTest.getSegments()).isEqualTo(new String[]{"camel", "Case"});
         underTest = new CasedString(CasedString.StringCase.CAMEL, new String[]{"camel", "case"});
-        assertThat(underTest.toString()).isEqualTo("CamelCase");
+        assertThat(underTest).hasToString("CamelCase");
 
     }
 
     @Test
     void testPascal() {
         CasedString underTest = new CasedString(CasedString.StringCase.PASCAL, "PascalCase");
-        assertThat(underTest.toString()).isEqualTo("pascalCase");
+        assertThat(underTest).hasToString("pascalCase");
         assertThat(underTest.getSegments()).isEqualTo(new String[]{"Pascal", "Case"});
         underTest = new CasedString(CasedString.StringCase.PASCAL, new String[]{"pascal", "case"});
-        assertThat(underTest.toString()).isEqualTo("pascalCase");
+        assertThat(underTest).hasToString("pascalCase");
     }
 }
