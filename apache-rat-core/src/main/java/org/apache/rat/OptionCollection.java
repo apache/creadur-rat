@@ -200,7 +200,7 @@ public final class OptionCollection {
      * @return the Options comprised of the Options defined in this class.
      */
     public static Options buildOptions() {
-        return Arg.getOptions().addOption(HELP);
+        return CLIOptionCollection.INSTANCE.getOptions();
     }
 
     /**
