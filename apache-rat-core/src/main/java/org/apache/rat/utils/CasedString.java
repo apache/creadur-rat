@@ -40,7 +40,7 @@ public final class CasedString {
     /** The case of the string as parsed */
     private final StringCase stringCase;
     /** A joiner used for the pascal and camel cases. */
-    private static final Function<String[], String> PASCAL_JOINER = strings -> {
+    private static final Function<String[], String> CAMEL_JOINER = strings -> {
         StringBuilder sb = new StringBuilder();
         Arrays.stream(strings).map(s -> s == null ? "" : s).forEach(token -> sb.append(WordUtils.capitalize(token.toLowerCase(Locale.ROOT))));
         return sb.toString();
@@ -108,7 +108,7 @@ public final class CasedString {
 
     @Override
     public int hashCode() {
-        return Objects.hash(Arrays.hashCode(getSegments()), stringCase);
+        return Arrays.hashCode(getSegments());
     }
 
     /**
@@ -130,9 +130,9 @@ public final class CasedString {
         /** The slash case. Example: "hello/world" */
         public static final StringCase SLASH;
         /** A marker for the parsing of a NULL string. */
-        private static final String[] NULL_SEGMENT;
+        static final String[] NULL_SEGMENT;
         /** An empty segment marker. */
-        private static final String[] EMPTY_SEGMENT;
+        static final String[] EMPTY_SEGMENT;
         /** The name of this case */
         private final String name;
         /** The predicate that determines if a character is a spliter character.  A splitter character
@@ -246,9 +246,9 @@ public final class CasedString {
 
 
         static {
-            CAMEL = new StringCase("CAMEL", Character::isUpperCase, true, CasedString.PASCAL_JOINER.andThen(WordUtils::uncapitalize),
+            CAMEL = new StringCase("CAMEL", Character::isUpperCase, true, CasedString.CAMEL_JOINER,
                     x -> (String) StringUtils.defaultIfEmpty(x, (CharSequence) null));
-            PASCAL = new StringCase("PASCAL", Character::isUpperCase, true, CasedString.PASCAL_JOINER,
+            PASCAL = new StringCase("PASCAL", Character::isUpperCase, true, CasedString.CAMEL_JOINER.andThen(WordUtils::uncapitalize),
                     x -> (String) StringUtils.defaultIfEmpty(x, (CharSequence) null));
             SNAKE = new StringCase("SNAKE", '_');
             KEBAB = new StringCase("KEBAB", '-');
