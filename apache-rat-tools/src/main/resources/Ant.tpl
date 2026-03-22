@@ -58,7 +58,7 @@ ${static}
 
     public static String createName(String longOpt) {
         String name = StringUtils.defaultIfEmpty(xlateName.get(longOpt), longOpt).toLowerCase(Locale.ROOT);
-        return new CasedString(CasedString.StringCase.KEBAB, name).toCase(CasedString.StringCase.CAMEL);
+        return new CasedString(CasedString.StringCase.KEBAB, name).toCase(CasedString.StringCase.PASCAL);
     }
 
     public static List<String> unsupportedArgs() {
