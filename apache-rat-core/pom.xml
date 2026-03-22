@@ -27,6 +27,7 @@
   <name>Apache Creadur RAT::Core</name>
   <description>The core functionality of RAT that is used by all clients.</description>
   <properties>
+    <!-- XMLChar.java is copied from Xerces codebase and so does no meet our sonar tests -->
     <sonar.exclusions>src/main/java/org/apache/rat/report/xml/writer/XMLChar.java</sonar.exclusions>
   </properties>
   <build>
