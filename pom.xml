@@ -85,6 +85,16 @@ agnostic home for software distribution comprehension and audit tools.
   </distributionManagement>
   <dependencyManagement>
     <dependencies>
+      <dependency>
+        <groupId>com.github.spotbugs</groupId>
+        <artifactId>spotbugs-annotations</artifactId>
+        <version>4.9.8</version>
+      </dependency>
+      <dependency>
+        <groupId>org.reflections</groupId>
+        <artifactId>reflections</artifactId>
+        <version>0.10.2</version>
+      </dependency>
       <!-- used to render the site and make skin updates more transparent -->
       <dependency>
         <groupId>org.apache.maven.skins</groupId>
