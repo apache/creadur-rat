@@ -76,61 +76,61 @@ class CasedStringTests {
     static Stream<Arguments> testToCaseData() {
         List<Arguments> lst = new ArrayList<>();
 
-        CasedString underTest = new CasedString(CasedString.StringCase.CAMEL, "camelCase");
-        lst.add(Arguments.of(underTest, CasedString.StringCase.CAMEL, "camelCase"));
+        CasedString underTest = new CasedString(CasedString.StringCase.PASCAL, "camelCase");
+        lst.add(Arguments.of(underTest, CasedString.StringCase.PASCAL, "camelCase"));
         lst.add(Arguments.of(underTest, CasedString.StringCase.SNAKE, "camel_Case"));
         lst.add(Arguments.of(underTest, CasedString.StringCase.KEBAB, "camel-Case"));
         lst.add(Arguments.of(underTest, CasedString.StringCase.PHRASE, "camel Case"));
         lst.add(Arguments.of(underTest, CasedString.StringCase.DOT, "camel.Case"));
-        lst.add(Arguments.of(underTest, CasedString.StringCase.PASCAL, "CamelCase"));
+        lst.add(Arguments.of(underTest, CasedString.StringCase.CAMEL, "CamelCase"));
 
         underTest = new CasedString(CasedString.StringCase.SNAKE, "snake_case");
-        lst.add(Arguments.of(underTest, CasedString.StringCase.CAMEL, "snakeCase"));
+        lst.add(Arguments.of(underTest, CasedString.StringCase.PASCAL, "snakeCase"));
         lst.add(Arguments.of(underTest, CasedString.StringCase.SNAKE, "snake_case"));
         lst.add(Arguments.of(underTest, CasedString.StringCase.KEBAB, "snake-case"));
         lst.add(Arguments.of(underTest, CasedString.StringCase.PHRASE, "snake case"));
         lst.add(Arguments.of(underTest, CasedString.StringCase.DOT, "snake.case"));
-        lst.add(Arguments.of(underTest, CasedString.StringCase.PASCAL, "SnakeCase"));
+        lst.add(Arguments.of(underTest, CasedString.StringCase.CAMEL, "SnakeCase"));
 
         underTest = new CasedString(CasedString.StringCase.KEBAB, "kebab-case");
-        lst.add(Arguments.of(underTest, CasedString.StringCase.CAMEL, "kebabCase"));
+        lst.add(Arguments.of(underTest, CasedString.StringCase.PASCAL, "kebabCase"));
         lst.add(Arguments.of(underTest, CasedString.StringCase.SNAKE, "kebab_case"));
         lst.add(Arguments.of(underTest, CasedString.StringCase.KEBAB, "kebab-case"));
         lst.add(Arguments.of(underTest, CasedString.StringCase.PHRASE, "kebab case"));
         lst.add(Arguments.of(underTest, CasedString.StringCase.DOT, "kebab.case"));
-        lst.add(Arguments.of(underTest, CasedString.StringCase.PASCAL, "KebabCase"));
+        lst.add(Arguments.of(underTest, CasedString.StringCase.CAMEL, "KebabCase"));
 
         underTest = new CasedString(CasedString.StringCase.PHRASE, "phrase case");
-        lst.add(Arguments.of(underTest, CasedString.StringCase.CAMEL, "phraseCase"));
+        lst.add(Arguments.of(underTest, CasedString.StringCase.PASCAL, "phraseCase"));
         lst.add(Arguments.of(underTest, CasedString.StringCase.SNAKE, "phrase_case"));
         lst.add(Arguments.of(underTest, CasedString.StringCase.KEBAB, "phrase-case"));
         lst.add(Arguments.of(underTest, CasedString.StringCase.PHRASE, "phrase case"));
         lst.add(Arguments.of(underTest, CasedString.StringCase.DOT, "phrase.case"));
-        lst.add(Arguments.of(underTest, CasedString.StringCase.PASCAL, "PhraseCase"));
+        lst.add(Arguments.of(underTest, CasedString.StringCase.CAMEL, "PhraseCase"));
 
         underTest = new CasedString(CasedString.StringCase.DOT, "dot.case");
-        lst.add(Arguments.of(underTest, CasedString.StringCase.CAMEL, "dotCase"));
+        lst.add(Arguments.of(underTest, CasedString.StringCase.PASCAL, "dotCase"));
         lst.add(Arguments.of(underTest, CasedString.StringCase.SNAKE, "dot_case"));
         lst.add(Arguments.of(underTest, CasedString.StringCase.KEBAB, "dot-case"));
         lst.add(Arguments.of(underTest, CasedString.StringCase.PHRASE, "dot case"));
         lst.add(Arguments.of(underTest, CasedString.StringCase.DOT, "dot.case"));
-        lst.add(Arguments.of(underTest, CasedString.StringCase.PASCAL, "DotCase"));
+        lst.add(Arguments.of(underTest, CasedString.StringCase.CAMEL, "DotCase"));
 
-        underTest = new CasedString(CasedString.StringCase.PASCAL, "PascalCase");
-        lst.add(Arguments.of(underTest, CasedString.StringCase.CAMEL, "pascalCase"));
-        lst.add(Arguments.of(underTest, CasedString.StringCase.SNAKE, "Pascal_Case"));
-        lst.add(Arguments.of(underTest, CasedString.StringCase.KEBAB, "Pascal-Case"));
-        lst.add(Arguments.of(underTest, CasedString.StringCase.PHRASE, "Pascal Case"));
-        lst.add(Arguments.of(underTest, CasedString.StringCase.DOT, "Pascal.Case"));
-        lst.add(Arguments.of(underTest, CasedString.StringCase.PASCAL, "PascalCase"));
+        underTest = new CasedString(CasedString.StringCase.PASCAL, "pascalCase");
+        lst.add(Arguments.of(underTest, CasedString.StringCase.PASCAL, "pascalCase"));
+        lst.add(Arguments.of(underTest, CasedString.StringCase.SNAKE, "pascal_Case"));
+        lst.add(Arguments.of(underTest, CasedString.StringCase.KEBAB, "pascal-Case"));
+        lst.add(Arguments.of(underTest, CasedString.StringCase.PHRASE, "pascal Case"));
+        lst.add(Arguments.of(underTest, CasedString.StringCase.DOT, "pascal.Case"));
+        lst.add(Arguments.of(underTest, CasedString.StringCase.CAMEL, "PascalCase"));
 
         underTest = new CasedString(CasedString.StringCase.DOT, "one..two");
-        lst.add(Arguments.of(underTest, CasedString.StringCase.CAMEL, "oneTwo"));
+        lst.add(Arguments.of(underTest, CasedString.StringCase.PASCAL, "oneTwo"));
         lst.add(Arguments.of(underTest, CasedString.StringCase.SNAKE, "one__two"));
         lst.add(Arguments.of(underTest, CasedString.StringCase.KEBAB, "one--two"));
         lst.add(Arguments.of(underTest, CasedString.StringCase.PHRASE, "one  two"));
         lst.add(Arguments.of(underTest, CasedString.StringCase.DOT, "one..two"));
-        lst.add(Arguments.of(underTest, CasedString.StringCase.PASCAL, "OneTwo"));
+        lst.add(Arguments.of(underTest, CasedString.StringCase.CAMEL, "OneTwo"));
 
         return lst.stream();
     }
@@ -152,7 +152,7 @@ class CasedStringTests {
         String[] doubleEmpty = {"one", "", "", "two"};
         String[] doubleNull = {"one", null, null, "two"};
 
-        CasedString.StringCase underTest = CasedString.StringCase.CAMEL;
+        CasedString.StringCase underTest = CasedString.StringCase.PASCAL;
         lst.add(Arguments.of(underTest, emptyFirst, "oneTwo"));
         lst.add(Arguments.of(underTest, emptyMiddle, "oneTwo"));
         lst.add(Arguments.of(underTest, emptyEnd, "oneTwo"));
@@ -162,7 +162,7 @@ class CasedStringTests {
         lst.add(Arguments.of(underTest, doubleEmpty, "oneTwo"));
         lst.add(Arguments.of(underTest, doubleNull, "oneTwo"));
 
-        underTest = CasedString.StringCase.PASCAL;
+        underTest = CasedString.StringCase.CAMEL;
         lst.add(Arguments.of(underTest, emptyFirst, "OneTwo"));
         lst.add(Arguments.of(underTest, emptyMiddle, "OneTwo"));
         lst.add(Arguments.of(underTest, emptyEnd, "OneTwo"));
