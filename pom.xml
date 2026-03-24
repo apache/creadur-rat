@@ -51,7 +51,7 @@ agnostic home for software distribution comprehension and audit tools.
     <ant.version>1.10.15</ant.version>
     <assertj.version>4.0.0-M1</assertj.version>
     <javaVersion>17</javaVersion>
-    <tika.version>3.2.3</tika.version>
+    <tika.version>3.3.0</tika.version>
     <mockito.version>5.23.0</mockito.version>
     <maven.compiler.source>${javaVersion}</maven.compiler.source>
     <maven.compiler.target>${javaVersion}</maven.compiler.target>
