@@ -28,7 +28,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamSource;
 
 /**
- * Factory to create standard XML objects.  The intention of this class is to resolve in a consistent manner the
+ * Factory to create standard XML objects. The intention of this class is to resolve in a consistent manner the
  * XXE errors and similar XML IO errors.
  */
 public final class StandardXmlFactory {
