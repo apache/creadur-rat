@@ -135,7 +135,7 @@ public final class CasedString {
         static final String[] EMPTY_SEGMENT;
         /** The name of this case */
         private final String name;
-        /** The predicate that determines if a character is a spliter character. A splitter character
+        /** The predicate that determines if a character is a splitter character. A splitter character
          * is the character that signals the start of a new segment.
          */
         private final Predicate<Character> splitter;
