@@ -62,7 +62,7 @@ ${static}
      */
     public static String createName(String longOpt) {
         String name = xlateName.get(longOpt);
-        return name != null ? name : new CasedString(CasedString.StringCase.KEBAB, longOpt).toCase(CasedString.StringCase.CAMEL);
+        return name != null ? name : new CasedString(CasedString.StringCase.KEBAB, longOpt).toCase(CasedString.StringCase.PASCAL);
     }
 
     /**
