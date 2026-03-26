@@ -30,10 +30,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
@@ -45,6 +43,7 @@ import org.apache.rat.configuration.MatcherBuilderTracker;
 import org.apache.rat.configuration.XMLConfig;
 import org.apache.rat.license.SimpleLicense;
 import org.apache.rat.tools.xsd.XsdWriter.Type;
+import org.apache.rat.utils.StandardXmlFactory;
 
 /**
  * Generates the XSD for a configuration.
@@ -71,16 +70,9 @@ public class XsdGenerator {
     public static void main(final String[] args) throws IOException, TransformerException {
         XsdGenerator generator = new XsdGenerator();
 
-        TransformerFactory tf = TransformerFactory.newInstance();
-        Transformer transformer;
         try (InputStream in = generator.getInputStream();
              InputStream styleIn = StyleSheets.XML.getStyleSheet().get()) {
-            transformer = tf.newTransformer(new StreamSource(styleIn));
-            transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
-            transformer.setOutputProperty(OutputKeys.METHOD, "xml");
-            transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-            transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
-            transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
+            Transformer transformer = StandardXmlFactory.create(styleIn);
             transformer.transform(new StreamSource(in),
                     new StreamResult(new OutputStreamWriter(System.out, StandardCharsets.UTF_8)));
         }
@@ -92,11 +84,11 @@ public class XsdGenerator {
      * @throws IOException on output errors.
      */
     public InputStream getInputStream() throws IOException {
-        try (ByteArrayOutputStream baos = new ByteArrayOutputStream();
-             Writer writer = new OutputStreamWriter(baos, StandardCharsets.UTF_8)) {
-            write(writer);
-            return new ByteArrayInputStream(baos.toByteArray());
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        try (Writer otherWriter = new OutputStreamWriter(baos, StandardCharsets.UTF_8)) {
+            write(otherWriter);
         }
+        return new ByteArrayInputStream(baos.toByteArray());
     }
 
     /**
