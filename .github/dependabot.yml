@@ -26,6 +26,10 @@ updates:
 #    ignore:
 #      - dependency-name: "org.apache.tika:tika-core"
 #        versions: ["[3,)"]
+# v4.x is for Maven 4.x only
+    ignore:
+      - dependency-name: "org.codehaus.plexus:plexus-utils"
+        versions: ["[4,)"]
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
