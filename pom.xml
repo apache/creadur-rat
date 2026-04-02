@@ -48,7 +48,7 @@ agnostic home for software distribution comprehension and audit tools.
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <!-- taken from https://maven.apache.org/guides/mini/guide-reproducible-builds.html, updated by maven-release-plugin -->
     <project.build.outputTimestamp>2026-03-11T23:25:45Z</project.build.outputTimestamp>
-    <ant.version>1.10.15</ant.version>
+    <ant.version>1.10.16</ant.version>
     <assertj.version>4.0.0-M1</assertj.version>
     <javaVersion>17</javaVersion>
     <tika.version>3.3.0</tika.version>
