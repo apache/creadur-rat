@@ -18,24 +18,29 @@
  */ 
 package org.apache.rat.report.xml.writer.impl.base;
 
+import org.apache.rat.report.xml.writer.IXmlWriter;
 import org.apache.rat.report.xml.writer.InvalidXmlException;
 import org.apache.rat.report.xml.writer.OperationNotAllowedException;
 import org.apache.rat.report.xml.writer.XmlWriter;
+import org.apache.rat.testhelpers.XmlUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.w3c.dom.Document;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.StringWriter;
+import java.nio.charset.StandardCharsets;
+import java.util.NoSuchElementException;
 
 import static org.assertj.core.api.Assertions.fail;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+class XmlWriterTest {
 
-public class XmlWriterTest {
-
-    private static final char[] ZERO_CHAR = {(char)0};
-    
     private XmlWriter writer;
     private StringWriter out;
     
@@ -46,7 +51,7 @@ public class XmlWriterTest {
     }
 
     @Test
-    public void returnValues() throws Exception {
+    void returnValues() throws Exception {
         assertEquals( 
                 writer, writer.openElement("alpha"), "XmlWriters should always return themselves");
         assertEquals(
@@ -58,7 +63,7 @@ public class XmlWriterTest {
     }
 
     @Test
-    public void openElement() throws Exception {
+    void openElement() throws Exception {
         assertEquals(
                 writer, writer.openElement("alpha"), "XmlWriters should always return themselves");
          assertEquals("<alpha", out.toString(), "Alpha element started");
@@ -74,7 +79,7 @@ public class XmlWriterTest {
     }
     
     @Test
-    public void invalidElementName() throws Exception {
+    void invalidElementName() throws Exception {
         assertTrue( isValidElementName("alpha"), "All strings ok");
         assertTrue(isValidElementName("alpha77"), "Strings and digits ok");
         assertFalse(isValidElementName("5alpha77"), "Must no start with digit");
@@ -102,7 +107,7 @@ public class XmlWriterTest {
     }
 
     @Test
-    public void callOpenElementAfterLastElementClosed() throws Exception {
+    void callOpenElementAfterLastElementClosed() throws Exception {
         assertEquals(
                 writer, writer.openElement("alpha"), "XmlWriters should always return themselves");
          assertEquals("<alpha", out.toString(), "Alpha element started");
@@ -118,7 +123,7 @@ public class XmlWriterTest {
     }    
 
     @Test
-    public void callCloseElementAfterLastElementClosed() throws Exception {
+    void callCloseElementAfterLastElementClosed() throws Exception {
         assertEquals(
                 writer, writer.openElement("alpha"), "XmlWriters should always return themselves");
          assertEquals("<alpha", out.toString(), "Alpha element started");
@@ -134,7 +139,7 @@ public class XmlWriterTest {
     }
 
     @Test
-    public void closeFirstElement() throws Exception {
+    void closeFirstElement() throws Exception {
         assertEquals(
                 writer, writer.openElement("alpha"), "XmlWriters should always return themselves");
         assertEquals("<alpha", out.toString(), "Alpha element started");
@@ -144,7 +149,7 @@ public class XmlWriterTest {
     }
     
     @Test
-    public void closeElementWithContent() throws Exception {
+    void closeElementWithContent() throws Exception {
         assertEquals(
                 writer, writer.openElement("alpha"), "XmlWriters should always return themselves");
         assertEquals("<alpha", out.toString(), "Alpha element started");
@@ -166,7 +171,7 @@ public class XmlWriterTest {
     }
     
     @Test
-    public void closeElementBeforeFirstElement() throws Exception {
+    void closeElementBeforeFirstElement() throws Exception {
         try {
             writer.closeElement();
             fail("Cannot close elements before the first element has been closed");
@@ -176,7 +181,7 @@ public class XmlWriterTest {
     }
     
     @Test
-    public void contentAfterElement() throws Exception {
+    void contentAfterElement() throws Exception {
         assertEquals(
                 writer, writer.openElement("alpha"), "XmlWriters should always return themselves");
          assertEquals("<alpha", out.toString(), "Alpha element started");
@@ -204,7 +209,7 @@ public class XmlWriterTest {
     }
 
     @Test
-    public void contentAfterLastElement() throws Exception {
+    void contentAfterLastElement() throws Exception {
         assertEquals(
                 writer, writer.openElement("alpha"), "XmlWriters should always return themselves");
          assertEquals("<alpha", out.toString(), "Alpha element started");
@@ -220,7 +225,7 @@ public class XmlWriterTest {
     }
     
     @Test
-    public void writeContentBeforeFirstElement() throws Exception {
+    void writeContentBeforeFirstElement() throws Exception {
         try {
             writer.content("Too early");
             fail("Cannot close elements before the first element has been closed");
@@ -230,7 +235,7 @@ public class XmlWriterTest {
     }
     
     @Test
-    public void contentEscaping() throws Exception {
+    void contentEscaping() throws Exception {
         assertEquals(
                 writer, writer.openElement("alpha"), "XmlWriters should always return themselves");
          assertEquals("<alpha", out.toString(), "Alpha element started");
@@ -247,7 +252,7 @@ public class XmlWriterTest {
     }
 
     @Test
-    public void attributeAfterLastElement() throws Exception {
+    void attributeAfterLastElement() throws Exception {
         assertEquals(
                 writer, writer.openElement("alpha"), "XmlWriters should always return themselves");
          assertEquals("<alpha", out.toString(), "Alpha element started");
@@ -263,7 +268,7 @@ public class XmlWriterTest {
     }
     
     @Test
-    public void attributeContentBeforeFirstElement() throws Exception {
+    void attributeContentBeforeFirstElement() throws Exception {
         try {
             writer.attribute("foo", "bar");
             fail("Cannot close elements before the first element has been closed");
@@ -273,7 +278,7 @@ public class XmlWriterTest {
     }
     
     @Test
-    public void invalidAttributeName() throws Exception {
+    void invalidAttributeName() throws Exception {
         writer.openElement("alpha");
         assertTrue(isValidAttributeName("alpha"), "All string ok");
         assertTrue(isValidAttributeName("alpha77"), "Strings and digits ok");
@@ -295,7 +300,7 @@ public class XmlWriterTest {
     }
     
     @Test
-    public void escapeAttributeContent() throws Exception {
+    void escapeAttributeContent() throws Exception {
         assertEquals(
                 writer, writer.openElement("alpha"), "XmlWriters should always return themselves");
          assertEquals("<alpha", out.toString(), "Alpha element started");
@@ -318,7 +323,7 @@ public class XmlWriterTest {
     }
     
     @Test
-    public void attributeInContent() throws Exception {
+    void attributeInContent() throws Exception {
         assertEquals(
                 writer, writer.openElement("alpha"), "XmlWriters should always return themselves");
          assertEquals("<alpha", out.toString(), "Alpha element started");
@@ -333,18 +338,33 @@ public class XmlWriterTest {
     }
   
     @Test
-    public void outOfRangeCharacter() throws Exception {
+    void outOfRangeCharacter() throws Exception {
         assertEquals(
                 writer, writer.openElement("alpha"), "XmlWriters should always return themselves");
          assertEquals("<alpha", out.toString(), "Alpha element started");
-        assertEquals(
-                writer, writer.content(new String(ZERO_CHAR)), "XmlWriters should always return themselves");
-        String out = this.out.toString();
-        assertEquals("<alpha>?", out, "Replace illegal characters with question marks");
+         CharSequence cs = new CharSequence() {
+             @Override
+             public int length() {
+                 return 1;
+             }
+
+             @Override
+             public char charAt(int index) {
+                 return Character.highSurrogate(0x110000);
+             }
+
+             @Override
+             public CharSequence subSequence(int start, int end) {
+                 return null;
+             }
+         };
+
+        assertEquals(writer, writer.content(cs), "XmlWriters should always return themselves");
+        assertEquals("<alpha>\\uDC00", this.out.toString(), "Replace illegal characters with \\u encoding");
     }
     
     @Test
-    public void attributeAfterElementClosed() throws Exception {
+    void attributeAfterElementClosed() throws Exception {
         assertEquals(
                 writer, writer.openElement("alpha"), "XmlWriters should always return themselves");
          assertEquals("<alpha", out.toString(), "Alpha element started");
@@ -363,7 +383,7 @@ public class XmlWriterTest {
     }
     
     @Test
-    public void closeDocumentBeforeOpen() throws Exception {
+    void closeDocumentBeforeOpen() throws Exception {
         try {
             writer.closeDocument();
             fail("Cannot close document before the first element has been opened");
@@ -373,7 +393,7 @@ public class XmlWriterTest {
     }
     
     @Test
-    public void closeDocumentAfterRootElementClosed() throws Exception {
+    void closeDocumentAfterRootElementClosed() throws Exception {
         assertEquals(
                 writer, writer.openElement("alpha"), "XmlWriters should always return themselves");
          assertEquals("<alpha", out.toString(), "Alpha element started");
@@ -388,7 +408,7 @@ public class XmlWriterTest {
     }   
     
     @Test
-    public void closeSimpleDocument() throws Exception {
+    void closeSimpleDocument() throws Exception {
         assertEquals(
                 writer, writer.openElement("alpha"), "XmlWriters should always return themselves");
          assertEquals("<alpha", out.toString(), "Alpha element started");
@@ -401,7 +421,7 @@ public class XmlWriterTest {
     }
     
     @Test
-    public void closeComplexDocument() throws Exception {
+    void closeComplexDocument() throws Exception {
         assertEquals(
                 writer, writer.openElement("alpha"), "XmlWriters should always return themselves");
          assertEquals("<alpha", out.toString(), "Alpha element started");
@@ -429,14 +449,14 @@ public class XmlWriterTest {
     }
     
     @Test
-    public void writeProlog() throws Exception {
+    void writeProlog() throws Exception {
         assertEquals(
                 writer, writer.startDocument(), "XmlWriters should always return themselves");
         assertEquals("<?xml version='1.0'?>", out.toString(), "Prolog written");
     }
     
     @Test
-    public void writeAfterElement() throws Exception {
+    void writeAfterElement() throws Exception {
         assertEquals(
                 writer, writer.openElement("alpha"), "XmlWriters should always return themselves");
          assertEquals("<alpha", out.toString(), "Alpha element started");
@@ -449,7 +469,7 @@ public class XmlWriterTest {
     }
     
     @Test
-    public void writePrologTwo() throws Exception {
+    void writePrologTwo() throws Exception {
         assertEquals(
                 writer, writer.startDocument(), "XmlWriters should always return themselves");
         assertEquals("<?xml version='1.0'?>", out.toString(), "Prolog written");
@@ -462,7 +482,7 @@ public class XmlWriterTest {
     }
     
     @Test
-    public void duplicateAttributes() throws Exception {
+    void duplicateAttributes() throws Exception {
         assertEquals(
                 writer, writer.openElement("alpha"), "XmlWriters should always return themselves");
          assertEquals("<alpha", out.toString(), "Alpha element started");
@@ -481,5 +501,51 @@ public class XmlWriterTest {
         } catch (InvalidXmlException e) {
             // Each attribute may only be written once
         }
+    }
+
+    @Test
+    void writeCDataBeforeElement() {
+        assertThrows(OperationNotAllowedException.class, () -> writer.startDocument().cdata("Just cdata").closeDocument());
+    }
+
+    @Test
+    void writeCData() throws Exception {
+        writer.startDocument().openElement("test").cdata("Just cdata").closeDocument();
+        assertEquals("<?xml version='1.0'?><test><![CDATA[ Just cdata ]]></test>", out.toString());
+    }
+
+    @Test
+    void writeCDataEmbeddedCData() throws Exception {
+        writer.startDocument().openElement("test").cdata("Some <![CDATA[ cdata ]]> text").closeDocument();
+        assertEquals("<?xml version='1.0'?><test><![CDATA[ Some \\u3C![CDATA[ cdata {rat:CDATA close} text ]]></test>", out.toString());
+    }
+
+    @Test
+    void closeElementBeforeOpened() throws IOException {
+        IXmlWriter underTest = writer.startDocument().openElement("test");
+        assertThrows(NoSuchElementException.class, () -> underTest.closeElement("missing"));
+    }
+
+    @Test
+    void closeElement() throws Exception {
+        writer.startDocument().openElement("root").openElement("hello").openElement("world").content("hello world").closeElement("hello").openElement("test").closeDocument();
+        assertEquals("<?xml version='1.0'?><root><hello><world>hello world</world></hello><test/></root>", out.toString());
+    }
+
+    @Test
+    void append() throws Exception {
+        // ensure proper line endings
+        String expected = String.format("<?xml version='1.0'?><base>%n" +
+                "<root>%n" +
+                "    <hello>%n" +
+                "        <world>hello world</world>%n" +
+                "    </hello>%n" +
+                "    <test/>%n" +
+                "</root>%n" +
+                "</base>");
+        byte[] rawDocument = "<?xml version='1.0'?><root><hello><world>hello world</world></hello><test/></root>".getBytes(StandardCharsets.UTF_8);
+        Document document = XmlUtils.toDom(new ByteArrayInputStream(rawDocument));
+        writer.startDocument().openElement("base").append(document).closeDocument();
+        assertEquals(expected, out.toString());
     }
 }
