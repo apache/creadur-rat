@@ -24,3 +24,11 @@
 **/src/site/apt/*.txt
 **/.externalToolBuilders/**/*
 **/.checkstyle
+
+# Gradle plugin
+apache-rat-gradle-plugin/build/**
+apache-rat-gradle-plugin/.idea
+apache-rat-gradle-plugin/.gradle
+# Gradle wrapper jar is downloaded and its checksum validated by apache-rat-gradle-plugin/gradle/gradlew-include.sh
+apache-rat-gradle-plugin/gradle/wrapper/*.jar
+apache-rat-gradle-plugin/gradle/wrapper/*.sha256
