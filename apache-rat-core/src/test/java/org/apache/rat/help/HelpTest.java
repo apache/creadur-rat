@@ -42,10 +42,10 @@ public class HelpTest {
 
         for (Option option : opts.getOptions()) {
             if (option.getOpt() != null) {
-                TextUtils.assertContains("-" + option.getOpt() + (option.getLongOpt() == null ? " " : ","), result);
+                TextUtils.assertContains(option, "-" + option.getOpt() + (option.getLongOpt() == null ? " " : ","), result);
             }
             if (option.getLongOpt() != null) {
-                TextUtils.assertContains("--" + option.getLongOpt() + " ", result);
+                TextUtils.assertContains(option, "--" + option.getLongOpt() + " ", result);
             }
         }
 
