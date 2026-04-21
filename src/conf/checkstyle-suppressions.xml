@@ -61,4 +61,8 @@
   <suppress checks="[a-zA-Z0-9]*"
             files="src[/\\]main[/\\]java[/\\]org[/\\]apache[/\\]rat[/\\]anttasks[/\\]BaseAntTask.java" />
 
+  <!-- RAT-539: Suppress checks for imported code -->
+  <suppress checks="[a-zA-Z0-9]*"
+            files="org[/\\]apache[/\\]rat[/\\]report[/\\]xml[/\\]writer[/\\]XMLChar.java" />
+
 </suppressions>
