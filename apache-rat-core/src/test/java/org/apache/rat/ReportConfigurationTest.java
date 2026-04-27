@@ -41,7 +41,7 @@ import java.util.SortedSet;
 import java.util.function.Function;
 
 import org.apache.commons.io.filefilter.DirectoryFileFilter;
-import org.apache.rat.ReportConfiguration.NoCloseOutputStream;
+import org.apache.commons.io.output.CloseShieldOutputStream;
 import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.config.AddLicenseHeaders;
 import org.apache.rat.config.exclusion.StandardCollection;
@@ -452,7 +452,7 @@ public class ReportConfigurationTest {
 
     @Test
     public void outputTest() throws IOException {
-        assertThat(underTest.getOutput().get()).isExactlyInstanceOf(NoCloseOutputStream.class);
+        assertThat(underTest.getOutput().get()).isExactlyInstanceOf(CloseShieldOutputStream.class);
         assertThat(underTest.getWriter()).isNotNull();
 
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
