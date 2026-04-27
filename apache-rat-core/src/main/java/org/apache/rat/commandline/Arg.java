@@ -58,10 +58,16 @@ import org.apache.rat.utils.Log;
 import static java.lang.String.format;
 
 /**
- * An enumeration of options.
- * <p>
- * Each Arg contains an OptionGroup that contains the individual options that all resolve to the same option.
- * This allows us to deprecate options as we move forward in development.
+ * An enumeration of options that are recommended across all UIs.  A UI may not implement some options if they are unsupportable
+ * within the UI.
+ * Each Arg contains:
+ * <ul>
+ *      <li>An OptionGroup that contains the individual options that all resolve to the same option.
+ * This allows us to deprecate options as we move forward in development.</li>
+ * <li>A {@code BiConsumer<ArgumentContext, Option>} that defines the process to configure the option in
+ * the {@code ArgumentContext.configuration}.</li>
+ * </ul>
+ *
  */
 public enum Arg {
     ///////////////////////// EDIT OPTIONS
@@ -680,7 +686,7 @@ public enum Arg {
     private final OptionGroup group;
 
     /**
-     * The apply the option to update the state of the context.configuration.
+     * The BiConsumer to apply the option to update the state of the context.configuration.
      */
     private final BiConsumer<ArgumentContext, Option> process;
 
@@ -694,6 +700,11 @@ public enum Arg {
         this.process = process;
     }
 
+    /**
+     * Executes the process associated with this Arg if the collection has an Option from this group selected.
+     * @param context the ArgumentContext that is being processed.
+     * @param optionCollection the OptionCollection that is available.
+     */
     private void execute(final ArgumentContext context, final UIOptionCollection<?> optionCollection) {
         optionCollection.getSelected(this)
                 .ifPresent(selected -> this.process.accept(context, selected));
@@ -784,6 +795,12 @@ public enum Arg {
         });
     }
 
+    /**
+     * Gets the list of Strings that are arguments for the option.
+     * @param context the ArgumentContext containing the command line.
+     * @param selected the selected option.
+     * @return the list of Strings that are aguments.
+     */
     private static List<String> processArrayArg(final ArgumentContext context, final Option selected) {
         try {
             return Arrays.asList(context.getCommandLine().getParsedOptionValue(selected));
@@ -792,6 +809,12 @@ public enum Arg {
         }
     }
 
+    /**
+     * parses lines with comma separated tokens from a file and returns the entire collection of tokens as a list of strings.
+     * @param context the Argument context that provides the command line.
+     * @param selected the selected option.
+     * @return the list of strings parsed from the file.
+     */
     private static List<String> processArrayFile(final ArgumentContext context, final Option selected) {
         List<String> result = new ArrayList<>();
         try {
