@@ -28,6 +28,7 @@ import java.util.regex.Pattern;
 import org.apache.commons.cli.Option;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.rat.OptionCollectionParser;
+import org.apache.rat.utils.CasedString;
 
 import static java.lang.String.format;
 
@@ -42,7 +43,7 @@ public abstract class UIOption<T extends UIOption<T>> {
     /** The actual UI-specific name for the option */
     protected final Option option;
     /** The name for the option */
-    protected final String name;
+    protected final CasedString name;
     /** The argument type for this option */
     protected final OptionCollectionParser.ArgumentType argumentType;
     /** The AbstractOptionCollection associated with this AbstractOption */
@@ -52,9 +53,9 @@ public abstract class UIOption<T extends UIOption<T>> {
      * Constructor.
      *
      * @param option The CLI option
-     * @param name the UI-specific name for the option.
+     * @param name the UI-specific name for the option
      */
-    protected <C extends UIOptionCollection<T>> UIOption(final C optionCollection, final Option option, final String name) {
+    protected <C extends UIOptionCollection<T>> UIOption(final C optionCollection, final Option option, final CasedString name) {
         this.optionCollection = optionCollection;
         this.option = option;
         this.name = name;
@@ -68,8 +69,8 @@ public abstract class UIOption<T extends UIOption<T>> {
      * Gets the AbstractOptionCollection that this option is a member of.
      * @return the AbstractOptionCollection that this option is a member of.
      */
-    public final UIOptionCollection<T> getOptionCollection() {
-        return optionCollection;
+    public final <X extends UIOptionCollection<T>> X getOptionCollection() {
+        return (X) optionCollection;
     }
 
     /**
@@ -126,10 +127,18 @@ public abstract class UIOption<T extends UIOption<T>> {
     }
 
     /**
-     * Gets the implementation specific name for the CLI option.
-     * @return The implementation specific name for the CLI option.
+     * Gets the implementation specific name for the native UI.
+     * @return The implementation specific name for the native UI.
      */
     public final String getName() {
+        return name.toString();
+    }
+
+    /**
+     * Gets the CasedString version of the name for the native UI..
+     * @return the CasedString version of the name for the native UI..
+     */
+    public final CasedString getCasedName() {
         return name;
     }
 

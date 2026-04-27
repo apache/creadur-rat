@@ -30,7 +30,7 @@ import org.apache.rat.ui.UIOptionCollection;
 public final class CLIOption extends UIOption<CLIOption> {
 
     public CLIOption(final UIOptionCollection<CLIOption> collection, final Option option) {
-        super(collection, option, ArgumentTracker.extractKey(option));
+        super(collection, option, ArgumentTracker.extractName(option));
     }
 
     @Override
