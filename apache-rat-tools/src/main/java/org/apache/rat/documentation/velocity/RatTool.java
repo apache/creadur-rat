@@ -25,12 +25,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
-import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 import org.apache.commons.cli.Option;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.rat.CLIOption;
+import org.apache.rat.CLIOptionCollection;
 import org.apache.rat.Defaults;
 import org.apache.rat.OptionCollection;
 import org.apache.rat.api.EnvVar;
@@ -41,8 +42,9 @@ import org.apache.rat.config.parameters.Description;
 import org.apache.rat.config.parameters.DescriptionBuilder;
 import org.apache.rat.configuration.MatcherBuilderTracker;
 import org.apache.rat.documentation.options.AntOption;
-import org.apache.rat.documentation.options.CLIOption;
+import org.apache.rat.documentation.options.AntOptionCollection;
 import org.apache.rat.documentation.options.MavenOption;
+import org.apache.rat.documentation.options.MavenOptionCollection;
 import org.apache.rat.help.AbstractHelp;
 import org.apache.rat.license.ILicense;
 import org.apache.rat.license.LicenseSetFactory;
@@ -94,9 +96,8 @@ public class RatTool {
      * @return the list of command line options.
      */
     public List<Option> options() {
-        List<Option> lst = new ArrayList<>(OptionCollection.buildOptions().getOptions());
-        lst.sort(Comparator.comparing(CLIOption::createName));
-        return lst;
+        return CLIOptionCollection.INSTANCE.getMappedOptions()
+        .map(CLIOption::getOption).toList();
     }
 
     /**
@@ -104,11 +105,7 @@ public class RatTool {
      * @return a map client option name to Ant Option.
      */
     public Map<String, AntOption> antOptions() {
-        Map<String, AntOption> result = new TreeMap<>();
-        for (AntOption antOption : AntOption.getAntOptions()) {
-            result.put(CLIOption.createName(antOption.getOption()), antOption);
-        }
-        return result;
+        return AntOptionCollection.INSTANCE.getOptionMap();
     }
 
     /**
@@ -116,12 +113,7 @@ public class RatTool {
      * @return a map client option name to CLI Option.
      */
     public Map<String, CLIOption> cliOptions() {
-        Map<String, CLIOption> result = new TreeMap<>();
-        for (Option option : OptionCollection.buildOptions().getOptions()) {
-            CLIOption cliOption = new CLIOption(option);
-            result.put(cliOption.getName(), cliOption);
-        }
-        return result;
+        return CLIOptionCollection.INSTANCE.getOptionMap();
     }
 
     /**
@@ -129,11 +121,7 @@ public class RatTool {
      * @return a map client option name to Maven Option.
      */
     public Map<String, MavenOption> mvnOptions() {
-        Map<String, MavenOption> result = new TreeMap<>();
-        for (MavenOption mavenOption : MavenOption.getMavenOptions()) {
-            result.put(CLIOption.createName(mavenOption.getOption()), mavenOption);
-        }
-        return result;
+        return MavenOptionCollection.INSTANCE.getOptionMap();
     }
 
     /**

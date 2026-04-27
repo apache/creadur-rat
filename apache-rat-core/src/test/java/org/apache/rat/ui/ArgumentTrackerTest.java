@@ -57,11 +57,11 @@ public class ArgumentTrackerTest {
         assertThat(underTest.args()).isEmpty();
         Option option = findOptionWithArgs(1);
         String string1 = String.format("--%s foo", ArgumentTracker.extractKey(option));
-        TestingUIOption mappedOption = testingUIOptionCollection.getMappedOption(option);
+        TestingUIOption mappedOption = testingUIOptionCollection.getMappedOption(option).get();
         underTest.setArg(mappedOption, "foo");
         option = findOptionWithArgs(2);
         String string2 = String.format("--%s bar baz", ArgumentTracker.extractKey(option));
-        mappedOption = testingUIOptionCollection.getMappedOption(option);
+        mappedOption = testingUIOptionCollection.getMappedOption(option).get();
         underTest.addArg(mappedOption, "bar");
         underTest.addArg(mappedOption, "baz");
         String join = String.join(" ", underTest.args());
@@ -72,7 +72,7 @@ public class ArgumentTrackerTest {
     @Test
     void setArg() {
         Option option = findOptionWithArgs(1);
-        TestingUIOption mappedOption = testingUIOptionCollection.getMappedOption(option);
+        TestingUIOption mappedOption = testingUIOptionCollection.getMappedOption(option).get();
         underTest.setArg(mappedOption, "foo");
         assertThat(underTest.getArg(mappedOption.keyValue())).contains(List.of("foo"));
     }
@@ -92,7 +92,7 @@ public class ArgumentTrackerTest {
     @Test
     void addArg() {
         Option option = findOptionWithArgs(2);
-        TestingUIOption mappedOption = testingUIOptionCollection.getMappedOption(option);
+        TestingUIOption mappedOption = testingUIOptionCollection.getMappedOption(option).get();
         underTest.addArg(mappedOption, "foo");
         assertThat(underTest.getArg(mappedOption.keyValue())).contains(List.of("foo"));
         underTest.addArg(mappedOption, "bar");
@@ -102,7 +102,7 @@ public class ArgumentTrackerTest {
     @Test
     void setOverridesAddArg() {
         Option option = findOptionWithArgs(2);
-        TestingUIOption mappedOption = testingUIOptionCollection.getMappedOption(option);
+        TestingUIOption mappedOption = testingUIOptionCollection.getMappedOption(option).get();
         underTest.addArg(mappedOption, "foo");
         assertThat(underTest.getArg(mappedOption.keyValue())).contains(List.of("foo"));
         underTest.addArg(mappedOption, "bar");

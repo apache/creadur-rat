@@ -66,7 +66,7 @@ public class UIOptionCollectionTest {
     static class TestingUIOption extends UIOption<TestingUIOption> {
 
         TestingUIOption(final UIOptionCollection<TestingUIOption> collection, final Option option) {
-            super(collection, option, new CasedString(CasedString.StringCase.KEBAB, ArgumentTracker.extractKey(option)).toCase(CasedString.StringCase.DOT));
+            super(collection, option, ArgumentTracker.extractName(option).as(CasedString.StringCase.DOT));
         }
 
         @Override
@@ -101,27 +101,28 @@ public class UIOptionCollectionTest {
 
     @Test
     void getMappedOption() {
-        TestingUIOption one = underTest.getMappedOption(UI_OPTION);
+        TestingUIOption one = underTest.getMappedOption(UI_OPTION).get();
         assertThat(one.option).isEqualTo(UI_OPTION);
-        assertThat(one.name).isEqualTo("ui.option1");
+        assertThat(one.getName()).isEqualTo("ui.option1");
         assertThat(one.isDeprecated()).isFalse();
-        TestingUIOption two = underTest.getMappedOption(DEPRECATED_UI_OPTION);
+        TestingUIOption two = underTest.getMappedOption(DEPRECATED_UI_OPTION).get();
         assertThat(two.option).isEqualTo(DEPRECATED_UI_OPTION);
-        assertThat(two.name).isEqualTo("ui.option2");
+        assertThat(two.getName()).isEqualTo("ui.option2");
         assertThat(two.isDeprecated()).isTrue();
 
-        assertThat(underTest.getMappedOption(Arg.EXCLUDE.option())).isNull();
+        assertThat(underTest.getMappedOption(Arg.EXCLUDE.option())).isEmpty();
         for (Option option : Arg.COUNTER_MAX.group().getOptions()) {
-            assertThat(underTest.getMappedOption(option)).isNull();
+            assertThat(underTest.getMappedOption(option)).isEmpty();
         }
 
-        TestingUIOption config = underTest.getMappedOption(Arg.CONFIGURATION.option());
-        assertThat(config).isNotNull();
+        Optional<TestingUIOption> optConfig = underTest.getMappedOption(Arg.CONFIGURATION.option());
+        assertThat(optConfig).isPresent();
+        TestingUIOption config = optConfig.get();
         assertThat(config.option).isEqualTo(Arg.CONFIGURATION.option());
-        assertThat(config.name).isEqualTo("config");
+        assertThat(config.getName()).isEqualTo("config");
 
-        config = underTest.getMappedOption(Option.builder("foo").build());
-        assertThat(config).isNull();
+        optConfig = underTest.getMappedOption(Option.builder("foo").build());
+        assertThat(optConfig).isEmpty();
     }
 
     @Test

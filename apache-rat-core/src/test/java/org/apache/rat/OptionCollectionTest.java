@@ -244,7 +244,9 @@ public class OptionCollectionTest {
         /** A flag to determine if help was called */
         final AtomicBoolean helpCalled = new AtomicBoolean(false);
 
-        @Override
+        /**
+         * Provide a test for the help optopn
+         */
         public void helpTest() {
             String[] args = { OptionFormatter.longOpt(OptionCollection.HELP) };
             try {
@@ -261,6 +263,7 @@ public class OptionCollectionTest {
          */
         public CliOptionsProvider() {
             super(Collections.emptyList(), testPath.toFile());
+            addTest(OptionCollectionTest.OptionTest.namedTest("help", this::helpTest));
         }
 
         /**

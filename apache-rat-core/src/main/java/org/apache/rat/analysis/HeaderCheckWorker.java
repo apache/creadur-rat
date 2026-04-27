@@ -36,7 +36,7 @@ import org.apache.rat.license.ILicense;
  * <strong>Note</strong> that this class is not thread safe.
  * </p>
  */
-public class HeaderCheckWorker {
+public final class HeaderCheckWorker {
 
     /*
      * TODO revisit this class. It is only used in one place and can be moved inline

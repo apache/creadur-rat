@@ -123,8 +123,8 @@ public class UIOptionCollection<T extends UIOption<T>> {
      * @param option the option to find the instance of.
      * @return an UIOption instance that wraps the option.
      */
-    public final T getMappedOption(final Option option) {
-        return uiOptions.get(option);
+    public final Optional<T> getMappedOption(final Option option) {
+        return Optional.ofNullable(uiOptions.get(option));
     }
 
     /**

@@ -32,6 +32,7 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.rat.DeprecationReporter;
 import org.apache.rat.commandline.Arg;
+import org.apache.rat.utils.CasedString;
 import org.apache.rat.utils.DefaultLog;
 import org.apache.rat.utils.Log;
 
@@ -72,6 +73,15 @@ public final class ArgumentTracker {
      */
     public static String extractKey(final Option option) {
         return StringUtils.defaultIfBlank(option.getLongOpt(), option.getOpt());
+    }
+
+    /**
+     * Generates the CasedString for the specified option.
+     * @param option
+     * @return the CasedString in KEBAB format.
+     */
+    public static CasedString extractName(final Option option) {
+        return new CasedString(CasedString.StringCase.KEBAB, ArgumentTracker.extractKey(option));
     }
 
     /**
