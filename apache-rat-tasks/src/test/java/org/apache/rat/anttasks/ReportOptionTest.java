@@ -27,6 +27,7 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.lang3.SystemUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.rat.documentation.options.AntOptionCollection;
 import org.apache.rat.test.AbstractConfigurationOptionsProvider;
 import org.apache.rat.OptionCollectionTest;
 import org.apache.rat.ReportConfiguration;
@@ -120,11 +121,6 @@ public class ReportOptionTest  {
         }
 
         @Override
-        protected void helpTest() {
-            fail("Should not be called");
-        }
-
-        @Override
         public void helpLicenses() {
             TestingLog testLog = new TestingLog();
             Log oldLog = DefaultLog.setInstance(testLog);
@@ -146,7 +142,7 @@ public class ReportOptionTest  {
             final String name;
 
             BuildTask(Option option) {
-                this(new AntOption(option).getName());
+                this(AntOptionCollection.INSTANCE.getMappedOption(option).get().getName());
             }
 
             BuildTask() {
@@ -162,7 +158,7 @@ public class ReportOptionTest  {
                 Map<String, String> attributes = new HashMap<>();
                 if (args.get(0).getKey() != null) {
                     for (Pair<Option, String[]> pair : args) {
-                        AntOption argOption = new AntOption(pair.getKey());
+                        AntOption argOption = AntOptionCollection.INSTANCE.getMappedOption(pair.getKey()).get();
                         if (argOption.isAttribute()) {
                             String value = pair.getValue() == null ? "true" : pair.getValue()[0];
                             attributes.put(argOption.getName(), value);

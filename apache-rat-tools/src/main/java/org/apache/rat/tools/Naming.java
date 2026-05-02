@@ -44,8 +44,8 @@ import org.apache.commons.csv.CSVPrinter;
 import org.apache.commons.csv.QuoteMode;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.rat.OptionCollection;
-import org.apache.rat.documentation.options.AntOption;
-import org.apache.rat.documentation.options.MavenOption;
+import org.apache.rat.documentation.options.AntOptionCollection;
+import org.apache.rat.documentation.options.MavenOptionCollection;
 import org.apache.rat.help.AbstractHelp;
 
 /**
@@ -105,8 +105,11 @@ public final class Naming {
         int width = Math.max(cl.getParsedOptionValue(WIDTH, AbstractHelp.HELP_WIDTH), AbstractHelp.HELP_WIDTH);
 
         boolean showMaven = cl.hasOption(MAVEN);
+        MavenOptionCollection mavenCollection = MavenOptionCollection.INSTANCE;
 
         boolean showAnt = cl.hasOption(ANT);
+        AntOptionCollection antCollection = AntOptionCollection.INSTANCE;
+
         boolean includeDeprecated = cl.hasOption(INCLUDE_DEPRECATED);
         Predicate<Option> filter = o -> o.hasLongOpt() && (!o.isDeprecated() || includeDeprecated);
 
@@ -139,20 +142,25 @@ public final class Naming {
         } else if (showAnt) {
             descriptionFunction = o -> {
                 StringBuilder desc = new StringBuilder();
-                AntOption antOption = new AntOption(o);
-                if (antOption.isDeprecated()) {
-                    desc.append("[").append(antOption.getDeprecated()).append("] ");
-                }
-                return desc.append(StringUtils.defaultIfEmpty(antOption.getDescription(), "")).toString();
+                antCollection.getMappedOption(o).ifPresent(
+                        antOption -> {
+                            if (antOption.isDeprecated()) {
+                                desc.append("[").append(antOption.getDeprecated()).append("] ");
+                            }
+                            desc.append(StringUtils.defaultIfEmpty(antOption.getDescription(), ""));
+                        });
+                return desc.toString();
             };
         } else {
             descriptionFunction = o -> {
                 StringBuilder desc = new StringBuilder();
-                MavenOption mavenOption = new MavenOption(o);
-                if (mavenOption.isDeprecated()) {
-                    desc.append("[").append(mavenOption.getDeprecated()).append("] ");
-                }
-                return desc.append(StringUtils.defaultIfEmpty(mavenOption.getDescription(), "")).toString();
+                mavenCollection.getMappedOption(o).ifPresent(mavenOption -> {
+                    if (mavenOption.isDeprecated()) {
+                        desc.append("[").append(mavenOption.getDeprecated()).append("] ");
+                    }
+                    desc.append(StringUtils.defaultIfEmpty(mavenOption.getDescription(), ""));
+                });
+                return desc.toString();
             };
         }
 
@@ -169,6 +177,9 @@ public final class Naming {
 
     private static List<String> fillColumns(final List<String> columns, final Option option, final boolean addCLI, final boolean showMaven,
                                             final boolean showAnt, final Function<Option, String> descriptionFunction) {
+        AntOptionCollection antCollection = AntOptionCollection.INSTANCE;
+        MavenOptionCollection mavenCollection = MavenOptionCollection.INSTANCE;
+
         if (addCLI) {
             if (option.hasLongOpt()) {
                 columns.add("--" + option.getLongOpt());
@@ -177,10 +188,12 @@ public final class Naming {
             }
         }
         if (showAnt) {
-            columns.add(new AntOption(option).getExample());
+            antCollection.getMappedOption(option).ifPresentOrElse(antOption -> columns.add(antOption.getExample()),
+                    () -> columns.add(" "));
         }
         if (showMaven) {
-            columns.add(new MavenOption(option).getExample());
+            mavenCollection.getMappedOption(option).ifPresentOrElse(mavenOption -> columns.add(mavenOption.getExample()),
+                    () -> columns.add(" "));
         }
 
         columns.add(descriptionFunction.apply(option));

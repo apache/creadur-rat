@@ -32,15 +32,11 @@
           <licensesApproved>GPL3</licensesApproved>
           <consoleOutput>true</consoleOutput>
           <ignoreErrors>false</ignoreErrors>
-          <inputIncludes>
-            <include>pom.xml</include>
-          </inputIncludes>
-          <inputExcludeStds>
-            <exclude>STANDARD_PATTERNS</exclude>
-            <exclude>STANDARD_SCMS</exclude>
-            <exclude>MAVEN</exclude>
-            <exclude>IDEA</exclude>
-          </inputExcludeStds>
+          <inputIncludes>pom.xml</inputIncludes>
+          <inputExcludeStds>STANDARD_PATTERNS</inputExcludeStds>
+            <inputExcludeStds>STANDARD_SCMS</inputExcludeStds>
+            <inputExcludeStds>MAVEN</inputExcludeStds>
+            <inputExcludeStds>IDEA</inputExcludeStds>
         </configuration>
       </plugin>
     </plugins>

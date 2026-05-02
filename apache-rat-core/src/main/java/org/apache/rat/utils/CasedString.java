@@ -57,7 +57,7 @@ public final class CasedString {
     }
 
     /**
-     * Creates a cased string of the specified case and segments.
+     * Creates a cased string of the specified case and segments
      * @param stringCase the case of the string.
      * @param segments the segments of the string.
      */
@@ -112,12 +112,12 @@ public final class CasedString {
     }
 
     /**
-     * The definition of a string case.
+     * The definition of a String case.
      */
     public static final class StringCase {
-        /** The camel case. Example: "HelloWorld"*/
+        /** The camel case.  Example: "HelloWorld"*/
         public static final StringCase CAMEL;
-        /** The pascal case. Example: "helloWorld" */
+        /** The pascal case.  Example: "helloWorld" */
         public static final StringCase PASCAL;
         /** The Snake case. Example: "hello_world" */
         public static final StringCase SNAKE;
@@ -125,7 +125,7 @@ public final class CasedString {
         public static final StringCase KEBAB;
         /** The phrase case. Example: "hello world" */
         public static final StringCase PHRASE;
-        /** The dot case. Example: "hello.world" */
+        /** The dot case.  Example: "hello.world" */
         public static final StringCase DOT;
         /** The slash case. Example: "hello/world" */
         public static final StringCase SLASH;
@@ -135,13 +135,13 @@ public final class CasedString {
         static final String[] EMPTY_SEGMENT;
         /** The name of this case */
         private final String name;
-        /** The predicate that determines if a character is a splitter character. A splitter character
+        /** The predicate that determines if a character is a spliter character.  A splitter character
          * is the character that signals the start of a new segment.
          */
         private final Predicate<Character> splitter;
         /**
-         * If {@code true}, the splitter character is preserved as part of the subsequent section otherwise,
-         * the splitter character is discarded.
+         * If {@code true} the spliter character is preserved as part of the subsequent section otherwise,
+         * the spliter character is discarded.
          */
         private final boolean preserveSplit;
         /** The function that converts segments into the String representation */

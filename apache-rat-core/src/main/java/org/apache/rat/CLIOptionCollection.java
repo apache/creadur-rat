@@ -7,7 +7,7 @@
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *   https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
@@ -16,26 +16,26 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.rat.documentation.options;
+package org.apache.rat;
 
 import org.apache.commons.cli.Option;
-import org.apache.rat.commandline.Arg;
-import org.apache.rat.testhelpers.TextUtils;
+import org.apache.rat.ui.UIOptionCollection;
 
-import org.junit.jupiter.api.Test;
+public final class CLIOptionCollection extends UIOptionCollection<CLIOption> {
+    /** The Help option */
+    static final Option HELP = new Option("?", "help", false, "Print help for the RAT command line interface and exit.");
 
-public class MavenOptionTest {
+    /** The instance of the collection */
+    public static final CLIOptionCollection INSTANCE = new CLIOptionCollection();
 
-    @Test
-    public void getDeprecatedTest() {
-        for (Option option : Arg.getOptions().getOptions()) {
-            if (option.isDeprecated()) {
-                MavenOptionCollection.INSTANCE.getMappedOption(option).ifPresent( mavenOption -> {
-                    String deprecated = mavenOption.getDeprecated();
+    private CLIOptionCollection() {
+        super(new Builder().uiOption(HELP)
+                .mapper(CLIOption::new));
+    }
 
-                    TextUtils.assertPatternNotInTarget("\\-\\- ", deprecated);
-                });
-            }
+    private static final class Builder extends UIOptionCollection.Builder<CLIOption, Builder> {
+        private Builder() {
+            super();
         }
     }
 }
