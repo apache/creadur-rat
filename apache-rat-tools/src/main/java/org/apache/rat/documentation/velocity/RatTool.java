@@ -62,6 +62,7 @@ import org.apache.velocity.tools.config.ValidScope;
 @ValidScope({"application"})
 public class RatTool {
 
+    // TODO remove this when velocity-tools 3.3 is available
     private static String[] charParser(final String charText) {
         char[] chars = charText.toCharArray();
         String[] result = new String[chars.length];
@@ -74,10 +75,12 @@ public class RatTool {
     /**
      * The characters to escape for markdown.
      */
+    // TODO remove this when velocity-tools 3.3 is available
     private static final String[] MARKDOWN_CHARS = charParser("\\`*_{}[]<>()#+-.!|");
     /**
      * The characters to escape for APT (Almost Plain Text).
      */
+    // TODO remove this when velocity-tools 3.3 is available
     private static final String[] APT_CHARS = charParser("\\~=-+*[]<>{}");
 
     /** The license factory this tool uses. */
