@@ -19,7 +19,6 @@
 package org.apache.rat.documentation.options;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.TreeMap;
@@ -36,7 +35,9 @@ import org.apache.rat.utils.CasedString;
  * with any unsupported options removed.
  */
 public final class MavenOptionCollection extends UIOptionCollection<MavenOption> {
-    /** mapping of standard name to non-conflicting name. */
+    /**
+     * mapping of standard name to non-conflicting name.
+     */
     private static final Map<String, String> RENAME_MAP;
 
     static {
@@ -45,7 +46,9 @@ public final class MavenOptionCollection extends UIOptionCollection<MavenOption>
         RENAME_MAP = map;
     }
 
-    /** The instance of the MavenOptionCollection */
+    /**
+     * The instance of the MavenOptionCollection
+     */
     public static final MavenOptionCollection INSTANCE = new Builder().build();
 
     public static Map<String, String> getRenameMap() {
@@ -60,13 +63,13 @@ public final class MavenOptionCollection extends UIOptionCollection<MavenOption>
     }
 
 
-
     public static Builder builder() {
         return new Builder();
     }
 
     /**
      * Provides a new name for an option if it is renamed in the collection.
+     *
      * @param name the option name.
      * @return the collection name, may be the same as the option name.
      */
@@ -76,22 +79,13 @@ public final class MavenOptionCollection extends UIOptionCollection<MavenOption>
 
     /**
      * Creates the name for the option based on rules for conversion of CLI option names.
+     *
      * @param option the standard option.
      * @return the new Option name as a CasedString.
      */
     static CasedString createName(final Option option) {
-        List<String> pluralEndings = List.of("approved", "denied");
         String name = rename(ArgumentTracker.extractKey(option));
-        CasedString casedName = new CasedString(CasedString.StringCase.KEBAB, name);
-        String[] segments = casedName.getSegments();
-        String lastSegment = segments[segments.length - 1];
-//        if (option.hasArgs()) {
-//            if (!lastSegment.endsWith("s") && !pluralEndings.contains(lastSegment)) {
-//                segments[segments.length - 1] += "s";
-//                casedName = new CasedString(CasedString.StringCase.KEBAB, segments);
-//            }
-//        }
-        return casedName.as(CasedString.StringCase.PASCAL);
+        return new CasedString(CasedString.StringCase.KEBAB, name).as(CasedString.StringCase.PASCAL);
     }
 
     /**
@@ -99,12 +93,11 @@ public final class MavenOptionCollection extends UIOptionCollection<MavenOption>
      */
     public static final class Builder extends UIOptionCollection.Builder<MavenOption, Builder> {
         private Builder() {
-            super();
+            super(MavenOption::new);
             Arg.getOptions().getOptions()
                     .stream().filter(o -> Objects.isNull(o.getLongOpt()))
                     .forEach(this::unsupported);
-            unsupported(Arg.DIR).unsupported(Arg.LOG_LEVEL)
-                    .mapper((collection, option) -> new MavenOption(collection, option));
+            unsupported(Arg.DIR).unsupported(Arg.LOG_LEVEL);
         }
 
         public MavenOptionCollection build() {

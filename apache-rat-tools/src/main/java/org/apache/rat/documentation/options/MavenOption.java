@@ -71,7 +71,7 @@ public final class MavenOption extends UIOption<MavenOption> {
     @Override
     public String getExample() {
         if (hasArgs()) {
-            return getExample(new String[]{getArgName() + "1", getArgName() + "2"});
+            return getExample(getArgName() + "1", getArgName() + "2");
         }
         if (hasArg()) {
             return getExample(getArgName());
@@ -107,7 +107,7 @@ public final class MavenOption extends UIOption<MavenOption> {
         if (isDeprecated()) {
             sb.append(format("%s@Deprecated%n", indent));
         }
-        String fname = name.toCase(CasedString.StringCase.CAMEL).toString();
+        String fname = name.toCase(CasedString.StringCase.CAMEL);
         String args = option.hasArg() ? "String" : "boolean";
         if (multiple) {
             if (!(fname.endsWith("s") || fname.endsWith("Approved") || fname.endsWith("Denied"))) {

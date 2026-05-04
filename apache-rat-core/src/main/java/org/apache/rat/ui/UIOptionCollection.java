@@ -191,12 +191,13 @@ public class UIOptionCollection<T extends UIOption<T>> {
         /** The list of unsupported Rat options */
         protected final List<Option> unsupportedRatOptions;
         /** The function to convert an option into a UIOption. */
-        private BiFunction<UIOptionCollection<T>, Option, T> mapper;
+        private final BiFunction<UIOptionCollection<T>, Option, T> mapper;
 
         /**
          * Constructor for the builder.
          */
-        protected Builder() {
+        protected Builder(final BiFunction<UIOptionCollection<T>, Option, T> mapper) {
+            this.mapper = mapper;
             uiOptions = new ArrayList<>();
             defaultValues = new HashMap<>();
             unsupportedRatOptions = new ArrayList<>();
@@ -221,16 +222,6 @@ public class UIOptionCollection<T extends UIOption<T>> {
          */
         protected final S self() {
             return (S) this;
-        }
-
-        /**
-         * Set the mapper for the builder.
-         * @param mapper the function to convert an option into a UIOption ({@code <T>} object).
-         * @return this
-         */
-        public S mapper(final BiFunction<UIOptionCollection<T>, Option, T> mapper) {
-            this.mapper = mapper;
-            return self();
         }
 
         /**

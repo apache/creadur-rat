@@ -31,11 +31,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
-import org.apache.commons.cli.Option;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.rat.OptionCollection;
+
 import org.apache.rat.ReportConfiguration;
-import org.apache.rat.commandline.Arg;
 import org.apache.rat.commandline.StyleSheets;
 import org.apache.rat.document.DocumentName;
 import org.apache.rat.documentation.options.AntOptionCollection;
@@ -58,8 +55,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import javax.sound.midi.Track;
-
 import static java.lang.String.format;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -69,54 +64,6 @@ public class GeneratedReportTest {
 
     private static final Map<String, String> REQUIRED_ATTRIBUTES = new HashMap<>();
     private static final Map<String, String> REQUIRED_ELEMENTS = new HashMap<>();
-
-
-//    static {
-//        BuildType buildType = null;
-//        for (OptionCollection.ArgumentType argType : OptionCollection.ArgumentType.values()) {
-//            switch (argType) {
-//                case FILE:
-//                case DIRORARCHIVE:
-//                    buildType = new BuildType("") {
-//                        @Override
-//                        protected String getMethodFormat(final AntOption antOption) {
-//                            return "<fileset file='%s' />";
-//                        }
-//                    };
-//                    break;
-//                case NONE:
-//                    buildType = new BuildType("") {
-//                        @Override
-//                        protected String getMethodFormat(final AntOption antOption) {
-//                            return "";
-//                        }
-//                    };
-//                    break;
-//                case STANDARDCOLLECTION:
-//                    buildType = new BuildType("std");
-//                    break;
-//                case EXPRESSION:
-//                    buildType = new BuildType("expr");
-//                    break;
-//                case COUNTERPATTERN:
-//                    buildType = new BuildType("cntr");
-//                    break;
-//                case LICENSEID:
-//                case FAMILYID:
-//                    buildType = new BuildType("lst");
-//                    break;
-//                default:
-//                    buildType = new BuildType("") {
-//                        @Override
-//                        protected String getMethodFormat(final AntOption antOption) {
-//                            return format("<%1$s>%%s</%1$s>", tag);
-//                        }
-//                    };
-//            }
-//            ARG_TYPE_MAP.put(argType, buildType);
-//        }
-//    }
-
     /**
      * The prefix for the ant build.xml file.
      */
@@ -302,9 +249,6 @@ public class GeneratedReportTest {
     private static String getData(AntOption antOption) {
 
         String value = getData(ArgumentTracker.extractName(antOption.getOption()).toCase(CasedString.StringCase.PASCAL));
-
-        //String value = getData(antOption.getCasedName().toCase(CasedString.StringCase.PASCAL));
-
         if (value == null) {
             if (!antOption.hasArg()) {
                 return "true";

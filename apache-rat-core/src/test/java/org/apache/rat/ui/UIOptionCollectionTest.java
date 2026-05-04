@@ -19,24 +19,16 @@
 package org.apache.rat.ui;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Predicate;
-import java.util.stream.Stream;
 import org.apache.commons.cli.AlreadySelectedException;
-import org.apache.commons.cli.DeprecatedAttributes;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.OptionGroup;
 import org.apache.commons.cli.Options;
 import org.apache.rat.commandline.Arg;
 import org.apache.rat.utils.CasedString;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -52,8 +44,8 @@ public class UIOptionCollectionTest {
         }
         private static class Builder extends UIOptionCollection.Builder<TestingUIOption, Builder> {
             Builder() {
-                mapper(TestingUIOption::new)
-                        .uiOption(UI_OPTION)
+                super(TestingUIOption::new);
+                        uiOption(UI_OPTION)
                         .uiOption(DEPRECATED_UI_OPTION)
                         .unsupported(Arg.COUNTER_MAX)
                         .unsupported(Arg.EXCLUDE.option())
@@ -76,28 +68,16 @@ public class UIOptionCollectionTest {
 
         @Override
         public String getExample() {
-            return String.format("The example for $s", cleanupName(option));
+            return "The example for " + cleanupName(option);
         }
 
         @Override
         public String getText() {
-            return String.format("Short and long options for ", cleanupName(option));
+            return "Short and long options for " + cleanupName(option);
         }
     }
 
     private final TestingUIOptionCollection underTest = new TestingUIOptionCollection();
-
-    private Optional<Option> findDeprecatedArgOption() {
-        Collection<Option> options = underTest.getOptions().getOptions();
-        return Arg.getOptions().getOptions().stream().filter(Option::isDeprecated)
-                .filter(option -> options.contains(option)).findAny();
-    }
-
-    private Optional<Option> findDeprecatedOption() {
-        Collection<Option> options = underTest.getOptions().getOptions();
-        return Arg.getOptions().getOptions().stream().filter(Option::isDeprecated)
-                .filter(option -> !options.contains(option)).findAny();
-    }
 
     @Test
     void getMappedOption() {

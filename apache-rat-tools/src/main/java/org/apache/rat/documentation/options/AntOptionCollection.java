@@ -106,7 +106,7 @@ public final class AntOptionCollection extends UIOptionCollection<AntOption> {
      */
     public AntOption getActualAntOption(final AntOption antOption) {
         Option opt = conversionMap.get(antOption.getOption());
-        return opt == null ? antOption : getMappedOption(opt).get();
+        return opt == null ? antOption : getMappedOption(opt).orElse(antOption);
     }
 
     public boolean isAttribute(final AntOption antOption) {
@@ -133,6 +133,7 @@ public final class AntOptionCollection extends UIOptionCollection<AntOption> {
             case STANDARDCOLLECTION -> new BuildType("std");
             case LICENSEID, FAMILYID -> new BuildType("lst");
             default -> new BuildType(type.getDisplayName()) {
+                @Override
                 protected String getMethodFormat(final AntOption antOption) {
                     return String.format("<%1$s>%%s</%1$s>%n", WordUtils.uncapitalize(antOption.getArgName()));
                 }
@@ -164,11 +165,9 @@ public final class AntOptionCollection extends UIOptionCollection<AntOption> {
         CasedString casedName = new CasedString(CasedString.StringCase.KEBAB, name);
         String[] segments = casedName.getSegments();
         String lastSegment = segments[segments.length - 1];
-        if (option.hasArgs()) {
-            if (!lastSegment.endsWith("s") && !pluralEndings.contains(lastSegment)) {
-                segments[segments.length - 1] += "s";
-                casedName = new CasedString(CasedString.StringCase.KEBAB, segments);
-            }
+        if (option.hasArgs() && !lastSegment.endsWith("s") && !pluralEndings.contains(lastSegment)) {
+            segments[segments.length - 1] += "s";
+            casedName = new CasedString(CasedString.StringCase.KEBAB, segments);
         }
         return casedName.as(CasedString.StringCase.PASCAL);
     }
@@ -181,7 +180,7 @@ public final class AntOptionCollection extends UIOptionCollection<AntOption> {
         private final Map<Option, Option> conversions = new HashMap<>();
 
         private Builder() {
-            super();
+            super(AntOption::new);
             Arg.getOptions().getOptions()
                     .stream().filter(o -> Objects.isNull(o.getLongOpt()))
                     .forEach(this::unsupported);
@@ -189,8 +188,6 @@ public final class AntOptionCollection extends UIOptionCollection<AntOption> {
                     .unsupported(Arg.DIR)
                     .unsupported(Arg.SOURCE)
                     .unsupported(Arg.HELP_LICENSES)
-                    .mapper((collection, option) -> new AntOption(collection, option))
-
                     // conversions
                     .convert(Arg.LICENSES_APPROVED_FILE, Arg.LICENSES_APPROVED)
                     .convert(Arg.LICENSES_DENIED_FILE, Arg.LICENSES_DENIED)

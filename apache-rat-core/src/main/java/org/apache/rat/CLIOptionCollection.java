@@ -29,13 +29,12 @@ public final class CLIOptionCollection extends UIOptionCollection<CLIOption> {
     public static final CLIOptionCollection INSTANCE = new CLIOptionCollection();
 
     private CLIOptionCollection() {
-        super(new Builder().uiOption(HELP)
-                .mapper(CLIOption::new));
+        super(new Builder().uiOption(HELP));
     }
 
     private static final class Builder extends UIOptionCollection.Builder<CLIOption, Builder> {
         private Builder() {
-            super();
+            super(CLIOption::new);
         }
     }
 }

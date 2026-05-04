@@ -212,23 +212,23 @@ public final class ArgumentTracker {
      */
     public void addArg(final String trackerKey, final String... value) {
         List<String> newValues = Arrays.stream(value).filter(StringUtils::isNotBlank).collect(Collectors.toList());
-        if (!newValues.isEmpty()) {
-            if (validateSet(trackerKey)) {
-                Option ratOption = Arg.findArg(trackerKey).find(trackerKey);
-                if (ratOption.hasArgs()) {
-                    if (DefaultLog.getInstance().isEnabled(Log.Level.DEBUG)) {
-                        DefaultLog.getInstance().debug(String.format("Adding [%s] to %s", String.join(", ", Arrays.asList(value)), trackerKey));
-                    }
-                    List<String> values = args.computeIfAbsent(trackerKey, k -> new ArrayList<>());
-                    values.addAll(newValues);
-                } else {
-                    DefaultLog.getInstance().warn(String.format("Key '%s' does not accept %sarguments.", trackerKey,
-                            ratOption.hasArg() ? "more that one " : ""));
-                }
-            } else {
-                DefaultLog.getInstance().warn(String.format("Key '%s' is unknown", trackerKey));
-            }
+        if (newValues.isEmpty()) {
+            return;
         }
+        if (!validateSet(trackerKey)) {
+            DefaultLog.getInstance().warn(String.format("Key '%s' is unknown", trackerKey));
+            return;
+        }
+        Option ratOption = Arg.findArg(trackerKey).find(trackerKey);
+        if (!ratOption.hasArgs()) {
+            DefaultLog.getInstance().warn(String.format("Key '%s' does not accept %sarguments.", trackerKey,
+                    ratOption.hasArg() ? "more that one " : ""));
+        }
+        if (DefaultLog.getInstance().isEnabled(Log.Level.DEBUG)) {
+            DefaultLog.getInstance().debug(String.format("Adding [%s] to %s", String.join(", ", Arrays.asList(value)), trackerKey));
+        }
+        List<String> values = args.computeIfAbsent(trackerKey, k -> new ArrayList<>());
+        values.addAll(newValues);
     }
 
     /**

@@ -18,19 +18,11 @@
  */
 package org.apache.rat.documentation.velocity;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
+
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.SortedSet;
-import java.util.TreeSet;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import org.apache.commons.cli.Option;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.rat.CLIOption;
 import org.apache.rat.CLIOptionCollection;
 import org.apache.rat.Defaults;
@@ -38,15 +30,11 @@ import org.apache.rat.OptionCollection;
 import org.apache.rat.api.EnvVar;
 import org.apache.rat.commandline.StyleSheets;
 import org.apache.rat.config.exclusion.StandardCollection;
-import org.apache.rat.config.parameters.ComponentType;
 import org.apache.rat.config.parameters.Description;
-import org.apache.rat.config.parameters.DescriptionBuilder;
-import org.apache.rat.configuration.MatcherBuilderTracker;
 import org.apache.rat.documentation.options.AntOption;
 import org.apache.rat.documentation.options.AntOptionCollection;
 import org.apache.rat.documentation.options.MavenOption;
 import org.apache.rat.documentation.options.MavenOptionCollection;
-import org.apache.rat.help.AbstractHelp;
 import org.apache.rat.license.ILicense;
 import org.apache.rat.license.LicenseSetFactory;
 import org.junit.jupiter.api.Test;
@@ -63,7 +51,7 @@ public class RatToolTest {
         for (EnvVar envVar : EnvVar.values()) {
             vars.remove(envVar);
         }
-        assertThat(vars.isEmpty());
+        assertThat(vars).isEmpty();
     }
 
     @Test
@@ -120,8 +108,7 @@ public class RatToolTest {
     }
 
     @Test
-    void matchers() {
-        List<String> expected = List.of("");
+    void matchers() {   
         List<String> matchers = underTest.matchers().stream().map(Matcher::getName).toList();
         assertThat(matchers).containsExactlyInAnyOrder("all", "any", "copyright", "matcherRef", "not", "regex", "spdx", "text");
     }

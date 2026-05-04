@@ -27,6 +27,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Map;
+import java.util.Optional;
 import java.util.TreeMap;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -177,12 +178,13 @@ public final class OptionCollection {
         argumentContext.processArgs(CLIOptionCollection.INSTANCE);
         final ReportConfiguration configuration = argumentContext.getConfiguration();
         final CommandLine commandLine = argumentContext.getCommandLine();
-        if (CLIOptionCollection.INSTANCE.isSelected(Arg.DIR)) {
+        Optional<Option> dirOpt = CLIOptionCollection.INSTANCE.getSelected(Arg.DIR);
+        if (dirOpt.isPresent()) {
             try {
                 configuration.addSource(getReportable(commandLine.getParsedOptionValue(
-                        CLIOptionCollection.INSTANCE.getSelected(Arg.DIR).get()), configuration));
+                        dirOpt.get()), configuration));
             } catch (ParseException e) {
-                throw new ConfigurationException("Unable to set parse " + CLIOptionCollection.INSTANCE.getSelected(Arg.DIR).get(), e);
+                throw new ConfigurationException("Unable to set parse " + dirOpt.get(), e);
             }
         }
         for (String s : commandLine.getArgs()) {

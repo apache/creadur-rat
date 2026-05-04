@@ -25,11 +25,11 @@ import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class HelpTest extends AbstractRatAntTaskTest {
-    private final String baseNameStr = String.join(File.separator, new String[]{"src","test","resources","helpTest"});
+    private final String baseNameStr = String.join(File.separator, "src", "test", "resources", "helpTest");
     private final File antFile = new File(new File(baseNameStr), "build.xml").getAbsoluteFile();
 
     @BeforeEach
-    public void setUp()  {
+    public void setUp() {
         File baseFile = antFile.getParentFile();
         for (int i = 0; i < 4; i++) {
             baseFile = baseFile.getParentFile();
@@ -38,6 +38,7 @@ public class HelpTest extends AbstractRatAntTaskTest {
         System.setProperty(MagicNames.PROJECT_BASEDIR, documentName.getBaseName());
         super.setUp();
     }
+
     @Override
     protected File getAntFile() {
         return antFile;
@@ -46,7 +47,7 @@ public class HelpTest extends AbstractRatAntTaskTest {
     @Test
     public void testExecHelp() {
         buildRule.executeTarget("execHelp");
-       // System.out.println(buildRule.getOutput());
+        // System.out.println(buildRule.getOutput());
         assertThat(buildRule.getOutput()).contains("<rat:report addLicense='value'> ");
         assertThat(buildRule.getOutput()).contains("<licenses>File</licenses>");
         assertThat(buildRule.getOutput()).contains("Deprecated for removal since 0.17: Use outputFamilies attribute");

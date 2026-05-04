@@ -31,7 +31,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.apache.rat.ui.UIOptionCollectionTest.TestingUIOptionCollection;
 import static org.apache.rat.ui.UIOptionCollectionTest.TestingUIOption;
 
-public class ArgumentTrackerTest {
+class ArgumentTrackerTest {
     private ArgumentTracker underTest;
     private TestingUIOptionCollection testingUIOptionCollection;
 

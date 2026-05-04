@@ -59,10 +59,18 @@ public abstract class UIOption<T extends UIOption<T>> {
         this.optionCollection = optionCollection;
         this.option = option;
         this.name = name;
-        argumentType = option.hasArg() ?
-                option.getArgName() == null ? OptionCollectionParser.ArgumentType.ARG :
-                OptionCollectionParser.ArgumentType.valueOf(option.getArgName().toUpperCase(Locale.ROOT)) :
-                OptionCollectionParser.ArgumentType.NONE;
+        OptionCollectionParser.ArgumentType argType;
+        if (option.hasArg()) {
+            if (option.getArgName() == null) {
+                argType = OptionCollectionParser.ArgumentType.ARG;
+            } else {
+                // extract the name of the argument type.
+                argType = OptionCollectionParser.ArgumentType.valueOf(option.getArgName().toUpperCase(Locale.ROOT));
+            }
+        } else {
+            argType = OptionCollectionParser.ArgumentType.NONE;
+        }
+        this.argumentType = argType;
     }
 
     /**

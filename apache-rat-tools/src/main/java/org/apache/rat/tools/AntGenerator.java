@@ -271,6 +271,18 @@ public final class AntGenerator {
         }
     }
 
+    private static String maybeAddParamDescription(final AntOption antOption, final String desc) {
+        if (antOption.getArgName() != null) {
+            Supplier<String> sup = OptionCollection.getArgumentTypes().get(antOption.getArgName());
+            if (sup == null) {
+                throw new IllegalStateException(format("Argument type %s must be in OptionCollection.ARGUMENT_TYPES", antOption.getArgName()));
+            }
+            return format("%s Argument%s should be %s%s. (See Argument Types for clarification)", desc, antOption.hasArgs() ? "s" : "",
+                    antOption.hasArgs() ? "" : "a ", antOption.getArgName());
+        }
+        return desc;
+    }
+
     /**
      * Get the method comment for this option.
      *
@@ -294,14 +306,7 @@ public final class AntGenerator {
             } else {
                 arg = "The state";
             }
-            if (antOption.getArgName() != null) {
-                Supplier<String> sup = OptionCollection.getArgumentTypes().get(antOption.getArgName());
-                if (sup == null) {
-                    throw new IllegalStateException(format("Argument type %s must be in OptionCollection.ARGUMENT_TYPES", antOption.getArgName()));
-                }
-                desc = format("%s Argument%s should be %s%s. (See Argument Types for clarification)", desc, antOption.hasArgs() ? "s" : "",
-                        antOption.hasArgs() ? "" : "a ", antOption.getArgName());
-            }
+            desc = maybeAddParamDescription(antOption, desc);
             sb.append(format("    /**%n     * %s%n     * @param %s %s%n", StringEscapeUtils.escapeHtml4(desc), antOption.getName(),
                     StringEscapeUtils.escapeHtml4(arg)));
         } else {

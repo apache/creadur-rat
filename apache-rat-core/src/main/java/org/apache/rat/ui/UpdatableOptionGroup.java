@@ -39,7 +39,7 @@ public final class UpdatableOptionGroup extends OptionGroup {
      * @return an UpdatableOptionGroup.
      */
     public static UpdatableOptionGroup create(final OptionGroup group) {
-        return group instanceof UpdatableOptionGroup ? (UpdatableOptionGroup) group : new UpdatableOptionGroup(group);
+        return group instanceof UpdatableOptionGroup updatableOptionGroup ? updatableOptionGroup : new UpdatableOptionGroup(group);
     }
 
     private UpdatableOptionGroup(final OptionGroup group) {

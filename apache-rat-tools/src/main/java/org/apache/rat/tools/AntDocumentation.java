@@ -77,7 +77,8 @@ public final class AntDocumentation {
         new AntDocumentation(outputDir).execute();
     }
 
-   private AntDocumentation(final File outputDir) {
+    /* Visible for testing */
+    AntDocumentation(final File outputDir) {
         this.outputDir = outputDir;
     }
 
@@ -107,7 +108,9 @@ public final class AntDocumentation {
             throw new RuntimeException(e);
         }
     }
-    private void printOptions(final Writer out, final List<AntOption> options,
+
+    /* package private for testing */
+    void printOptions(final Writer out, final List<AntOption> options,
                               final Predicate<AntOption> typeFilter, final String tableCaption) throws IOException {
         boolean hasDeprecated = options.stream().anyMatch(typeFilter.and(AntOption::isDeprecated));
 
