@@ -23,11 +23,13 @@ import org.apache.rat.documentation.options.AntOption;
 import org.apache.rat.documentation.options.AntOptionCollection;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.CleanupMode;
 import org.junit.jupiter.api.io.TempDir;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.List;
 
@@ -39,13 +41,12 @@ public class AntDocumentationTest {
     private AntOptionCollection optionCollection;
     private AntDocumentation underTest;
     private Path testPath;
-
-    private Options options = new Options().addOption("one", false, "first option")
+    private final Options options = new Options().addOption("one", false, "first option")
             .addOption("two", true, "hasOption")
             .addOption(Option.builder().longOpt("three").hasArgs().desc("third option").build());
 
     @BeforeEach
-    void setup(@TempDir Path path) {
+    void setup(@TempDir(cleanup = CleanupMode.NEVER) Path path) {
         optionCollection = AntOptionCollection.INSTANCE;
         testPath = path;
         underTest = new AntDocumentation(path.toFile());
@@ -57,7 +58,7 @@ public class AntDocumentationTest {
         underTest.writeAttributes(antOptions);
         File result = new File(testPath.toFile(), "report_attributes.txt");
         assertThat(result).exists();
-        List<String> lines = IOUtils.readLines(new FileInputStream(result));
+        List<String> lines = IOUtils.readLines(new FileInputStream(result), StandardCharsets.UTF_8);
         assertThat(lines).contains("| one | first option | boolean | false |", "| two | hasOption | Arg | false |");
         assertThat(lines).doesNotContainSubsequence("three");
     }
@@ -68,7 +69,7 @@ public class AntDocumentationTest {
         underTest.writeElements(antOptions);
         File result = new File(testPath.toFile(), "report_elements.txt");
         assertThat(result).exists();
-        List<String> lines = IOUtils.readLines(new FileInputStream(result));
+        List<String> lines = IOUtils.readLines(new FileInputStream(result), StandardCharsets.UTF_8);
         assertThat(lines).contains("| threes | third option | Arg | false |");
         assertThat(lines).doesNotContainSubsequence("one", "two");
     }
