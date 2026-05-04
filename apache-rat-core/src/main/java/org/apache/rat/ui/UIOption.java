@@ -65,7 +65,11 @@ public abstract class UIOption<T extends UIOption<T>> {
                 argType = OptionCollectionParser.ArgumentType.ARG;
             } else {
                 // extract the name of the argument type.
-                argType = OptionCollectionParser.ArgumentType.valueOf(option.getArgName().toUpperCase(Locale.ROOT));
+                try {
+                    argType = OptionCollectionParser.ArgumentType.valueOf(option.getArgName().toUpperCase(Locale.ROOT));
+                } catch (IllegalArgumentException e) {
+                    argType = OptionCollectionParser.ArgumentType.ARG;
+                }
             }
         } else {
             argType = OptionCollectionParser.ArgumentType.NONE;

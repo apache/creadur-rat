@@ -59,8 +59,8 @@ public class AntDocumentationTest {
         File result = new File(testPath.toFile(), "report_attributes.txt");
         assertThat(result).exists();
         List<String> lines = IOUtils.readLines(new FileInputStream(result), StandardCharsets.UTF_8);
-        assertThat(lines).contains("| one | first option | boolean | false |", "| two | hasOption | Arg | false |");
-        assertThat(lines).doesNotContainSubsequence("three");
+        assertThat(lines).contains("| one | first option | boolean | false |", "| two | hasOption | Arg | false |")
+                .doesNotContainSubsequence("three");
     }
 
     @Test
@@ -70,7 +70,6 @@ public class AntDocumentationTest {
         File result = new File(testPath.toFile(), "report_elements.txt");
         assertThat(result).exists();
         List<String> lines = IOUtils.readLines(new FileInputStream(result), StandardCharsets.UTF_8);
-        assertThat(lines).contains("| threes | third option | Arg | false |");
-        assertThat(lines).doesNotContainSubsequence("one", "two");
+        assertThat(lines).contains("| threes | third option | Arg | false |").doesNotContainSubsequence("one", "two");
     }
 }

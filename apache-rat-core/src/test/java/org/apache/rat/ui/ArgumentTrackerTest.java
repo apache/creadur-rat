@@ -36,7 +36,7 @@ class ArgumentTrackerTest {
     private TestingUIOptionCollection testingUIOptionCollection;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         testingUIOptionCollection = new TestingUIOptionCollection();
         underTest = new ArgumentTracker(testingUIOptionCollection);
     }

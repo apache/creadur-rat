@@ -39,10 +39,10 @@ public final class CLIOption extends UIOption<CLIOption> {
         if (option.getLongOpt() != null) {
             result.append("--").append(option.getLongOpt());
             if (option.getOpt() != null) {
-                result.append(" or -").append(option.getArgs());
+                result.append(" or -").append(option.getOpt());
             }
         } else {
-            result.append("-").append(option.getArgs());
+            result.append("-").append(option.getOpt());
         }
         return result.toString();
     }
