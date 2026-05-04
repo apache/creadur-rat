@@ -62,7 +62,7 @@ public final class ArgumentTracker {
                         String.format("Use of deprecated option '%s'. %s", abstractOption.getName(), abstractOption.getDeprecated()));
             }
         }
-        setDeprecationReporter();
+        //setDeprecationReporter();
     }
 
     /**
