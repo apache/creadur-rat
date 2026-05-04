@@ -174,6 +174,9 @@ public class ExclusionProcessor {
         for (StandardCollection sc : fileProcessors) {
             appendable.append(format("Processing exclude file from %s.%n", sc.name()));
         }
+        for (DocumentNameMatcher nameMatcher : excludedPaths) {
+            appendable.append(format("Excluding %s.%n", nameMatcher.toString()));
+        }
     }
 
 

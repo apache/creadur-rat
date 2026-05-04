@@ -1,16 +1,13 @@
 package org.apache.rat;
 
 import org.apache.commons.cli.Option;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.rat.ui.ArgumentTracker;
-import org.apache.rat.ui.UIOptionCollection;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class CLIOptionTest {
+class CLIOptionTest {
     final CLIOptionCollection optionCollection = CLIOptionCollection.INSTANCE;
     final CLIOption optionA = new CLIOption(CLIOptionCollection.INSTANCE, new Option("a", false, "short key"));
     final CLIOption optionB = new CLIOption(CLIOptionCollection.INSTANCE, Option.builder("b").longOpt("bee").hasArg().desc("two key").build());

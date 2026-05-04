@@ -34,6 +34,7 @@ import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.rat.api.Document;
 import org.apache.rat.commandline.Arg;
 import org.apache.rat.commandline.ArgumentContext;
@@ -201,9 +202,7 @@ public final class OptionCollectionParser {
         private static final long serialVersionUID = 5305467873966684014L;
 
         private String getKey(final Option opt) {
-            String key = opt.getOpt();
-            key = key == null ? opt.getLongOpt() : key;
-            return key;
+            return StringUtils.defaultIfBlank(opt.getOpt(), opt.getLongOpt());
         }
 
         /**
