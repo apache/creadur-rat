@@ -26,7 +26,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.BiConsumer;
-import java.util.stream.Collectors;
 
 import org.apache.commons.cli.Option;
 import org.apache.commons.lang3.StringUtils;
@@ -63,6 +62,7 @@ public final class ArgumentTracker {
                         String.format("Use of deprecated option '%s'. %s", abstractOption.getName(), abstractOption.getDeprecated()));
             }
         }
+        setDeprecationReporter();
     }
 
     /**
@@ -77,7 +77,7 @@ public final class ArgumentTracker {
 
     /**
      * Generates the CasedString for the specified option.
-     * @param option
+     * @param option the option to extract the name for.
      * @return the CasedString in KEBAB format.
      */
     public static CasedString extractName(final Option option) {
@@ -106,7 +106,7 @@ public final class ArgumentTracker {
         final List<String> result = new ArrayList<>();
         for (Map.Entry<String, List<String>> entry : args.entrySet()) {
             result.add("--" + entry.getKey());
-            result.addAll(entry.getValue().stream().filter(Objects::nonNull).collect(Collectors.toList()));
+            result.addAll(entry.getValue().stream().filter(Objects::nonNull).toList());
         }
         return result;
     }
@@ -211,7 +211,7 @@ public final class ArgumentTracker {
      * @param value the array of values to set.
      */
     public void addArg(final String trackerKey, final String... value) {
-        List<String> newValues = Arrays.stream(value).filter(StringUtils::isNotBlank).collect(Collectors.toList());
+        List<String> newValues = Arrays.stream(value).filter(StringUtils::isNotBlank).toList();
         if (newValues.isEmpty()) {
             return;
         }
