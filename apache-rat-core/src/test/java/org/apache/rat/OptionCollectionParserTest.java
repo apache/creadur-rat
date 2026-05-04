@@ -1,18 +1,30 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one   *
+ * or more contributor license agreements.  See the NOTICE file *
+ * distributed with this work for additional information        *
+ * regarding copyright ownership.  The ASF licenses this file   *
+ * to you under the Apache License, Version 2.0 (the            *
+ * "License"); you may not use this file except in compliance   *
+ * with the License.  You may obtain a copy of the License at   *
+ *                                                              *
+ *   https://www.apache.org/licenses/LICENSE-2.0                 *
+ *                                                              *
+ * Unless required by applicable law or agreed to in writing,   *
+ * software distributed under the License is distributed on an  *
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY       *
+ * KIND, either express or implied.  See the License for the    *
+ * specific language governing permissions and limitations      *
+ * under the License.                                           *
+ */
 package org.apache.rat;
 
-import com.google.common.io.Files;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.ParseException;
-import org.apache.rat.api.Document;
 import org.apache.rat.commandline.ArgumentContext;
-import org.apache.rat.document.DocumentName;
-import org.apache.rat.document.DocumentNameMatcher;
-import org.apache.rat.document.FileDocument;
 import org.apache.rat.report.IReportable;
 import org.apache.rat.ui.UIOption;
 import org.apache.rat.ui.UIOptionCollection;
 import org.apache.rat.utils.CasedString;
-import org.apache.rat.utils.DefaultLog;
 import org.apache.rat.walker.ArchiveWalker;
 import org.apache.rat.walker.DirectoryWalker;
 import org.junit.jupiter.api.Test;
@@ -33,8 +45,8 @@ class OptionCollectionParserTest {
     @TempDir(cleanup = CleanupMode.NEVER)
     static Path testPath;
 
-    private TestOptionCollection optionCollection = new TestOptionCollection();
-    private OptionCollectionParser underTest = new OptionCollectionParser(optionCollection);
+    final private TestOptionCollection optionCollection = new TestOptionCollection();
+    final private OptionCollectionParser underTest = new OptionCollectionParser(optionCollection);
 
     @Test
     void parseCommands() throws IOException, ParseException {
@@ -78,7 +90,7 @@ class OptionCollectionParserTest {
         /**
          * Constructor.
          *
-         * @param optionCollection
+         * @param optionCollection the collection the UIOption belongs to.
          * @param option           The CLI option
          */
         protected <C extends UIOptionCollection<TestOption>> TestOption(C optionCollection, Option option) {
@@ -101,7 +113,7 @@ class OptionCollectionParserTest {
         }
     }
 
-    class TestOptionCollection extends UIOptionCollection<TestOption> {
+    static class TestOptionCollection extends UIOptionCollection<TestOption> {
         /**
          * Construct the UIOptionCollection from the builder.
          */
