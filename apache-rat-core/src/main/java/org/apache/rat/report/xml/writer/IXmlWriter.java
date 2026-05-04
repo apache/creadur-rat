@@ -21,6 +21,7 @@ package org.apache.rat.report.xml.writer;
 import java.io.IOException;
 
 import org.apache.rat.report.xml.XmlElements;
+import org.w3c.dom.Document;
 
 /**
  * Simple interface for creating basic XML documents.
@@ -147,4 +148,12 @@ public interface IXmlWriter extends AutoCloseable {
      * if called before any call to {@link #openElement(CharSequence)}
      */
     IXmlWriter closeDocument() throws IOException;
+
+    /**
+     * Append an XML document into this one.
+     * @param document the document to append
+     * @return this object
+     * @throws IOException on error.
+     */
+    IXmlWriter append(Document document) throws IOException;
 }
