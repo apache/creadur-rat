@@ -21,13 +21,9 @@ package org.apache.rat;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.io.Serial;
 import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
 import java.util.Comparator;
-import java.util.function.Supplier;
-import java.util.stream.Collectors;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.DefaultParser;
@@ -38,24 +34,17 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.rat.api.Document;
 import org.apache.rat.commandline.Arg;
 import org.apache.rat.commandline.ArgumentContext;
-import org.apache.rat.commandline.StyleSheets;
-import org.apache.rat.config.exclusion.StandardCollection;
 import org.apache.rat.document.DocumentName;
 import org.apache.rat.document.DocumentNameMatcher;
 import org.apache.rat.document.FileDocument;
 import org.apache.rat.help.Licenses;
-import org.apache.rat.license.LicenseSetFactory;
 import org.apache.rat.report.IReportable;
-import org.apache.rat.report.claim.ClaimStatistic;
 import org.apache.rat.ui.UIOptionCollection;
 import org.apache.rat.utils.DefaultLog;
-import org.apache.rat.utils.Log.Level;
 import org.apache.rat.walker.ArchiveWalker;
 import org.apache.rat.walker.DirectoryWalker;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-
-import static java.lang.String.format;
 
 /**
  * Uses the AbstractOptionCollection to parse the command line options.
@@ -72,15 +61,6 @@ public final class OptionCollectionParser {
 
     /** The Option comparator to sort the help */
     public static final Comparator<Option> OPTION_COMPARATOR = new OptionComparator();
-
-    /**
-     * Join a collection of objects together as a comma separated list of their string values.
-     * @param args the objects to join together.
-     * @return the comma separated string.
-     */
-    private static String asString(final Object[] args) {
-        return Arrays.stream(args).map(Object::toString).collect(Collectors.joining(", "));
-    }
 
     /**
      * Parses the standard options to create a ReportConfiguration.
@@ -154,7 +134,7 @@ public final class OptionCollectionParser {
         final CommandLine commandLine = argumentContext.getCommandLine();
         if (!configuration.hasSource()) {
             for (String s : commandLine.getArgs()) {
-                IReportable reportable = getReportable(new File(s), configuration);
+                IReportable reportable = OptionCollection.getReportable(new File(s), configuration);
                 if (reportable != null) {
                     configuration.addSource(reportable);
                 }
@@ -198,7 +178,6 @@ public final class OptionCollectionParser {
      */
     private static final class OptionComparator implements Comparator<Option>, Serializable {
         /** The serial version UID.  */
-        @Serial
         private static final long serialVersionUID = 5305467873966684014L;
 
         private String getKey(final Option opt) {
@@ -218,107 +197,6 @@ public final class OptionCollectionParser {
         @Override
         public int compare(final Option opt1, final Option opt2) {
             return getKey(opt1).compareToIgnoreCase(getKey(opt2));
-        }
-    }
-
-    public enum ArgumentType {
-        /**
-         * A plain file.
-         */
-        FILE("File", () -> "A file name."),
-        /**
-         * An Integer.
-         */
-        INTEGER("Integer", () -> "An integer value."),
-        /**
-         * A directory or archive.
-         */
-        DIRORARCHIVE("DirOrArchive", () -> "A directory or archive file to scan."),
-        /**
-         * A matching expression.
-         */
-        EXPRESSION("Expression", () -> "A file matching pattern usually of the form used in Ant build files and " +
-                "'.gitignore' files (see https://ant.apache.org/manual/dirtasks.html#patterns for examples). " +
-                "Regular expression patterns may be specified by surrounding the pattern with '%regex[' and ']'. " +
-                "For example '%regex[[A-Z].*]' would match files and directories that start with uppercase latin letters."),
-        /**
-         * A license filter.
-         */
-        LICENSEFILTER("LicenseFilter", () -> format("A defined filter for the licenses to include. Valid values: %s.",
-                asString(LicenseSetFactory.LicenseFilter.values()))),
-        /**
-         * A log level.
-         */
-        LOGLEVEL("LogLevel", () -> format("The log level to use. Valid values %s.", asString(Level.values()))),
-        /**
-         * A processing type.
-         */
-        PROCESSINGTYPE("ProcessingType", () -> format("Specifies how to process file types. Valid values are: %s%n",
-                Arrays.stream(ReportConfiguration.Processing.values())
-                        .map(v -> format("\t%s: %s", v.name(), v.desc()))
-                        .collect(Collectors.joining(System.lineSeparator())))),
-        /**
-         * A style sheet.
-         */
-        STYLESHEET("StyleSheet", () -> format("Either an external XSLT file or one of the internal named sheets. Internal sheets are: %n%s",
-                Arrays.stream(StyleSheets.values())
-                        .map(v -> format("\t%s: %s%n", v.arg(), v.desc()))
-                        .collect(Collectors.joining(System.lineSeparator())))),
-        /**
-         * A license id.
-         */
-        LICENSEID("LicenseID", () -> "The ID for a license."),
-        /**
-         * A license family id.
-         */
-        FAMILYID("FamilyID", () -> "The ID for a license family."),
-        /**
-         * A standard collection name.
-         */
-        STANDARDCOLLECTION("StandardCollection", () -> format("Defines standard expression patterns (see above). Valid values are: %n%s%n",
-                Arrays.stream(StandardCollection.values())
-                        .map(v -> format("\t%s: %s%n", v.name(), v.desc()))
-                        .collect(Collectors.joining(System.lineSeparator())))),
-        /**
-         * A Counter pattern name
-         */
-        COUNTERPATTERN("CounterPattern", () -> format("A pattern comprising one of the following prefixes followed by " +
-                        "a colon and a count (e.g. %s:5).  Prefixes are %n%s.", ClaimStatistic.Counter.UNAPPROVED,
-                Arrays.stream(ClaimStatistic.Counter.values())
-                        .map(v -> format("\t%s: %s Default range [%s, %s]%n", v.name(), v.getDescription(),
-                                v.getDefaultMinValue(),
-                                v.getDefaultMaxValue() == -1 ? "unlimited" : v.getDefaultMaxValue()))
-                        .collect(Collectors.joining(System.lineSeparator())))),
-        /**
-         * A generic argument.
-         */
-        ARG("Arg", () -> "A string"),
-        /**
-         * No argument.
-         */
-        NONE("", () -> "");
-
-        /**
-         * The display name
-         */
-        private final String displayName;
-        /**
-         * A supplier of the description
-         */
-        private final Supplier<String> description;
-
-        ArgumentType(final String name,
-                     final Supplier<String> description) {
-            this.displayName = name;
-            this.description = description;
-        }
-
-        public String getDisplayName() {
-            return displayName;
-        }
-
-        public Supplier<String> description() {
-            return description;
         }
     }
 }

@@ -37,7 +37,7 @@ public class UIOptionCollectionTest {
     public static final Option UI_OPTION = Option.builder("ui-option1").build();
     public static final Option DEPRECATED_UI_OPTION = Option.builder("ui-option2").deprecated().build();
 
-    public static class TestingUIOptionCollection extends UIOptionCollection<TestingUIOption> {
+    static class TestingUIOptionCollection extends UIOptionCollection<TestingUIOption> {
         public TestingUIOptionCollection() {
             super(new Builder());
 
@@ -121,7 +121,6 @@ public class UIOptionCollectionTest {
     @Test
     void getUnsupportedOptions() {
         Options options = underTest.getUnsupportedOptions();
-        Collection<Option> OptionCollection = options.getOptions();
         List<Option> expected = new ArrayList<Option>();
         expected.addAll(Arg.COUNTER_MAX.group().getOptions());
         expected.add(Arg.EXCLUDE.option());

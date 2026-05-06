@@ -32,6 +32,8 @@ import static java.lang.String.format;
  */
 public final class MavenOption extends UIOption<MavenOption> {
 
+    /** THe format to start an XML entity */
+    private static final String XML_FMT = "<%s>";
     /**
      * Constructor.
      *
@@ -57,10 +59,7 @@ public final class MavenOption extends UIOption<MavenOption> {
     @Override
     protected String cleanupName(final Option option) {
         // only parse the option if we need to.
-        if (option == this.option) {
-            return format("<%s>", this.name);
-        }
-        return format("<%s>", ((MavenOptionCollection) getOptionCollection()).createName(option));
+        return option == this.option ? format(XML_FMT, this.name) : format(XML_FMT, ((MavenOptionCollection) getOptionCollection()).createName(option));
     }
 
     @Override
@@ -85,7 +84,7 @@ public final class MavenOption extends UIOption<MavenOption> {
      * @return a formatted option.
      */
     public String getExample(final String... args) {
-        StringBuilder sb = new StringBuilder(String.format("<%s>", getName()));
+        StringBuilder sb = new StringBuilder(String.format(XML_FMT, getName()));
         if (hasArg()) {
             if (hasArgs()) {
                 sb.append(System.lineSeparator());

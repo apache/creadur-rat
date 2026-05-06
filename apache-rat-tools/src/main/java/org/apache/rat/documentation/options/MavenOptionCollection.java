@@ -100,6 +100,7 @@ public final class MavenOptionCollection extends UIOptionCollection<MavenOption>
             unsupported(Arg.DIR).unsupported(Arg.LOG_LEVEL);
         }
 
+        @Override
         public MavenOptionCollection build() {
             return new MavenOptionCollection(this);
         }

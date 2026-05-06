@@ -45,8 +45,8 @@ class OptionCollectionParserTest {
     @TempDir(cleanup = CleanupMode.NEVER)
     static Path testPath;
 
-    final private TestOptionCollection optionCollection = new TestOptionCollection();
-    final private OptionCollectionParser underTest = new OptionCollectionParser(optionCollection);
+    private final TestOptionCollection optionCollection = new TestOptionCollection();
+    private final OptionCollectionParser underTest = new OptionCollectionParser(optionCollection);
 
     @Test
     void parseCommands() throws IOException, ParseException {
@@ -60,29 +60,6 @@ class OptionCollectionParserTest {
         ctxt.getConfiguration().reportExclusions(sb);
         assertThat(sb.toString()).contains("Excluding File size < 5 bytes.");
         assertThat(ctxt.getCommandLine().getArgList()).containsExactly(args);
-    }
-
-    @Test
-    void getReportable() throws IOException {
-        File dir1 = testPath.resolve("dir1").toFile();
-        assertThat(underTest.getReportable(dir1, new ReportConfiguration())).isNull();
-
-        assertThat(dir1.mkdir()).isTrue();
-        ReportConfiguration reportConfiguration = new ReportConfiguration();
-
-        File dir2 = testPath.resolve("dir2").toFile();
-        reportConfiguration.addExcludedPatterns(List.of(dir2.getName()));
-        assertThat(underTest.getReportable(dir2, reportConfiguration)).isNull();
-
-        IReportable reportable = underTest.getReportable(dir1, new ReportConfiguration());
-        assertThat(reportable).isInstanceOf(DirectoryWalker.class);
-
-        File file1 = new File(dir1, "file1");
-        try (FileOutputStream fos = new FileOutputStream(file1)) {
-            fos.write("Hello world".getBytes(StandardCharsets.UTF_8));
-        }
-        reportable = underTest.getReportable(file1, new ReportConfiguration());
-        assertThat(reportable).isInstanceOf(ArchiveWalker.class);
     }
 
     static class TestOption extends UIOption<TestOption> {

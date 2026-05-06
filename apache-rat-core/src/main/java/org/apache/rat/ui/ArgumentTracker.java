@@ -136,10 +136,8 @@ public final class ArgumentTracker {
             }
             // non-deprecated options may have default so ignore it if another option has already been set.
             for (Option o : arg.group().getOptions()) {
-                if (!o.equals(main)) {
-                    if (args.containsKey(extractKey(o))) {
-                        return false;
-                    }
+                if (!o.equals(main) && args.containsKey(extractKey(o))) {
+                    return false;
                 }
             }
             return true;

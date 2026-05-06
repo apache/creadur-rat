@@ -64,8 +64,7 @@ public class RatToolTest {
     @Test
     void options() {
         List<Option> options = underTest.options();
-        assertThat(options).isNotEmpty();
-        assertThat(options).containsExactlyInAnyOrderElementsOf(CLIOptionCollection.INSTANCE.getMappedOptions()
+        assertThat(options).isNotEmpty().containsExactlyInAnyOrderElementsOf(CLIOptionCollection.INSTANCE.getMappedOptions()
                     .map(CLIOption::getOption).toList());
     }
 
@@ -108,7 +107,7 @@ public class RatToolTest {
     }
 
     @Test
-    void matchers() {   
+    void matchers() {
         List<String> matchers = underTest.matchers().stream().map(Matcher::getName).toList();
         assertThat(matchers).containsExactlyInAnyOrder("all", "any", "copyright", "matcherRef", "not", "regex", "spdx", "text");
     }

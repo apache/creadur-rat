@@ -32,7 +32,7 @@ import java.util.stream.Collectors;
 import org.apache.commons.cli.Option;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.WordUtils;
-import org.apache.rat.OptionCollectionParser;
+import org.apache.rat.OptionCollection;
 import org.apache.rat.commandline.Arg;
 import org.apache.rat.ui.ArgumentTracker;
 import org.apache.rat.ui.UIOptionCollection;
@@ -47,6 +47,11 @@ import static java.lang.String.format;
 public final class AntOptionCollection extends UIOptionCollection<AntOption> {
     /** mapping of standard name to non-conflicting name. */
     private static final Map<String, String> RENAME_MAP;
+
+    /**
+     * The format for an XML element
+     */
+    private static final String DEFAULT_XML = "<%1$s>%%s</%1$s>%n";
 
     /** Attributes that are required for example data. */
     private static final Map<String, Map<String, String>> REQUIRED_ATTRIBUTES = new HashMap<>();
@@ -119,7 +124,7 @@ public final class AntOptionCollection extends UIOptionCollection<AntOption> {
         return REQUIRED_ATTRIBUTES.get(name);
     }
 
-    BuildType buildType(final OptionCollectionParser.ArgumentType type) {
+    BuildType buildType(final OptionCollection.ArgumentType type) {
         return switch (type) {
             case FILE, DIRORARCHIVE -> new BuildType("filename") {
                 @Override
@@ -135,7 +140,7 @@ public final class AntOptionCollection extends UIOptionCollection<AntOption> {
             default -> new BuildType(type.getDisplayName()) {
                 @Override
                 protected String getMethodFormat(final AntOption antOption) {
-                    return String.format("<%1$s>%%s</%1$s>%n", WordUtils.uncapitalize(antOption.getArgName()));
+                    return String.format(DEFAULT_XML, WordUtils.uncapitalize(antOption.getArgName()));
                 }
             };
         };
@@ -199,6 +204,7 @@ public final class AntOptionCollection extends UIOptionCollection<AntOption> {
                     .convert(Arg.EXCLUDE_STD, Arg.EXCLUDE);
         }
 
+        @Override
         public AntOptionCollection build() {
             return new AntOptionCollection(this);
         }
@@ -244,7 +250,7 @@ public final class AntOptionCollection extends UIOptionCollection<AntOption> {
          * @return the format used for multiple arguments.
          */
         protected String getMultipleFormat(final AntOption antOption) {
-            return String.format("<%1$s>%%s</%1$s>%n", tag);
+            return String.format("<%1$s>%%s</%1$s>%n", tag, antOption);
         }
 
         /**

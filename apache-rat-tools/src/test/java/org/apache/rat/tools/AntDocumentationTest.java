@@ -36,7 +36,7 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 
 
-public class AntDocumentationTest {
+class AntDocumentationTest {
 
     private AntOptionCollection optionCollection;
     private AntDocumentation underTest;

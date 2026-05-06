@@ -65,8 +65,7 @@ class ArgumentTrackerTest {
         underTest.addArg(mappedOption, "bar");
         underTest.addArg(mappedOption, "baz");
         String join = String.join(" ", underTest.args());
-        assertThat(join).contains(string1);
-        assertThat(join).contains(string2);
+        assertThat(join).contains(string1, string2);
     }
 
     @Test
@@ -84,7 +83,7 @@ class ArgumentTrackerTest {
         } else if (number == 1) {
             filter = opt -> opt.hasArg() && ! opt.hasArgs();
         } else {
-            filter = opt -> opt.hasArgs();
+            filter = Option::hasArgs;
         }
         return Arrays.stream(Arg.values()).map(Arg::option).filter(filter).findAny().orElseThrow();
     }

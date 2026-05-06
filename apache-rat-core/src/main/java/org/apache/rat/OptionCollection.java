@@ -174,7 +174,7 @@ public final class OptionCollection {
      * @see #parseCommands(File, String[], Consumer)
      * @see #parseCommands(File, String[], Consumer, boolean)
      */
-    static ReportConfiguration createConfiguration(final ArgumentContext argumentContext) {
+    public static ReportConfiguration createConfiguration(final ArgumentContext argumentContext) {
         argumentContext.processArgs(CLIOptionCollection.INSTANCE);
         final ReportConfiguration configuration = argumentContext.getConfiguration();
         final CommandLine commandLine = argumentContext.getCommandLine();
@@ -213,7 +213,7 @@ public final class OptionCollection {
      * @param config the ReportConfiguration.
      * @return the IReportable instance containing the files.
      */
-    static IReportable getReportable(final File base, final ReportConfiguration config) {
+    public static IReportable getReportable(final File base, final ReportConfiguration config) {
         File absBase = base.getAbsoluteFile();
         DocumentName documentName = DocumentName.builder(absBase).build();
         if (!absBase.exists()) {
@@ -356,12 +356,30 @@ public final class OptionCollection {
             this.description = description;
         }
 
+        /**
+         * Gets the display name.
+         * @return the display name.
+         */
         public String getDisplayName() {
             return displayName;
         }
 
+        /**
+         * Gets the description.
+         * @return the description.
+         */
         public Supplier<String> description() {
             return description;
+        }
+
+        /**
+         * Get the matching Argument type.
+         * @param displayName the display name for the desired type.
+         * @return An optional with the ArgumentType or an empty optional if non exists.
+         */
+        public static Optional<ArgumentType> forDisplayName(final String displayName) {
+            return Arrays.stream(ArgumentType.values()).filter(argType -> argType.displayName.equals(displayName))
+                    .findAny();
         }
     }
 }

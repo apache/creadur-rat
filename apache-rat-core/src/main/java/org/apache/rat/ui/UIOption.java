@@ -27,7 +27,7 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.cli.Option;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.rat.OptionCollectionParser;
+import org.apache.rat.OptionCollection;
 import org.apache.rat.utils.CasedString;
 
 import static java.lang.String.format;
@@ -39,13 +39,13 @@ import static java.lang.String.format;
  */
 public abstract class UIOption<T extends UIOption<T>> {
     /** The pattern to match CLI options in text */
-    protected static final Pattern PATTERN = Pattern.compile("-(-[a-z0-9]+)+");
+    protected static final Pattern PATTERN = Pattern.compile("-?-([A-Za-z0-9]+-?)+");
     /** The actual UI-specific name for the option */
     protected final Option option;
     /** The name for the option */
     protected final CasedString name;
     /** The argument type for this option */
-    protected final OptionCollectionParser.ArgumentType argumentType;
+    protected final OptionCollection.ArgumentType argumentType;
     /** The AbstractOptionCollection associated with this AbstractOption */
     protected final UIOptionCollection<T> optionCollection;
 
@@ -59,20 +59,20 @@ public abstract class UIOption<T extends UIOption<T>> {
         this.optionCollection = optionCollection;
         this.option = option;
         this.name = name;
-        OptionCollectionParser.ArgumentType argType;
+        OptionCollection.ArgumentType argType;
         if (option.hasArg()) {
             if (option.getArgName() == null) {
-                argType = OptionCollectionParser.ArgumentType.ARG;
+                argType = OptionCollection.ArgumentType.ARG;
             } else {
                 // extract the name of the argument type.
                 try {
-                    argType = OptionCollectionParser.ArgumentType.valueOf(option.getArgName().toUpperCase(Locale.ROOT));
+                    argType = OptionCollection.ArgumentType.valueOf(option.getArgName().toUpperCase(Locale.ROOT));
                 } catch (IllegalArgumentException e) {
-                    argType = OptionCollectionParser.ArgumentType.ARG;
+                    argType = OptionCollection.ArgumentType.ARG;
                 }
             }
         } else {
-            argType = OptionCollectionParser.ArgumentType.NONE;
+            argType = OptionCollection.ArgumentType.NONE;
         }
         this.argumentType = argType;
     }
@@ -126,7 +126,7 @@ public abstract class UIOption<T extends UIOption<T>> {
             Matcher matcher = PATTERN.matcher(workingStr);
             while (matcher.find()) {
                 String key = matcher.group();
-                String optKey = key.substring(2);
+                String optKey = (1 == key.indexOf('-', 1)) ?  key.substring(2) : key.substring(1);
                 Optional<Option> maybeResult = getOptionCollection().getOptions().getOptions().stream()
                                 .filter(o -> optKey.equals(o.getOpt()) || optKey.equals(o.getLongOpt())).findFirst();
                 maybeResult.ifPresent(value -> maps.put(key, cleanupName(value)));
@@ -191,7 +191,7 @@ public abstract class UIOption<T extends UIOption<T>> {
      * Gets the argument type if there is one.
      * @return the Argument name
      */
-    public final OptionCollectionParser.ArgumentType getArgType() {
+    public final OptionCollection.ArgumentType getArgType() {
         return argumentType;
     }
 

@@ -63,7 +63,6 @@ public final class AntGenerator {
                         }
                         """;
 
-        GenerateType generateType = null;
         return switch (antOption.getArgType()) {
             case FILE, DIRORARCHIVE -> new GenerateType("FileSet") {
                 @Override
@@ -138,7 +137,7 @@ public final class AntGenerator {
         try (InputStream template = AntGenerator.class.getResourceAsStream("/Ant.tpl");
              FileWriter writer = new FileWriter(file, StandardCharsets.UTF_8);
              ByteArrayOutputStream bos = new ByteArrayOutputStream();
-             OutputStreamWriter customClasses = new OutputStreamWriter(bos, StandardCharsets.UTF_8);) {
+             OutputStreamWriter customClasses = new OutputStreamWriter(bos, StandardCharsets.UTF_8)) {
             if (template == null) {
                 throw new RuntimeException("Template /Ant.tpl not found");
             }
@@ -273,7 +272,8 @@ public final class AntGenerator {
 
     private static String maybeAddParamDescription(final AntOption antOption, final String desc) {
         if (antOption.getArgName() != null) {
-            Supplier<String> sup = OptionCollection.getArgumentTypes().get(antOption.getArgName());
+            Supplier<String> sup = OptionCollection.ArgumentType.forDisplayName(antOption.getArgName()).map(OptionCollection.ArgumentType::description)
+                    .orElse(null);
             if (sup == null) {
                 throw new IllegalStateException(format("Argument type %s must be in OptionCollection.ARGUMENT_TYPES", antOption.getArgName()));
             }
