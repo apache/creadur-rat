@@ -85,9 +85,8 @@ public enum Arg {
                     .desc("The copyright message to use in the license headers. Usually in the form of \"Copyright 2008 Foo\".  "
                             + "Only valid with --edit-license")
                     .build()),
-            (context, selected) -> {
-                throw new ImplementationException(String.format("'%s' should not be executed directly", selected));
-            }),
+    Arg::doNotExecute
+    ),
 
     /**
      * Causes file updates to overwrite existing files.
@@ -102,9 +101,7 @@ public enum Arg {
                     .desc("Forces any changes in files to be written directly to the source files so that new files are not created. "
                             + "Only valid with --edit-license.")
                     .build()),
-            (context, selected) -> {
-                throw new ImplementationException(String.format("'%s' should not be executed directly", selected));
-            }
+            Arg::doNotExecute
     ),
 
     /**
@@ -125,9 +122,7 @@ public enum Arg {
                             + "By default new files will be created with the license header, "
                             + "to force the modification of existing files use the --edit-overwrite option.").build()
             ),
-            (context, selected) -> {
-                throw new ImplementationException(String.format("'%s' should not be executed directly", selected));
-            }
+            Arg::doNotExecute
     ),
 
     //////////////////////////// CONFIGURATION OPTIONS
@@ -146,9 +141,7 @@ public enum Arg {
                     .converter(Converters.FILE_CONVERTER)
                     .type(File.class)
                     .build()),
-            (context, selected) -> {
-                throw new ImplementationException(String.format("'%s' should not be executed directly", selected));
-            }
+            Arg::doNotExecute
     ),
 
     /**
@@ -164,9 +157,8 @@ public enum Arg {
                             .setDescription(StdMsgs.useMsg("--configuration-no-defaults")).get())
                     .desc("Ignore default configuration.")
                     .build()),
-            (context, selected) -> {
-                throw new ImplementationException(String.format("'%s' should not be executed directly", selected));
-            }),
+            Arg::doNotExecute
+    ),
 
     /**
      * Option that adds approved licenses to the list
@@ -499,9 +491,8 @@ public enum Arg {
             .desc("Used to indicate end of list when using options that take multiple arguments.").argName("DirOrArchive")
             .deprecated(DeprecatedAttributes.builder().setForRemoval(true).setSince("0.17")
                     .setDescription("Use the standard '--' to signal the end of arguments.").get()).build()),
-            (context, selected) -> {
-                throw new ImplementationException(String.format("'%s' should not be executed directly", selected));
-            }),
+            Arg::doNotExecute
+    ),
 
     /////////////// OUTPUT OPTIONS
     /**
@@ -676,9 +667,8 @@ public enum Arg {
     HELP_LICENSES(new OptionGroup()
             .addOption(Option.builder().longOpt("help-licenses") //
                     .desc("Print information about registered licenses.").build()),
-            (context, selected) -> {
-                throw new ImplementationException(String.format("'%s' should not be executed directly", selected));
-            });
+            Arg::doNotExecute
+    );
 
     /**
      * The option group for the argument
@@ -689,6 +679,11 @@ public enum Arg {
      * The BiConsumer to apply the option to update the state of the context.configuration.
      */
     private final BiConsumer<ArgumentContext, Option> process;
+
+
+    private static void doNotExecute(final ArgumentContext context, final Option selected) {
+        throw new ImplementationException(String.format("'%s' should not be executed directly", selected));
+    }
 
     /**
      * Creates an Arg from an Option group.
@@ -810,6 +805,17 @@ public enum Arg {
     }
 
     /**
+     * parses the option as a file.
+     * @param context the Argument context that provides the command line.
+     * @param selected the selected option.
+     * @return Option as a file.
+     */
+    private static File commandLineFile(final ArgumentContext context, final Option selected) throws ParseException {
+        File file = context.getCommandLine().getParsedOptionValue(selected);
+        return file;
+    }
+
+    /**
      * parses lines with comma separated tokens from a file and returns the entire collection of tokens as a list of strings.
      * @param context the Argument context that provides the command line.
      * @param selected the selected option.
@@ -817,17 +823,16 @@ public enum Arg {
      */
     private static List<String> processArrayFile(final ArgumentContext context, final Option selected) {
         List<String> result = new ArrayList<>();
-        try {
-            File file = context.getCommandLine().getParsedOptionValue(selected);
-            try (InputStream in = Files.newInputStream(file.toPath())) {
-                for (String line : IOUtils.readLines(in, StandardCharsets.UTF_8)) {
-                    String[] ids = Converters.TEXT_LIST_CONVERTER.apply(line);
-                    result.addAll(Arrays.asList(ids));
-                }
-                return result;
-            } catch (IOException e) {
-                throw new ConfigurationException(e);
+        try (InputStream in = Files.newInputStream(commandLineFile(context, selected)
+                .toPath())) {
+            for (String line : IOUtils.readLines(in, StandardCharsets.UTF_8)) {
+                String[] ids = Converters.TEXT_LIST_CONVERTER.apply(line);
+                result.addAll(Arrays.asList(ids));
             }
+            return result;
+        } catch (IOException e) {
+            throw new ConfigurationException(e);
+
         } catch (ParseException e) {
             throw ConfigurationException.from(e);
         }

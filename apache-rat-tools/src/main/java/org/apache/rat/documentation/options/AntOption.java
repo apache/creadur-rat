@@ -52,6 +52,11 @@ public class AntOption extends UIOption<AntOption> {
         return getAntCollection().isAttribute(this);
     }
 
+    @Override
+    public String toString() {
+        return getName();
+    }
+
     /**
      * Returns {@code true} if the option should be a child element of the &lt;rat:report&gt; element.
      *

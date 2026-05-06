@@ -19,7 +19,8 @@
 package org.apache.rat.ui.spi;
 
 import org.apache.rat.ui.UI;
+import org.apache.rat.ui.UIOption;
 
 public interface UIProvider {
-    UI<?> create();
+    <T extends UIOption<T>> UI<T> create();
 }

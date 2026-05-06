@@ -29,7 +29,6 @@ import java.util.function.BiConsumer;
 
 import org.apache.commons.cli.Option;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.rat.DeprecationReporter;
 import org.apache.rat.commandline.Arg;
 import org.apache.rat.utils.CasedString;
 import org.apache.rat.utils.DefaultLog;
@@ -62,7 +61,6 @@ public final class ArgumentTracker {
                         String.format("Use of deprecated option '%s'. %s", abstractOption.getName(), abstractOption.getDeprecated()));
             }
         }
-        //setDeprecationReporter();
     }
 
     /**
@@ -82,20 +80,6 @@ public final class ArgumentTracker {
      */
     public static CasedString extractName(final Option option) {
         return new CasedString(CasedString.StringCase.KEBAB, ArgumentTracker.extractKey(option));
-    }
-
-    /**
-     * Sets the deprecation report method in the Apache Commons CLI processes.
-     */
-    private void setDeprecationReporter() {
-        DeprecationReporter.setLogReporter(opt -> {
-            String msg = deprecatedArgs.get(extractKey(opt));
-            if (msg == null) {
-                DeprecationReporter.getDefault().accept(opt);
-            } else {
-                DefaultLog.getInstance().warn(msg);
-            }
-        });
     }
 
     /**

@@ -250,7 +250,7 @@ public final class AntOptionCollection extends UIOptionCollection<AntOption> {
          * @return the format used for multiple arguments.
          */
         protected String getMultipleFormat(final AntOption antOption) {
-            return String.format("<%1$s>%%s</%1$s>%n", tag, antOption);
+            return String.format("<%1$s>%2$s</%1$s>%n", tag, antOption);
         }
 
         /**
