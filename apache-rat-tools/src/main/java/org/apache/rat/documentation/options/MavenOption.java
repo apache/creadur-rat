@@ -55,7 +55,7 @@ public final class MavenOption extends UIOption<MavenOption> {
     public String getMethodName() {
         return "set" + name.toCase(CasedString.StringCase.PASCAL);
     }
-    
+
     @Override
     protected String cleanupName(final Option option) {
         // only parse the option if we need to.
