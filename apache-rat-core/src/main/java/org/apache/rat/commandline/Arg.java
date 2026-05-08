@@ -623,8 +623,9 @@ public enum Arg {
                     }
                     context.getConfiguration().setOut(file);
                 } catch (ParseException e) {
+                    // we write to system out by default.
                     context.logParseException(e, selected, "System.out");
-                    context.getConfiguration().setOut(() -> CloseShieldOutputStream.wrap(System.out));
+                    context.getConfiguration().setOut(() -> CloseShieldOutputStream.wrap(System.out)); // NOSONAR
                 }
             }),
 
@@ -811,8 +812,7 @@ public enum Arg {
      * @return Option as a file.
      */
     private static File commandLineFile(final ArgumentContext context, final Option selected) throws ParseException {
-        File file = context.getCommandLine().getParsedOptionValue(selected);
-        return file;
+        return context.getCommandLine().getParsedOptionValue(selected);
     }
 
     /**

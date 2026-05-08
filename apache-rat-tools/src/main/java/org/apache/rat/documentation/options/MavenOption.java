@@ -55,15 +55,11 @@ public final class MavenOption extends UIOption<MavenOption> {
     public String getMethodName() {
         return "set" + name.toCase(CasedString.StringCase.PASCAL);
     }
-
-    MavenOptionCollection getMavenCollection() {
-        return getOptionCollection();
-    }
-
+    
     @Override
     protected String cleanupName(final Option option) {
         // only parse the option if we need to.
-        return option == this.option ? format(XML_FMT, this.name) : format(XML_FMT, getMavenCollection().createName(option));
+        return option == this.option ? format(XML_FMT, this.name) : format(XML_FMT, MavenOptionCollection.createName(option));
     }
 
     @Override

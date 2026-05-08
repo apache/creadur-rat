@@ -244,23 +244,13 @@ public final class AntOptionCollection extends UIOptionCollection<AntOption> {
         }
 
         /**
-         * Returns the format used when multiple arguments are expected by an Ant option.
-         *
-         * @param antOption the Ant option to check.
-         * @return the format used for multiple arguments.
-         */
-        protected String getMultipleFormat(final AntOption antOption) {
-            return String.format("<%1$s>%2$s</%1$s>%n", tag, antOption);
-        }
-
-        /**
          * Gets the method based on how many arguments an Ant option requires.
          *
          * @param antOption the Ant option to check.
          * @return the method format for the option.
          */
         protected String getMethodFormat(final AntOption antOption) {
-            return String.format("<%1$s>%%s</%1$s>%n", tag);
+            return String.format(DEFAULT_XML, tag);
         }
 
         /**

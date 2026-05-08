@@ -39,7 +39,7 @@ import static java.lang.String.format;
  */
 public abstract class UIOption<T extends UIOption<T>> {
     /** The pattern to match CLI options in text */
-    protected static final Pattern PATTERN = Pattern.compile("-?-([A-Za-z0-9]+-?)+");
+    protected static final Pattern PATTERN = Pattern.compile("-?-([A-Za-z0-9]+-?)+"); // NOSONAR
     /** The actual UI-specific name for the option */
     protected final Option option;
     /** The name for the option */

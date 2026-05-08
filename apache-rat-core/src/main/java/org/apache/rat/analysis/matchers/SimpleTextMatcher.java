@@ -45,8 +45,9 @@ public class SimpleTextMatcher extends AbstractHeaderMatcher {
     }
 
     @Override
-    protected final void finalize() throws Throwable {
-        super.finalize();
+    protected final void finalize() throws Throwable { // NOSNOAR
+        // no sonar because this is how we ensure that the finalize bug does not bite us
+        super.finalize(); // NOSONAR
       // finalizer attack remediation.
     }
 

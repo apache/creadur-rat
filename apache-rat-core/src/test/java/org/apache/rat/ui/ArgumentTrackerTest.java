@@ -46,7 +46,7 @@ class ArgumentTrackerTest {
         assertThat(ArgumentTracker.extractKey(Option.builder().longOpt("foo").build())).isEqualTo("foo");
         assertThat(ArgumentTracker.extractKey(Option.builder("b").build())).isEqualTo("b");
         assertThat(ArgumentTracker.extractKey(Option.builder("b").longOpt("foo").build())).isEqualTo("foo");
-        assertThatThrownBy(() -> ArgumentTracker.extractKey(Option.builder().build()))
+        assertThatThrownBy(() -> ArgumentTracker.extractKey(Option.builder().build())) // NOSONAR
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("Either opt or longOpt must be specified");
     }
