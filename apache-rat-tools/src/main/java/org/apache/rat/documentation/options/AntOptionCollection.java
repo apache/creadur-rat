@@ -260,7 +260,7 @@ public final class AntOptionCollection extends UIOptionCollection<AntOption> {
          * @return the method format for the option.
          */
         protected String getMethodFormat(final AntOption antOption) {
-            return antOption.hasArgs() ? getMultipleFormat(antOption) : String.format("<%1$s>%%s</%1$s>%n", tag);
+            return String.format("<%1$s>%%s</%1$s>%n", tag);
         }
 
         /**
