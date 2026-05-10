@@ -38,7 +38,6 @@ import org.apache.commons.cli.OptionGroup;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.io.output.CloseShieldOutputStream;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.rat.ConfigurationException;
 import org.apache.rat.Defaults;
@@ -519,14 +518,14 @@ public enum Arg {
                 if ("x".equals(key)) {
                     // display deprecated message.
                     context.getCommandLine().hasOption("x");
-                    context.getConfiguration().setStyleSheet(StyleSheets.getStyleSheet("xml"));
+                    context.getConfiguration().setStyleSheet(StyleSheets.getStyleSheet("xml", context.getWorkingDirectory()));
                 } else {
                     String[] style = context.getCommandLine().getOptionValues(selected);
                     if (style.length != 1) {
                         DefaultLog.getInstance().error("Please specify a single stylesheet");
                         throw new ConfigurationException("Please specify a single stylesheet");
                     }
-                    context.getConfiguration().setStyleSheet(StyleSheets.getStyleSheet(style[0]));
+                    context.getConfiguration().setStyleSheet(StyleSheets.getStyleSheet(style[0], context.getWorkingDirectory()));
                 }
             }),
 
@@ -625,7 +624,7 @@ public enum Arg {
                 } catch (ParseException e) {
                     // we write to system out by default.
                     context.logParseException(e, selected, "System.out");
-                    context.getConfiguration().setOut(() -> CloseShieldOutputStream.wrap(System.out)); // NOSONAR
+                    context.getConfiguration().setOut(ReportConfiguration.SYSTEM_OUT);
                 }
             }),
 

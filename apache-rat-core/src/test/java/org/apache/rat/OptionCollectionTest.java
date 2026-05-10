@@ -225,7 +225,7 @@ public class OptionCollectionTest {
         ReportConfiguration config = OptionCollection.parseCommands(testPath.toFile(), new String[]{fName}, o -> fail("Help called"), false);
         IReportable reportable = OptionCollection.getReportable(base, config);
         assertThat(reportable).as(() -> format("'%s' returned null", fName)).isNotNull();
-        assertThat(reportable.getName().getName()).isEqualTo(expected);
+        assertThat(reportable.name().getName()).isEqualTo(expected);
     }
 
     @Test

@@ -21,26 +21,16 @@ package org.apache.rat.testhelpers.data;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
 import java.util.function.Consumer;
-import javax.xml.xpath.XPathExpressionException;
 import org.apache.commons.cli.Option;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.text.WordUtils;
-import org.apache.rat.report.claim.ClaimStatistic;
-import org.apache.rat.testhelpers.XmlUtils;
 import org.apache.rat.ui.ArgumentTracker;
 import org.apache.rat.utils.CasedString;
 import org.apache.rat.utils.FileUtils;
-import org.w3c.dom.Document;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * The definition of a test.
@@ -52,7 +42,7 @@ public final class TestData implements Comparable<TestData> {
     private final String name;
     /** The command line for the test */
     private final List<ImmutablePair<Option, String[]>> commandLine;
-    /** A function to setup the test in a specific path */
+    /** A function to set up the test in a specific path */
     private final Consumer<Path> setupFiles;
     /** A function to test the results of the test. */
     private final Consumer<ValidatorData> validator;
@@ -116,8 +106,8 @@ public final class TestData implements Comparable<TestData> {
     }
 
     /**
-     * Gets the expected excepton or {@code null} if not exception is expected.
-     * @return the expected excepton or {@code null} if not exception is expected.
+     * Gets the expected exception or {@code null} if not exception is expected.
+     * @return the expected exception or {@code null} if not exception is expected.
      */
     public Exception getExpectedException() {
         return expectedException;
@@ -176,7 +166,7 @@ public final class TestData implements Comparable<TestData> {
 
     /**
      * Get the arguments for the command line.
-     * @return the argumentsfor the command line as Option, String[] pairs.
+     * @return the arguments for the command line as Option, String[] pairs.
      */
     public List<? extends Pair<Option, String[]>> getArgs() {
         return commandLine;
