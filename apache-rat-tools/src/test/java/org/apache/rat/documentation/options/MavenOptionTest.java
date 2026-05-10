@@ -30,9 +30,11 @@ public class MavenOptionTest {
     public void getDeprecatedTest() {
         for (Option option : Arg.getOptions().getOptions()) {
             if (option.isDeprecated()) {
-                MavenOption mavenOption = new MavenOption(option);
-                String deprecated = mavenOption.getDeprecated();
-                TextUtils.assertPatternNotInTarget("\\-\\- ", deprecated);
+                MavenOptionCollection.INSTANCE.getMappedOption(option).ifPresent( mavenOption -> {
+                    String deprecated = mavenOption.getDeprecated();
+
+                    TextUtils.assertPatternNotInTarget("\\-\\- ", deprecated);
+                });
             }
         }
     }

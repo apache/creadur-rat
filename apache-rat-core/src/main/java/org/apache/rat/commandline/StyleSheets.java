@@ -21,12 +21,11 @@ package org.apache.rat.commandline;
 import java.io.InputStream;
 import java.net.URL;
 import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Objects;
 
-import org.apache.commons.io.function.IOSupplier;
 import org.apache.rat.ConfigurationException;
+import org.apache.rat.ReportConfiguration;
+import org.apache.rat.document.DocumentName;
 
 import static java.lang.String.format;
 
@@ -49,7 +48,11 @@ public enum StyleSheets {
     /**
      * The plain style sheet. The current default.
      */
-    XML("xml", "Produces output in pretty-printed XML.");
+    XML("xml", "Produces output in pretty-printed XML."),
+    /**
+     * Official HTML5 stylesheet.
+     */
+    XHTML5("xhtml5", "Produces a HTML5 report");
     /**
      * The name of the style sheet. Must map to bundled resource xslt file
      */
@@ -70,27 +73,29 @@ public enum StyleSheets {
     }
 
     /**
-     * Gets the IOSupplier for a style sheet.
-     * @return an IOSupplier for the sheet.
+     * Gets the IODescriptor for a style sheet.
+     * @return an IODescriptor for the sheet.
      */
-    public IOSupplier<InputStream> getStyleSheet() {
-        return Objects.requireNonNull(StyleSheets.class.getClassLoader().getResource(format("org/apache/rat/%s.xsl", name)),
-                "missing stylesheet: " + name)::openStream;
+    public ReportConfiguration.IODescriptor<InputStream> getStyleSheet() {
+        URL url = StyleSheets.class.getClassLoader().getResource(format("org/apache/rat/%s.xsl", name));
+        Objects.requireNonNull(url, "missing stylesheet: " + name);
+        return new ReportConfiguration.IODescriptor<>(name, url::openStream);
     }
 
     /**
-     * Gets the IOSupplier for a style sheet.
+     * Gets the IODescriptor for a style sheet.
      * @param name the short name for or the path to a style sheet.
-     * @return the IOSupplier for the style sheet.
+     * @param workingDirectory the working directory to resolve the name against.
+     * @return the IODescriptor for the style sheet.
      */
-    public static IOSupplier<InputStream> getStyleSheet(final String name) {
+    public static ReportConfiguration.IODescriptor<InputStream> getStyleSheet(final String name, final DocumentName workingDirectory) {
         URL url = StyleSheets.class.getClassLoader().getResource(format("org/apache/rat/%s.xsl", name));
         if (url != null) {
-            return url::openStream;
+            return new ReportConfiguration.IODescriptor<>(name, url::openStream);
         }
-        Path p = Paths.get(name);
-        if (p.toFile().exists()) {
-            return () -> Files.newInputStream(p);
+        DocumentName xslt = workingDirectory.resolve(name);
+        if (xslt.asFile().exists()) {
+            return new ReportConfiguration.IODescriptor<>(xslt.toString(), () -> Files.newInputStream(xslt.asFile().toPath()));
         }
         throw new ConfigurationException(format("Stylesheet file '%s' not found", name));
     }

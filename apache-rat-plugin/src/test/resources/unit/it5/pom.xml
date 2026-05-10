@@ -28,12 +28,12 @@
         <version>@pom.version@</version>
         <configuration>
           <outputStyle>xml</outputStyle>
-          <config>.rat/customConfig.xml</config>
-          <inputExcludes>
-            <exclude>.rat/**</exclude>
-            <exclude>pom.xml</exclude>
-            <exclude>invoker.properties</exclude>
-          </inputExcludes>
+          <configs>
+            <config>.rat/customConfig.xml</config>
+          </configs>
+          <inputExcludes>.rat/**</inputExcludes>
+            <inputExcludes>pom.xml</inputExcludes>
+            <inputExcludes>invoker.properties</inputExcludes>
         </configuration>
       </plugin>
     </plugins>

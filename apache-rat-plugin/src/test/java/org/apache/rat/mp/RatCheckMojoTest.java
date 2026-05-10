@@ -463,11 +463,8 @@ public class RatCheckMojoTest {
         final String[] expected = {};
         final String[] notExpected = {};
         //setVariableValueToObject(mojo, "excludeSubProjects", Boolean.FALSE);
-        mojo.setInputExcludeParsedScm("MAVEN");
-        mojo.setInputExcludeParsedScm("idea");
-        mojo.setInputExcludeParsedScm("eclipse");
+        mojo.setInputExcludeParsedScms(new String[] {"MAVEN", "idea", "eclipse"});
         mojo.execute();
-
         ensureRatReportIsCorrect(ratTxtFile, expected, notExpected);
     }
 }

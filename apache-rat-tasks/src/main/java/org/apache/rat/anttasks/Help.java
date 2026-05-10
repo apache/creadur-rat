@@ -22,7 +22,6 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
@@ -30,9 +29,10 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.rat.commandline.Arg;
 import org.apache.rat.config.exclusion.StandardCollection;
+import org.apache.rat.documentation.options.AntOptionCollection;
 import org.apache.rat.help.AbstractHelp;
-import org.apache.rat.documentation.options.AbstractOption;
 import org.apache.rat.documentation.options.AntOption;
+import org.apache.rat.ui.UIOption;
 import org.apache.rat.utils.DefaultLog;
 import org.apache.rat.utils.Log;
 
@@ -178,11 +178,9 @@ public class Help extends BaseAntTask {
             String descriptionTitle = " -- Description --";
             int max = optionTitle.length();
             int maxExample = exampleTitle.length();
-            final List<AntOption> optList = options.getOptions().stream().filter(Option::hasLongOpt)
-                    .map(AntOption::new).collect(Collectors.toList());
-            if (getOptionComparator() != null) {
-                optList.sort(Comparator.comparing(AbstractOption::getName));
-            }
+            final List<AntOption> optList = new ArrayList<>();
+            AntOptionCollection.INSTANCE.getMappedOptions().forEach(optList::add);
+            optList.sort(Comparator.comparing(UIOption::getName));
             List<String> exampleList = new ArrayList<>();
             for (final AntOption option : optList) {
                 String argName = StringUtils.defaultIfEmpty(option.getArgName(), "value");

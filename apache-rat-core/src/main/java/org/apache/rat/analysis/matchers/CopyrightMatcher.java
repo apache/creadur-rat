@@ -60,7 +60,7 @@ import org.apache.rat.config.parameters.ConfigComponent;
                 "patterns that are not caught by a standard text matcher. This matcher will match \"(C)\", \"copyright\", " +
                 "or \"©\". (text is not case sensitive). It will also match things like Copyright (c) joe 1995 as well " +
                 "as Copyright (C) 1995 joe and Copyright (C) joe 1995.")
-public class CopyrightMatcher extends AbstractHeaderMatcher {
+public final class CopyrightMatcher extends AbstractHeaderMatcher {
     /** String to build a pattern to match the various recognized copyright symbols */
     private static final String COPYRIGHT_SYMBOL_DEFN = "\\([Cc]\\)|©|\\&[Cc][Oo][Pp][Yy]\\;";
     /** String to build a pattern to match symbols or word "copyright" */

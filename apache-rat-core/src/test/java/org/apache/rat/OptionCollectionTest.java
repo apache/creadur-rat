@@ -18,12 +18,14 @@
  */
 package org.apache.rat;
 
+import java.io.FileOutputStream;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.Locale;
 import java.util.Map;
@@ -43,6 +45,8 @@ import org.apache.rat.testhelpers.TestingLog;
 import org.apache.rat.utils.CasedString;
 import org.apache.rat.utils.DefaultLog;
 import org.apache.rat.utils.Log;
+import org.apache.rat.walker.ArchiveWalker;
+import org.apache.rat.walker.DirectoryWalker;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.CleanupMode;
@@ -221,8 +225,32 @@ public class OptionCollectionTest {
         ReportConfiguration config = OptionCollection.parseCommands(testPath.toFile(), new String[]{fName}, o -> fail("Help called"), false);
         IReportable reportable = OptionCollection.getReportable(base, config);
         assertThat(reportable).as(() -> format("'%s' returned null", fName)).isNotNull();
-        assertThat(reportable.getName().getName()).isEqualTo(expected);
+        assertThat(reportable.name().getName()).isEqualTo(expected);
     }
+
+    @Test
+    void getReportable() throws IOException {
+        File dir1 = testPath.resolve("dir1").toFile();
+        assertThat(OptionCollection.getReportable(dir1, new ReportConfiguration())).isNull();
+
+        assertThat(dir1.mkdir()).isTrue();
+        ReportConfiguration reportConfiguration = new ReportConfiguration();
+
+        File dir2 = testPath.resolve("dir2").toFile();
+        reportConfiguration.addExcludedPatterns(List.of(dir2.getName()));
+        assertThat(OptionCollection.getReportable(dir2, reportConfiguration)).isNull();
+
+        IReportable reportable = OptionCollection.getReportable(dir1, new ReportConfiguration());
+        assertThat(reportable).isInstanceOf(DirectoryWalker.class);
+
+        File file1 = new File(dir1, "file1");
+        try (FileOutputStream fos = new FileOutputStream(file1)) {
+            fos.write("Hello world".getBytes(StandardCharsets.UTF_8));
+        }
+        reportable = OptionCollection.getReportable(file1, new ReportConfiguration());
+        assertThat(reportable).isInstanceOf(ArchiveWalker.class);
+    }
+
 
     /**
      * A parameterized test for the options.
@@ -244,7 +272,9 @@ public class OptionCollectionTest {
         /** A flag to determine if help was called */
         final AtomicBoolean helpCalled = new AtomicBoolean(false);
 
-        @Override
+        /**
+         * Provide a test for the help optopn
+         */
         public void helpTest() {
             String[] args = { OptionFormatter.longOpt(OptionCollection.HELP) };
             try {
@@ -261,6 +291,7 @@ public class OptionCollectionTest {
          */
         public CliOptionsProvider() {
             super(Collections.emptyList(), testPath.toFile());
+            addTest(OptionCollectionTest.OptionTest.namedTest("help", this::helpTest));
         }
 
         /**
