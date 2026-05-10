@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations      *
  * under the License.                                           *
  */
-package org.apache.rat.testhelpers;
+package org.apache.rat.utils;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -25,15 +25,17 @@ import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.Collections;
 
-import static org.assertj.core.api.Fail.fail;
 
-public class FileUtils {
+public final class FileUtils {
+    private FileUtils() {
+        // do not instantiate
+    }
 
     /**
      * Creates a directory if it does not exist.
      * @param dir the directory to make.
      */
-    public static void mkDir(File dir) {
+    public static void mkDir(final File dir) {
         boolean ignored = dir.mkdirs();
     }
 
@@ -41,7 +43,7 @@ public class FileUtils {
      * Deletes a file if it exists.
      * @param file the file to delete.
      */
-    public static void delete(File file) {
+    public static void delete(final File file) {
         if (file.exists()) {
             if (file.isDirectory()) {
                 try {
@@ -62,15 +64,16 @@ public class FileUtils {
      * @param lines the lines to write into the file.
      * @return the new File.
      */
-    static public File writeFile(File dir, final String name, final Iterable<String> lines) {
+    public static  File writeFile(final File dir, final String name, final Iterable<String> lines) {
         if (dir == null) {
-            fail("base directory not specified");
+            throw new IllegalArgumentException("base directory not specified");
         }
+        mkDir(dir);
         File file = new File(dir, name);
         try (PrintWriter writer = new PrintWriter(new FileWriter(file))) {
             lines.forEach(writer::println);
         } catch (IOException e) {
-            fail(e.getMessage());
+            throw new RuntimeException(e.getMessage(), e);
         }
         return file;
     }
@@ -82,7 +85,7 @@ public class FileUtils {
      * @param lines the lines to write into the file.
      * @return the new File.
      */
-    static public File writeFile(File dir, final String name, final String... lines) {
+    public static File writeFile(final File dir, final String name, final String... lines) {
         return writeFile(dir, name, Arrays.asList(lines));
     }
 
@@ -92,7 +95,7 @@ public class FileUtils {
      * @param name the name of the file.
      * @return the new file.
      */
-    public static File writeFile(File dir, String name) {
+    public static File writeFile(final File dir, final String name) {
         return writeFile(dir, name, Collections.singletonList(name));
     }
 }
