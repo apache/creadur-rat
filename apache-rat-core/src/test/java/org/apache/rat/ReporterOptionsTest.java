@@ -78,14 +78,14 @@ public final class ReporterOptionsTest {
             FileUtils.writeFile(testDir, "foo.md");
             ReportConfiguration config = OptionCollection.parseCommands(testDir, args, o -> fail("Help called"), true);
             Reporter reporter = new Reporter(config);
-            ClaimStatistic claimStatistic = reporter.execute();
-            XmlUtils.printDocument(System.out, reporter.getDocument());
+            Reporter.Output output = reporter.execute();
+            XmlUtils.printDocument(System.out, output.getDocument());
             XPath xpath = XPathFactory.newInstance().newXPath();
-            XmlUtils.assertIsPresent(reporter.getDocument(), xpath, "/rat-report/resource[@name='/foo.md']");
-            XmlUtils.assertAttributes(reporter.getDocument(), xpath, "/rat-report/resource[@name='/foo.md']",
+            XmlUtils.assertIsPresent(output.getDocument(), xpath, "/rat-report/resource[@name='/foo.md']");
+            XmlUtils.assertAttributes(output.getDocument(), xpath, "/rat-report/resource[@name='/foo.md']",
                     XmlUtils.mapOf("type", "IGNORED"));
-            assertThat(claimStatistic.getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(0);
-            assertThat(claimStatistic.getCounter(ClaimStatistic.Counter.IGNORED)).isEqualTo(2);
+            assertThat(output.getStatistic().getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(0);
+            assertThat(output.getStatistic().getCounter(ClaimStatistic.Counter.IGNORED)).isEqualTo(2);
         } catch (IOException | RatException | XPathExpressionException e) {
             fail(e);
         }
