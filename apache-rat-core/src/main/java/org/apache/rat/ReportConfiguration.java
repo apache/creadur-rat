@@ -527,7 +527,7 @@ public class ReportConfiguration {
      */
     public void setFrom(final Defaults defaults) {
         licenseSetFactory.add(defaults.getLicenseSetFactory());
-        if (getStyleSheet() == null) {
+        if (getStyleSheetDescriptor() == null) {
             setStyleSheet(StyleSheets.PLAIN.getStyleSheet());
         }
         defaults.getStandardExclusion().forEach(this::addExcludedCollection);
@@ -902,20 +902,15 @@ public class ReportConfiguration {
 
     /**
      * Validates that the configuration is valid.
-     * @param logger String consumer to log warning messages to.
      * @throws ConfigurationException on configuration error.
      */
-    public void validate(final Consumer<String> logger) {
+    public void validate() {
         if (!hasSource()) {
             String msg = "At least one source must be specified";
-            logger.accept(msg);
+            DefaultLog.getInstance().error(msg);
             throw new ConfigurationException(msg);
         }
-        if (licenseSetFactory.getLicenses(LicenseFilter.ALL).isEmpty()) {
-            String msg = "You must specify at least one license";
-            logger.accept(msg);
-            throw new ConfigurationException(msg);
-        }
+        licenseSetFactory.validate();
     }
 
     /**

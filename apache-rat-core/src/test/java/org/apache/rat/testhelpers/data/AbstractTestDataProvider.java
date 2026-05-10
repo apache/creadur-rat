@@ -32,7 +32,7 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.rat.OptionCollectionParser;
 import org.apache.rat.commandline.Arg;
-import org.apache.rat.ui.AbstractOptionCollection;
+import org.apache.rat.ui.UIOptionCollection;
 import org.apache.rat.ui.ArgumentTracker;
 import org.apache.rat.utils.DefaultLog;
 
@@ -40,8 +40,6 @@ import org.apache.rat.utils.DefaultLog;
  * Generates a list of TestData for executing the Report.
  * Use of this interface ensures consistent testing across the UIs. Each method
  * tests an Option from {@link OptionCollectionParser} that must be implemented in the UI.
- * This differes from the {@link OptionTestDataProvider} in that tests from this set
- * expect that execptions will be thrown during execution, and tests the xml output.
  */
 public abstract class AbstractTestDataProvider {
 
@@ -56,7 +54,7 @@ public abstract class AbstractTestDataProvider {
      * @param optionCollection the collection of options for the UI under test.
      * @return the map of testName to Test Data.
      */
-    public final Map<String, TestData> getOptionTestMap(final AbstractOptionCollection<?> optionCollection) {
+    public final Map<String, TestData> getOptionTestMap(final UIOptionCollection<?> optionCollection) {
         Map<String, TestData> map = new TreeMap<>();
         for (TestData test : getOptionTests(optionCollection)) {
             map.put(test.getTestName(), test);
@@ -71,7 +69,7 @@ public abstract class AbstractTestDataProvider {
      * @param optionCollection the collection of options for the UI under test.
      * @return a set of TestData for the tests.
      */
-    public final Set<TestData> getOptionTests(final AbstractOptionCollection<?> optionCollection) {
+    public final Set<TestData> getOptionTests(final UIOptionCollection<?> optionCollection) {
         // the optionCollection establishes any changes to the Arg values.
         List<Option> unsupportedOptions = new ArrayList<>(optionCollection.getUnsupportedOptions().getOptions());
         Set<TestData> result = new TreeSet<>();
