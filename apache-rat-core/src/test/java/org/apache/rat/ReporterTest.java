@@ -19,6 +19,7 @@
 package org.apache.rat;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Fail.fail;
 
 import java.io.ByteArrayOutputStream;
@@ -38,6 +39,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.TreeMap;
+import java.util.stream.Stream;
 import java.util.UUID;
 import java.util.regex.Pattern;
 import javax.xml.XMLConstants;
@@ -52,6 +54,7 @@ import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathFactory;
 
+import org.apache.commons.cli.ParseException;
 import org.apache.commons.io.FileUtils;
 import org.apache.rat.api.Document.Type;
 import org.apache.rat.api.RatException;
@@ -65,7 +68,11 @@ import org.apache.rat.report.claim.ClaimStatisticTest;
 import org.apache.rat.test.utils.Resources;
 import org.apache.rat.testhelpers.BaseOption;
 import org.apache.rat.testhelpers.BaseOptionCollection;
+import org.apache.rat.testhelpers.TextUtils;
 import org.apache.rat.testhelpers.XmlUtils;
+import org.apache.rat.testhelpers.data.ReportTestDataProvider;
+import org.apache.rat.testhelpers.data.TestData;
+import org.apache.rat.testhelpers.data.ValidatorData;
 import org.apache.rat.utils.StandardXmlFactory;
 import org.apache.rat.walker.DirectoryWalker;
 import org.junit.jupiter.api.AfterAll;
@@ -73,6 +80,9 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInfo;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
@@ -96,12 +106,13 @@ public class ReporterTest {
      * Directory for the test data.
      */
     final String basedir;
+    private final OptionCollectionParser collectionParser;
 
     private final OptionCollectionParser<BaseOption> collectionParser;
 
     ReporterTest() throws URISyntaxException {
         basedir = Resources.getExampleResource("exampleData").getPath();
-        collectionParser = new OptionCollectionParser<>(new BaseOptionCollection());
+        collectionParser = new OptionCollectionParser(BaseOptionCollection.builder().build());
     }
 
     @BeforeAll
@@ -134,6 +145,7 @@ public class ReporterTest {
     @Test
     void testExecute() throws RatException {
         File output = testPath.resolve("output.xml").toFile();
+        BaseOptionCollection optionCollection = BaseOptionCollection.builder().build();
         ArgumentContext ctxt = collectionParser.parseCommands(new File("."), new String[]{"--output-style", "xml", "--output-file", output.getPath(), basedir});
         ClaimStatistic statistic = new Reporter(ctxt.getConfiguration()).execute().getStatistic();
 
@@ -217,6 +229,7 @@ public class ReporterTest {
     @Test
     void testDefaultOutput() throws Exception {
         File output = testPath.resolve("captured.txt").toFile();
+        BaseOptionCollection optionCollection = BaseOptionCollection.builder().build();
 
         PrintStream origin = System.out;
         try (PrintStream out = new PrintStream(output)) {
@@ -544,6 +557,37 @@ public class ReporterTest {
         assertThat(config.getClaimValidator().hasErrors()).isFalse();
         assertThat(config.getClaimValidator().isValid(ClaimStatistic.Counter.UNAPPROVED, output.getStatistic().getCounter(ClaimStatistic.Counter.UNAPPROVED)))
                 .isTrue();
+    }
+
+    static Stream<Arguments> getTestData() {
+        BaseOptionCollection.Builder builder = BaseOptionCollection.builder()
+                        .unsupported(Arg.OUTPUT_FILE);
+        return new ReportTestDataProvider().getOptionTests(builder.build()).stream().map(testData ->
+                Arguments.of(testData.getTestName(), testData));
+    }
+
+    @ParameterizedTest( name = "{index} {0}")
+    @MethodSource("getTestData")
+    void testReportData(String name, TestData test) throws Exception {
+        Path tempPath = tempDirectory.toPath();
+        Path basePath = tempPath.resolve(test.getTestName());
+        org.apache.rat.utils.FileUtils.mkDir(basePath.toFile());
+        test.setupFiles(basePath);
+        ArgumentContext ctxt = collectionParser.parseCommands(basePath.toFile(),
+                test.getCommandLine(basePath.toString()));
+        if (test.expectingException()) {
+            assertThatThrownBy(() -> new Reporter(ctxt.getConfiguration()).execute()).as("Expected throws from " + name)
+                    .hasMessageContaining(test.getExpectedException().getMessage());
+            ValidatorData data = new ValidatorData(Reporter.Output.builder().configuration(ctxt.getConfiguration()).build(),
+                    basePath.toString());
+            test.getValidator().accept(data);
+        } else {
+            Reporter.Output output = ctxt.getConfiguration() != null ? new Reporter(ctxt.getConfiguration()).execute() :
+                    Reporter.Output.builder().build();
+            ValidatorData data = new ValidatorData(output, basePath.toString());
+            data.getOutput().format(data.getConfiguration());
+            test.getValidator().accept(data);
+        }
     }
 
     private record LicenseInfo(String id, String family, boolean approval, boolean hasNotes) {

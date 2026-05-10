@@ -19,8 +19,13 @@
 package org.apache.rat;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.PrintWriter;
 
 import org.apache.commons.cli.Options;
+import org.apache.commons.io.function.IOSupplier;
+import org.apache.rat.commandline.ArgumentContext;
 import org.apache.rat.document.RatDocumentAnalysisException;
 import org.apache.rat.help.Help;
 import org.apache.rat.utils.DefaultLog;
@@ -48,28 +53,59 @@ public final class Report {
             System.exit(0);
         }
 
-        ReportConfiguration configuration = OptionCollection.parseCommands(new File("."), args, Report::printUsage);
-        if (configuration != null) {
-            configuration.validate(DefaultLog.getInstance()::error);
-            Reporter.Output output = new Reporter(configuration).execute();
-            output.format(configuration);
-            output.writeSummary(DefaultLog.getInstance().asWriter());
+        Reporter.Output result = generateReport(CLIOptionCollection.INSTANCE, new File("."), args);
+        if (result != null) {
+            result.writeSummary(DefaultLog.getInstance().asWriter());
 
-            if (configuration.getClaimValidator().hasErrors()) {
-                configuration.getClaimValidator().logIssues(output.getStatistic());
+            if (result.getConfiguration().getClaimValidator().hasErrors()) {
+                result.getConfiguration().getClaimValidator().logIssues(result.getStatistic());
                 throw new RatDocumentAnalysisException(format("Issues with %s",
                         String.join(", ",
-                                configuration.getClaimValidator().listIssues(output.getStatistic()))));
+                                result.getConfiguration().getClaimValidator().listIssues(result.getStatistic()))));
             }
         }
     }
 
     /**
-     * Prints the usage message on {@code System.out}.
-     * @param opts the defined options.
+     * Prints the usage message on the specified output stream.
+     * @param out The OutputStream supplier
      */
-    private static void printUsage(final Options opts) {
-        new Help(System.out).printUsage(opts);
+    private static void printUsage(final Options options, final IOSupplier<OutputStream> out) {
+        try (OutputStream stream = out.get();
+             PrintWriter writer = new PrintWriter(stream)) {
+            new Help(writer).printUsage(options);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * Generates the report
+     * @param workingDirectory the directory that we are executing in
+     * @param args the arguments from the command line.
+     * @return The Client output.
+     * @throws Exception on error.
+     */
+    static Reporter.Output generateReport(final CLIOptionCollection optionCollection, final File workingDirectory, final String[] args) throws Exception {
+        Reporter.Output output = null;
+        OptionCollectionParser optionParser = new OptionCollectionParser(optionCollection);
+        ArgumentContext argumentContext = optionParser.parseCommands(workingDirectory, args);
+        ReportConfiguration configuration = argumentContext.getConfiguration();
+        if (configuration != null) {
+            if (argumentContext.getCommandLine().hasOption(CLIOptionCollection.HELP)) {
+                printUsage(optionCollection.getOptions(), argumentContext.getConfiguration().getOutput());
+            } else if (!configuration.hasSource()) {
+                String msg = "No directories or files specified for scanning. Did you forget to close a multi-argument option?";
+                DefaultLog.getInstance().error(msg);
+                printUsage(optionCollection.getOptions(), argumentContext.getConfiguration().getOutput());
+            } else {
+                configuration.validate();
+                Reporter reporter = new Reporter(configuration);
+                output = reporter.execute();
+                output.format(configuration);
+            }
+        }
+        return output;
     }
 
     private Report() {

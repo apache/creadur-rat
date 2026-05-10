@@ -278,7 +278,7 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
             arg[0] = "Unapproved:1";
             config = generateConfig(ImmutablePair.of(option, arg));
             reporter = new Reporter(config);
-            output = reporter.execute();
+            output  = reporter.execute();
             validator = config.getClaimValidator();
             assertThat(validator.listIssues(output.getStatistic())).isEmpty();
         });
@@ -501,7 +501,7 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
             // verify exclude removes most files.
             config = generateConfig(ImmutablePair.of(excludeOption, EXCLUDE_ARGS));
             reporter = new Reporter(config);
-            output = reporter.execute();
+            output  = reporter.execute();
             assertThat(output.getStatistic().getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(1);
             // .gitignore is ignored by default as it is hidden but not counted
             assertThat(output.getStatistic().getCounter(ClaimStatistic.Counter.IGNORED)).isEqualTo(addIgnored ? 4 : 3);
@@ -509,7 +509,7 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
             // verify include put them back
             config = generateConfig(ImmutablePair.of(option, args), ImmutablePair.of(excludeOption, EXCLUDE_ARGS));
             reporter = new Reporter(config);
-            output = reporter.execute();
+            output  = reporter.execute();
             assertThat(output.getStatistic().getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(3);
             // .gitignore is ignored by default as it is hidden but not counted
             assertThat(output.getStatistic().getCounter(ClaimStatistic.Counter.IGNORED)).isEqualTo(addIgnored ? 2 : 1);
@@ -570,7 +570,7 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
 
             config = generateConfig(excludes, ImmutablePair.of(option, args));
             reporter = new Reporter(config);
-            output = reporter.execute();
+            output  = reporter.execute();
             assertThat(output.getStatistic().getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(7);
             assertThat(output.getStatistic().getCounter(ClaimStatistic.Counter.IGNORED)).isEqualTo(1);
         });
@@ -595,7 +595,7 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
 
             config = generateConfig(ImmutablePair.of(option, new String[]{inputFile.getAbsolutePath()}));
             reporter = new Reporter(config);
-            output = reporter.execute();
+            output  = reporter.execute();
             assertThat(output.getStatistic().getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(1);
             assertThat(output.getStatistic().getCounter(ClaimStatistic.Counter.IGNORED)).isZero();
         });
@@ -627,7 +627,7 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
 
             config = addCatzLicense(generateConfig(arg1));
             reporter = new Reporter(config);
-            output = reporter.execute();
+            output  = reporter.execute();
             assertThat(output.getStatistic().getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(1);
             assertThat(output.getStatistic().getCounter(ClaimStatistic.Counter.APPROVED)).isEqualTo(1);
             assertThat(output.getStatistic().getCounter(ClaimStatistic.Counter.UNAPPROVED)).isZero();
@@ -664,7 +664,7 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
 
             config = generateConfig(arg1);
             reporter = new Reporter(config);
-            output = reporter.execute();
+            output  = reporter.execute();
             assertThat(output.getStatistic().getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(1);
             assertThat(output.getStatistic().getCounter(ClaimStatistic.Counter.APPROVED)).isZero();
             assertThat(output.getStatistic().getCounter(ClaimStatistic.Counter.UNAPPROVED)).isEqualTo(1);
@@ -704,7 +704,7 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
 
             config = generateConfig(arg1);
             reporter = new Reporter(config);
-            output = reporter.execute();
+            output  = reporter.execute();
             assertThat(output.getStatistic().getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(2);
             assertThat(output.getStatistic().getCounter(ClaimStatistic.Counter.APPROVED)).isEqualTo(2);
             assertThat(output.getStatistic().getCounter(ClaimStatistic.Counter.UNAPPROVED)).isZero();
@@ -713,7 +713,7 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
 
             config = generateConfig(arg1, arg2);
             reporter = new Reporter(config);
-            output = reporter.execute();
+            output  = reporter.execute();
             assertThat(output.getStatistic().getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(2);
             assertThat(output.getStatistic().getCounter(ClaimStatistic.Counter.APPROVED)).isEqualTo(1);
             assertThat(output.getStatistic().getCounter(ClaimStatistic.Counter.UNAPPROVED)).isEqualTo(1);
@@ -749,7 +749,7 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
 
             config = generateConfig(arg1);
             reporter = new Reporter(config);
-            output = reporter.execute();
+            output  = reporter.execute();
             assertThat(output.getStatistic().getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(2);
             assertThat(output.getStatistic().getCounter(ClaimStatistic.Counter.APPROVED)).isEqualTo(2);
             assertThat(output.getStatistic().getCounter(ClaimStatistic.Counter.UNAPPROVED)).isZero();
@@ -793,7 +793,7 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
 
             config = generateConfig(arg1);
             reporter = new Reporter(config);
-            output = reporter.execute();
+            output  = reporter.execute();
             assertThat(output.getStatistic().getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(2);
             assertThat(output.getStatistic().getCounter(ClaimStatistic.Counter.APPROVED)).isEqualTo(1);
             assertThat(output.getStatistic().getCounter(ClaimStatistic.Counter.UNAPPROVED)).isEqualTo(1);
@@ -870,6 +870,9 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
                         break;
                     case UNAPPROVED_LICENSES:
                         TextUtils.assertContainsExactly(1, "Files with unapproved licenses:" + System.lineSeparator() + "  /stylesheet", actualText);
+                        break;
+                    case XHTML5:
+                        TextUtils.assertPatternInTarget("<td>Approved<\\/td>\\s+<td>\\d+<\\/td>\\s+<td>A count of approved licenses.<\\/td>", actualText);
                         break;
                     default:
                         fail("No test for stylesheet " + sheet);
@@ -974,13 +977,13 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
 
         assertDoesNotThrow(() -> {
             configureSourceDir(option);
-            File outFile = new File(sourceDir, "out.xml");
-            FileUtils.delete(outFile);
-            ImmutablePair<Option, String[]> outputFile = ImmutablePair.of(Arg.OUTPUT_FILE.option(), new String[]{outFile.getAbsolutePath()});
-            ImmutablePair<Option, String[]> stylesheet = ImmutablePair.of(Arg.OUTPUT_STYLE.option(), new String[]{StyleSheets.XML.arg()});
+//            File outFile = new File(sourceDir, "out.xml");
+//            FileUtils.delete(outFile);
+//            ImmutablePair<Option, String[]> outputFile = ImmutablePair.of(Arg.OUTPUT_FILE.option(), new String[]{outFile.getAbsolutePath()});
+//            ImmutablePair<Option, String[]> stylesheet = ImmutablePair.of(Arg.OUTPUT_STYLE.option(), new String[]{StyleSheets.XML.arg()});
             for (LicenseSetFactory.LicenseFilter filter : LicenseSetFactory.LicenseFilter.values()) {
                 args[0] = filter.name();
-                ReportConfiguration config = generateConfig(outputFile, stylesheet, ImmutablePair.of(option, args));
+                ReportConfiguration config = generateConfig(ImmutablePair.of(option, args));
                 Reporter reporter = new Reporter(config);
                 reporter.execute().format(config);
                 Document document = XmlUtils.toDom(new FileInputStream(outFile));
@@ -1020,13 +1023,13 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
 
         assertDoesNotThrow(() -> {
             configureSourceDir(option);
-            File outFile = new File(sourceDir, "out.xml");
-            FileUtils.delete(outFile);
-            ImmutablePair<Option, String[]> outputFile = ImmutablePair.of(Arg.OUTPUT_FILE.option(), new String[]{outFile.getAbsolutePath()});
-            ImmutablePair<Option, String[]> stylesheet = ImmutablePair.of(Arg.OUTPUT_STYLE.option(), new String[]{StyleSheets.XML.arg()});
+//            File outFile = new File(sourceDir, "out.xml");
+//            FileUtils.delete(outFile);
+//            ImmutablePair<Option, String[]> outputFile = ImmutablePair.of(Arg.OUTPUT_FILE.option(), new String[]{outFile.getAbsolutePath()});
+//            ImmutablePair<Option, String[]> stylesheet = ImmutablePair.of(Arg.OUTPUT_STYLE.option(), new String[]{StyleSheets.XML.arg()});
             for (LicenseSetFactory.LicenseFilter filter : LicenseSetFactory.LicenseFilter.values()) {
                 args[0] = filter.name();
-                ReportConfiguration config = generateConfig(outputFile, stylesheet, ImmutablePair.of(option, args));
+                ReportConfiguration config = generateConfig(ImmutablePair.of(option, args));
                 Reporter reporter = new Reporter(config);
                 reporter.execute().format(config);
                 Document document = XmlUtils.toDom(Files.newInputStream(outFile.toPath()));
@@ -1083,7 +1086,7 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
                 Reporter reporter = new Reporter(config);
                 reporter.execute().format(config);
 
-                Document document = XmlUtils.toDom(Files.newInputStream(outFile.toPath()));
+                Document document = reporter.execute().getDocument();
                 XmlUtils.assertIsPresent(proc.name(), document, xPath, "/rat-report/resource[@name='/dummy.jar']");
                 switch (proc) {
                     case ABSENCE:
@@ -1131,9 +1134,9 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
                 args[0] = proc.name();
                 ReportConfiguration config = generateConfig(outputFile, stylesheet, ImmutablePair.of(option, args));
                 Reporter reporter = new Reporter(config);
-                reporter.execute().format(config);
+                Reporter.Output output = reporter.execute();
 
-                Document document = XmlUtils.toDom(Files.newInputStream(outFile.toPath()));
+                Document document = output.getDocument();
                 XmlUtils.assertIsPresent(proc.name(), document, xPath, testDoc);
                 XmlUtils.assertIsPresent(proc.name(), document, xPath, missingDoc);
 
