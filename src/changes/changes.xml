@@ -68,6 +68,9 @@ in order to be properly linked in site reports.
     </release>
     -->
     <release version="1.0.0-SNAPSHOT" date="xxxx-yy-zz" description="Current SNAPSHOT - release to be done">
+      <action issue="RAT-527" type="add" dev="pottlinger">
+        Migrate from old groovy-all to current ASF groovy in integration tests.
+      </action>
       <action issue="RAT-551" type="add" dev="claudenw">
         Replace NoCloseOutputStream with Apache Commons CloseShieldOutputStream.
       </action>
