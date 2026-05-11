@@ -250,7 +250,7 @@ agnostic home for software distribution comprehension and audit tools.
         <groupId>org.codehaus.groovy</groupId>
         <artifactId>groovy-all</artifactId>
         <!-- TODO RAT-527: migrate to newer version under ASF umbrella: 5.x including itests in RAT's core -->
-        <version>2.4.21</version>
+        <version>3.0.25</version>
         <scope>test</scope>
       </dependency>
       <dependency>
