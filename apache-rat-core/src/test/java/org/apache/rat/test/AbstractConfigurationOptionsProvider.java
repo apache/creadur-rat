@@ -114,7 +114,6 @@ public abstract class AbstractConfigurationOptionsProvider extends AbstractOptio
         addTest(OptionCollectionTest.OptionTest.namedTest("exclude", this::excludeTest));
         addTest(OptionCollectionTest.OptionTest.namedTest("exclude-file", this::excludeFileTest));
         addTest(OptionCollectionTest.OptionTest.namedTest("force", this::forceTest));
-        addTest(OptionCollectionTest.OptionTest.namedTest("help", this::helpTest));
         addTest(OptionCollectionTest.OptionTest.namedTest("help-licenses", this::helpLicenses));
         addTest(OptionCollectionTest.OptionTest.namedTest("include", this::includeTest));
         addTest(OptionCollectionTest.OptionTest.namedTest("includes-file", this::includesFileTest));
@@ -152,9 +151,6 @@ public abstract class AbstractConfigurationOptionsProvider extends AbstractOptio
         addTest(OptionCollectionTest.OptionTest.namedTest("xml", this::xmlTest));
         super.validate(unsupportedArgs);
     }
-
-    /** Help test */
-    protected abstract void helpTest();
 
     // exclude tests
     private void execExcludeTest(final Option option, final String[] args) {

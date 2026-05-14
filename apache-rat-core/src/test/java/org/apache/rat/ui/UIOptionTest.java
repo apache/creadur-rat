@@ -7,7 +7,7 @@
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *   https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
@@ -16,26 +16,26 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.rat.documentation.options;
+package org.apache.rat.ui;
 
 import org.apache.commons.cli.Option;
-import org.apache.rat.commandline.Arg;
-import org.apache.rat.testhelpers.TextUtils;
-
 import org.junit.jupiter.api.Test;
 
-public class MavenOptionTest {
+import static org.assertj.core.api.Assertions.assertThat;
+
+class UIOptionTest {
+    private UIOption underTest;
+    private UIOptionCollectionTest.TestingUIOptionCollection optionCollection;
 
     @Test
-    public void getDeprecatedTest() {
-        for (Option option : Arg.getOptions().getOptions()) {
-            if (option.isDeprecated()) {
-                MavenOptionCollection.INSTANCE.getMappedOption(option).ifPresent( mavenOption -> {
-                    String deprecated = mavenOption.getDeprecated();
+    void cleanup() {
+        optionCollection = new UIOptionCollectionTest.TestingUIOptionCollection();
+        underTest = new UIOptionCollectionTest.TestingUIOption(optionCollection, new Option("a", false, "An option"));
+        String s = underTest.cleanup("The name is --output-licenses because I said so");
+        assertThat(s).isEqualTo("The name is output.licenses because I said so");
 
-                    TextUtils.assertPatternNotInTarget("\\-\\- ", deprecated);
-                });
-            }
-        }
+        s = underTest.cleanup("The name is -A because I said so");
+        assertThat(s).isEqualTo("The name is addLicense because I said so");
     }
+
 }

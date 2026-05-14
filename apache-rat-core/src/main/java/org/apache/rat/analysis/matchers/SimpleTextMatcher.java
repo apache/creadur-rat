@@ -44,6 +44,13 @@ public class SimpleTextMatcher extends AbstractHeaderMatcher {
         this(null, simpleText);
     }
 
+    @Override
+    protected final void finalize() throws Throwable { // NOSONAR
+        // no sonar because this is how we ensure that the finalize bug does not bite us
+        super.finalize(); // NOSONAR
+      // finalizer attack remediation.
+    }
+
     /**
      * Constructs the simple text matcher for the simple string.
      *

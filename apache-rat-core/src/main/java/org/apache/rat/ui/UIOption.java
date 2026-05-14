@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.rat.documentation.options;
+package org.apache.rat.ui;
 
 import java.util.HashMap;
 import java.util.Locale;
@@ -28,47 +28,68 @@ import java.util.regex.Pattern;
 import org.apache.commons.cli.Option;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.rat.OptionCollection;
-import org.apache.rat.commandline.Arg;
+import org.apache.rat.utils.CasedString;
 
 import static java.lang.String.format;
 
 /**
  * Abstract class that provides the framework for UI-specific RAT options.
- * In this context UI option means an option expressed in the specific UI, such as:
- * @see AntOption
- * @see MavenOption
- * @see CLIOption
+ * In this context UI option means an option expressed in the specific UI.
+ * @param <T> the concrete implementation of AbstractOption.
  */
-public abstract class AbstractOption {
+public abstract class UIOption<T extends UIOption<T>> {
     /** The pattern to match CLI options in text */
-    protected static final Pattern PATTERN = Pattern.compile("-(-[a-z0-9]+)+");
+    protected static final Pattern PATTERN = Pattern.compile("-?-([A-Za-z0-9]+-?)+"); // NOSONAR
     /** The actual UI-specific name for the option */
     protected final Option option;
     /** The name for the option */
-    protected final String name;
+    protected final CasedString name;
     /** The argument type for this option */
     protected final OptionCollection.ArgumentType argumentType;
+    /** The AbstractOptionCollection associated with this AbstractOption */
+    protected final UIOptionCollection<T> optionCollection;
 
     /**
      * Constructor.
      *
      * @param option The CLI option
-     * @param name the UI-specific name for the option.
+     * @param name the UI-specific name for the option
      */
-    AbstractOption(final Option option, final String name) {
+    protected <C extends UIOptionCollection<T>> UIOption(final C optionCollection, final Option option, final CasedString name) {
+        this.optionCollection = optionCollection;
         this.option = option;
         this.name = name;
-        argumentType = option.hasArg() ?
-                option.getArgName() == null ? OptionCollection.ArgumentType.ARG :
-                OptionCollection.ArgumentType.valueOf(option.getArgName().toUpperCase(Locale.ROOT)) :
-                OptionCollection.ArgumentType.NONE;
+        OptionCollection.ArgumentType argType;
+        if (option.hasArg()) {
+            if (option.getArgName() == null) {
+                argType = OptionCollection.ArgumentType.ARG;
+            } else {
+                // extract the name of the argument type.
+                try {
+                    argType = OptionCollection.ArgumentType.valueOf(option.getArgName().toUpperCase(Locale.ROOT));
+                } catch (IllegalArgumentException e) {
+                    argType = OptionCollection.ArgumentType.ARG;
+                }
+            }
+        } else {
+            argType = OptionCollection.ArgumentType.NONE;
+        }
+        this.argumentType = argType;
+    }
+
+    /**
+     * Gets the AbstractOptionCollection that this option is a member of.
+     * @return the AbstractOptionCollection that this option is a member of.
+     */
+    public final <X extends UIOptionCollection<T>> X getOptionCollection() {
+        return (X) optionCollection;
     }
 
     /**
      * Gets the option this abstract option is wrapping.
      * @return the original Option.
      */
-    public Option getOption() {
+    public final Option getOption() {
         return option;
     }
 
@@ -76,9 +97,8 @@ public abstract class AbstractOption {
      * Return default value.
      * @return default value or {@code null} if no argument given.
      */
-    public String getDefaultValue() {
-        Arg arg = Arg.findArg(option);
-        return arg == null ? null : arg.defaultValue();
+    public final String getDefaultValue() {
+        return optionCollection.defaultValue(option);
     }
 
     /**
@@ -95,14 +115,6 @@ public abstract class AbstractOption {
     public abstract String getExample();
 
     /**
-     * Gets this option's cleaned up name.
-     * @return This option's cleaned up name.
-     */
-    public String cleanupName() {
-        return cleanupName(option);
-    }
-
-    /**
      * Replaces CLI pattern options with implementation specific pattern options.
      * @param str the string to clean.
      * @return the string with CLI names replaced with implementation specific names.
@@ -114,9 +126,9 @@ public abstract class AbstractOption {
             Matcher matcher = PATTERN.matcher(workingStr);
             while (matcher.find()) {
                 String key = matcher.group();
-                String optKey = key.substring(2);
-                Optional<Option> maybeResult = Arg.getOptions().getOptions().stream()
-                        .filter(o -> optKey.equals(o.getOpt()) || optKey.equals(o.getLongOpt())).findFirst();
+                String optKey = (1 == key.indexOf('-', 1)) ?  key.substring(2) : key.substring(1);
+                Optional<Option> maybeResult = getOptionCollection().getOptions().getOptions().stream()
+                                .filter(o -> optKey.equals(o.getOpt()) || optKey.equals(o.getLongOpt())).findFirst();
                 maybeResult.ifPresent(value -> maps.put(key, cleanupName(value)));
             }
             for (Map.Entry<String, String> entry : maps.entrySet()) {
@@ -127,10 +139,18 @@ public abstract class AbstractOption {
     }
 
     /**
-     * Gets the implementation specific name for the CLI option.
-     * @return The implementation specific name for the CLI option.
+     * Gets the implementation specific name for the native UI.
+     * @return The implementation specific name for the native UI.
      */
     public final String getName() {
+        return name.toString();
+    }
+
+    /**
+     * Gets the CasedString version of the name for the native UI..
+     * @return the CasedString version of the name for the native UI..
+     */
+    public final CasedString getCasedName() {
         return name;
     }
 
@@ -208,19 +228,11 @@ public abstract class AbstractOption {
     }
 
     /**
-     * Returns the number of arguments.
-     * @return The number of arguments.
-     */
-    public final int argCount() {
-        return option.getArgs();
-    }
-
-    /**
      * The key value for the option.
      * @return the key value for the CLI argument map.
      */
     public final String keyValue() {
-        return format("\"%s\"", StringUtils.defaultIfEmpty(option.getLongOpt(), option.getOpt()));
+        return StringUtils.defaultIfEmpty(option.getLongOpt(), option.getOpt());
     }
 
     /**

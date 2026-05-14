@@ -30,14 +30,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.rat.OptionCollection;
+
+
 import org.apache.rat.ReportConfiguration;
-import org.apache.rat.commandline.Arg;
 import org.apache.rat.commandline.StyleSheets;
 import org.apache.rat.document.DocumentName;
+import org.apache.rat.documentation.options.AntOptionCollection;
 import org.apache.rat.license.LicenseSetFactory;
 import org.apache.rat.documentation.options.AntOption;
+import org.apache.rat.ui.ArgumentTracker;
+import org.apache.rat.utils.CasedString;
 import org.apache.rat.utils.DefaultLog;
 import org.apache.tools.ant.BuildEvent;
 import org.apache.tools.ant.BuildListener;
@@ -56,60 +58,12 @@ import org.junit.jupiter.params.provider.MethodSource;
 import static java.lang.String.format;
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class GeneratedReportTest  {
+public class GeneratedReportTest {
     @TempDir
     static Path tempDir;
 
     private static final Map<String, String> REQUIRED_ATTRIBUTES = new HashMap<>();
     private static final Map<String, String> REQUIRED_ELEMENTS = new HashMap<>();
-    private static final Map<OptionCollection.ArgumentType, BuildType> ARG_TYPE_MAP = new HashMap<>();
-
-    static {
-        BuildType buildType = null;
-        for (OptionCollection.ArgumentType argType : OptionCollection.ArgumentType.values()) {
-            switch (argType) {
-                case FILE:
-                case DIRORARCHIVE:
-                    buildType = new BuildType("") {
-                        @Override
-                        protected String getMethodFormat(final AntOption antOption) {
-                            return "<fileset file='%s' />";
-                        }
-                    };
-                    break;
-                case NONE:
-                    buildType = new BuildType("") {
-                        @Override
-                        protected String getMethodFormat(final AntOption antOption) {
-                            return "";
-                        }
-                    };
-                    break;
-                case STANDARDCOLLECTION:
-                    buildType = new BuildType("std");
-                    break;
-                case EXPRESSION:
-                    buildType = new BuildType("expr");
-                    break;
-                case COUNTERPATTERN:
-                    buildType = new BuildType("cntr");
-                    break;
-                case LICENSEID:
-                case FAMILYID:
-                    buildType = new BuildType("lst");
-                    break;
-                default:
-                    buildType = new BuildType("") {
-                        @Override
-                        protected String getMethodFormat(final AntOption antOption) {
-                            return format("<%1$s>%%s</%1$s>", tag);
-                        }
-                    };
-            }
-            ARG_TYPE_MAP.put(argType, buildType);
-        }
-    }
-
     /**
      * The prefix for the ant build.xml file.
      */
@@ -158,7 +112,7 @@ public class GeneratedReportTest  {
     }
 
     private static String configFile(String fileName) {
-        return format("<config><fileset file=\"%s\" /></config>", fileName);
+        return format("<configs><fileset file=\"%s\" /></configs>", fileName);
     }
 
     @ParameterizedTest(name = "{index} {0}")
@@ -221,24 +175,23 @@ public class GeneratedReportTest  {
 
     static String targetName(AntOption option) {
         AntOption actualOption = option.getActualAntOption();
-        return actualOption.getName() + (actualOption.isAttribute() ? "Attribute" :"Element");
+        return actualOption.getName() + (actualOption.isAttribute() ? "Attribute" : "Element");
     }
 
     /**
      * Generate the data for the tests.
+     *
      * @return the arguments for the tests.
      */
     static Stream<Arguments> generatedData() {
 
-        List<AntOption> options = Arg.getOptions().getOptions().stream()
-                .filter(o -> !AntOption.getFilteredOptions().contains(o)).map(AntOption::new)
-                .toList();
+        List<AntOption> options = AntOptionCollection.INSTANCE.getMappedOptions().toList();
 
         List<Arguments> lst = new ArrayList<>();
 
         for (AntOption option : options) {
             lst.add(createTest(option));
-            option.convertedFrom().forEach(o -> lst.add(createTest(new AntOption(o))));
+            option.convertedFrom().forEach(o -> lst.add(createTest(o)));
         }
         for (Arguments arguments : lst) {
             Object[] objects = arguments.get();
@@ -249,8 +202,8 @@ public class GeneratedReportTest  {
 
     private static Arguments createTest(AntOption option) {
         AntOption actualOption = option.getActualAntOption();
-        BuildType buildType = ARG_TYPE_MAP.get(option.getArgType());
-        String xml = buildXml(actualOption, option, buildType.getXml(option));
+        AntOptionCollection.BuildType buildType = option.buildType();
+        String xml = buildXml(actualOption, option, buildType.getXml(option, getData(option)));
         return Arguments.of(buildType.testName(option), xml, option);
     }
 
@@ -278,7 +231,7 @@ public class GeneratedReportTest  {
 //                if (actualOption.argCount() == 1) {
 //                    xml.append(format("      <%s %s=\"%s\" />%n", actualOption.getName(), createAttribute(option), getData(option)));
 //                } else {
-                    xml.append(format("      <%1$s>%2$s</%1$s>%n", actualOption.getName(), body));
+                xml.append(format("      <%1$s>%2$s</%1$s>%n", actualOption.getName(), body));
 //                }
             }
         }
@@ -293,17 +246,19 @@ public class GeneratedReportTest  {
         return xml.toString();
     }
 
-    private static String getData(AntOption option) {
-        String value = getData(option.getName());
+    private static String getData(AntOption antOption) {
+
+        String value = getData(ArgumentTracker.extractName(antOption.getOption()).toCase(CasedString.StringCase.PASCAL));
         if (value == null) {
-            if (!option.hasArg()) {
+            if (!antOption.hasArg()) {
                 return "true";
             } else {
-                throw new IllegalStateException("Missing " + option.getName());
+                throw new IllegalStateException("Missing " + antOption.getName());
             }
         }
         return value;
     }
+
     private static String getData(String name) {
         try {
             return switch (name) {
@@ -394,6 +349,7 @@ public class GeneratedReportTest  {
         private final int logLevel;
         private final StringBuilder logBuffer;
         private final StringBuilder fullLogBuffer;
+
         /**
          * Constructs a test listener which will ignore log events
          * above the given level.
@@ -480,43 +436,6 @@ public class GeneratedReportTest  {
 
         public void write(int b) {
             buffer.append((char) b);
-        }
-    }
-
-    public static class BuildType {
-        /** The configuration tag for this build type */
-        protected final String tag;
-        /** If True adds the tag as the test extension */
-        private final boolean addExt;
-
-        BuildType(final String tag) {
-            this(tag, StringUtils.isNotEmpty(tag));
-        }
-
-        BuildType(final String tag, boolean addExt) {
-            this.tag = tag;
-            this.addExt = addExt;
-        }
-
-        protected String getMultipleFormat(final AntOption antOption) {
-            return String.format("  <%1$s>%%s</%1$s>\n", tag);
-        }
-
-        protected String getMethodFormat(final AntOption antOption) {
-            return antOption.hasArgs() ? getMultipleFormat(antOption) : String.format("  <%1$s>%%s</%1$s>\n", tag);
-        }
-
-        public String testName(final AntOption antOption) {
-            return addExt ? format("%s_%s", antOption.getName(), antOption.getArgName()) : antOption.getName();
-        }
-
-        public String getXml(final AntOption antOption) {
-            AntOption delegateOption = antOption.getActualAntOption();
-            if (delegateOption.isAttribute()) {
-                return "";
-            } else {
-                return format(getMethodFormat(antOption), getData(antOption));
-            }
         }
     }
 }

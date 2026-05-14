@@ -1,0 +1,202 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one   *
+ * or more contributor license agreements.  See the NOTICE file *
+ * distributed with this work for additional information        *
+ * regarding copyright ownership.  The ASF licenses this file   *
+ * to you under the Apache License, Version 2.0 (the            *
+ * "License"); you may not use this file except in compliance   *
+ * with the License.  You may obtain a copy of the License at   *
+ *                                                              *
+ *   http://www.apache.org/licenses/LICENSE-2.0                 *
+ *                                                              *
+ * Unless required by applicable law or agreed to in writing,   *
+ * software distributed under the License is distributed on an  *
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY       *
+ * KIND, either express or implied.  See the License for the    *
+ * specific language governing permissions and limitations      *
+ * under the License.                                           *
+ */
+package org.apache.rat;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.Serializable;
+import java.nio.charset.StandardCharsets;
+import java.util.Comparator;
+
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.DefaultParser;
+import org.apache.commons.cli.Option;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.rat.api.Document;
+import org.apache.rat.commandline.Arg;
+import org.apache.rat.commandline.ArgumentContext;
+import org.apache.rat.document.DocumentName;
+import org.apache.rat.document.DocumentNameMatcher;
+import org.apache.rat.document.FileDocument;
+import org.apache.rat.help.Licenses;
+import org.apache.rat.report.IReportable;
+import org.apache.rat.ui.UIOptionCollection;
+import org.apache.rat.utils.DefaultLog;
+import org.apache.rat.walker.ArchiveWalker;
+import org.apache.rat.walker.DirectoryWalker;
+
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
+/**
+ * Uses the AbstractOptionCollection to parse the command line options.
+ * contains utility methods to ReportConfiguration from the options and an array of arguments.
+ */
+@SuppressFBWarnings("EI_EXPOSE_REP2")
+public final class OptionCollectionParser {
+    /** The OptionCollection that we are working with */
+    private final UIOptionCollection<?> uiOptionCollection;
+
+    public OptionCollectionParser(final UIOptionCollection<?> optionCollection) {
+        this.uiOptionCollection = optionCollection;
+    }
+
+    /** The Option comparator to sort the help */
+    public static final Comparator<Option> OPTION_COMPARATOR = new OptionComparator();
+
+    /**
+     * Parses the standard options to create a ReportConfiguration.
+     *
+     * @param workingDirectory The directory to resolve relative file names against.
+     * @param args the arguments to parse
+     * @return the ArgumentContext for the process.
+     * @throws IOException on error.
+     * @throws ParseException on option parsing error.
+     */
+    public ArgumentContext parseCommands(final File workingDirectory, final String[] args)
+            throws IOException, ParseException {
+        return parseCommands(workingDirectory, args, uiOptionCollection.getOptions());
+    }
+
+    /**
+     * Parse the options into the command line.
+     * @param opts the option definitions.
+     * @param args the argument to apply the definitions to.
+     * @return the CommandLine
+     * @throws ParseException on option parsing error.
+     */
+    //@VisibleForTesting
+    CommandLine parseCommandLine(final Options opts, final String[] args) throws ParseException {
+        try {
+            return DefaultParser.builder().setDeprecatedHandler(DeprecationReporter.getLogReporter())
+                    .setAllowPartialMatching(true).build().parse(opts, args);
+        } catch (ParseException e) {
+            DefaultLog.getInstance().error(e.getMessage());
+            DefaultLog.getInstance().error("Please use the \"--help\" option to see a list of valid commands and options.", e);
+            throw e;
+        }
+    }
+
+    /**
+     * Parses the standard options to create a ReportConfiguration.
+     *
+     * @param workingDirectory The directory to resolve relative file names against.
+     * @param args the arguments to parse.
+     * @param options An Options object containing Apache command line options.
+     * @return the ArgumentContext for the process.
+     * @throws IOException on error.
+     * @throws ParseException on option parsing error.
+     */
+    private ArgumentContext parseCommands(final File workingDirectory, final String[] args,
+                                                                       final Options options) throws IOException, ParseException {
+
+        CommandLine commandLine = parseCommandLine(options, args);
+        ArgumentContext argumentContext = new ArgumentContext(workingDirectory, commandLine);
+        Arg.processLogLevel(argumentContext, uiOptionCollection);
+        populateConfiguration(argumentContext);
+        if (uiOptionCollection.isSelected(Arg.HELP_LICENSES)) {
+            new Licenses(argumentContext.getConfiguration(),
+                    new PrintWriter(argumentContext.getConfiguration().getOutput().get(),
+                            false, StandardCharsets.UTF_8)).printHelp();
+        }
+
+        return argumentContext;
+    }
+
+    /**
+     * Create the report configuration.
+     * Note: this method is package private for testing.
+     * You probably want one of the {@code ParseCommands} methods.
+     * @param argumentContext The context to execute in.
+     * @return a ReportConfiguration
+     */
+    private ReportConfiguration populateConfiguration(final ArgumentContext argumentContext) {
+        argumentContext.processArgs(uiOptionCollection);
+        final ReportConfiguration configuration = argumentContext.getConfiguration();
+        final CommandLine commandLine = argumentContext.getCommandLine();
+        if (!configuration.hasSource()) {
+            for (String s : commandLine.getArgs()) {
+                IReportable reportable = OptionCollection.getReportable(new File(s), configuration);
+                if (reportable != null) {
+                    configuration.addSource(reportable);
+                }
+            }
+        }
+        return configuration;
+    }
+
+    /**
+     * Creates an IReportable object from the directory name and ReportConfiguration
+     * object.
+     *
+     * @param base the directory that contains the files to report on.
+     * @param config the ReportConfiguration.
+     * @return the IReportable instance containing the files.
+     */
+    IReportable getReportable(final File base, final ReportConfiguration config) {
+        File absBase = base.getAbsoluteFile();
+        DocumentName documentName = DocumentName.builder(absBase).build();
+        if (!absBase.exists()) {
+            DefaultLog.getInstance().error("Directory '" + documentName + "' does not exist.");
+            return null;
+        }
+        DocumentNameMatcher documentExcluder = config.getDocumentExcluder(documentName);
+
+        Document doc = new FileDocument(documentName, absBase, documentExcluder);
+        if (!documentExcluder.matches(doc.getName())) {
+            DefaultLog.getInstance().error("Directory '" + documentName + "' is in excluded list.");
+            return null;
+        }
+
+        if (absBase.isDirectory()) {
+            return new DirectoryWalker(doc);
+        }
+
+        return new ArchiveWalker(doc);
+    }
+
+    /**
+     * This class implements the {@code Comparator} interface for comparing Options.
+     */
+    private static final class OptionComparator implements Comparator<Option>, Serializable {
+        /** The serial version UID.  */
+        private static final long serialVersionUID = 5305467873966684014L;
+
+        private String getKey(final Option opt) {
+            return StringUtils.defaultIfBlank(opt.getOpt(), opt.getLongOpt());
+        }
+
+        /**
+         * Compares its two arguments for order. Returns a negative integer, zero, or a
+         * positive integer as the first argument is less than, equal to, or greater
+         * than the second.
+         *
+         * @param opt1 The first Option to be compared.
+         * @param opt2 The second Option to be compared.
+         * @return a negative integer, zero, or a positive integer as the first argument
+         * is less than, equal to, or greater than the second.
+         */
+        @Override
+        public int compare(final Option opt1, final Option opt2) {
+            return getKey(opt1).compareToIgnoreCase(getKey(opt2));
+        }
+    }
+}

@@ -1275,7 +1275,6 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
     }
 
     @OptionCollectionTest.TestFunction
-    @Override
     public void helpTest() {
         PrintStream origin = System.out;
         Options options = OptionCollection.buildOptions();

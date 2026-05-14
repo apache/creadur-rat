@@ -27,6 +27,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Map;
+import java.util.Optional;
 import java.util.TreeMap;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -140,9 +141,8 @@ public final class OptionCollection {
             // for "commandLine"
         }
 
-        Arg.processLogLevel(commandLine);
-
         ArgumentContext argumentContext = new ArgumentContext(workingDirectory, commandLine);
+        Arg.processLogLevel(argumentContext, CLIOptionCollection.INSTANCE);
 
         if (commandLine.hasOption(HELP)) {
             helpCmd.accept(opts);
@@ -174,15 +174,17 @@ public final class OptionCollection {
      * @see #parseCommands(File, String[], Consumer)
      * @see #parseCommands(File, String[], Consumer, boolean)
      */
-    static ReportConfiguration createConfiguration(final ArgumentContext argumentContext) {
-        argumentContext.processArgs();
+    public static ReportConfiguration createConfiguration(final ArgumentContext argumentContext) {
+        argumentContext.processArgs(CLIOptionCollection.INSTANCE);
         final ReportConfiguration configuration = argumentContext.getConfiguration();
         final CommandLine commandLine = argumentContext.getCommandLine();
-        if (Arg.DIR.isSelected()) {
+        Optional<Option> dirOpt = CLIOptionCollection.INSTANCE.getSelected(Arg.DIR);
+        if (dirOpt.isPresent()) {
             try {
-                configuration.addSource(getReportable(commandLine.getParsedOptionValue(Arg.DIR.getSelected()), configuration));
+                configuration.addSource(getReportable(commandLine.getParsedOptionValue(
+                        dirOpt.get()), configuration));
             } catch (ParseException e) {
-                throw new ConfigurationException("Unable to set parse " + Arg.DIR.getSelected(), e);
+                throw new ConfigurationException("Unable to set parse " + dirOpt.get(), e);
             }
         }
         for (String s : commandLine.getArgs()) {
@@ -200,7 +202,7 @@ public final class OptionCollection {
      * @return the Options comprised of the Options defined in this class.
      */
     public static Options buildOptions() {
-        return Arg.getOptions().addOption(HELP);
+        return CLIOptionCollection.INSTANCE.getOptions();
     }
 
     /**
@@ -211,7 +213,7 @@ public final class OptionCollection {
      * @param config the ReportConfiguration.
      * @return the IReportable instance containing the files.
      */
-    static IReportable getReportable(final File base, final ReportConfiguration config) {
+    public static IReportable getReportable(final File base, final ReportConfiguration config) {
         File absBase = base.getAbsoluteFile();
         DocumentName documentName = DocumentName.builder(absBase).build();
         if (!absBase.exists()) {
@@ -354,12 +356,30 @@ public final class OptionCollection {
             this.description = description;
         }
 
+        /**
+         * Gets the display name.
+         * @return the display name.
+         */
         public String getDisplayName() {
             return displayName;
         }
 
+        /**
+         * Gets the description.
+         * @return the description.
+         */
         public Supplier<String> description() {
             return description;
+        }
+
+        /**
+         * Get the matching Argument type.
+         * @param displayName the display name for the desired type.
+         * @return An optional with the ArgumentType or an empty optional if non exists.
+         */
+        public static Optional<ArgumentType> forDisplayName(final String displayName) {
+            return Arrays.stream(ArgumentType.values()).filter(argType -> argType.displayName.equals(displayName))
+                    .findAny();
         }
     }
 }

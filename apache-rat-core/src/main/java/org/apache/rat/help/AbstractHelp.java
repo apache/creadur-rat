@@ -30,9 +30,9 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.WordUtils;
+import org.apache.rat.CLIOptionCollection;
 import org.apache.rat.OptionCollection;
 import org.apache.rat.VersionInfo;
-import org.apache.rat.commandline.Arg;
 
 import static java.lang.String.format;
 
@@ -185,8 +185,7 @@ public abstract class AbstractHelp {
                     optBuf.append(END_OF_OPTION_MSG);
                 }
                 // check for default value
-                Arg arg = Arg.findArg(option);
-                String defaultValue = arg == null ? null : arg.defaultValue();
+                String defaultValue = CLIOptionCollection.INSTANCE.defaultValue(option);
                 if (defaultValue != null) {
                     optBuf.append(format(" (Default value = %s)", defaultValue));
                 }
