@@ -95,6 +95,7 @@ public final class TikaProcessor {
         DOCUMENT_TYPE_MAP.put("application/x-xliff+zip", Document.Type.ARCHIVE);
 //        org.apache.tika.parser.xml.DcXMLParser
         DOCUMENT_TYPE_MAP.put("application/xml", Document.Type.STANDARD);
+        DOCUMENT_TYPE_MAP.put("application/xslt+xml", Document.Type.STANDARD);
         DOCUMENT_TYPE_MAP.put("image/svg+xml", Document.Type.STANDARD);
 //        org.apache.tika.parser.xml.FictionBookParser
         DOCUMENT_TYPE_MAP.put("application/x-fictionbook+xml", Document.Type.STANDARD);
