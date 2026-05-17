@@ -69,7 +69,7 @@ public final class CopyrightMatcher extends AbstractHeaderMatcher {
     private static final Pattern COPYRIGHT_PATTERN = Pattern.compile(COPYRIGHT_PATTERN_DEFN);
     /** The string to build a Pattern to match a copyright with a single part (date or name) */
     private static final String ONE_PART = "\\W+((" + COPYRIGHT_SYMBOL_DEFN + ")\\W+)?%s";
-    /** The string to build a Pattern to match a copyright iwth both name and date */
+    /** The string to build a Pattern to match a copyright with both name and date */
     private static final String TWO_PART = "\\W+((" + COPYRIGHT_SYMBOL_DEFN + ")\\W+)?%s,?\\W+%s";
     /** Format string to build a pattern to match two dates */
     private static final String DOUBLE_DATE_FMT = "%s\\W*-\\W*%s";

@@ -58,7 +58,7 @@ import org.apache.rat.utils.Log;
 import static java.lang.String.format;
 
 /**
- * An enumeration of options that are recommended across all UIs.  A UI may not implement some options if they are unsupportable
+ * An enumeration of options that are recommended across all UIs. A UI may not implement some options if they are unsupportable
  * within the UI.
  * Each Arg contains:
  * <ul>
@@ -67,7 +67,6 @@ import static java.lang.String.format;
  * <li>A {@code BiConsumer<ArgumentContext, Option>} that defines the process to configure the option in
  * the {@code ArgumentContext.configuration}.</li>
  * </ul>
- *
  */
 public enum Arg {
     ///////////////////////// EDIT OPTIONS
@@ -681,7 +680,6 @@ public enum Arg {
      */
     private final BiConsumer<ArgumentContext, Option> process;
 
-
     private static void doNotExecute(final ArgumentContext context, final Option selected) {
         throw new ImplementationException(String.format("'%s' should not be executed directly", selected));
     }
@@ -806,7 +804,7 @@ public enum Arg {
     }
 
     /**
-     * parses the option as a file.
+     * Parses the option as a file.
      * @param context the Argument context that provides the command line.
      * @param selected the selected option.
      * @return Option as a file.
@@ -816,7 +814,7 @@ public enum Arg {
     }
 
     /**
-     * parses lines with comma separated tokens from a file and returns the entire collection of tokens as a list of strings.
+     * Parses lines with comma separated tokens from a file and returns the entire collection of tokens as a list of strings.
      * @param context the Argument context that provides the command line.
      * @param selected the selected option.
      * @return the list of strings parsed from the file.
@@ -926,7 +924,7 @@ public enum Arg {
      * @param context the context in which to process the args.
      */
     private static void processOutputArgs(final ArgumentContext context, final UIOptionCollection<?> optionCollection) throws ConfigurationException {
-        for (Arg arg : new Arg[]{DRY_RUN, OUTPUT_FAMILIES, OUTPUT_LICENSES, OUTPUT_ARCHIVE, OUTPUT_STANDARD, OUTPUT_FILE, OUTPUT_STYLE}) {
+        for (Arg arg : List.of(DRY_RUN, OUTPUT_FAMILIES, OUTPUT_LICENSES, OUTPUT_ARCHIVE, OUTPUT_STANDARD, OUTPUT_FILE, OUTPUT_STYLE)) {
             arg.execute(context, optionCollection);
         }
     }

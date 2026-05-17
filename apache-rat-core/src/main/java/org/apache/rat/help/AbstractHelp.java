@@ -134,8 +134,8 @@ public abstract class AbstractHelp {
             final String lpad = createPadding(leftPad);
             final String dpad = createPadding(descPad);
             // first create list containing only <lpad>-a,--aaa where
-            // -a is opt and --aaa is long opt; in parallel look for
-            // the longest opt string; this list will then be used to
+            // -a is option and --aaa is long option; in parallel look for
+            // the longest option string; this list will then be used to
             // sort options ascending
             int max = 0;
             final List<StringBuffer> prefixList = new ArrayList<>();
