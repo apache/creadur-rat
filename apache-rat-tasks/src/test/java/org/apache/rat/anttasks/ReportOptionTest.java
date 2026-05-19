@@ -37,6 +37,7 @@ import org.apache.rat.utils.Log;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.io.CleanupMode;
 import org.junit.jupiter.api.io.TempDir;
+import org.junit.jupiter.api.io.TempDirDeletionStrategy;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ArgumentsProvider;
 import org.junit.jupiter.params.provider.ArgumentsSource;
@@ -55,7 +56,8 @@ import static org.junit.jupiter.api.Assertions.fail;
  */
 public class ReportOptionTest  {
     // RAT-475: Do no cleanup in order to prevent random build failures on ASF-Linux/GitHub nodes
-    @TempDir(cleanup = CleanupMode.NEVER)
+    // RAT-555: Try out new deletionStrategie without failing the tests.
+    @TempDir(cleanup = CleanupMode.NEVER, deletionStrategy = TempDirDeletionStrategy.IgnoreFailures.class)
     static Path testPath;
 
     static ReportConfiguration reportConfiguration;
