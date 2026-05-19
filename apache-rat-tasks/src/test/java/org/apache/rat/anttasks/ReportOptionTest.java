@@ -58,7 +58,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 @DisabledIf(value = "isRunningOnGitHubActionOrLinux", disabledReason = "RAT-555, RAT-475")
 public class ReportOptionTest  {
     // RAT-475: Do no cleanup in order to prevent random build failures on ASF-Linux/GitHub nodes
-    // RAT-555: Try out new deletionStrategie without failing the tests.
+    // RAT-555: Try out new deletionStrategy without failing the tests.
     @TempDir(cleanup = CleanupMode.NEVER, deletionStrategy = TempDirDeletionStrategy.IgnoreFailures.class)
     static Path testPath;
 
