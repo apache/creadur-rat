@@ -35,6 +35,7 @@ import org.apache.rat.documentation.options.AntOption;
 import org.apache.rat.utils.DefaultLog;
 import org.apache.rat.utils.Log;
 import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.condition.DisabledIf;
 import org.junit.jupiter.api.io.CleanupMode;
 import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.api.io.TempDirDeletionStrategy;
@@ -54,6 +55,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 /**
  * Tests to ensure the option setting works correctly.
  */
+@DisabledIf(value = "isRunningOnGitHubActionOrLinux", disabledReason = "RAT-555, RAT-475")
 public class ReportOptionTest  {
     // RAT-475: Do no cleanup in order to prevent random build failures on ASF-Linux/GitHub nodes
     // RAT-555: Try out new deletionStrategie without failing the tests.
