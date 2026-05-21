@@ -106,7 +106,7 @@ public final class ArgumentTracker {
      * Validate that the option is defined in Args and has not already been set.
      * This check will verify that only one of the keys in the group can be set.
      * @param key the key to check
-     * @return true if the key may be set.
+     * @return {@code true} if the key may be set.
      */
     private boolean validateSet(final String key) {
         final Arg arg = Arg.findArg(key);

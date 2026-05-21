@@ -67,7 +67,9 @@ public final class OptionCollection {
         // do not instantiate
     }
 
-    /** The Option comparator to sort the help */
+    /**
+     * The Option comparator to sort the help.
+     */
     public static final Comparator<Option> OPTION_COMPARATOR = new OptionComparator();
 
     /** The Help option */
@@ -375,7 +377,7 @@ public final class OptionCollection {
         /**
          * Get the matching Argument type.
          * @param displayName the display name for the desired type.
-         * @return An optional with the ArgumentType or an empty optional if non exists.
+         * @return An optional with the ArgumentType or an empty optional if none exists.
          */
         public static Optional<ArgumentType> forDisplayName(final String displayName) {
             return Arrays.stream(ArgumentType.values()).filter(argType -> argType.displayName.equals(displayName))

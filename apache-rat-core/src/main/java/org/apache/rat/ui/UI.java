@@ -29,7 +29,6 @@ public interface UI<T extends UIOption<T>> {
 
     /**
      * Gets the OptionFactory configuration for this UI.
-     *
      * @return the OptionFactory configuration for this UI.
      */
     UIOptionCollection<T> getOptionCollection();

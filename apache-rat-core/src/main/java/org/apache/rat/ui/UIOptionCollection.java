@@ -36,7 +36,7 @@ import org.apache.rat.commandline.Arg;
 import org.apache.rat.utils.Log;
 
 /**
- * A collection of options supported by the UI.  This includes RAT options and UI specific options.
+ * A collection of options supported by the UI. This includes RAT options and UI specific options.
  * @param <T> the AbstractOption implementation.
  */
 public class UIOptionCollection<T extends UIOption<T>> {
@@ -47,8 +47,8 @@ public class UIOptionCollection<T extends UIOption<T>> {
     /** set of UI specific options */
     private final Map<Option, T> uiOptions;
     /**
-     * Map of option to overridden default value.  Generally applies to supported rat options but may be ui
-     * specific options as well
+     * Map of option to overridden default value. Generally applies to supported RAT options but may be
+     * UI-specific options as well.
      */
     private final Map <Option, String> defaultValues;
 
@@ -121,7 +121,7 @@ public class UIOptionCollection<T extends UIOption<T>> {
     /**
      * Gets the UiOption instance for the Option.
      * @param option the option to find the instance of.
-     * @return an UIOption instance that wraps the option.
+     * @return a UIOption instance that wraps the option.
      */
     public final Optional<T> getMappedOption(final Option option) {
         return Optional.ofNullable(uiOptions.get(option));
@@ -137,7 +137,7 @@ public class UIOptionCollection<T extends UIOption<T>> {
     }
 
     /**
-     * Gets the Stream of AbstractOption implementations  understood by this collection.
+     * Gets the Stream of AbstractOption implementations understood by this collection.
      * @return the Stream of AbstractOption implementations understood by this collection.
      */
     public final Stream<T> getMappedOptions() {
@@ -184,11 +184,11 @@ public class UIOptionCollection<T extends UIOption<T>> {
         /** set of additional UI specific options */
         private final List<Option> uiOptions;
         /**
-         * Map of option to overridden default value.  Generally applies to supported rat options but may be ui
-         * specific options as well
+         * Map of option to overridden default value. Generally applies to supported RAT options but may be
+         * UI-specific options as well.
          */
         private final Map <Option, String> defaultValues;
-        /** The list of unsupported Rat options */
+        /** The list of unsupported RAT options. */
         protected final List<Option> unsupportedRatOptions;
         /** The function to convert an option into a UIOption. */
         private final BiFunction<UIOptionCollection<T>, Option, T> mapper;
@@ -209,7 +209,7 @@ public class UIOptionCollection<T extends UIOption<T>> {
         }
 
         /**
-         * build the UIOptionCollection.
+         * Build the UIOptionCollection.
          * @return the UIOptionCollection.
          */
         public UIOptionCollection<T> build() {
@@ -246,7 +246,7 @@ public class UIOptionCollection<T extends UIOption<T>> {
 
         /**
          * Register an option as unsupported.
-         * @param option the option that is not be supported.  This should be an option in the
+         * @param option the option that is not be supported. This should be an option in the
          * {@link Arg} collection.
          * @return this
          */

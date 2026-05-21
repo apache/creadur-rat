@@ -35,9 +35,9 @@ import org.apache.commons.text.WordUtils;
  * @since 0.17
  */
 public final class CasedString {
-    /** The segments of the cased string */
+    /** The segments of the cased string. */
     private final String[] segments;
-    /** The case of the string as parsed */
+    /** The case of the string as parsed. */
     private final StringCase stringCase;
     /** A joiner used for the pascal and camel cases. */
     private static final Function<String[], String> CAMEL_JOINER = strings -> {
@@ -72,7 +72,7 @@ public final class CasedString {
      * @return the new CasedString.
      */
     public CasedString as(final StringCase stringCase) {
-        return stringCase.name.equals(this.stringCase.name) ? this : new CasedString(stringCase, (String[]) Arrays.copyOf(this.segments, this.segments.length));
+        return stringCase.name.equals(this.stringCase.name) ? this : new CasedString(stringCase, Arrays.copyOf(this.segments, this.segments.length));
     }
 
     /**
@@ -115,9 +115,9 @@ public final class CasedString {
      * The definition of a String case.
      */
     public static final class StringCase {
-        /** The camel case.  Example: "HelloWorld"*/
+        /** The camel case. Example: "HelloWorld"*/
         public static final StringCase CAMEL;
-        /** The pascal case.  Example: "helloWorld" */
+        /** The pascal case. Example: "helloWorld" */
         public static final StringCase PASCAL;
         /** The Snake case. Example: "hello_world" */
         public static final StringCase SNAKE;
@@ -125,7 +125,7 @@ public final class CasedString {
         public static final StringCase KEBAB;
         /** The phrase case. Example: "hello world" */
         public static final StringCase PHRASE;
-        /** The dot case.  Example: "hello.world" */
+        /** The dot case. Example: "hello.world" */
         public static final StringCase DOT;
         /** The slash case. Example: "hello/world" */
         public static final StringCase SLASH;
@@ -133,9 +133,10 @@ public final class CasedString {
         static final String[] NULL_SEGMENT;
         /** An empty segment marker. */
         static final String[] EMPTY_SEGMENT;
-        /** The name of this case */
+        /** The name of this case. */
         private final String name;
-        /** The predicate that determines if a character is a spliter character.  A splitter character
+        /**
+         * The predicate that determines if a character is a spliter character. A splitter character
          * is the character that signals the start of a new segment.
          */
         private final Predicate<Character> splitter;
@@ -163,7 +164,7 @@ public final class CasedString {
         /**
          * Constructs a String case for the common cases where the delimiter is not preserved in the segments.
          * @param name the name of the case.
-         * @param delimiter the delimter between segments.
+         * @param delimiter the delimiter between segments.
          */
         public StringCase(final String name, final char delimiter) {
             this(name, c -> c == delimiter, false, simpleJoiner(delimiter));
@@ -193,7 +194,7 @@ public final class CasedString {
          * @return the assembled string.
          */
         public static Function<String[], String> simpleJoiner(final char delimiter) {
-            return s -> String.join(String.valueOf(delimiter), (CharSequence[]) Arrays.stream(s).filter(Objects::nonNull).toArray(String[]::new));
+            return s -> String.join(String.valueOf(delimiter), Arrays.stream(s).filter(Objects::nonNull).toArray(String[]::new));
         }
 
         @Override
@@ -243,8 +244,6 @@ public final class CasedString {
                 return lst.stream().map(this.postProcess).filter(Objects::nonNull).toArray(String[]::new);
             }
         }
-
-
         static {
             CAMEL = new StringCase("CAMEL", Character::isUpperCase, true, CasedString.CAMEL_JOINER,
                     x -> (String) StringUtils.defaultIfEmpty(x, (CharSequence) null));
