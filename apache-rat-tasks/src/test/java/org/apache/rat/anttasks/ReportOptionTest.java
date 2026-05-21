@@ -24,7 +24,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
 import org.apache.commons.cli.Option;
-import org.apache.commons.lang3.SystemUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.rat.test.AbstractConfigurationOptionsProvider;
@@ -55,7 +54,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 /**
  * Tests to ensure the option setting works correctly.
  */
-@DisabledIf(value = "isRunningOnGitHubActionOrLinux", disabledReason = "RAT-555, RAT-475")
+@DisabledIf(value = "isRunningOnGitHubActionAndLinux", disabledReason = "RAT-555, RAT-475")
 public class ReportOptionTest  {
     // RAT-475: Do no cleanup in order to prevent random build failures on ASF-Linux/GitHub nodes
     // RAT-555: Try out new deletionStrategy without failing the tests.
@@ -64,15 +63,8 @@ public class ReportOptionTest  {
 
     static ReportConfiguration reportConfiguration;
 
-    static boolean isGitHubLinuxOrWindowsWithJava8() {
+    static boolean isRunningOnGitHubActionAndLinux() {
         return System.getenv("GITHUB_ACTION") != null &&
-                (System.getProperty("os.name").toLowerCase(Locale.ENGLISH).contains("linux") ||
-                        (System.getProperty("os.name").toLowerCase(Locale.ENGLISH).contains("windows") && SystemUtils.IS_JAVA_1_8)
-                );
-    }
-
-    static boolean isRunningOnGitHubActionOrLinux() {
-        return System.getenv("GITHUB_ACTION") != null || 
          System.getProperty("os.name").toLowerCase(Locale.ENGLISH).contains("linux");
     }
 
