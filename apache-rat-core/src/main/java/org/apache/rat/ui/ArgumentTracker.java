@@ -64,7 +64,7 @@ public final class ArgumentTracker {
     }
 
     /**
-     * Extract the core name from the option.  This is the {@link Option#getLongOpt()} if defined, otherwise
+     * Extract the core name from the option. This is the {@link Option#getLongOpt()} if defined, otherwise
      * the {@link Option#getOpt()}.
      * @param option the commons cli option.
      * @return the common cli based name.
@@ -104,7 +104,7 @@ public final class ArgumentTracker {
 
     /**
      * Validate that the option is defined in Args and has not already been set.
-     * This check will verify tha only one of the keys in the group can be set.
+     * This check will verify that only one of the keys in the group can be set.
      * @param key the key to check
      * @return true if the key may be set.
      */
