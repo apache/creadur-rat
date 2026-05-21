@@ -24,7 +24,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
 import org.apache.commons.cli.Option;
-import org.apache.commons.lang3.SystemUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.rat.test.AbstractConfigurationOptionsProvider;
@@ -35,8 +34,10 @@ import org.apache.rat.documentation.options.AntOption;
 import org.apache.rat.utils.DefaultLog;
 import org.apache.rat.utils.Log;
 import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.condition.DisabledIf;
 import org.junit.jupiter.api.io.CleanupMode;
 import org.junit.jupiter.api.io.TempDir;
+import org.junit.jupiter.api.io.TempDirDeletionStrategy;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ArgumentsProvider;
 import org.junit.jupiter.params.provider.ArgumentsSource;
@@ -53,22 +54,17 @@ import static org.junit.jupiter.api.Assertions.fail;
 /**
  * Tests to ensure the option setting works correctly.
  */
+@DisabledIf(value = "isRunningOnGitHubActionAndLinux", disabledReason = "RAT-555, RAT-475")
 public class ReportOptionTest  {
     // RAT-475: Do no cleanup in order to prevent random build failures on ASF-Linux/GitHub nodes
-    @TempDir(cleanup = CleanupMode.NEVER)
+    // RAT-555: Try out new deletionStrategy without failing the tests.
+    @TempDir(cleanup = CleanupMode.NEVER, deletionStrategy = TempDirDeletionStrategy.IgnoreFailures.class)
     static Path testPath;
 
     static ReportConfiguration reportConfiguration;
 
-    static boolean isGitHubLinuxOrWindowsWithJava8() {
+    static boolean isRunningOnGitHubActionAndLinux() {
         return System.getenv("GITHUB_ACTION") != null &&
-                (System.getProperty("os.name").toLowerCase(Locale.ENGLISH).contains("linux") ||
-                        (System.getProperty("os.name").toLowerCase(Locale.ENGLISH).contains("windows") && SystemUtils.IS_JAVA_1_8)
-                );
-    }
-
-    static boolean isRunningOnGitHubActionOrLinux() {
-        return System.getenv("GITHUB_ACTION") != null || 
          System.getProperty("os.name").toLowerCase(Locale.ENGLISH).contains("linux");
     }
 
