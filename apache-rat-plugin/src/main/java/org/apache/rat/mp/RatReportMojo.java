@@ -436,6 +436,7 @@ public class RatReportMojo extends AbstractRatMojo implements MavenMultiPageRepo
                 config.setOut(new ReportConfiguration.IODescriptor<>("RAT output", () -> baos));
                 Reporter reporter = new Reporter(config);
                 Reporter.Output output = reporter.execute();
+                output.format(config);
                 if (verbose) {
                     output.writeSummary(logWriter);
                 }

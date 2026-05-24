@@ -977,10 +977,6 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
 
         assertDoesNotThrow(() -> {
             configureSourceDir(option);
-//            File outFile = new File(sourceDir, "out.xml");
-//            FileUtils.delete(outFile);
-//            ImmutablePair<Option, String[]> outputFile = ImmutablePair.of(Arg.OUTPUT_FILE.option(), new String[]{outFile.getAbsolutePath()});
-//            ImmutablePair<Option, String[]> stylesheet = ImmutablePair.of(Arg.OUTPUT_STYLE.option(), new String[]{StyleSheets.XML.arg()});
             for (LicenseSetFactory.LicenseFilter filter : LicenseSetFactory.LicenseFilter.values()) {
                 args[0] = filter.name();
                 ReportConfiguration config = generateConfig(ImmutablePair.of(option, args));
@@ -1023,10 +1019,6 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
 
         assertDoesNotThrow(() -> {
             configureSourceDir(option);
-//            File outFile = new File(sourceDir, "out.xml");
-//            FileUtils.delete(outFile);
-//            ImmutablePair<Option, String[]> outputFile = ImmutablePair.of(Arg.OUTPUT_FILE.option(), new String[]{outFile.getAbsolutePath()});
-//            ImmutablePair<Option, String[]> stylesheet = ImmutablePair.of(Arg.OUTPUT_STYLE.option(), new String[]{StyleSheets.XML.arg()});
             for (LicenseSetFactory.LicenseFilter filter : LicenseSetFactory.LicenseFilter.values()) {
                 args[0] = filter.name();
                 ReportConfiguration config = generateConfig(ImmutablePair.of(option, args));
