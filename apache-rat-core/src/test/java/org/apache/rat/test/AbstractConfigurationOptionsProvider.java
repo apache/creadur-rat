@@ -787,16 +787,23 @@ public abstract class AbstractConfigurationOptionsProvider extends AbstractOptio
         // run the test
         String[] args = {null};
         try {
-            for (String sheet : new String[]{"plain-rat", "missing-headers", "unapproved-licenses", file.getAbsolutePath()}) {
+            for (String sheet : new String[]{"plain-rat", "missing-headers", "unapproved-licenses", "stylesheet-" + option.getLongOpt()}) {
                 args[0] = sheet;
                 ReportConfiguration config = generateConfig(ImmutablePair.of(option, args));
-                try (InputStream expected = StyleSheets.getStyleSheet(sheet, DocumentName.builder(baseDir).build()).ioSupplier().get();
+                DocumentName base = DocumentName.builder(baseDir).build();
+                DocumentName expectedName = base.resolve(sheet);
+                try (InputStream expected = StyleSheets.getStyleSheet(sheet, base).ioSupplier().get();
                      InputStream actual = config.getStyleSheet().get()) {
-                    assertThat(IOUtils.contentEquals(expected, actual)).as(() -> String.format("'%s' does not match", sheet)).isTrue();
+                    String expectedStr =  IOUtils.toString(expected);
+                    String actualStr =  IOUtils.toString(actual);
+                    assertThat(actualStr).isEqualTo(expectedStr).as(() -> String.format("'%s' does not match '%s': %s != %s",
+                            config.getStyleSheetDescriptor().name(),
+                            expectedName.getName(),
+                            actualStr, expectedStr));
                 }
             }
         } catch (IOException e) {
-            fail(e.getMessage());
+            fail(e.getMessage(), e);
         }
     }
 

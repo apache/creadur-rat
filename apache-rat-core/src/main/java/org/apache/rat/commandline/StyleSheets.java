@@ -97,7 +97,7 @@ public enum StyleSheets {
         if (xslt.asFile().exists()) {
             return new ReportConfiguration.IODescriptor<>(xslt.toString(), () -> Files.newInputStream(xslt.asFile().toPath()));
         }
-        throw new ConfigurationException(format("Stylesheet file '%s' not found", name));
+        throw new ConfigurationException(format("Stylesheet file '%s' not found: %s", name, xslt.getName()));
     }
 
     /**
