@@ -446,11 +446,12 @@ public class RatReportMojo extends AbstractRatMojo implements MavenMultiPageRepo
                     config.reportExclusions(logWriter);
                 }
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                config.setOut(() -> baos);
+                config.setOut(new ReportConfiguration.IODescriptor<>("streaming output", () -> baos));
                 Reporter reporter = new Reporter(config);
-                reporter.output();
+                Reporter.Output output = reporter.execute();
+                output.format(config);
                 if (verbose) {
-                    reporter.writeSummary(logWriter);
+                    output.writeSummary(logWriter);
                 }
                 sink.text(baos.toString(StandardCharsets.UTF_8.name()));
             } catch (IOException | MojoExecutionException | RatException e) {
