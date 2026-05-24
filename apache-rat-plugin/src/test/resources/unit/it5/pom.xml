@@ -32,8 +32,8 @@
             <config>.rat/customConfig.xml</config>
           </configs>
           <inputExcludes>.rat/**</inputExcludes>
-            <inputExcludes>pom.xml</inputExcludes>
-            <inputExcludes>invoker.properties</inputExcludes>
+          <inputExcludes>pom.xml</inputExcludes>
+          <inputExcludes>invoker.properties</inputExcludes>
         </configuration>
       </plugin>
     </plugins>
