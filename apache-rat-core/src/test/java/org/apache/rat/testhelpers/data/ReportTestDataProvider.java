@@ -70,8 +70,7 @@ import static org.assertj.core.api.Fail.fail;
  * Generates a list of TestData for executing the Report.
  * Use of this interface ensures consistent testing across the UIs. Each method
  * tests an Option from {@link OptionCollectionParser} that must be implemented in the UI.
- * This differes from the {@link OptionTestDataProvider} in that tests from this set
- * expect that execptions will be thrown during execution, and tests the xml output.
+ * These tests generally validate the results in the generated XML are as expected.
  */
 public class ReportTestDataProvider extends AbstractTestDataProvider {
 
