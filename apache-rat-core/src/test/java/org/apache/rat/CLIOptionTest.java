@@ -26,7 +26,6 @@ import java.io.File;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class CLIOptionTest {
-    final CLIOptionCollection optionCollection = CLIOptionCollection.INSTANCE;
     final CLIOption optionA = new CLIOption(CLIOptionCollection.INSTANCE, new Option("a", false, "short key"));
     final CLIOption optionB = new CLIOption(CLIOptionCollection.INSTANCE, Option.builder("b").longOpt("bee").hasArg().desc("two key").build());
     final CLIOption optionC = new CLIOption(CLIOptionCollection.INSTANCE, Option.builder().longOpt("sea").hasArgs().type(File.class).desc("long key").build());

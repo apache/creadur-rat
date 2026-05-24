@@ -24,7 +24,7 @@ import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class UIOptionTest {
-    private UIOption underTest;
+    private UIOption<UIOptionCollectionTest.TestingUIOption> underTest;
     private UIOptionCollectionTest.TestingUIOptionCollection optionCollection;
 
     @Test

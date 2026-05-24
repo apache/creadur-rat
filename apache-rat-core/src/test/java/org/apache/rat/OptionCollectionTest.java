@@ -273,7 +273,7 @@ public class OptionCollectionTest {
         final AtomicBoolean helpCalled = new AtomicBoolean(false);
 
         /**
-         * Provide a test for the help optopn
+         * Provide a test for the help option.
          */
         public void helpTest() {
             String[] args = { OptionFormatter.longOpt(OptionCollection.HELP) };
