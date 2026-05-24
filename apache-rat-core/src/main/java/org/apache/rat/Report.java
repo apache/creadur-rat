@@ -22,6 +22,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.nio.charset.StandardCharsets;
 
 import org.apache.commons.cli.Options;
 import org.apache.commons.io.function.IOSupplier;
@@ -72,7 +73,7 @@ public final class Report {
      */
     private static void printUsage(final Options options, final IOSupplier<OutputStream> out) {
         try (OutputStream stream = out.get();
-             PrintWriter writer = new PrintWriter(stream)) {
+             PrintWriter writer = new PrintWriter(stream, false, StandardCharsets.UTF_8)) {
             new Help(writer).printUsage(options);
         } catch (IOException e) {
             throw new RuntimeException(e);

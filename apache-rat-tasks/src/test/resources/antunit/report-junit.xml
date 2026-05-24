@@ -226,7 +226,7 @@ public class InlineMatcher extends AbstractHeaderMatcher {
 		<file file="${ant.file}"/>
 		<rat:report>
 			<rat:stylesheet>
-				<file file="${ant.file}"/>
+				<file file="stylesheet.xslt"/>
 			</rat:stylesheet>
 		</rat:report>
 	</target>
@@ -235,7 +235,7 @@ public class InlineMatcher extends AbstractHeaderMatcher {
 		<file file="${ant.file}"/>
 		<rat:report>
 			<rat:stylesheet>
-				<file file="${ant.file}"/>
+				<file file="stylesheet.xslt"/>
 			</rat:stylesheet>
 		</rat:report>
 	</target>
