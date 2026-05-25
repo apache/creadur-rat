@@ -54,7 +54,7 @@ public final class AntGenerator {
 
     /**
      * Create a GenerateType for the option
-     * @param antOption the ant option to generate the type for.
+     * @param antOption the Ant option to generate the type for.
      */
     private static GenerateType getGenerateType(final AntOption antOption) {
         String defaultFmt = """
@@ -198,7 +198,6 @@ public final class AntGenerator {
 
     private static void writeMethods(final FileWriter writer, final List<AntOption> options, final Writer customClasses) throws IOException {
         for (AntOption antOption : options) {
-
             if (antOption.isAttribute()) {
                 writer.append(getComment(antOption, true));
                 if (antOption.isDeprecated()) {
@@ -220,7 +219,6 @@ public final class AntGenerator {
     }
 
     private static String getElementClass(final AntOption option) {
-
         String elementConstructor =
                 """
                             public class %1$s {
@@ -238,7 +236,7 @@ public final class AntGenerator {
     }
 
     public static class GenerateType {
-        /** the inner class name text */
+        /** The inner class name text. */
         protected final String innerClass;
 
         GenerateType(final String innerClass) {
@@ -286,7 +284,7 @@ public final class AntGenerator {
     /**
      * Get the method comment for this option.
      *
-     * @param addParam if {@code true} the param annotation is added.
+     * @param addParam if {@code true} the parameter annotation is added.
      * @return the Comment block for the function.
      */
     private static String getComment(final AntOption antOption, final boolean addParam) {
@@ -330,5 +328,4 @@ public final class AntGenerator {
                 antOption.getName() +
                 ")";
     }
-
 }
