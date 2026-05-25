@@ -32,8 +32,9 @@ import static java.lang.String.format;
  */
 public final class MavenOption extends UIOption<MavenOption> {
 
-    /** THe format to start an XML entity */
+    /** The format to start an XML entity */
     private static final String XML_FMT = "<%s>";
+
     /**
      * Constructor.
      *
@@ -137,5 +138,4 @@ public final class MavenOption extends UIOption<MavenOption> {
         }
         return sb.toString();
     }
-
 }

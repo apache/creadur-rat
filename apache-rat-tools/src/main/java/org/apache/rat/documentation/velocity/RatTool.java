@@ -73,7 +73,7 @@ public class RatTool {
     }
 
     /**
-     * The characters to escape for markdown.
+     * The characters to escape for Markdown.
      */
     // TODO remove this when velocity-tools 3.3 is available // NOSONAR
     private static final String[] MARKDOWN_CHARS = charParser("\\`*_{}[]<>()#+-.!|");
@@ -145,9 +145,9 @@ public class RatTool {
     }
 
     /**
-     * Escapes a string for markdown.
+     * Escapes a string for Markdown.
      * @param text the text to escape.
-     * @return the text with the markdown specific characters escaped.
+     * @return the text with the Markdown specific characters escaped.
      */
     public String markdownEscape(final String text) {
         return escape(text, MARKDOWN_CHARS);
@@ -217,7 +217,7 @@ public class RatTool {
     }
 
     /**
-     * Gets the {@link StringUtils} object in order to work with it in Velocity templates.
+     * Gets the {@link StringUtils} object in order to work with it in RAT Velocity templates.
      * @return the org.apache.commons.lang3 StringUtils object.
      * @see org.apache.commons.lang3.StringUtils
      */
