@@ -416,7 +416,7 @@ public enum Arg {
             .addOption(Option.builder().longOpt("includes-file")
                     .argName("File").hasArg().type(File.class)
                     .converter(Converters.FILE_CONVERTER)
-                    .desc("Reads <Expression> entries from a file. Entries will be excluded from processing.")
+                    .desc("Reads <Expression> entries from a file. Entries will override excluded files.")
                     .deprecated(DeprecatedAttributes.builder().setForRemoval(true).setSince("0.17")
                             .setDescription(StdMsgs.useMsg("--input-include-file")).get())
                     .build()),
@@ -679,7 +679,15 @@ public enum Arg {
      * The BiConsumer to apply the option to update the state of the context.configuration.
      */
     private final BiConsumer<ArgumentContext, Option> process;
-
+    /**
+     * This method is used for an implementation marker.  The options use this as the test process should be handled before
+     * the standard processing.  For example, EDIT_COPYRIGHT is only valid if EDIT_ADD is specified.  The processes that handle EDIT_ADD
+     * and EDIT_COPYRIGHT do not call the execute method as they have to make extra calls to display deprecated messages and otherwise
+     * properly execute.  If somehow, a UI attempts to execute them the UI testing should fail.  This method ensures that happens when it
+     * is specified as the process for the option.
+     * @param context
+     * @param selected
+     */
     private static void doNotExecute(final ArgumentContext context, final Option selected) {
         throw new ImplementationException(String.format("'%s' should not be executed directly", selected));
     }
@@ -688,6 +696,8 @@ public enum Arg {
      * Creates an Arg from an Option group.
      *
      * @param group The option group.
+     * @param process The BiConsumer that executes the argument.  Generally these processes apply the argument to the configuration or
+     *                other componsent of the ArgumentContext.
      */
     Arg(final OptionGroup group, final BiConsumer<ArgumentContext, Option> process) {
         this.group = group;
@@ -860,9 +870,9 @@ public enum Arg {
         });
         context.getConfiguration().setFrom(defaultBuilder.build());
 
-        for (Arg arg : new Arg[]{FAMILIES_APPROVED, FAMILIES_APPROVED_FILE, FAMILIES_DENIED, FAMILIES_DENIED_FILE,
+        for (Arg arg : List.of(FAMILIES_APPROVED, FAMILIES_APPROVED_FILE, FAMILIES_DENIED, FAMILIES_DENIED_FILE,
                 LICENSES_APPROVED, LICENSES_APPROVED_FILE, LICENSES_DENIED, LICENSES_DENIED_FILE,
-                COUNTER_MAX, COUNTER_MIN}) {
+                COUNTER_MAX, COUNTER_MIN)) {
             arg.execute(context, optionCollection);
         }
     }
@@ -874,8 +884,8 @@ public enum Arg {
      * @throws ConfigurationException if an exclude file can not be read.
      */
     private static void processInputArgs(final ArgumentContext context, final UIOptionCollection<?> optionCollection) throws ConfigurationException {
-        for (Arg arg : new Arg[]{SOURCE, EXCLUDE, EXCLUDE_FILE, EXCLUDE_STD, EXCLUDE_PARSE_SCM, EXCLUDE_SIZE,
-                INCLUDE, INCLUDE_FILE, INCLUDE_STD}) {
+        for (Arg arg : List.of(SOURCE, EXCLUDE, EXCLUDE_FILE, EXCLUDE_STD, EXCLUDE_PARSE_SCM, EXCLUDE_SIZE,
+                INCLUDE, INCLUDE_FILE, INCLUDE_STD)) {
             arg.execute(context, optionCollection);
         }
     }
