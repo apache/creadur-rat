@@ -51,7 +51,7 @@ agnostic home for software distribution comprehension and audit tools.
     <ant.version>1.10.17</ant.version>
     <assertj.version>4.0.0-M1</assertj.version>
     <javaVersion>17</javaVersion>
-    <tika.version>3.3.0</tika.version>
+    <tika.version>3.3.1</tika.version>
     <mockito.version>5.23.0</mockito.version>
     <maven.compiler.source>${javaVersion}</maven.compiler.source>
     <maven.compiler.target>${javaVersion}</maven.compiler.target>
@@ -621,7 +621,7 @@ agnostic home for software distribution comprehension and audit tools.
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-site-plugin</artifactId>
-          <version>3.21.0</version>
+          <version>3.22.0</version>
           <configuration>
             <!-- RAT-536 keep site generation timestamp instead of release timestamp -->
             <outputTimestamp>x</outputTimestamp>
@@ -674,12 +674,12 @@ agnostic home for software distribution comprehension and audit tools.
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-failsafe-plugin</artifactId>
-          <version>3.5.5</version>
+          <version>3.5.6</version>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-surefire-plugin</artifactId>
-          <version>3.5.5</version>
+          <version>3.5.6</version>
           <configuration>
             <forkCount>1</forkCount>
             <!-- RAT-293: We need to append to the existing arguments in order for code coverage to work -->
@@ -750,7 +750,7 @@ agnostic home for software distribution comprehension and audit tools.
         <plugin>
           <groupId>org.sonarsource.scanner.maven</groupId>
           <artifactId>sonar-maven-plugin</artifactId>
-          <version>5.6.0.6792</version>
+          <version>5.7.0.6970</version>
         </plugin>
       </plugins>
     </pluginManagement>
