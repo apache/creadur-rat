@@ -611,7 +611,7 @@ agnostic home for software distribution comprehension and audit tools.
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-site-plugin</artifactId>
-          <version>3.21.0</version>
+          <version>3.22.0</version>
           <configuration>
             <!-- RAT-536 keep site generation timestamp instead of release timestamp -->
             <outputTimestamp>x</outputTimestamp>
