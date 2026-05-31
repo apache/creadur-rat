@@ -717,7 +717,7 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
             Pair<Option, String[]> arg1 = ImmutablePair.of(option, args);
 
             writeFile("bsd.txt", "SPDX-License-Identifier: BSD-3-Clause");
-            writeFile("one.txt", "one is the lonelest number");
+            writeFile("one.txt", "one is the loneliest number");
 
             ReportConfiguration config = generateConfig();
             Reporter reporter = new Reporter(config);
@@ -890,7 +890,7 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
                 assertThat(claimStatistic.getCounter(ClaimStatistic.Counter.APPROVED)).isEqualTo(0);
                 assertThat(claimStatistic.getCounter(ClaimStatistic.Counter.UNAPPROVED)).isEqualTo(1);
 
-                String actualText = baos.toString(StandardCharsets.UTF_8.name());
+                String actualText = baos.toString(StandardCharsets.UTF_8);
                 switch (sheet) {
                     case MISSING_HEADERS:
                         TextUtils.assertContainsExactly(1, "Files with missing headers:" + System.lineSeparator() +
@@ -920,9 +920,8 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
             assertThat(claimStatistic.getCounter(ClaimStatistic.Counter.APPROVED)).isEqualTo(0);
             assertThat(claimStatistic.getCounter(ClaimStatistic.Counter.UNAPPROVED)).isEqualTo(1);
 
-            String actualText = baos.toString(StandardCharsets.UTF_8.name());
+            String actualText = baos.toString(StandardCharsets.UTF_8);
             TextUtils.assertContainsExactly(1, "Hello world", actualText);
-
         } catch (IOException | RatException e) {
             fail(e.getMessage(), e);
         } finally {
@@ -963,7 +962,7 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
             assertThat(claimStatistic.getCounter(ClaimStatistic.Counter.APPROVED)).isEqualTo(0);
             assertThat(claimStatistic.getCounter(ClaimStatistic.Counter.UNAPPROVED)).isEqualTo(1);
 
-            String actualText = baos.toString(StandardCharsets.UTF_8.name());
+            String actualText = baos.toString(StandardCharsets.UTF_8);
             TextUtils.assertContainsExactly(1, "<resource encoding=\"ISO-8859-1\" mediaType=\"text/plain\" name=\"/stylesheet\" type=\"STANDARD\">", actualText);
 
             try (InputStream expected = StyleSheets.getStyleSheet("xml").get();
@@ -990,12 +989,12 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
             ReportConfiguration config = generateConfig();
             Reporter reporter = new Reporter(config);
             reporter.output();
-            TextUtils.assertNotContains("DEBUG", baos.toString(StandardCharsets.UTF_8.name()));
+            TextUtils.assertNotContains("DEBUG", baos.toString(StandardCharsets.UTF_8));
 
             config = generateConfig(ImmutablePair.of(option, new String[]{"debug"}));
             reporter = new Reporter(config);
             reporter.output();
-            TextUtils.assertContains("DEBUG", baos.toString(StandardCharsets.UTF_8.name()));
+            TextUtils.assertContains("DEBUG", baos.toString(StandardCharsets.UTF_8));
         } catch (IOException | RatException e) {
             fail(e.getMessage(), e);
         } finally {
@@ -1275,7 +1274,6 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
     }
 
     @OptionCollectionTest.TestFunction
-    @Override
     public void helpTest() {
         PrintStream origin = System.out;
         Options options = OptionCollection.buildOptions();
@@ -1286,10 +1284,10 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
             System.setOut(out);
             configureSourceDir(OptionCollection.HELP);
 
-            ReportConfiguration config = generateConfig(Arrays.asList(arg1), true);
+            ReportConfiguration config = generateConfig(List.of(arg1), true);
             assertThat(helpCalled.get()).as("Help was not called").isTrue();
             new Help(System.out).printUsage(options);
-            actualText = baos.toString(StandardCharsets.UTF_8.name());
+            actualText = baos.toString(StandardCharsets.UTF_8);
         } catch (IOException e) {
             fail(e.getMessage(), e);
         } finally {
@@ -1337,7 +1335,7 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
             System.setOut(out);
             configureSourceDir(option);
             ReportConfiguration config = generateConfig(arg1);
-            actualText = baos.toString(StandardCharsets.UTF_8.name());
+            actualText = baos.toString(StandardCharsets.UTF_8);
         } catch (IOException e) {
             fail(e.getMessage(), e);
         } finally {

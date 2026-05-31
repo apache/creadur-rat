@@ -30,9 +30,9 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.WordUtils;
+import org.apache.rat.CLIOptionCollection;
 import org.apache.rat.OptionCollection;
 import org.apache.rat.VersionInfo;
-import org.apache.rat.commandline.Arg;
 
 import static java.lang.String.format;
 
@@ -134,8 +134,8 @@ public abstract class AbstractHelp {
             final String lpad = createPadding(leftPad);
             final String dpad = createPadding(descPad);
             // first create list containing only <lpad>-a,--aaa where
-            // -a is opt and --aaa is long opt; in parallel look for
-            // the longest opt string; this list will then be used to
+            // -a is option and --aaa is long option; in parallel look for
+            // the longest option string; this list will then be used to
             // sort options ascending
             int max = 0;
             final List<StringBuffer> prefixList = new ArrayList<>();
@@ -185,8 +185,7 @@ public abstract class AbstractHelp {
                     optBuf.append(END_OF_OPTION_MSG);
                 }
                 // check for default value
-                Arg arg = Arg.findArg(option);
-                String defaultValue = arg == null ? null : arg.defaultValue();
+                String defaultValue = CLIOptionCollection.INSTANCE.defaultValue(option);
                 if (defaultValue != null) {
                     optBuf.append(format(" (Default value = %s)", defaultValue));
                 }

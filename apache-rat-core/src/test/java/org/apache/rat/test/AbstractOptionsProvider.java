@@ -177,9 +177,6 @@ public abstract class AbstractOptionsProvider implements ArgumentsProvider {
         return DocumentName.builder(new File(baseDir, name)).build();
     }
 
-    /** Help test */
-    protected abstract void helpTest();
-
     /** Display the option and value under test */
     final protected String displayArgAndName(final Option option, final String fname) {
         return String.format("%s %s", option.getLongOpt(), fname);
