@@ -120,8 +120,7 @@ public class UIOptionCollectionTest {
     @Test
     void getUnsupportedOptions() {
         Options options = underTest.getUnsupportedOptions();
-        List<Option> expected = new ArrayList<Option>();
-        expected.addAll(Arg.COUNTER_MAX.group().getOptions());
+        List<Option> expected = new ArrayList<>(Arg.COUNTER_MAX.group().getOptions());
         expected.add(Arg.EXCLUDE.option());
         assertThat(options.getOptions()).containsExactlyInAnyOrderElementsOf(expected);
     }

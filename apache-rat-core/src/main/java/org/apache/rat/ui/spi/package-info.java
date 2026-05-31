@@ -17,6 +17,6 @@
  * under the License.
  */
 /**
- * The SPI implementation for the UIs
+ * The SPI implementation for the UIs.
  */
 package org.apache.rat.ui.spi;

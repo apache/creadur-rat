@@ -34,9 +34,9 @@
           <ignoreErrors>false</ignoreErrors>
           <inputIncludes>pom.xml</inputIncludes>
           <inputExcludeStds>STANDARD_PATTERNS</inputExcludeStds>
-            <inputExcludeStds>STANDARD_SCMS</inputExcludeStds>
-            <inputExcludeStds>MAVEN</inputExcludeStds>
-            <inputExcludeStds>IDEA</inputExcludeStds>
+          <inputExcludeStds>STANDARD_SCMS</inputExcludeStds>
+          <inputExcludeStds>MAVEN</inputExcludeStds>
+          <inputExcludeStds>IDEA</inputExcludeStds>
         </configuration>
       </plugin>
     </plugins>

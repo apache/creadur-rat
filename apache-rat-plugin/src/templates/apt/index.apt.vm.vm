@@ -121,7 +121,7 @@ Configuration Options
 
 Using SNAPSHOT versions
 
-    In case you want to try out current development versions, you need to adapt your pom.xml in order to include the ASF snapshot repossitory:
+    In case you want to try out current development versions, you need to adapt your pom.xml in order to include the ASF snapshot repository:
 
 ------------------------------------------------------------------
     <pluginRepositories>

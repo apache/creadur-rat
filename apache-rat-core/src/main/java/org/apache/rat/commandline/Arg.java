@@ -57,7 +57,7 @@ import org.apache.rat.utils.Log;
 import static java.lang.String.format;
 
 /**
- * An enumeration of options that are recommended across all UIs.  A UI may not implement some options if they are unsupportable
+ * An enumeration of options that are recommended across all UIs. A UI may not implement some options if they are unsupportable
  * within the UI.
  * Each Arg contains:
  * <ul>
@@ -66,12 +66,11 @@ import static java.lang.String.format;
  * <li>A {@code BiConsumer<ArgumentContext, Option>} that defines the process to configure the option in
  * the {@code ArgumentContext.configuration}.</li>
  * </ul>
- *
  */
 public enum Arg {
     ///////////////////////// EDIT OPTIONS
     /**
-     * Defines options to add copyright to files
+     * Defines options to add copyright to files.
      */
     EDIT_COPYRIGHT(new OptionGroup()
             .addOption(Option.builder("c")
@@ -104,7 +103,7 @@ public enum Arg {
     ),
 
     /**
-     * Defines options to add licenses to files
+     * Defines options to add licenses to files.
      */
     EDIT_ADD(new OptionGroup()
             .addOption(Option.builder("a")
@@ -126,7 +125,7 @@ public enum Arg {
 
     //////////////////////////// CONFIGURATION OPTIONS
     /**
-     * Group of options that read a configuration file
+     * Group of options that read a configuration file.
      */
     CONFIGURATION(new OptionGroup()
             .addOption(Option.builder().longOpt("config").hasArgs().argName("File")
@@ -144,7 +143,7 @@ public enum Arg {
     ),
 
     /**
-     * Group of options that skip the default configuration file
+     * Group of options that skip the default configuration file.
      */
     CONFIGURATION_NO_DEFAULTS(new OptionGroup()
             .addOption(Option.builder().longOpt("configuration-no-defaults")
@@ -160,7 +159,7 @@ public enum Arg {
     ),
 
     /**
-     * Option that adds approved licenses to the list
+     * Option that adds approved licenses to the list.
      */
     LICENSES_APPROVED(new OptionGroup().addOption(Option.builder().longOpt("licenses-approved").hasArg().argName("LicenseID")
             .desc("A comma separated list of approved License IDs. These licenses will be added to the list of approved licenses.")
@@ -172,7 +171,7 @@ public enum Arg {
     ),
 
     /**
-     * Option that adds approved licenses from a file
+     * Option that adds approved licenses from a file.
      */
     LICENSES_APPROVED_FILE(new OptionGroup().addOption(Option.builder().longOpt("licenses-approved-file").hasArg().argName("File")
             .desc("Name of file containing comma separated lists of approved License IDs.")
@@ -183,7 +182,7 @@ public enum Arg {
                     context.getConfiguration().addApprovedLicenseIds(processArrayFile(context, selected))),
 
     /**
-     * Option that specifies approved license families
+     * Option that specifies approved license families.
      */
     FAMILIES_APPROVED(new OptionGroup().addOption(Option.builder().longOpt("license-families-approved").hasArg().argName("FamilyID")
             .desc("A comma separated list of approved license family IDs. These license families will be added to the list of approved license families.")
@@ -193,7 +192,7 @@ public enum Arg {
             (context, selected) -> context.getConfiguration().addApprovedLicenseCategories(processArrayArg(context, selected))),
 
     /**
-     * Option that specifies approved license families from a file
+     * Option that specifies approved license families from a file.
      */
     FAMILIES_APPROVED_FILE(new OptionGroup().addOption(Option.builder().longOpt("license-families-approved-file").hasArg().argName("File")
             .desc("Name of file containing comma separated lists of approved family IDs.")
@@ -204,7 +203,7 @@ public enum Arg {
     ),
 
     /**
-     * Option to remove licenses from the approved list
+     * Option to remove licenses from the approved list.
      */
     LICENSES_DENIED(new OptionGroup().addOption(Option.builder().longOpt("licenses-denied").hasArg().argName("LicenseID")
             .desc("A comma separated list of denied License IDs. " +
@@ -304,7 +303,7 @@ public enum Arg {
             }),
 
     /**
-     * Excludes files by expression
+     * Excludes files by expression.
      */
     EXCLUDE(new OptionGroup()
             .addOption(Option.builder("e").longOpt("exclude").hasArgs().argName("Expression")
@@ -416,7 +415,7 @@ public enum Arg {
             .addOption(Option.builder().longOpt("includes-file")
                     .argName("File").hasArg().type(File.class)
                     .converter(Converters.FILE_CONVERTER)
-                    .desc("Reads <Expression> entries from a file. Entries will be excluded from processing.")
+                    .desc("Reads <Expression> entries from a file. Entries will override excluded files.")
                     .deprecated(DeprecatedAttributes.builder().setForRemoval(true).setSince("0.17")
                             .setDescription(StdMsgs.useMsg("--input-include-file")).get())
                     .build()),
@@ -671,7 +670,7 @@ public enum Arg {
     );
 
     /**
-     * The option group for the argument
+     * The option group for the argument.
      */
     private final OptionGroup group;
 
@@ -680,7 +679,15 @@ public enum Arg {
      */
     private final BiConsumer<ArgumentContext, Option> process;
 
-
+    /**
+     * This method is used for an implementation marker. The options use this as the test process should be handled before
+     * the standard processing. For example, EDIT_COPYRIGHT is only valid if EDIT_ADD is specified. The processes that handle EDIT_ADD
+     * and EDIT_COPYRIGHT do not call the execute method as they have to make extra calls to display deprecated messages and otherwise
+     * properly execute. If somehow, a UI attempts to execute them the UI testing should fail. This method ensures that happens when it
+     * is specified as the process for the option.
+     * @param context the current argument context.
+     * @param selected the selected option.
+     */
     private static void doNotExecute(final ArgumentContext context, final Option selected) {
         throw new ImplementationException(String.format("'%s' should not be executed directly", selected));
     }
@@ -689,6 +696,8 @@ public enum Arg {
      * Creates an Arg from an Option group.
      *
      * @param group The option group.
+     * @param process The BiConsumer that executes the argument. Generally these processes apply the argument to the configuration or
+     *                other component of the ArgumentContext.
      */
     Arg(final OptionGroup group, final BiConsumer<ArgumentContext, Option> process) {
         this.group = group;
@@ -794,7 +803,7 @@ public enum Arg {
      * Gets the list of Strings that are arguments for the option.
      * @param context the ArgumentContext containing the command line.
      * @param selected the selected option.
-     * @return the list of Strings that are aguments.
+     * @return the list of Strings that are arguments.
      */
     private static List<String> processArrayArg(final ArgumentContext context, final Option selected) {
         try {
@@ -805,7 +814,7 @@ public enum Arg {
     }
 
     /**
-     * parses the option as a file.
+     * Parses the option as a file.
      * @param context the Argument context that provides the command line.
      * @param selected the selected option.
      * @return Option as a file.
@@ -815,7 +824,7 @@ public enum Arg {
     }
 
     /**
-     * parses lines with comma separated tokens from a file and returns the entire collection of tokens as a list of strings.
+     * Parses lines with comma separated tokens from a file and returns the entire collection of tokens as a list of strings.
      * @param context the Argument context that provides the command line.
      * @param selected the selected option.
      * @return the list of strings parsed from the file.
@@ -861,9 +870,9 @@ public enum Arg {
         });
         context.getConfiguration().setFrom(defaultBuilder.build());
 
-        for (Arg arg : new Arg[]{FAMILIES_APPROVED, FAMILIES_APPROVED_FILE, FAMILIES_DENIED, FAMILIES_DENIED_FILE,
+        for (Arg arg : List.of(FAMILIES_APPROVED, FAMILIES_APPROVED_FILE, FAMILIES_DENIED, FAMILIES_DENIED_FILE,
                 LICENSES_APPROVED, LICENSES_APPROVED_FILE, LICENSES_DENIED, LICENSES_DENIED_FILE,
-                COUNTER_MAX, COUNTER_MIN}) {
+                COUNTER_MAX, COUNTER_MIN)) {
             arg.execute(context, optionCollection);
         }
     }
@@ -875,8 +884,8 @@ public enum Arg {
      * @throws ConfigurationException if an exclude file can not be read.
      */
     private static void processInputArgs(final ArgumentContext context, final UIOptionCollection<?> optionCollection) throws ConfigurationException {
-        for (Arg arg : new Arg[]{SOURCE, EXCLUDE, EXCLUDE_FILE, EXCLUDE_STD, EXCLUDE_PARSE_SCM, EXCLUDE_SIZE,
-                INCLUDE, INCLUDE_FILE, INCLUDE_STD}) {
+        for (Arg arg : List.of(SOURCE, EXCLUDE, EXCLUDE_FILE, EXCLUDE_STD, EXCLUDE_PARSE_SCM, EXCLUDE_SIZE,
+                INCLUDE, INCLUDE_FILE, INCLUDE_STD)) {
             arg.execute(context, optionCollection);
         }
     }
@@ -925,7 +934,7 @@ public enum Arg {
      * @param context the context in which to process the args.
      */
     private static void processOutputArgs(final ArgumentContext context, final UIOptionCollection<?> optionCollection) throws ConfigurationException {
-        for (Arg arg : new Arg[]{DRY_RUN, OUTPUT_FAMILIES, OUTPUT_LICENSES, OUTPUT_ARCHIVE, OUTPUT_STANDARD, OUTPUT_FILE, OUTPUT_STYLE}) {
+        for (Arg arg : List.of(DRY_RUN, OUTPUT_FAMILIES, OUTPUT_LICENSES, OUTPUT_ARCHIVE, OUTPUT_STANDARD, OUTPUT_FILE, OUTPUT_STYLE)) {
             arg.execute(context, optionCollection);
         }
     }

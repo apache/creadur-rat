@@ -41,7 +41,7 @@ import org.apache.rat.utils.CasedString;
 import static java.lang.String.format;
 
 /**
- * The collection of MavenOptions equivalent to the CLI options
+ * The collection of AntOptions equivalent to the CLI options
  * with any unsupported options removed.
  */
 public final class AntOptionCollection extends UIOptionCollection<AntOption> {
@@ -55,10 +55,10 @@ public final class AntOptionCollection extends UIOptionCollection<AntOption> {
 
     /** Attributes that are required for example data. */
     private static final Map<String, Map<String, String>> REQUIRED_ATTRIBUTES = new HashMap<>();
-    /** The list of data types that are specified as XML attributes in ant build.xml documents */
+    /** The list of data types that are specified as XML attributes in Ant build.xml documents */
     private static final List<Class<?>> ATTRIBUTE_TYPES = new ArrayList<>();
 
-    /** The map of option name conversioins */
+    /** The map of option name conversions. */
     private final Map<Option, Option> conversionMap;
 
     static {
@@ -72,24 +72,23 @@ public final class AntOptionCollection extends UIOptionCollection<AntOption> {
         REQUIRED_ATTRIBUTES.put("force", attributes);
         REQUIRED_ATTRIBUTES.put("editOverwrite", attributes);
 
-        // types that are specified as XML attributes in Ant.
+        // Types that are specified as XML attributes in Ant.
         ATTRIBUTE_TYPES.add(String.class);
         ATTRIBUTE_TYPES.add(String[].class);
         ATTRIBUTE_TYPES.add(Integer.class);
         ATTRIBUTE_TYPES.add(Long.class);
         ATTRIBUTE_TYPES.add(File.class);
-
     }
 
     public static Map<String, String> getRenameMap() {
         return new TreeMap<>(RENAME_MAP);
     }
 
-    /** The instance of the MavenOptionCollection */
+    /** The instance of the AntOptionCollection */
     public static final AntOptionCollection INSTANCE = new Builder().build();
 
     /**
-     * Create an Instance.
+     * Create an instance.
      */
     private AntOptionCollection(final Builder builder) {
         super(builder);
@@ -178,10 +177,10 @@ public final class AntOptionCollection extends UIOptionCollection<AntOption> {
     }
 
     /**
-     * The Builder for the MavenOptionCollection.
+     * The Builder for the AntOptionCollection.
      */
     public static final class Builder extends UIOptionCollection.Builder<AntOption, Builder> {
-        /** convert key to value type when generating code */
+        /** Convert key to value type when generating code */
         private final Map<Option, Option> conversions = new HashMap<>();
 
         private Builder() {
@@ -225,11 +224,11 @@ public final class AntOptionCollection extends UIOptionCollection<AntOption> {
      */
     public static class BuildType {
         /**
-         * The configuration tag for this build type
+         * The configuration tag for this build type.
          */
         private final String tag;
         /**
-         * If True adds the tag as the test extension
+         * If True adds the tag as the test extension.
          */
         private final boolean addExt;
 
@@ -257,8 +256,8 @@ public final class AntOptionCollection extends UIOptionCollection<AntOption> {
          * Gets a string comprising the Ant XML pattern for this data type and the number of arguments expected by the Ant option.
          *
          * @param delegateOption the Ant option that the call is delegated to.
-         * @param antOption      the actual ant option.
-         * @param data           the data for the actual ant option.
+         * @param antOption      the actual Ant option.
+         * @param data           the data for the actual Ant option.
          * @return the Ant XML pattern for this data type.
          */
         public String getXml(final AntOption delegateOption, final AntOption antOption, final String data) {
@@ -276,7 +275,6 @@ public final class AntOptionCollection extends UIOptionCollection<AntOption> {
                 return format(getMethodFormat(antOption), data);
             }
         }
-
 
         public String testName(final AntOption antOption) {
             return addExt ? format("%s_%s", antOption.getName(), antOption.getArgName()) : antOption.getName();

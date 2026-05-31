@@ -373,7 +373,7 @@ public class RatCheckMojoTest {
             for (ClaimStatistic.Counter counter : ClaimStatistic.Counter.values()) {
                 String xpath = String.format("/rat-report/statistics/statistic[@name='%s']", counter.displayName());
                 Map<String, String> map = mapOf("approval",
-                        counter == ClaimStatistic.Counter.UNAPPROVED ? "false" : "true",
+                        Boolean.toString(counter != ClaimStatistic.Counter.UNAPPROVED),
                         "count", data.get(counter),
                         "description", counter.getDescription());
                 XmlUtils.assertAttributes(document, xPath, xpath, map);

@@ -147,8 +147,8 @@ public abstract class UIOption<T extends UIOption<T>> {
     }
 
     /**
-     * Gets the CasedString version of the name for the native UI..
-     * @return the CasedString version of the name for the native UI..
+     * Gets the CasedString version of the name for the native UI.
+     * @return the CasedString version of the name for the native UI.
      */
     public final CasedString getCasedName() {
         return name;

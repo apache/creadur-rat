@@ -49,7 +49,7 @@ public final class AntDocumentation {
     private final File outputDir;
 
     /**
-     * Creates apt documentation files for Ant.
+     * Creates APT documentation files for Ant.
      * Requires 1 argument:
      * <ol>
      *     <li>the directory in which to write the documentation files.</li>
@@ -123,7 +123,7 @@ public final class AntDocumentation {
         options.stream().filter(typeFilter.and(o -> !o.isDeprecated()))
                 .map(o -> Arrays.asList(o.getName(), o.getDescription(),
                         o.hasArg() ? StringUtils.defaultIfEmpty(o.getArgName(), "String") : "boolean",
-                        o.isRequired() ? "true" : "false"))
+                        Boolean.toString(o.isRequired())))
                 .forEach(table::add);
 
         AptFormat.writeTable(out, table, "*--+--+--+--+", tableCaption);
@@ -231,8 +231,8 @@ public final class AntDocumentation {
 
         /**
          * Write a table.
-         * @param writer the Writer to write to.
-         * @param table the Table to write. A collection of collections of Strings.
+         * @param writer the writer to write to.
+         * @param table the table to write. A collection of collections of Strings.
          * @param pattern the pattern before and after the table.
          * @param caption the caption for the table.
          * @throws IOException on error.
@@ -253,7 +253,7 @@ public final class AntDocumentation {
         }
 
         /**
-         * Write a table entry.
+         * Write a table entry without caption.
          * @param writer the writer to write to.
          * @param table the table to write
          * @param pattern the pattern before and after the table.

@@ -45,7 +45,7 @@ public class ArgTests {
 
     @ParameterizedTest(name = "{0}")
     @ValueSource(strings = { "rat.txt", "./rat.txt", "/rat.txt", "target/rat.test" })
-    public void outputFleNameNoDirectoryTest(String name) throws ParseException, IOException {
+    public void outputFileNameNoDirectoryTest(String name) throws ParseException, IOException {
         class OutputFileConfig extends ReportConfiguration  {
             private File actual = null;
             @Override

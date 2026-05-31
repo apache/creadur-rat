@@ -31,36 +31,29 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.rat.api.Document;
 import org.apache.rat.commandline.Arg;
 import org.apache.rat.commandline.ArgumentContext;
-import org.apache.rat.document.DocumentName;
-import org.apache.rat.document.DocumentNameMatcher;
-import org.apache.rat.document.FileDocument;
 import org.apache.rat.help.Licenses;
 import org.apache.rat.report.IReportable;
 import org.apache.rat.ui.UIOptionCollection;
 import org.apache.rat.utils.DefaultLog;
-import org.apache.rat.walker.ArchiveWalker;
-import org.apache.rat.walker.DirectoryWalker;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
  * Uses the AbstractOptionCollection to parse the command line options.
- * contains utility methods to ReportConfiguration from the options and an array of arguments.
+ * Contains utility methods to ReportConfiguration from the options and an array of arguments.
  */
 @SuppressFBWarnings("EI_EXPOSE_REP2")
 public final class OptionCollectionParser {
-    /** The OptionCollection that we are working with */
+    /**
+     * The OptionCollection that we are working with.
+     */
     private final UIOptionCollection<?> uiOptionCollection;
 
     public OptionCollectionParser(final UIOptionCollection<?> optionCollection) {
         this.uiOptionCollection = optionCollection;
     }
-
-    /** The Option comparator to sort the help */
-    public static final Comparator<Option> OPTION_COMPARATOR = new OptionComparator();
 
     /**
      * Parses the standard options to create a ReportConfiguration.
@@ -107,7 +100,6 @@ public final class OptionCollectionParser {
      */
     private ArgumentContext parseCommands(final File workingDirectory, final String[] args,
                                                                        final Options options) throws IOException, ParseException {
-
         CommandLine commandLine = parseCommandLine(options, args);
         ArgumentContext argumentContext = new ArgumentContext(workingDirectory, commandLine);
         Arg.processLogLevel(argumentContext, uiOptionCollection);
@@ -141,36 +133,6 @@ public final class OptionCollectionParser {
             }
         }
         return configuration;
-    }
-
-    /**
-     * Creates an IReportable object from the directory name and ReportConfiguration
-     * object.
-     *
-     * @param base the directory that contains the files to report on.
-     * @param config the ReportConfiguration.
-     * @return the IReportable instance containing the files.
-     */
-    IReportable getReportable(final File base, final ReportConfiguration config) {
-        File absBase = base.getAbsoluteFile();
-        DocumentName documentName = DocumentName.builder(absBase).build();
-        if (!absBase.exists()) {
-            DefaultLog.getInstance().error("Directory '" + documentName + "' does not exist.");
-            return null;
-        }
-        DocumentNameMatcher documentExcluder = config.getDocumentExcluder(documentName);
-
-        Document doc = new FileDocument(documentName, absBase, documentExcluder);
-        if (!documentExcluder.matches(doc.getName())) {
-            DefaultLog.getInstance().error("Directory '" + documentName + "' is in excluded list.");
-            return null;
-        }
-
-        if (absBase.isDirectory()) {
-            return new DirectoryWalker(doc);
-        }
-
-        return new ArchiveWalker(doc);
     }
 
     /**

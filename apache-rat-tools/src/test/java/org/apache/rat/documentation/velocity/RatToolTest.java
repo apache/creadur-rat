@@ -18,7 +18,6 @@
  */
 package org.apache.rat.documentation.velocity;
 
-
 import java.util.List;
 import java.util.Map;
 
@@ -112,7 +111,6 @@ public class RatToolTest {
         assertThat(matchers).containsExactlyInAnyOrder("all", "any", "copyright", "matcherRef", "not", "regex", "spdx", "text");
     }
 
-
     @Test
     void standardCollections() {
         List<StandardCollection> lst = underTest.standardCollections();
@@ -124,7 +122,6 @@ public class RatToolTest {
         List<StyleSheets> styleSheets = underTest.styleSheets();
         assertThat(styleSheets).containsExactlyInAnyOrder(StyleSheets.values());
     }
-
 
     @Test
     void licenseProperties() {
@@ -140,6 +137,4 @@ public class RatToolTest {
                         .stream().map(ILicense::getName).toList();
         assertThat(actual).containsExactlyInAnyOrderElementsOf(expected);
     }
-
-
 }

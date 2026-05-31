@@ -25,16 +25,12 @@ import org.apache.rat.testhelpers.TextUtils;
 import org.junit.jupiter.api.Test;
 
 public class MavenOptionTest {
-
     @Test
-    public void getDeprecatedTest() {
+    void getDeprecatedTest() {
         for (Option option : Arg.getOptions().getOptions()) {
             if (option.isDeprecated()) {
-                MavenOptionCollection.INSTANCE.getMappedOption(option).ifPresent( mavenOption -> {
-                    String deprecated = mavenOption.getDeprecated();
-
-                    TextUtils.assertPatternNotInTarget("\\-\\- ", deprecated);
-                });
+                MavenOptionCollection.INSTANCE.getMappedOption(option).ifPresent( mavenOption -> //
+                        TextUtils.assertPatternNotInTarget("\\-\\- ", mavenOption.getDeprecated()));
             }
         }
     }

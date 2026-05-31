@@ -27,7 +27,7 @@ Maven Options
   environment. The argument types specified in the list below are defined in the section following.
 
  By default the RAT Maven plugin excludes the MAVEN standard collection as well as the defined project build directory.
-  If there there is a need to include any of these the MAVEN standard collection can be added to
+  If there is a need to include any of these the MAVEN standard collection can be added to
   \<inputIncludeStd\> and the project build directory can be added to \<inputInclude\> using the standard expression syntax.
 
 * The Options

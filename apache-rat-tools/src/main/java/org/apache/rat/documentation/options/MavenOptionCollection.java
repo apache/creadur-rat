@@ -36,7 +36,7 @@ import org.apache.rat.utils.CasedString;
  */
 public final class MavenOptionCollection extends UIOptionCollection<MavenOption> {
     /**
-     * mapping of standard name to non-conflicting name.
+     * Mapping of standard name to non-conflicting name.
      */
     private static final Map<String, String> RENAME_MAP;
 
@@ -47,7 +47,7 @@ public final class MavenOptionCollection extends UIOptionCollection<MavenOption>
     }
 
     /**
-     * The instance of the MavenOptionCollection
+     * The instance of the MavenOptionCollection.
      */
     public static final MavenOptionCollection INSTANCE = new Builder().build();
 
@@ -56,12 +56,11 @@ public final class MavenOptionCollection extends UIOptionCollection<MavenOption>
     }
 
     /**
-     * Create an Instance.
+     * Create an instance.
      */
     private MavenOptionCollection(final Builder builder) {
         super(builder);
     }
-
 
     public static Builder builder() {
         return new Builder();
