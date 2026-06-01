@@ -61,6 +61,8 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 /**
  * A class that reads the XML configuration file format.
  */
@@ -606,6 +608,7 @@ public final class XMLConfigurationReader implements LicenseReader, MatcherReade
         nodeListConsumer(document.getElementsByTagName(XMLConfig.MATCHER), this::parseMatcherBuilder);
     }
 
+    @SuppressFBWarnings("URLCONNECTION_SSRF_FD")
     @Override
     public void addMatchers(final URI uri) {
         read(uri);
