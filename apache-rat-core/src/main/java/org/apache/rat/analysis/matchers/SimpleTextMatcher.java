@@ -23,6 +23,8 @@ import org.apache.rat.analysis.IHeaders;
 import org.apache.rat.config.parameters.ComponentType;
 import org.apache.rat.config.parameters.ConfigComponent;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 /**
  * A simple text matching IHeaderMatcher implementation.
  */
@@ -44,11 +46,12 @@ public class SimpleTextMatcher extends AbstractHeaderMatcher {
         this(null, simpleText);
     }
 
+    // no sonar and supress FI_USELESS because this is how we ensure that the finalize bug does not bite us
+    @SuppressFBWarnings("FI_USELESS")
     @Override
     protected final void finalize() throws Throwable { // NOSONAR
-        // no sonar because this is how we ensure that the finalize bug does not bite us
+        // finalizer attack remediation.
         super.finalize(); // NOSONAR
-      // finalizer attack remediation.
     }
 
     /**

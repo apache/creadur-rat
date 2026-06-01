@@ -43,6 +43,8 @@ import org.apache.rat.license.ILicense;
 import org.apache.rat.license.ILicenseFamily;
 import org.apache.rat.license.LicenseSetFactory.LicenseFilter;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 import static java.lang.String.format;
 
 /**
@@ -64,6 +66,7 @@ public final class Licenses extends AbstractHelp {
      * @param config The configuration that contains the license information.
      * @param writer the writer to write the report to.
      */
+    @SuppressFBWarnings("EI_EXPOSE_REP2")
     public Licenses(final ReportConfiguration config, final Writer writer) {
         this.config = config;
         this.licenses = config.getLicenses(LicenseFilter.ALL);
