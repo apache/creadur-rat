@@ -24,11 +24,11 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 import org.apache.commons.cli.Option;
+import org.apache.commons.collections4.set.UnmodifiableSortedSet;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.rat.CLIOption;
 import org.apache.rat.CLIOptionCollection;
@@ -187,9 +187,8 @@ public class RatTool {
      * @return the set of Matchers.
      */
     public Set<Matcher> matchers() {
-        MatcherBuilderTracker tracker = MatcherBuilderTracker.instance();
         Set<Matcher> documentationSet = new TreeSet<>(Comparator.comparing(Matcher::getName));
-        for (Class<?> clazz : tracker.getClasses()) {
+        for (Class<?> clazz : MatcherBuilderTracker.instance().getClasses()) {
             Description desc = DescriptionBuilder.buildMap(clazz);
             documentationSet.add(new Matcher(desc, null));
         }
@@ -246,7 +245,7 @@ public class RatTool {
      * @return a list of license property descriptions.
      */
     public List<Description> licenseProperties() {
-        SortedSet<ILicense> licenses = licenseSetFactory.getLicenses(LicenseSetFactory.LicenseFilter.ALL);
+        UnmodifiableSortedSet<ILicense> licenses = licenseSetFactory.getLicenses(LicenseSetFactory.LicenseFilter.ALL);
         Description licenseDescription = DescriptionBuilder.build(licenses.first());
         List<Description> descriptions = new ArrayList<>(licenseDescription.filterChildren(d -> d.getType() == ComponentType.PARAMETER));
         descriptions.sort(Comparator.comparing(Description::getCommonName));
@@ -258,7 +257,7 @@ public class RatTool {
      * @return the list of defined licenses.
      */
     public List<License> licenses() {
-        Set<ILicense> licenses = licenseSetFactory.getLicenses(LicenseSetFactory.LicenseFilter.ALL);
+        UnmodifiableSortedSet<ILicense> licenses = licenseSetFactory.getLicenses(LicenseSetFactory.LicenseFilter.ALL);
         return licenses.stream().map(License::new).collect(Collectors.toList());
     }
 

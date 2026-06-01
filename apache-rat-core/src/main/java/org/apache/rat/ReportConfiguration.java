@@ -42,6 +42,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.apache.commons.collections4.set.UnmodifiableSortedSet;
 import org.apache.commons.io.function.IOSupplier;
 import org.apache.commons.io.output.CloseShieldOutputStream;
 import org.apache.commons.lang3.StringUtils;
@@ -73,6 +74,8 @@ import org.apache.rat.walker.FileListWalker;
 import org.apache.rat.walker.IReportableListWalker;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
+
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
  * A configuration object is used by the front end to invoke the
@@ -706,7 +709,7 @@ public class ReportConfiguration {
      * @param filter The LicenseFilter to filter the licenses by.
      * @return the Sorted set of approved license categories.
      */
-    public SortedSet<ILicense> getLicenses(final LicenseFilter filter) {
+    public UnmodifiableSortedSet<ILicense> getLicenses(final LicenseFilter filter) {
         return licenseSetFactory.getLicenses(filter);
     }
 
@@ -873,6 +876,12 @@ public class ReportConfiguration {
         licenseSetFactory.validate();
     }
 
+    /**
+     * Serializes the ReportConfiguration into an XML document that can be deserialzed by the Serde.
+     * Deserialized ReportConfigurations can not be executed as the reportable objects a simply named placeholders
+     * and do not have access to the original object.
+     */
+    @SuppressFBWarnings({"MALICIOUS_XSLT", "XXE_DOCUMENT"})
     public class Serde {
         /**
          * Writes the configuration as an XML document to the appendable.
@@ -966,6 +975,7 @@ public class ReportConfiguration {
                 addSource(new File(nAttributes.get("name")));
             });
 
+            // Deserialize the reportables.
             XMLConfigurationReader.nodeListConsumer(document.getElementsByTagName("reportable"), lNode -> {
                 Map<String, String> nAttributes = XMLConfigurationReader.attributes(lNode);
                 DocumentName documentName = DocumentName.builder().setBaseName(nAttributes.get("baseName"))
@@ -984,6 +994,10 @@ public class ReportConfiguration {
         }
     }
 
+    /**
+     * A record that identifies a deserialized reportable.  Deserialized reportables are not executable.
+     * @param name the name of the reportable.
+     */
     private record DeserializedReportable(DocumentName name) implements IReportable {
         @Override
         public void run(final RatReport report) throws RatException {
@@ -991,6 +1005,12 @@ public class ReportConfiguration {
         }
     }
 
+    /**
+     * An IODescriptor comprises a name and an IOSupplier.  The name should identify the contents of the stream.
+     * @param name the name of the supplier.
+     * @param ioSupplier the IOSupplier that provides either an InputStream or an OutputStream
+     * @param <T> either InputStream or OutputStream.
+     */
     public record IODescriptor<T>(String name, IOSupplier<T> ioSupplier) {
         /**
          * Creates an output IODescriptor for the file name within the working directory.
