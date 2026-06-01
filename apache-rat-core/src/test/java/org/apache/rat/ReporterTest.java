@@ -569,22 +569,22 @@ public class ReporterTest {
     @ParameterizedTest( name = "{index} {0}")
     @MethodSource("getTestData")
     void testReportData(String name, TestData test) throws Exception {
-        Path tempPath = tempDirectory.toPath();
-        Path basePath = tempPath.resolve(test.getTestName());
-        org.apache.rat.utils.FileUtils.mkDir(basePath.toFile());
-        test.setupFiles(basePath);
-        ArgumentContext ctxt = collectionParser.parseCommands(basePath.toFile(),
-                test.getCommandLine(basePath.toString()));
+        Path invokePath = testPath.resolve(test.getTestName());
+        org.apache.rat.utils.FileUtils.mkDir(invokePath.toFile());
+
+        test.setupFiles(invokePath);
+        ArgumentContext ctxt = collectionParser.parseCommands(invokePath.toFile(),
+                test.getCommandLine(invokePath.toString()));
         if (test.expectingException()) {
             assertThatThrownBy(() -> new Reporter(ctxt.getConfiguration()).execute()).as("Expected throws from " + name)
                     .hasMessageContaining(test.getExpectedException().getMessage());
             ValidatorData data = new ValidatorData(Reporter.Output.builder().configuration(ctxt.getConfiguration()).build(),
-                    basePath.toString());
+                    invokePath.toString());
             test.getValidator().accept(data);
         } else {
             Reporter.Output output = ctxt.getConfiguration() != null ? new Reporter(ctxt.getConfiguration()).execute() :
                     Reporter.Output.builder().build();
-            ValidatorData data = new ValidatorData(output, basePath.toString());
+            ValidatorData data = new ValidatorData(output, invokePath.toString());
             data.getOutput().format(data.getConfiguration());
             test.getValidator().accept(data);
         }
