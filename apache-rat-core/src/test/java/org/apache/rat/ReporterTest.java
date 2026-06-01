@@ -26,16 +26,20 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.lang.reflect.Method;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.TreeMap;
+import java.util.UUID;
 import java.util.stream.Stream;
 import javax.xml.XMLConstants;
 import javax.xml.transform.Source;
@@ -69,8 +73,12 @@ import org.apache.rat.testhelpers.data.TestData;
 import org.apache.rat.testhelpers.data.ValidatorData;
 import org.apache.rat.utils.StandardXmlFactory;
 import org.apache.rat.walker.DirectoryWalker;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.io.TempDir;
+import org.junit.jupiter.api.TestInfo;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -82,9 +90,26 @@ import org.xml.sax.SAXException;
  * Tests the output of the Reporter.
  */
 public class ReporterTest {
-    @TempDir
-    File tempDirectory;
+    /**
+     * temporary file.  Not using tempDir because it does not
+     * always work.
+     */
+    private static Path tempPath;
+    /**
+     * The TestInfo for the current test.
+     */
+    private TestInfo testInfo;
+
+    /**
+     * The directory for the test.
+     */
+    private Path testPath;
+
+    /**
+     * Directory for the test data.
+     */
     final String basedir;
+
     private final OptionCollectionParser collectionParser;
 
     ReporterTest() throws URISyntaxException {
@@ -92,9 +117,38 @@ public class ReporterTest {
         collectionParser = new OptionCollectionParser(BaseOptionCollection.builder().build());
     }
 
+    @BeforeAll
+    static void setUp() throws IOException {
+        tempPath = Files.createTempDirectory("ReporterTest");
+    }
+
+    @AfterAll
+    static void cleanup() throws IOException {
+        FileUtils.deleteDirectory(tempPath.toFile());
+    }
+
+    @BeforeEach
+    void setUpTest(TestInfo testInfo) {
+        this.testInfo = testInfo;
+        Optional<Method> testMethod = testInfo.getTestMethod();
+        this.testPath = tempPath.resolve(testMethod.isPresent() ?
+                        testMethod.get().getName() :
+                        UUID.randomUUID().toString());
+        File file = testPath.toFile();
+        if (!file.exists()) {
+            if (!file.mkdirs()) {
+                throw new RuntimeException("Unable to create temp directory: " + file.getName());
+            }
+        } else {
+            if (!file.isDirectory()) {
+                throw new RuntimeException(file.getName() + " is NOT a directory.");
+            }
+        }
+    }
+
     @Test
-    void testExecute() throws RatException, ParseException {
-        File output = new File(tempDirectory, "testExecute");
+    void testExecute() throws RatException, ParseException, IOException {
+        File output = testPath.resolve("testExecute").toFile();
         BaseOptionCollection optionCollection = BaseOptionCollection.builder().build();
         ArgumentContext ctxt = collectionParser.parseCommands(new File("."), new String[]{"--output-style", "xml", "--output-file", output.getPath(), basedir});
         ClaimStatistic statistic = new Reporter(ctxt.getConfiguration()).execute().getStatistic();
@@ -147,10 +201,9 @@ public class ReporterTest {
 
     @Test
     void testExecuteNoSource() throws ParseException, RatException, TransformerException {
-        File output = new File(tempDirectory, "testExecuteNoSource");
+        File output = testPath.resolve("testExecuteNoSource").toFile();
 
-        CommandLine cl = new DefaultParser().parse(OptionCollection.buildOptions(), new String[]{"--output-style", "xml", "--output-file", output.getPath()});
-        ArgumentContext context = new ArgumentContext(new File("."), cl);
+        ArgumentContext context = collectionParser.parseCommands(new File("."), new String[]{{"--output-style", "xml", "--output-file", output.getPath()}, basedir});
         ReportConfiguration config = OptionCollection.createConfiguration(context);
         Reporter.Output result = new Reporter(config).execute();
         assertThat(StandardXmlFactory.serializeDocument(result.getDocument())).isEmpty();
@@ -159,7 +212,7 @@ public class ReporterTest {
 
     @Test
     void testOutputOption() throws Exception {
-        File output = new File(tempDirectory, "test");
+        File output = testPath.resolve("testOutputOption.txt").toFile();
         ArgumentContext ctxt = collectionParser.parseCommands(new File("."), new String[]{"--output-file", output.getCanonicalPath(), basedir});
         new Reporter(ctxt.getConfiguration()).execute().format(ctxt.getConfiguration());
         assertThat(output.exists()).isTrue();
@@ -171,9 +224,8 @@ public class ReporterTest {
 
     @Test
     void testGetOutputMethod() throws Exception {
-        File output = new File(tempDirectory, "test");
-        CommandLine commandLine = new DefaultParser().parse(OptionCollection.buildOptions(), new String[]{"-o", output.getCanonicalPath(), basedir});
-        ArgumentContext context = new ArgumentContext(new File("."), commandLine);
+        File output = testPath.resolve("testGetOutputMethod.txt").toFile();
+        ArgumentContext context = collectionParser.parseCommands(new File("."), new String[]{"-o", output.getCanonicalPath(), basedir});
 
         ReportConfiguration config = OptionCollection.createConfiguration(context);
         Reporter reporter = new Reporter(config);
@@ -181,9 +233,10 @@ public class ReporterTest {
         assertThat(reporter.getOutput()).isEqualTo(expected);
     }
 
+
     @Test
     void testDefaultOutput() throws Exception {
-        File output = new File(tempDirectory, "testDefaultOutput");
+        File output = testPath.resolve("captured.txt").toFile();
         BaseOptionCollection optionCollection = BaseOptionCollection.builder().build();
 
         PrintStream origin = System.out;
@@ -238,9 +291,9 @@ public class ReporterTest {
         expected.put("/tri.txt", mapOf("encoding", "ISO-8859-1", "mediaType", "text/plain",
                 "type", "STANDARD"));
 
-        File output = new File(tempDirectory, ".rat/testXMLOutput");
+        File output = testPath.resolve(".rat/testXMLOutput").toFile();
         output.getParentFile().mkdir();
-        ArgumentContext ctxt = collectionParser.parseCommands(tempDirectory, new String[]{"--output-style", "xml", "--output-file", output.getPath(), basedir});
+        ArgumentContext ctxt = collectionParser.parseCommands(testPath.toFile(), new String[]{"--output-style", "xml", "--output-file", output.getPath(), basedir});
         new Reporter(ctxt.getConfiguration()).execute().format(ctxt.getConfiguration());
 
         assertThat(output).exists();
@@ -530,22 +583,22 @@ public class ReporterTest {
     @ParameterizedTest( name = "{index} {0}")
     @MethodSource("getTestData")
     void testReportData(String name, TestData test) throws Exception {
-        Path tempPath = tempDirectory.toPath();
-        Path basePath = tempPath.resolve(test.getTestName());
-        org.apache.rat.utils.FileUtils.mkDir(basePath.toFile());
-        test.setupFiles(basePath);
-        ArgumentContext ctxt = collectionParser.parseCommands(basePath.toFile(),
-                test.getCommandLine(basePath.toString()));
+        Path invokePath = testPath.resolve(test.getTestName());
+        org.apache.rat.utils.FileUtils.mkDir(invokePath.toFile());
+
+        test.setupFiles(invokePath);
+        ArgumentContext ctxt = collectionParser.parseCommands(invokePath.toFile(),
+                test.getCommandLine(invokePath.toString()));
         if (test.expectingException()) {
             assertThatThrownBy(() -> new Reporter(ctxt.getConfiguration()).execute()).as("Expected throws from " + name)
                     .hasMessageContaining(test.getExpectedException().getMessage());
             ValidatorData data = new ValidatorData(Reporter.Output.builder().configuration(ctxt.getConfiguration()).build(),
-                    basePath.toString());
+                    invokePath.toString());
             test.getValidator().accept(data);
         } else {
             Reporter.Output output = ctxt.getConfiguration() != null ? new Reporter(ctxt.getConfiguration()).execute() :
                     Reporter.Output.builder().build();
-            ValidatorData data = new ValidatorData(output, basePath.toString());
+            ValidatorData data = new ValidatorData(output, invokePath.toString());
             data.getOutput().format(data.getConfiguration());
             test.getValidator().accept(data);
         }
