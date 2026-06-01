@@ -220,8 +220,7 @@ public class OptionCollectionTest {
     @Test
     public void testDefaultConfiguration() throws ParseException {
         String[] empty = {};
-        CommandLine cl = new DefaultParser().parse(OptionCollection.buildOptions(), empty);
-        ArgumentContext context = new ArgumentContext(new File("."), cl);
+        ArgumentContext context = new ArgumentContext(new File("."), OptionCollection.buildOptions(), empty);
         ReportConfiguration config = OptionCollection.createConfiguration(context);
         ReportConfigurationTest.validateDefault(config);
     }
