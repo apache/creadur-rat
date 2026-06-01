@@ -216,7 +216,7 @@ public class ExclusionProcessor {
     public DocumentNameMatcher getNameMatcher(final DocumentName basedir) {
         // if lastMatcher is not set or the basedir is not the same as the last one then
         // we have to regenerate the matching document.
-        // Otherwise we can just return the lastMatcher since there is no change.
+        // Otherwise, we can just return the lastMatcher since there is no change.
         if (lastMatcher == null || !basedir.equals(lastMatcherBaseDir)) {
             lastMatcherBaseDir = basedir;
 
@@ -409,11 +409,13 @@ public class ExclusionProcessor {
                         includedCollections.add(collection);
                         break;
                     case "includedPath":
-                        excludedPaths.add(new DocumentNameMatcher(attributes.get("name"),
+                        includedPaths.add(new DocumentNameMatcher(attributes.get("name"),
                                 (Predicate<DocumentName>) x -> {
                                     throw new NotImplementedException("Deserialized ExclusionProcessor can not evaluate paths");
                                 }));
                         break;
+                    default:
+                        throw new NotImplementedException("Deserialization for %s is not implemented", child.getNodeName());
                 }
 
             }
