@@ -21,8 +21,6 @@ package org.apache.rat.analysis;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.Reader;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Locale;
 import java.util.Objects;
 
