@@ -21,10 +21,12 @@ package org.apache.rat.analysis;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.Reader;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Locale;
 import java.util.Objects;
 
+import org.apache.commons.collections4.set.UnmodifiableSortedSet;
 import org.apache.rat.ConfigurationException;
 import org.apache.rat.analysis.matchers.FullTextMatcher;
 import org.apache.rat.api.Document;
@@ -54,7 +56,7 @@ public final class HeaderCheckWorker {
     /** The BufferedReader used to read the lines */
     private final BufferedReader reader;
     /** The licenses to check for match */
-    private final Collection<ILicense> licenses;
+    private final UnmodifiableSortedSet<ILicense> licenses;
     /** The document being processed */
     private final Document document;
     /**  The matcher for generated headers */
@@ -108,7 +110,7 @@ public final class HeaderCheckWorker {
      * @param licenses The licenses to check against. Not null.
      * @param name The document that is being checked. Possibly null.
      */
-    public HeaderCheckWorker(final IHeaderMatcher generatedMatcher, final Reader reader, final Collection<ILicense> licenses, final Document name) {
+    public HeaderCheckWorker(final IHeaderMatcher generatedMatcher, final Reader reader, final UnmodifiableSortedSet<ILicense> licenses, final Document name) {
         this(generatedMatcher, reader, DEFAULT_NUMBER_OF_RETAINED_HEADER_LINES, licenses, name);
     }
 
@@ -123,7 +125,7 @@ public final class HeaderCheckWorker {
      * @param document The document that is being checked. Possibly null.
      */
     public HeaderCheckWorker(final IHeaderMatcher generatedMatcher, final Reader reader,
-                             final int numberOfRetainedHeaderLine, final Collection<ILicense> licenses,
+                             final int numberOfRetainedHeaderLine, final UnmodifiableSortedSet<ILicense> licenses,
                              final Document document) {
         Objects.requireNonNull(reader, "Reader may not be null");
         Objects.requireNonNull(licenses, "Licenses may not be null");

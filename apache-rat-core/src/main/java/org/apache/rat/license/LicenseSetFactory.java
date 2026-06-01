@@ -28,6 +28,7 @@ import java.util.TreeSet;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import org.apache.commons.collections4.set.UnmodifiableSortedSet;
 import org.apache.rat.ConfigurationException;
 import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.analysis.IHeaders;
@@ -319,18 +320,21 @@ public class LicenseSetFactory {
      * @param filter the types of LicenseFamily objects to return.
      * @return a SortedSet of ILicense objects.
      */
-    public SortedSet<ILicense> getLicenses(final LicenseFilter filter) {
+    public UnmodifiableSortedSet<ILicense> getLicenses(final LicenseFilter filter) {
+        SortedSet<ILicense> result = new TreeSet<>();
         switch (filter) {
         case ALL:
-            return Collections.unmodifiableSortedSet(licenses);
+            result = licenses;
+            break;
         case APPROVED:
-            SortedSet<ILicense> result = new TreeSet<>();
+            result = new TreeSet<>();
             licenses.stream().filter(getApprovedLicensePredicate()).forEach(result::add);
-            return result;
+            break;
         case NONE:
         default:
-            return Collections.emptySortedSet();
+            result = Collections.emptySortedSet();
         }
+        return (UnmodifiableSortedSet<ILicense>) UnmodifiableSortedSet.unmodifiableSortedSet(result);
     }
 
     /**
