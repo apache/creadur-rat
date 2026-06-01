@@ -34,12 +34,8 @@
           <verbose>true</verbose>
           <consoleOutput>true</consoleOutput>
           <ignoreErrors>false</ignoreErrors>
-          <inputIncludes>
-            <include>pom.xml</include>
-          </inputIncludes>
-          <inputExcludeStds>
-            <exclude>ALL</exclude>
-          </inputExcludeStds>
+          <inputIncludes>pom.xml</inputIncludes>
+          <inputExcludeStds>ALL</inputExcludeStds>
         </configuration>
       </plugin>
     </plugins>

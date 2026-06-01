@@ -24,7 +24,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
-import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
 
@@ -36,6 +35,7 @@ import org.apache.commons.text.StringEscapeUtils;
 import org.apache.commons.text.WordUtils;
 import org.apache.rat.OptionCollection;
 import org.apache.rat.documentation.options.MavenOption;
+import org.apache.rat.documentation.options.MavenOptionCollection;
 import org.apache.rat.utils.CasedString;
 import org.apache.rat.utils.CasedString.StringCase;
 
@@ -74,7 +74,6 @@ public final class MavenGenerator {
         String packageName = args[0];
         String className = args[1];
         String destDir = args[2];
-        List<MavenOption> options = MavenOption.getMavenOptions();
         String pkgName = String.join(File.separator, new CasedString(StringCase.DOT, packageName).getSegments());
         File file = new File(new File(new File(destDir), pkgName), className + ".java");
         System.out.println("Creating " + file);
@@ -89,21 +88,19 @@ public final class MavenGenerator {
                 String line = iter.next();
                 switch (line.trim()) {
                     case "${static}":
-                        for (Map.Entry<String, String> entry : MavenOption.getRenameMap().entrySet()) {
+                        for (Map.Entry<?, ?> entry : MavenOptionCollection.getRenameMap().entrySet()) {
                             writer.append(format("        xlateName.put(\"%s\", \"%s\");%n", entry.getKey(), entry.getValue()));
                         }
-                        for (Option option : MavenOption.getFilteredOptions()) {
+                        for (Option option : MavenOptionCollection.INSTANCE.getUnsupportedOptions().getOptions()) {
                             writer.append(format("        unsupportedArgs.add(\"%s\");%n", argsKey(option)));
                         }
-                        for (MavenOption option : options) {
-                            if (option.isDeprecated()) {
-                                writer.append(format("        deprecatedArgs.put(\"%s\", \"%s\");%n", argsKey(option.getOption()),
-                                        format("Use of deprecated option '%s'. %s", option.getName(), option.getDeprecated())));
-                            }
+                        for (MavenOption option : MavenOptionCollection.INSTANCE.getMappedOptions().filter(MavenOption::isDeprecated).toList()) {
+                            writer.append(format("        deprecatedArgs.put(\"%s\", \"%s\");%n", argsKey(option.getOption()),
+                                    format("Use of deprecated option '%s'. %s", option.getName(), option.getDeprecated())));
                         }
                         break;
                     case "${methods}":
-                        writeMethods(writer, options);
+                        writeMethods(writer);
                         break;
                     case "${package}":
                         writer.append(format("package %s;%n", packageName));
@@ -165,14 +162,14 @@ public final class MavenGenerator {
         return sb.append(format("     */%n")).toString();
     }
 
-    private static void writeMethods(final FileWriter writer, final List<MavenOption> options) throws IOException {
-        for (MavenOption option : options) {
+    private static void writeMethods(final FileWriter writer) throws IOException {
+        for (MavenOption option : MavenOptionCollection.INSTANCE.getMappedOptions().toList()) {
             writer.append(getComment(option))
                     .append(option.getMethodSignature("    ", option.hasArgs())).append(" {").append(System.lineSeparator())
                     .append(getBody(option))
                     .append("    }").append(System.lineSeparator());
             if (option.hasArgs()) {
-                // create multi argument method
+                // create single argument method
                 writer.append(getComment(option))
                         .append(option.getMethodSignature("    ", false)).append(" {").append(System.lineSeparator())
                         .append(getBody(option))
@@ -183,10 +180,10 @@ public final class MavenGenerator {
 
     private static String getBody(final MavenOption option) {
         if (option.hasArg()) {
-            return format("        %sArg(%s, %s);%n", option.hasArgs() ? "add" : "set", option.keyValue(), option.getName());
+            return format("        %sArg(\"%s\", %s);%n", option.hasArgs() ? "add" : "set", option.keyValue(), option.getName());
         } else {
-            return format("        if (%1$s) {%n            setArg(%2$s, null);%n" +
-                            "        } else {%n            removeArg(%2$s);%n        }%n",
+            return format("        if (%1$s) {%n            setArg(\"%2$s\", null);%n" +
+                            "        } else {%n            removeArg(\"%2$s\");%n        }%n",
                     option.getName(), option.keyValue());
         }
     }

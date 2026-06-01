@@ -30,15 +30,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 import java.util.function.Predicate;
-import java.util.function.Supplier;
 
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.rat.OptionCollection;
 import org.apache.rat.documentation.options.AntOption;
+import org.apache.rat.documentation.options.AntOptionCollection;
 import org.apache.rat.utils.DefaultLog;
 
 import static java.lang.String.format;
@@ -51,7 +49,7 @@ public final class AntDocumentation {
     private final File outputDir;
 
     /**
-     * Creates apt documentation files for Ant.
+     * Creates APT documentation files for Ant.
      * Requires 1 argument:
      * <ol>
      *     <li>the directory in which to write the documentation files.</li>
@@ -79,13 +77,13 @@ public final class AntDocumentation {
         new AntDocumentation(outputDir).execute();
     }
 
-   private AntDocumentation(final File outputDir) {
+    /* Visible for testing */
+    AntDocumentation(final File outputDir) {
         this.outputDir = outputDir;
     }
 
     public void execute() {
-        List<AntOption> options = AntOption.getAntOptions();
-
+        List<AntOption> options = AntOptionCollection.INSTANCE.getMappedOptions().toList();
         writeAttributes(options);
         writeElements(options);
         printValueTypes();
@@ -110,7 +108,9 @@ public final class AntDocumentation {
             throw new RuntimeException(e);
         }
     }
-    private void printOptions(final Writer out, final List<AntOption> options,
+
+    /* package private for testing */
+    void printOptions(final Writer out, final List<AntOption> options,
                               final Predicate<AntOption> typeFilter, final String tableCaption) throws IOException {
         boolean hasDeprecated = options.stream().anyMatch(typeFilter.and(AntOption::isDeprecated));
 
@@ -123,7 +123,7 @@ public final class AntDocumentation {
         options.stream().filter(typeFilter.and(o -> !o.isDeprecated()))
                 .map(o -> Arrays.asList(o.getName(), o.getDescription(),
                         o.hasArg() ? StringUtils.defaultIfEmpty(o.getArgName(), "String") : "boolean",
-                        o.isRequired() ? "true" : "false"))
+                        Boolean.toString(o.isRequired())))
                 .forEach(table::add);
 
         AptFormat.writeTable(out, table, "*--+--+--+--+", tableCaption);
@@ -151,9 +151,9 @@ public final class AntDocumentation {
         List<List<String>> table = new ArrayList<>();
         table.add(Arrays.asList("Value Type", "Description"));
 
-        for (Map.Entry<String, Supplier<String>> argInfo : OptionCollection.getArgumentTypes().entrySet()) {
-            table.add(Arrays.asList(argInfo.getKey(), argInfo.getValue().get()));
-        }
+        AntOptionCollection.INSTANCE.getMappedOptions()
+                .map(antOption -> Arrays.asList(antOption.getName(), antOption.getDescription()))
+                .forEach(table::add);
 
         AptFormat.writeTable(writer, table, "*--+--+");
 
@@ -231,8 +231,8 @@ public final class AntDocumentation {
 
         /**
          * Write a table.
-         * @param writer the Writer to write to.
-         * @param table the Table to write. A collection of collections of Strings.
+         * @param writer the writer to write to.
+         * @param table the table to write. A collection of collections of Strings.
          * @param pattern the pattern before and after the table.
          * @param caption the caption for the table.
          * @throws IOException on error.
@@ -253,7 +253,7 @@ public final class AntDocumentation {
         }
 
         /**
-         * Write a table entry.
+         * Write a table entry without caption.
          * @param writer the writer to write to.
          * @param table the table to write
          * @param pattern the pattern before and after the table.

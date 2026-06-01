@@ -174,6 +174,9 @@ public class ExclusionProcessor {
         for (StandardCollection sc : fileProcessors) {
             appendable.append(format("Processing exclude file from %s.%n", sc.name()));
         }
+        for (DocumentNameMatcher nameMatcher : excludedPaths) {
+            appendable.append(format("Excluding %s.%n", nameMatcher.toString()));
+        }
     }
 
 
@@ -199,8 +202,8 @@ public class ExclusionProcessor {
      */
     public DocumentNameMatcher getNameMatcher(final DocumentName basedir) {
         // if lastMatcher is not set or the basedir is not the same as the last one then
-        // we have to regenerate the matching document. Otherwise we can just return the
-        // lastMatcher since there is no change.
+        // we have to regenerate the matching document.
+        // Otherwise we can just return the lastMatcher since there is no change.
         if (lastMatcher == null || !basedir.equals(lastMatcherBaseDir)) {
             lastMatcherBaseDir = basedir;
 

@@ -23,6 +23,7 @@ import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
+import org.apache.rat.CLIOptionCollection;
 import org.apache.rat.DeprecationReporter;
 import org.apache.rat.OptionCollection;
 import org.apache.rat.ReportConfiguration;
@@ -44,7 +45,7 @@ public class ArgTests {
 
     @ParameterizedTest(name = "{0}")
     @ValueSource(strings = { "rat.txt", "./rat.txt", "/rat.txt", "target/rat.test" })
-    public void outputFleNameNoDirectoryTest(String name) throws ParseException, IOException {
+    public void outputFileNameNoDirectoryTest(String name) throws ParseException, IOException {
         class OutputFileConfig extends ReportConfiguration  {
             private File actual = null;
             @Override
@@ -58,7 +59,7 @@ public class ArgTests {
         CommandLine commandLine = createCommandLine(new String[] {"--output-file", fileName});
         OutputFileConfig configuration = new OutputFileConfig();
         ArgumentContext ctxt = new ArgumentContext(new File("."), configuration, commandLine);
-        Arg.processArgs(ctxt);
+        Arg.processArgs(ctxt, CLIOptionCollection.INSTANCE);
         assertThat(configuration.actual.getAbsolutePath()).isEqualTo(expected.getCanonicalPath());
     }
 }

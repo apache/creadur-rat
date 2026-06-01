@@ -16,22 +16,20 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.rat.documentation.options;
+package org.apache.rat.ui;
 
-import org.apache.commons.cli.Option;
-import org.apache.rat.commandline.Arg;
-import org.apache.rat.testhelpers.TextUtils;
-
-import org.junit.jupiter.api.Test;
-
-public class MavenOptionTest {
-    @Test
-    void getDeprecatedTest() {
-        for (Option option : Arg.getOptions().getOptions()) {
-            if (option.isDeprecated()) {
-                MavenOptionCollection.INSTANCE.getMappedOption(option).ifPresent( mavenOption -> //
-                        TextUtils.assertPatternNotInTarget("\\-\\- ", mavenOption.getDeprecated()));
-            }
-        }
+public interface UI<T extends UIOption<T>> {
+    /**
+     * Gets the common name of this UI.
+     * @return the common name of this UI.
+     */
+    default String name() {
+        return getClass().getSimpleName();
     }
+
+    /**
+     * Gets the OptionFactory configuration for this UI.
+     * @return the OptionFactory configuration for this UI.
+     */
+    UIOptionCollection<T> getOptionCollection();
 }

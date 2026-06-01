@@ -25,6 +25,7 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.ParseException;
 import org.apache.rat.ReportConfiguration;
 import org.apache.rat.document.DocumentName;
+import org.apache.rat.ui.UIOptionCollection;
 import org.apache.rat.utils.DefaultLog;
 
 import static java.lang.String.format;
@@ -33,7 +34,7 @@ import static java.lang.String.format;
  * Provides the context necessary to process various arguments.
  * @since 0.17
  */
-public class ArgumentContext {
+public final class ArgumentContext {
     /** The report configuration that is being built */
     private final ReportConfiguration configuration;
     /** The command line that is building the configuration */
@@ -65,8 +66,8 @@ public class ArgumentContext {
     /**
      * Process the arguments specified in this context.
      */
-    public void processArgs() {
-        Arg.processArgs(this);
+    public void processArgs(final UIOptionCollection<?> uiOptionCollection) {
+        Arg.processArgs(this,  uiOptionCollection);
     }
 
     /**

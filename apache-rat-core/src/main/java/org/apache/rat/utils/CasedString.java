@@ -35,9 +35,9 @@ import org.apache.commons.text.WordUtils;
  * @since 0.17
  */
 public final class CasedString {
-    /** The segments of the cased string */
+    /** The segments of the cased string. */
     private final String[] segments;
-    /** The case of the string as parsed */
+    /** The case of the string as parsed. */
     private final StringCase stringCase;
     /** A joiner used for the pascal and camel cases. */
     private static final Function<String[], String> CAMEL_JOINER = strings -> {
@@ -57,7 +57,7 @@ public final class CasedString {
     }
 
     /**
-     * Creates a cased string of the specified case and segments.
+     * Creates a cased string of the specified case and segments
      * @param stringCase the case of the string.
      * @param segments the segments of the string.
      */
@@ -72,7 +72,7 @@ public final class CasedString {
      * @return the new CasedString.
      */
     public CasedString as(final StringCase stringCase) {
-        return stringCase.name.equals(this.stringCase.name) ? this : new CasedString(stringCase, (String[]) Arrays.copyOf(this.segments, this.segments.length));
+        return stringCase.name.equals(this.stringCase.name) ? this : new CasedString(stringCase, Arrays.copyOf(this.segments, this.segments.length));
     }
 
     /**
@@ -112,7 +112,7 @@ public final class CasedString {
     }
 
     /**
-     * The definition of a string case.
+     * The definition of a String case.
      */
     public static final class StringCase {
         /** The camel case. Example: "HelloWorld"*/
@@ -133,15 +133,16 @@ public final class CasedString {
         static final String[] NULL_SEGMENT;
         /** An empty segment marker. */
         static final String[] EMPTY_SEGMENT;
-        /** The name of this case */
+        /** The name of this case. */
         private final String name;
-        /** The predicate that determines if a character is a splitter character. A splitter character
+        /**
+         * The predicate that determines if a character is a spliter character. A splitter character
          * is the character that signals the start of a new segment.
          */
         private final Predicate<Character> splitter;
         /**
-         * If {@code true}, the splitter character is preserved as part of the subsequent section otherwise,
-         * the splitter character is discarded.
+         * If {@code true} the spliter character is preserved as part of the subsequent section otherwise,
+         * the spliter character is discarded.
          */
         private final boolean preserveSplit;
         /** The function that converts segments into the String representation */
@@ -163,7 +164,7 @@ public final class CasedString {
         /**
          * Constructs a String case for the common cases where the delimiter is not preserved in the segments.
          * @param name the name of the case.
-         * @param delimiter the delimter between segments.
+         * @param delimiter the delimiter between segments.
          */
         public StringCase(final String name, final char delimiter) {
             this(name, c -> c == delimiter, false, simpleJoiner(delimiter));
@@ -193,7 +194,7 @@ public final class CasedString {
          * @return the assembled string.
          */
         public static Function<String[], String> simpleJoiner(final char delimiter) {
-            return s -> String.join(String.valueOf(delimiter), (CharSequence[]) Arrays.stream(s).filter(Objects::nonNull).toArray(String[]::new));
+            return s -> String.join(String.valueOf(delimiter), Arrays.stream(s).filter(Objects::nonNull).toArray(String[]::new));
         }
 
         @Override
@@ -243,8 +244,6 @@ public final class CasedString {
                 return lst.stream().map(this.postProcess).filter(Objects::nonNull).toArray(String[]::new);
             }
         }
-
-
         static {
             CAMEL = new StringCase("CAMEL", Character::isUpperCase, true, CasedString.CAMEL_JOINER,
                     x -> (String) StringUtils.defaultIfEmpty(x, (CharSequence) null));
