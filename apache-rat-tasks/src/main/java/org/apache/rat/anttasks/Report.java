@@ -474,7 +474,7 @@ public class Report extends BaseAntTask {
      * @deprecated use &lt;editCopyright&gt; amd &lt;editOverwrite&gt; instead.
      */
     @Deprecated
-    public static class AddLicenseHeaders extends EnumeratedAttribute {
+    public final static class AddLicenseHeaders extends EnumeratedAttribute {
         /**
          * add license headers and create *.new file
          */
