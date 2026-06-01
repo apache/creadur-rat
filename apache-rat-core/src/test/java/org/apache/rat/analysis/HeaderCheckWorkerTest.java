@@ -48,6 +48,13 @@ class HeaderCheckWorkerTest {
         return (UnmodifiableSortedSet<ILicense>) UnmodifiableSortedSet.unmodifiableSortedSet(inner);
     }
 
+    /** Create an unmodifiable sorted set from members */
+    private UnmodifiableSortedSet<ILicense> asLicenses(ILicense... licenses) {
+        SortedSet<ILicense> inner = new  TreeSet<>();
+        inner.addAll(List.of(licenses));
+        return (UnmodifiableSortedSet<ILicense>) UnmodifiableSortedSet.unmodifiableSortedSet(inner);
+    }
+
     @Test
     void emptyInputIsUnknownTest() throws RatHeaderAnalysisException {
         final Document subject = new TestingDocument("subject");
