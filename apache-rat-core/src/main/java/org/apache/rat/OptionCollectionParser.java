@@ -77,8 +77,7 @@ public final class OptionCollectionParser {
      * @return the CommandLine
      * @throws ParseException on option parsing error.
      */
-    //@VisibleForTesting
-    CommandLine parseCommandLine(final Options opts, final String[] args) throws ParseException {
+    public static CommandLine parseCommandLine(final Options opts, final String[] args) throws ParseException {
         try {
             return DefaultParser.builder().setDeprecatedHandler(DeprecationReporter.getLogReporter())
                     .setAllowPartialMatching(true).build().parse(opts, args);
@@ -101,8 +100,7 @@ public final class OptionCollectionParser {
      */
     private ArgumentContext parseCommands(final File workingDirectory, final String[] args,
                                                                        final Options options) throws IOException, ParseException {
-        CommandLine commandLine = parseCommandLine(options, args);
-        ArgumentContext argumentContext = new ArgumentContext(workingDirectory, commandLine);
+        ArgumentContext argumentContext = new ArgumentContext(workingDirectory, options, args);
         Arg.processLogLevel(argumentContext, uiOptionCollection);
         populateConfiguration(argumentContext);
         if (uiOptionCollection.isSelected(Arg.HELP_LICENSES)) {

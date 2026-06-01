@@ -35,7 +35,6 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
@@ -132,27 +131,22 @@ public final class OptionCollection {
                                                     final Consumer<Options> helpCmd, final boolean noArgs) throws IOException {
 
         Options opts = buildOptions();
-        CommandLine commandLine;
+            ArgumentContext argumentContext;
         try {
-            commandLine = DefaultParser.builder().setDeprecatedHandler(DeprecationReporter.getLogReporter())
-                    .setAllowPartialMatching(true).build().parse(opts, args);
+            argumentContext = new ArgumentContext(workingDirectory, opts, args);
         } catch (ParseException e) {
-            DefaultLog.getInstance().error(e.getMessage());
-            DefaultLog.getInstance().error("Please use the \"--help\" option to see a list of valid commands and options.", e);
             System.exit(1);
             return null; // dummy return (won't be reached) to avoid Eclipse complaint about possible NPE
             // for "commandLine"
         }
-
-        ArgumentContext argumentContext = new ArgumentContext(workingDirectory, commandLine);
         Arg.processLogLevel(argumentContext, CLIOptionCollection.INSTANCE);
 
-        if (commandLine.hasOption(HELP)) {
+        if (argumentContext.getCommandLine().hasOption(HELP)) {
             helpCmd.accept(opts);
             return null;
         }
 
-        if (commandLine.hasOption(Arg.HELP_LICENSES.option())) {
+        if (argumentContext.getCommandLine().hasOption(Arg.HELP_LICENSES.option())) {
             new Licenses(createConfiguration(argumentContext), new PrintWriter(System.out, false, StandardCharsets.UTF_8)).printHelp();
             return null;
         }
