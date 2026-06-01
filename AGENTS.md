@@ -1,3 +1,10 @@
+# Agent guidance
+
+This file is read by automated agents (security scanners, code
+analyzers, AI assistants) operating on this repository. It
+points them at the human-authored references they should
+consult before producing output.
+
 # CODE STYLE
 - Use consistent naming conventions
 - Follow language-specific style guides
