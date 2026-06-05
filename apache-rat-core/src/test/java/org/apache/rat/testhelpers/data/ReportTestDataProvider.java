@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
@@ -907,11 +908,11 @@ public class ReportTestDataProvider extends AbstractTestDataProvider {
                     try {
                         assertThat(validatorData.getStatistic()).isNotNull();
                         File javaFile = validatorData.getBaseDir().resolve("NoLicense.java").toFile();
-                        String contents = String.join("\n", IOUtils.readLines(new FileReader(javaFile)));
+                        String contents = String.join("\n", IOUtils.readLines(new FileReader(javaFile, StandardCharsets.UTF_8)));
                         assertThat(contents).isEqualTo("class NoLicense {}");
                         File resultFile = validatorData.getBaseDir().resolve("NoLicense.java.new").toFile();
                         assertThat(resultFile).exists();
-                        contents = String.join("\n", IOUtils.readLines(new FileReader(resultFile)));
+                        contents = String.join("\n", IOUtils.readLines(new FileReader(resultFile, StandardCharsets.UTF_8)));
                         assertThat(contents).isEqualTo("""
                                 /*
                                  * Licensed to the Apache Software Foundation (ASF) under one
@@ -1247,7 +1248,7 @@ public class ReportTestDataProvider extends AbstractTestDataProvider {
                         DefaultLog.getInstance().warn("outputStyleTest setup for " + basePath);
                         DocumentName name = DocumentName.builder().setName("fileStyleSheet.xslt")
                                 .setBaseName(basePath.toString()).build();
-                        try (FileWriter fileWriter = new FileWriter(new File(name.getBaseName(), name.getName()));
+                        try (FileWriter fileWriter = new FileWriter(name.asFile(), StandardCharsets.UTF_8);
                              XmlWriter writer = new XmlWriter(fileWriter)) {
                             writer.startDocument()
                                     .comment(DataUtils.ASF_TEXT)

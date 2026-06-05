@@ -28,11 +28,11 @@ public class ArchiveEntryName extends DocumentName {
     private final DocumentName archiveFileName;
 
     private static DocumentName.Builder prepareBuilder(final DocumentName archiveFileName, final String archiveEntryName) {
-        String root = archiveFileName.getName() + "#";
+        String root = archiveFileName.getName() + "#/";
         FSInfo fsInfo = new FSInfo("archiveEntry", "/", true, Collections.singletonList(root));
         return DocumentName.builder(fsInfo)
                 .setRoot(root)
-                .setBaseName(root + "/")
+                .setBaseName("/")
                 .setName(archiveEntryName);
     }
     public ArchiveEntryName(final DocumentName archiveFileName, final String archiveEntryName) {
@@ -70,15 +70,5 @@ public class ArchiveEntryName extends DocumentName {
         String superLocal = super.localized(dirSeparator);
         superLocal = superLocal.substring(superLocal.lastIndexOf("#") + 1);
         return archiveFileName.localized(dirSeparator) + "#" + superLocal;
-    }
-
-    @Override
-    public boolean equals(final Object other) {
-        return super.equals(other);
-    }
-
-    @Override
-    public int hashCode() {
-        return super.hashCode();
     }
 }
