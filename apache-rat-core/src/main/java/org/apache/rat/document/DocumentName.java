@@ -672,6 +672,16 @@ public class DocumentName implements Comparable<DocumentName> {
             return result;
         }
 
+        /**
+         * Creates a path separated by the directory separator.
+         * Starting with an empty string will cause the directory separateor to appear at the beginning.
+         * @param segments the segments that make up the path.
+         * @return the path string.
+         */
+        public String mkPath(final String... segments) {
+            return String.join(dirSeparator(), segments);
+        }
+
         @Override
         public int compareTo(final FSInfo other) {
             int result = this.name.compareToIgnoreCase(other.name);
