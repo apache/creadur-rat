@@ -19,23 +19,38 @@
 package org.apache.rat.document;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Stream;
+
+import org.apache.commons.lang3.tuple.Pair;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.FieldSource;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.apache.rat.document.FSInfoTest.WINDOWS;
 
+/**
+ * Tests the DcoumentName.Builder class
+ */
 public class DocumentNameBuilderTest {
 
-    @ParameterizedTest(name="{0}")
-    @MethodSource("buildTestData")
-    void buildTest(String testName, DocumentName documentName, String name, String shortName, String baseName, String root,
+    private static final DocumentName.FSInfo[] TEST_SUITE = FSInfoTest.TEST_SUITE;
+
+    /**
+     * Validates the data in a document name matches expected data.
+     * @param documentName the document name to check
+     * @param name the expected fully qualified name.
+     * @param shortName the name for the last segment of the name.
+     * @param baseName the name of the base document.
+     * @param root the root the document is in.
+     * @param directorySeparator the expected directory separator.
+     * @param isCaseSensitive the expected case sensitivity.
+     * @param localized the default localized name (e.g. path and file name from base name).
+     * @param localizedArg the localized name with directory separator set to '+'
+     */
+    void assertDocumentName(DocumentName documentName, String name, String shortName, String baseName, String root,
                    String directorySeparator, Boolean isCaseSensitive, String localized, String localizedArg) {
         assertThat(documentName.getName()).as("Invalid name").isEqualTo(name);
         assertThat(documentName.getShortName()).as("Invalid short name").isEqualTo(shortName);
@@ -48,120 +63,189 @@ public class DocumentNameBuilderTest {
             assertThat(documentName.isCaseSensitive()).as("Invalid case sensitivity").isFalse();
         }
         assertThat(documentName.localized()).as("Invalid localized ").isEqualTo(localized);
-        final String sep = documentName.getDirectorySeparator().equals("/") ? "\\" : "/";
-        assertThat(documentName.localized(sep)).as(() -> String.format("Invalid localized('%s')", sep)).isEqualTo(localizedArg);
+        assertThat(documentName.localized("+")).as("Invalid localized('+')").isEqualTo(localizedArg);
     }
 
-    static Stream<Arguments> buildTestData() {
-        List<Arguments> lst = new ArrayList<>();
+    /**
+     * Verifies tha the baseName is not modified when used in the builder.
+     * Base name is default root + OS name.  For example C:\windows, or /unix
+     * @param fsInfo the file system info for the test.
+     */
+    @ParameterizedTest
+    @FieldSource("TEST_SUITE")
+    void baseNamePreserved(DocumentName.FSInfo fsInfo) {
+        final String root = fsInfo.roots()[0];
+        final String baseNameStr = root + fsInfo;
+        // create a document {os name}/bar.  Used to establish basename in builder.
+        final DocumentName siblingName = DocumentName.builder(fsInfo).setName("bar").setBaseName(fsInfo.toString()).build();
 
-            //
-            String testName = "windows\\foo direct";
-            DocumentName documentName = DocumentName.builder(WINDOWS).setName("C:\\windows\\foo").setBaseName("C:\\windows").build();
-            lst.add(Arguments.of( testName, documentName, "C:\\windows\\foo", "foo", "C:\\windows", "C:", "\\", false,
-                    "\\foo", "/foo"));
-            DocumentName baseName = documentName;
+        // check a relative name does not change base name.
+        String nameStr = fsInfo.mkPath("foo", "baz");
+        DocumentName documentName = DocumentName.builder(siblingName).setName(nameStr).build();
+        String expected = root + fsInfo.mkPath(fsInfo.toString(), "foo", "baz");
+        assertThat(documentName.getName()).as("relative value").isEqualTo(expected);
+        assertDocumentName(documentName, expected, "baz", baseNameStr, root, fsInfo.dirSeparator(), fsInfo.isCaseSensitive(),
+                fsInfo.dirSeparator() + nameStr, "+foo+baz");
 
-            //
-            testName = "builder(docName)";
-            documentName = DocumentName.builder(baseName).build();
-            lst.add(Arguments.of( testName, documentName, "C:\\windows\\foo", "foo", "C:\\windows", "C:", "\\", false,
-                    "\\foo", "/foo"));
+        // check a FQName results in the base name not being changed.
+        documentName = DocumentName.builder(siblingName).setName(expected).build();
+        assertThat(documentName.getName()).as("absolute value").isEqualTo(expected);
+        assertDocumentName(documentName, expected, "baz", baseNameStr, root, fsInfo.dirSeparator(), fsInfo.isCaseSensitive(),
+                fsInfo.dirSeparator() + nameStr, "+foo+baz");
 
-            //
-            testName = "windows\\foo\\bar by resolve";
-            documentName = baseName.resolve("bar");
-            lst.add(Arguments.of(testName, documentName, "C:\\windows\\foo\\bar", "bar", "C:\\windows", "C:", "\\", false,
-                    "\\foo\\bar", "/foo/bar"));
+    }
 
-            //
-            testName = "windows\\foo\\direct by basename";
-            documentName = DocumentName.builder(baseName).setName("windows\\foo\\direct").build();
-            lst.add(Arguments.of(testName, documentName, "C:\\windows\\foo\\direct", "direct", "C:\\windows", "C:", "\\", false,
-                    "\\foo\\direct", "/foo/direct"));
+    @ParameterizedTest
+    @FieldSource("TEST_SUITE")
+    void documentNameFromFQNameWithBaseName(DocumentName.FSInfo fsInfo) {
+        final String root = fsInfo.roots()[0];
+        final String baseNameStr = root + fsInfo;
+        String fqName = root + fsInfo.mkPath(fsInfo.toString(), "foo");
+        DocumentName documentName = DocumentName.builder(fsInfo).setName(fqName).setBaseName(baseNameStr).build();
+        assertDocumentName(documentName, fqName, "foo", baseNameStr, root, fsInfo.dirSeparator(), fsInfo.isCaseSensitive(),
+                fsInfo.dirSeparator() + "foo", "+foo");
+    }
 
-            //
-            testName = "windows\\foo\\bar by file";
-            File file = mock(File.class);
-            File parent = mock(File.class);
-            when(file.getAbsolutePath()).thenReturn("C:\\windows\\foo\\bar");
-            when(file.getParentFile()).thenReturn(parent);
-            when(file.isDirectory()).thenReturn(false);
-            when(parent.getAbsolutePath()).thenReturn("C:\\windows\\foo");
-            when(parent.isDirectory()).thenReturn(true);
-            documentName = new DocumentName.Builder(WINDOWS, file).build();
-            lst.add(Arguments.of(testName, documentName, "C:\\windows\\foo\\bar", "bar", "C:\\windows\\foo", "C:", "\\", false,
-                    "\\bar", "/bar"));
+    @ParameterizedTest
+    @FieldSource("TEST_SUITE")
+    void noBaseNameThowsException(DocumentName.FSInfo fsInfo) {
+        final String root = fsInfo.roots()[0];
+        String fqName = root + fsInfo.mkPath(fsInfo.toString(), "foo");
+        assertThatThrownBy(() -> DocumentName.builder(fsInfo).setName(fqName).build())
+                .isInstanceOf(NullPointerException.class)
+                .hasMessage("Basename must not be null");
+    }
 
-        //
-        testName = "windows\\foo\\bar by directory";
-        file = mock(File.class);
-        parent = mock(File.class);
-        when(file.getAbsolutePath()).thenReturn("C:\\windows\\foo\\bar");
-        when(file.getParentFile()).thenReturn(parent);
-        when(file.isDirectory()).thenReturn(true);
-        when(parent.getAbsolutePath()).thenReturn("C:\\windows\\foo");
-        when(parent.isDirectory()).thenReturn(true);
-        documentName = new DocumentName.Builder(WINDOWS, file).build();
-        lst.add(Arguments.of(testName, documentName, "C:\\windows\\foo\\bar", "bar", "C:\\windows\\foo\\bar", "C:", "\\", false,
-                "\\", "/"));
+    @ParameterizedTest
+    @FieldSource("TEST_SUITE")
+    void noNameThowsException(DocumentName.FSInfo fsInfo) {
+        final String root = fsInfo.roots()[0];
+        String fqName = root + fsInfo.mkPath(fsInfo.toString(), "foo");
+        assertThatThrownBy(() -> DocumentName.builder(fsInfo).setBaseName(fqName).build())
+                .isInstanceOf(NullPointerException.class)
+                .hasMessage("Name must not be null");
+    }
 
-            //
-            testName = "windows setRoot";
-            documentName = DocumentName.builder(baseName).setRoot("D:").build();
-            lst.add(Arguments.of(testName, documentName, "D:\\windows\\foo", "foo", "C:\\windows", "D:", "\\", false,
-                    "D:\\windows\\foo", "D:/windows/foo"));
 
-            testName = "windows setRoot(null)";
-            documentName = DocumentName.builder(baseName).setRoot(null).build();
-            lst.add(Arguments.of(testName, documentName, "\\windows\\foo", "foo", "C:\\windows", "", "\\", false,
-                    "\\windows\\foo", "/windows/foo"));
+    @ParameterizedTest
+    @FieldSource("TEST_SUITE")
+    void DocumentNameFromDocumentName(DocumentName.FSInfo fsInfo) {
+        final String root = fsInfo.roots()[0];
+        final String baseNameStr = root + fsInfo;
+        String fqName = root + fsInfo.mkPath(fsInfo.toString(), "foo");
+        DocumentName expected = DocumentName.builder(fsInfo).setName(fqName).setBaseName(baseNameStr).build();
 
-            testName = "windows setRoot('')";
-            documentName = DocumentName.builder(baseName).setRoot("").build();
-            lst.add(Arguments.of(testName, documentName, "\\windows\\foo", "foo", "C:\\windows", "", "\\", false,
-                    "\\windows\\foo", "/windows/foo"));
+        DocumentName actual = DocumentName.builder(expected).build();
+        assertThat(actual).isEqualTo(expected);
 
-            //
-            testName = "windows setName('baz')";
-            documentName = DocumentName.builder(baseName).setName("baz").build();
-            lst.add(Arguments.of(testName, documentName, "C:\\windows\\baz", "baz", "C:\\windows", "C:", "\\", false,
-                    "\\baz", "/baz"));
+        assertDocumentName(actual, fqName, "foo", baseNameStr, root, fsInfo.dirSeparator(), fsInfo.isCaseSensitive(),
+                fsInfo.dirSeparator() + "foo", "+foo");
 
-            testName = "windows setName((String)null)";
-            documentName = DocumentName.builder(baseName).setName((String)null).build();
-            lst.add(Arguments.of(testName, documentName, "C:\\windows", "windows", "C:\\windows", "C:", "\\", false,
-                    "\\", "/"));
+    }
 
-            testName = "windows setName('')";
-            documentName = DocumentName.builder(baseName).setName("").build();
-            lst.add(Arguments.of(testName, documentName, "C:\\windows", "windows", "C:\\windows", "C:", "\\", false,
-                    "\\", "/"));
+    @ParameterizedTest
+    @FieldSource("TEST_SUITE")
+    void builderOnDocumentNameWithNameSharesBaseName(DocumentName.FSInfo fsInfo) {
+        final String root = fsInfo.roots()[0];
+        final String baseNameStr = root + fsInfo;
 
-        file = mock(File.class);
-        parent = mock(File.class);
-        when(file.getAbsolutePath()).thenReturn("C:\\windows\\foo\\bar");
+        String fqName = root + fsInfo.mkPath(fsInfo.toString(), "foo");
+        DocumentName firstName = DocumentName.builder(fsInfo).setName(fqName).setBaseName(baseNameStr).build();
+
+        fqName = root + fsInfo.mkPath(fsInfo.toString(), "bar");
+        DocumentName actual = DocumentName.builder(firstName).setName(fqName).setBaseName(baseNameStr).build();
+
+        assertDocumentName(actual, fqName, "bar", baseNameStr, root, fsInfo.dirSeparator(), fsInfo.isCaseSensitive(),
+                fsInfo.dirSeparator() + "bar", "+bar");
+    }
+
+    @ParameterizedTest
+    @FieldSource("TEST_SUITE")
+    void builderOnFile(DocumentName.FSInfo fsInfo) {
+        final String root = fsInfo.roots()[0];
+        final String baseNameStr = root + fsInfo.mkPath(fsInfo.toString(), "foo");
+        final String fqName = root + fsInfo.mkPath(fsInfo.toString(), "foo", "bar");
+        File file = mock(File.class);
+        File parent = mock(File.class);
+        when(file.getAbsolutePath()).thenReturn(fqName);
         when(file.getParentFile()).thenReturn(parent);
         when(file.isDirectory()).thenReturn(false);
-        when(parent.getAbsolutePath()).thenReturn("C:\\windows\\foo");
+        when(parent.getAbsolutePath()).thenReturn(baseNameStr);
         when(parent.isDirectory()).thenReturn(true);
-            testName = "windows setName(file)";
-            documentName = DocumentName.builder(baseName).setName(file).build();
-            lst.add(Arguments.of(testName, documentName, "C:\\windows\\foo\\bar", "bar", "C:\\windows\\foo", "C:", "\\", false,
-                    "\\bar", "/bar"));
 
-        file = mock(File.class);
-        parent = mock(File.class);
-        when(file.getAbsolutePath()).thenReturn("C:\\windows\\foo\\bar");
-        when(file.getParentFile()).thenReturn(parent);
-        when(file.isDirectory()).thenReturn(true);
-        when(parent.getAbsolutePath()).thenReturn("C:\\windows\\foo");
-        when(parent.isDirectory()).thenReturn(true);
-        testName = "windows setName(directory)";
-        documentName = DocumentName.builder(baseName).setName(file).build();
-        lst.add(Arguments.of(testName, documentName, "C:\\windows\\foo\\bar", "bar", "C:\\windows\\foo\\bar", "C:", "\\", false,
-                "\\", "/"));
+        DocumentName actual = new DocumentName.Builder(fsInfo, file).build();
 
-        return lst.stream();
+        assertDocumentName(actual, fqName, "bar", baseNameStr, root, fsInfo.dirSeparator(), fsInfo.isCaseSensitive(),
+                fsInfo.dirSeparator() + "bar", "+bar");
+
+    }
+
+    @Test
+    void windowRootDifference() {
+        // verify that setting the root results in the entire DocumentName being re-rooted e.g. including the basename(s).
+        DocumentName.FSInfo fsInfo = WINDOWS;
+        String root = fsInfo.roots()[0];
+        String baseNameStr = root + fsInfo.mkPath(fsInfo.toString(), "foo");
+        String fqName = root + fsInfo.mkPath(fsInfo.toString(), "foo", "bar");
+        DocumentName firstName = DocumentName.builder(fsInfo).setName(fqName).setBaseName(baseNameStr).build();
+
+        root = "D:\\";
+        DocumentName actual = DocumentName.builder(firstName).setRoot(root).build();
+
+        baseNameStr = root + fsInfo.mkPath(fsInfo.toString(), "foo");
+        fqName = root + fsInfo.mkPath(fsInfo.toString(), "foo", "bar");
+
+        assertDocumentName(actual, fqName, "bar", baseNameStr, root, fsInfo.dirSeparator(), fsInfo.isCaseSensitive(),
+                fsInfo.dirSeparator() + "bar", "+bar");
+
+    }
+
+    @ParameterizedTest
+    @FieldSource("TEST_SUITE")
+    void setRootNull(DocumentName.FSInfo fsInfo) {
+        String root = fsInfo.roots()[0];
+        String baseNameStr = root + fsInfo.mkPath(fsInfo.toString(), "foo");
+        String fqName = root + fsInfo.mkPath(fsInfo.toString(), "foo", "bar");
+        DocumentName firstName = DocumentName.builder(fsInfo).setName(fqName).setBaseName(baseNameStr).build();
+
+        // verify setting the root to null results in relative names with a blank root set
+        root = null;
+        DocumentName actual = DocumentName.builder(firstName).setRoot(root).build();
+
+        baseNameStr = fsInfo.mkPath(fsInfo.toString(), "foo");
+        fqName = fsInfo.mkPath(fsInfo.toString(), "foo", "bar");
+
+        assertDocumentName(actual, fqName, "bar", baseNameStr, "", fsInfo.dirSeparator(), fsInfo.isCaseSensitive(),
+                fsInfo.dirSeparator() + "bar", "+bar");
+
+    }
+
+    @ParameterizedTest
+    @FieldSource("TEST_SUITE")
+    void setRootEmpty(DocumentName.FSInfo fsInfo) {
+        String root = fsInfo.roots()[0];
+        String baseNameStr = root + fsInfo.mkPath(fsInfo.toString(), "foo");
+        String fqName = root + fsInfo.mkPath(fsInfo.toString(), "foo", "bar");
+        DocumentName firstName = DocumentName.builder(fsInfo).setName(fqName).setBaseName(baseNameStr).build();
+
+        root = "";
+        DocumentName actual = DocumentName.builder(firstName).setRoot(root).build();
+
+        baseNameStr = root + fsInfo.mkPath(fsInfo.toString(), "foo");
+        fqName = root + fsInfo.mkPath(fsInfo.toString(), "foo", "bar");
+
+        assertDocumentName(actual, fqName, "bar", baseNameStr, root, fsInfo.dirSeparator(), fsInfo.isCaseSensitive(),
+                fsInfo.dirSeparator() + "bar", "+bar");
+
+    }
+
+    @ParameterizedTest
+    @FieldSource("TEST_SUITE")
+    void splitRootsTest(DocumentName.FSInfo fsInfo) {
+        String root = fsInfo.roots()[0];
+        String path = fsInfo.mkPath("My", "path", "to", "a", "file.txt");
+        Pair<String, String> result = DocumentName.builder(fsInfo).splitRoot(root + path);
+        assertThat(result.getLeft()).isEqualTo(root);
+        assertThat(result.getRight()).isEqualTo(path);
     }
 }

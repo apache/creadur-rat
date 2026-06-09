@@ -23,18 +23,33 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collections;
 
+/**
+ * The DocumentName for an ArchiveEntry.
+ */
 public class ArchiveEntryName extends DocumentName {
     /** The name of the document that contains this entry. */
     private final DocumentName archiveFileName;
 
+    /**
+     * Sets the builder so that a propery DocumentName is constructed.
+     * @param archiveFileName the archvie file DocumentName
+     * @param archiveEntryName the entry name
+     * @return the DocumentName.Builder for the archive entry.
+     */
     private static DocumentName.Builder prepareBuilder(final DocumentName archiveFileName, final String archiveEntryName) {
-        String root = archiveFileName.getName() + "#";
+        String root = archiveFileName.getName() + "#/";
         FSInfo fsInfo = new FSInfo("archiveEntry", "/", true, Collections.singletonList(root));
         return DocumentName.builder(fsInfo)
                 .setRoot(root)
-                .setBaseName(root + "/")
+                .setBaseName("/")
                 .setName(archiveEntryName);
     }
+
+    /**
+     * Constucts an archive file name from an archive file document name and an entry name.
+     * @param archiveFileName the archive file document name.
+     * @param archiveEntryName the archive entry name.
+     */
     public ArchiveEntryName(final DocumentName archiveFileName, final String archiveEntryName) {
         super(prepareBuilder(archiveFileName, archiveEntryName));
         this.archiveFileName = archiveFileName;
@@ -70,15 +85,5 @@ public class ArchiveEntryName extends DocumentName {
         String superLocal = super.localized(dirSeparator);
         superLocal = superLocal.substring(superLocal.lastIndexOf("#") + 1);
         return archiveFileName.localized(dirSeparator) + "#" + superLocal;
-    }
-
-    @Override
-    public boolean equals(final Object other) {
-        return super.equals(other);
-    }
-
-    @Override
-    public int hashCode() {
-        return super.hashCode();
     }
 }
