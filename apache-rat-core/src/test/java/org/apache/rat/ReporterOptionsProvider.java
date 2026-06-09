@@ -22,10 +22,13 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
+import java.io.Reader;
+import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.Arrays;
@@ -114,16 +117,24 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
         return config;
     }
 
-    private File configureRatDir(Option option) {
-        configureSourceDir(option);
-        File result = new File(sourceDir, ".rat");
-        FileUtils.mkDir(result);
-        return result;
-    }
-
+    /**
+     * Creates the srcDir.,.
+     * @param option the name for the srcDir.
+     */
     private void configureSourceDir(Option option) {
         sourceDir = new File(baseDir, OptionFormatter.getName(option));
         FileUtils.mkDir(sourceDir);
+    }
+
+    /**
+     * Creates the option/.rat directory
+     * @param option the name for the sourceDirectory.
+     */
+    private File configureRatDir(Option option) {
+        configureSourceDir(option);
+        File ratDir = new File(sourceDir, ".rat");
+        FileUtils.mkDir(ratDir);
+        return ratDir;
     }
 
     private void validateNoArgSetup() throws IOException, RatException {
@@ -228,8 +239,7 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
     @OptionCollectionTest.TestFunction
     protected void licensesDeniedFileTest() {
         Option option = Arg.LICENSES_DENIED_FILE.find("licenses-denied-file");
-        File ratDir = configureRatDir(option);
-        File outputFile = FileUtils.writeFile(ratDir, "licensesDenied.txt", Collections.singletonList("ILLUMOS"));
+        File outputFile = FileUtils.writeFile(configureRatDir(option), "licensesDenied.txt", Collections.singletonList("ILLUMOS"));
         execLicensesDeniedTest(option, new String[]{outputFile.getAbsolutePath()});
     }
 
@@ -312,8 +322,13 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
         });
     }
 
-    // exclude tests
-    private void execExcludeTest(final Option option, final String[] args, final boolean addIgnored) {
+    /**
+     * Runs the exclude tests.
+     * @param option The exclude option to run.
+     * @param args the arguments for the command line.
+     * @param includesRatDir @{code true} if the .rat directory was created.
+     */
+    private void execExcludeTest(final Option option, final String[] args, final boolean includesRatDir) {
         String[] notExcluded = {"notbaz", "well._afile"};
         String[] excluded = {"some.foo", "B.bar", "justbaz"};
 
@@ -329,20 +344,19 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
             Reporter reporter = new Reporter(config);
             Reporter.Output output = reporter.execute();
             assertThat(output.getStatistic().getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(5);
-            assertThat(output.getStatistic().getCounter(ClaimStatistic.Counter.IGNORED)).isEqualTo(addIgnored ? 1 : 0);
+            assertThat(output.getStatistic().getCounter(ClaimStatistic.Counter.IGNORED)).isEqualTo(includesRatDir ? 1 : 0);
 
             // filter out source
             config = generateConfig(ImmutablePair.of(option, args));
             reporter = new Reporter(config);
             output = reporter.execute();
             assertThat(output.getStatistic().getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(2);
-            assertThat(output.getStatistic().getCounter(ClaimStatistic.Counter.IGNORED)).isEqualTo(addIgnored ? 4 : 3);
+            assertThat(output.getStatistic().getCounter(ClaimStatistic.Counter.IGNORED)).isEqualTo(includesRatDir ? 4 : 3);
         });
     }
 
     private void excludeFileTest(final Option option) {
-        File ratDir = configureRatDir(option);
-        File outputFile = FileUtils.writeFile(ratDir, "exclude.txt", Arrays.asList(EXCLUDE_ARGS));
+        File outputFile = FileUtils.writeFile(configureRatDir(option), "exclude.txt", Arrays.asList(EXCLUDE_ARGS));
         execExcludeTest(option, new String[]{outputFile.getAbsolutePath()}, true);
     }
 
@@ -482,8 +496,13 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
         });
     }
 
-    // include tests
-    private void execIncludeTest(final Option option, final String[] args, boolean addIgnored) {
+    /**
+     * Runs the include tests.
+     * @param option The include option to run.
+     * @param args the arguments for the command line.
+     * @param includesRatDir @{code true} if the .rat directory was created.
+     */
+    private void execIncludeTest(final Option option, final String[] args, final boolean includesRatDir) {
         Option excludeOption = Arg.EXCLUDE.option();
         String[] notExcluded = {"B.bar", "justbaz", "notbaz"};
         String[] excluded = {"some.foo"};
@@ -499,7 +518,8 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
             Reporter reporter = new Reporter(config);
             Reporter.Output output = reporter.execute();
             assertThat(output.getStatistic().getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(4);
-            assertThat(output.getStatistic().getCounter(ClaimStatistic.Counter.IGNORED)).isEqualTo(addIgnored ? 1 : 0);
+
+            assertThat(output.getStatistic().getCounter(ClaimStatistic.Counter.IGNORED)).isEqualTo(includesRatDir ? 1 : 0);
 
             // verify exclude removes most files.
             config = generateConfig(ImmutablePair.of(excludeOption, EXCLUDE_ARGS));
@@ -507,7 +527,7 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
             output  = reporter.execute();
             assertThat(output.getStatistic().getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(1);
             // .gitignore is ignored by default as it is hidden but not counted
-            assertThat(output.getStatistic().getCounter(ClaimStatistic.Counter.IGNORED)).isEqualTo(addIgnored ? 4 : 3);
+            assertThat(output.getStatistic().getCounter(ClaimStatistic.Counter.IGNORED)).isEqualTo(includesRatDir ? 4 : 3);
 
             // verify include pust them back
             config = generateConfig(ImmutablePair.of(option, args), ImmutablePair.of(excludeOption, EXCLUDE_ARGS));
@@ -515,13 +535,12 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
             output  = reporter.execute();
             assertThat(output.getStatistic().getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(3);
             // .gitignore is ignored by default as it is hidden but not counted
-            assertThat(output.getStatistic().getCounter(ClaimStatistic.Counter.IGNORED)).isEqualTo(addIgnored ? 2 : 1);
+            assertThat(output.getStatistic().getCounter(ClaimStatistic.Counter.IGNORED)).isEqualTo(includesRatDir ? 2 : 1 );
         });
     }
 
     private void includeFileTest(final Option option) {
-        File ratDir = configureRatDir(option);
-        File outputFile = FileUtils.writeFile(ratDir, "include.txt", Arrays.asList(INCLUDE_ARGS));
+        File outputFile = FileUtils.writeFile(configureRatDir(option), "include.txt", Arrays.asList(INCLUDE_ARGS));
         execIncludeTest(option, new String[]{outputFile.getAbsolutePath()}, true);
     }
 
@@ -766,8 +785,7 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
     @OptionCollectionTest.TestFunction
     protected void licensesApprovedFileTest() {
         Option option = Arg.LICENSES_APPROVED_FILE.find("licenses-approved-file");
-        File ratDir = configureRatDir(option);
-                File outputFile = FileUtils.writeFile(ratDir, "licensesApproved.txt", Collections.singletonList("GPL1"));
+        File outputFile = FileUtils.writeFile(configureRatDir(option), "licensesApproved.txt", Collections.singletonList("GPL1"));
         execLicensesApprovedTest(option, new String[]{outputFile.getAbsolutePath()});
     }
 

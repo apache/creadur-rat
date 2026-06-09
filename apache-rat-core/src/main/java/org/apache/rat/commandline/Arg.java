@@ -218,7 +218,7 @@ public enum Arg {
      * Option to read a file licenses to be removed from the approved list.
      */
     LICENSES_DENIED_FILE(new OptionGroup().addOption(Option.builder().longOpt("licenses-denied-file")
-            .hasArg().argName("File").type(File.class)
+            .hasArg().argName("File").type(DocumentName.class)
             .converter(Converters.FILE_CONVERTER)
             .desc("Name of file containing comma separated lists of the denied license IDs. " +
                     "These licenses will be removed from the list of approved licenses. " +
@@ -326,14 +326,14 @@ public enum Arg {
      */
     EXCLUDE_FILE(new OptionGroup()
             .addOption(Option.builder("E").longOpt("exclude-file")
-                    .argName("File").hasArg().type(File.class)
+                    .argName("File").hasArg().type(DocumentName.class)
                     .converter(Converters.FILE_CONVERTER)
                     .deprecated(DeprecatedAttributes.builder().setForRemoval(true).setSince("0.17")
                             .setDescription(StdMsgs.useMsg("--input-exclude-file")).get())
                     .desc("Reads <Expression> entries from a file. Entries will be excluded from processing.")
                     .build())
             .addOption(Option.builder().longOpt("input-exclude-file")
-                    .argName("File").hasArg().type(File.class)
+                    .argName("File").hasArg().type(DocumentName.class)
                     .converter(Converters.FILE_CONVERTER)
                     .desc("Reads <Expression> entries from a file. Entries will be excluded from processing.")
                     .build()),
@@ -408,12 +408,12 @@ public enum Arg {
      */
     INCLUDE_FILE(new OptionGroup()
             .addOption(Option.builder().longOpt("input-include-file")
-                    .argName("File").hasArg().type(File.class)
+                    .argName("File").hasArg().type(DocumentName.class)
                     .converter(Converters.FILE_CONVERTER)
                     .desc("Reads <Expression> entries from a file. Entries will override excluded files.")
                     .build())
             .addOption(Option.builder().longOpt("includes-file")
-                    .argName("File").hasArg().type(File.class)
+                    .argName("File").hasArg().type(DocumentName.class)
                     .converter(Converters.FILE_CONVERTER)
                     .desc("Reads <Expression> entries from a file. Entries will override excluded files.")
                     .deprecated(DeprecatedAttributes.builder().setForRemoval(true).setSince("0.17")
@@ -485,7 +485,7 @@ public enum Arg {
      * Stop processing an input stream and declare an input file.
      */
     DIR(new OptionGroup().addOption(Option.builder().option("d").longOpt("dir").hasArg()
-            .type(File.class)
+            .type(DocumentName.class)
             .desc("Used to indicate end of list when using options that take multiple arguments.").argName("DirOrArchive")
             .deprecated(DeprecatedAttributes.builder().setForRemoval(true).setSince("0.17")
                     .setDescription("Use the standard '--' to signal the end of arguments.").get()).build()),
