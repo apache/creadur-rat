@@ -29,7 +29,6 @@ import java.util.Set;
 
 import org.apache.commons.cli.Option;
 import org.apache.commons.io.filefilter.IOFileFilter;
-import org.apache.commons.io.output.CloseShieldOutputStream;
 import org.apache.rat.ConfigurationException;
 import org.apache.rat.DeprecationReporter;
 import org.apache.rat.ImplementationException;
@@ -411,14 +410,15 @@ public class Report extends BaseAntTask {
         try {
             boolean helpLicenses = !getValues(Arg.HELP_LICENSES).isEmpty();
             removeKey(Arg.HELP_LICENSES);
-
-            final ReportConfiguration configuration = OptionCollection.parseCommands(new File("."), args().toArray(new String[0]),
+            File antFileDir = new File(getProject().getProperty("ant.file")).getParentFile();
+            DocumentName name = DocumentName.builder(antFileDir).build();;
+            final ReportConfiguration configuration = OptionCollection.parseCommands(antFileDir, args().toArray(new String[0]),
                     o -> DefaultLog.getInstance().warn("Help option not supported"),
                     true);
             if (getValues(Arg.OUTPUT_FILE).isEmpty()) {
-                configuration.setOut(() -> new LogOutputStream(this, Project.MSG_INFO));
+                configuration.setOut(new ReportConfiguration.IODescriptor<>("log output", () -> new LogOutputStream(this, Project.MSG_INFO)));
             }
-            DocumentName name = DocumentName.builder(getProject().getBaseDir()).build();
+
             configuration.addSource(new ResourceCollectionContainer(name, configuration, nestedResources));
             configuration.addApprovedLicenseCategories(deprecatedConfig.approvedLicenseCategories);
             configuration.removeApprovedLicenseCategories(deprecatedConfig.removedLicenseCategories);
@@ -443,9 +443,9 @@ public class Report extends BaseAntTask {
     @Override
     public void execute() {
         try {
-            Reporter r = new Reporter(validate(getConfiguration()));
-            r.output(StyleSheets.PLAIN.getStyleSheet(), () -> CloseShieldOutputStream.wrap(System.out));
-            r.output();
+            Reporter.Output output = new Reporter(validate(getConfiguration())).execute();
+            output.format(StyleSheets.PLAIN.getStyleSheet().ioSupplier(), ReportConfiguration.SYSTEM_OUT.ioSupplier());
+            output.format(output.getConfiguration());
         } catch (BuildException e) {
             throw e;
         } catch (Exception ioex) {
@@ -458,7 +458,7 @@ public class Report extends BaseAntTask {
      */
     protected ReportConfiguration validate(final ReportConfiguration cfg) {
         try {
-            cfg.validate(s -> log(s, Project.MSG_WARN));
+            cfg.validate();
         } catch (ConfigurationException e) {
             throw new BuildException(e.getMessage(), e.getCause());
         }
@@ -474,7 +474,7 @@ public class Report extends BaseAntTask {
      * @deprecated use &lt;editCopyright&gt; amd &lt;editOverwrite&gt; instead.
      */
     @Deprecated
-    public static class AddLicenseHeaders extends EnumeratedAttribute {
+    public static final class AddLicenseHeaders extends EnumeratedAttribute {
         /**
          * add license headers and create *.new file
          */

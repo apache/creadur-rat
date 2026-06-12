@@ -211,8 +211,7 @@ public class OptionCollectionTest {
     @Test
     public void testDefaultConfiguration() throws ParseException {
         String[] empty = {};
-        CommandLine cl = new DefaultParser().parse(OptionCollection.buildOptions(), empty);
-        ArgumentContext context = new ArgumentContext(new File("."), cl);
+        ArgumentContext context = new ArgumentContext(new File("."), OptionCollection.buildOptions(), empty);
         ReportConfiguration config = OptionCollection.createConfiguration(context);
         ReportConfigurationTest.validateDefault(config);
     }
@@ -225,7 +224,7 @@ public class OptionCollectionTest {
         ReportConfiguration config = OptionCollection.parseCommands(testPath.toFile(), new String[]{fName}, o -> fail("Help called"), false);
         IReportable reportable = OptionCollection.getReportable(base, config);
         assertThat(reportable).as(() -> format("'%s' returned null", fName)).isNotNull();
-        assertThat(reportable.getName().getName()).isEqualTo(expected);
+        assertThat(reportable.name().getName()).isEqualTo(expected);
     }
 
     @Test

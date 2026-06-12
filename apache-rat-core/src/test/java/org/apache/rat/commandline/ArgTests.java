@@ -56,9 +56,9 @@ public class ArgTests {
         String fileName = name.replace("/", DocumentName.FSInfo.getDefault().dirSeparator());
         File expected = new File(fileName);
 
-        CommandLine commandLine = createCommandLine(new String[] {"--output-file", fileName});
+        String[] args = new String[] {"--output-file", fileName};
         OutputFileConfig configuration = new OutputFileConfig();
-        ArgumentContext ctxt = new ArgumentContext(new File("."), configuration, commandLine);
+        ArgumentContext ctxt = new ArgumentContext(new File("."), configuration, OptionCollection.buildOptions(), args);
         Arg.processArgs(ctxt, CLIOptionCollection.INSTANCE);
         assertThat(configuration.actual.getAbsolutePath()).isEqualTo(expected.getCanonicalPath());
     }

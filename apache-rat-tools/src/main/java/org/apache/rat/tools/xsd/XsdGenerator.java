@@ -71,7 +71,7 @@ public class XsdGenerator {
         XsdGenerator generator = new XsdGenerator();
 
         try (InputStream in = generator.getInputStream();
-             InputStream styleIn = StyleSheets.XML.getStyleSheet().get()) {
+             InputStream styleIn = StyleSheets.XML.getStyleSheet().ioSupplier().get()) {
             Transformer transformer = StandardXmlFactory.create(styleIn);
             transformer.transform(new StreamSource(in),
                     new StreamResult(new OutputStreamWriter(System.out, StandardCharsets.UTF_8)));
@@ -179,11 +179,10 @@ public class XsdGenerator {
     }
 
     private void writeMatcherElements() throws IOException {
-        MatcherBuilderTracker tracker = MatcherBuilderTracker.instance();
         writer.open(Type.ELEMENT, "name", XMLConfig.MATCHER, "abstract", "true").close(Type.ELEMENT);
 
         // matchers
-        for (Class<?> clazz : tracker.getClasses()) {
+        for (Class<?> clazz : MatcherBuilderTracker.instance().getClasses()) {
             Description desc = DescriptionBuilder.buildMap(clazz);
             if (desc != null) {
                 boolean hasResourceAttr = false;

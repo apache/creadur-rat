@@ -45,8 +45,8 @@ import org.apache.commons.lang3.tuple.Pair;
  * The name for a document. The {@code DocumentName} is an immutable structure that handles all the intricacies of file
  * naming on various operating systems. DocumentNames have several components:
  * <ul>
- *     <li>{@code root} - where in the file system the name starts (e.g C: on windows). May be empty but not null.</li>
- *     <li>{@code dirSeparator} - the separator between name segments (e.g. "\\" on windows, "/" on linux). May not be
+ *     <li>{@code root} - where in the file system the name starts (e.g C:\ on Microsoft Windows). May be empty but not null.</li>
+ *     <li>{@code dirSeparator} - the separator between name segments (e.g. "\" on MicroSoft Windows, "/" on linux). May not be
  *     empty or null.</li>
  *     <li>{@code name} - the name of the file relative to the {@code root}. May not be null. Does NOT begin with a {@code dirSeparator}</li>
  *     <li>{@code baseName} - the name of a directory or file from which this file is reported. A DocumentName with a
@@ -63,9 +63,10 @@ public class DocumentName implements Comparable<DocumentName> {
     private final String name;
     /** The name of the base directory for the document. */
     private final DocumentName baseName;
+    // visible for testing
     /** The file system info for this document. */
     private final FSInfo fsInfo;
-    /** The root for the DocumentName. May be empty but not null. */
+    /** The root for the DocumentName. May be empty but not null. Must be one of the roots in fsInfo*/
     private final String root;
 
     /**
@@ -126,7 +127,7 @@ public class DocumentName implements Comparable<DocumentName> {
     }
 
     /**
-     * Creates a file from the document name.
+     * Creates a file from the fully qualified document name.
      * @return a new File object.
      */
     public File asFile() {
@@ -134,7 +135,8 @@ public class DocumentName implements Comparable<DocumentName> {
     }
 
     /**
-     * Creates a path from the document name.
+     * Creates a path from the document name.  This method uses the fullyqualified name without the root.
+     * this results in a relative file name from the root.
      * @return a new Path object.
      */
     public Path asPath() {
@@ -144,9 +146,23 @@ public class DocumentName implements Comparable<DocumentName> {
     /**
      * Creates a new DocumentName by adding the child to the current name.
      * Resulting documentName will have the same base name.
+     * Directory separator is normalized to the directory separator for this file system.
+     * If the child string:
+     * <dl>
+     *     <dt>Is blank</dt>
+     *     <dd>This DocumentName is returned.</dd>
+     *     <dt>Starts with the file system root</dt>
+     *     <dd>The root The root must match the root of this DocumentName and the directory structure
+     *     must start with the directory structure of the basename for this DocuemntName.</dd>
+     *     <dt>Starts with the directory separator character<dt>
+ *         <dd>Result will be a tree starting at the directory specified by the basename.</dd>
+     *     <dt>Does not start with a directory separator character</dt>
+     *     <dd>Result will be a tree starting at the directory specified by this DocumentName</dd>
+     * </dl>
      * @param child the child to add (must use directory separator from this document name).
      * @return the new document name with the same {@link #baseName}, directory sensitivity and case sensitivity as
      * this one.
+     * @throws IllegalArgumentException if the child specifies a different root from this document name.
      */
     public DocumentName resolve(final String child) {
         if (StringUtils.isBlank(child)) {
@@ -156,8 +172,25 @@ public class DocumentName implements Comparable<DocumentName> {
         String pattern = separator.equals("/") ? child.replace('\\', '/') :
                 child.replace('/', '\\');
 
+        Optional<String> root = fsInfo.rootFor(child);
+        if (root.isPresent()) {
+            if (!root.get().equals(getRoot())) {
+                throw new IllegalArgumentException(String.format("%s does not start with %s", pattern, getName()));
+            }
+            if (!getRoot().equals(separator)) {
+                // we have something like C:\ as the root so convert the pattern to start with the separator.
+                pattern = separator + pattern.substring(getRoot().length());
+                if (pattern.startsWith(baseName.name)) {
+                    pattern = pattern.substring(baseName.name.length());
+                }
+            }
+        }
+
+        // patterns with separators either start with the name of this document plus a relative
+        // name, or are just directory off the baseName.  In either case the name is correct.
+        // so just handle the relative case.
         if (!pattern.startsWith(separator)) {
-             pattern = name + separator + pattern;
+            pattern = name + separator + pattern;
         }
 
         return new Builder(this).setName(fsInfo.normalize(pattern)).build();
@@ -168,7 +201,7 @@ public class DocumentName implements Comparable<DocumentName> {
      * @return the fully qualified name of the document.
      */
     public String getName() {
-        return root + fsInfo.dirSeparator() + name;
+        return root + name;
     }
 
     /**
@@ -201,6 +234,10 @@ public class DocumentName implements Comparable<DocumentName> {
      */
     public String getDirectorySeparator() {
         return fsInfo.dirSeparator();
+    }
+
+    public FSInfo fsInfo() {
+        return fsInfo;
     }
 
     /**
@@ -287,17 +324,23 @@ public class DocumentName implements Comparable<DocumentName> {
 
     @Override
     public int compareTo(final DocumentName other) {
-        return CompareToBuilder.reflectionCompare(this, other);
+        return new CompareToBuilder()
+                .append(this.root, other.root)
+                .append(this.getBaseName(), other.getBaseName())
+                .append(this.getName(), other.getName()).build();
     }
 
     @Override
-    public boolean equals(final Object other) {
-        return EqualsBuilder.reflectionEquals(this, other);
+    public final boolean equals(final Object other) {
+        if (other instanceof DocumentName otherDocumentName) {
+            return compareTo(otherDocumentName) == 0;
+        }
+        return false;
     }
 
     @Override
-    public int hashCode() {
-        return HashCodeBuilder.reflectionHashCode(this);
+    public final int hashCode() {
+        return new HashCodeBuilder().append(root).append(getBaseName()).append(getName()).toHashCode();
     }
 
     private static final class FSInfoData {
@@ -469,6 +512,14 @@ public class DocumentName implements Comparable<DocumentName> {
         }
 
         /**
+         * Gets the array of roots for this file system.
+         * @return an array of roots for this file system.
+         */
+        public String[] roots() {
+            return data.roots.toArray(new String[0]);
+        }
+
+        /**
          * Tokenizes the string based on the directory separator of this DocumentName.
          * @param source the source to tokenize.
          * @return the array of tokenized strings.
@@ -500,6 +551,16 @@ public class DocumentName implements Comparable<DocumentName> {
                 }
             }
             return parts.stream().filter(Objects::nonNull).collect(Collectors.joining(dirSeparator()));
+        }
+
+        /**
+         * Creates a path separated by the directory separator.
+         * Starting with an empty string will cause the directory separateor to appear at the beginning.
+         * @param segments the segments that make up the path.
+         * @return the path string.
+         */
+        public String mkPath(final String... segments) {
+            return String.join(dirSeparator(), segments);
         }
 
         @Override
@@ -538,7 +599,7 @@ public class DocumentName implements Comparable<DocumentName> {
          */
         private Builder(final FSInfo fsInfo) {
             this.fsInfo = fsInfo;
-            root = "";
+            root = fsInfo.data.roots.get(0);
         }
 
         /**
@@ -625,12 +686,6 @@ public class DocumentName implements Comparable<DocumentName> {
                 this.root = pair.getLeft();
             }
             this.name = fsInfo.normalize(pair.getRight());
-            if (this.baseName != null && !baseName.name.isEmpty()) {
-                if (!this.name.startsWith(baseName.name)) {
-                    this.name = this.name.isEmpty() ? baseName.name :
-                            baseName.name + fsInfo.dirSeparator() + this.name;
-                }
-            }
             return this;
         }
 
@@ -644,16 +699,15 @@ public class DocumentName implements Comparable<DocumentName> {
          */
         Pair<String, String> splitRoot(final String name) {
             String workingName = name;
-            Optional<String> maybeRoot = fsInfo.rootFor(name);
-            String root = maybeRoot.orElse("");
+            String root = fsInfo.rootFor(name).orElse("");
             if (!root.isEmpty()) {
                 if (workingName.startsWith(root)) {
                     workingName = workingName.substring(root.length());
-                    if (!workingName.startsWith(fsInfo.dirSeparator())) {
-                        if (root.endsWith(fsInfo.dirSeparator())) {
-                            root = root.substring(0, root.length() - fsInfo.dirSeparator().length());
-                        }
-                    }
+//                    if (!workingName.startsWith(fsInfo.dirSeparator())) {
+//                        if (root.endsWith(fsInfo.dirSeparator())) {
+//                            root = root.substring(0, root.length() - fsInfo.dirSeparator().length());
+//                        }
+//                    }
                 }
             }
             return ImmutablePair.of(root, workingName);
@@ -751,6 +805,26 @@ public class DocumentName implements Comparable<DocumentName> {
          */
         public DocumentName build() {
             verify();
+            if (this.baseName != null) {
+                if (!this.name.startsWith(baseName.name)) {
+                    this.name = this.name.isEmpty() ? baseName.name :
+                            baseName.name + fsInfo.dirSeparator() + this.name;
+                }
+                if (!this.baseName.getRoot().equals(root)) {
+                    Builder builder = new Builder(baseName).setRoot(root);
+                    if (baseName.baseName != null && baseName.baseName != baseName) {
+                        builder.setBaseName(baseName.baseName);
+                    } else {
+                        builder.baseName = null;
+                        builder.sameNameFlag = true;
+                    }
+                    this.baseName = builder.build();
+                }
+            } else {
+                if (this.name.startsWith(root)) {
+                    this.name = this.name.substring(root.length());
+                }
+            }
             return new DocumentName(this);
         }
     }

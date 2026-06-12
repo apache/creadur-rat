@@ -787,16 +787,23 @@ public abstract class AbstractConfigurationOptionsProvider extends AbstractOptio
         // run the test
         String[] args = {null};
         try {
-            for (String sheet : new String[]{"plain-rat", "missing-headers", "unapproved-licenses", file.getAbsolutePath()}) {
+            for (String sheet : new String[]{"plain-rat", "missing-headers", "unapproved-licenses", "stylesheet-" + option.getLongOpt()}) {
                 args[0] = sheet;
                 ReportConfiguration config = generateConfig(ImmutablePair.of(option, args));
-                try (InputStream expected = StyleSheets.getStyleSheet(sheet).get();
+                DocumentName base = DocumentName.builder(baseDir).build();
+                DocumentName expectedName = base.resolve(sheet);
+                try (InputStream expected = StyleSheets.getStyleSheet(sheet, base).ioSupplier().get();
                      InputStream actual = config.getStyleSheet().get()) {
-                    assertThat(IOUtils.contentEquals(expected, actual)).as(() -> String.format("'%s' does not match", sheet)).isTrue();
+                    String expectedStr =  IOUtils.toString(expected);
+                    String actualStr =  IOUtils.toString(actual);
+                    assertThat(actualStr).isEqualTo(expectedStr).as(() -> String.format("'%s' does not match '%s': %s != %s",
+                            config.getStyleSheetDescriptor().name(),
+                            expectedName.getName(),
+                            actualStr, expectedStr));
                 }
             }
         } catch (IOException e) {
-            fail(e.getMessage());
+            fail(e.getMessage(), e);
         }
     }
 
@@ -821,7 +828,7 @@ public abstract class AbstractConfigurationOptionsProvider extends AbstractOptio
     protected void xmlTest() {
         try {
             ReportConfiguration config = generateConfig(ImmutablePair.of(Arg.OUTPUT_STYLE.find("xml"), null));
-            try (InputStream expected = StyleSheets.getStyleSheet("xml").get();
+            try (InputStream expected = StyleSheets.getStyleSheet("xml", null).ioSupplier().get();
                  InputStream actual = config.getStyleSheet().get()) {
                 assertThat(IOUtils.contentEquals(expected, actual)).as("'xml' does not match").isTrue();
             }

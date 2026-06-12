@@ -44,6 +44,8 @@ import org.apache.rat.license.LicenseSetFactory.LicenseFilter;
 import org.apache.rat.report.xml.writer.IXmlWriter;
 import org.apache.rat.report.xml.writer.XmlWriter;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 /**
  * Writes the XML configuration file format.
  */
@@ -59,6 +61,7 @@ public class XMLConfigurationWriter {
      * Constructor
      * @param configuration the configuration information to write.
      */
+    @SuppressFBWarnings("EI_EXPOSE_REP2")
     public XMLConfigurationWriter(final ReportConfiguration configuration) {
         this.configuration = configuration;
         this.matchers = new HashSet<>();
@@ -126,9 +129,8 @@ public class XMLConfigurationWriter {
                 writer.closeElement(); // APPROVED
 
                 // matchers section
-                MatcherBuilderTracker tracker = MatcherBuilderTracker.instance();
                 writer.openElement(XMLConfig.MATCHERS);
-                for (Class<?> clazz : tracker.getClasses()) {
+                for (Class<?> clazz : MatcherBuilderTracker.instance().getClasses()) {
                     writer.openElement(XMLConfig.MATCHER).attribute(XMLConfig.ATT_CLASS_NAME, clazz.getCanonicalName())
                             .closeElement();
                 }

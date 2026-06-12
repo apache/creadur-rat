@@ -36,6 +36,7 @@ import org.apache.rat.Reporter;
 import org.apache.rat.commandline.Arg;
 import org.apache.rat.commandline.StyleSheets;
 import org.apache.rat.config.exclusion.StandardCollection;
+import org.apache.rat.config.results.ClaimValidator;
 import org.apache.rat.license.LicenseSetFactory.LicenseFilter;
 import org.apache.rat.report.claim.ClaimStatistic;
 import org.apache.rat.utils.DefaultLog;
@@ -209,11 +210,12 @@ public class RatCheckMojo extends AbstractRatMojo {
             }
             try {
                 this.reporter = new Reporter(config);
-                reporter.output();
+                Reporter.Output output = reporter.execute();
                 if (verbose) {
-                    reporter.writeSummary(logWriter);
+                    output.writeSummary(logWriter);
                 }
-                check(config);
+                output.format(config);
+                check(output);
             } catch (MojoFailureException e) {
                 throw e;
             } catch (Exception e) {
@@ -224,17 +226,18 @@ public class RatCheckMojo extends AbstractRatMojo {
         }
     }
 
-    protected void check(final ReportConfiguration config) throws MojoFailureException {
-        ClaimStatistic statistics = reporter.getClaimsStatistic();
+    protected void check(final Reporter.Output output) throws MojoFailureException {
+        ClaimStatistic statistics = output.getStatistic();
+        ClaimValidator validator = output.getConfiguration().getClaimValidator();
         try {
-           reporter.writeSummary(DefaultLog.getInstance().asWriter(Log.Level.DEBUG));
-           if (config.getClaimValidator().hasErrors()) {
-               config.getClaimValidator().logIssues(statistics);
+           output.writeSummary(DefaultLog.getInstance().asWriter(Log.Level.DEBUG));
+           if (validator.hasErrors()) {
+               validator.logIssues(statistics);
                if (consoleOutput &&
-                       !config.getClaimValidator().isValid(ClaimStatistic.Counter.UNAPPROVED, statistics.getCounter(ClaimStatistic.Counter.UNAPPROVED))) {
+                       !validator.isValid(ClaimStatistic.Counter.UNAPPROVED, statistics.getCounter(ClaimStatistic.Counter.UNAPPROVED))) {
                    try {
                        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                       reporter.output(StyleSheets.UNAPPROVED_LICENSES.getStyleSheet(), () -> baos);
+                       output.format(StyleSheets.UNAPPROVED_LICENSES.getStyleSheet().ioSupplier(), () -> baos);
                        getLog().warn(baos.toString(StandardCharsets.UTF_8));
                    } catch (RuntimeException rte) {
                        throw rte;
@@ -244,7 +247,7 @@ public class RatCheckMojo extends AbstractRatMojo {
                }
 
                String msg = format("Counter(s) %s exceeded minimum or maximum values. See RAT report in: '%s'.",
-                       String.join(", ", config.getClaimValidator().listIssues(statistics)),
+                       String.join(", ", validator.listIssues(statistics)),
                        getRatTxtFile());
 
                if (!ignoreErrors) {
