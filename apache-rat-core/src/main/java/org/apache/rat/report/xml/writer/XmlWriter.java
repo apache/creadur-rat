@@ -21,6 +21,7 @@ package org.apache.rat.report.xml.writer;
 import java.io.ByteArrayOutputStream;
 import java.io.Closeable;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayDeque;
 import java.util.HashSet;
 import java.util.Objects;
@@ -327,7 +328,7 @@ public final class XmlWriter implements IXmlWriter {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             transformer.transform(new DOMSource(document),
                     new StreamResult(baos));
-            appendable.append(baos.toString());
+            appendable.append(baos.toString(StandardCharsets.UTF_8));
         } catch (TransformerException e) {
             throw new IOException(e);
         }

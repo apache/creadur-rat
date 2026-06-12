@@ -68,6 +68,9 @@ in order to be properly linked in site reports.
     </release>
     -->
     <release version="1.0.0-SNAPSHOT" date="xxxx-yy-zz" description="Current SNAPSHOT - release to be done">
+      <action issue="RAT-532" type="update" dev="pottlinger" due-to="dependabot">
+        Update to spotbugs-maven-plugin to 4.10.2.0 and use UTF-8 as fallback encoding in LicenseAppender and XmlWriter.
+      </action>
       <action issue="RAT-558" type="add" dev="pottlinger">
         Add a basic security and agents configuration to Apache RAT.
       </action>
