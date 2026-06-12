@@ -308,7 +308,7 @@ public abstract class AbstractLicenseAppender {
                 // for Java just place the license at the front, for XML add
                 // an XML decl first - don't know how to handle PHP
                 if (expectsPackage || expectsXMLDecl) {
-                    try (FileWriter writer2  = new FileWriter(newDocument)) {
+                    try (FileWriter writer2  = new FileWriter(newDocument, StandardCharsets.UTF_8)) {
                         if (expectsXMLDecl) {
                             writer2.write("<?xml version='1.0'?>");
                             writer2.write(LINE_SEP);
