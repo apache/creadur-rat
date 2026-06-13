@@ -56,6 +56,8 @@ public class ArgTests {
         String fileName = name.replace("/", DocumentName.FSInfo.getDefault().dirSeparator());
         File expected = new File(fileName);
 
+        System.out.println("WORKING DIRECTORY >>>>>>>>>>>>>>>>>>>> " + new File(".").getAbsolutePath());
+
         CommandLine commandLine = createCommandLine(new String[] {"--output-file", fileName});
         OutputFileConfig configuration = new OutputFileConfig();
         ArgumentContext ctxt = new ArgumentContext(new File("."), configuration, commandLine);
