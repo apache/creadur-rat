@@ -31,3 +31,10 @@ consult before producing output.
 - Don't add unnecessary dependencies
 - Follow the existing codebase patterns and conventions
 - Test your solutions when possible with unit or integration tests
+
+## Security
+
+Security model: [SECURITY.md](./SECURITY.md), which links to the project's
+threat model at [THREAT_MODEL.md](./THREAT_MODEL.md). Consult the threat model
+for the project's in-scope / out-of-scope declarations and known non-findings
+before reporting security issues.
