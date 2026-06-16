@@ -485,7 +485,7 @@ public class ReporterTest {
     }
 
     @Test
-    public void listLicensesReportTest() throws Exception {
+    void listLicensesReportTest() throws Exception {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         ReportConfiguration configuration = initializeConfiguration();
         configuration.setOut(() -> out);
@@ -499,7 +499,7 @@ public class ReporterTest {
     }
 
     @Test
-    public void counterMaxTest() throws Exception {
+    void counterMaxTest() throws Exception {
         ReportConfiguration config = initializeConfiguration();
         Reporter reporter = new Reporter(config);
         reporter.output();

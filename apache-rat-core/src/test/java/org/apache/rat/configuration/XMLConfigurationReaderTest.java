@@ -59,7 +59,7 @@ public class XMLConfigurationReaderTest {
             "GPL3", "MIT", "OASIS", "W3C", "W3CD"};
 
     @Test
-    public void approvedLicenseIdTest() throws URISyntaxException {
+    void approvedLicenseIdTest() throws URISyntaxException {
         XMLConfigurationReader reader = new XMLConfigurationReader();
         URL url = XMLConfigurationReaderTest.class.getResource("/org/apache/rat/default.xml");
         assertThat(url).isNotNull();
@@ -71,7 +71,7 @@ public class XMLConfigurationReaderTest {
     }
 
     @Test
-    public void LicensesTest() throws URISyntaxException {
+    void LicensesTest() throws URISyntaxException {
         XMLConfigurationReader reader = new XMLConfigurationReader();
         URL url = XMLConfigurationReaderTest.class.getResource("/org/apache/rat/default.xml");
         reader.read(url.toURI());
@@ -80,7 +80,7 @@ public class XMLConfigurationReaderTest {
     }
 
     @Test
-    public void LicenseFamiliesTest() throws URISyntaxException {
+    void LicenseFamiliesTest() throws URISyntaxException {
         XMLConfigurationReader reader = new XMLConfigurationReader();
         URL url = XMLConfigurationReaderTest.class.getResource("/org/apache/rat/default.xml");
         reader.read(url.toURI());
@@ -95,7 +95,7 @@ public class XMLConfigurationReaderTest {
     }
 
     @Test
-    public void checkSystemMatcherTest() throws URISyntaxException {
+    void checkSystemMatcherTest() throws URISyntaxException {
         XMLConfigurationReader reader = new XMLConfigurationReader();
         URI uri = XMLConfigurationReaderTest.class.getResource("/org/apache/rat/default.xml").toURI();
         assertThat(uri).isNotNull();
@@ -112,7 +112,7 @@ public class XMLConfigurationReaderTest {
     }
 
     @Test
-    public void descriptionTest() throws SecurityException, URISyntaxException {
+    void descriptionTest() throws SecurityException, URISyntaxException {
         XMLConfigurationReader reader = new XMLConfigurationReader();
         URI uri = XMLConfigurationReaderTest.class.getResource("/org/apache/rat/default.xml").toURI();
         assertThat(uri).isNotNull();
@@ -139,7 +139,7 @@ public class XMLConfigurationReaderTest {
     }
 
     @Test
-    public void checkWithXXETest() throws SecurityException {
+    void checkWithXXETest() throws SecurityException {
         final String contents = """
                 <?xml version="1.0" encoding="UTF-8"?>
                 <!DOCTYPE user [
@@ -152,14 +152,14 @@ public class XMLConfigurationReaderTest {
                 """;
 
         final XMLConfigurationReader reader = new XMLConfigurationReader();
+        final StringReader xml = new StringReader(contents);
 
         final ConfigurationException expectedException = assertThrows(ConfigurationException.class,
                 () -> {
-                    try (StringReader xml = new StringReader(contents)) {
-                        reader.read(xml);
-                    }
+                    reader.read(xml);
                 }
         );
+
         assertThat(expectedException.getMessage()).isEqualTo("Unable to read inputSource");
     }
 

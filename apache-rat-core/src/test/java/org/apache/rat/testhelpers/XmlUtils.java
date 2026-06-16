@@ -46,7 +46,6 @@ import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 
-import org.apache.rat.api.RatException;
 import org.apache.rat.report.xml.writer.IXmlWriter;
 import org.apache.rat.utils.DefaultLog;
 import org.apache.rat.utils.StandardXmlFactory;
