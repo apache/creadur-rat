@@ -257,7 +257,9 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
                 reporter.execute();
                 fail("Should have thrown exception");
             } catch (RatException e) {
+                ClaimStatistic claimStatistic = reporter.getClaimsStatistic();
                 ClaimValidator validator = config.getClaimValidator();
+                assertThat(validator.listIssues(claimStatistic)).containsExactlyInAnyOrder("DOCUMENT_TYPES", "LICENSE_CATEGORIES", "LICENSE_NAMES", "STANDARDS");
             }
         });
     }
