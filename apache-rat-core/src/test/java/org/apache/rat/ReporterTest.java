@@ -208,9 +208,10 @@ public class ReporterTest {
         expected.put("/tri.txt", mapOf("encoding", "ISO-8859-1", "mediaType", "text/plain",
                 "type", "STANDARD"));
 
-        File output = new File(tempDirectory, "testXMLOutput");
+        File output = new File(tempDirectory, ".rat/testXMLOutput");
+        output.getParentFile().mkdir();
         CommandLine commandLine = new DefaultParser().parse(OptionCollection.buildOptions(), new String[]{"--output-style", "xml", "--output-file", output.getPath(), basedir});
-        ArgumentContext ctxt = new ArgumentContext(new File("."), commandLine);
+        ArgumentContext ctxt = new ArgumentContext(tempDirectory, commandLine);
 
         ReportConfiguration config = OptionCollection.createConfiguration(ctxt);
         new Reporter(config).output();

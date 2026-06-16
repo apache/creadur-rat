@@ -153,7 +153,11 @@ public final class XMLConfigurationReader implements LicenseReader, MatcherReade
     public void read(final Reader reader) {
         DocumentBuilder builder;
         try {
-            builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+            String FEATURE = "http://apache.org/xml/features/disallow-doctype-decl";
+            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+                    factory.setFeature(FEATURE, true);
+                    factory.setXIncludeAware(false);
+            builder = factory.newDocumentBuilder();
         } catch (ParserConfigurationException e) {
             throw new ConfigurationException("Unable to create DOM builder", e);
         }

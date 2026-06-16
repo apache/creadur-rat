@@ -136,6 +136,14 @@ public class OptionCollectionTest {
     }
 
     /**
+     * Gets the test path for.
+     * @return the test path.
+     */
+    public static Path getTestPath() {
+        return testPath;
+    }
+
+    /**
      * Process methods in a test provider.
      * Tests are detected by looking for the {@link TestFunction} annotation.
      * @param testProvider the test provider

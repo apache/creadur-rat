@@ -32,6 +32,8 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -53,15 +55,25 @@ public class ArgTests {
                 actual = file;
             }
         }
+
         String fileName = name.replace("/", DocumentName.FSInfo.getDefault().dirSeparator());
-        File expected = new File(fileName);
+        Path workingPath = new File(".").getAbsoluteFile().toPath();
+        Path expectedPath = workingPath.resolve("./" + fileName);
 
-        System.out.println("WORKING DIRECTORY >>>>>>>>>>>>>>>>>>>> " + new File(".").getAbsolutePath());
+        try {
+            expectedPath.toFile().createNewFile();
+            CommandLine commandLine = createCommandLine(new String[]{"--output-file", fileName});
+            OutputFileConfig configuration = new OutputFileConfig();
+            ArgumentContext ctxt = new ArgumentContext(new File("."), configuration, commandLine);
+            Arg.processArgs(ctxt, CLIOptionCollection.INSTANCE);
+            if (name.equals("/rat.txt")) {
+                assertThat(configuration.actual.getAbsolutePath()).isEqualTo(name);
+            } else {
+                assertThat(Files.isSameFile(configuration.actual.toPath(), expectedPath)).isTrue();
+            }
+        } finally {
+            expectedPath.toFile().delete();
+        }
 
-        CommandLine commandLine = createCommandLine(new String[] {"--output-file", fileName});
-        OutputFileConfig configuration = new OutputFileConfig();
-        ArgumentContext ctxt = new ArgumentContext(new File("."), configuration, commandLine);
-        Arg.processArgs(ctxt, CLIOptionCollection.INSTANCE);
-        assertThat(configuration.actual.getAbsolutePath()).isEqualTo(expected.getCanonicalPath());
     }
 }

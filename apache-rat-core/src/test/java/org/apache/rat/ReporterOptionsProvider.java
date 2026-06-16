@@ -116,6 +116,13 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
         return config;
     }
 
+    private File configureRatDir(Option option) {
+        configureSourceDir(option);
+        File result = new File(sourceDir, ".rat");
+        FileUtils.mkDir(result);
+        return result;
+    }
+
     private void configureSourceDir(Option option) {
         sourceDir = new File(baseDir, OptionFormatter.getName(option));
         FileUtils.mkDir(sourceDir);
@@ -227,9 +234,10 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
 
     @OptionCollectionTest.TestFunction
     protected void licensesDeniedFileTest() {
-        File outputFile = FileUtils.writeFile(baseDir, "licensesDenied.txt", Collections.singletonList("ILLUMOS"));
-        execLicensesDeniedTest(Arg.LICENSES_DENIED_FILE.find("licenses-denied-file"),
-                new String[]{outputFile.getAbsolutePath()});
+        Option option = Arg.LICENSES_DENIED_FILE.find("licenses-denied-file");
+        File ratDir = configureRatDir(option);
+        File outputFile = FileUtils.writeFile(ratDir, "licensesDenied.txt", Collections.singletonList("ILLUMOS"));
+        execLicensesDeniedTest(option, new String[]{outputFile.getAbsolutePath()});
     }
 
     private void noDefaultsTest(final Option option) {
@@ -319,7 +327,7 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
     }
 
     // exclude tests
-    private void execExcludeTest(final Option option, final String[] args) {
+    private void execExcludeTest(final Option option, final String[] args, final boolean addIgnored) {
         String[] notExcluded = {"notbaz", "well._afile"};
         String[] excluded = {"some.foo", "B.bar", "justbaz"};
         try {
@@ -334,23 +342,23 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
             Reporter reporter = new Reporter(config);
             ClaimStatistic claimStatistic = reporter.execute();
             assertThat(claimStatistic.getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(5);
-            assertThat(claimStatistic.getCounter(ClaimStatistic.Counter.IGNORED)).isEqualTo(0);
+            assertThat(claimStatistic.getCounter(ClaimStatistic.Counter.IGNORED)).isEqualTo(addIgnored ? 1 : 0);
 
             // filter out source
             config = generateConfig(ImmutablePair.of(option, args));
             reporter = new Reporter(config);
             claimStatistic = reporter.execute();
             assertThat(claimStatistic.getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(2);
-            assertThat(claimStatistic.getCounter(ClaimStatistic.Counter.IGNORED)).isEqualTo(3);
+            assertThat(claimStatistic.getCounter(ClaimStatistic.Counter.IGNORED)).isEqualTo(addIgnored ? 4 : 3);
         } catch (IOException | RatException e) {
             fail(e.getMessage(), e);
         }
     }
 
     private void excludeFileTest(final Option option) {
-        configureSourceDir(option);
-        File outputFile = FileUtils.writeFile(baseDir, "exclude.txt", Arrays.asList(EXCLUDE_ARGS));
-        execExcludeTest(option, new String[]{outputFile.getAbsolutePath()});
+        File ratDir = configureRatDir(option);
+        File outputFile = FileUtils.writeFile(ratDir, "exclude.txt", Arrays.asList(EXCLUDE_ARGS));
+        execExcludeTest(option, new String[]{outputFile.getAbsolutePath()}, true);
     }
 
     @OptionCollectionTest.TestFunction
@@ -365,12 +373,12 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
 
     @OptionCollectionTest.TestFunction
     protected void excludeTest() {
-        execExcludeTest(Arg.EXCLUDE.find("exclude"), EXCLUDE_ARGS);
+        execExcludeTest(Arg.EXCLUDE.find("exclude"), EXCLUDE_ARGS, false);
     }
 
     @OptionCollectionTest.TestFunction
     protected void inputExcludeTest() {
-        execExcludeTest(Arg.EXCLUDE.find("input-exclude"), EXCLUDE_ARGS);
+        execExcludeTest(Arg.EXCLUDE.find("input-exclude"), EXCLUDE_ARGS, false);
     }
 
     @OptionCollectionTest.TestFunction
@@ -496,7 +504,7 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
     }
 
     // include tests
-    private void execIncludeTest(final Option option, final String[] args) {
+    private void execIncludeTest(final Option option, final String[] args, boolean addIgnored) {
         Option excludeOption = Arg.EXCLUDE.option();
         String[] notExcluded = {"B.bar", "justbaz", "notbaz"};
         String[] excluded = {"some.foo"};
@@ -511,7 +519,7 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
             Reporter reporter = new Reporter(config);
             ClaimStatistic claimStatistic = reporter.execute();
             assertThat(claimStatistic.getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(4);
-            assertThat(claimStatistic.getCounter(ClaimStatistic.Counter.IGNORED)).isEqualTo(0);
+            assertThat(claimStatistic.getCounter(ClaimStatistic.Counter.IGNORED)).isEqualTo(addIgnored ? 1 : 0);
 
             // verify exclude removes most files.
             config = generateConfig(ImmutablePair.of(excludeOption, EXCLUDE_ARGS));
@@ -519,7 +527,7 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
             claimStatistic = reporter.execute();
             assertThat(claimStatistic.getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(1);
             // .gitignore is ignored by default as it is hidden but not counted
-            assertThat(claimStatistic.getCounter(ClaimStatistic.Counter.IGNORED)).isEqualTo(3);
+            assertThat(claimStatistic.getCounter(ClaimStatistic.Counter.IGNORED)).isEqualTo(addIgnored ? 4 : 3);
 
             // verify include pust them back
             config = generateConfig(ImmutablePair.of(option, args), ImmutablePair.of(excludeOption, EXCLUDE_ARGS));
@@ -527,15 +535,16 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
             claimStatistic = reporter.execute();
             assertThat(claimStatistic.getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(3);
             // .gitignore is ignored by default as it is hidden but not counted
-            assertThat(claimStatistic.getCounter(ClaimStatistic.Counter.IGNORED)).isEqualTo(1);
+            assertThat(claimStatistic.getCounter(ClaimStatistic.Counter.IGNORED)).isEqualTo(addIgnored ? 2 : 1);
         } catch (IOException | RatException e) {
             fail(e.getMessage(), e);
         }
     }
 
     private void includeFileTest(final Option option) {
-        File outputFile = FileUtils.writeFile(baseDir, "include.txt", Arrays.asList(INCLUDE_ARGS));
-        execIncludeTest(option, new String[]{outputFile.getAbsolutePath()});
+        File ratDir = configureRatDir(option);
+        File outputFile = FileUtils.writeFile(ratDir, "include.txt", Arrays.asList(INCLUDE_ARGS));
+        execIncludeTest(option, new String[]{outputFile.getAbsolutePath()}, true);
     }
 
     @OptionCollectionTest.TestFunction
@@ -550,12 +559,12 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
 
     @OptionCollectionTest.TestFunction
     protected void includeTest() {
-        execIncludeTest(Arg.INCLUDE.find("include"), INCLUDE_ARGS);
+        execIncludeTest(Arg.INCLUDE.find("include"), INCLUDE_ARGS, false);
     }
 
     @OptionCollectionTest.TestFunction
     protected void inputIncludeTest() {
-        execIncludeTest(Arg.INCLUDE.find("input-include"), INCLUDE_ARGS);
+        execIncludeTest(Arg.INCLUDE.find("input-include"), INCLUDE_ARGS, false);
     }
 
     @OptionCollectionTest.TestFunction
@@ -656,7 +665,7 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
     @OptionCollectionTest.TestFunction
     protected void licenseFamiliesApprovedFileTest() {
         Option option = Arg.FAMILIES_APPROVED_FILE.find("license-families-approved-file");
-        File outputFile = FileUtils.writeFile(baseDir, "familiesApproved.txt", Collections.singletonList("catz"));
+        File outputFile = FileUtils.writeFile(configureRatDir(option), "familiesApproved.txt", Collections.singletonList("catz"));
         execLicenseFamiliesApprovedTest(option, new String[]{outputFile.getAbsolutePath()});
     }
 
@@ -695,9 +704,9 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
 
     @OptionCollectionTest.TestFunction
     protected void licenseFamiliesDeniedFileTest() {
-        File outputFile = FileUtils.writeFile(baseDir, "familiesDenied.txt", Collections.singletonList("BSD-3"));
-        execLicenseFamiliesDeniedTest(Arg.FAMILIES_DENIED_FILE.find("license-families-denied-file"),
-                new String[]{outputFile.getAbsolutePath()});
+        Option option = Arg.FAMILIES_DENIED_FILE.find("license-families-denied-file");
+        File outputFile = FileUtils.writeFile(configureRatDir(option), "familiesDenied.txt", Collections.singletonList("BSD-3"));
+        execLicenseFamiliesDeniedTest(option, new String[]{outputFile.getAbsolutePath()});
     }
 
     @OptionCollectionTest.TestFunction
@@ -789,9 +798,10 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
 
     @OptionCollectionTest.TestFunction
     protected void licensesApprovedFileTest() {
-        File outputFile = FileUtils.writeFile(baseDir, "licensesApproved.txt", Collections.singletonList("GPL1"));
-        execLicensesApprovedTest(Arg.LICENSES_APPROVED_FILE.find("licenses-approved-file"),
-                new String[]{outputFile.getAbsolutePath()});
+        Option option = Arg.LICENSES_APPROVED_FILE.find("licenses-approved-file");
+        File ratDir = configureRatDir(option);
+                File outputFile = FileUtils.writeFile(ratDir, "licensesApproved.txt", Collections.singletonList("GPL1"));
+        execLicensesApprovedTest(option, new String[]{outputFile.getAbsolutePath()});
     }
 
     @OptionCollectionTest.TestFunction

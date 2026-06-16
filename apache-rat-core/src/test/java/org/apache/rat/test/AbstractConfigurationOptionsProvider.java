@@ -18,6 +18,7 @@
  */
 package org.apache.rat.test;
 
+import java.io.FileWriter;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import org.apache.commons.cli.Option;
@@ -25,6 +26,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.commons.text.WordUtils;
 import org.apache.rat.OptionCollectionTest;
 import org.apache.rat.ReportConfiguration;
 import org.apache.rat.ReporterTest;
@@ -37,6 +39,7 @@ import org.apache.rat.license.ILicense;
 import org.apache.rat.license.ILicenseFamily;
 import org.apache.rat.license.LicenseSetFactory;
 import org.apache.rat.report.claim.ClaimStatistic;
+import org.apache.rat.report.xml.writer.XmlWriter;
 import org.apache.rat.test.utils.Resources;
 import org.apache.rat.testhelpers.TextUtils;
 import org.apache.rat.utils.DefaultLog;
@@ -54,6 +57,7 @@ import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Locale;
 import java.util.SortedSet;
 
 import static org.apache.rat.commandline.Arg.HELP_LICENSES;
@@ -525,8 +529,56 @@ public abstract class AbstractConfigurationOptionsProvider extends AbstractOptio
         }
     }
 
+    private String writeConfigXML(String name) {
+        String licenseText = """
+                Licensed to the Apache Software Foundation (ASF) under one or more
+                       contributor license agreements.  See the NOTICE file distributed with
+                       this work for additional information regarding copyright ownership.
+                               The ASF licenses this file to You under the Apache License, Version 2.0
+                       (the "License"); you may not use this file except in compliance with
+                       the License.  You may obtain a copy of the License at
+                
+                       http://www.apache.org/licenses/LICENSE-2.0
+                
+                       Unless required by applicable law or agreed to in writing, software
+                       distributed under the License is distributed on an "AS IS" BASIS,
+                               WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+                               See the License for the specific language governing permissions and
+                       limitations under the License.""";
+        String capName = WordUtils.capitalize(name);
+        String upperName = name.toUpperCase(Locale.ROOT);
+
+        Path xmlPath = OptionCollectionTest.getTestPath().resolve(".rat/" + capName + ".xml");
+        File f = xmlPath.toFile();
+        try {
+            FileUtils.forceMkdir(f.getParentFile());
+            try (FileWriter writer = new FileWriter(f);
+                 XmlWriter xmlWriter = new XmlWriter(writer)) {
+
+                xmlWriter.startDocument()
+                        .comment(licenseText)
+                        .openElement("rat-config")
+                        .openElement("families")
+                        .openElement("family")
+                        .attribute("id", upperName)
+                        .attribute("name", "from " + capName + ".xml")
+                        .closeElement("families")
+                        .openElement("licenses")
+                        .openElement("license")
+                        .attribute("family", upperName)
+                        .openElement("text")
+                        .content(name)
+                        .closeElement("rat-config");
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        return xmlPath.toString();
+    }
+
     private void configTest(final Option option) {
-        String[] args = {"src/test/resources/OptionTools/One.xml", "src/test/resources/OptionTools/Two.xml"};
+        String[] args = {writeConfigXML("one"), writeConfigXML("two")};
+        Path xmlPath = OptionCollectionTest.getTestPath().resolve(".rat/One.xml");
         Pair<Option, String[]> arg1 = ImmutablePair.of(option, args);
         try {
             ReportConfiguration config = generateConfig(arg1);
