@@ -56,6 +56,7 @@ import org.apache.rat.commandline.StyleSheets;
 import org.apache.rat.document.FileDocument;
 import org.apache.rat.document.DocumentName;
 import org.apache.rat.license.ILicenseFamily;
+import org.apache.rat.license.LicenseSetFactory;
 import org.apache.rat.report.claim.ClaimStatistic;
 import org.apache.rat.test.utils.Resources;
 import org.apache.rat.testhelpers.TextUtils;
@@ -481,6 +482,20 @@ public class ReporterTest {
         TextUtils.assertContains("Generated at: ", document );
         TextUtils.assertPatternInTarget("\\Q/Source.java\\E$", document);
         TextUtils.assertPatternInTarget("\\Q/sub/Empty.txt\\E", document);
+    }
+
+    @Test
+    public void listLicensesReportTest() throws Exception {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        ReportConfiguration configuration = initializeConfiguration();
+        configuration.setOut(() -> out);
+        configuration.setStyleSheet(this.getClass().getResource("/org/apache/rat/unapproved-licenses.xsl"));
+        Reporter.listLicenses(configuration, LicenseSetFactory.LicenseFilter.NONE);
+
+        out.flush();
+        String document = out.toString();
+
+        assertThat(document).contains("Licenses (NONE):");
     }
 
     @Test
