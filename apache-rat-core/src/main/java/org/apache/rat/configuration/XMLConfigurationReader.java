@@ -34,7 +34,6 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.function.BiPredicate;
 import java.util.function.Consumer;
-import java.util.stream.Collectors;
 
 import javax.xml.parsers.DocumentBuilder;
 
@@ -375,7 +374,7 @@ public final class XMLConfigurationReader implements LicenseReader, MatcherReade
             // check for inline nodes that can accept child nodes.
             List<Description> childDescriptions = description.getChildren().values().stream()
                     .filter(d -> XMLConfig.isInlineNode(description.getCommonName(), d.getCommonName()))
-                    .collect(Collectors.toList());
+                    .toList();
 
             for (Description childDescription : childDescriptions) {
                 if (XMLConfig.isInlineNode(description.getCommonName(), childDescription.getCommonName())) {
@@ -464,7 +463,7 @@ public final class XMLConfigurationReader implements LicenseReader, MatcherReade
 
             // check for inline nodes that can accept child nodes.
             List<Description> childDescriptions = description.getChildren().values().stream()
-                    .filter(d -> XMLConfig.isLicenseInline(d.getCommonName())).collect(Collectors.toList());
+                    .filter(d -> XMLConfig.isLicenseInline(d.getCommonName())).toList();
             for (Description childDescription : childDescriptions) {
                 Iterator<Node> iter = children.iterator();
                 while (iter.hasNext()) {
