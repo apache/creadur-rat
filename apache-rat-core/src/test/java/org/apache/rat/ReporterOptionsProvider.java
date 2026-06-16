@@ -1036,7 +1036,7 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
                         throw new IllegalArgumentException("Unexpected filter: " + filter);
                 }
             }
-        } catch (IOException | RatException | SAXException | ParserConfigurationException |
+        } catch (IOException | RatException | SAXException |
                  XPathExpressionException e) {
             fail(e.getMessage(), e);
         }
@@ -1085,7 +1085,7 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
                         throw new IllegalArgumentException("Unexpected filter: " + filter);
                 }
             }
-        } catch (IOException | RatException | SAXException | ParserConfigurationException |
+        } catch (IOException | RatException | SAXException |
                  XPathExpressionException e) {
             fail(e.getMessage(), e);
         }
@@ -1143,7 +1143,7 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
                         throw new IllegalArgumentException("Unexpected processing " + proc);
                 }
             }
-        } catch (IOException | RatException | SAXException | ParserConfigurationException |
+        } catch (IOException | RatException | SAXException |
                  XPathExpressionException e) {
             fail(e.getMessage(), e);
         }
@@ -1198,7 +1198,7 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
                         throw new IllegalArgumentException("Unexpected processing " + proc);
                 }
             }
-        } catch (IOException | RatException | SAXException | ParserConfigurationException |
+        } catch (IOException | RatException | SAXException |
                  XPathExpressionException e) {
             fail(e.getMessage(), e);
         }

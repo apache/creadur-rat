@@ -34,9 +34,6 @@ import java.util.HashMap;
 import java.util.List;
 
 import java.util.Map;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
 import javax.xml.transform.OutputKeys;
@@ -49,8 +46,10 @@ import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 
+import org.apache.rat.api.RatException;
 import org.apache.rat.report.xml.writer.IXmlWriter;
 import org.apache.rat.utils.DefaultLog;
+import org.apache.rat.utils.StandardXmlFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
@@ -133,12 +132,16 @@ public final class XmlUtils {
         return sb.toString();
     }
 
-    public static Document toDom(final InputStream in)
-            throws SAXException, IOException, ParserConfigurationException, FactoryConfigurationError {
-        final DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-        Document result;
-        result = builder.parse(in);
-        return result;
+    /**
+     * Reads an input stream into a document.
+     * @param inputStream the input stream to read.
+     * @return the Document
+     * @throws SAXException on sax Error
+     * @throws IOException on IO Error
+     */
+    public static Document toDom(final InputStream inputStream)
+            throws SAXException, IOException {
+        return StandardXmlFactory.documentBuilder().parse(inputStream);
     }
 
     public static void writeAttribute(final IXmlWriter writer, final String name, final boolean booleanValue)

@@ -21,6 +21,9 @@ package org.apache.rat.utils;
 import java.io.InputStream;
 
 import javax.xml.XMLConstants;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
@@ -32,6 +35,13 @@ import javax.xml.transform.stream.StreamSource;
  * XXE errors and similar XML IO errors.
  */
 public final class StandardXmlFactory {
+
+    /**
+     This is the PRIMARY defense. If DTDs (doctypes) are disallowed, almost all
+     XML entity attacks are prevented
+     */
+     //Xerces 2 only - http://xerces.apache.org/xerces2-j/features.html#disallow-doctype-decl
+    private static final String FEATURE  = "http://apache.org/xml/features/disallow-doctype-decl";
 
     private StandardXmlFactory() {
         // do not instantiate.
@@ -63,5 +73,25 @@ public final class StandardXmlFactory {
         transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
         transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
         return transformer;
+    }
+
+    /**
+     * Creates a DocumentBuilder with reasonable security settings.
+     * @return a DocumentBuilder.
+     */
+    public static DocumentBuilder documentBuilder() {
+        try {
+            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            factory.setFeature(FEATURE, true);
+
+            // and these as well, per Timothy Morgan's 2014 paper: "XML Schema, DTD, and Entity Attacks"
+            factory.setXIncludeAware(false);
+
+            // remaining parser logic
+
+            return factory.newDocumentBuilder();
+        } catch (ParserConfigurationException e) {
+            throw new IllegalStateException("No XML parser defined", e);
+        }
     }
 }

@@ -28,7 +28,6 @@ import java.io.PrintWriter;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
@@ -45,6 +44,7 @@ import org.apache.rat.report.claim.ClaimStatistic;
 import org.apache.rat.report.xml.XmlReportFactory;
 import org.apache.rat.report.xml.writer.IXmlWriter;
 import org.apache.rat.report.xml.writer.XmlWriter;
+import org.apache.rat.utils.StandardXmlFactory;
 import org.w3c.dom.Document;
 
 /**
@@ -96,9 +96,9 @@ public class Reporter {
                         report.endReport();
                     }
                     InputStream inputStream = new ByteArrayInputStream(outputStream.toByteArray());
-                    document = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(inputStream);
+                    document = StandardXmlFactory.documentBuilder().parse(inputStream);
                 } else {
-                    document = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
+                    document = StandardXmlFactory.documentBuilder().newDocument();
                     statistic = new ClaimStatistic();
                 }
             }  catch (Exception e) {
