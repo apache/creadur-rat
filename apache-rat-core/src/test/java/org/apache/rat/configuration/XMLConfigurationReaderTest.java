@@ -16,19 +16,7 @@
  */
 package org.apache.rat.configuration;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.util.Collection;
-
+import org.apache.rat.ConfigurationException;
 import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.config.parameters.ComponentType;
 import org.apache.rat.config.parameters.Description;
@@ -44,19 +32,34 @@ import org.apache.rat.configuration.builders.SpdxBuilder;
 import org.apache.rat.configuration.builders.TextBuilder;
 import org.junit.jupiter.api.Test;
 
+import java.io.StringReader;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.util.Collection;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 public class XMLConfigurationReaderTest {
 
-    public static final String[] EXPECTED_IDS = { "AL", "BSD-3", "CDDL1", "GPL", "MIT", "OASIS",
-            "W3C", "W3CD" };
+    public static final String[] EXPECTED_IDS = {"AL", "BSD-3", "CDDL1", "GPL", "MIT", "OASIS",
+            "W3C", "W3CD"};
 
-    public static final String[] APPROVED_IDS = { "AL", "BSD-3", "CDDL1",  "MIT", "OASIS",
-            "W3C", "W3CD" };
+    public static final String[] APPROVED_IDS = {"AL", "BSD-3", "CDDL1", "MIT", "OASIS",
+            "W3C", "W3CD"};
 
-    public static final String[] EXPECTED_LICENSES = { "AL1.0", "AL1.1", "AL2.0", "BSD-3", "DOJO", "TMF", "CDDL1", "ILLUMOS", "GPL1", "GPL2",
-            "GPL3", "MIT", "OASIS", "W3C", "W3CD" };
+    public static final String[] EXPECTED_LICENSES = {"AL1.0", "AL1.1", "AL2.0", "BSD-3", "DOJO", "TMF", "CDDL1", "ILLUMOS", "GPL1", "GPL2",
+            "GPL3", "MIT", "OASIS", "W3C", "W3CD"};
 
     @Test
-    public void approvedLicenseIdTest() throws URISyntaxException {
+    void approvedLicenseIdTest() throws URISyntaxException {
         XMLConfigurationReader reader = new XMLConfigurationReader();
         URL url = XMLConfigurationReaderTest.class.getResource("/org/apache/rat/default.xml");
         assertThat(url).isNotNull();
@@ -68,7 +71,7 @@ public class XMLConfigurationReaderTest {
     }
 
     @Test
-    public void LicensesTest() throws URISyntaxException {
+    void LicensesTest() throws URISyntaxException {
         XMLConfigurationReader reader = new XMLConfigurationReader();
         URL url = XMLConfigurationReaderTest.class.getResource("/org/apache/rat/default.xml");
         reader.read(url.toURI());
@@ -77,7 +80,7 @@ public class XMLConfigurationReaderTest {
     }
 
     @Test
-    public void LicenseFamiliesTest() throws URISyntaxException {
+    void LicenseFamiliesTest() throws URISyntaxException {
         XMLConfigurationReader reader = new XMLConfigurationReader();
         URL url = XMLConfigurationReaderTest.class.getResource("/org/apache/rat/default.xml");
         reader.read(url.toURI());
@@ -92,7 +95,7 @@ public class XMLConfigurationReaderTest {
     }
 
     @Test
-    public void checkSystemMatcherTest() throws URISyntaxException {
+    void checkSystemMatcherTest() throws URISyntaxException {
         XMLConfigurationReader reader = new XMLConfigurationReader();
         URI uri = XMLConfigurationReaderTest.class.getResource("/org/apache/rat/default.xml").toURI();
         assertThat(uri).isNotNull();
@@ -109,7 +112,7 @@ public class XMLConfigurationReaderTest {
     }
 
     @Test
-    public void descriptionTest() throws SecurityException, URISyntaxException {
+    void descriptionTest() throws SecurityException, URISyntaxException {
         XMLConfigurationReader reader = new XMLConfigurationReader();
         URI uri = XMLConfigurationReaderTest.class.getResource("/org/apache/rat/default.xml").toURI();
         assertThat(uri).isNotNull();
@@ -134,4 +137,30 @@ public class XMLConfigurationReaderTest {
         assertTrue(desc.getChildren().containsKey("owner"));
         assertTrue(desc.getChildren().containsKey("id"));
     }
+
+    @Test
+    void checkWithXXETest() throws SecurityException {
+        final String contents = """
+                <?xml version="1.0" encoding="UTF-8"?>
+                <!DOCTYPE user [
+                    <!ENTITY xxe SYSTEM "file:///etc/passwd">
+                ]>
+                <user>
+                    <name>John Doe</name>
+                    <bio>&xxe;</bio>
+                </user>
+                """;
+
+        final XMLConfigurationReader reader = new XMLConfigurationReader();
+        final StringReader xml = new StringReader(contents);
+
+        final ConfigurationException expectedException = assertThrows(ConfigurationException.class,
+                () -> {
+                    reader.read(xml);
+                }
+        );
+
+        assertThat(expectedException.getMessage()).isEqualTo("Unable to read inputSource");
+    }
+
 }

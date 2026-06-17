@@ -38,7 +38,7 @@ public final class StandardXmlFactory {
 
     /**
      This is the PRIMARY defense. If DTDs (doctypes) are disallowed, almost all
-     XML entity attacks are prevented
+     XML entity attacks are prevented.
      */
      //Xerces 2 only - http://xerces.apache.org/xerces2-j/features.html#disallow-doctype-decl
     private static final String FEATURE  = "http://apache.org/xml/features/disallow-doctype-decl";
@@ -46,6 +46,7 @@ public final class StandardXmlFactory {
     private StandardXmlFactory() {
         // do not instantiate.
     }
+
     /**
      * Create a transformer with no stylesheet.
      * @return the transformer.
@@ -88,7 +89,6 @@ public final class StandardXmlFactory {
             factory.setXIncludeAware(false);
 
             // remaining parser logic
-
             return factory.newDocumentBuilder();
         } catch (ParserConfigurationException e) {
             throw new IllegalStateException("No XML parser defined", e);
