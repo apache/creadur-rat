@@ -39,13 +39,7 @@ import java.net.URL;
 import java.util.Collection;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class XMLConfigurationReaderTest {
 
@@ -66,8 +60,8 @@ public class XMLConfigurationReaderTest {
         reader.read(url.toURI());
 
         Collection<String> readCategories = reader.approvedLicenseId();
-
-        assertArrayEquals(APPROVED_IDS, readCategories.toArray(new String[readCategories.size()]));
+        assertThat(readCategories.toArray(new String[readCategories.size()]))
+                .containsExactly(APPROVED_IDS);
     }
 
     @Test
@@ -75,8 +69,8 @@ public class XMLConfigurationReaderTest {
         XMLConfigurationReader reader = new XMLConfigurationReader();
         URL url = XMLConfigurationReaderTest.class.getResource("/org/apache/rat/default.xml");
         reader.read(url.toURI());
-
-        assertArrayEquals(EXPECTED_LICENSES, reader.readLicenses().stream().map(IHeaderMatcher::getId).toArray(String[]::new));
+        assertThat(reader.readLicenses().stream().map(IHeaderMatcher::getId).toArray(String[]::new))
+                .containsExactly(EXPECTED_LICENSES);
     }
 
     @Test
@@ -85,13 +79,15 @@ public class XMLConfigurationReaderTest {
         URL url = XMLConfigurationReaderTest.class.getResource("/org/apache/rat/default.xml");
         reader.read(url.toURI());
 
-        assertArrayEquals(EXPECTED_IDS, reader.readFamilies().stream().map(x -> x.getFamilyCategory().trim()).toArray(String[]::new));
+        assertThat(reader.readFamilies().stream().map(x -> x.getFamilyCategory().trim()).toArray(String[]::new))
+                .containsExactly(EXPECTED_IDS);
     }
 
     private void checkMatcher(String name, Class<? extends AbstractBuilder> clazz) {
         AbstractBuilder builder = MatcherBuilderTracker.getMatcherBuilder(name);
-        assertNotNull(builder);
-        assertTrue(clazz.isAssignableFrom(builder.getClass()), () -> name + " is not an instanceof " + clazz.getName());
+        assertThat(builder).isNotNull();
+        assertThat(clazz.isAssignableFrom(builder.getClass())).as(() -> name + " is not an instanceof " + clazz.getName())
+                .isTrue();
     }
 
     @Test
@@ -121,21 +117,21 @@ public class XMLConfigurationReaderTest {
 
         IHeaderMatcher.Builder builder = MatcherBuilderTracker.getMatcherBuilder("copyright");
         Description desc = DescriptionBuilder.buildMap(builder.getClass());
-        assertNotNull(desc, () -> "did not build description for 'copyright'");
-        assertEquals("copyright", desc.getCommonName());
-        assertEquals(ComponentType.MATCHER, desc.getType());
-        assertFalse(desc.isCollection());
-        assertNull(desc.getChildType());
-        assertEquals("A matcher that matches Copyright text. Uses regular expressions and so should only " +
+        assertThat(desc).as(() -> "did not build description for 'copyright'").isNotNull();
+        assertThat(desc.getCommonName()).isEqualTo("copyright");
+        assertThat(desc.getType()).isEqualTo(ComponentType.MATCHER);
+        assertThat(desc.isCollection()).isFalse();
+        assertThat(desc.getChildType()).isNull();
+        assertThat(desc.getDescription()).isEqualTo("A matcher that matches Copyright text. Uses regular expressions and so should only " +
                 "be used when looking for copyrights with specific patterns that are not caught by a standard text " +
                 "matcher. This matcher will match \"(C)\", \"copyright\", or \"©\". (text is not case sensitive). " +
                 "It will also match things like Copyright (c) joe 1995 as well as Copyright (C) 1995 joe and " +
-                "Copyright (C) joe 1995.", desc.getDescription());
-        assertEquals(4, desc.getChildren().size());
-        assertTrue(desc.getChildren().containsKey("end"));
-        assertTrue(desc.getChildren().containsKey("start"));
-        assertTrue(desc.getChildren().containsKey("owner"));
-        assertTrue(desc.getChildren().containsKey("id"));
+                "Copyright (C) joe 1995.");
+        assertThat(desc.getChildren().size()).isEqualTo(4);
+        assertThat(desc.getChildren()).containsKey("end");
+        assertThat(desc.getChildren()).containsKey("start");
+        assertThat(desc.getChildren()).containsKey("owner");
+        assertThat(desc.getChildren()).containsKey("id");
     }
 
     @Test
@@ -154,13 +150,9 @@ public class XMLConfigurationReaderTest {
         final XMLConfigurationReader reader = new XMLConfigurationReader();
         final StringReader xml = new StringReader(contents);
 
-        final ConfigurationException expectedException = assertThrows(ConfigurationException.class,
-                () -> {
-                    reader.read(xml);
-                }
-        );
-
-        assertThat(expectedException.getMessage()).isEqualTo("Unable to read inputSource");
+       assertThatThrownBy(()->reader.read(xml))
+               .isInstanceOf(ConfigurationException.class)
+               .hasMessageContaining("Unable to read inputSource");
     }
 
 }
