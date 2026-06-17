@@ -87,7 +87,7 @@ agnostic home for software distribution comprehension and audit tools.
       <dependency>
         <groupId>com.github.spotbugs</groupId>
         <artifactId>spotbugs-annotations</artifactId>
-        <version>4.10.1</version>
+        <version>4.10.2</version>
       </dependency>
       <dependency>
         <groupId>org.reflections</groupId>
@@ -538,7 +538,7 @@ agnostic home for software distribution comprehension and audit tools.
         <plugin>
           <groupId>com.github.spotbugs</groupId>
           <artifactId>spotbugs-maven-plugin</artifactId>
-          <version>4.9.8.3</version>
+          <version>4.10.2.0</version>
           <configuration>
             <maxAllowedViolations>46</maxAllowedViolations>
             <failOnError>true</failOnError>
@@ -634,6 +634,8 @@ agnostic home for software distribution comprehension and audit tools.
           <configuration>
             <inputExcludeStd>ALL</inputExcludeStd>
             <inputExcludes>
+              <exclude>AGENTS.md</exclude>
+              <exclude>SECURITY.md</exclude>
               <exclude>.asf.yaml</exclude>
               <exclude>src/site/apt/naming_help.txt</exclude>
               <exclude>**/iso-8859-1.html</exclude>

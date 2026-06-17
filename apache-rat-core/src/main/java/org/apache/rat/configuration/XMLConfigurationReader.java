@@ -34,11 +34,8 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.function.BiPredicate;
 import java.util.function.Consumer;
-import java.util.stream.Collectors;
 
 import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
@@ -54,6 +51,7 @@ import org.apache.rat.configuration.builders.AbstractBuilder;
 import org.apache.rat.license.ILicense;
 import org.apache.rat.license.ILicenseFamily;
 import org.apache.rat.utils.DefaultLog;
+import org.apache.rat.utils.StandardXmlFactory;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -94,11 +92,7 @@ public final class XMLConfigurationReader implements LicenseReader, MatcherReade
      * Constructs the XML configuration reader.
      */
     public XMLConfigurationReader() {
-        try {
-            document = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
-        } catch (ParserConfigurationException e) {
-            throw new IllegalStateException("No XML parser defined", e);
-        }
+        document = StandardXmlFactory.documentBuilder().newDocument();
         rootElement = document.createElement(XMLConfig.ROOT);
         document.appendChild(rootElement);
         familiesElement = document.createElement(XMLConfig.FAMILIES);
@@ -151,19 +145,8 @@ public final class XMLConfigurationReader implements LicenseReader, MatcherReade
      * @param reader the reader to read XML from.
      */
     public void read(final Reader reader) {
-        DocumentBuilder builder;
         try {
-            String FEATURE = "http://apache.org/xml/features/disallow-doctype-decl";
-            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-                    factory.setFeature(FEATURE, true);
-                    factory.setXIncludeAware(false);
-            builder = factory.newDocumentBuilder();
-        } catch (ParserConfigurationException e) {
-            throw new ConfigurationException("Unable to create DOM builder", e);
-        }
-
-        try {
-            add(builder.parse(new InputSource(reader)));
+            add(StandardXmlFactory.documentBuilder().parse(new InputSource(reader)));
         } catch (SAXException | IOException e) {
             throw new ConfigurationException("Unable to read inputSource", e);
         }
@@ -174,12 +157,7 @@ public final class XMLConfigurationReader implements LicenseReader, MatcherReade
      * @param uris The URIs to read.
      */
     public void read(final URI... uris) {
-        DocumentBuilder builder;
-        try {
-            builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-        } catch (ParserConfigurationException e) {
-            throw new ConfigurationException("Unable to create DOM builder", e);
-        }
+        DocumentBuilder builder = StandardXmlFactory.documentBuilder();
         for (URI uri : uris) {
             try (InputStream inputStream = uri.toURL().openStream()) {
                 add(builder.parse(inputStream));
@@ -396,7 +374,7 @@ public final class XMLConfigurationReader implements LicenseReader, MatcherReade
             // check for inline nodes that can accept child nodes.
             List<Description> childDescriptions = description.getChildren().values().stream()
                     .filter(d -> XMLConfig.isInlineNode(description.getCommonName(), d.getCommonName()))
-                    .collect(Collectors.toList());
+                    .toList();
 
             for (Description childDescription : childDescriptions) {
                 if (XMLConfig.isInlineNode(description.getCommonName(), childDescription.getCommonName())) {
@@ -485,7 +463,7 @@ public final class XMLConfigurationReader implements LicenseReader, MatcherReade
 
             // check for inline nodes that can accept child nodes.
             List<Description> childDescriptions = description.getChildren().values().stream()
-                    .filter(d -> XMLConfig.isLicenseInline(d.getCommonName())).collect(Collectors.toList());
+                    .filter(d -> XMLConfig.isLicenseInline(d.getCommonName())).toList();
             for (Description childDescription : childDescriptions) {
                 Iterator<Node> iter = children.iterator();
                 while (iter.hasNext()) {

@@ -31,12 +31,12 @@ import java.util.Arrays;
 import java.util.Optional;
 
 import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.rat.ReportConfiguration;
 import org.apache.rat.ReportConfigurationTest;
 import org.apache.rat.document.DocumentName;
+import org.apache.rat.utils.StandardXmlFactory;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.MagicNames;
 import org.apache.tools.ant.Target;
@@ -269,7 +269,7 @@ public class ReportTest extends AbstractRatAntTaskTest {
         String outputDir = System.getProperty("output.dir", "target/anttasks");
         String selftestOutput = System.getProperty("report.file", outputDir + "/selftest.report");
         buildRule.executeTarget("testISO88591WithReportFile");
-        DocumentBuilder db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+        DocumentBuilder db = StandardXmlFactory.documentBuilder();
         boolean documentParsed;
         try (FileInputStream fis = new FileInputStream(selftestOutput)) {
             Document doc = db.parse(fis);
