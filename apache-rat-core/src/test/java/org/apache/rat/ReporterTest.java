@@ -56,6 +56,7 @@ import org.apache.rat.commandline.StyleSheets;
 import org.apache.rat.document.FileDocument;
 import org.apache.rat.document.DocumentName;
 import org.apache.rat.license.ILicenseFamily;
+import org.apache.rat.license.LicenseSetFactory;
 import org.apache.rat.report.claim.ClaimStatistic;
 import org.apache.rat.test.utils.Resources;
 import org.apache.rat.testhelpers.TextUtils;
@@ -484,7 +485,21 @@ public class ReporterTest {
     }
 
     @Test
-    public void counterMaxTest() throws Exception {
+    void listLicensesReportTest() throws Exception {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        ReportConfiguration configuration = initializeConfiguration();
+        configuration.setOut(() -> out);
+        configuration.setStyleSheet(StyleSheets.UNAPPROVED_LICENSES.getStyleSheet());
+        Reporter.listLicenses(configuration, LicenseSetFactory.LicenseFilter.NONE);
+
+        out.flush();
+        String document = out.toString();
+
+        assertThat(document).contains("Licenses (NONE):");
+    }
+
+    @Test
+    void counterMaxTest() throws Exception {
         ReportConfiguration config = initializeConfiguration();
         Reporter reporter = new Reporter(config);
         reporter.output();
