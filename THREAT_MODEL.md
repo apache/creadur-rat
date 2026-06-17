@@ -32,7 +32,8 @@
   process ([`SECURITY.md`](SECURITY.md)); §3/§9 findings closed citing this doc.
 - **Provenance legend:** *(documented)* / *(maintainer)* / *(inferred)* — each
   *(inferred)* has a §14 open question.
-- **Draft confidence:** ~14 documented / 0 maintainer / 16 inferred.
+- **Draft confidence:** ~14 documented / 5 maintainer / 11 inferred (maintainer
+  answers folded in from PR #677 review, 2026-06).
 
 **What it is.** RAT is a **build-time / CLI license-auditing tool**: it walks a
 source tree, matches files against configurable license/header definitions, and
@@ -62,7 +63,13 @@ case the model cares about. *(inferred — Q1.)*
 | **XML configuration reader** | `XMLConfigurationReader` | the **config** (if attacker-supplied) | **Yes** (XXE surface) |
 | **Archive walker** | `ArchiveWalker` | archives in the tree (zip/jar/tar) | **Yes** (decompression-bomb surface) |
 | CLI / Ant task / Maven plugin | wrappers | invocation args (trusted caller) | wrappers — trusted |
+| **License-header insertion (write mode)** | `--addLicense` / editors | **modifies files in the audited tree** (operator-invoked) | trusted-input (§3) |
 | Whisker / Tentacles | their CLIs | same dev-tool profile | sibling — §2 note |
+
+**Note (PMC, review).** The CLI, Ant task, and Maven plugin front-ends are
+generated from a common option core, so any security-relevant behaviour (or
+gap) in that core transfers automatically to all three UIs — a finding in one
+front-end's handling generally applies to all of them. *(maintainer.)*
 
 ## §3 Out of scope (explicit non-goals)
 
@@ -78,6 +85,12 @@ case the model cares about. *(inferred — Q1.)*
   already trust are `OUT-OF-MODEL: trusted-input`.
 - **Test resources** (the deliberately-odd license fixtures under
   `*/src/test/resources/`) — those are test data, not a target.
+- **RAT's header-insertion / file-modification mode** (`--addLicense` and the
+  editors) — RAT can *write* license headers into the audited files, mutating
+  the tree. This is explicitly operator-invoked against the operator's own
+  (trusted) sources; a run that modifies files the operator already controls is
+  `OUT-OF-MODEL: trusted-input`. (Raised by the PMC in review — write mode is
+  noted here so the boundary is explicit rather than silent.) *(maintainer.)*
 
 ## §4 Trust boundaries and data flow
 
@@ -114,9 +127,12 @@ finding that requires the operator to feed RAT input they already control is
 RAT has no security-mode flag. The security-relevant configuration is whether
 its **XML config parser disables DOCTYPE/external entities** and whether the
 **archive walker bounds decompression** (depth/size/entry count). Both are
-hardcoded behaviours, not operator knobs — confirmed in §14. There is no
-"insecure default toggle"; the question is simply what the parser/walker do by
-default. *(inferred — Q3/Q4.)*
+hardcoded behaviours, not operator knobs. The **archive walker does not bound
+decompression** — it extracts entry contents into an in-memory buffer (Apache
+Commons Compress `ArchiveStreamFactory`) with no size/depth/entry-count limit
+(§8/§9, maintainer-confirmed). XML-parser DOCTYPE handling is being hardened via
+a PMC PR (§14 Q3). There is no "insecure default toggle". *(maintainer / Q3
+pending PR link.)*
 
 ## §6 Assumptions about inputs
 
@@ -140,20 +156,24 @@ default. *(inferred — Q3/Q4.)*
 
 ## §8 Security properties the project provides
 
-1. **Bounded resource use on untrusted archives** — the archive walker should
-   not allow a small input to cause unbounded CPU/memory (decompression-bomb /
-   nested-archive defence). *Violation:* OOM/hang from a crafted archive.
-   *Severity:* security (DoS) when RAT audits untrusted input. *(inferred —
-   Q4: confirm whether bounds exist; this may be a §8 property or a §9 gap.)*
+1. **Bounded resource use on untrusted archives** — **not currently provided.**
+   The archive walker (`ArchiveWalker`) uses Apache Commons Compress
+   `ArchiveStreamFactory` and extracts entry contents into an **in-memory
+   buffer** held until the document is processed, with no decompression /
+   size / depth / entry-count bound — so a crafted archive can exhaust memory
+   (OOM). This is therefore a **disclaimed gap (§9)** plus a downstream
+   responsibility (§10), not a provided property. *(maintainer — confirmed by
+   the Creadur PMC in PR #677 review, 2026-06.)*
 2. **Safe XML configuration parsing** — the config reader should reject
    DOCTYPE/external entities (no XXE). *Violation:* file read / SSRF via a
-   crafted config. *Severity:* critical when config is untrusted. *(inferred —
-   Q3: confirm DOCTYPE handling — may be §8 or §9.)*
+   crafted config. *Severity:* critical when config is untrusted. The PMC has
+   noted a hardening PR is in flight addressing this (§14 Q3); pending its link
+   this stays tentative. *(maintainer / Q3 pending PR link.)*
 3. **No ambient network/side effects** — RAT does filesystem I/O only.
    *Violation:* unexpected outbound connection. *(inferred — Q2.)*
 
-(Whether items 1–2 are *provided* properties or *disclaimed* gaps depends on the
-maintainer's answers in §14; they are listed here as the relevant questions.)
+(Item 1 is resolved as a disclaimed §9 gap per the maintainer's archive answer;
+item 2 firms up once the §14 Q3 XXE-hardening PR is linked.)
 
 ## §9 Security properties the project does *not* provide
 
@@ -162,6 +182,11 @@ maintainer's answers in §14; they are listed here as the relevant questions.)
   that case: treat RAT-on-untrusted-input as you would any parser — sandbox it.
 - **It is not a security/vulnerability scanner** (§3); a clean RAT report says
   nothing about security.
+- **Decompression-bomb / archive resource exhaustion** — **confirmed not
+  bounded.** Archives are extracted into an in-memory buffer with no
+  size/depth/entry-count limit (Commons Compress `ArchiveStreamFactory`), so
+  RAT pointed at untrusted archives can OOM. Runs over untrusted archives must
+  be sandboxed / resource-limited (§10). *(maintainer.)*
 - **Well-known classes (parser/archive tools):** XXE via configuration,
   decompression bombs / nested-archive blowup, and path handling on archive
   entries — the standard risks of any tool that parses XML and descends into
@@ -219,10 +244,15 @@ maintainer's answers in §14; they are listed here as the relevant questions.)
   RAT auditing **untrusted** input (CI on untrusted PRs, third-party artifacts).
   Is that the case you want modelled, or do you consider all RAT input trusted
   (which would move XXE/archive items to `OUT-OF-MODEL: trusted-input`)? (§2/§7.)
-- **Q3.** Does `XMLConfigurationReader` disable DOCTYPE / external entities
-  (XXE-safe)? If yes, §8 #2 stands; if no, it's a §9 gap + a §10 responsibility.
-- **Q4.** Does `ArchiveWalker` bound decompression (size/depth/entry-count) so a
-  crafted archive can't exhaust memory/CPU? §8 #1 vs §9 gap.
+- **Q3.** *(Partially answered — PMC, PR #677: a hardening PR is in flight
+  ensuring DOCTYPE / external-entity handling is covered. **Pending the PR link
+  to cite**; once landed §8 #2 becomes a provided property.)* Does
+  `XMLConfigurationReader` disable DOCTYPE / external entities (XXE-safe)?
+- **Q4.** *(Answered — PMC, PR #677: no bound. Archives are extracted into an
+  in-memory buffer (Commons Compress `ArchiveStreamFactory`) held until the
+  document is processed, so a crafted archive can OOM. Resolved as a §9 gap +
+  §10 responsibility; §8 #1 is **not** a provided property.)* Does
+  `ArchiveWalker` bound decompression (size/depth/entry-count)?
 
 **Wave 2 — surface.**
 
@@ -241,7 +271,9 @@ maintainer's answers in §14; they are listed here as the relevant questions.)
 
 ## §15 Appendix — existing-policy back-map
 
-No in-repo `SECURITY.md` exists today; this PR adds one (ASF security-process
-pointer) plus `AGENTS.md`. Once the §14 answers land (especially Q3/Q4), the
-§8/§9 split firms up and the same chain can be added to `creadur-whisker` and
-`creadur-tentacles`.
+A basic `SECURITY.md` was introduced via #671 (ASF security-process pointer);
+this PR **appends** the `AGENTS.md` → `SECURITY.md` → `THREAT_MODEL.md`
+discoverability pointer to it and adds `AGENTS.md`. With the §14 Q4 answer in
+(archive walker unbounded → §9 gap) and Q3 pending its hardening-PR link, the
+§8/§9 split is firming up; the same chain can be added to `creadur-whisker` and
+`creadur-tentacles` (§14 Q6).
