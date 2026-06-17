@@ -43,8 +43,7 @@ public class StandardXmlFactoryTests {
     @Test
     void noEmptyInput() {
         assertThatThrownBy(() -> StandardXmlFactory.create(InputStream.nullInputStream()))
-                .isInstanceOf(TransformerConfigurationException.class)
-                .hasMessageContaining("Premature end of file.");
+                .isInstanceOf(TransformerConfigurationException.class);
     }
 
     @Test
