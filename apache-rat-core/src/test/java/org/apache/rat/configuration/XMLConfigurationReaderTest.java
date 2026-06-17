@@ -127,7 +127,7 @@ public class XMLConfigurationReaderTest {
                 "matcher. This matcher will match \"(C)\", \"copyright\", or \"©\". (text is not case sensitive). " +
                 "It will also match things like Copyright (c) joe 1995 as well as Copyright (C) 1995 joe and " +
                 "Copyright (C) joe 1995.");
-        assertThat(desc.getChildren().size()).isEqualTo(4);
+        assertThat(desc.getChildren()).hasSize(4);
         assertThat(desc.getChildren()).containsKey("end");
         assertThat(desc.getChildren()).containsKey("start");
         assertThat(desc.getChildren()).containsKey("owner");

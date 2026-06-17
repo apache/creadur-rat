@@ -33,7 +33,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 /**
  * Tests for StandardXmlFactory.
  */
-public class StandardXmlFactoryTests {
+class StandardXmlFactoryTests {
 
     @Test
     void noArg() throws TransformerConfigurationException {
