@@ -571,7 +571,7 @@ public abstract class AbstractConfigurationOptionsProvider extends AbstractOptio
         String capName = WordUtils.capitalize(name);
         String upperName = name.toUpperCase(Locale.ROOT);
 
-        Path xmlPath = OptionCollectionTest.getTestPath().resolve(".rat/" + capName + ".xml");
+        Path xmlPath = this.baseDir.toPath().resolve(".rat/" + capName + ".xml");
         File f = xmlPath.toFile();
         try {
             FileUtils.forceMkdir(f.getParentFile());
