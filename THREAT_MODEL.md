@@ -91,6 +91,15 @@ front-end's handling generally applies to all of them. *(maintainer.)*
   (trusted) sources; a run that modifies files the operator already controls is
   `OUT-OF-MODEL: trusted-input`. (Raised by the PMC in review — write mode is
   noted here so the boundary is explicit rather than silent.) *(maintainer.)*
+- **Custom matchers / matcher extensions**
+  (<https://creadur.apache.org/rat/license_def.html#Matchers>) — RAT lets the
+  operator define custom matcher classes in its configuration, and a custom
+  matcher sees the full text of every file selected for scanning. Because the
+  matcher set is operator-defined configuration under the control of whoever
+  runs RAT (not attacker-supplied), a custom matcher reading scanned text is
+  `OUT-OF-MODEL: trusted-input` — the same posture as any operator-supplied
+  extension code (cf. the write mode above). (Raised by the PMC in review.)
+  *(maintainer — Claudenw.)*
 
 ## §4 Trust boundaries and data flow
 
