@@ -861,8 +861,8 @@ public enum Arg {
 
         optionCollection.getSelected(CONFIGURATION).ifPresent(
                 selected -> {
-                    DocumentName[] files = getParsedOptionValues(selected, context.getCommandLine());
-                    for (DocumentName documentName : files) {
+                    DocumentName[] documentNames = getParsedOptionValues(selected, context.getCommandLine());
+                    for (DocumentName documentName : documentNames) {
                         defaultBuilder.add(documentName.asFile());
                     }
                 });

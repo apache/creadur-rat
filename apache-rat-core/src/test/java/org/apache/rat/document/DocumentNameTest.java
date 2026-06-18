@@ -42,6 +42,7 @@ import org.junit.jupiter.params.provider.FieldSource;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.mockito.ArgumentMatchers.any;
@@ -111,11 +112,11 @@ public class DocumentNameTest {
      * @param toResolve the string to resolve.
      * @param expected the expected DocumentName after resolution.
      */
-    @ParameterizedTest(name = "{index} {0} {2}")
+    @ParameterizedTest(name = "{index} {0} {1} {3}")
     @MethodSource("resolveTestData")
-    void resolveTest(DocumentName.FSInfo fsInfo, DocumentName base, String toResolve, DocumentName expected) {
+    void resolveTest(DocumentName.FSInfo fsInfo, String root, DocumentName base, String toResolve, DocumentName expected) {
        DocumentName actual = base.resolve(toResolve);
-       assertThat(actual).isEqualTo(expected);
+       assertThat(actual.getName()).isEqualTo(expected.getName());
     }
 
     private static Stream<Arguments> resolveTestData() {
@@ -125,28 +126,81 @@ public class DocumentNameTest {
         for (DocumentName.FSInfo fsInfo : TEST_SUITE) {
             String root = fsInfo.roots()[0];
             for (String baseName : List.of(root, root + fsInfo.mkPath("from", "base"))) {
-                String name = fsInfo.mkPath("", "dir", fsInfo.toString());
+                for (String testRoot : fsInfo.roots()) {
+                    String name = testRoot + fsInfo.mkPath("", "dir", fsInfo.toString());
+                    base = DocumentName.builder(fsInfo).setName(name).setBaseName(baseName).build();
+                    lst.add(Arguments.of(fsInfo, base.getName(),  base, null, base));
 
-                base = DocumentName.builder(fsInfo).setName(name).setBaseName(baseName).build();
+                    lst.add(Arguments.of(fsInfo, base.getName(), base, "", base));
 
-                expected = DocumentName.builder(fsInfo).setName(fsInfo.mkPath("", "dir", fsInfo.toString(), "relative")).setBaseName(baseName).build();
-                lst.add(Arguments.of(fsInfo, base, "relative", expected));
+                    lst.add(Arguments.of(fsInfo, base.getName(), base, "  ", base));
 
-                expected = DocumentName.builder(fsInfo).setName(fsInfo.mkPath("", "from", "root")).setBaseName(baseName).build();
-                lst.add(Arguments.of(fsInfo, base, fsInfo.mkPath("", "from", "root"), expected));
+                    expected = DocumentName.builder(fsInfo).setName(fsInfo.mkPath(name, "relative")).setBaseName(baseName).build();
+                    lst.add(Arguments.of(fsInfo, base.getName(), base, "relative", expected));
 
-                expected = DocumentName.builder(fsInfo).setName(fsInfo.mkPath("dir", "up", "and", "down")).setBaseName(baseName).build();
-                lst.add(Arguments.of(fsInfo, base, fsInfo.mkPath("..", "up", "and", "down"), expected));
+                    expected = DocumentName.builder(fsInfo).setRoot(testRoot).setName(fsInfo.mkPath("", "from", "root")).setBaseName(baseName).build();
+                    lst.add(Arguments.of(fsInfo, base.getName(), base, fsInfo.mkPath("", "from", "root"), expected));
 
-                expected = DocumentName.builder(fsInfo).setName(fsInfo.mkPath("", "from", "root")).setBaseName(baseName).build();
-                String wrongSeparator = fsInfo.dirSeparator().equals("/") ? "\\" : "/";
-                lst.add(Arguments.of(fsInfo, base, String.join(wrongSeparator, "", "from", "root"), expected));
+                    expected = DocumentName.builder(fsInfo).setRoot(testRoot).setName(fsInfo.mkPath("dir", "up", "and", "down")).setBaseName(baseName).build();
+                    lst.add(Arguments.of(fsInfo, base.getName(), base, fsInfo.mkPath("..", "up", "and", "down"), expected));
 
-                expected = DocumentName.builder(fsInfo).setName(fsInfo.mkPath("dir", "up", "and", "down")).setBaseName(baseName).build();
-                lst.add(Arguments.of(fsInfo, base, String.join(wrongSeparator, "..", "up", "and", "down"), expected));
+                    expected = DocumentName.builder(fsInfo).setRoot(testRoot).setName(fsInfo.mkPath("", "from", "root")).setBaseName(baseName).build();
+                    String wrongSeparator = fsInfo.dirSeparator().equals("/") ? "\\" : "/";
+                    lst.add(Arguments.of(fsInfo, base.getName(), base, String.join(wrongSeparator, "", "from", "root"), expected));
+
+                    expected = DocumentName.builder(fsInfo).setRoot(testRoot).setName(fsInfo.mkPath("dir", "up", "and", "down")).setBaseName(baseName).build();
+                    lst.add(Arguments.of(fsInfo, base.getName(), base, String.join(wrongSeparator, "..", "up", "and", "down"), expected));
+                }
             }
         }
         return lst.stream();
+    }
+
+    @Test
+    void resolveWithMultipleRootsTest() {
+        // these tests exist because windows has multiple roots.
+        DocumentName.FSInfo fsInfo = FSInfoTest.WINDOWS;
+        DocumentName base = DocumentName.builder(fsInfo).setName(fsInfo.mkPath("", "dir", fsInfo.toString()))
+                .setBaseName("").build();
+
+        String resolveName = fsInfo.roots()[1] + fsInfo.mkPath("dir", fsInfo.toString());
+        assertThatThrownBy(() -> base.resolve(resolveName))
+                .as(resolveName)
+                .hasMessageContaining(String.format("%s does not start with %s", resolveName, base.getName()))
+                .isInstanceOf(IllegalArgumentException.class);
+
+        String resolveName2 = fsInfo.roots()[0] + fsInfo.mkPath("dir", fsInfo.toString(), "thing");
+        assertThat(base.resolve(resolveName2).getName())
+                .isEqualTo(resolveName2);
+
+    }
+
+    void testNoRootSpecified() {
+        // no root specified
+        assertThat(DocumentName.startsWithRootOrSeparator("X:/candidate", null, "/")).isFalse();
+        assertThat(DocumentName.startsWithRootOrSeparator("X:/candidate", "", "/")).isFalse();
+        assertThat(DocumentName.startsWithRootOrSeparator("X;/candidate", "  ", "/")).isFalse();
+        assertThat(DocumentName.startsWithRootOrSeparator("/candidate", null, "/")).isTrue();
+        assertThat(DocumentName.startsWithRootOrSeparator("/candidate", "", "/")).isTrue();
+        assertThat(DocumentName.startsWithRootOrSeparator("/candidate", "  ", "/")).isTrue();
+        assertThat(DocumentName.startsWithRootOrSeparator("candidate", null, "/")).isFalse();
+        assertThat(DocumentName.startsWithRootOrSeparator("candidate", "", "/")).isFalse();
+        assertThat(DocumentName.startsWithRootOrSeparator("candidate", "  ", "/")).isFalse();
+    }
+
+    @Test
+    void startsWithRootOrSeparatorTest() {
+        assertThat(DocumentName.startsWithRootOrSeparator("X:/candidate", "X:/", "/")).isTrue();
+        assertThat(DocumentName.startsWithRootOrSeparator("X:/candidate", "Y:/", "/")).isFalse();
+        assertThat(DocumentName.startsWithRootOrSeparator("/candidate", "X:/", "/")).isTrue();
+        assertThat(DocumentName.startsWithRootOrSeparator("\\candidate", "Y:/", "/")).isFalse();
+        assertThat(DocumentName.startsWithRootOrSeparator("candidate", "Y:/", "/")).isFalse();
+        assertThat(DocumentName.startsWithRootOrSeparator("Y:candidate", "Y:/", "/")).isFalse();
+        assertThat(DocumentName.startsWithRootOrSeparator(null, "Y:/", "/")).isFalse();
+        assertThat(DocumentName.startsWithRootOrSeparator("", "Y:/", "/")).isFalse();
+        assertThat(DocumentName.startsWithRootOrSeparator("  ", "Y:/", "/")).isFalse();
+
+        testNoRootSpecified();
     }
 
     @ParameterizedTest
@@ -155,8 +209,23 @@ public class DocumentNameTest {
         DocumentName documentName = DocumentName.builder(fsInfo).setName(
                 fsInfo.mkPath("", "a", "b", "c"))
                 .setBaseName(fsInfo.mkPath("", "a")).build();
+
         assertThat(documentName.localized()).isEqualTo(fsInfo.mkPath("", "b", "c"));
         assertThat(documentName.localized("-")).isEqualTo("-b-c");
+
+        documentName = DocumentName.builder(fsInfo).setName(
+                        fsInfo.mkPath("", "a", "b", "c"))
+                .setBaseName(fsInfo.mkPath("", "z")).build();
+
+        assertThat(documentName.localized()).isEqualTo(fsInfo.mkPath("", "a", "b", "c"));
+
+        if (fsInfo.roots().length > 1) {
+            documentName = DocumentName.builder(fsInfo).setName(
+                            fsInfo.mkPath("", "a", "b", "c"))
+                    .setBaseName(fsInfo.mkPath("", "z"))
+                    .setRoot(fsInfo.roots()[1]).build();
+            assertThat(documentName.localized()).isEqualTo(fsInfo.mkPath("", "a", "b", "c"));
+        }
     }
 
     @Test

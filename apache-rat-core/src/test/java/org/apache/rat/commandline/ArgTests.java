@@ -7,7 +7,7 @@
  * "License"); you may not use this file except in compliance   *
  * with the License.  You may obtain a copy of the License at   *
  *                                                              *
- *   http://www.apache.org/licenses/LICENSE-2.0                 *
+ *   https://www.apache.org/licenses/LICENSE-2.0                 *
  *                                                              *
  * Unless required by applicable law or agreed to in writing,   *
  * software distributed under the License is distributed on an  *
@@ -18,7 +18,6 @@
  */
 package org.apache.rat.commandline;
 
-import java.io.IOException;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.Options;
@@ -32,7 +31,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import java.io.File;
-import java.nio.file.Files;
 import java.nio.file.Path;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -47,33 +45,31 @@ public class ArgTests {
 
     @ParameterizedTest(name = "{0}")
     @ValueSource(strings = { "rat.txt", "./rat.txt", "/rat.txt", "target/rat.test" })
-    public void outputFileNameNoDirectoryTest(String name) throws ParseException, IOException {
-        class OutputFileConfig extends ReportConfiguration  {
+    public void outputFileNameNoDirectoryTest(String name) throws ParseException {
+        class OutputFileConfig extends ReportConfiguration {
             private File actual = null;
+
             @Override
             public void setOut(File file) {
                 actual = file;
             }
         }
 
-        String fileName = name.replace("/", DocumentName.FSInfo.getDefault().dirSeparator());
-        Path workingPath = new File(".").getAbsoluteFile().toPath();
-        Path expectedPath = workingPath.resolve("./" + fileName);
+        DocumentName.FSInfo fsInfo = DocumentName.FSInfo.getDefault();
+        String fileName = name.replace("/", fsInfo.dirSeparator());
+        File localFile = new File(".");
+        DocumentName localFileName = DocumentName.builder(localFile).build();
+        Path workingPath = localFile.getAbsoluteFile().toPath();
+        String expected = fsInfo.normalize(workingPath.resolve("./" + fileName).toString());
 
-        try {
-            expectedPath.toFile().createNewFile();
-            CommandLine commandLine = createCommandLine(new String[]{"--output-file", fileName});
-            OutputFileConfig configuration = new OutputFileConfig();
-            ArgumentContext ctxt = new ArgumentContext(new File("."), configuration, commandLine);
-            Arg.processArgs(ctxt, CLIOptionCollection.INSTANCE);
-            if (name.equals("/rat.txt")) {
-                assertThat(configuration.actual.getAbsolutePath()).isEqualTo(name);
-            } else {
-                assertThat(Files.isSameFile(configuration.actual.toPath(), expectedPath)).isTrue();
-            }
-        } finally {
-            expectedPath.toFile().delete();
+        CommandLine commandLine = createCommandLine(new String[]{"--output-file", fileName});
+        OutputFileConfig configuration = new OutputFileConfig();
+        ArgumentContext ctxt = new ArgumentContext(localFile, configuration, commandLine);
+        Arg.processArgs(ctxt, CLIOptionCollection.INSTANCE);
+        if (name.equals("/rat.txt")) {
+            assertThat(fsInfo.normalize(configuration.actual.getAbsolutePath())).isEqualTo(localFileName.getRoot() + "rat.txt");
+        } else {
+            assertThat(fsInfo.normalize(configuration.actual.toString())).isEqualTo(expected);
         }
-
     }
 }

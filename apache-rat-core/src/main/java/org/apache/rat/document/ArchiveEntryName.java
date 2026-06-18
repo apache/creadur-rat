@@ -76,11 +76,6 @@ public class ArchiveEntryName extends DocumentName {
     }
 
     @Override
-    boolean startsWithRootOrSeparator(final String candidate, final String root, final String separator) {
-        return super.startsWithRootOrSeparator(candidate, root, separator);
-    }
-
-    @Override
     public String localized(final String dirSeparator) {
         String superLocal = super.localized(dirSeparator);
         superLocal = superLocal.substring(superLocal.lastIndexOf("#") + 1);

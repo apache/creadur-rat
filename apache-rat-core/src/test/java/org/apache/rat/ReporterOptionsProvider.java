@@ -721,7 +721,6 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
             String[] args = {
                     Resources.getResourceFile("OptionTools/One.xml").getAbsolutePath(),
                     Resources.getResourceFile("OptionTools/Two.xml").getAbsolutePath()};
-
             Pair<Option, String[]> arg1 = ImmutablePair.of(option, args);
 
             writeFile("bsd.txt", "SPDX-License-Identifier: BSD-3-Clause");

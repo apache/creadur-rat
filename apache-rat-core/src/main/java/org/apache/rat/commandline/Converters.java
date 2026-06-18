@@ -18,8 +18,6 @@
  */
 package org.apache.rat.commandline;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.Optional;
 
@@ -80,8 +78,9 @@ public final class Converters {
 
         /**
          * The constructor.
+         * visible for testing
          */
-        private FileConverter() {
+        FileConverter() {
             // private construction only.
         }
 
@@ -96,18 +95,27 @@ public final class Converters {
         /**
          * Applies the conversion function to the specified file name.
          * @param fileName the file name to create a file from.
-         * @return a File.
+         * @return the DocumentName
          * @throws NullPointerException if {@code fileName} is null.
          */
         public DocumentName apply(final String fileName) throws NullPointerException {
-            Optional<String> root = workingDirectory.fsInfo().rootFor(fileName);
-            DocumentName.Builder builder = DocumentName.builder(workingDirectory.fsInfo());
-            if (root.isPresent() || fileName.startsWith(workingDirectory.getDirectorySeparator())) {
-                builder.setBaseName(root.orElse(workingDirectory.getDirectorySeparator()));
+            DocumentName.FSInfo fsInfo = workingDirectory.fsInfo();
+            DocumentName.Builder builder = DocumentName.builder(fsInfo);
+            String normalizedFileName = fsInfo.normalize(fileName.trim());
+
+            Optional<String> root = fsInfo.rootFor(normalizedFileName);
+            builder.setRoot(root.orElse(workingDirectory.getRoot()));
+            if (fsInfo.startsWithRootOrSeparator(normalizedFileName)) {
+                if (normalizedFileName.startsWith(workingDirectory.getName()) ||
+                        normalizedFileName.startsWith(workingDirectory.getName().substring(workingDirectory.getRoot().length()))) {
+                    builder.setBaseName(workingDirectory.getBaseDocumentName());
+                } else {
+                    builder.setBaseName(fsInfo.dirSeparator());
+                }
             } else {
                 builder.setBaseName(workingDirectory);
             }
-            return builder.setName(fileName).build();
+            return  builder.setName(normalizedFileName).build();
         }
     }
 }

@@ -79,7 +79,7 @@ public abstract class AbstractConfigurationOptionsProvider extends AbstractOptio
      */
     public static void preserveData(File baseDir, String targetDir) {
         final Path recordPath = FileSystems.getDefault().getPath("target", targetDir);
-        recordPath.toFile().mkdirs();
+        org.apache.rat.testhelpers.FileUtils.mkDir(recordPath.toFile());
         try {
             FileUtils.copyDirectory(baseDir, recordPath.toFile());
         } catch (IOException e) {
@@ -233,10 +233,10 @@ public abstract class AbstractConfigurationOptionsProvider extends AbstractOptio
 
         writeFile(".gitignore", Arrays.asList(lines));
         File dir = new File(baseDir, "red");
-        dir.mkdirs();
+        org.apache.rat.testhelpers.FileUtils.mkDir(dir);
         dir = new File(baseDir, "blue");
         dir = new File(dir, "fish");
-        dir.mkdirs();
+        org.apache.rat.testhelpers.FileUtils.mkDir(dir);
 
         try {
             ReportConfiguration config = generateConfig(ImmutablePair.of(option, args));
@@ -548,7 +548,7 @@ public abstract class AbstractConfigurationOptionsProvider extends AbstractOptio
         String capName = WordUtils.capitalize(name);
         String upperName = name.toUpperCase(Locale.ROOT);
 
-        Path xmlPath = OptionCollectionTest.getTestPath().resolve(".rat/" + capName + ".xml");
+        Path xmlPath = this.baseDir.toPath().resolve(".rat/" + capName + ".xml");
         File f = xmlPath.toFile();
         try {
             FileUtils.forceMkdir(f.getParentFile());
@@ -578,7 +578,6 @@ public abstract class AbstractConfigurationOptionsProvider extends AbstractOptio
 
     private void configTest(final Option option) {
         String[] args = {writeConfigXML("one"), writeConfigXML("two")};
-        Path xmlPath = OptionCollectionTest.getTestPath().resolve(".rat/One.xml");
         Pair<Option, String[]> arg1 = ImmutablePair.of(option, args);
         try {
             ReportConfiguration config = generateConfig(arg1);
@@ -646,11 +645,10 @@ public abstract class AbstractConfigurationOptionsProvider extends AbstractOptio
             config = generateConfig(arg1, arg2);
             assertThat(config.getCopyrightMessage()).isEqualTo("MyCopyright");
         } catch (IOException e) {
-            e.printStackTrace();
             if (e.getCause() != null) {
                 fail(e.getMessage() + ": " + e.getCause().getMessage());
             }
-            fail(e.getMessage());
+            fail(e.getMessage(), e);
         }
     }
 
@@ -832,7 +830,11 @@ public abstract class AbstractConfigurationOptionsProvider extends AbstractOptio
         try (
                 InputStream in = ReporterTest.class.getResourceAsStream("MatcherContainerResource.txt");
                 OutputStream out = Files.newOutputStream(file.toPath())) {
-            IOUtils.copy(in, out);
+            if (in == null) {
+                fail("Could not copy MatcherContainerResource.txt: resource not found");
+            } else {
+                IOUtils.copy(in, out);
+            }
         } catch (IOException e) {
             fail("Could not copy MatcherContainerResource.txt: " + e.getMessage());
         }
