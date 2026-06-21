@@ -27,13 +27,14 @@
 - **Written against:** `main`/`master` @ HEAD (2026-06).
 - **Author:** ASF Security team, via the threat-model-producer rubric (Scovetta
   rubric) at the Creadur PMC's request (path 3).
-- **Status:** DRAFT — under maintainer review (2026-06-10). Not yet ratified.
+- **Status:** DRAFT — all §14 questions answered in the PR #677 review
+  (ottlinger, Claudenw; 2026-06-21); ready to ratify at the PMC's discretion.
 - **Reporting cross-reference:** §8-violating findings via the ASF security
   process ([`SECURITY.md`](SECURITY.md)); §3/§9 findings closed citing this doc.
 - **Provenance legend:** *(documented)* / *(maintainer)* / *(inferred)* — each
   *(inferred)* has a §14 open question.
-- **Draft confidence:** ~14 documented / 5 maintainer / 11 inferred (maintainer
-  answers folded in from PR #677 review, 2026-06).
+- **Draft confidence:** ~14 documented / 16 maintainer / 1 inferred (all §14
+  questions answered in the PR #677 review, 2026-06).
 
 **What it is.** RAT is a **build-time / CLI license-auditing tool**: it walks a
 source tree, matches files against configurable license/header definitions, and
@@ -53,7 +54,8 @@ Caller trust level: the developer/CI invoking RAT is trusted. The **inputs are
 normally trusted too** (your own source, your own config) — but RAT is
 sometimes pointed at **untrusted input**: a CI job auditing an untrusted
 contribution/PR, or auditing a downloaded third-party artifact. That is the
-case the model cares about. *(inferred — Q1.)*
+case the model cares about. *(maintainer — Claudenw, PR #677: confirmed; RAT
+config is operator-trusted, the scanned files may be untrusted.)*
 
 **Component families.**
 
@@ -126,10 +128,16 @@ finding that requires the operator to feed RAT input they already control is
 ## §5 Assumptions about the environment
 
 - A JRE; RAT reads the filesystem it is pointed at and writes a report. It opens
-  **no network connections** and runs no services. *(inferred — Q2, the
-  no-network claim is high-value to confirm.)*
-- The XML parser behaviour depends on the platform JAXP unless RAT configures it
-  (§5a/§8). *(inferred — Q3.)*
+  **no network connections** and runs no services — RAT runs locally and only
+  opens files. The one operator-reachable exception is an XSLT stylesheet using
+  `xsl:include` to pull a remote resource; XSLT stylesheets are trusted,
+  operator-controlled config, so that is `OUT-OF-MODEL: trusted-input` (§3).
+  (Build tooling — Maven/Ant — may fetch dependencies, but RAT itself does not.)
+  *(maintainer — Claudenw + ottlinger, PR #677.)*
+- The XML parser behaviour depends on the platform JAXP and is configurable via
+  the standard [JAXP system properties](https://docs.oracle.com/javase/8/docs/technotes/guides/security/jaxp/jaxp.html);
+  RAT disables external entities by default (§5a / §8 #2). *(maintainer —
+  Claudenw, PR #677.)*
 
 ## §5a Build-time and configuration variants
 
@@ -139,16 +147,16 @@ its **XML config parser disables DOCTYPE/external entities** and whether the
 hardcoded behaviours, not operator knobs. The **archive walker does not bound
 decompression** — it extracts entry contents into an in-memory buffer (Apache
 Commons Compress `ArchiveStreamFactory`) with no size/depth/entry-count limit
-(§8/§9, maintainer-confirmed). XML-parser DOCTYPE handling is being hardened via
-a PMC PR (§14 Q3). There is no "insecure default toggle". *(maintainer / Q3
-pending PR link.)*
+(§8/§9, maintainer-confirmed). The XML config reader **disables external
+entities**; DOCTYPE handling is further hardened by PR #679 (§8 #2). There is no
+"insecure default toggle". *(maintainer — Claudenw, PR #677; hardening in #679.)*
 
 ## §6 Assumptions about inputs
 
 | Input | Attacker-controllable? (untrusted-run) | Concern |
 | --- | --- | --- |
 | scanned file content | **yes** | parsed/read; resource use |
-| scanned file paths / archive entry names | **yes** | path handling on archive extraction |
+| scanned file paths / archive entry names | **yes** | reported as labels only — entries are read into memory, never extracted to disk, so no zip-slip / path-traversal-on-write surface *(maintainer)* |
 | archives (zip/jar/tar) in the tree | **yes** | decompression bomb / nested-archive depth |
 | RAT XML configuration | **maybe** (only if config is attacker-supplied) | XXE / external entity |
 | invocation arguments | no — trusted caller | — |
@@ -159,7 +167,7 @@ pending PR link.)*
   *untrusted-input* RAT run processes — e.g. a contributor whose PR is audited
   by CI, or the author of a third-party artifact being audited. Capabilities:
   craft a malicious archive (zip bomb), a hostile XML config (XXE), or
-  pathological file content. *(inferred — Q1.)*
+  pathological file content. *(maintainer — Claudenw, PR #677.)*
 - **Out of scope:** an attacker who controls the RAT invocation or the trusted
   source tree (the normal case — they already own the build).
 
@@ -173,16 +181,19 @@ pending PR link.)*
    (OOM). This is therefore a **disclaimed gap (§9)** plus a downstream
    responsibility (§10), not a provided property. *(maintainer — confirmed by
    the Creadur PMC in PR #677 review, 2026-06.)*
-2. **Safe XML configuration parsing** — the config reader should reject
-   DOCTYPE/external entities (no XXE). *Violation:* file read / SSRF via a
-   crafted config. *Severity:* critical when config is untrusted. The PMC has
-   noted a hardening PR is in flight addressing this (§14 Q3); pending its link
-   this stays tentative. *(maintainer / Q3 pending PR link.)*
-3. **No ambient network/side effects** — RAT does filesystem I/O only.
-   *Violation:* unexpected outbound connection. *(inferred — Q2.)*
+2. **Safe XML configuration parsing (no XXE)** — **provided.** The config reader
+   has **external entities disabled**; DOCTYPE handling is further hardened by
+   PR #679. *Violation:* file read / SSRF via a crafted config. *Severity:*
+   critical when config is untrusted. *(maintainer — Claudenw, PR #677; hardening
+   in #679.)*
+3. **No ambient network/side effects** — RAT does filesystem I/O only; it opens
+   no network connections on default settings. (Sole exception: an
+   operator-supplied XSLT `xsl:include` pointing at a remote resource — trusted
+   config, `OUT-OF-MODEL`.) *Violation:* unexpected outbound connection.
+   *(maintainer — Claudenw + ottlinger, PR #677.)*
 
-(Item 1 is resolved as a disclaimed §9 gap per the maintainer's archive answer;
-item 2 firms up once the §14 Q3 XXE-hardening PR is linked.)
+(Item 1 is a disclaimed §9 gap per the maintainer's archive answer; item 2 is a
+provided property — external entities disabled, with PR #679 hardening DOCTYPE.)
 
 ## §9 Security properties the project does *not* provide
 
@@ -196,10 +207,12 @@ item 2 firms up once the §14 Q3 XXE-hardening PR is linked.)
   size/depth/entry-count limit (Commons Compress `ArchiveStreamFactory`), so
   RAT pointed at untrusted archives can OOM. Runs over untrusted archives must
   be sandboxed / resource-limited (§10). *(maintainer.)*
-- **Well-known classes (parser/archive tools):** XXE via configuration,
-  decompression bombs / nested-archive blowup, and path handling on archive
-  entries — the standard risks of any tool that parses XML and descends into
-  archives.
+- **Well-known classes (parser/archive tools):** decompression bombs /
+  nested-archive blowup remain the live untrusted-archive risk. XXE via
+  configuration is mitigated (external entities disabled, §8 #2). Path-traversal
+  on archive entries does **not** apply: RAT reads entries into memory and never
+  extracts them to disk, so an entry label like `bar/baz.zip#/junk.txt` is a
+  report string, not a write path. *(maintainer — Claudenw, PR #677.)*
 
 ## §10 Downstream responsibilities
 
@@ -246,43 +259,44 @@ item 2 firms up once the §14 Q3 XXE-hardening PR is linked.)
 
 ## §14 Open questions for the maintainers
 
-**Wave 1 — the load-bearing ones.**
+All wave-1/2/3 questions were answered by the Creadur PMC in the PR #677 review
+(ottlinger, Claudenw; 2026-06) and folded above. Kept here as a resolved record.
 
-- **Q1.** Confirm the intended trust posture: RAT runs in-process for a
-  trusted caller; inputs are normally trusted, but the security-relevant case is
-  RAT auditing **untrusted** input (CI on untrusted PRs, third-party artifacts).
-  Is that the case you want modelled, or do you consider all RAT input trusted
-  (which would move XXE/archive items to `OUT-OF-MODEL: trusted-input`)? (§2/§7.)
-- **Q3.** *(Partially answered — PMC, PR #677: a hardening PR is in flight
-  ensuring DOCTYPE / external-entity handling is covered. **Pending the PR link
-  to cite**; once landed §8 #2 becomes a provided property.)* Does
-  `XMLConfigurationReader` disable DOCTYPE / external entities (XXE-safe)?
-- **Q4.** *(Answered — PMC, PR #677: no bound. Archives are extracted into an
-  in-memory buffer (Commons Compress `ArchiveStreamFactory`) held until the
-  document is processed, so a crafted archive can OOM. Resolved as a §9 gap +
-  §10 responsibility; §8 #1 is **not** a provided property.)* Does
-  `ArchiveWalker` bound decompression (size/depth/entry-count)?
+- **Q1 — trust posture (answered, Claudenw).** Confirmed: RAT configuration
+  (XSLT stylesheets, config files, license definitions, custom matchers) is
+  trusted/operator-controlled; the scanned **files** may be untrusted (CI
+  auditing a third-party PR/artifact). The attack surface is whatever can break
+  out of the scanning stream under default settings. Folded into §2 / §7.
+- **Q2 — no network (answered, Claudenw + ottlinger).** Confirmed: RAT opens no
+  network connections; it only reads files. Sole exception is an operator-set
+  XSLT `xsl:include` to a remote resource (trusted config → `OUT-OF-MODEL`).
+  Build tooling (Maven/Ant) may fetch dependencies, but RAT itself does not.
+  Folded into §5 / §8 #3.
+- **Q3 — XXE / XML parser (answered, Claudenw).** External entities are
+  **disabled** in the config reader; DOCTYPE handling is further hardened by
+  PR #679. JAXP behaviour is configurable via the standard JAXP system
+  properties. §8 #2 is now a **provided** property.
+- **Q4 — archive bound (answered, PMC).** No bound — entries are read into an
+  in-memory buffer (Commons Compress) with no size/depth/entry-count limit, and
+  OOM is **not** guarded ("we probably should add a limit but at this time we do
+  not"). Resolved as a §9 gap + §10 responsibility; §8 #1 is **not** provided.
+  Entries are never extracted to disk, so there is no path-traversal-on-write
+  surface (§6 / §9).
+- **Q5 / Q6 — Whisker / Tentacles coexistence (answered, ottlinger).**
+  Development on Whisker/Tentacles is low right now; the PMC prefers to **start
+  with RAT** and add the sibling pointer files (AGENTS.md → SECURITY.md → model)
+  to `creadur-whisker` / `creadur-tentacles` later, to reduce noise. This PR is
+  therefore scoped to `creadur-rat`; the sibling chain is a deferred follow-up.
 
-**Wave 2 — surface.**
-
-- **Q2.** Confirm RAT makes no network connections and has no side effects beyond
-  reading the scanned tree and writing the report. (§5/§8.)
-- **Q5.** Whisker and Tentacles — same trust profile (in-process dev tool,
-  inputs normally trusted)? Any input either processes that this RAT model
-  doesn't cover (e.g. Tentacles fetching/inspecting remote bundles)? (§2.)
-
-**Wave 3 — coexistence.**
-
-- **Q6.** This adds `THREAT_MODEL.md` + `SECURITY.md` + `AGENTS.md` to
-  `creadur-rat`. Want matching pointer files (AGENTS.md → SECURITY.md → this
-  model) added to `creadur-whisker` and `creadur-tentacles` so all three are
-  discoverable, or will you add them? (§1/§15.)
+With every question resolved, this model is ready to move from DRAFT to ratified
+at the PMC's discretion.
 
 ## §15 Appendix — existing-policy back-map
 
 A basic `SECURITY.md` was introduced via #671 (ASF security-process pointer);
 this PR **appends** the `AGENTS.md` → `SECURITY.md` → `THREAT_MODEL.md`
-discoverability pointer to it and adds `AGENTS.md`. With the §14 Q4 answer in
-(archive walker unbounded → §9 gap) and Q3 pending its hardening-PR link, the
-§8/§9 split is firming up; the same chain can be added to `creadur-whisker` and
-`creadur-tentacles` (§14 Q6).
+discoverability pointer to it and adds `AGENTS.md`. With every §14 question
+answered — Q4 archive walker unbounded → §9 gap, Q3 external entities disabled +
+PR #679 hardening DOCTYPE → §8 #2 provided — the §8/§9 split is settled. The same
+pointer chain will be added to `creadur-whisker` and `creadur-tentacles` as a
+deferred follow-up (§14 Q5/Q6).
