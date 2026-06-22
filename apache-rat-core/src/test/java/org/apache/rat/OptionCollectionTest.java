@@ -44,6 +44,7 @@ import org.apache.rat.test.utils.OptionFormatter;
 import org.apache.rat.testhelpers.TestingLog;
 import org.apache.rat.utils.CasedString;
 import org.apache.rat.utils.DefaultLog;
+import org.apache.rat.utils.FileUtils;
 import org.apache.rat.utils.Log;
 import org.apache.rat.walker.ArchiveWalker;
 import org.apache.rat.walker.DirectoryWalker;
@@ -181,6 +182,7 @@ public class OptionCollectionTest {
     public void testDeprecatedUseLogged() throws IOException {
         TestingLog log = new TestingLog();
         try {
+            FileUtils.mkDir(testPath.resolve("target").toFile());
             DefaultLog.setInstance(log);
             String[] args = {"--dir", "target", "-a"};
             ReportConfiguration config = OptionCollection.parseCommands(testPath.toFile(), args, o -> fail("Help printed"), true);

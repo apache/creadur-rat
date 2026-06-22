@@ -64,7 +64,7 @@ public class ArgTests {
 
         CommandLine commandLine = createCommandLine(new String[]{"--output-file", fileName});
         OutputFileConfig configuration = new OutputFileConfig();
-        ArgumentContext ctxt = new ArgumentContext(localFile, configuration, commandLine);
+        ArgumentContext ctxt = new ArgumentContext(localFile, configuration, CLIOptionCollection.INSTANCE.getOptions(), new String[]{"--output-file", fileName});
         Arg.processArgs(ctxt, CLIOptionCollection.INSTANCE);
         if (name.equals("/rat.txt")) {
             assertThat(fsInfo.normalize(configuration.actual.getAbsolutePath())).isEqualTo(localFileName.getRoot() + "rat.txt");

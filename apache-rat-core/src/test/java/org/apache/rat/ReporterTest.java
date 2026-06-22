@@ -59,6 +59,7 @@ import org.apache.rat.api.Document.Type;
 import org.apache.rat.api.RatException;
 import org.apache.rat.commandline.Arg;
 import org.apache.rat.commandline.ArgumentContext;
+import org.apache.rat.commandline.StyleSheets;
 import org.apache.rat.document.FileDocument;
 import org.apache.rat.document.DocumentName;
 import org.apache.rat.license.ILicenseFamily;

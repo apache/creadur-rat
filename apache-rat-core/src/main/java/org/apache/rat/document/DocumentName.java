@@ -625,63 +625,6 @@ public class DocumentName implements Comparable<DocumentName> {
             return result;
         }
 
-        /**
-         * Creates a path separated by the directory separator.
-         * Starting with an empty string will cause the directory separateor to appear at the beginning.
-         * @param segments the segments that make up the path.
-         * @return the path string.
-         */
-        public String mkPath(final String... segments) {
-            return String.join(dirSeparator(), segments);
-        }
-
-        /**
-         * Determines if the candidate string starts with a root or directory separator as defined in this
-         * FSInfo.
-         * @param candidate the candidate string to test.
-         * @return {@code true} if the candidate starts with a root or a directory separator.
-         */
-        public boolean startsWithRootOrSeparator(final String candidate) {
-            if (candidate == null) {
-                return false;
-            }
-            String target = candidate.trim();
-            if (StringUtils.isBlank(target)) {
-                return false;
-            }
-            for (String root : roots()) {
-                if (target.startsWith(root)) {
-                    return true;
-                }
-            }
-            return target.startsWith(dirSeparator());
-        }
-
-        private int compareData(final DocumentName.FSInfoData otherData) {
-            int result = Boolean.compare(this.data.isCaseSensitive, otherData.isCaseSensitive);
-            if (result == 0) {
-                result = this.data.separator.compareTo(otherData.separator);
-                if (result == 0) {
-                    if (new HashSet<>(this.data.roots).containsAll(otherData.roots)) {
-                        result = new HashSet<>(otherData.roots).containsAll(this.data.roots) ? 0 : 1;
-                    } else {
-                        result = -1;
-                    }
-                }
-            }
-            return result;
-        }
-
-        /**
-         * Creates a path separated by the directory separator.
-         * Starting with an empty string will cause the directory separateor to appear at the beginning.
-         * @param segments the segments that make up the path.
-         * @return the path string.
-         */
-        public String mkPath(final String... segments) {
-            return String.join(dirSeparator(), segments);
-        }
-
         @Override
         public int compareTo(final FSInfo other) {
             int result = this.name.compareToIgnoreCase(other.name);

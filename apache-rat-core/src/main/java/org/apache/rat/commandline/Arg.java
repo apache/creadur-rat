@@ -486,6 +486,7 @@ public enum Arg {
      */
     DIR(new OptionGroup().addOption(Option.builder().option("d").longOpt("dir").hasArg()
             .type(DocumentName.class)
+            .converter(Converters.FILE_CONVERTER)
             .desc("Used to indicate end of list when using options that take multiple arguments.").argName("DirOrArchive")
             .deprecated(DeprecatedAttributes.builder().setForRemoval(true).setSince("0.17")
                     .setDescription("Use the standard '--' to signal the end of arguments.").get()).build()),
