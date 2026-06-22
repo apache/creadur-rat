@@ -80,7 +80,7 @@ public abstract class AbstractConfigurationOptionsProvider extends AbstractOptio
      */
     public static void preserveData(File baseDir, String targetDir) {
         final Path recordPath = FileSystems.getDefault().getPath("target", targetDir);
-        org.apache.rat.testhelpers.FileUtils.mkDir(recordPath.toFile());
+        org.apache.rat.utils.FileUtils.mkDir(recordPath.toFile());
         try {
             FileUtils.copyDirectory(baseDir, recordPath.toFile());
         } catch (IOException e) {
@@ -232,10 +232,10 @@ public abstract class AbstractConfigurationOptionsProvider extends AbstractOptio
 
         writeFile(".gitignore", Arrays.asList(lines));
         File dir = new File(baseDir, "red");
-        org.apache.rat.testhelpers.FileUtils.mkDir(dir);
+        org.apache.rat.utils.FileUtils.mkDir(dir);
         dir = new File(baseDir, "blue");
         dir = new File(dir, "fish");
-        org.apache.rat.testhelpers.FileUtils.mkDir(dir);
+        org.apache.rat.utils.FileUtils.mkDir(dir);
 
         assertDoesNotThrow(() -> {
             ReportConfiguration config = generateConfig(ImmutablePair.of(option, args));
