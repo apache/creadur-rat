@@ -131,7 +131,6 @@ public class Reporter {
                             lic.getLicenseFamily().getFamilyName(), lic.getNote()));
             pw.println();
         }
-        return statistic;
     }
 
     /**

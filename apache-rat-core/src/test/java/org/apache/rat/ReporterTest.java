@@ -58,6 +58,7 @@ import org.apache.rat.api.Document.Type;
 import org.apache.rat.api.RatException;
 import org.apache.rat.commandline.Arg;
 import org.apache.rat.commandline.ArgumentContext;
+import org.apache.rat.commandline.StyleSheets;
 import org.apache.rat.document.FileDocument;
 import org.apache.rat.document.DocumentName;
 import org.apache.rat.license.ILicenseFamily;
@@ -536,13 +537,12 @@ public class ReporterTest {
     void listLicensesReportTest() throws Exception {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         ReportConfiguration configuration = initializeConfiguration();
-        configuration.setOut(() -> out);
+        configuration.setOut(new ReportConfiguration.IODescriptor<>("listLicensesReportTest", () -> out));
         configuration.setStyleSheet(StyleSheets.UNAPPROVED_LICENSES.getStyleSheet());
         Reporter.listLicenses(configuration, LicenseSetFactory.LicenseFilter.NONE);
 
         out.flush();
         String document = out.toString();
-
         assertThat(document).contains("Licenses (NONE):");
     }
 

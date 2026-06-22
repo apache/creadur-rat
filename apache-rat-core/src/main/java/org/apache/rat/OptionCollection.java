@@ -177,8 +177,8 @@ public final class OptionCollection {
         Optional<Option> dirOpt = CLIOptionCollection.INSTANCE.getSelected(Arg.DIR);
         if (dirOpt.isPresent()) {
             try {
-                configuration.addSource(getReportable(commandLine.getParsedOptionValue(
-                        dirOpt.get()), configuration));
+                DocumentName directoryName = commandLine.getParsedOptionValue(dirOpt.get());
+                configuration.addSource(getReportable(directoryName.asFile(), configuration));
             } catch (ParseException e) {
                 throw new ConfigurationException("Unable to set parse " + dirOpt.get(), e);
             }
