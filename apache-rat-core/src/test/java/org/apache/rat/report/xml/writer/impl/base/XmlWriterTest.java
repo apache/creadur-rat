@@ -7,7 +7,7 @@
  * "License"); you may not use this file except in compliance   *
  * with the License.  You may obtain a copy of the License at   *
  *                                                              *
- *   http://www.apache.org/licenses/LICENSE-2.0                 *
+ *   https://www.apache.org/licenses/LICENSE-2.0                 *
  *                                                              *
  * Unless required by applicable law or agreed to in writing,   *
  * software distributed under the License is distributed on an  *
@@ -32,6 +32,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.NoSuchElementException;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatNoException;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class XmlWriterTest {
@@ -52,13 +53,13 @@ class XmlWriterTest {
         StringWriter out = new StringWriter();
         try (XmlWriter writer = new XmlWriter(out)) {
             writer.startElement("alpha");
-            assertThat(out.toString()).isEqualTo("<alpha");
+            assertThat(out).hasToString("<alpha");
             writer.startElement("beta");
-            assertThat(out.toString()).isEqualTo("<alpha><beta");
+            assertThat(out).hasToString("<alpha><beta");
             writer.closeElement();
-            assertThat(out.toString()).isEqualTo("<alpha><beta/>");
+            assertThat(out).hasToString("<alpha><beta/>");
             writer.startElement("gamma");
-            assertThat(out.toString()).isEqualTo("<alpha><beta/><gamma");
+            assertThat(out).hasToString("<alpha><beta/><gamma");
         }
     }
     
@@ -96,9 +97,9 @@ class XmlWriterTest {
         StringWriter out = new StringWriter();
         try (XmlWriter writer = new XmlWriter(out)) {
             writer.startElement("alpha");
-            assertThat(out.toString()).isEqualTo("<alpha");
+            assertThat(out).hasToString("<alpha");
             writer.closeElement();
-            assertThat(out.toString()).isEqualTo("<alpha/>");
+            assertThat(out).hasToString("<alpha/>");
             assertThatThrownBy(() -> writer.startElement("delta"))
                     .hasMessageContaining("Root element already closed. Cannot open new element.")
                             .isInstanceOf(OperationNotAllowedException.class);
@@ -110,9 +111,9 @@ class XmlWriterTest {
         StringWriter out = new StringWriter();
         try (XmlWriter writer = new XmlWriter(out)) {
             writer.startElement("alpha");
-            assertThat(out.toString()).isEqualTo("<alpha");
+            assertThat(out).hasToString("<alpha");
             writer.closeElement();
-            assertThat(out.toString()).isEqualTo("<alpha/>");
+            assertThat(out).hasToString("<alpha/>");
             assertThatThrownBy(writer::closeElement)
                     .hasMessageContaining("Root element already closed. Cannot open new element.")
                     .isInstanceOf(OperationNotAllowedException.class);
@@ -124,9 +125,9 @@ class XmlWriterTest {
         StringWriter out = new StringWriter();
         try (XmlWriter writer = new XmlWriter(out)) {
             writer.startElement("alpha");
-            assertThat(out.toString()).isEqualTo("<alpha");
+            assertThat(out).hasToString("<alpha");
             writer.closeElement();
-            assertThat(out.toString()).isEqualTo("<alpha/>");
+            assertThat(out).hasToString("<alpha/>");
         }
     }
     
@@ -135,12 +136,12 @@ class XmlWriterTest {
         StringWriter out = new StringWriter();
         try (XmlWriter writer = new XmlWriter(out)) {
             writer.startElement("alpha").startElement("beta");
-            assertThat(out.toString()).isEqualTo("<alpha><beta");
+            assertThat(out).hasToString("<alpha><beta");
 
                    writer.closeElement();
-            assertThat(out.toString()).isEqualTo("<alpha><beta/>");
+            assertThat(out).hasToString("<alpha><beta/>");
             writer.closeElement();
-            assertThat(out.toString()).isEqualTo("<alpha><beta/></alpha>");
+            assertThat(out).hasToString("<alpha><beta/></alpha>");
             assertThatThrownBy(writer::closeElement)
                     .hasMessageContaining("Root element already closed. Cannot open new element.")
                     .isInstanceOf(OperationNotAllowedException.class);
@@ -165,17 +166,17 @@ class XmlWriterTest {
         StringWriter out = new StringWriter();
         try (XmlWriter writer = new XmlWriter(out)) {
             writer.startElement("alpha");
-            assertThat(out.toString()).isEqualTo("<alpha");
+            assertThat(out).hasToString("<alpha");
             writer.content("foo bar");
-            assertThat(out.toString()).isEqualTo("<alpha>foo bar");
+            assertThat(out).hasToString("<alpha>foo bar");
             writer.content(" and more foo bar");
-            assertThat(out.toString()).isEqualTo("<alpha>foo bar and more foo bar");
+            assertThat(out).hasToString("<alpha>foo bar and more foo bar");
             writer.startElement("beta");
-            assertThat(out.toString()).isEqualTo("<alpha>foo bar and more foo bar<beta");
+            assertThat(out).hasToString("<alpha>foo bar and more foo bar<beta");
             writer.closeElement();
-            assertThat(out.toString()).isEqualTo("<alpha>foo bar and more foo bar<beta/>");
+            assertThat(out).hasToString("<alpha>foo bar and more foo bar<beta/>");
             writer.closeElement();
-            assertThat(out.toString()).isEqualTo("<alpha>foo bar and more foo bar<beta/></alpha>");
+            assertThat(out).hasToString("<alpha>foo bar and more foo bar<beta/></alpha>");
             assertThatThrownBy(() -> writer.content("A Sentence Too far"))
                     .hasMessageContaining("Root element already closed. Cannot open new element.")
                             .isInstanceOf(OperationNotAllowedException.class);
@@ -187,9 +188,9 @@ class XmlWriterTest {
         StringWriter out = new StringWriter();
         try (XmlWriter writer = new XmlWriter(out)) {
             writer.startElement("alpha");
-            assertThat(out.toString()).isEqualTo("<alpha");
+            assertThat(out).hasToString("<alpha");
             writer.closeElement();
-            assertThat(out.toString()).isEqualTo("<alpha/>");
+            assertThat(out).hasToString("<alpha/>");
             assertThatThrownBy(() -> writer.content("A Sentence Too far"))
                     .hasMessageContaining("Root element already closed. Cannot open new element.")
                             .isInstanceOf(OperationNotAllowedException.class);
@@ -213,13 +214,13 @@ class XmlWriterTest {
         StringWriter out = new StringWriter();
         try (XmlWriter writer = new XmlWriter(out)) {
             writer.startElement("alpha");
-            assertThat(out.toString()).isEqualTo("<alpha");
+            assertThat(out).hasToString("<alpha");
             writer.content("this&that");
-            assertThat(out.toString()).isEqualTo("<alpha>this&amp;that");
+            assertThat(out).hasToString("<alpha>this&amp;that");
             writer.content("small<large");
-            assertThat(out.toString()).isEqualTo("<alpha>this&amp;thatsmall&lt;large");
+            assertThat(out).hasToString("<alpha>this&amp;thatsmall&lt;large");
             writer.content("12>1");
-            assertThat(out.toString()).isEqualTo("<alpha>this&amp;thatsmall&lt;large12&gt;1");
+            assertThat(out).hasToString("<alpha>this&amp;thatsmall&lt;large12&gt;1");
         }
     }
 
@@ -228,7 +229,7 @@ class XmlWriterTest {
         StringWriter out = new StringWriter();
         try (XmlWriter writer = new XmlWriter(out)) {
             writer.startElement("alpha").closeElement();
-            assertThat(out.toString()).isEqualTo("<alpha/>");
+            assertThat(out).hasToString("<alpha/>");
             assertThatThrownBy(() -> writer.attribute("foo", "bar"))
                     .hasMessageContaining("Root element already closed. Cannot open new element.")
                             .isInstanceOf(OperationNotAllowedException.class);
@@ -276,7 +277,7 @@ class XmlWriterTest {
         try (XmlWriter writer = new XmlWriter(out)) {
             writer.startElement("alpha").attribute("one", "this&that").attribute("two", "small<large")
                     .attribute("three", "12>1").attribute("four", "'quote'").attribute("five", "\"quote\"");
-            assertThat(out.toString()).isEqualTo("<alpha one='this&amp;that' two='small&lt;large' three='12&gt;1' four='&apos;quote&apos;' five='&quot;quote&quot;'");
+            assertThat(out).hasToString("<alpha one='this&amp;that' two='small&lt;large' three='12&gt;1' four='&apos;quote&apos;' five='&quot;quote&quot;'");
         }
     }
     
@@ -312,7 +313,7 @@ class XmlWriterTest {
                 }
             };
             writer.startElement("alpha").content(cs);
-            assertThat(out.toString()).isEqualTo("<alpha>\\uDC00");
+            assertThat(out).hasToString("<alpha>\\uDC00");
         }
     }
     
@@ -321,7 +322,7 @@ class XmlWriterTest {
         StringWriter out = new StringWriter();
         try (XmlWriter writer = new XmlWriter(out)) {
             writer.startElement("alpha").startElement("beta").closeElement();
-            assertThat(out.toString()).isEqualTo("<alpha><beta/>");
+            assertThat(out).hasToString("<alpha><beta/>");
             assertThatThrownBy(() -> writer.attribute("name", "value"))
                     .hasMessageContaining("Attributes can only be written in elements")
                             .isInstanceOf(InvalidXmlException.class);
@@ -345,16 +346,17 @@ class XmlWriterTest {
     void closeDocumentAfterRootElementClosed() throws Exception {
         StringWriter out = new StringWriter();
         try (XmlWriter writer = new XmlWriter(out)) {
-            writer.startElement("alpha").closeElement().closeDocument();
+            writer.startElement("alpha").closeElement();
+            assertThatNoException().isThrownBy(writer::closeDocument);
         }
-    }   
+    }
     
     @Test
     void closeSimpleDocument() throws Exception {
         StringWriter out = new StringWriter();
         try (XmlWriter writer = new XmlWriter(out)) {
             writer.startElement("alpha").startElement("beta").closeDocument();
-            assertThat(out.toString()).isEqualTo("<alpha><beta/></alpha>");
+            assertThat(out).hasToString("<alpha><beta/></alpha>");
         }
     }
     
@@ -366,7 +368,7 @@ class XmlWriterTest {
                     .startElement("beta")
             .attribute("name", "value")
                     .startElement("gamma").closeDocument();
-            assertThat(out.toString()).isEqualTo("<alpha><beta name='value'/><beta name='value'><gamma/></beta></alpha>");
+            assertThat(out).hasToString("<alpha><beta name='value'/><beta name='value'><gamma/></beta></alpha>");
         }
     }
     
@@ -375,7 +377,7 @@ class XmlWriterTest {
         StringWriter out = new StringWriter();
         try (XmlWriter writer = new XmlWriter(out)) {
             writer.startDocument();
-            assertThat(out.toString()).isEqualTo("<?xml version='1.0'?>");
+            assertThat(out).hasToString("<?xml version='1.0'?>");
         } catch (OperationNotAllowedException expected) {
             assertThat(expected).hasMessageContaining("Close called before an element has been opened.");
         }
@@ -396,7 +398,7 @@ class XmlWriterTest {
         StringWriter out = new StringWriter();
         try (XmlWriter writer = new XmlWriter(out)) {
             writer.startDocument();
-            assertThat(out.toString()).isEqualTo("<?xml version='1.0'?>");
+            assertThat(out).hasToString("<?xml version='1.0'?>");
             assertThatThrownBy(writer::startDocument).hasMessageContaining("Only one prolog allowed")
                     .isInstanceOf(OperationNotAllowedException.class);
         } catch (OperationNotAllowedException expected) {
@@ -409,7 +411,7 @@ class XmlWriterTest {
         StringWriter out = new StringWriter();
         try (XmlWriter writer = new XmlWriter(out)) {
             writer.startElement("alpha").attribute("one", "1").startElement("beta").attribute("one", "1");
-            assertThat(out.toString()).isEqualTo("<alpha one='1'><beta one='1'");
+            assertThat(out).hasToString("<alpha one='1'><beta one='1'");
             assertThatThrownBy(() -> writer.attribute("one", "2"))
                     .hasMessageContaining("Each attribute can only be written once")
                     .isInstanceOf(InvalidXmlException.class);
@@ -434,7 +436,7 @@ class XmlWriterTest {
         StringWriter out = new StringWriter();
         try (XmlWriter writer = new XmlWriter(out)) {
             writer.startDocument().startElement("test").cdata("Just cdata").closeDocument();
-            assertThat(out.toString()).isEqualTo("<?xml version='1.0'?><test><![CDATA[ Just cdata ]]></test>");
+            assertThat(out).hasToString("<?xml version='1.0'?><test><![CDATA[ Just cdata ]]></test>");
         }
     }
 
@@ -443,7 +445,7 @@ class XmlWriterTest {
         StringWriter out = new StringWriter();
         try (XmlWriter writer = new XmlWriter(out)) {
             writer.startDocument().startElement("test").cdata("Some <![CDATA[ cdata ]]> text").closeDocument();
-            assertThat(out.toString()).isEqualTo("<?xml version='1.0'?><test><![CDATA[ Some \\u3C![CDATA[ cdata {rat:CDATA close} text ]]></test>");
+            assertThat(out).hasToString("<?xml version='1.0'?><test><![CDATA[ Some \\u3C![CDATA[ cdata {rat:CDATA close} text ]]></test>");
         }
     }
 
@@ -462,7 +464,7 @@ class XmlWriterTest {
         StringWriter out = new StringWriter();
         try (XmlWriter writer = new XmlWriter(out)) {
             writer.startDocument().startElement("root").startElement("hello").startElement("world").content("hello world").closeElement("hello").startElement("test").closeDocument();
-            assertThat(out.toString()).isEqualTo("<?xml version='1.0'?><root><hello><world>hello world</world></hello><test/></root>");
+            assertThat(out).hasToString("<?xml version='1.0'?><root><hello><world>hello world</world></hello><test/></root>");
         }
     }
 
@@ -483,6 +485,6 @@ class XmlWriterTest {
         try (XmlWriter writer = new XmlWriter(out)) {
             writer.startDocument().startElement("base").append(document).closeDocument();
         }
-        assertThat(out.toString()).isEqualTo(expected);
+        assertThat(out).hasToString(expected);
     }
 }

@@ -83,17 +83,20 @@ public final class XmlReportFactory {
      * @return the RatReport that will write to the writer.
      */
     public static RatReport simple(final XmlWriter writer) {
-        return document -> {
-            final MetaData metaData = document.getMetaData();
-            XmlElements.document(writer, document);
-            for (Iterator<ILicense> iter = metaData.licenses().iterator(); iter.hasNext();) {
-                final ILicense license = iter.next();
-                XmlElements.license(writer, license, metaData.isApproved(license));
-            }
-            try {
-                writer.closeElement();
-            } catch (IOException e) {
-                throw new RuntimeException(e);
+        return new RatReport() {
+            @Override
+            public void report(final Document document) throws RatException {
+                final MetaData metaData = document.getMetaData();
+                XmlElements.document(writer, document);
+                for (Iterator<ILicense> iter = metaData.licenses().iterator(); iter.hasNext(); ) {
+                    final ILicense license = iter.next();
+                    XmlElements.license(writer, license, metaData.isApproved(license));
+                }
+                try {
+                    writer.closeElement();
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
             }
         };
     }
@@ -105,10 +108,6 @@ public final class XmlReportFactory {
      */
     public static RatReport validator(final XmlWriter writer, final ClaimStatistic statistic, final ReportConfiguration configuration) {
         return new RatReport() {
-            @Override
-            public void report(final Document document) throws RatException {
-            }
-
             @Override
             public void endReport() throws RatException {
                 XmlElements.statistics(writer, statistic, configuration.getClaimValidator());
@@ -129,10 +128,6 @@ public final class XmlReportFactory {
                 if (configuration.listFamilies() != LicenseFilter.NONE || configuration.listLicenses() != LicenseFilter.NONE) {
                     new XMLConfigurationWriter(configuration).write(writer);
                 }
-            }
-
-            @Override
-            public void report(final Document document) throws RatException {
             }
         };
     }
@@ -181,5 +176,4 @@ public final class XmlReportFactory {
             }
         };
     }
-
 }
