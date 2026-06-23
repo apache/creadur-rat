@@ -78,7 +78,6 @@ class FileConverterTest {
                 String root = fsInfo.roots()[1];
                 lst.add(Arguments.of(fsInfo, root + "foo/bar.txt", underTest, root + String.join(fsInfo.dirSeparator(), "foo", "bar.txt")));
                 lst.add(Arguments.of(fsInfo, root + "foo\\bar.txt", underTest, root + String.join(fsInfo.dirSeparator(), "foo", "bar.txt")));
-
             }
         }
         return lst;
