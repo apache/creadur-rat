@@ -44,7 +44,7 @@ import org.apache.commons.lang3.tuple.Pair;
  * naming on various operating systems. DocumentNames have several components:
  * <ul>
  *     <li>{@code root} - where in the file system the name starts (e.g C:\ on Microsoft Windows). May be empty but not null.</li>
- *     <li>{@code dirSeparator} - the separator between name segments (e.g. "\" on MicroSoft Windows, "/" on linux). May not be
+ *     <li>{@code dirSeparator} - the separator between name segments (e.g. "\" on Microsoft Windows, "/" on linux). May not be
  *     empty or null.</li>
  *     <li>{@code name} - the name of the file relative to the {@code root}. May not be null. Does NOT begin with a {@code dirSeparator}</li>
  *     <li>{@code baseName} - the name of a directory or file from which this file is reported. A DocumentName with a
@@ -63,7 +63,7 @@ public class DocumentName implements Comparable<DocumentName> {
     private final DocumentName baseName;
     /** The file system info for this document. */
     private final FSInfo fsInfo;
-    /** The root for the DocumentName. May be empty but not null. Must be one of the roots in fsInfo*/
+    /** The root for the DocumentName. May be empty but not null. Must be one of the roots in fsInfo. */
     private final String root;
 
     /**
@@ -132,7 +132,7 @@ public class DocumentName implements Comparable<DocumentName> {
     }
 
     /**
-     * Creates a path from the document name.  This method uses the fullyqualified name without the root.
+     * Creates a path from the document name. This method uses the fully qualified name without the root.
      * this results in a relative file name from the root.
      * @return a new Path object.
      */
@@ -149,10 +149,10 @@ public class DocumentName implements Comparable<DocumentName> {
      *     <dt>Is blank</dt>
      *     <dd>This DocumentName is returned.</dd>
      *     <dt>Starts with the file system root</dt>
-     *     <dd>The root The root must match the root of this DocumentName and the directory structure
-     *     must start with the directory structure of the basename for this DocuemntName.</dd>
+     *     <dd>The root must match the root of this DocumentName and the directory structure
+     *     must start with the directory structure of the basename for this DocumentName.</dd>
      *     <dt>Starts with the directory separator character<dt>
- *         <dd>Result will be a tree starting at the directory specified by the basename.</dd>
+     *     <dd>Result will be a tree starting at the directory specified by the basename.</dd>
      *     <dt>Does not start with a directory separator character</dt>
      *     <dd>Result will be a tree starting at the directory specified by this DocumentName</dd>
      * </dl>
@@ -183,9 +183,9 @@ public class DocumentName implements Comparable<DocumentName> {
             }
         }
 
-        // patterns with separators either start with the name of this document plus a relative
-        // name, or are just directory off the baseName.  In either case the name is correct.
-        // so just handle the relative case.
+        // Patterns with separators either start with the name of this document plus a relative
+        // name, or are just directory off the baseName. In either case the name is correct.
+        // So just handle the relative case.
         if (!pattern.startsWith(separator)) {
             pattern = name + separator + pattern;
         }
@@ -202,7 +202,7 @@ public class DocumentName implements Comparable<DocumentName> {
     }
 
     /**
-     * Gets the path of the document.  THis is the fully qualified name without the root but starting with a path separator.
+     * Gets the path of the document. This is the fully qualified name without the root but starting with a path separator.
      * @return the path of the document.
      */
     public String getPath() {
@@ -580,7 +580,7 @@ public class DocumentName implements Comparable<DocumentName> {
 
         /**
          * Creates a path separated by the directory separator.
-         * Starting with an empty string will cause the directory separateor to appear at the beginning.
+         * Starting with an empty string will cause the directory separator to appear at the beginning.
          * @param segments the segments that make up the path.
          * @return the path string.
          */

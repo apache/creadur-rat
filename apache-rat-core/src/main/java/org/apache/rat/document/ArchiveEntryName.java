@@ -31,8 +31,8 @@ public class ArchiveEntryName extends DocumentName {
     private final DocumentName archiveFileName;
 
     /**
-     * Sets the builder so that a propery DocumentName is constructed.
-     * @param archiveFileName the archvie file DocumentName
+     * Sets the builder so that a property DocumentName is constructed.
+     * @param archiveFileName the archive file DocumentName
      * @param archiveEntryName the entry name
      * @return the DocumentName.Builder for the archive entry.
      */

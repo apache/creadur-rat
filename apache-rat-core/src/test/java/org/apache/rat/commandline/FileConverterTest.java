@@ -48,9 +48,9 @@ class FileConverterTest {
     }
 
     /**
-     * Creats a DocumentData from a FSInfo.
+     * Creates a DocumentData from a FSInfo.
      * @param fsInfo the FSInfo to work with.
-     * @return the DocumentData for the working directory,.
+     * @return the DocumentData for the working directory.
      */
     private static DocumentData createDocumentData(final DocumentName.FSInfo fsInfo) {
         String defaultRoot = fsInfo.roots()[0];
@@ -59,7 +59,6 @@ class FileConverterTest {
         return new DocumentData(DocumentName.builder(fsInfo).setRoot(defaultRoot).setBaseName(workingBaseName).setName("base").build(),
                 defaultRoot, workingBaseName, baseName);
     }
-
 
     static List<Arguments> applyTestData() {
         List<Arguments> lst = new ArrayList<>();
@@ -79,7 +78,6 @@ class FileConverterTest {
                 String root = fsInfo.roots()[1];
                 lst.add(Arguments.of(fsInfo, root + "foo/bar.txt", underTest, root + String.join(fsInfo.dirSeparator(), "foo", "bar.txt")));
                 lst.add(Arguments.of(fsInfo, root + "foo\\bar.txt", underTest, root + String.join(fsInfo.dirSeparator(), "foo", "bar.txt")));
-
             }
         }
         return lst;
