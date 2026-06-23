@@ -42,7 +42,6 @@ import org.apache.rat.license.LicenseSetFactory.LicenseFilter;
 import org.apache.rat.report.RatReport;
 import org.apache.rat.report.claim.ClaimStatistic;
 import org.apache.rat.report.xml.XmlReportFactory;
-import org.apache.rat.report.xml.writer.IXmlWriter;
 import org.apache.rat.report.xml.writer.XmlWriter;
 import org.apache.rat.utils.StandardXmlFactory;
 import org.w3c.dom.Document;
@@ -88,7 +87,7 @@ public class Reporter {
                 if (configuration.hasSource()) {
                     ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
                     Writer outputWriter = new OutputStreamWriter(outputStream, StandardCharsets.UTF_8);
-                    try (IXmlWriter writer = new XmlWriter(outputWriter)) {
+                    try (XmlWriter writer = new XmlWriter(outputWriter)) {
                         statistic = new ClaimStatistic();
                         RatReport report = XmlReportFactory.createStandardReport(writer, statistic, configuration);
                         report.startReport();

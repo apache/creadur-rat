@@ -36,7 +36,7 @@ import org.apache.rat.document.DocumentAnalyser;
 import org.apache.rat.document.DocumentName;
 import org.apache.rat.document.FileDocument;
 import org.apache.rat.document.RatDocumentAnalysisException;
-import org.apache.rat.report.claim.SimpleXmlClaimReporter;
+import org.apache.rat.report.xml.XmlReportFactory;
 import org.apache.rat.report.xml.writer.XmlWriter;
 import org.apache.rat.test.utils.Resources;
 import org.apache.rat.testhelpers.TestingDocument;
@@ -53,8 +53,6 @@ public class AnalyserFactoryTest {
 
     private final DocumentName basedir;
 
-    private StringWriter out;
-    private SimpleXmlClaimReporter reporter;
     private DocumentAnalyser analyser;
 
     AnalyserFactoryTest() {
@@ -63,8 +61,6 @@ public class AnalyserFactoryTest {
 
     @BeforeEach
     public void setUp() {
-        out = new StringWriter();
-        reporter = new SimpleXmlClaimReporter(new XmlWriter(out));
         ReportConfiguration config = new ReportConfiguration();
         config.addLicense(UnknownLicense.INSTANCE);
         analyser = AnalyserFactory.createConfiguredAnalyser(config);
@@ -175,13 +171,20 @@ public class AnalyserFactoryTest {
         assertThat(document.getMetaData().getMediaType().toString()).isEqualTo("application/gzip");
     }
 
+    private String buildReport(final Document document) throws Exception {
+        StringWriter out = new StringWriter();
+        try (XmlWriter writer = new XmlWriter(out)) {
+            XmlReportFactory.simple(writer).report(document);
+        }
+        return out.toString();
+    }
+
     @Test
     public void RAT147_unix_Test() throws Exception {
         final Document document = new FileDocument(basedir,
                 Resources.getResourceFile("/jira/RAT147/unix-newlines.txt.bin"), DocumentNameMatcher.MATCHES_ALL);
         analyser.analyse(document);
-        reporter.report(document);
-        String result = out.toString();
+        String result = buildReport(document);
         TextUtils.assertPatternInTarget(
                 "<resource name='/jira/RAT147/unix-newlines.txt.bin' type='STANDARD'",
                 result);
@@ -192,8 +195,7 @@ public class AnalyserFactoryTest {
         final Document document = new FileDocument(basedir,
                 Resources.getResourceFile("/jira/RAT147/windows-newlines.txt.bin"), DocumentNameMatcher.MATCHES_ALL);
         analyser.analyse(document);
-        reporter.report(document);
-        String result = out.toString();
+        String result = buildReport(document);
         TextUtils.assertPatternInTarget(
                 "<resource name='/jira/RAT147/windows-newlines.txt.bin' type='STANDARD'",
                 result);

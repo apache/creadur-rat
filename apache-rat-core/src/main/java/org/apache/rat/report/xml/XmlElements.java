@@ -28,18 +28,20 @@ import org.apache.rat.VersionInfo;
 import org.apache.rat.api.Document;
 import org.apache.rat.api.MetaData;
 import org.apache.rat.api.RatException;
+import org.apache.rat.config.results.ClaimValidator;
 import org.apache.rat.license.ILicense;
-import org.apache.rat.report.xml.writer.IXmlWriter;
+import org.apache.rat.report.claim.ClaimStatistic;
+import org.apache.rat.report.xml.writer.XmlWriter;
 import org.apache.rat.utils.CasedString;
 
 /**
  * Creates the elements in the XML report.
  */
-public class XmlElements {
+public final class XmlElements {
     /**
      * Converts an enum name to snake case.
-     * @param name the enum name to convert.
-     * @return a camel cased name.
+     * @param name the Atrribute to normalize
+     * @return a pascal cased name.
      */
     private static String normalizeName(final String name) {
         CasedString casedName = new CasedString(CasedString.StringCase.SNAKE, name.toLowerCase(Locale.ROOT));
@@ -90,7 +92,7 @@ public class XmlElements {
          * Gets the XML element name.
          * @return the XML element name.
          */
-        public String getElementName() {
+        public String elementName() {
             return elementName;
         }
     }
@@ -126,106 +128,120 @@ public class XmlElements {
         /** The encoding for a text document */
         ENCODING,
         /** Denotes a skipped directory */
-        IS_DIRECTORY
+        IS_DIRECTORY;
+
+        String attributeName() {
+            return normalizeName(this.name());
+        }
     }
 
-    /** The XMLWriter that we write to */
-    private final IXmlWriter writer;
-
-    /**
-     * Constructor.
-     * @param xmlWriter The writer to use.
-     */
-    public XmlElements(final IXmlWriter xmlWriter) {
-        this.writer = xmlWriter;
+    private XmlElements() {
+        // do not instantiate
     }
-
     /**
      * Create the RAT report element. Includes the timestamp and the version element.
-     * @return this.
+     * Does not close the report.
      * @throws RatException on error
      */
-    public XmlElements ratReport() throws RatException {
-        return write(Elements.RAT_REPORT).
-                write(Attributes.TIMESTAMP, DateFormatUtils.ISO_8601_EXTENDED_DATETIME_TIME_ZONE_FORMAT.format(Calendar.getInstance()))
-                .version();
+    public static void ratReport(final XmlWriter writer) throws RatException {
+        try {
+            writer.openElement(Elements.RAT_REPORT.elementName)
+                    .attribute(Attributes.TIMESTAMP.attributeName(),
+                            DateFormatUtils.ISO_8601_EXTENDED_DATETIME_TIME_ZONE_FORMAT.format(Calendar.getInstance()));
+            version(writer);
+        } catch (IOException e) {
+            throw new RatException(e);
+        }
     }
 
     /**
      * Creates the version element with all version attributes populated. Closes the version element.
-     * @return this.
      * @throws RatException on error
      */
-    public XmlElements version() throws RatException {
+    public static void version(final XmlWriter writer) throws RatException {
         VersionInfo versionInfo = new VersionInfo();
-        return write(Elements.VERSION)
-                .write(Attributes.PRODUCT, versionInfo.getTitle())
-                .write(Attributes.VENDOR, versionInfo.getVendor())
-                .write(Attributes.VERSION, versionInfo.getVersion())
-                .closeElement();
+        try {
+            writer.openElement(Elements.VERSION.elementName)
+                    .attribute(Attributes.PRODUCT.attributeName(), versionInfo.getTitle())
+                    .attribute(Attributes.VENDOR.attributeName(), versionInfo.getVendor())
+                    .attribute(Attributes.VERSION.attributeName(), versionInfo.getVersion())
+                    .closeElement();
+                    } catch (IOException e) {
+                throw new RatException(e);
+            }
     }
 
     /**
      * Creates a license element. Closes the element before exit.
      * @param license the license for the element.
      * @param approved {@code true} if the license is approved.
-     * @return this
      * @throws RatException on error.
      */
-    public XmlElements license(final ILicense license, final boolean approved) throws RatException {
-        write(Elements.LICENSE).write(Attributes.ID, license.getId())
-                .write(Attributes.NAME, license.getName())
-                .write(Attributes.APPROVAL, Boolean.valueOf(approved).toString())
-                .write(Attributes.FAMILY, license.getLicenseFamily().getFamilyCategory());
-        if (StringUtils.isNotBlank(license.getNote())) {
-            try {
-                write(Elements.NOTES).cdata(license.getNote()).closeElement();
-            } catch (IOException e) {
-                throw new RatException("Can not write CDATA for 'notes' element", e);
-            }
-        }
-        return closeElement();
-    }
+    public static void license(final XmlWriter writer, final ILicense license, final boolean approved) throws RatException {
+        try {
+            writer.openElement(Elements.LICENSE.elementName)
+                    .attribute(Attributes.ID.attributeName(), license.getId())
+                    .attribute(Attributes.NAME.attributeName(), license.getName())
+                    .attribute(Attributes.APPROVAL.attributeName(), Boolean.valueOf(approved).toString())
+                    .attribute(Attributes.FAMILY.attributeName(), license.getLicenseFamily().getFamilyCategory());
 
-    /**
-     * Writes a CDATA block
-     * @param data the data to write.
-     * @return this
-     * @throws IOException on error.
-     */
-    private XmlElements cdata(final String data) throws IOException {
-        writer.cdata(data);
-        return this;
+            if (StringUtils.isNotBlank(license.getNote())) {
+                writer.openElement(Elements.NOTES.elementName).cdata(license.getNote()).closeElement();
+            }
+            writer.closeElement();
+                    } catch (IOException e) {
+                throw new RatException(e);
+            }
     }
 
     /**
      * Creates a document element with attributes. Does NOT close the document element.
      * @param document the document to write.
-     * @return this
      * @throws RatException on error.
      */
-    public XmlElements document(final Document document) throws RatException {
+    public static void document(final XmlWriter writer, final Document document) throws RatException {
         final MetaData metaData = document.getMetaData();
-        XmlElements result = write(Elements.RESOURCE)
-                .write(Attributes.NAME, document.getName().localized("/"))
-                .write(Attributes.TYPE, metaData.getDocumentType().toString())
-                .write(Attributes.MEDIA_TYPE, metaData.getMediaType().toString());
-        if (Document.Type.STANDARD == metaData.getDocumentType() || metaData.hasCharset()) {
-            result = result.write(Attributes.ENCODING, metaData.getCharset().displayName());
-        }
-        if (document.isIgnored()) {
-            result = result.write(Attributes.IS_DIRECTORY, Boolean.toString(document.isDirectory()));
-        }
-        return result;
+        try {
+            writer.openElement(Elements.RESOURCE.elementName)
+                    .attribute(Attributes.NAME.attributeName(), document.getName().localized("/"))
+                    .attribute(Attributes.TYPE.attributeName(), metaData.getDocumentType().toString())
+                    .attribute(Attributes.MEDIA_TYPE.attributeName(), metaData.getMediaType().toString());
+            if (Document.Type.STANDARD == metaData.getDocumentType() || metaData.hasCharset()) {
+                writer.attribute(Attributes.ENCODING.attributeName(), metaData.getCharset().displayName());
+            }
+            if (document.isIgnored()) {
+                writer.attribute(Attributes.IS_DIRECTORY.attributeName(), Boolean.toString(document.isDirectory()));
+            }
+                    } catch (IOException e) {
+                throw new RatException(e);
+            }
     }
 
     /**
      * Creates a statistics element.
-     * @return this
      * @throws RatException on error.
      */
-    public XmlElements statistics() throws RatException {
-        return write(Elements.STATISTICS);
+    public static void statistics(final XmlWriter writer, final ClaimStatistic statistic, final ClaimValidator validator) throws RatException {
+        try {
+            writer.openElement(Elements.STATISTICS.elementName);
+            for (ClaimStatistic.Counter counter : ClaimStatistic.Counter.values()) {
+                int count = statistic.getCounter(counter);
+                XmlElements.statistic(writer, counter.displayName(), count, counter.getDescription(), validator.isValid(counter, count));
+            }
+            for (String category : statistic.getLicenseFamilyCategories()) {
+                XmlElements.licenseCategory(writer, category, statistic.getLicenseCategoryCount(category));
+            }
+            for (String category : statistic.getLicenseNames()) {
+                XmlElements.licenseName(writer, category, statistic.getLicenseNameCount(category));
+            }
+            for (Document.Type type : statistic.getDocumentTypes()) {
+                XmlElements.documentType(writer, type.name(), statistic.getCounter(type));
+            }
+
+            writer.closeElement();
+        } catch (IOException e) {
+            throw new RatException(e);
+        }
     }
 
     /**
@@ -237,100 +253,70 @@ public class XmlElements {
      * @return this
      * @throws RatException on error.
      */
-    public XmlElements statistic(final String name, final int count, final String description, final boolean isOk) throws RatException {
-        return write(Elements.STATISTIC)
-                .write(Attributes.NAME, name)
-                .write(Attributes.COUNT, Integer.toString(count))
-                .write(Attributes.APPROVAL, Boolean.toString(isOk))
-                .write(Attributes.DESCRIPTION, description)
-                .closeElement();
-    }
-
-    /**
-     * Creates a statistic element. Closes the element before returning.
-     * @param name the name of the statistics element.
-     * @param count the count for the element.
-     * @return this
-     * @throws RatException on error.
-     */
-    public XmlElements licenseCategory(final String name, final int count) throws RatException {
-        return write(Elements.LICENSE_CATEGORY)
-                .write(Attributes.NAME, name)
-                .write(Attributes.COUNT, Integer.toString(count))
-                .closeElement();
-    }
-
-    /**
-     * Creates a statistic element. Closes the element before returning.
-     * @param name the name of the statistics element.
-     * @param count the count for the element.
-     * @return this
-     * @throws RatException on error.
-     */
-    public XmlElements licenseName(final String name, final int count) throws RatException {
-        return write(Elements.LICENSE_NAME)
-                .write(Attributes.NAME, name)
-                .write(Attributes.COUNT, Integer.toString(count))
-                .closeElement();
-    }
-
-    /**
-     * Creates a statistic element. Closes the element before returning.
-     * @param name the name of the statistics element.
-     * @param count the count for the element.
-     * @return this
-     * @throws RatException on error.
-     */
-    public XmlElements documentType(final String name, final int count) throws RatException {
-        return write(Elements.DOCUMENT_TYPE)
-                .write(Attributes.NAME, name)
-                .write(Attributes.COUNT, Integer.toString(count))
-                .closeElement();
-    }
-
-    /**
-     * Closes the currently open element.
-     * @return this
-     * @throws RatException on error.
-     */
-    public XmlElements closeElement() throws RatException {
+    public static void statistic(final XmlWriter writer, final String name, final int count, final String description, final boolean isOk) throws RatException {
         try {
-            writer.closeElement();
-            return this;
-        } catch (IOException e) {
-            throw new RatException("Cannot close currently open element", e);
-        }
-
+            writer.openElement(Elements.STATISTIC.elementName)
+                    .attribute(Attributes.NAME.attributeName(), name)
+                    .attribute(Attributes.COUNT.attributeName(), Integer.toString(count))
+                    .attribute(Attributes.APPROVAL.attributeName(), Boolean.toString(isOk))
+                    .attribute(Attributes.DESCRIPTION.attributeName(), description)
+                    .closeElement();
+                    } catch (IOException e) {
+                throw new RatException(e);
+            }
     }
 
     /**
-     * Write an element. The element is not closed.
-     * @param element the element to write.
+     * Creates a statistic element. Closes the element before returning.
+     * @param name the name of the statistics element.
+     * @param count the count for the element.
      * @return this
      * @throws RatException on error.
      */
-    private XmlElements write(final Elements element) throws RatException {
+    public static void licenseCategory(final XmlWriter writer, final String name, final int count) throws RatException {
         try {
-            writer.openElement(element.getElementName());
-            return this;
+        writer.openElement(Elements.LICENSE_CATEGORY.elementName)
+                .attribute(Attributes.NAME.attributeName(), name)
+                .attribute(Attributes.COUNT.attributeName(), Integer.toString(count))
+                .closeElement();
+                    } catch (IOException e) {
+                throw new RatException(e);
+            }
+    }
+
+    /**
+     * Creates a statistic element. Closes the element before returning.
+     * @param name the name of the statistics element.
+     * @param count the count for the element.
+     * @return this
+     * @throws RatException on error.
+     */
+    public static void licenseName(final XmlWriter writer, final String name, final int count) throws RatException {
+        try {
+            writer.openElement(Elements.LICENSE_NAME.elementName)
+                    .attribute(Attributes.NAME.attributeName(), name)
+                    .attribute(Attributes.COUNT.attributeName(), Integer.toString(count))
+                    .closeElement();
         } catch (IOException e) {
-            throw new RatException("Cannot open start element: " + element.elementName, e);
+            throw new RatException(e);
         }
     }
 
     /**
-     * Write an attribute.
-     * @param attribute the attribute name.
-     * @param value the attribute value.
+     * Creates a statistic element. Closes the element before returning.
+     * @param name the name of the statistics element.
+     * @param count the count for the element.
      * @return this
      * @throws RatException on error.
      */
-    public XmlElements write(final Attributes attribute, final String value) throws RatException {
+    public static void documentType(final XmlWriter writer, final String name, final int count) throws RatException {
         try {
-            writer.attribute(normalizeName(attribute.name()), value);
-            return this;
+            writer.openElement(Elements.DOCUMENT_TYPE.elementName)
+                    .attribute(Attributes.NAME.attributeName(), name)
+                    .attribute(Attributes.COUNT.attributeName(), Integer.toString(count))
+                    .closeElement();
         } catch (IOException e) {
-            throw new RatException("Cannot open add attribute: " + attribute, e);
+            throw new RatException(e);
         }
     }
 }

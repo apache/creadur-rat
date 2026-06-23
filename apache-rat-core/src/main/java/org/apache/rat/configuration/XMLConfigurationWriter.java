@@ -41,7 +41,6 @@ import org.apache.rat.configuration.builders.MatcherRefBuilder;
 import org.apache.rat.license.ILicense;
 import org.apache.rat.license.ILicenseFamily;
 import org.apache.rat.license.LicenseSetFactory.LicenseFilter;
-import org.apache.rat.report.xml.writer.IXmlWriter;
 import org.apache.rat.report.xml.writer.XmlWriter;
 
 /**
@@ -92,7 +91,7 @@ public class XMLConfigurationWriter {
      * @param writer the IXmlWriter to write to.
      * @throws RatException on error.
      */
-    public void write(final IXmlWriter writer) throws RatException {
+    public void write(final XmlWriter writer) throws RatException {
         if (configuration.listFamilies() != LicenseFilter.NONE || configuration.listLicenses() != LicenseFilter.NONE) {
             try {
                 writer.openElement(XMLConfig.ROOT);
@@ -141,7 +140,7 @@ public class XMLConfigurationWriter {
         }
     }
 
-    private void writeFamily(final IXmlWriter writer, final ILicenseFamily family) throws RatException {
+    private void writeFamily(final XmlWriter writer, final ILicenseFamily family) throws RatException {
         try {
             writer.openElement(XMLConfig.FAMILY).attribute(XMLConfig.ATT_ID, family.getFamilyCategory().trim())
                     .attribute(XMLConfig.ATT_NAME, family.getFamilyName());
@@ -151,21 +150,21 @@ public class XMLConfigurationWriter {
         }
     }
 
-    private void writeDescriptions(final IXmlWriter writer, final Collection<Description> descriptions, final IHeaderMatcher component)
+    private void writeDescriptions(final XmlWriter writer, final Collection<Description> descriptions, final IHeaderMatcher component)
             throws RatException {
         for (Description description : descriptions) {
             writeDescription(writer, description, component);
         }
     }
 
-    private void writeChildren(final IXmlWriter writer, final Description description, final IHeaderMatcher component)
+    private void writeChildren(final XmlWriter writer, final Description description, final IHeaderMatcher component)
             throws RatException {
         writeAttributes(writer, description.filterChildren(attributeFilter(component.getDescription())), component);
         writeDescriptions(writer, description.filterChildren(attributeFilter(component.getDescription()).negate()),
                 component);
     }
 
-    private void writeAttributes(final IXmlWriter writer, final Collection<Description> descriptions, final IHeaderMatcher component)
+    private void writeAttributes(final XmlWriter writer, final Collection<Description> descriptions, final IHeaderMatcher component)
             throws RatException {
         for (Description d : descriptions) {
             try {
@@ -176,13 +175,13 @@ public class XMLConfigurationWriter {
         }
     }
 
-    private void writeComment(final IXmlWriter writer, final Description description) throws IOException {
+    private void writeComment(final XmlWriter writer, final Description description) throws IOException {
         if (StringUtils.isNotBlank(description.getDescription())) {
             writer.comment(description.getDescription().replace("-->", "-&ndash;>"));
         }
     }
 
-    private void writeAttribute(final IXmlWriter writer, final Description description, final IHeaderMatcher component)
+    private void writeAttribute(final XmlWriter writer, final Description description, final IHeaderMatcher component)
             throws IOException {
         String paramValue = description.getParamValue(component);
         if (paramValue != null) {
@@ -192,7 +191,7 @@ public class XMLConfigurationWriter {
 
     /* package private for testing */
     @SuppressWarnings("unchecked")
-    void writeDescription(final IXmlWriter writer, final Description desc, final IHeaderMatcher comp) throws RatException {
+    void writeDescription(final XmlWriter writer, final Description desc, final IHeaderMatcher comp) throws RatException {
         Description description = desc;
         IHeaderMatcher component = comp;
         try {

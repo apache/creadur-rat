@@ -47,7 +47,7 @@ import org.w3c.dom.Document;
  * </p>
  */
 @SuppressWarnings({"checkstyle:MagicNumber", "checkstyle:JavadocVariable"})
-public final class XmlWriter implements IXmlWriter {
+public final class XmlWriter implements AutoCloseable {
     private final Appendable appendable;
     private final ArrayDeque<CharSequence> elementNames;
     private final Set<CharSequence> currentAttributes = new HashSet<>();
@@ -86,8 +86,7 @@ public final class XmlWriter implements IXmlWriter {
      * @throws OperationNotAllowedException if called after the first element has
      * been written or once a prolog has already been written
      */
-    @Override
-    public IXmlWriter startDocument() throws IOException {
+    public XmlWriter startDocument() throws IOException {
         if (elementsWritten) {
             throw new OperationNotAllowedException("Document already started");
         }
@@ -108,8 +107,7 @@ public final class XmlWriter implements IXmlWriter {
      * @throws OperationNotAllowedException if called after the first element has
      * been closed
      */
-    @Override
-    public IXmlWriter openElement(final CharSequence elementName) throws IOException {
+    public XmlWriter openElement(final CharSequence elementName) throws IOException {
         validateRootOpen();
         if (!XMLChar.isValidName(elementName.toString())) {
             throw new InvalidXmlException("'" + elementName + "' is not a valid element name");
@@ -124,8 +122,15 @@ public final class XmlWriter implements IXmlWriter {
         return this;
     }
 
-    @Override
-    public IXmlWriter comment(final CharSequence text) throws IOException {
+    /**
+     * Writes a comment.
+     *
+     * @param text the comment text
+     * @return this object
+     * @throws OperationNotAllowedException
+     * if called after the first element has been closed
+     */
+    public XmlWriter comment(final CharSequence text) throws IOException {
         maybeCloseElement();
         appendable.append("<!-- ");
         writeEscaped(text, false);
@@ -146,8 +151,7 @@ public final class XmlWriter implements IXmlWriter {
      * {@link #content(CharSequence)} or {@link #closeElement()} or before any call
      * to {@link #openElement(CharSequence)}
      */
-    @Override
-    public IXmlWriter attribute(final CharSequence name, final CharSequence value) throws IOException {
+    public XmlWriter attribute(final CharSequence name, final CharSequence value) throws IOException {
         if (elementNames.isEmpty()) {
             validateRootOpen();
             throw new OperationNotAllowedException("Close called before an element has been opened.");
@@ -182,15 +186,34 @@ public final class XmlWriter implements IXmlWriter {
         maybeCloseElement();
     }
 
-    @Override
-    public IXmlWriter content(final CharSequence content) throws IOException {
+    /**
+     * Writes content.
+     * Note that this method does not support CDATA.
+     * This method automatically escapes characters.
+     *
+     * @param content the content to write
+     * @return this object
+     * @throws OperationNotAllowedException
+     * if called before any call to {@link #openElement(CharSequence)}
+     * or after the first element has been closed
+     */public XmlWriter content(final CharSequence content) throws IOException {
         prepareForData();
         writeEscaped(content, false);
         return this;
     }
 
-    @Override
-    public IXmlWriter cdata(final CharSequence content) throws IOException {
+    /**
+     * Writes CDATA content.
+     * This method DOES NOT automatically escape characters.
+     * It will remove enclosed CDATA closing strings (e.g. {@code ]]>})
+     *
+     * @param content the content to write
+     * @return this object
+     * @throws OperationNotAllowedException
+     * if called before any call to {@link #openElement(CharSequence)}
+     * or after the first element has been closed
+     */
+    public XmlWriter cdata(final CharSequence content) throws IOException {
         prepareForData();
         StringBuilder sb = new StringBuilder(content);
         int found;
@@ -242,8 +265,7 @@ public final class XmlWriter implements IXmlWriter {
      * @throws OperationNotAllowedException if called before any call to
      * {@link #openElement} or after the first element has been closed
      */
-    @Override
-    public IXmlWriter closeElement() throws IOException {
+    public XmlWriter closeElement() throws IOException {
         if (elementNames.isEmpty()) {
             validateRootOpen();
             throw new OperationNotAllowedException("Close called before an element has been opened.");
@@ -267,8 +289,7 @@ public final class XmlWriter implements IXmlWriter {
      * @throws OperationNotAllowedException if called before any call to
      * {@link #openElement} or after the first element has been closed
      */
-    @Override
-    public IXmlWriter closeElement(final CharSequence name) throws IOException {
+    public XmlWriter closeElement(final CharSequence name) throws IOException {
         Objects.requireNonNull(name);
         if (elementNames.isEmpty()) {
             validateRootOpen();
@@ -298,8 +319,7 @@ public final class XmlWriter implements IXmlWriter {
      * @throws OperationNotAllowedException if called before any call to
      * {@link #openElement}
      */
-    @Override
-    public IXmlWriter closeDocument() throws IOException {
+    public XmlWriter closeDocument() throws IOException {
         if (elementNames.isEmpty() && !elementsWritten) {
             throw new OperationNotAllowedException("Close called before an element has been opened.");
         }
@@ -311,13 +331,28 @@ public final class XmlWriter implements IXmlWriter {
 
     @Override
     public void close() throws IOException {
-        closeDocument();
-        if (appendable instanceof Closeable closeable) {
-            closeable.close();
+        IOException thrown = null;
+        try {
+            closeDocument();
+        } catch (IOException e) {
+            thrown = e;
+        } finally {
+            if (appendable instanceof Closeable closeable) {
+                try {
+                    closeable.close();
+                } catch (IOException e) {
+                    if (thrown == null) {
+                        thrown = e;
+                    }
+                }
+            }
+        }
+        if (thrown != null) {
+            throw thrown;
         }
     }
 
-    public IXmlWriter append(final Document document) throws IOException {
+    public XmlWriter append(final Document document) throws IOException {
         validateRootOpen();
         elementsWritten = true;
         maybeCloseElement();
