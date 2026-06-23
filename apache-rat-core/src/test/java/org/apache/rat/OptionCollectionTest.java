@@ -67,6 +67,7 @@ import static java.lang.String.format;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Fail.fail;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 public class OptionCollectionTest {
     @TempDir(cleanup = CleanupMode.NEVER)
@@ -260,7 +261,6 @@ public class OptionCollectionTest {
         assertThat(reportable).isInstanceOf(ArchiveWalker.class);
     }
 
-
     /**
      * A parameterized test for the options.
      * @param name The name of the test.
@@ -286,13 +286,12 @@ public class OptionCollectionTest {
          */
         public void helpTest() {
             String[] args = { OptionFormatter.longOpt(OptionCollection.HELP) };
-            try {
+
+            assertDoesNotThrow(() -> {
                 ReportConfiguration config = OptionCollection.parseCommands(testPath.toFile(), args, o -> helpCalled.set(true), true);
                 assertThat(config).as("Should not have config").isNull();
                 assertThat(helpCalled.get()).as("Help was not called").isTrue();
-            } catch (IOException e) {
-                fail(e.getMessage());
-            }
+            });
         }
 
         /**

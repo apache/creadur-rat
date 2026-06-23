@@ -42,7 +42,7 @@ public class DocumentNameBuilderTest {
 
     /**
      * Validates the data in a document name matches expected data.
-     * @param documentName the document name to check
+     * @param documentName the document name to check.
      * @param name the expected fully qualified name.
      * @param shortName the name for the last segment of the name.
      * @param baseName the name of the base document.
@@ -70,7 +70,7 @@ public class DocumentNameBuilderTest {
 
     /**
      * Verifies tha the baseName is not modified when used in the builder.
-     * Base name is default root + OS name.  For example C:\windows, or /unix
+     * Base name is default root + OS name.  For example {@code C:\windows}, or {@code /unix}
      * @param fsInfo the file system info for the test.
      */
     @ParameterizedTest
@@ -78,7 +78,7 @@ public class DocumentNameBuilderTest {
     void baseNamePreserved(DocumentName.FSInfo fsInfo) {
         final String root = fsInfo.roots()[0];
         final String baseNameStr = root + fsInfo;
-        // create a document {os name}/bar.  Used to establish basename in builder.
+        // create a document {os name}/bar. Used to establish basename in builder.
         final DocumentName siblingName = DocumentName.builder(fsInfo).setName("bar").setBaseName(fsInfo.toString()).build();
 
         // check a relative name does not change base name.
@@ -89,17 +89,16 @@ public class DocumentNameBuilderTest {
         assertDocumentName(documentName, expected, "baz", baseNameStr, root, fsInfo.dirSeparator(), fsInfo.isCaseSensitive(),
                 fsInfo.dirSeparator() + nameStr, "+foo+baz");
 
-        // check a FQName results in the base name not being changed.
+        // check a fully qualified name results in the base name not being changed.
         documentName = DocumentName.builder(siblingName).setName(expected).build();
         assertThat(documentName.getName()).as("absolute value").isEqualTo(expected);
         assertDocumentName(documentName, expected, "baz", baseNameStr, root, fsInfo.dirSeparator(), fsInfo.isCaseSensitive(),
                 fsInfo.dirSeparator() + nameStr, "+foo+baz");
-
     }
 
     @ParameterizedTest
     @FieldSource("TEST_SUITE")
-    void documentNameFromFQNameWithBaseName(DocumentName.FSInfo fsInfo) {
+    void documentNameFromFullyQualifiedNameWithBaseName(DocumentName.FSInfo fsInfo) {
         final String root = fsInfo.roots()[0];
         final String baseNameStr = root + fsInfo;
         String fqName = root + fsInfo.mkPath(fsInfo.toString(), "foo");
@@ -110,7 +109,7 @@ public class DocumentNameBuilderTest {
 
     @ParameterizedTest
     @FieldSource("TEST_SUITE")
-    void noBaseNameThowsException(DocumentName.FSInfo fsInfo) {
+    void noBaseNameThrowsException(DocumentName.FSInfo fsInfo) {
         final String root = fsInfo.roots()[0];
         String fqName = root + fsInfo.mkPath(fsInfo.toString(), "foo");
         DocumentName.Builder underTest = DocumentName.builder(fsInfo).setName(fqName);
@@ -121,7 +120,7 @@ public class DocumentNameBuilderTest {
 
     @ParameterizedTest
     @FieldSource("TEST_SUITE")
-    void noNameThowsException(DocumentName.FSInfo fsInfo) {
+    void noNameThrowsException(DocumentName.FSInfo fsInfo) {
         final String root = fsInfo.roots()[0];
         String fqName = root + fsInfo.mkPath(fsInfo.toString(), "foo");
         DocumentName.Builder underTest = DocumentName.builder(fsInfo).setBaseName(fqName);
@@ -153,7 +152,6 @@ public class DocumentNameBuilderTest {
 
         assertDocumentName(actual, fqName, "foo", baseNameStr, root, fsInfo.dirSeparator(), fsInfo.isCaseSensitive(),
                 fsInfo.dirSeparator() + "foo", "+foo");
-
     }
 
     @ParameterizedTest
@@ -209,7 +207,6 @@ public class DocumentNameBuilderTest {
 
         assertDocumentName(actual, fqName, "bar", baseNameStr, root, fsInfo.dirSeparator(), fsInfo.isCaseSensitive(),
                 fsInfo.dirSeparator() + "bar", "+bar");
-
     }
 
     @ParameterizedTest

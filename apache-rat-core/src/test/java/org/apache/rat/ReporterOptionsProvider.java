@@ -68,6 +68,7 @@ import org.xml.sax.SAXException;
 import static org.apache.rat.commandline.Arg.HELP_LICENSES;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Fail.fail;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 /**
  * A class to provide the Options and tests to the testOptionsUpdateConfig.
@@ -208,7 +209,7 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
 
     @OptionCollectionTest.TestFunction
     private void execLicensesDeniedTest(final Option option, final String[] args) {
-        try {
+        assertDoesNotThrow(() -> {
             configureSourceDir(option);
             File illumosFile = writeFile("illumousFile.java", "The contents of this file are " +
                     "subject to the terms of the Common Development and Distribution License (the \"License\") You " +
@@ -221,9 +222,7 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
             ClaimStatistic claimStatistic = reporter.execute();
             ClaimValidator validator = config.getClaimValidator();
             assertThat(validator.listIssues(claimStatistic)).containsExactly("UNAPPROVED");
-        } catch (IOException | RatException e) {
-            fail(e.getMessage(), e);
-        }
+        });
     }
 
     @OptionCollectionTest.TestFunction
@@ -240,7 +239,7 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
     }
 
     private void noDefaultsTest(final Option option) {
-        try {
+        assertDoesNotThrow(() -> {
             configureSourceDir(option);
             File testFile = writeFile("Test.java", Arrays.asList("/*\n", "SPDX-License-Identifier: Apache-2.0\n",
                     "*/\n\n", "class Test {}\n"));
@@ -257,9 +256,7 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
                 ClaimValidator validator = config.getClaimValidator();
                 assertThat(validator.listIssues(claimStatistic)).containsExactlyInAnyOrder("DOCUMENT_TYPES", "LICENSE_CATEGORIES", "LICENSE_NAMES", "STANDARDS");
             }
-        } catch (IOException | RatException e) {
-            fail(e.getMessage(), e);
-        }
+        });
     }
 
     @OptionCollectionTest.TestFunction
@@ -276,7 +273,8 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
     protected void counterMaxTest() {
         Option option = Arg.COUNTER_MAX.option();
         String[] arg = {null};
-        try {
+
+        assertDoesNotThrow(() -> {
             configureSourceDir(option);
             File testFile = writeFile("Test.java", Arrays.asList("/*\n", "SPDX-License-Identifier: Unapproved\n",
                     "*/\n\n", "class Test {}\n"));
@@ -293,9 +291,7 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
             claimStatistic = reporter.execute();
             validator = config.getClaimValidator();
             assertThat(validator.listIssues(claimStatistic)).isEmpty();
-        } catch (IOException | RatException e) {
-            fail(e.getMessage(), e);
-        }
+        });
     }
 
     @OptionCollectionTest.TestFunction
