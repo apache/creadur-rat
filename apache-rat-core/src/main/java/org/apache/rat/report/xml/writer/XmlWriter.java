@@ -104,7 +104,7 @@ public final class XmlWriter implements AutoCloseable {
      * @throws OperationNotAllowedException if called after the first element has
      * been closed
      */
-    public XmlWriter openElement(final CharSequence elementName) throws IOException {
+    public XmlWriter startElement(final CharSequence elementName) throws IOException {
         validateRootOpen();
         if (!XMLChar.isValidName(elementName.toString())) {
             throw new InvalidXmlException("'" + elementName + "' is not a valid element name");
@@ -137,7 +137,7 @@ public final class XmlWriter implements AutoCloseable {
 
     /**
      * Writes an attribute of an element. Note that this is only allowed directly
-     * after {@link #openElement(CharSequence)} or a previous {@code attribute} call.
+     * after {@link #startElement(CharSequence)} or a previous {@code attribute} call.
      *
      * @param name the attribute name, not null
      * @param value the attribute value, not null
@@ -146,7 +146,7 @@ public final class XmlWriter implements AutoCloseable {
      * if a value for the attribute has already been written
      * @throws OperationNotAllowedException if called after
      * {@link #content(CharSequence)} or {@link #closeElement()} or before any call
-     * to {@link #openElement(CharSequence)}
+     * to {@link #startElement(CharSequence)}
      */
     public XmlWriter attribute(final CharSequence name, final CharSequence value) throws IOException {
         if (elementNames.isEmpty()) {
@@ -191,7 +191,7 @@ public final class XmlWriter implements AutoCloseable {
      * @param content the content to write
      * @return this object
      * @throws OperationNotAllowedException
-     * if called before any call to {@link #openElement(CharSequence)}
+     * if called before any call to {@link #startElement(CharSequence)}
      * or after the first element has been closed
      */public XmlWriter content(final CharSequence content) throws IOException {
         prepareForData();
@@ -207,7 +207,7 @@ public final class XmlWriter implements AutoCloseable {
      * @param content the content to write
      * @return this object
      * @throws OperationNotAllowedException
-     * if called before any call to {@link #openElement(CharSequence)}
+     * if called before any call to {@link #startElement(CharSequence)}
      * or after the first element has been closed
      */
     public XmlWriter cdata(final CharSequence content) throws IOException {
@@ -260,7 +260,7 @@ public final class XmlWriter implements AutoCloseable {
      *
      * @return this object
      * @throws OperationNotAllowedException if called before any call to
-     * {@link #openElement} or after the first element has been closed
+     * {@link #startElement} or after the first element has been closed
      */
     public XmlWriter closeElement() throws IOException {
         if (elementNames.isEmpty()) {
@@ -284,7 +284,7 @@ public final class XmlWriter implements AutoCloseable {
      * @param name The name of the element to close.  Must not be {@code null}.
      * @return this object
      * @throws OperationNotAllowedException if called before any call to
-     * {@link #openElement} or after the first element has been closed
+     * {@link #startElement} or after the first element has been closed
      */
     public XmlWriter closeElement(final CharSequence name) throws IOException {
         Objects.requireNonNull(name);
@@ -314,7 +314,7 @@ public final class XmlWriter implements AutoCloseable {
      *
      * @return this object
      * @throws OperationNotAllowedException if called before any call to
-     * {@link #openElement}
+     * {@link #startElement}
      */
     public XmlWriter closeDocument() throws IOException {
         if (elementNames.isEmpty() && !elementsWritten) {

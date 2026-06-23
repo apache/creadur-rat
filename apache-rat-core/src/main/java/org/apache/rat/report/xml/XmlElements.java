@@ -145,7 +145,7 @@ public final class XmlElements {
      */
     public static void ratReport(final XmlWriter writer) throws RatException {
         try {
-            writer.openElement(Elements.RAT_REPORT.elementName)
+            writer.startElement(Elements.RAT_REPORT.elementName) // NOSONAR
                     .attribute(Attributes.TIMESTAMP.attributeName(),
                             DateFormatUtils.ISO_8601_EXTENDED_DATETIME_TIME_ZONE_FORMAT.format(Calendar.getInstance()));
             version(writer);
@@ -161,7 +161,7 @@ public final class XmlElements {
     public static void version(final XmlWriter writer) throws RatException {
         VersionInfo versionInfo = new VersionInfo();
         try {
-            writer.openElement(Elements.VERSION.elementName)
+            writer.startElement(Elements.VERSION.elementName) // NOSONAR
                     .attribute(Attributes.PRODUCT.attributeName(), versionInfo.getTitle())
                     .attribute(Attributes.VENDOR.attributeName(), versionInfo.getVendor())
                     .attribute(Attributes.VERSION.attributeName(), versionInfo.getVersion())
@@ -179,14 +179,14 @@ public final class XmlElements {
      */
     public static void license(final XmlWriter writer, final ILicense license, final boolean approved) throws RatException {
         try {
-            writer.openElement(Elements.LICENSE.elementName)
+            writer.startElement(Elements.LICENSE.elementName)
                     .attribute(Attributes.ID.attributeName(), license.getId())
                     .attribute(Attributes.NAME.attributeName(), license.getName())
                     .attribute(Attributes.APPROVAL.attributeName(), Boolean.valueOf(approved).toString())
                     .attribute(Attributes.FAMILY.attributeName(), license.getLicenseFamily().getFamilyCategory());
 
             if (StringUtils.isNotBlank(license.getNote())) {
-                writer.openElement(Elements.NOTES.elementName).cdata(license.getNote()).closeElement();
+                writer.startElement(Elements.NOTES.elementName).cdata(license.getNote()).closeElement();
             }
             writer.closeElement();
                     } catch (IOException e) {
@@ -202,7 +202,7 @@ public final class XmlElements {
     public static void document(final XmlWriter writer, final Document document) throws RatException {
         final MetaData metaData = document.getMetaData();
         try {
-            writer.openElement(Elements.RESOURCE.elementName)
+            writer.startElement(Elements.RESOURCE.elementName)
                     .attribute(Attributes.NAME.attributeName(), document.getName().localized("/"))
                     .attribute(Attributes.TYPE.attributeName(), metaData.getDocumentType().toString())
                     .attribute(Attributes.MEDIA_TYPE.attributeName(), metaData.getMediaType().toString());
@@ -223,7 +223,7 @@ public final class XmlElements {
      */
     public static void statistics(final XmlWriter writer, final ClaimStatistic statistic, final ClaimValidator validator) throws RatException {
         try {
-            writer.openElement(Elements.STATISTICS.elementName);
+            writer.startElement(Elements.STATISTICS.elementName);
             for (ClaimStatistic.Counter counter : ClaimStatistic.Counter.values()) {
                 int count = statistic.getCounter(counter);
                 XmlElements.statistic(writer, counter.displayName(), count, counter.getDescription(), validator.isValid(counter, count));
@@ -255,7 +255,7 @@ public final class XmlElements {
      */
     public static void statistic(final XmlWriter writer, final String name, final int count, final String description, final boolean isOk) throws RatException {
         try {
-            writer.openElement(Elements.STATISTIC.elementName)
+            writer.startElement(Elements.STATISTIC.elementName)
                     .attribute(Attributes.NAME.attributeName(), name)
                     .attribute(Attributes.COUNT.attributeName(), Integer.toString(count))
                     .attribute(Attributes.APPROVAL.attributeName(), Boolean.toString(isOk))
@@ -275,7 +275,7 @@ public final class XmlElements {
      */
     public static void licenseCategory(final XmlWriter writer, final String name, final int count) throws RatException {
         try {
-        writer.openElement(Elements.LICENSE_CATEGORY.elementName)
+        writer.startElement(Elements.LICENSE_CATEGORY.elementName)
                 .attribute(Attributes.NAME.attributeName(), name)
                 .attribute(Attributes.COUNT.attributeName(), Integer.toString(count))
                 .closeElement();
@@ -293,7 +293,7 @@ public final class XmlElements {
      */
     public static void licenseName(final XmlWriter writer, final String name, final int count) throws RatException {
         try {
-            writer.openElement(Elements.LICENSE_NAME.elementName)
+            writer.startElement(Elements.LICENSE_NAME.elementName)
                     .attribute(Attributes.NAME.attributeName(), name)
                     .attribute(Attributes.COUNT.attributeName(), Integer.toString(count))
                     .closeElement();
@@ -311,7 +311,7 @@ public final class XmlElements {
      */
     public static void documentType(final XmlWriter writer, final String name, final int count) throws RatException {
         try {
-            writer.openElement(Elements.DOCUMENT_TYPE.elementName)
+            writer.startElement(Elements.DOCUMENT_TYPE.elementName)
                     .attribute(Attributes.NAME.attributeName(), name)
                     .attribute(Attributes.COUNT.attributeName(), Integer.toString(count))
                     .closeElement();

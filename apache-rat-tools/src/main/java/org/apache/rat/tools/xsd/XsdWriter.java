@@ -76,7 +76,7 @@ public class XsdWriter {
      */
     public XsdWriter init() throws IOException {
         writer.startDocument()
-        .openElement("xs:schema")
+        .startElement("xs:schema")
         .attribute("attributeFormDefault", "unqualified")
                 .attribute("xmlns:xs", "http://www.w3.org/2001/XMLSchema");
         return this;
@@ -111,7 +111,7 @@ public class XsdWriter {
      * @throws IOException on error.
      */
     public XsdWriter open(final Type type, final String... attributeMap) throws IOException {
-        writer.openElement(type.elementName);
+        writer.startElement(type.elementName);
         writeAttributes(attributeMap);
         return this;
     }
@@ -124,7 +124,7 @@ public class XsdWriter {
      * @throws IOException on error.
      */
     public XsdWriter attribute(final String name, final String... attributeMap) throws IOException {
-        writer.openElement("xs:attribute").attribute("name", name);
+        writer.startElement("xs:attribute").attribute("name", name);
         writeAttributes(attributeMap);
         writer.closeElement();
         return this;

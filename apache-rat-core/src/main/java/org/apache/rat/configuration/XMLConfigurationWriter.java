@@ -94,12 +94,12 @@ public class XMLConfigurationWriter {
     public void write(final XmlWriter writer) throws RatException {
         if (configuration.listFamilies() != LicenseFilter.NONE || configuration.listLicenses() != LicenseFilter.NONE) {
             try {
-                writer.openElement(XMLConfig.ROOT);
+                writer.startElement(XMLConfig.ROOT);
 
                 // Families section
                 SortedSet<ILicenseFamily> families = configuration.getLicenseFamilies(configuration.listFamilies());
                 if (!families.isEmpty()) {
-                    writer.openElement(XMLConfig.FAMILIES);
+                    writer.startElement(XMLConfig.FAMILIES);
                     for (ILicenseFamily family : families) {
                         writeFamily(writer, family);
                     }
@@ -109,7 +109,7 @@ public class XMLConfigurationWriter {
                 // licenses section
                 SortedSet<ILicense> licenses = configuration.getLicenses(configuration.listLicenses());
                 if (!licenses.isEmpty()) {
-                    writer.openElement(XMLConfig.LICENSES);
+                    writer.startElement(XMLConfig.LICENSES);
                     for (ILicense license : licenses) {
                         writeDescription(writer, license.getDescription(), license);
                     }
@@ -117,18 +117,18 @@ public class XMLConfigurationWriter {
                 }
 
                 // approved section
-                writer.openElement(XMLConfig.APPROVED);
+                writer.startElement(XMLConfig.APPROVED);
                 for (String family : configuration.getLicenseCategories(LicenseFilter.APPROVED)) {
-                    writer.openElement(XMLConfig.APPROVED).attribute(XMLConfig.ATT_LICENSE_REF, family.trim())
+                    writer.startElement(XMLConfig.APPROVED).attribute(XMLConfig.ATT_LICENSE_REF, family.trim())
                             .closeElement();
                 }
                 writer.closeElement(); // APPROVED
 
                 // matchers section
                 MatcherBuilderTracker tracker = MatcherBuilderTracker.instance();
-                writer.openElement(XMLConfig.MATCHERS);
+                writer.startElement(XMLConfig.MATCHERS);
                 for (Class<?> clazz : tracker.getClasses()) {
-                    writer.openElement(XMLConfig.MATCHER).attribute(XMLConfig.ATT_CLASS_NAME, clazz.getCanonicalName())
+                    writer.startElement(XMLConfig.MATCHER).attribute(XMLConfig.ATT_CLASS_NAME, clazz.getCanonicalName())
                             .closeElement();
                 }
                 writer.closeElement(); // MATCHERS
@@ -142,7 +142,7 @@ public class XMLConfigurationWriter {
 
     private void writeFamily(final XmlWriter writer, final ILicenseFamily family) throws RatException {
         try {
-            writer.openElement(XMLConfig.FAMILY).attribute(XMLConfig.ATT_ID, family.getFamilyCategory().trim())
+            writer.startElement(XMLConfig.FAMILY).attribute(XMLConfig.ATT_ID, family.getFamilyCategory().trim())
                     .attribute(XMLConfig.ATT_NAME, family.getFamilyName());
             writer.closeElement();
         } catch (IOException e) {
@@ -232,12 +232,12 @@ public class XMLConfigurationWriter {
                     }
                 }
                 writeComment(writer, description);
-                writer.openElement(description.getCommonName());
+                writer.startElement(description.getCommonName());
                 writeChildren(writer, description, component);
                 writer.closeElement();
                 break;
             case LICENSE:
-                writer.openElement(XMLConfig.LICENSE);
+                writer.startElement(XMLConfig.LICENSE);
                 writeChildren(writer, description, component);
                 writer.closeElement();
                 break;
@@ -261,7 +261,7 @@ public class XMLConfigurationWriter {
                     String s = description.getParamValue(component);
                     if (StringUtils.isNotBlank(s)) {
                         if (!inline) {
-                            writer.openElement(description.getCommonName());
+                            writer.startElement(description.getCommonName());
                         }
                         writer.content(description.getParamValue(component));
                         if (!inline) {
