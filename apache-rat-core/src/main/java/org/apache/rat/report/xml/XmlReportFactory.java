@@ -88,7 +88,7 @@ public final class XmlReportFactory {
             public void report(final Document document) throws RatException {
                 final MetaData metaData = document.getMetaData();
                 XmlElements.document(writer, document);
-                for (Iterator<ILicense> iter = metaData.licenses().iterator(); iter.hasNext(); ) {
+                for (Iterator<ILicense> iter = metaData.licenses().iterator(); iter.hasNext();) {
                     final ILicense license = iter.next();
                     XmlElements.license(writer, license, metaData.isApproved(license));
                 }
