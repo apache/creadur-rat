@@ -37,9 +37,6 @@ import org.w3c.dom.Document;
 
 /**
  * <p>
- * Lightweight {@link IXmlWriter} implementation.
- * </p>
- * <p>
  * Requires a wrapper to be used safely in a multithreaded environment.
  * </p>
  * <p>
