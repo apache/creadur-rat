@@ -63,6 +63,7 @@ import java.util.SortedSet;
 import static org.apache.rat.commandline.Arg.HELP_LICENSES;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Fail.fail;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 /**
  * A list of methods that an OptionsProvider in a test case must support.
@@ -607,14 +608,12 @@ public abstract class AbstractConfigurationOptionsProvider extends AbstractOptio
     }
 
     private void noDefaultsTest(final Option arg) {
-        try {
+        assertDoesNotThrow(() -> {
             ReportConfiguration config = generateConfig(ImmutablePair.of(arg, null));
             assertThat(config.getLicenses(LicenseSetFactory.LicenseFilter.ALL)).isEmpty();
             config = generateConfig(ImmutablePair.nullPair());
             assertThat(config.getLicenses(LicenseSetFactory.LicenseFilter.ALL)).isNotEmpty();
-        } catch (IOException e) {
-            fail(e.getMessage());
-        }
+        });
     }
 
     protected void noDefaultsTest() {
