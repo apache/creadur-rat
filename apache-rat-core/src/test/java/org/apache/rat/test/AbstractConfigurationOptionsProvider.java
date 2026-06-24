@@ -533,16 +533,16 @@ public abstract class AbstractConfigurationOptionsProvider extends AbstractOptio
 
                 xmlWriter.startDocument()
                         .comment(licenseText)
-                        .openElement("rat-config")
-                        .openElement("families")
-                        .openElement("family")
+                        .startElement("rat-config")
+                        .startElement("families")
+                        .startElement("family")
                         .attribute("id", upperName)
                         .attribute("name", "from " + capName + ".xml")
                         .closeElement("families")
-                        .openElement("licenses")
-                        .openElement("license")
+                        .startElement("licenses")
+                        .startElement("license")
                         .attribute("family", upperName)
-                        .openElement("text")
+                        .startElement("text")
                         .content(name)
                         .closeElement("rat-config");
             }
