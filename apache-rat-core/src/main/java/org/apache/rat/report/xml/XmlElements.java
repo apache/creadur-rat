@@ -18,6 +18,10 @@
  */
 package org.apache.rat.report.xml;
 
+import java.io.IOException;
+import java.util.Calendar;
+import java.util.Locale;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.rat.VersionInfo;
@@ -29,10 +33,6 @@ import org.apache.rat.license.ILicense;
 import org.apache.rat.report.claim.ClaimStatistic;
 import org.apache.rat.report.xml.writer.XmlWriter;
 import org.apache.rat.utils.CasedString;
-
-import java.io.IOException;
-import java.util.Calendar;
-import java.util.Locale;
 
 /**
  * Creates the elements in the XML report.
