@@ -68,6 +68,9 @@ in order to be properly linked in site reports.
     </release>
     -->
     <release version="1.0.0-SNAPSHOT" date="xxxx-yy-zz" description="Current SNAPSHOT - release to be done">
+      <action issue="RAT-561" type="add" dev="claudenw">
+        Remove IXmlWriter and simplify RatReport XML writer implementations while ensuring all resources are closed in tests.
+      </action>
       <action issue="RAT-560" type="add" dev="claudenw">
         Disallowed DOCTYPE declarations in the Xerces2 XML parser to mitigate XXE attacks, and centralised XML parser initialisation within RAT.
       </action>
