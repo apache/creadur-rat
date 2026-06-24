@@ -38,7 +38,6 @@ import org.apache.rat.license.ILicense;
 import org.apache.rat.license.ILicenseFamily;
 import org.apache.rat.report.RatReport;
 import org.apache.rat.report.claim.ClaimStatistic;
-import org.apache.rat.report.xml.writer.IXmlWriter;
 import org.apache.rat.report.xml.writer.XmlWriter;
 import org.apache.rat.test.utils.Resources;
 import org.apache.rat.testhelpers.TestingLicense;
@@ -54,7 +53,7 @@ public class XmlReportFactoryTest {
             .setLicenseFamilyName("Testing family").build();
 
     private StringWriter out;
-    private IXmlWriter writer;
+    private XmlWriter writer;
 
     @BeforeEach
     public void setUp() throws Exception {

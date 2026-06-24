@@ -41,18 +41,17 @@ import org.apache.rat.configuration.builders.MatcherRefBuilder;
 import org.apache.rat.license.ILicense;
 import org.apache.rat.license.ILicenseFamily;
 import org.apache.rat.license.LicenseSetFactory.LicenseFilter;
-import org.apache.rat.report.xml.writer.IXmlWriter;
 import org.apache.rat.report.xml.writer.XmlWriter;
 
 /**
  * Writes the XML configuration file format.
  */
 public class XMLConfigurationWriter {
-    /** The configuration that is being written */
+    /** The configuration that is being written. */
     private final ReportConfiguration configuration;
-    /** The set of defined matcher IDs */
+    /** The set of defined matcher IDs. */
     private final Set<String> matchers;
-    /** The set of defined license IDs */
+    /** The set of defined license IDs. */
     private final Set<String> licenseChildren;
 
     /**
@@ -87,52 +86,59 @@ public class XMLConfigurationWriter {
         write(new XmlWriter(plainWriter));
     }
 
+    private void writeFamilies(final XmlWriter writer, final SortedSet<ILicenseFamily> families) throws IOException, RatException {
+        if (!families.isEmpty()) {
+            writer.startElement(XMLConfig.FAMILIES);
+            for (ILicenseFamily family : families) {
+                writeFamily(writer, family);
+            }
+            writer.closeElement(); // FAMILIES
+        }
+    }
+
+    private void writeLicenses(final XmlWriter writer, final SortedSet<ILicense> licenses) throws IOException, RatException {
+        if (!licenses.isEmpty()) {
+            writer.startElement(XMLConfig.LICENSES);
+            for (ILicense license : licenses) {
+                writeDescription(writer, license.getDescription(), license);
+            }
+            writer.closeElement(); // LICENSES
+        }
+    }
+
+    private void writeApproved(final XmlWriter writer) throws IOException {
+        writer.startElement(XMLConfig.APPROVED);
+        for (String family : configuration.getLicenseCategories(LicenseFilter.APPROVED)) {
+            writer.startElement(XMLConfig.APPROVED).attribute(XMLConfig.ATT_LICENSE_REF, family.trim())
+                    .closeElement();
+        }
+        writer.closeElement(); // APPROVED
+    }
+
+    private void writeMatchers(final XmlWriter writer) throws IOException {
+        MatcherBuilderTracker tracker = MatcherBuilderTracker.instance();
+        writer.startElement(XMLConfig.MATCHERS);
+        for (Class<?> clazz : tracker.getClasses()) {
+            writer.startElement(XMLConfig.MATCHER).attribute(XMLConfig.ATT_CLASS_NAME, clazz.getCanonicalName())
+                    .closeElement();
+        }
+        writer.closeElement(); // MATCHERS
+    }
+
     /**
-     * Writes the configuration to an IXmlWriter instance.
-     * @param writer the IXmlWriter to write to.
+     * Writes the configuration to an XmlWriter instance.
+     * @param writer the XmlWriter to write to.
      * @throws RatException on error.
      */
-    public void write(final IXmlWriter writer) throws RatException {
+    public void write(final XmlWriter writer) throws RatException {
         if (configuration.listFamilies() != LicenseFilter.NONE || configuration.listLicenses() != LicenseFilter.NONE) {
             try {
-                writer.openElement(XMLConfig.ROOT);
+                writer.startElement(XMLConfig.ROOT);
 
-                // Families section
-                SortedSet<ILicenseFamily> families = configuration.getLicenseFamilies(configuration.listFamilies());
-                if (!families.isEmpty()) {
-                    writer.openElement(XMLConfig.FAMILIES);
-                    for (ILicenseFamily family : families) {
-                        writeFamily(writer, family);
-                    }
-                    writer.closeElement(); // FAMILIES
-                }
-
-                // licenses section
-                SortedSet<ILicense> licenses = configuration.getLicenses(configuration.listLicenses());
-                if (!licenses.isEmpty()) {
-                    writer.openElement(XMLConfig.LICENSES);
-                    for (ILicense license : licenses) {
-                        writeDescription(writer, license.getDescription(), license);
-                    }
-                    writer.closeElement(); // LICENSES
-                }
-
-                // approved section
-                writer.openElement(XMLConfig.APPROVED);
-                for (String family : configuration.getLicenseCategories(LicenseFilter.APPROVED)) {
-                    writer.openElement(XMLConfig.APPROVED).attribute(XMLConfig.ATT_LICENSE_REF, family.trim())
-                            .closeElement();
-                }
-                writer.closeElement(); // APPROVED
-
-                // matchers section
-                MatcherBuilderTracker tracker = MatcherBuilderTracker.instance();
-                writer.openElement(XMLConfig.MATCHERS);
-                for (Class<?> clazz : tracker.getClasses()) {
-                    writer.openElement(XMLConfig.MATCHER).attribute(XMLConfig.ATT_CLASS_NAME, clazz.getCanonicalName())
-                            .closeElement();
-                }
-                writer.closeElement(); // MATCHERS
+                writeFamilies(writer, configuration.getLicenseFamilies(configuration.listFamilies()));
+                writeLicenses(writer, configuration.getLicenses(configuration.listLicenses()));
+                writeApproved(writer);
+                writeMatchers(writer);
 
                 writer.closeElement(); // ROOT
             } catch (IOException e) {
@@ -141,9 +147,9 @@ public class XMLConfigurationWriter {
         }
     }
 
-    private void writeFamily(final IXmlWriter writer, final ILicenseFamily family) throws RatException {
+    private void writeFamily(final XmlWriter writer, final ILicenseFamily family) throws RatException {
         try {
-            writer.openElement(XMLConfig.FAMILY).attribute(XMLConfig.ATT_ID, family.getFamilyCategory().trim())
+            writer.startElement(XMLConfig.FAMILY).attribute(XMLConfig.ATT_ID, family.getFamilyCategory().trim())
                     .attribute(XMLConfig.ATT_NAME, family.getFamilyName());
             writer.closeElement();
         } catch (IOException e) {
@@ -151,21 +157,21 @@ public class XMLConfigurationWriter {
         }
     }
 
-    private void writeDescriptions(final IXmlWriter writer, final Collection<Description> descriptions, final IHeaderMatcher component)
+    private void writeDescriptions(final XmlWriter writer, final Collection<Description> descriptions, final IHeaderMatcher component)
             throws RatException {
         for (Description description : descriptions) {
             writeDescription(writer, description, component);
         }
     }
 
-    private void writeChildren(final IXmlWriter writer, final Description description, final IHeaderMatcher component)
+    private void writeChildren(final XmlWriter writer, final Description description, final IHeaderMatcher component)
             throws RatException {
         writeAttributes(writer, description.filterChildren(attributeFilter(component.getDescription())), component);
         writeDescriptions(writer, description.filterChildren(attributeFilter(component.getDescription()).negate()),
                 component);
     }
 
-    private void writeAttributes(final IXmlWriter writer, final Collection<Description> descriptions, final IHeaderMatcher component)
+    private void writeAttributes(final XmlWriter writer, final Collection<Description> descriptions, final IHeaderMatcher component)
             throws RatException {
         for (Description d : descriptions) {
             try {
@@ -176,13 +182,13 @@ public class XMLConfigurationWriter {
         }
     }
 
-    private void writeComment(final IXmlWriter writer, final Description description) throws IOException {
+    private void writeComment(final XmlWriter writer, final Description description) throws IOException {
         if (StringUtils.isNotBlank(description.getDescription())) {
             writer.comment(description.getDescription().replace("-->", "-&ndash;>"));
         }
     }
 
-    private void writeAttribute(final IXmlWriter writer, final Description description, final IHeaderMatcher component)
+    private void writeAttribute(final XmlWriter writer, final Description description, final IHeaderMatcher component)
             throws IOException {
         String paramValue = description.getParamValue(component);
         if (paramValue != null) {
@@ -190,102 +196,121 @@ public class XMLConfigurationWriter {
         }
     }
 
-    /* package private for testing */
+    private boolean hasUUIDId(final Description desc, final IHeaderMatcher comp) {
+        if ("id".equals(desc.getCommonName())) {
+            try {
+                String paramId = desc.getParamValue(comp);
+                // if a UUID skip it.
+                if (paramId != null) {
+                    UUID.fromString(paramId);
+                    return true;
+                }
+            } catch (IllegalArgumentException expected) {
+                // do nothing.
+            }
+        }
+        return false;
+    }
+
+    private void writeChildParameter(final XmlWriter writer, final Description description, final IHeaderMatcher component) throws IOException {
+        boolean inline = XMLConfig.isInlineNode(component.getDescription().getCommonName(),
+                description.getCommonName());
+        String s = description.getParamValue(component);
+        if (StringUtils.isNotBlank(s)) {
+            if (!inline) {
+                writer.startElement(description.getCommonName());
+            }
+            writer.content(description.getParamValue(component));
+            if (!inline) {
+                writer.closeElement();
+            }
+        }
+
+    }
     @SuppressWarnings("unchecked")
-    void writeDescription(final IXmlWriter writer, final Description desc, final IHeaderMatcher comp) throws RatException {
+    private void writeParameterDescription(final XmlWriter writer, final Description description, final IHeaderMatcher component) throws IOException {
+        if (hasUUIDId(description, component)) {
+            return;
+        }
+
+        if (description.getChildType() == String.class) {
+            writeChildParameter(writer, description, component);
+        } else {
+            try {
+                if (description.isCollection()) {
+                    for (IHeaderMatcher matcher : (Collection<IHeaderMatcher>) description
+                            .getter(component.getClass()).invoke(component)) {
+                        writeDescription(writer, matcher.getDescription(), matcher);
+                    }
+                } else {
+                    IHeaderMatcher matcher = (IHeaderMatcher) description.getter(component.getClass())
+                            .invoke(component);
+                    writeDescription(writer, matcher.getDescription(), matcher);
+                }
+            } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException
+                     | NoSuchMethodException | SecurityException | RatException e) {
+                throw new ImplementationException(e);
+            }
+        }
+    }
+
+    private void writeMatcherDescription(final XmlWriter writer, final Description desc, final IHeaderMatcher comp) throws IOException, RatException {
         Description description = desc;
         IHeaderMatcher component = comp;
+        // see if id was registered
+        Optional<Description> id = description.childrenOfType(ComponentType.PARAMETER).stream()
+                .filter(i -> XMLConfig.ATT_ID.equals(i.getCommonName())).findFirst();
+
+        // id will not be present in matcherRef
+        if (id.isPresent()) {
+            String matcherId = id.get().getParamValue(component);
+            // if we have seen the id before, put a reference to the other one.
+            if (matchers.contains(matcherId)) {
+                component = new MatcherRefBuilder.IHeaderMatcherProxy(matcherId, null);
+                description = component.getDescription();
+            } else {
+                matchers.add(matcherId);
+            }
+            // remove the matcher id if it is a UUID
+            try {
+                UUID.fromString(matcherId);
+                description.getChildren().remove(XMLConfig.ATT_ID);
+            } catch (IllegalArgumentException expected) {
+                if (description.getCommonName().equals("spdx")) {
+                    description.getChildren().remove(XMLConfig.ATT_ID);
+                }
+            }
+        }
+
+        // if only a resource, list the resource not the contents of the matcher
+        Optional<Description> resource = description.childrenOfType(ComponentType.PARAMETER).stream()
+                .filter(i -> XMLConfig.ATT_RESOURCE.equals(i.getCommonName())).findFirst();
+        if (resource.isPresent()) {
+            String resourceStr = resource.get().getParamValue(component);
+            if (StringUtils.isNotBlank(resourceStr)) {
+                description.getChildren().remove("enclosed");
+            }
+        }
+        writeComment(writer, description);
+        writer.startElement(description.getCommonName());
+        writeChildren(writer, description, component);
+        writer.closeElement();
+    }
+
+    /* package private for testing */
+    void writeDescription(final XmlWriter writer, final Description description, final IHeaderMatcher component) throws RatException {
         try {
             switch (description.getType()) {
             case MATCHER:
-                // see if id was registered
-                Optional<Description> id = description.childrenOfType(ComponentType.PARAMETER).stream()
-                        .filter(i -> XMLConfig.ATT_ID.equals(i.getCommonName())).findFirst();
-
-                // id will not be present in matcherRef
-                if (id.isPresent()) {
-                    String matcherId = id.get().getParamValue(component);
-                    // if we have seen the ID before, put a reference to the other one.
-                    if (matchers.contains(matcherId)) {
-                        component = new MatcherRefBuilder.IHeaderMatcherProxy(matcherId, null);
-                        description = component.getDescription();
-                    } else {
-                        matchers.add(matcherId);
-                    }
-                    // remove the matcher id if it is a UUID
-                    try {
-                        UUID.fromString(matcherId);
-                        description.getChildren().remove(XMLConfig.ATT_ID);
-                    } catch (IllegalArgumentException expected) {
-                        if (description.getCommonName().equals("spdx")) {
-                            description.getChildren().remove(XMLConfig.ATT_ID);
-                        }
-                    }
-                }
-
-                // if only a resource, list the resource not the contents of the matcher
-                Optional<Description> resource = description.childrenOfType(ComponentType.PARAMETER).stream()
-                        .filter(i -> XMLConfig.ATT_RESOURCE.equals(i.getCommonName())).findFirst();
-                if (resource.isPresent()) {
-                    String resourceStr = resource.get().getParamValue(component);
-                    if (StringUtils.isNotBlank(resourceStr)) {
-                        description.getChildren().remove("enclosed");
-                    }
-                }
-                writeComment(writer, description);
-                writer.openElement(description.getCommonName());
-                writeChildren(writer, description, component);
-                writer.closeElement();
+                writeMatcherDescription(writer, description, component);
                 break;
             case LICENSE:
-                writer.openElement(XMLConfig.LICENSE);
+                writer.startElement(XMLConfig.LICENSE);
                 writeChildren(writer, description, component);
                 writer.closeElement();
                 break;
             case PARAMETER:
-                if ("id".equals(description.getCommonName())) {
-                    try {
-                        String paramId = description.getParamValue(component);
-                        // if a UUID skip it.
-                        if (paramId != null) {
-                            UUID.fromString(paramId);
-                            return;
-                        }
-                    } catch (IllegalArgumentException expected) {
-                        // do nothing.
-                    }
-                }
-                if (description.getChildType() == String.class) {
-
-                    boolean inline = XMLConfig.isInlineNode(component.getDescription().getCommonName(),
-                            description.getCommonName());
-                    String s = description.getParamValue(component);
-                    if (StringUtils.isNotBlank(s)) {
-                        if (!inline) {
-                            writer.openElement(description.getCommonName());
-                        }
-                        writer.content(description.getParamValue(component));
-                        if (!inline) {
-                            writer.closeElement();
-                        }
-                    }
-                } else {
-                    try {
-                        if (description.isCollection()) {
-                            for (IHeaderMatcher matcher : (Collection<IHeaderMatcher>) description
-                                    .getter(component.getClass()).invoke(component)) {
-                                writeDescription(writer, matcher.getDescription(), matcher);
-                            }
-                        } else {
-                            IHeaderMatcher matcher = (IHeaderMatcher) description.getter(component.getClass())
-                                    .invoke(component);
-                            writeDescription(writer, matcher.getDescription(), matcher);
-                        }
-                    } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException
-                            | NoSuchMethodException | SecurityException | RatException e) {
-                        throw new ImplementationException(e);
-                    }
-                }
+                writeParameterDescription(writer, description, component);
                 break;
             case BUILD_PARAMETER:
                 // ignore;
