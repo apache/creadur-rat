@@ -71,6 +71,9 @@ in order to be properly linked in site reports.
       <action issue="RAT-559" type="fix" dev="claudenw">
         Fix issues with DocumentName and DocumentNameBuilder that address errors in archive handling and Windows as operating system.
       </action>
+      <action issue="RAT-561" type="add" dev="claudenw">
+        Remove IXmlWriter and simplify RatReport XML writer implementations while ensuring all resources are closed in tests.
+      </action>
       <action issue="RAT-560" type="add" dev="claudenw">
         Disallowed DOCTYPE declarations in the Xerces2 XML parser to mitigate XXE attacks, and centralised XML parser initialisation within RAT.
       </action>

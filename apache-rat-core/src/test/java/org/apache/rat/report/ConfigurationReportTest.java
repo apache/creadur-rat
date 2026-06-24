@@ -35,7 +35,7 @@ import org.apache.rat.ReportConfiguration;
 import org.apache.rat.configuration.MatcherBuilderTracker;
 import org.apache.rat.license.ILicenseFamily;
 import org.apache.rat.license.LicenseSetFactory.LicenseFilter;
-import org.apache.rat.report.xml.writer.IXmlWriter;
+import org.apache.rat.report.xml.XmlReportFactory;
 import org.apache.rat.report.xml.writer.XmlWriter;
 import org.apache.rat.testhelpers.XmlUtils;
 import org.junit.jupiter.api.BeforeEach;
@@ -45,30 +45,31 @@ import org.w3c.dom.Node;
 
 public class ConfigurationReportTest {
 
-    private ConfigurationReport report;
-    private StringWriter sw;
-    private IXmlWriter writer;
-
+    private ReportConfiguration reportConfiguration;
     private final String[] FAMILY_IDS = { "AL", "BSD-3", "CDDL1", "GPL", "MIT", "OASIS", "W3C", "W3CD", };
 
     @BeforeEach
     public void setup() {
-        ReportConfiguration reportConfiguration = new ReportConfiguration();
+        reportConfiguration = new ReportConfiguration();
         reportConfiguration.listFamilies(LicenseFilter.ALL);
         reportConfiguration.listLicenses(LicenseFilter.ALL);
         reportConfiguration.setFrom(Defaults.builder().build());
+    }
 
-        sw = new StringWriter();
-        writer = new XmlWriter(sw);
-        report = new ConfigurationReport(writer, reportConfiguration);
+    private String executeReport() throws Exception {
+        StringWriter out = new StringWriter();
+        try (XmlWriter writer = new XmlWriter(out)) {
+            writer.startDocument();
+            RatReport report = XmlReportFactory.configuration(writer, reportConfiguration);
+            report.startReport();
+            report.endReport();
+        }
+        return out.toString();
     }
 
     @Test
     public void testAllFamiliesAndMatchers() throws Exception {
-        report.startReport();
-        report.endReport();
-        writer.closeDocument();
-        String result = sw.toString();
+        String result = executeReport();
         assertTrue(XmlUtils.isWellFormedXml(result), "Is well formed");
 
         XPath xPath = XPathFactory.newInstance().newXPath();

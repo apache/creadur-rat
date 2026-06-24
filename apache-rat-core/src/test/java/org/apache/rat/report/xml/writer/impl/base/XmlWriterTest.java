@@ -7,7 +7,7 @@
  * "License"); you may not use this file except in compliance   *
  * with the License.  You may obtain a copy of the License at   *
  *                                                              *
- *   http://www.apache.org/licenses/LICENSE-2.0                 *
+ *   https://www.apache.org/licenses/LICENSE-2.0                 *
  *                                                              *
  * Unless required by applicable law or agreed to in writing,   *
  * software distributed under the License is distributed on an  *
@@ -18,12 +18,10 @@
  */ 
 package org.apache.rat.report.xml.writer.impl.base;
 
-import org.apache.rat.report.xml.writer.IXmlWriter;
 import org.apache.rat.report.xml.writer.InvalidXmlException;
 import org.apache.rat.report.xml.writer.OperationNotAllowedException;
 import org.apache.rat.report.xml.writer.XmlWriter;
 import org.apache.rat.testhelpers.XmlUtils;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.w3c.dom.Document;
 
@@ -33,73 +31,61 @@ import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.NoSuchElementException;
 
-import static org.assertj.core.api.Assertions.fail;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatNoException;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class XmlWriterTest {
 
-    private XmlWriter writer;
-    private StringWriter out;
-    
-    @BeforeEach
-    public void setUp() {
-        out = new StringWriter();
-        writer = new XmlWriter(out);
-    }
-
     @Test
     void returnValues() throws Exception {
-        assertEquals( 
-                writer, writer.openElement("alpha"), "XmlWriters should always return themselves");
-        assertEquals(
-                writer, writer.attribute("beta", "b"), "XmlWriters should always return themselves");
-        assertEquals(
-                writer, writer.content("gamma"), "XmlWriters should always return themselves");
-        assertEquals(
-                writer, writer.closeElement(), "XmlWriters should always return themselves");
+        StringWriter out = new StringWriter();
+        try (XmlWriter writer = new XmlWriter(out)) {
+        assertThat(writer.startElement("alpha")).as("XmlWriters should always return themselves").isEqualTo(writer);
+            assertThat(writer.attribute("beta", "b")).as("XmlWriters should always return themselves").isEqualTo(writer);
+            assertThat(writer.content("gamma")).as("XmlWriters should always return themselves").isEqualTo(writer);
+            assertThat(writer.closeElement()).as("XmlWriters should always return themselves").isEqualTo(writer);
+        }
     }
 
     @Test
-    void openElement() throws Exception {
-        assertEquals(
-                writer, writer.openElement("alpha"), "XmlWriters should always return themselves");
-         assertEquals("<alpha", out.toString(), "Alpha element started");
-        assertEquals(
-                writer, writer.openElement("beta"), "XmlWriters should always return themselves");
-        assertEquals("<alpha><beta", out.toString(), "Alpha element tag closed and beta started");
-        assertEquals(
-                writer, writer.closeElement(), "XmlWriters should always return themselves");
-        assertEquals("<alpha><beta/>", out.toString(), "Beta tag ended");
-        assertEquals(
-                writer, writer.openElement("gamma"), "XmlWriters should always return themselves");
-        assertEquals("<alpha><beta/><gamma", out.toString(), "Gamma tag started");
+    void startElement() throws Exception {
+        StringWriter out = new StringWriter();
+        try (XmlWriter writer = new XmlWriter(out)) {
+            writer.startElement("alpha");
+            assertThat(out).hasToString("<alpha");
+            writer.startElement("beta");
+            assertThat(out).hasToString("<alpha><beta");
+            writer.closeElement();
+            assertThat(out).hasToString("<alpha><beta/>");
+            writer.startElement("gamma");
+            assertThat(out).hasToString("<alpha><beta/><gamma");
+        }
     }
     
     @Test
     void invalidElementName() throws Exception {
-        assertTrue( isValidElementName("alpha"), "All strings ok");
-        assertTrue(isValidElementName("alpha77"), "Strings and digits ok");
-        assertFalse(isValidElementName("5alpha77"), "Must no start with digit");
-        assertFalse(isValidElementName("alph<a77"), "Greater than not ok");
-        assertFalse(isValidElementName("alph<a77"), "Less than not ok");
-        assertFalse(isValidElementName("alph'a77"), "Quote not ok");
-        assertTrue(isValidElementName("alph-a77"), "Dash ok");
-        assertTrue(isValidElementName("alph_a77"), "Underscore ok");
-        assertTrue(isValidElementName("alph.a77"), "Dot ok");
-        assertTrue(isValidElementName("alpha:77"), "Colon ok");
-        assertFalse(isValidElementName("-a77"), "Start with dash not ok");
-        assertTrue(isValidElementName("_a77"), "Start with underscore ok");
-        assertFalse(isValidElementName(".a77"), "Start with dot not ok");
-        assertTrue(isValidElementName(":a77"), "Start with colon ok");
+        assertThat(isValidElementName("alpha")).as("All strings ok").isTrue();
+        assertThat(isValidElementName("alpha77")).as("Strings and digits ok").isTrue();
+        assertThat(isValidElementName("5alpha77")).as("Must no start with digit").isFalse();
+        assertThat(isValidElementName("alph<a77")).as("Greater than not ok").isFalse();
+        assertThat(isValidElementName("alph<a77")).as("Less than not ok").isFalse();
+        assertThat(isValidElementName("alph'a77")).as("Quote not ok").isFalse();
+        assertThat(isValidElementName("alph-a77")).as("Dash ok").isTrue();
+        assertThat(isValidElementName("alph_a77")).as("Underscore ok").isTrue();
+        assertThat(isValidElementName("alph.a77")).as("Dot ok").isTrue();
+        assertThat(isValidElementName("alpha:77")).as("Colon ok").isTrue();
+        assertThat(isValidElementName("-a77")).as("Start with dash not ok").isFalse();
+        assertThat(isValidElementName("_a77")).as("Start with underscore ok").isTrue();
+        assertThat(isValidElementName(".a77")).as("Start with dot not ok").isFalse();
+        assertThat(isValidElementName(":a77")).as("Start with colon ok").isTrue();
     }
     
     private boolean isValidElementName(String elementName) throws Exception {
         boolean result = true;
-        try {
-            writer.openElement(elementName);
+        StringWriter out = new StringWriter();
+        try (XmlWriter writer = new XmlWriter(out)) {
+            writer.startElement(elementName);
         } catch (InvalidXmlException e) {
             result = false;
         }
@@ -107,191 +93,177 @@ class XmlWriterTest {
     }
 
     @Test
-    void callOpenElementAfterLastElementClosed() throws Exception {
-        assertEquals(
-                writer, writer.openElement("alpha"), "XmlWriters should always return themselves");
-         assertEquals("<alpha", out.toString(), "Alpha element started");
-        assertEquals(
-                writer, writer.closeElement(), "XmlWriters should always return themselves");
-        assertEquals("<alpha/>", out.toString(), "Element alpha is closed");
-        try {
-            writer.openElement("delta");
-            fail("Cannot open new elements once the first element has been closed");
-        } catch (OperationNotAllowedException e) {
-            // Cannot open new elements once the first element has been closed
+    void callStartElementAfterLastElementClosed() throws Exception {
+        StringWriter out = new StringWriter();
+        try (XmlWriter writer = new XmlWriter(out)) {
+            writer.startElement("alpha");
+            assertThat(out).hasToString("<alpha");
+            writer.closeElement();
+            assertThat(out).hasToString("<alpha/>");
+            assertThatThrownBy(() -> writer.startElement("delta"))
+                    .hasMessageContaining("Root element already closed. Cannot open new element.")
+                            .isInstanceOf(OperationNotAllowedException.class);
         }
     }    
 
     @Test
     void callCloseElementAfterLastElementClosed() throws Exception {
-        assertEquals(
-                writer, writer.openElement("alpha"), "XmlWriters should always return themselves");
-         assertEquals("<alpha", out.toString(), "Alpha element started");
-        assertEquals(
-                writer, writer.closeElement(), "XmlWriters should always return themselves");
-        assertEquals("<alpha/>", out.toString(), "Element alpha is closed");
-        try {
+        StringWriter out = new StringWriter();
+        try (XmlWriter writer = new XmlWriter(out)) {
+            writer.startElement("alpha");
+            assertThat(out).hasToString("<alpha");
             writer.closeElement();
-            fail("Cannot close elements once the first element has been closed");
-        } catch (OperationNotAllowedException e) {
-            // Cannot open new elements once the first element has been closed
+            assertThat(out).hasToString("<alpha/>");
+            assertThatThrownBy(writer::closeElement)
+                    .hasMessageContaining("Root element already closed. Cannot open new element.")
+                    .isInstanceOf(OperationNotAllowedException.class);
         }
     }
 
     @Test
     void closeFirstElement() throws Exception {
-        assertEquals(
-                writer, writer.openElement("alpha"), "XmlWriters should always return themselves");
-        assertEquals("<alpha", out.toString(), "Alpha element started");
-        assertEquals(
-                writer, writer.closeElement(), "XmlWriters should always return themselves");
-        assertEquals("<alpha/>", out.toString(), "Element alpha is closed");
+        StringWriter out = new StringWriter();
+        try (XmlWriter writer = new XmlWriter(out)) {
+            writer.startElement("alpha");
+            assertThat(out).hasToString("<alpha");
+            writer.closeElement();
+            assertThat(out).hasToString("<alpha/>");
+        }
     }
     
     @Test
     void closeElementWithContent() throws Exception {
-        assertEquals(
-                writer, writer.openElement("alpha"), "XmlWriters should always return themselves");
-        assertEquals("<alpha", out.toString(), "Alpha element started");
-        assertEquals(
-                writer, writer.openElement("beta"), "XmlWriters should always return themselves");
-        assertEquals("<alpha><beta", out.toString(), "Beta element started");
-        assertEquals(
-                writer, writer.closeElement(), "XmlWriters should always return themselves");
-        assertEquals("<alpha><beta/>", out.toString(), "Element beta is closed");
-        assertEquals(
-                writer, writer.closeElement(), "XmlWriters should always return themselves");
-        assertEquals("<alpha><beta/></alpha>", out.toString(), "Element beta is closed");
-        try {
+        StringWriter out = new StringWriter();
+        try (XmlWriter writer = new XmlWriter(out)) {
+            writer.startElement("alpha").startElement("beta");
+            assertThat(out).hasToString("<alpha><beta");
+
+                   writer.closeElement();
+            assertThat(out).hasToString("<alpha><beta/>");
             writer.closeElement();
-            fail("Cannot close elements once the first element has been closed");
-        } catch (OperationNotAllowedException e) {
-            // Cannot open new elements once the first element has been closed
+            assertThat(out).hasToString("<alpha><beta/></alpha>");
+            assertThatThrownBy(writer::closeElement)
+                    .hasMessageContaining("Root element already closed. Cannot open new element.")
+                    .isInstanceOf(OperationNotAllowedException.class);
         }
     }
     
     @Test
     void closeElementBeforeFirstElement() throws Exception {
-        try {
-            writer.closeElement();
-            fail("Cannot close elements before the first element has been closed");
-        } catch (OperationNotAllowedException e) {
-            // Cannot open new elements before the first element has been closed
+        StringWriter out = new StringWriter();
+        try (XmlWriter writer = new XmlWriter(out)) {
+            assertThatThrownBy(writer::closeElement)
+                    .hasMessageContaining("Close called before an element has been opened.")
+                    .isInstanceOf(OperationNotAllowedException.class);
+        } catch (OperationNotAllowedException expected) {
+            assertThat(expected).hasMessageContaining("Close called before an element has been opened.");
         }
+
     }
     
     @Test
     void contentAfterElement() throws Exception {
-        assertEquals(
-                writer, writer.openElement("alpha"), "XmlWriters should always return themselves");
-         assertEquals("<alpha", out.toString(), "Alpha element started");
-        assertEquals(
-                writer, writer.content("foo bar"), "XmlWriters should always return themselves");
-        assertEquals("<alpha>foo bar", out.toString(), "Alpha tag closed. Content written");
-        assertEquals(
-                writer, writer.content(" and more foo bar"), "XmlWriters should always return themselves");
-        assertEquals("<alpha>foo bar and more foo bar", out.toString(), "Alpha tag closed. Content written");
-        assertEquals(
-                writer, writer.openElement("beta"), "XmlWriters should always return themselves");
-        assertEquals("<alpha>foo bar and more foo bar<beta", out.toString());
-        assertEquals(
-                writer, writer.closeElement(), "XmlWriters should always return themselves");
-        assertEquals("<alpha>foo bar and more foo bar<beta/>", out.toString(), "Element beta is closed");
-        assertEquals(
-                writer, writer.closeElement(), "XmlWriters should always return themselves");
-        assertEquals("<alpha>foo bar and more foo bar<beta/></alpha>", out.toString(), "Element beta is closed");
-        try {
-            writer.content("A Sentence Too far");
-            fail("Cannot write content once the first element has been closed");
-        } catch (OperationNotAllowedException e) {
-            // Cannot open new elements once the first element has been closed
+        StringWriter out = new StringWriter();
+        try (XmlWriter writer = new XmlWriter(out)) {
+            writer.startElement("alpha");
+            assertThat(out).hasToString("<alpha");
+            writer.content("foo bar");
+            assertThat(out).hasToString("<alpha>foo bar");
+            writer.content(" and more foo bar");
+            assertThat(out).hasToString("<alpha>foo bar and more foo bar");
+            writer.startElement("beta");
+            assertThat(out).hasToString("<alpha>foo bar and more foo bar<beta");
+            writer.closeElement();
+            assertThat(out).hasToString("<alpha>foo bar and more foo bar<beta/>");
+            writer.closeElement();
+            assertThat(out).hasToString("<alpha>foo bar and more foo bar<beta/></alpha>");
+            assertThatThrownBy(() -> writer.content("A Sentence Too far"))
+                    .hasMessageContaining("Root element already closed. Cannot open new element.")
+                            .isInstanceOf(OperationNotAllowedException.class);
         }
     }
 
     @Test
     void contentAfterLastElement() throws Exception {
-        assertEquals(
-                writer, writer.openElement("alpha"), "XmlWriters should always return themselves");
-         assertEquals("<alpha", out.toString(), "Alpha element started");
-        assertEquals(
-                writer, writer.closeElement(), "XmlWriters should always return themselves");
-        assertEquals("<alpha/>", out.toString(), "Element alpha is closed");
-        try {
-            writer.content("A Sentence Too far");
-            fail("Cannot write content once the first element has been closed");
-        } catch (OperationNotAllowedException e) {
-            // Cannot open new elements once the first element has been closed
+        StringWriter out = new StringWriter();
+        try (XmlWriter writer = new XmlWriter(out)) {
+            writer.startElement("alpha");
+            assertThat(out).hasToString("<alpha");
+            writer.closeElement();
+            assertThat(out).hasToString("<alpha/>");
+            assertThatThrownBy(() -> writer.content("A Sentence Too far"))
+                    .hasMessageContaining("Root element already closed. Cannot open new element.")
+                            .isInstanceOf(OperationNotAllowedException.class);
         }
     }
     
     @Test
     void writeContentBeforeFirstElement() throws Exception {
-        try {
-            writer.content("Too early");
-            fail("Cannot close elements before the first element has been closed");
-        } catch (OperationNotAllowedException e) {
-            // Cannot open new elements before the first element has been closed
+        StringWriter out = new StringWriter();
+        try (XmlWriter writer = new XmlWriter(out)) {
+            assertThatThrownBy(() -> writer.content("Too early"))
+                    .hasMessageContaining("An element must be opened before content can be written.")
+                            .isInstanceOf(OperationNotAllowedException.class);
+        } catch (OperationNotAllowedException expected) {
+            assertThat(expected).hasMessageContaining("Close called before an element has been opened.");
         }
     }
     
     @Test
     void contentEscaping() throws Exception {
-        assertEquals(
-                writer, writer.openElement("alpha"), "XmlWriters should always return themselves");
-         assertEquals("<alpha", out.toString(), "Alpha element started");
-        assertEquals(
-                writer, writer.content("this&that"), "XmlWriters should always return themselves");
-        assertEquals("<alpha>this&amp;that", out.toString(), "Amphersands must be escaped");
-        assertEquals(
-                writer, writer.content("small<large"), "XmlWriters should always return themselves");
-        assertEquals("<alpha>this&amp;thatsmall&lt;large", out.toString(), "Left angle brackets must be escaped");
-        assertEquals(
-                writer, writer.content("12>1"), "XmlWriters should always return themselves");
-        assertEquals("<alpha>this&amp;thatsmall&lt;large12&gt;1", out.toString(), "Choose to escape right angle brackets");
-
+        StringWriter out = new StringWriter();
+        try (XmlWriter writer = new XmlWriter(out)) {
+            writer.startElement("alpha");
+            assertThat(out).hasToString("<alpha");
+            writer.content("this&that");
+            assertThat(out).hasToString("<alpha>this&amp;that");
+            writer.content("small<large");
+            assertThat(out).hasToString("<alpha>this&amp;thatsmall&lt;large");
+            writer.content("12>1");
+            assertThat(out).hasToString("<alpha>this&amp;thatsmall&lt;large12&gt;1");
+        }
     }
 
     @Test
     void attributeAfterLastElement() throws Exception {
-        assertEquals(
-                writer, writer.openElement("alpha"), "XmlWriters should always return themselves");
-         assertEquals("<alpha", out.toString(), "Alpha element started");
-        assertEquals(
-                writer, writer.closeElement(), "XmlWriters should always return themselves");
-        assertEquals("<alpha/>", out.toString(), "Element alpha is closed");
-        try {
-            writer.attribute("foo", "bar");
-            fail("Cannot write content once the first element has been closed");
-        } catch (OperationNotAllowedException e) {
-            // Cannot open new elements once the first element has been closed
+        StringWriter out = new StringWriter();
+        try (XmlWriter writer = new XmlWriter(out)) {
+            writer.startElement("alpha").closeElement();
+            assertThat(out).hasToString("<alpha/>");
+            assertThatThrownBy(() -> writer.attribute("foo", "bar"))
+                    .hasMessageContaining("Root element already closed. Cannot open new element.")
+                            .isInstanceOf(OperationNotAllowedException.class);
         }
     }
     
     @Test
     void attributeContentBeforeFirstElement() throws Exception {
-        try {
-            writer.attribute("foo", "bar");
-            fail("Cannot close elements before the first element has been closed");
-        } catch (OperationNotAllowedException e) {
-            // Cannot open new elements before the first element has been closed
+        StringWriter out = new StringWriter();
+        try (XmlWriter writer = new XmlWriter(out)) {
+            assertThatThrownBy(() -> writer.attribute("foo", "bar"))
+                    .hasMessageContaining("Close called before an element has been opened.")
+                    .isInstanceOf(OperationNotAllowedException.class);
+        } catch (OperationNotAllowedException expected) {
+            assertThat(expected).hasMessageContaining("Close called before an element has been opened.");
         }
     }
     
     @Test
     void invalidAttributeName() throws Exception {
-        writer.openElement("alpha");
-        assertTrue(isValidAttributeName("alpha"), "All string ok");
-        assertTrue(isValidAttributeName("alpha77"), "Strings and digits ok");
-        assertFalse(isValidAttributeName("5alpha77"), "Must not start with digit");
-        assertTrue(isValidAttributeName("alpha:77"), "Colon ok");
-        assertFalse(isValidAttributeName("alph<a77"),"Greater than not ok");
-        assertFalse(isValidAttributeName("alph<a77"), "Less than not ok");
-        assertFalse(isValidAttributeName("alph'a77"), "Quote not ok");
+        assertThat(isValidAttributeName("alpha")).as("All string ok").isTrue();
+        assertThat(isValidAttributeName("alpha77")).as("Strings and digits ok").isTrue();
+        assertThat(isValidAttributeName("5alpha77")).as("Must not start with digit").isFalse();
+        assertThat(isValidAttributeName("alpha:77")).as("Colon ok").isTrue();
+        assertThat(isValidAttributeName("alph<a77")).as("Greater than not ok").isFalse();
+        assertThat(isValidAttributeName("alph<a77")).as("Less than not ok").isFalse();
+        assertThat(isValidAttributeName("alph'a77")).as("Quote not ok").isFalse();
     }
     
     private boolean isValidAttributeName(String name) throws Exception {
         boolean result = true;
-        try {
+        StringWriter out = new StringWriter();
+        try (XmlWriter writer = new XmlWriter(out)) {
+            writer.startElement("alpha");
             writer.attribute(name, "");
         } catch (InvalidXmlException e) {
             result = false;
@@ -301,235 +273,199 @@ class XmlWriterTest {
     
     @Test
     void escapeAttributeContent() throws Exception {
-        assertEquals(
-                writer, writer.openElement("alpha"), "XmlWriters should always return themselves");
-         assertEquals("<alpha", out.toString(), "Alpha element started");
-        assertEquals(
-                writer, writer.attribute("one", "this&that"), "XmlWriters should always return themselves");
-        assertEquals("<alpha one='this&amp;that'", out.toString(), "Amphersands must be escaped");
-        assertEquals(
-                writer, writer.attribute("two", "small<large"), "XmlWriters should always return themselves");
-        assertEquals("<alpha one='this&amp;that' two='small&lt;large'", out.toString(), "Left angle brackets must be escaped");
-        assertEquals(
-                writer, writer.attribute("three", "12>1"), "XmlWriters should always return themselves");
-        assertEquals("<alpha one='this&amp;that' two='small&lt;large' three='12&gt;1'", out.toString(), "Choose to escape right angle brackets");
-        assertEquals(
-                writer, writer.attribute("four", "'quote'"), "XmlWriters should always return themselves");
-        assertEquals("<alpha one='this&amp;that' two='small&lt;large' three='12&gt;1' four='&apos;quote&apos;'", out.toString(), "Apostrophes must be escape");
-        assertEquals(
-                writer, writer.attribute("five", "\"quote\""), "XmlWriters should always return themselves");
-        assertEquals("<alpha one='this&amp;that' two='small&lt;large' three='12&gt;1' four='&apos;quote&apos;' five='&quot;quote&quot;'", out.toString(), "Double quotes must be escape");
-
+        StringWriter out = new StringWriter();
+        try (XmlWriter writer = new XmlWriter(out)) {
+            writer.startElement("alpha").attribute("one", "this&that").attribute("two", "small<large")
+                    .attribute("three", "12>1").attribute("four", "'quote'").attribute("five", "\"quote\"");
+            assertThat(out).hasToString("<alpha one='this&amp;that' two='small&lt;large' three='12&gt;1' four='&apos;quote&apos;' five='&quot;quote&quot;'");
+        }
     }
     
     @Test
     void attributeInContent() throws Exception {
-        assertEquals(
-                writer, writer.openElement("alpha"), "XmlWriters should always return themselves");
-         assertEquals("<alpha", out.toString(), "Alpha element started");
-        assertEquals(
-                writer, writer.content("foo bar"), "XmlWriters should always return themselves");
-        try {
-            writer.attribute("name", "value");
-            fail("attributes after body content are not allowed");
-        } catch (InvalidXmlException e) {
-            // attributes after body content are not allowed
+        StringWriter out = new StringWriter();
+        try (XmlWriter writer = new XmlWriter(out)) {
+            writer.startElement("alpha").content("foo bar");
+            assertThatThrownBy(() -> writer.attribute("name", "value"))
+                    .hasMessageContaining("Attributes can only be written in elements")
+                            .isInstanceOf(InvalidXmlException.class);
         }
     }
   
     @Test
     void outOfRangeCharacter() throws Exception {
-        assertEquals(
-                writer, writer.openElement("alpha"), "XmlWriters should always return themselves");
-         assertEquals("<alpha", out.toString(), "Alpha element started");
-         CharSequence cs = new CharSequence() {
-             @Override
-             public int length() {
-                 return 1;
-             }
+        StringWriter out = new StringWriter();
+        try (XmlWriter writer = new XmlWriter(out)) {
+            CharSequence cs = new CharSequence() {
+                @Override
+                public int length() {
+                    return 1;
+                }
 
-             @Override
-             public char charAt(int index) {
-                 return Character.highSurrogate(0x110000);
-             }
+                @Override
+                public char charAt(int index) {
+                    return Character.highSurrogate(0x110000);
+                }
 
-             @Override
-             public CharSequence subSequence(int start, int end) {
-                 return null;
-             }
-         };
-
-        assertEquals(writer, writer.content(cs), "XmlWriters should always return themselves");
-        assertEquals("<alpha>\\uDC00", this.out.toString(), "Replace illegal characters with \\u encoding");
+                @Override
+                public CharSequence subSequence(int start, int end) {
+                    return null;
+                }
+            };
+            writer.startElement("alpha").content(cs);
+            assertThat(out).hasToString("<alpha>\\uDC00");
+        }
     }
     
     @Test
     void attributeAfterElementClosed() throws Exception {
-        assertEquals(
-                writer, writer.openElement("alpha"), "XmlWriters should always return themselves");
-         assertEquals("<alpha", out.toString(), "Alpha element started");
-        assertEquals(
-                writer, writer.openElement("beta"), "XmlWriters should always return themselves");
-        assertEquals("<alpha><beta", out.toString(), "Beta element started");
-        assertEquals(
-                writer, writer.closeElement(), "XmlWriters should always return themselves");
-        assertEquals("<alpha><beta/>", out.toString(), "Beta element closed");
-        try {
-            writer.attribute("name", "value");
-            fail("attributes after closed element are not allowed");
-        } catch (InvalidXmlException e) {
-            // attributes after body content are not allowed
+        StringWriter out = new StringWriter();
+        try (XmlWriter writer = new XmlWriter(out)) {
+            writer.startElement("alpha").startElement("beta").closeElement();
+            assertThat(out).hasToString("<alpha><beta/>");
+            assertThatThrownBy(() -> writer.attribute("name", "value"))
+                    .hasMessageContaining("Attributes can only be written in elements")
+                            .isInstanceOf(InvalidXmlException.class);
         }
     }
     
     @Test
     void closeDocumentBeforeOpen() throws Exception {
-        try {
-            writer.closeDocument();
-            fail("Cannot close document before the first element has been opened");
-        } catch (OperationNotAllowedException e) {
-            // Cannot open new elements before the first element has been opened
+        StringWriter out = new StringWriter();
+        try (XmlWriter writer = new XmlWriter(out)) {
+            assertThatThrownBy(writer::closeDocument)
+                    .hasMessageContaining("Close called before an element has been opened.")
+                    .isInstanceOf(OperationNotAllowedException.class);
+        } catch (OperationNotAllowedException expected) {
+            assertThat(expected).hasMessageContaining("Close called before an element has been opened.");
         }
+
     }
     
     @Test
     void closeDocumentAfterRootElementClosed() throws Exception {
-        assertEquals(
-                writer, writer.openElement("alpha"), "XmlWriters should always return themselves");
-         assertEquals("<alpha", out.toString(), "Alpha element started");
-        assertEquals(
-                writer, writer.closeElement(), "XmlWriters should always return themselves");
-        assertEquals("<alpha/>", out.toString());
-        try {
-            writer.closeDocument();
-        } catch (OperationNotAllowedException e) {
-            fail("No exception should be thrown when called after the root element is closed.");
+        StringWriter out = new StringWriter();
+        try (XmlWriter writer = new XmlWriter(out)) {
+            writer.startElement("alpha").closeElement();
+            assertThatNoException().isThrownBy(writer::closeDocument);
         }
-    }   
+    }
     
     @Test
     void closeSimpleDocument() throws Exception {
-        assertEquals(
-                writer, writer.openElement("alpha"), "XmlWriters should always return themselves");
-         assertEquals("<alpha", out.toString(), "Alpha element started");
-        assertEquals(
-                writer, writer.openElement("beta"), "XmlWriters should always return themselves");
-        assertEquals("<alpha><beta", out.toString(), "Beta element started");
-        assertEquals(
-                writer, writer.closeDocument(), "XmlWriters should always return themselves");
-        assertEquals("<alpha><beta/></alpha>", out.toString(), "Beta element started");
+        StringWriter out = new StringWriter();
+        try (XmlWriter writer = new XmlWriter(out)) {
+            writer.startElement("alpha").startElement("beta").closeDocument();
+            assertThat(out).hasToString("<alpha><beta/></alpha>");
+        }
     }
     
     @Test
     void closeComplexDocument() throws Exception {
-        assertEquals(
-                writer, writer.openElement("alpha"), "XmlWriters should always return themselves");
-         assertEquals("<alpha", out.toString(), "Alpha element started");
-        assertEquals(
-                writer, writer.openElement("beta"), "XmlWriters should always return themselves");
-        assertEquals("<alpha><beta", out.toString(), "Beta element started");
-        assertEquals(
-                writer, writer.attribute("name", "value"), "XmlWriters should always return themselves");
-        assertEquals("<alpha><beta name='value'", out.toString(), "Beta element started");
-        assertEquals(
-                writer, writer.closeElement(), "XmlWriters should always return themselves");
-        assertEquals("<alpha><beta name='value'/>", out.toString(), "Beta element started");
-        assertEquals(
-                writer, writer.openElement("beta"), "XmlWriters should always return themselves");
-        assertEquals("<alpha><beta name='value'/><beta", out.toString(), "Beta element started");
-        assertEquals(
-                writer, writer.attribute("name", "value"), "XmlWriters should always return themselves");
-        assertEquals("<alpha><beta name='value'/><beta name='value'", out.toString(), "Beta element started");
-        assertEquals(
-                writer, writer.openElement("gamma"), "XmlWriters should always return themselves");
-        assertEquals("<alpha><beta name='value'/><beta name='value'><gamma", out.toString(), "Beta element started");
-        assertEquals(
-                writer, writer.closeDocument(), "XmlWriters should always return themselves");
-        assertEquals("<alpha><beta name='value'/><beta name='value'><gamma/></beta></alpha>", out.toString(), "Beta element started");
-    }
-    
-    @Test
-    void writeProlog() throws Exception {
-        assertEquals(
-                writer, writer.startDocument(), "XmlWriters should always return themselves");
-        assertEquals("<?xml version='1.0'?>", out.toString(), "Prolog written");
-    }
-    
-    @Test
-    void writeAfterElement() throws Exception {
-        assertEquals(
-                writer, writer.openElement("alpha"), "XmlWriters should always return themselves");
-         assertEquals("<alpha", out.toString(), "Alpha element started");
-        try {
-            writer.startDocument();
-            fail("Operation not allowed once an element has been written");
-        } catch (OperationNotAllowedException e) {
-            // Operation not allowed once an element has been written
+        StringWriter out = new StringWriter();
+        try (XmlWriter writer = new XmlWriter(out)) {
+            writer.startElement("alpha").startElement("beta").attribute("name", "value").closeElement()
+                    .startElement("beta")
+            .attribute("name", "value")
+                    .startElement("gamma").closeDocument();
+            assertThat(out).hasToString("<alpha><beta name='value'/><beta name='value'><gamma/></beta></alpha>");
         }
     }
     
     @Test
-    void writePrologTwo() throws Exception {
-        assertEquals(
-                writer, writer.startDocument(), "XmlWriters should always return themselves");
-        assertEquals("<?xml version='1.0'?>", out.toString(), "Prolog written");
-        try {
+    void writeProlog() throws Exception {
+        StringWriter out = new StringWriter();
+        try (XmlWriter writer = new XmlWriter(out)) {
             writer.startDocument();
-            fail("Operation not allow once a prolog has been written");
-        } catch (OperationNotAllowedException e) {
-            // Operation not allowed once a prolog has been written
+            assertThat(out).hasToString("<?xml version='1.0'?>");
+        } catch (OperationNotAllowedException expected) {
+            assertThat(expected).hasMessageContaining("Close called before an element has been opened.");
+        }
+    }
+    
+    @Test
+    void writeAfterElement() throws Exception {
+        StringWriter out = new StringWriter();
+        try (XmlWriter writer = new XmlWriter(out)) {
+            writer.startElement("alpha");
+            assertThatThrownBy(writer::startDocument).hasMessageContaining("Document already started")
+                    .isInstanceOf(OperationNotAllowedException.class);
+        }
+    }
+    
+    @Test
+    void writePrologTwice() throws Exception {
+        StringWriter out = new StringWriter();
+        try (XmlWriter writer = new XmlWriter(out)) {
+            writer.startDocument();
+            assertThat(out).hasToString("<?xml version='1.0'?>");
+            assertThatThrownBy(writer::startDocument).hasMessageContaining("Only one prolog allowed")
+                    .isInstanceOf(OperationNotAllowedException.class);
+        } catch (OperationNotAllowedException expected) {
+            assertThat(expected).hasMessageContaining("Close called before an element has been opened.");
         }
     }
     
     @Test
     void duplicateAttributes() throws Exception {
-        assertEquals(
-                writer, writer.openElement("alpha"), "XmlWriters should always return themselves");
-         assertEquals("<alpha", out.toString(), "Alpha element started");
-        assertEquals(
-                writer, writer.attribute("one", "1"), "XmlWriters should always return themselves");
-        assertEquals("<alpha one='1'", out.toString(), "Attribute written");
-        assertEquals(
-                writer, writer.openElement("beta"), "XmlWriters should always return themselves");
-        assertEquals("<alpha one='1'><beta", out.toString(), "Beta element started");
-        assertEquals(
-                writer, writer.attribute("one", "1"), "XmlWriters should always return themselves");
-        assertEquals("<alpha one='1'><beta one='1'", out.toString(), "Beta element started");
-        try {
-            writer.attribute("one", "2");
-            fail("Each attribute may only be written once");
-        } catch (InvalidXmlException e) {
-            // Each attribute may only be written once
+        StringWriter out = new StringWriter();
+        try (XmlWriter writer = new XmlWriter(out)) {
+            writer.startElement("alpha").attribute("one", "1").startElement("beta").attribute("one", "1");
+            assertThat(out).hasToString("<alpha one='1'><beta one='1'");
+            assertThatThrownBy(() -> writer.attribute("one", "2"))
+                    .hasMessageContaining("Each attribute can only be written once")
+                    .isInstanceOf(InvalidXmlException.class);
         }
     }
 
     @Test
-    void writeCDataBeforeElement() {
-        assertThrows(OperationNotAllowedException.class, () -> writer.startDocument().cdata("Just cdata").closeDocument());
+    void writeCDataBeforeElement() throws IOException {
+        StringWriter out = new StringWriter();
+        try (XmlWriter writer = new XmlWriter(out)) {
+            writer.startDocument();
+            assertThatThrownBy(() -> writer.cdata("Just cdata"))
+                    .hasMessageContaining("An element must be opened before content can be written.")
+                    .isInstanceOf(OperationNotAllowedException.class);
+        } catch (OperationNotAllowedException expected) {
+            assertThat(expected).hasMessageContaining("Close called before an element has been opened.");
+        }
     }
 
     @Test
     void writeCData() throws Exception {
-        writer.startDocument().openElement("test").cdata("Just cdata").closeDocument();
-        assertEquals("<?xml version='1.0'?><test><![CDATA[ Just cdata ]]></test>", out.toString());
+        StringWriter out = new StringWriter();
+        try (XmlWriter writer = new XmlWriter(out)) {
+            writer.startDocument().startElement("test").cdata("Just cdata").closeDocument();
+            assertThat(out).hasToString("<?xml version='1.0'?><test><![CDATA[ Just cdata ]]></test>");
+        }
     }
 
     @Test
     void writeCDataEmbeddedCData() throws Exception {
-        writer.startDocument().openElement("test").cdata("Some <![CDATA[ cdata ]]> text").closeDocument();
-        assertEquals("<?xml version='1.0'?><test><![CDATA[ Some \\u3C![CDATA[ cdata {rat:CDATA close} text ]]></test>", out.toString());
+        StringWriter out = new StringWriter();
+        try (XmlWriter writer = new XmlWriter(out)) {
+            writer.startDocument().startElement("test").cdata("Some <![CDATA[ cdata ]]> text").closeDocument();
+            assertThat(out).hasToString("<?xml version='1.0'?><test><![CDATA[ Some \\u3C![CDATA[ cdata {rat:CDATA close} text ]]></test>");
+        }
     }
 
     @Test
     void closeElementBeforeOpened() throws IOException {
-        IXmlWriter underTest = writer.startDocument().openElement("test");
-        assertThrows(NoSuchElementException.class, () -> underTest.closeElement("missing"));
+        StringWriter out = new StringWriter();
+        try (XmlWriter writer = new XmlWriter(out)) {
+            XmlWriter underTest = writer.startDocument().startElement("test");
+            assertThatThrownBy(() -> underTest.closeElement("missing"))
+                            .isInstanceOf(NoSuchElementException.class);
+        }
     }
 
     @Test
     void closeElement() throws Exception {
-        writer.startDocument().openElement("root").openElement("hello").openElement("world").content("hello world").closeElement("hello").openElement("test").closeDocument();
-        assertEquals("<?xml version='1.0'?><root><hello><world>hello world</world></hello><test/></root>", out.toString());
+        StringWriter out = new StringWriter();
+        try (XmlWriter writer = new XmlWriter(out)) {
+            writer.startDocument().startElement("root").startElement("hello").startElement("world").content("hello world").closeElement("hello").startElement("test").closeDocument();
+            assertThat(out).hasToString("<?xml version='1.0'?><root><hello><world>hello world</world></hello><test/></root>");
+        }
     }
 
     @Test
@@ -545,7 +481,10 @@ class XmlWriterTest {
                 "</base>");
         byte[] rawDocument = "<?xml version='1.0'?><root><hello><world>hello world</world></hello><test/></root>".getBytes(StandardCharsets.UTF_8);
         Document document = XmlUtils.toDom(new ByteArrayInputStream(rawDocument));
-        writer.startDocument().openElement("base").append(document).closeDocument();
-        assertEquals(expected, out.toString());
+        StringWriter out = new StringWriter();
+        try (XmlWriter writer = new XmlWriter(out)) {
+            writer.startDocument().startElement("base").append(document).closeDocument();
+        }
+        assertThat(out).hasToString(expected);
     }
 }

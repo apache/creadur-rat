@@ -21,7 +21,7 @@ package org.apache.rat.report.xml.writer;
 import java.io.IOException;
 
 /**
- * Thrown by {@link IXmlWriter} implementations when the current
+ * Thrown by {@link XmlWriter} implementations when the current
  * state does not allow the requested operation.
  */
 public class OperationNotAllowedException extends IOException {

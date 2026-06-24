@@ -46,7 +46,7 @@ import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 
-import org.apache.rat.report.xml.writer.IXmlWriter;
+import org.apache.rat.report.xml.writer.XmlWriter;
 import org.apache.rat.utils.DefaultLog;
 import org.apache.rat.utils.StandardXmlFactory;
 import org.w3c.dom.Document;
@@ -143,7 +143,7 @@ public final class XmlUtils {
         return StandardXmlFactory.documentBuilder().parse(inputStream);
     }
 
-    public static void writeAttribute(final IXmlWriter writer, final String name, final boolean booleanValue)
+    public static void writeAttribute(final XmlWriter writer, final String name, final boolean booleanValue)
             throws IOException {
         final String value = Boolean.toString(booleanValue);
         writer.attribute(name, value);
