@@ -219,6 +219,21 @@ public class XMLConfigurationWriter {
         return false;
     }
 
+    private void writeChildParameter(final XmlWriter writer, final Description description, final IHeaderMatcher component) throws IOException {
+        boolean inline = XMLConfig.isInlineNode(component.getDescription().getCommonName(),
+                description.getCommonName());
+        String s = description.getParamValue(component);
+        if (StringUtils.isNotBlank(s)) {
+            if (!inline) {
+                writer.startElement(description.getCommonName());
+            }
+            writer.content(description.getParamValue(component));
+            if (!inline) {
+                writer.closeElement();
+            }
+        }
+
+    }
     @SuppressWarnings("unchecked")
     private void writeParameterDescription(final XmlWriter writer, final Description description, final IHeaderMatcher component) throws IOException {
         if (hasUUIDId(description, component)) {
@@ -226,18 +241,7 @@ public class XMLConfigurationWriter {
         }
 
         if (description.getChildType() == String.class) {
-            boolean inline = XMLConfig.isInlineNode(component.getDescription().getCommonName(),
-                    description.getCommonName());
-            String s = description.getParamValue(component);
-            if (StringUtils.isNotBlank(s)) {
-                if (!inline) {
-                    writer.startElement(description.getCommonName());
-                }
-                writer.content(description.getParamValue(component));
-                if (!inline) {
-                    writer.closeElement();
-                }
-            }
+            writeChildParameter(writer, description, component);
         } else {
             try {
                 if (description.isCollection()) {

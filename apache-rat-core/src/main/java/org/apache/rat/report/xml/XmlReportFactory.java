@@ -138,8 +138,13 @@ public final class XmlReportFactory {
      */
     public static RatReport multiplexer(final XmlWriter writer, final boolean dryRun, final DocumentAnalyser analyser,
                                         final List<? extends RatReport> reporters) {
-        return new RatReport() {
-            @Override
+        return new MultiplexerReport(writer, dryRun, analyser, reporters);
+    }
+
+    private record MultiplexerReport(XmlWriter writer, boolean dryRun, DocumentAnalyser analyser,
+                                     List<? extends RatReport> reporters) implements RatReport {
+
+        @Override
             public void report(final Document document) throws RatException {
                 if (!dryRun) {
                     if (analyser != null) {
@@ -174,6 +179,5 @@ public final class XmlReportFactory {
                     throw new RuntimeException(e);
                 }
             }
-        };
-    }
+        }
 }
