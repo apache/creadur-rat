@@ -27,7 +27,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class XmlWriterUtilsTest {
 
-
     @Test
     public void writeTrue() throws Exception {
         StringWriter out = new StringWriter();
