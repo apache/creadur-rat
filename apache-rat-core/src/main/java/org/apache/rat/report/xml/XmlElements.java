@@ -40,7 +40,7 @@ import org.apache.rat.utils.CasedString;
 public final class XmlElements {
     /**
      * Converts an enum name to snake case.
-     * @param name the Atrribute to normalize
+     * @param name the attribute to normalize
      * @return a pascal cased name.
      */
     private static String normalizeName(final String name) {
@@ -52,25 +52,25 @@ public final class XmlElements {
      * The elements in the report.
      */
     public enum Elements {
-        /** The start of the RAT report */
+        /** The start of the RAT report. */
         RAT_REPORT("rat-report"),
-        /** The version of RAT being run */
+        /** The version of RAT being run. */
         VERSION(),
-        /** A resource element */
+        /** A resource element. */
         RESOURCE(),
-        /** A license element */
+        /** A license element. */
         LICENSE(),
-        /** A notes element */
+        /** A notes element. */
         NOTES(),
-        /** A statistics element */
+        /** A statistics element. */
         STATISTICS(),
-        /** A statistic entry */
+        /** A statistic entry. */
         STATISTIC(),
-        /** A license name entry */
+        /** A license name entry. */
         LICENSE_NAME(),
-        /** A license category entry */
+        /** A license category entry. */
         LICENSE_CATEGORY(),
-        /** A document type entry */
+        /** A document type entry. */
         DOCUMENT_TYPE();
 
         /** The XML name for the element */
@@ -93,33 +93,33 @@ public final class XmlElements {
      * The attributes of elements in the report.
      */
     public enum Attributes {
-        /** A timestamp */
+        /** A timestamp. */
         TIMESTAMP,
-        /** A version string */
+        /** A version string. */
         VERSION,
-        /** The product identifier */
+        /** The product identifier. */
         PRODUCT,
-        /** The vendor identifier */
+        /** The vendor identifier. */
         VENDOR,
-        /** The approval flag */
+        /** The approval flag. */
         APPROVAL,
-        /** The family category */
+        /** The family category. */
         FAMILY,
-        /** The document type */
+        /** The document type. */
         TYPE,
-        /** The id */
+        /** The id. */
         ID,
-        /** The name */
+        /** The name. */
         NAME,
-        /** A counter */
+        /** A counter. */
         COUNT,
-        /** A description */
+        /** A description. */
         DESCRIPTION,
-        /** The media type for a document */
+        /** The media type for a document. */
         MEDIA_TYPE,
-        /** The encoding for a text document */
+        /** The encoding for a text document. */
         ENCODING,
-        /** Denotes a skipped directory */
+        /** Denotes a skipped directory. */
         IS_DIRECTORY;
 
         String attributeName() {
@@ -181,13 +181,13 @@ public final class XmlElements {
                 writer.startElement(Elements.NOTES.elementName).cdata(license.getNote()).closeElement();
             }
             writer.closeElement();
-                    } catch (IOException e) {
-                throw new RatException(e);
-            }
+        } catch (IOException e) {
+            throw new RatException(e);
+        }
     }
 
     /**
-     * Creates a document element with attributes. Does NOT close the document element.
+     * Creates a document element with attributes. Does <strong>NOT</strong> close the document element.
      * @param document the document to write.
      * @throws RatException on error.
      */
@@ -204,9 +204,9 @@ public final class XmlElements {
             if (document.isIgnored()) {
                 writer.attribute(Attributes.IS_DIRECTORY.attributeName(), Boolean.toString(document.isDirectory()));
             }
-                    } catch (IOException e) {
-                throw new RatException(e);
-            }
+        } catch (IOException e) {
+           throw new RatException(e);
+        }
     }
 
     /**
@@ -269,9 +269,9 @@ public final class XmlElements {
                 .attribute(Attributes.NAME.attributeName(), name)
                 .attribute(Attributes.COUNT.attributeName(), Integer.toString(count))
                 .closeElement();
-                    } catch (IOException e) {
-                throw new RatException(e);
-            }
+        } catch (IOException e) {
+            throw new RatException(e);
+        }
     }
 
     /**

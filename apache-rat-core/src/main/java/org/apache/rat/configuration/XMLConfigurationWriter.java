@@ -47,11 +47,11 @@ import org.apache.rat.report.xml.writer.XmlWriter;
  * Writes the XML configuration file format.
  */
 public class XMLConfigurationWriter {
-    /** The configuration that is being written */
+    /** The configuration that is being written. */
     private final ReportConfiguration configuration;
-    /** The set of defined matcher IDs */
+    /** The set of defined matcher IDs. */
     private final Set<String> matchers;
-    /** The set of defined license IDs */
+    /** The set of defined license IDs. */
     private final Set<String> licenseChildren;
 
     /**
@@ -126,8 +126,8 @@ public class XMLConfigurationWriter {
     }
 
     /**
-     * Writes the configuration to an IXmlWriter instance.
-     * @param writer the IXmlWriter to write to.
+     * Writes the configuration to an XmlWriter instance.
+     * @param writer the XmlWriter to write to.
      * @throws RatException on error.
      */
     public void write(final XmlWriter writer) throws RatException {
@@ -135,16 +135,9 @@ public class XMLConfigurationWriter {
             try {
                 writer.startElement(XMLConfig.ROOT);
 
-                // Families section
                 writeFamilies(writer, configuration.getLicenseFamilies(configuration.listFamilies()));
-
-                // licenses section
                 writeLicenses(writer, configuration.getLicenses(configuration.listLicenses()));
-
-                // approved section
                 writeApproved(writer);
-
-                // matchers section
                 writeMatchers(writer);
 
                 writer.closeElement(); // ROOT
@@ -271,7 +264,7 @@ public class XMLConfigurationWriter {
         // id will not be present in matcherRef
         if (id.isPresent()) {
             String matcherId = id.get().getParamValue(component);
-            // if we have seen the ID before, put a reference to the other one.
+            // if we have seen the id before, put a reference to the other one.
             if (matchers.contains(matcherId)) {
                 component = new MatcherRefBuilder.IHeaderMatcherProxy(matcherId, null);
                 description = component.getDescription();
