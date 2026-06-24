@@ -608,19 +608,30 @@ public abstract class AbstractConfigurationOptionsProvider extends AbstractOptio
     }
 
     private void editCopyrightTest(final Option option) {
-        try {
+        assertDoesNotThrow(() -> {
             Pair<Option, String[]> arg1 = ImmutablePair.of(option, new String[]{"MyCopyright"});
-            ReportConfiguration config = generateConfig(arg1);
-            assertThat(config.getCopyrightMessage()).as("Copyright without --edit-license should not work").isNull();
-            Pair<Option, String[]> arg2 = ImmutablePair.of(Arg.EDIT_ADD.find("edit-license"), null);
-            config = generateConfig(arg1, arg2);
-            assertThat(config.getCopyrightMessage()).isEqualTo("MyCopyright");
-        } catch (IOException e) {
-            if (e.getCause() != null) {
-                fail(e.getMessage() + ": " + e.getCause().getMessage());
+            ReportConfiguration config;
+            try {
+                config = generateConfig(arg1);
+                assertThat(config.getCopyrightMessage()).as("Copyright without --edit-license should not work").isNull();
+            } catch (IOException e) {
+                if (e.getCause() != null) {
+                    fail(e.getMessage() + ": " + e.getCause().getMessage());
+                }
+                throw e;
             }
-            fail(e.getMessage(), e);
-        }
+
+            Pair<Option, String[]> arg2 = ImmutablePair.of(Arg.EDIT_ADD.find("edit-license"), null);
+            try {
+                config = generateConfig(arg1, arg2);
+                assertThat(config.getCopyrightMessage()).isEqualTo("MyCopyright");
+            } catch (IOException e) {
+                if (e.getCause() != null) {
+                    fail(e.getMessage() + ": " + e.getCause().getMessage());
+                }
+                throw e;
+            }
+        });
     }
 
     protected void copyrightTest() {
