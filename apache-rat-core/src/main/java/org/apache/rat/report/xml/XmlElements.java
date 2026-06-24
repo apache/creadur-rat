@@ -18,10 +18,6 @@
  */
 package org.apache.rat.report.xml;
 
-import java.io.IOException;
-import java.util.Calendar;
-import java.util.Locale;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.rat.VersionInfo;
@@ -34,105 +30,33 @@ import org.apache.rat.report.claim.ClaimStatistic;
 import org.apache.rat.report.xml.writer.XmlWriter;
 import org.apache.rat.utils.CasedString;
 
+import java.io.IOException;
+import java.util.Calendar;
+import java.util.Locale;
+
 /**
  * Creates the elements in the XML report.
  */
 public final class XmlElements {
+    private XmlElements() {
+        // do not instantiate
+    }
+
     /**
      * Converts an enum name to snake case.
+     *
      * @param name the attribute to normalize
      * @return a pascal cased name.
      */
     private static String normalizeName(final String name) {
         CasedString casedName = new CasedString(CasedString.StringCase.SNAKE, name.toLowerCase(Locale.ROOT));
-       return casedName.toCase(CasedString.StringCase.PASCAL);
+        return casedName.toCase(CasedString.StringCase.PASCAL);
     }
 
-    /**
-     * The elements in the report.
-     */
-    public enum Elements {
-        /** The start of the RAT report. */
-        RAT_REPORT("rat-report"),
-        /** The version of RAT being run. */
-        VERSION(),
-        /** A resource element. */
-        RESOURCE(),
-        /** A license element. */
-        LICENSE(),
-        /** A notes element. */
-        NOTES(),
-        /** A statistics element. */
-        STATISTICS(),
-        /** A statistic entry. */
-        STATISTIC(),
-        /** A license name entry. */
-        LICENSE_NAME(),
-        /** A license category entry. */
-        LICENSE_CATEGORY(),
-        /** A document type entry. */
-        DOCUMENT_TYPE();
-
-        /** The XML name for the element */
-        private final String elementName;
-
-        /**
-         * Constructor.
-         * @param elementName the XML name for the element.
-         */
-        Elements(final String elementName) {
-            this.elementName = elementName;
-        }
-
-        Elements() {
-            this.elementName = normalizeName(name());
-        }
-    }
-
-    /**
-     * The attributes of elements in the report.
-     */
-    public enum Attributes {
-        /** A timestamp. */
-        TIMESTAMP,
-        /** A version string. */
-        VERSION,
-        /** The product identifier. */
-        PRODUCT,
-        /** The vendor identifier. */
-        VENDOR,
-        /** The approval flag. */
-        APPROVAL,
-        /** The family category. */
-        FAMILY,
-        /** The document type. */
-        TYPE,
-        /** The id. */
-        ID,
-        /** The name. */
-        NAME,
-        /** A counter. */
-        COUNT,
-        /** A description. */
-        DESCRIPTION,
-        /** The media type for a document. */
-        MEDIA_TYPE,
-        /** The encoding for a text document. */
-        ENCODING,
-        /** Denotes a skipped directory. */
-        IS_DIRECTORY;
-
-        String attributeName() {
-            return normalizeName(this.name());
-        }
-    }
-
-    private XmlElements() {
-        // do not instantiate
-    }
     /**
      * Create the RAT report element. Includes the timestamp and the version element.
      * Does not close the report.
+     *
      * @throws RatException on error
      */
     public static void ratReport(final XmlWriter writer) throws RatException {
@@ -148,6 +72,7 @@ public final class XmlElements {
 
     /**
      * Creates the version element with all version attributes populated. Closes the version element.
+     *
      * @throws RatException on error
      */
     public static void version(final XmlWriter writer) throws RatException {
@@ -158,14 +83,15 @@ public final class XmlElements {
                     .attribute(Attributes.VENDOR.attributeName(), versionInfo.getVendor())
                     .attribute(Attributes.VERSION.attributeName(), versionInfo.getVersion())
                     .closeElement();
-                    } catch (IOException e) {
-                throw new RatException(e);
-            }
+        } catch (IOException e) {
+            throw new RatException(e);
+        }
     }
 
     /**
      * Creates a license element. Closes the element before exit.
-     * @param license the license for the element.
+     *
+     * @param license  the license for the element.
      * @param approved {@code true} if the license is approved.
      * @throws RatException on error.
      */
@@ -188,6 +114,7 @@ public final class XmlElements {
 
     /**
      * Creates a document element with attributes. Does <strong>NOT</strong> close the document element.
+     *
      * @param document the document to write.
      * @throws RatException on error.
      */
@@ -205,12 +132,13 @@ public final class XmlElements {
                 writer.attribute(Attributes.IS_DIRECTORY.attributeName(), Boolean.toString(document.isDirectory()));
             }
         } catch (IOException e) {
-           throw new RatException(e);
+            throw new RatException(e);
         }
     }
 
     /**
      * Creates a statistics element.
+     *
      * @throws RatException on error.
      */
     public static void statistics(final XmlWriter writer, final ClaimStatistic statistic, final ClaimValidator validator) throws RatException {
@@ -238,10 +166,11 @@ public final class XmlElements {
 
     /**
      * Creates a statistic element. Closes the element before returning.
-     * @param name the name of the statistics element.
-     * @param count the count for the element.
+     *
+     * @param name        the name of the statistics element.
+     * @param count       the count for the element.
      * @param description description of this statistic.
-     * @param isOk if {@code true} the count is within limits.
+     * @param isOk        if {@code true} the count is within limits.
      * @throws RatException on error.
      */
     public static void statistic(final XmlWriter writer, final String name, final int count, final String description, final boolean isOk) throws RatException {
@@ -252,23 +181,6 @@ public final class XmlElements {
                     .attribute(Attributes.APPROVAL.attributeName(), Boolean.toString(isOk))
                     .attribute(Attributes.DESCRIPTION.attributeName(), description)
                     .closeElement();
-                    } catch (IOException e) {
-                throw new RatException(e);
-            }
-    }
-
-    /**
-     * Creates a statistic element. Closes the element before returning.
-     * @param name the name of the statistics element.
-     * @param count the count for the element.
-     * @throws RatException on error.
-     */
-    public static void licenseCategory(final XmlWriter writer, final String name, final int count) throws RatException {
-        try {
-        writer.startElement(Elements.LICENSE_CATEGORY.elementName)
-                .attribute(Attributes.NAME.attributeName(), name)
-                .attribute(Attributes.COUNT.attributeName(), Integer.toString(count))
-                .closeElement();
         } catch (IOException e) {
             throw new RatException(e);
         }
@@ -276,7 +188,26 @@ public final class XmlElements {
 
     /**
      * Creates a statistic element. Closes the element before returning.
-     * @param name the name of the statistics element.
+     *
+     * @param name  the name of the statistics element.
+     * @param count the count for the element.
+     * @throws RatException on error.
+     */
+    public static void licenseCategory(final XmlWriter writer, final String name, final int count) throws RatException {
+        try {
+            writer.startElement(Elements.LICENSE_CATEGORY.elementName)
+                    .attribute(Attributes.NAME.attributeName(), name)
+                    .attribute(Attributes.COUNT.attributeName(), Integer.toString(count))
+                    .closeElement();
+        } catch (IOException e) {
+            throw new RatException(e);
+        }
+    }
+
+    /**
+     * Creates a statistic element. Closes the element before returning.
+     *
+     * @param name  the name of the statistics element.
      * @param count the count for the element.
      * @throws RatException on error.
      */
@@ -293,7 +224,8 @@ public final class XmlElements {
 
     /**
      * Creates a statistic element. Closes the element before returning.
-     * @param name the name of the statistics element.
+     *
+     * @param name  the name of the statistics element.
      * @param count the count for the element.
      * @throws RatException on error.
      */
@@ -305,6 +237,136 @@ public final class XmlElements {
                     .closeElement();
         } catch (IOException e) {
             throw new RatException(e);
+        }
+    }
+
+    /**
+     * The elements in the report.
+     */
+    public enum Elements {
+        /**
+         * The start of the RAT report.
+         */
+        RAT_REPORT("rat-report"),
+        /**
+         * The version of RAT being run.
+         */
+        VERSION(),
+        /**
+         * A resource element.
+         */
+        RESOURCE(),
+        /**
+         * A license element.
+         */
+        LICENSE(),
+        /**
+         * A notes element.
+         */
+        NOTES(),
+        /**
+         * A statistics element.
+         */
+        STATISTICS(),
+        /**
+         * A statistic entry.
+         */
+        STATISTIC(),
+        /**
+         * A license name entry.
+         */
+        LICENSE_NAME(),
+        /**
+         * A license category entry.
+         */
+        LICENSE_CATEGORY(),
+        /**
+         * A document type entry.
+         */
+        DOCUMENT_TYPE();
+
+        /**
+         * The XML name for the element
+         */
+        private final String elementName;
+
+        /**
+         * Constructor.
+         *
+         * @param elementName the XML name for the element.
+         */
+        Elements(final String elementName) {
+            this.elementName = elementName;
+        }
+
+        Elements() {
+            this.elementName = normalizeName(name());
+        }
+    }
+
+    /**
+     * The attributes of elements in the report.
+     */
+    public enum Attributes {
+        /**
+         * A timestamp.
+         */
+        TIMESTAMP,
+        /**
+         * A version string.
+         */
+        VERSION,
+        /**
+         * The product identifier.
+         */
+        PRODUCT,
+        /**
+         * The vendor identifier.
+         */
+        VENDOR,
+        /**
+         * The approval flag.
+         */
+        APPROVAL,
+        /**
+         * The family category.
+         */
+        FAMILY,
+        /**
+         * The document type.
+         */
+        TYPE,
+        /**
+         * The id.
+         */
+        ID,
+        /**
+         * The name.
+         */
+        NAME,
+        /**
+         * A counter.
+         */
+        COUNT,
+        /**
+         * A description.
+         */
+        DESCRIPTION,
+        /**
+         * The media type for a document.
+         */
+        MEDIA_TYPE,
+        /**
+         * The encoding for a text document.
+         */
+        ENCODING,
+        /**
+         * Denotes a skipped directory.
+         */
+        IS_DIRECTORY;
+
+        String attributeName() {
+            return normalizeName(this.name());
         }
     }
 }
