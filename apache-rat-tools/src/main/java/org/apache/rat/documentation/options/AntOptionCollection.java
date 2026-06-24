@@ -50,7 +50,7 @@ public final class AntOptionCollection extends UIOptionCollection<AntOption> {
     private static final Map<String, String> RENAME_MAP;
 
     /**
-     * The format for an XML element
+     * The format for an XML element.
      */
     private static final String DEFAULT_XML = "<%1$s>%%s</%1$s>%n";
 
