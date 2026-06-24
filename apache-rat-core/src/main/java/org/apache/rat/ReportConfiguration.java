@@ -65,7 +65,6 @@ import org.apache.rat.license.LicenseSetFactory.LicenseFilter;
 import org.apache.rat.report.IReportable;
 import org.apache.rat.report.RatReport;
 import org.apache.rat.report.claim.ClaimStatistic;
-import org.apache.rat.report.xml.writer.IXmlWriter;
 import org.apache.rat.report.xml.writer.XmlWriter;
 import org.apache.rat.utils.DefaultLog;
 import org.apache.rat.utils.Log.Level;
@@ -890,8 +889,8 @@ public class ReportConfiguration {
          * @throws IOException on error.
          */
         public void serialize(final Appendable appendable) throws IOException {
-            try (IXmlWriter writer = new XmlWriter(appendable)) {
-                writer.openElement("ReportConfiguration")
+            try (XmlWriter writer = new XmlWriter(appendable)) {
+                writer.startElement("ReportConfiguration")
                         .attribute("addingLicenses", Boolean.toString(addingLicenses))
                         .attribute("addingLicensesForced", Boolean.toString(addingLicensesForced))
                         .attribute("listFamilies", listFamilies.name())
@@ -902,15 +901,15 @@ public class ReportConfiguration {
                         .attribute("stylesheet", styleSheet.name())
                         .attribute("output", out.name());
                 if (StringUtils.isNotEmpty(copyrightMessage)) {
-                    writer.openElement("copyrightMessage").content(copyrightMessage).closeElement();
+                    writer.startElement("copyrightMessage").content(copyrightMessage).closeElement();
                 }
-                writer.openElement("sources");
+                writer.startElement("sources");
                 for (File f : sources) {
-                    writer.openElement("source").attribute("name", f.getName()).closeElement();
+                    writer.startElement("source").attribute("name", f.getName()).closeElement();
                 }
-                writer.closeElement("sources").openElement("reportables");
+                writer.closeElement("sources").startElement("reportables");
                 for (IReportable reportable : reportables) {
-                    writer.openElement("reportable")
+                    writer.startElement("reportable")
                             .attribute("baseName", reportable.name().getBaseName())
                             .attribute("name", reportable.name().toString())
                             .attribute("class", reportable.getClass().getName()).closeElement();
@@ -919,9 +918,9 @@ public class ReportConfiguration {
 
                 exclusionProcessor.serde().serialize(writer);
 
-                writer.openElement("claimValidator");
+                writer.startElement("claimValidator");
                 for (ClaimStatistic.Counter counter : ClaimStatistic.Counter.values()) {
-                    writer.openElement("claimCounter")
+                    writer.startElement("claimCounter")
                             .attribute("name", counter.name()).attribute("min", Integer.toString(claimValidator.getMin(counter)))
                             .attribute("max", Integer.toString(claimValidator.getMax(counter))).closeElement();
                 }

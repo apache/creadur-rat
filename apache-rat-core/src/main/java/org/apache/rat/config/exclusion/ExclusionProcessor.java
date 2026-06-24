@@ -33,7 +33,7 @@ import org.apache.commons.lang3.NotImplementedException;
 import org.apache.rat.configuration.XMLConfigurationReader;
 import org.apache.rat.document.DocumentName;
 import org.apache.rat.document.DocumentNameMatcher;
-import org.apache.rat.report.xml.writer.IXmlWriter;
+import org.apache.rat.report.xml.writer.XmlWriter;
 import org.apache.rat.utils.DefaultLog;
 import org.apache.rat.utils.ExtendedIterator;
 import org.w3c.dom.Node;
@@ -351,31 +351,31 @@ public class ExclusionProcessor {
     }
 
     public class Serde {
-        public void serialize(final IXmlWriter writer) throws IOException {
-            writer.openElement("ExclusionProcessor");
+        public void serialize(final XmlWriter writer) throws IOException {
+            writer.startElement("ExclusionProcessor");
 
             for (String pattern : excludedPatterns) {
-                writer.openElement("excludedPattern").attribute("pattern", pattern).closeElement();
+                writer.startElement("excludedPattern").attribute("pattern", pattern).closeElement();
             }
             for (StandardCollection obj : excludedCollections) {
-                writer.openElement("excludedCollection").attribute("name", obj.name()).closeElement();
+                writer.startElement("excludedCollection").attribute("name", obj.name()).closeElement();
             }
             for (DocumentNameMatcher obj : excludedPaths) {
-                writer.openElement("excludedPath").attribute("name", obj.toString()).closeElement();
+                writer.startElement("excludedPath").attribute("name", obj.toString()).closeElement();
             }
 
             for (String pattern : includedPatterns) {
-                writer.openElement("includedPattern").attribute("pattern", pattern).closeElement();
+                writer.startElement("includedPattern").attribute("pattern", pattern).closeElement();
             }
             for (StandardCollection obj : includedCollections) {
-                writer.openElement("includedCollection").attribute("name", obj.name()).closeElement();
+                writer.startElement("includedCollection").attribute("name", obj.name()).closeElement();
             }
             for (DocumentNameMatcher obj : includedPaths) {
-                writer.openElement("includedPath").attribute("name", obj.toString()).closeElement();
+                writer.startElement("includedPath").attribute("name", obj.toString()).closeElement();
             }
 
             for (StandardCollection obj : fileProcessors) {
-                writer.openElement("fileProcessor").attribute("name", obj.name()).closeElement();
+                writer.startElement("fileProcessor").attribute("name", obj.name()).closeElement();
             }
             writer.closeElement();
 

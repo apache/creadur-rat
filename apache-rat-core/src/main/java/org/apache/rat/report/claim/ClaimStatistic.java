@@ -326,38 +326,38 @@ public class ClaimStatistic {
 
         public void serialize(final Appendable appendable) throws IOException {
             try (XmlWriter writer = new XmlWriter(appendable)) {
-                writer.startDocument().openElement("ClaimStatistic")
-                        .openElement("licenseNameMap");
+                writer.startDocument().startElement("ClaimStatistic")
+                        .startElement("licenseNameMap");
                 for (Map.Entry<String, IntCounter> entry : licenseNameMap.entrySet()) {
                     if (entry.getValue().value > 0) {
-                        writer.openElement("licenseName")
+                        writer.startElement("licenseName")
                                 .attribute("count", entry.getValue().toString())
                                 .attribute("name", entry.getKey()).closeElement();
                     }
                 }
                 writer.closeElement()
-                        .openElement("licenseFamilyCategoryMap");
+                        .startElement("licenseFamilyCategoryMap");
                 for (Map.Entry<String, IntCounter> entry : licenseFamilyCategoryMap.entrySet()) {
                     if (entry.getValue().value > 0) {
-                        writer.openElement("familyCategory")
+                        writer.startElement("familyCategory")
                                 .attribute("count", entry.getValue().toString())
                                 .attribute("name", entry.getKey()).closeElement();
                     }
                 }
                 writer.closeElement()
-                        .openElement("documentTypeMap");
+                        .startElement("documentTypeMap");
                 for (Map.Entry<Document.Type, IntCounter> entry : documentTypeMap.entrySet()) {
                     if (entry.getValue().value > 0) {
-                        writer.openElement("documentType")
+                        writer.startElement("documentType")
                                 .attribute("count", entry.getValue().toString())
                                 .attribute("name", entry.getKey().name()).closeElement();
                     }
                 }
                 writer.closeElement()
-                        .openElement("counterMap");
+                        .startElement("counterMap");
                 for (Map.Entry<ClaimStatistic.Counter, IntCounter> entry : counterMap.entrySet()) {
                     if (entry.getValue().value > 0) {
-                        writer.openElement("counter")
+                        writer.startElement("counter")
                                 .attribute("count", entry.getValue().toString())
                                 .attribute("name", entry.getKey().name()).closeElement();
                     }
