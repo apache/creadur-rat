@@ -43,7 +43,7 @@ public final class XmlElements {
     }
 
     /**
-     * Converts an enum name to snake case.
+     * Converts an enum name to pascal case.
      *
      * @param name the attribute to normalize
      * @return a pascal cased name.
@@ -223,9 +223,9 @@ public final class XmlElements {
     }
 
     /**
-     * Creates a statistic element. Closes the element before returning.
+     * Creates a document type element. Closes the element before returning.
      *
-     * @param name  the name of the statistics element.
+     * @param name  the name of the document type element.
      * @param count the count for the element.
      * @throws RatException on error.
      */
