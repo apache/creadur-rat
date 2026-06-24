@@ -93,17 +93,17 @@ public class DataUtils {
                         StandardCharsets.UTF_8))) {
             writer.startDocument()
                     .comment(ASF_TEXT)
-                    .openElement("rat-config")
-                    .openElement("families")
-                    .openElement("family")
+                    .startElement("rat-config")
+                    .startElement("families")
+                    .startElement("family")
                     .attribute("id", id)
                     .attribute("name", "from " + fileName.getFileName())
                     .closeElement() // family
                     .closeElement() // families
-                    .openElement("licenses")
-                    .openElement("license")
+                    .startElement("licenses")
+                    .startElement("license")
                     .attribute("family", id)
-                    .openElement("text")
+                    .startElement("text")
                     .content(text)
                     .closeDocument(); // close all open elements
         } catch (IOException e) {
@@ -122,17 +122,17 @@ public class DataUtils {
                 StandardCharsets.UTF_8))) {
             writer.startDocument()
                     .comment(ASF_TEXT)
-                    .openElement("rat-config")
-                    .openElement("families")
-                    .openElement("family")
+                    .startElement("rat-config")
+                    .startElement("families")
+                    .startElement("family")
                     .attribute("id", id)
                     .attribute("name", "from " + fileName.getFileName())
                     .closeElement() // family
                     .closeElement() // families
-                    .openElement("licenses")
-                    .openElement("license")
+                    .startElement("licenses")
+                    .startElement("license")
                     .attribute("family", id)
-                    .openElement("spdx")
+                    .startElement("spdx")
                     .attribute("name", spdxId)
                     .closeDocument(); // close all open elements
         } catch (IOException e) {

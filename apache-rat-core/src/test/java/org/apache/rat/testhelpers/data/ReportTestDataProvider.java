@@ -1252,10 +1252,10 @@ public class ReportTestDataProvider extends AbstractTestDataProvider {
                              XmlWriter writer = new XmlWriter(fileWriter)) {
                             writer.startDocument()
                                     .comment(DataUtils.ASF_TEXT)
-                                    .openElement("xsl:stylesheet")
+                                    .startElement("xsl:stylesheet")
                                     .attribute("version", "1.0")
                                     .attribute("xmlns:xsl", "http://www.w3.org/1999/XSL/Transform")
-                                    .openElement("xsl:template")
+                                    .startElement("xsl:template")
                                     .attribute("match", "@*|node()")
                                     .content("Hello World")
                                     .closeDocument();
