@@ -67,6 +67,7 @@ import static java.lang.String.format;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Fail.fail;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 public class OptionCollectionTest {
     @TempDir(cleanup = CleanupMode.NEVER)
@@ -133,6 +134,14 @@ public class OptionCollectionTest {
     @Retention(RetentionPolicy.RUNTIME)
     @Target(ElementType.METHOD)
     public @interface TestFunction {
+    }
+
+    /**
+     * Gets the test path for.
+     * @return the test path.
+     */
+    public static Path getTestPath() {
+        return testPath;
     }
 
     /**
@@ -221,7 +230,8 @@ public class OptionCollectionTest {
     @ValueSource(strings = { ".", "./", "target", "./target" })
     public void getReportableTest(String fName) throws IOException {
         File base = new File(fName);
-        String expected = DocumentName.FSInfo.getDefault().normalize(base.getAbsolutePath());
+        DocumentName.FSInfo fsInfo = new DocumentName.FSInfo(testPath.getFileSystem());
+        String expected = fsInfo.normalize(base.getAbsolutePath());
         ReportConfiguration config = OptionCollection.parseCommands(testPath.toFile(), new String[]{fName}, o -> fail("Help called"), false);
         IReportable reportable = OptionCollection.getReportable(base, config);
         assertThat(reportable).as(() -> format("'%s' returned null", fName)).isNotNull();
@@ -251,7 +261,6 @@ public class OptionCollectionTest {
         assertThat(reportable).isInstanceOf(ArchiveWalker.class);
     }
 
-
     /**
      * A parameterized test for the options.
      * @param name The name of the test.
@@ -277,13 +286,12 @@ public class OptionCollectionTest {
          */
         public void helpTest() {
             String[] args = { OptionFormatter.longOpt(OptionCollection.HELP) };
-            try {
+
+            assertDoesNotThrow(() -> {
                 ReportConfiguration config = OptionCollection.parseCommands(testPath.toFile(), args, o -> helpCalled.set(true), true);
                 assertThat(config).as("Should not have config").isNull();
                 assertThat(helpCalled.get()).as("Help was not called").isTrue();
-            } catch (IOException e) {
-                fail(e.getMessage());
-            }
+            });
         }
 
         /**

@@ -18,79 +18,79 @@
  */
 package org.apache.rat.document;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileFilter;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.FilenameFilter;
 import java.io.IOException;
-import java.nio.file.FileSystems;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Stream;
 
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang3.tuple.Pair;
 import org.apache.rat.config.exclusion.ExclusionUtils;
 import org.apache.rat.document.DocumentName.FSInfo;
 
-import org.assertj.core.util.Files;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.FieldSource;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.mockito.Mockito;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.apache.rat.document.FSInfoTest.OSX;
-import static org.apache.rat.document.FSInfoTest.UNIX;
-import static org.apache.rat.document.FSInfoTest.WINDOWS;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.mockito.ArgumentMatchers.any;
 
 public class DocumentNameTest {
+    private static final FSInfo[] TEST_SUITE = FSInfoTest.TEST_SUITE;
 
-    public static DocumentName mkName(Path tempDir, FSInfo fsInfo) {
-        File docFile = mkFile(tempDir.toFile(), fsInfo);
-        DocumentName result = DocumentName.builder(fsInfo).setName(docFile).build();
-        DocumentName mocked = Mockito.spy(result);
-
-        String fn = result.localized(FileSystems.getDefault().getSeparator());
-        File file = tempDir.resolve(fn.substring(1)).toFile();
-        File mockedFile = mkFile(file, fsInfo);
-        when(mocked.asFile()).thenReturn(mockedFile);
-
-        assertThat(mocked.asFile()).isEqualTo(mockedFile);
-        return mocked;
+    /**
+     * Create a list of mocked files from the specified directory.
+     * @param directory the native directory to read.
+     * @param fsInfo the file system to mock the files in.
+     * @return an array of mocked files in the file system.
+     */
+    private static File[] listFiles(File directory, FSInfo fsInfo) {
+        File[] fileList = directory.listFiles();
+        return fileList == null ? null : Arrays.stream(fileList).map(f -> mkFile(f, fsInfo)).toArray(File[]::new);
     }
 
-    private static File[] listFiles(File file, FSInfo fsInfo) {
-        File[] fileList = file.listFiles();
-        if (fileList == null) {
-            return fileList;
-        }
-        return Arrays.stream(fileList).map(f -> mkFile(f, fsInfo)).toArray(File[]::new);
+    /**
+     * Create an array of mocked files from the specified directory then apply applying a file filter.
+     * @param directory the native directory to read files from.
+     * @param fsInfo the file system to create the mocked files in.
+     * @param filter the filter to apply to the mocked files.
+     * @return the array of mocked files that pass the filter.
+     */
+    private static File[] listFiles(File directory, FSInfo fsInfo, FileFilter filter) {
+        File[] fileList = directory.listFiles();
+        return fileList == null ? null : Arrays.stream(fileList).map(f -> mkFile(f, fsInfo)).filter(filter::accept).toArray(File[]::new);
     }
 
-    private static File[] listFiles(File file, FSInfo fsInfo, FileFilter filter) {
-        File[] fileList = file.listFiles();
-        if (fileList == null) {
-            return fileList;
-        }
-        return Arrays.stream(fileList).map(f -> mkFile(f, fsInfo)).filter(filter::accept).toArray(File[]::new);
+    /**
+     * Create an array of mocked files from the specified directory then apply applying a file filter.
+     * @param directory the native directory to read files from.
+     * @param fsInfo the file system to create the mocked files in.
+     * @param filter the filter to apply to the mocked files.
+     * @return the array of mocked files that pass the filter.
+     */
+    private static File[] listFiles(File directory, FSInfo fsInfo, FilenameFilter filter) {
+        File[] fileList = directory.listFiles();
+        return fileList == null ? null : Arrays.stream(fileList).map(f -> mkFile(f, fsInfo)).filter(x -> filter.accept(x, x.getName())).toArray(File[]::new);
     }
 
-    private static File[] listFiles(File file, FSInfo fsInfo, FilenameFilter filter) {
-        File[] fileList = file.listFiles();
-        if (fileList == null) {
-            return fileList;
-        }
-        return Arrays.stream(fileList).map(f -> mkFile(f, fsInfo)).filter(x -> filter.accept(x, x.getName())).toArray(File[]::new);
-    }
-
+    /**
+     * Creates a mocked file on the specified file system with the
+     * @param file the name of the native file.
+     * @param fsInfo the file system to mock the file in.
+     * @return the mocked file in the specified file system
+     */
     public static File mkFile(final File file, final FSInfo fsInfo) {
         File mockedFile = mock(File.class);
         when(mockedFile.listFiles()).thenAnswer( env -> listFiles(file, fsInfo));
@@ -105,222 +105,199 @@ public class DocumentNameTest {
         return mockedFile;
     }
 
-    public static DocumentName mkName(Path tempDir, DocumentName baseDir, String pth) throws IOException {
-        DocumentName result = baseDir.resolve(ExclusionUtils.convertSeparator(pth, "/", baseDir.getDirectorySeparator()));
-        DocumentName mocked = Mockito.spy(result);
-
-        String fn = result.localized(FileSystems.getDefault().getSeparator());
-        File file = tempDir.resolve(fn.substring(1)).toFile();
-        File parent = file.getParentFile();
-        if (parent.exists() && !parent.isDirectory()) {
-            parent.delete();
-        }
-        parent.mkdirs();
-        if (file.exists()) {
-            if (file.isDirectory()) {
-                FileUtils.deleteDirectory(file);
-            } else {
-                FileUtils.delete(file);
-            }
-        }
-        file.createNewFile();
-        when(mocked.asFile()).thenReturn(file);
-        return mocked;
-    }
-
-    @ParameterizedTest(name = "{index} {0} {2}")
+    /**
+     * Verifies that {@code resolve()} works correctly.
+     * @param fsInfo the file system under test.
+     * @param base the DocumentName to resolve from.
+     * @param toResolve the string to resolve.
+     * @param expected the expected DocumentName after resolution.
+     */
+    @ParameterizedTest(name = "{index} {0} {1} {3}")
     @MethodSource("resolveTestData")
-    void resolveTest(String testName, DocumentName base, String toResolve, DocumentName expected) {
+    void resolveTest(DocumentName.FSInfo fsInfo, String root, DocumentName base, String toResolve, DocumentName expected) {
        DocumentName actual = base.resolve(toResolve);
-       assertThat(actual).isEqualTo(expected);
+       assertThat(actual.getName()).isEqualTo(expected.getName());
     }
 
     private static Stream<Arguments> resolveTestData() {
         List<Arguments> lst = new ArrayList<>();
+        DocumentName base;
+        DocumentName expected;
+        for (DocumentName.FSInfo fsInfo : TEST_SUITE) {
+            String root = fsInfo.roots()[0];
+            for (String baseName : List.of(root, root + fsInfo.mkPath("from", "base"))) {
+                for (String testRoot : fsInfo.roots()) {
+                    String name = testRoot + fsInfo.mkPath("", "dir", fsInfo.toString());
+                    base = DocumentName.builder(fsInfo).setName(name).setBaseName(baseName).build();
+                    lst.add(Arguments.of(fsInfo, base.getName(),  base, null, base));
 
-        DocumentName base = DocumentName.builder(UNIX).setName("/dir/unix").setBaseName("/").build();
+                    lst.add(Arguments.of(fsInfo, base.getName(), base, "", base));
 
-        DocumentName expected = DocumentName.builder(UNIX).setName("/dir/unix/relative").setBaseName("/").build();
-        lst.add(Arguments.of("unix", base, "relative", expected));
+                    lst.add(Arguments.of(fsInfo, base.getName(), base, "  ", base));
 
-        expected = DocumentName.builder(UNIX).setName("/from/root").setBaseName("/").build();
-        lst.add(Arguments.of("unix", base, "/from/root", expected));
+                    expected = DocumentName.builder(fsInfo).setName(fsInfo.mkPath(name, "relative")).setBaseName(baseName).build();
+                    lst.add(Arguments.of(fsInfo, base.getName(), base, "relative", expected));
 
-        expected = DocumentName.builder(UNIX).setName("dir/up/and/down").setBaseName("/").build();
-        lst.add(Arguments.of("unix", base, "../up/and/down", expected));
+                    expected = DocumentName.builder(fsInfo).setRoot(testRoot).setName(fsInfo.mkPath("", "from", "root")).setBaseName(baseName).build();
+                    lst.add(Arguments.of(fsInfo, base.getName(), base, fsInfo.mkPath("", "from", "root"), expected));
 
-        expected = DocumentName.builder(UNIX).setName("/from/root").setBaseName("/").build();
-        lst.add(Arguments.of("unix", base, "\\from\\root", expected));
+                    expected = DocumentName.builder(fsInfo).setRoot(testRoot).setName(fsInfo.mkPath("dir", "up", "and", "down")).setBaseName(baseName).build();
+                    lst.add(Arguments.of(fsInfo, base.getName(), base, fsInfo.mkPath("..", "up", "and", "down"), expected));
 
-        expected = DocumentName.builder(UNIX).setName("dir/up/and/down").setBaseName("/").build();
-        lst.add(Arguments.of("unix", base, "..\\up\\and\\down", expected));
+                    expected = DocumentName.builder(fsInfo).setRoot(testRoot).setName(fsInfo.mkPath("", "from", "root")).setBaseName(baseName).build();
+                    String wrongSeparator = fsInfo.dirSeparator().equals("/") ? "\\" : "/";
+                    lst.add(Arguments.of(fsInfo, base.getName(), base, String.join(wrongSeparator, "", "from", "root"), expected));
 
-        // WINDOWS
-        base = DocumentName.builder(WINDOWS).setName("\\dir\\windows").setBaseName("C:\\").build();
-
-        expected = DocumentName.builder(WINDOWS).setName("\\dir\\windows\\relative").setBaseName("C:\\").build();
-        lst.add(Arguments.of("windows", base, "relative", expected));
-
-        expected = DocumentName.builder(WINDOWS).setName("\\from\\root").setBaseName("C:\\").build();
-        lst.add(Arguments.of("windows", base, "/from/root", expected));
-
-        expected = DocumentName.builder(WINDOWS).setName("dir\\up\\and\\down").setBaseName("C:\\").build();
-        lst.add(Arguments.of("windows", base, "../up/and/down", expected));
-
-        expected = DocumentName.builder(WINDOWS).setName("\\from\\root").setBaseName("C:\\").build();
-        lst.add(Arguments.of("windows", base, "\\from\\root", expected));
-
-        expected = DocumentName.builder(WINDOWS).setName("dir\\up\\and\\down").setBaseName("C:\\").build();
-        lst.add(Arguments.of("windows", base, "..\\up\\and\\down", expected));
-
-        // OSX
-        base = DocumentName.builder(OSX).setName("/dir/osx").setBaseName("/").build();
-
-        expected = DocumentName.builder(OSX).setName("/dir/osx/relative").setBaseName("/").build();
-        lst.add(Arguments.of("osx", base, "relative", expected));
-
-        expected = DocumentName.builder(OSX).setName("/from/root").setBaseName("/").build();
-        lst.add(Arguments.of("osx", base, "/from/root", expected));
-
-        expected = DocumentName.builder(OSX).setName("dir/up/and/down").setBaseName("/").build();
-        lst.add(Arguments.of("osx", base, "../up/and/down", expected));
-
-        expected = DocumentName.builder(OSX).setName("/from/root").setBaseName("/").build();
-        lst.add(Arguments.of("osx", base, "\\from\\root", expected));
-
-        expected = DocumentName.builder(OSX).setName("dir/up/and/down").setBaseName("/").build();
-        lst.add(Arguments.of("osx", base, "..\\up\\and\\down", expected));
-
-        return lst.stream();
-    }
-
-    @Test
-    void localizeTest() {
-        DocumentName documentName = DocumentName.builder(UNIX).setName("/a/b/c")
-                .setBaseName("/a").build();
-        assertThat(documentName.localized()).isEqualTo("/b/c");
-        assertThat(documentName.localized("-")).isEqualTo("-b-c");
-
-        documentName = DocumentName.builder(WINDOWS).setName("\\a\\b\\c")
-                .setBaseName("\\a").build();
-        assertThat(documentName.localized()).isEqualTo("\\b\\c");
-        assertThat(documentName.localized("-")).isEqualTo("-b-c");
-
-        documentName = DocumentName.builder(OSX).setName("/a/b/c")
-                .setBaseName("/a").build();
-        assertThat(documentName.localized()).isEqualTo("/b/c");
-        assertThat(documentName.localized("-")).isEqualTo("-b-c");
-    }
-
-    @ParameterizedTest(name = "{index} {0}")
-    @MethodSource("validBuilderData")
-    void validBuilderTest(String testName, DocumentName.Builder builder, String root, String name, String baseName, String dirSeparator) {
-        DocumentName underTest = builder.build();
-        assertThat(underTest.getRoot()).as(testName).isEqualTo(root);
-        assertThat(underTest.getDirectorySeparator()).as(testName).isEqualTo(dirSeparator);
-        assertThat(underTest.getName()).as(testName).isEqualTo(root + dirSeparator + name);
-        assertThat(underTest.getBaseName()).as(testName).isEqualTo(root + dirSeparator + baseName);
-    }
-
-    private static Stream<Arguments> validBuilderData() {
-        List<Arguments> lst = new ArrayList<>();
-        File f = Files.newTemporaryFile();
-
-        Set<String> roots = new HashSet<>();
-        File[] rootary = File.listRoots();
-        if (rootary != null) {
-            for (File root : rootary) {
-                String name = root.getPath();
-                roots.add(name);
-            }
-        }
-
-        String name = f.getAbsolutePath();
-        String root = "";
-        for (String sysRoot : roots) {
-            if (name.startsWith(sysRoot)) {
-                name = name.substring(sysRoot.length());
-                if (sysRoot.endsWith(File.separator)) {
-                    root = sysRoot.substring(0, sysRoot.length() - File.separator.length());
+                    expected = DocumentName.builder(fsInfo).setRoot(testRoot).setName(fsInfo.mkPath("dir", "up", "and", "down")).setBaseName(baseName).build();
+                    lst.add(Arguments.of(fsInfo, base.getName(), base, String.join(wrongSeparator, "..", "up", "and", "down"), expected));
                 }
-                break;
             }
         }
-
-        File p = f.getParentFile();
-        String baseName = p.getAbsolutePath().substring(root.length());
-        if (baseName.startsWith(File.separator)) {
-            baseName = baseName.substring(File.separator.length());
-        }
-        lst.add(Arguments.of("setName(file)", DocumentName.builder().setName(f), root, name, baseName, File.separator));
-        lst.add(Arguments.of("Builder(file)", DocumentName.builder(f), root, name, baseName, File.separator));
-
-        lst.add(Arguments.of("setName(dir)", DocumentName.builder().setName(p), root, baseName, baseName, File.separator));
-        lst.add(Arguments.of("Builder(dir)", DocumentName.builder(p), root, baseName, baseName, File.separator));
-
-        File r = new File(root.isEmpty() ? File.separator : root);
-        lst.add(Arguments.of("setName(root)", DocumentName.builder().setName(r), root, "", "", File.separator));
-        lst.add(Arguments.of("Builder(root)", DocumentName.builder(r), root, "", "", File.separator));
-
-
-        lst.add(Arguments.of("foo/bar foo", DocumentName.builder(UNIX)
-                .setName("/foo/bar").setBaseName("foo"), "", "foo/bar", "foo", "/"));
-
-        DocumentName.Builder builder = DocumentName.builder(WINDOWS).setName("\\foo\\bar").setBaseName("C:\\foo")
-                .setRoot("C:");
-        lst.add(Arguments.of("\\foo\\bar foo", builder, "C:", "foo\\bar", "foo", "\\"));
-
-        lst.add(Arguments.of("foo/bar foo", DocumentName.builder(OSX)
-                .setName("/foo/bar").setBaseName("foo"), "", "foo/bar", "foo", "/"));
-
         return lst.stream();
     }
 
     @Test
-    void splitRootsTest() {
-        Pair<String, String> result = DocumentName.builder(WINDOWS).splitRoot("C:\\My\\path\\to\\a\\file.txt");
-        assertThat(result.getLeft()).isEqualTo("C:");
-        assertThat(result.getRight()).isEqualTo("My\\path\\to\\a\\file.txt");
+    void resolveWithMultipleRootsTest() {
+        // these tests exist because windows has multiple roots.
+        DocumentName.FSInfo fsInfo = FSInfoTest.WINDOWS;
+        DocumentName base = DocumentName.builder(fsInfo).setName(fsInfo.mkPath("", "dir", fsInfo.toString()))
+                .setBaseName("").build();
 
-        result = DocumentName.builder(UNIX).splitRoot("/My/path/to/a/file.txt");
-        assertThat(result.getLeft()).isEqualTo("");
-        assertThat(result.getRight()).isEqualTo("My/path/to/a/file.txt");
+        String resolveName = fsInfo.roots()[1] + fsInfo.mkPath("dir", fsInfo.toString());
+        assertThatThrownBy(() -> base.resolve(resolveName))
+                .as(resolveName)
+                .hasMessageContaining(String.format("%s does not start with %s", resolveName, base.getName()))
+                .isInstanceOf(IllegalArgumentException.class);
 
-        result = DocumentName.builder(OSX).splitRoot("/My/path/to/a/file.txt");
-        assertThat(result.getLeft()).isEqualTo("");
-        assertThat(result.getRight()).isEqualTo("My/path/to/a/file.txt");
+        String resolveName2 = fsInfo.roots()[0] + fsInfo.mkPath("dir", fsInfo.toString(), "thing");
+        assertThat(base.resolve(resolveName2).getName())
+                .isEqualTo(resolveName2);
+
+    }
+
+    void testNoRootSpecified() {
+        // no root specified
+        assertThat(DocumentName.startsWithRootOrSeparator("X:/candidate", null, "/")).isFalse();
+        assertThat(DocumentName.startsWithRootOrSeparator("X:/candidate", "", "/")).isFalse();
+        assertThat(DocumentName.startsWithRootOrSeparator("X;/candidate", "  ", "/")).isFalse();
+        assertThat(DocumentName.startsWithRootOrSeparator("/candidate", null, "/")).isTrue();
+        assertThat(DocumentName.startsWithRootOrSeparator("/candidate", "", "/")).isTrue();
+        assertThat(DocumentName.startsWithRootOrSeparator("/candidate", "  ", "/")).isTrue();
+        assertThat(DocumentName.startsWithRootOrSeparator("candidate", null, "/")).isFalse();
+        assertThat(DocumentName.startsWithRootOrSeparator("candidate", "", "/")).isFalse();
+        assertThat(DocumentName.startsWithRootOrSeparator("candidate", "  ", "/")).isFalse();
     }
 
     @Test
-    void archiveEntryNameTest() {
-        String entryName = "./anArchiveEntry.txt";
-        DocumentName archiveName = DocumentName.builder(WINDOWS)
-                .setName("C:\\archives\\anArchive.zip").setBaseName("C:\\archives").build();
+    void startsWithRootOrSeparatorTest() {
+        assertThat(DocumentName.startsWithRootOrSeparator("X:/candidate", "X:/", "/")).isTrue();
+        assertThat(DocumentName.startsWithRootOrSeparator("X:/candidate", "Y:/", "/")).isFalse();
+        assertThat(DocumentName.startsWithRootOrSeparator("/candidate", "X:/", "/")).isTrue();
+        assertThat(DocumentName.startsWithRootOrSeparator("\\candidate", "Y:/", "/")).isFalse();
+        assertThat(DocumentName.startsWithRootOrSeparator("candidate", "Y:/", "/")).isFalse();
+        assertThat(DocumentName.startsWithRootOrSeparator("Y:candidate", "Y:/", "/")).isFalse();
+        assertThat(DocumentName.startsWithRootOrSeparator(null, "Y:/", "/")).isFalse();
+        assertThat(DocumentName.startsWithRootOrSeparator("", "Y:/", "/")).isFalse();
+        assertThat(DocumentName.startsWithRootOrSeparator("  ", "Y:/", "/")).isFalse();
 
-        assertThat(archiveName.getRoot()).isEqualTo("C:");
-        assertThat(archiveName.getDirectorySeparator()).isEqualTo("\\");
-        assertThat(archiveName.getBaseName()).isEqualTo("C:\\archives");
-        assertThat(archiveName.getName()).isEqualTo("C:\\archives\\anArchive.zip");
-        assertThat(archiveName.localized()).isEqualTo("\\anArchive.zip");
+        testNoRootSpecified();
+    }
 
-        ArchiveEntryName archiveEntryName = new ArchiveEntryName(archiveName, entryName);
+    @ParameterizedTest
+    @FieldSource("TEST_SUITE")
+    void localizeTest(FSInfo fsInfo) {
+        DocumentName documentName = DocumentName.builder(fsInfo).setName(
+                fsInfo.mkPath("", "a", "b", "c"))
+                .setBaseName(fsInfo.mkPath("", "a")).build();
 
-        assertThat(archiveEntryName.getRoot()).isEqualTo(archiveName.getName()+"#");
-        assertThat(archiveEntryName.getDirectorySeparator()).isEqualTo("/");
-        assertThat(archiveEntryName.getBaseName()).isEqualTo("C:\\archives\\anArchive.zip#");
-        assertThat(archiveEntryName.getName()).isEqualTo("C:\\archives\\anArchive.zip#/anArchiveEntry.txt");
-        assertThat(archiveEntryName.localized()).isEqualTo("/anArchiveEntry.txt");
-        assertThat(archiveEntryName.localized("/")).isEqualTo("/anArchive.zip#/anArchiveEntry.txt");
+        assertThat(documentName.localized()).isEqualTo(fsInfo.mkPath("", "b", "c"));
+        assertThat(documentName.localized("-")).isEqualTo("-b-c");
 
-        // test with directory
-        entryName = "./someDir/anArchiveEntry.txt";
-        archiveEntryName = new ArchiveEntryName(archiveName, entryName);
+        documentName = DocumentName.builder(fsInfo).setName(
+                        fsInfo.mkPath("", "a", "b", "c"))
+                .setBaseName(fsInfo.mkPath("", "z")).build();
 
-        assertThat(archiveEntryName.getRoot()).isEqualTo(archiveName.getName()+"#");
-        assertThat(archiveEntryName.getDirectorySeparator()).isEqualTo("/");
-        assertThat(archiveEntryName.getBaseName()).isEqualTo("C:\\archives\\anArchive.zip#");
-        assertThat(archiveEntryName.getName()).isEqualTo("C:\\archives\\anArchive.zip#/someDir/anArchiveEntry.txt");
-        assertThat(archiveEntryName.localized()).isEqualTo("/someDir/anArchiveEntry.txt");
-        assertThat(archiveEntryName.localized("/")).isEqualTo("/anArchive.zip#/someDir/anArchiveEntry.txt");
+        assertThat(documentName.localized()).isEqualTo(fsInfo.mkPath("", "a", "b", "c"));
+
+        if (fsInfo.roots().length > 1) {
+            documentName = DocumentName.builder(fsInfo).setName(
+                            fsInfo.mkPath("", "a", "b", "c"))
+                    .setBaseName(fsInfo.mkPath("", "z"))
+                    .setRoot(fsInfo.roots()[1]).build();
+            assertThat(documentName.localized()).isEqualTo(fsInfo.mkPath("", "a", "b", "c"));
+        }
+    }
+
+    @Test
+    void asFileTest() throws IOException {
+        File expected = File.createTempFile("docNameTest", ".txt");
+        try (FileWriter fw = new FileWriter(expected, StandardCharsets.UTF_8)) {
+            fw.write("Hello world");
+        }
+        DocumentName underTest = DocumentName.builder(expected).build();
+        File actual = underTest.asFile();
+        try (FileReader fr = new FileReader(actual, StandardCharsets.UTF_8);
+        BufferedReader br = new BufferedReader(fr)) {
+            assertThat(br.readLine()).isEqualTo("Hello world");
+        }
+    }
+
+    @Test
+    void asPathTest() throws IOException {
+        File expected = File.createTempFile("docNameTest", ".txt");
+        try (FileWriter fw = new FileWriter(expected, StandardCharsets.UTF_8)) {
+            fw.write("Hello world");
+        }
+        DocumentName underTest = DocumentName.builder(expected).build();
+        Path actual = underTest.asPath();
+        Path root = Path.of(underTest.getRoot());
+        File file = root.resolve(actual).toFile();
+        try (FileReader fr = new FileReader(file, StandardCharsets.UTF_8);
+             BufferedReader br = new BufferedReader(fr)) {
+            assertThat(br.readLine()).isEqualTo("Hello world");
+        }
+    }
+
+
+    @ParameterizedTest(name = "{index} {0} {1}")
+    @MethodSource("archiveEntryTestData")
+    void archiveEntryNameTest(String os, String testName, DocumentName archiveName, String root, String separator, String baseName,
+                              String localizedName) {
+        assertThat(archiveName.getRoot()).as("root").isEqualTo(root);
+        assertThat(archiveName.getDirectorySeparator()).as("separator").isEqualTo(separator);
+        assertThat(archiveName.getBaseName()).as("baseName").isEqualTo(baseName);
+        assertThat(archiveName.localized()).as("localized").isEqualTo(localizedName);
+        assertThat(archiveName.getName()).as("name").isEqualTo(baseName + localizedName);
+        if (!separator.equals(archiveName.fsInfo().dirSeparator()))
+        {
+            String newBaseName = separator.equals("/") ? baseName.replace('\\', '/') : baseName.replace('/', '\\');
+            assertThat(archiveName.localized(separator)).as("localized(x)").isEqualTo(newBaseName + localizedName);
+        }
+    }
+
+    static List<Arguments> archiveEntryTestData() {
+        List<Arguments> lst = new ArrayList<>();
+
+        for (FSInfo fsInfo :  FSInfoTest.TEST_SUITE) {
+            String os = fsInfo.toString();
+            String root = fsInfo.roots()[0];
+            String baseName = String.format(String.format("%sarchives", root));
+            String simpleName = String.format("%sanArchive.zip", fsInfo.dirSeparator());
+            String entryName = "./anArchiveEntry.txt";
+            DocumentName archiveName = DocumentName.builder(fsInfo).setName(baseName + simpleName).setBaseName(baseName).build();
+            lst.add(Arguments.of(os, "archive name", archiveName, root, fsInfo.dirSeparator(), baseName, simpleName));
+
+            ArchiveEntryName archiveEntryName = new ArchiveEntryName(archiveName, entryName);
+            baseName = archiveName.getName() + "#";
+            root = baseName + "/";
+            lst.add(Arguments.of(os, "archive entry name", archiveEntryName, root, "/", baseName, "/anArchiveEntry.txt"));
+
+            // test with directory
+            entryName = "./someDir/anArchiveEntry.txt";
+            archiveEntryName = new ArchiveEntryName(archiveName, entryName);
+
+            lst.add(Arguments.of(os, "archive entry with directory", archiveEntryName, root, "/", baseName, "/someDir/anArchiveEntry.txt"));
+        }
+        return lst;
     }
 }

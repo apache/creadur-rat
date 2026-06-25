@@ -34,7 +34,6 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Pattern;
 import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
@@ -63,11 +62,11 @@ import org.apache.rat.utils.DefaultLog;
 import org.apache.rat.utils.Log;
 import org.junit.jupiter.params.provider.ArgumentsProvider;
 import org.w3c.dom.Document;
-import org.xml.sax.SAXException;
 
 import static org.apache.rat.commandline.Arg.HELP_LICENSES;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Fail.fail;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 /**
  * A class to provide the Options and tests to the testOptionsUpdateConfig.
@@ -115,6 +114,13 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
         return config;
     }
 
+    private File configureRatDir(Option option) {
+        configureSourceDir(option);
+        File result = new File(sourceDir, ".rat");
+        FileUtils.mkDir(result);
+        return result;
+    }
+
     private void configureSourceDir(Option option) {
         sourceDir = new File(baseDir, OptionFormatter.getName(option));
         FileUtils.mkDir(sourceDir);
@@ -133,7 +139,6 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
         } finally {
             DefaultLog.setInstance(null);
         }
-
     }
 
     @OptionCollectionTest.TestFunction
@@ -147,7 +152,7 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
     }
 
     private void editLicenseTest(final Option option) {
-        try {
+        assertDoesNotThrow(() -> {
             configureSourceDir(option);
             ReportConfiguration config = generateConfig(ImmutablePair.of(option, null));
             File testFile = writeFile("NoLicense.java", "class NoLicense {}");
@@ -182,9 +187,7 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
                      */
                     
                     class NoLicense {}""");
-        } catch (IOException | RatException e) {
-            fail(e.getMessage(), e);
-        }
+        });
     }
 
     protected File writeFile(String name) {
@@ -201,7 +204,7 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
 
     @OptionCollectionTest.TestFunction
     private void execLicensesDeniedTest(final Option option, final String[] args) {
-        try {
+        assertDoesNotThrow(() -> {
             configureSourceDir(option);
             File illumosFile = writeFile("illumousFile.java", "The contents of this file are " +
                     "subject to the terms of the Common Development and Distribution License (the \"License\") You " +
@@ -214,9 +217,7 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
             ClaimStatistic claimStatistic = reporter.execute();
             ClaimValidator validator = config.getClaimValidator();
             assertThat(validator.listIssues(claimStatistic)).containsExactly("UNAPPROVED");
-        } catch (IOException | RatException e) {
-            fail(e.getMessage(), e);
-        }
+        });
     }
 
     @OptionCollectionTest.TestFunction
@@ -226,13 +227,14 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
 
     @OptionCollectionTest.TestFunction
     protected void licensesDeniedFileTest() {
-        File outputFile = FileUtils.writeFile(baseDir, "licensesDenied.txt", Collections.singletonList("ILLUMOS"));
-        execLicensesDeniedTest(Arg.LICENSES_DENIED_FILE.find("licenses-denied-file"),
-                new String[]{outputFile.getAbsolutePath()});
+        Option option = Arg.LICENSES_DENIED_FILE.find("licenses-denied-file");
+        File ratDir = configureRatDir(option);
+        File outputFile = FileUtils.writeFile(ratDir, "licensesDenied.txt", Collections.singletonList("ILLUMOS"));
+        execLicensesDeniedTest(option, new String[]{outputFile.getAbsolutePath()});
     }
 
     private void noDefaultsTest(final Option option) {
-        try {
+        assertDoesNotThrow(() -> {
             configureSourceDir(option);
             File testFile = writeFile("Test.java", Arrays.asList("/*\n", "SPDX-License-Identifier: Apache-2.0\n",
                     "*/\n\n", "class Test {}\n"));
@@ -249,9 +251,7 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
                 ClaimValidator validator = config.getClaimValidator();
                 assertThat(validator.listIssues(claimStatistic)).containsExactlyInAnyOrder("DOCUMENT_TYPES", "LICENSE_CATEGORIES", "LICENSE_NAMES", "STANDARDS");
             }
-        } catch (IOException | RatException e) {
-            fail(e.getMessage(), e);
-        }
+        });
     }
 
     @OptionCollectionTest.TestFunction
@@ -268,7 +268,8 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
     protected void counterMaxTest() {
         Option option = Arg.COUNTER_MAX.option();
         String[] arg = {null};
-        try {
+
+        assertDoesNotThrow(() -> {
             configureSourceDir(option);
             File testFile = writeFile("Test.java", Arrays.asList("/*\n", "SPDX-License-Identifier: Unapproved\n",
                     "*/\n\n", "class Test {}\n"));
@@ -285,9 +286,7 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
             claimStatistic = reporter.execute();
             validator = config.getClaimValidator();
             assertThat(validator.listIssues(claimStatistic)).isEmpty();
-        } catch (IOException | RatException e) {
-            fail(e.getMessage(), e);
-        }
+        });
     }
 
     @OptionCollectionTest.TestFunction
@@ -295,7 +294,7 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
         Option option = Arg.COUNTER_MIN.option();
         String[] arg = {null};
 
-        try {
+        assertDoesNotThrow(() -> {
             configureSourceDir(option);
             File testFile = writeFile("Test.java", Arrays.asList("/*\n", "SPDX-License-Identifier: Unapproved\n",
                     "*/\n\n", "class Test {}\n"));
@@ -312,16 +311,15 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
             claimStatistic = reporter.execute();
             validator = config.getClaimValidator();
             assertThat(validator.listIssues(claimStatistic)).isEmpty();
-        } catch (IOException | RatException e) {
-            fail(e.getMessage(), e);
-        }
+        });
     }
 
     // exclude tests
-    private void execExcludeTest(final Option option, final String[] args) {
+    private void execExcludeTest(final Option option, final String[] args, final boolean addIgnored) {
         String[] notExcluded = {"notbaz", "well._afile"};
         String[] excluded = {"some.foo", "B.bar", "justbaz"};
-        try {
+
+        assertDoesNotThrow(() -> {
             configureSourceDir(option);
             writeFile("notbaz");
             writeFile("well._afile");
@@ -333,23 +331,21 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
             Reporter reporter = new Reporter(config);
             ClaimStatistic claimStatistic = reporter.execute();
             assertThat(claimStatistic.getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(5);
-            assertThat(claimStatistic.getCounter(ClaimStatistic.Counter.IGNORED)).isEqualTo(0);
+            assertThat(claimStatistic.getCounter(ClaimStatistic.Counter.IGNORED)).isEqualTo(addIgnored ? 1 : 0);
 
             // filter out source
             config = generateConfig(ImmutablePair.of(option, args));
             reporter = new Reporter(config);
             claimStatistic = reporter.execute();
             assertThat(claimStatistic.getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(2);
-            assertThat(claimStatistic.getCounter(ClaimStatistic.Counter.IGNORED)).isEqualTo(3);
-        } catch (IOException | RatException e) {
-            fail(e.getMessage(), e);
-        }
+            assertThat(claimStatistic.getCounter(ClaimStatistic.Counter.IGNORED)).isEqualTo(addIgnored ? 4 : 3);
+        });
     }
 
     private void excludeFileTest(final Option option) {
-        configureSourceDir(option);
-        File outputFile = FileUtils.writeFile(baseDir, "exclude.txt", Arrays.asList(EXCLUDE_ARGS));
-        execExcludeTest(option, new String[]{outputFile.getAbsolutePath()});
+        File ratDir = configureRatDir(option);
+        File outputFile = FileUtils.writeFile(ratDir, "exclude.txt", Arrays.asList(EXCLUDE_ARGS));
+        execExcludeTest(option, new String[]{outputFile.getAbsolutePath()}, true);
     }
 
     @OptionCollectionTest.TestFunction
@@ -364,12 +360,12 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
 
     @OptionCollectionTest.TestFunction
     protected void excludeTest() {
-        execExcludeTest(Arg.EXCLUDE.find("exclude"), EXCLUDE_ARGS);
+        execExcludeTest(Arg.EXCLUDE.find("exclude"), EXCLUDE_ARGS, false);
     }
 
     @OptionCollectionTest.TestFunction
     protected void inputExcludeTest() {
-        execExcludeTest(Arg.EXCLUDE.find("input-exclude"), EXCLUDE_ARGS);
+        execExcludeTest(Arg.EXCLUDE.find("input-exclude"), EXCLUDE_ARGS, false);
     }
 
     @OptionCollectionTest.TestFunction
@@ -377,7 +373,7 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
         Option option = Arg.EXCLUDE_SIZE.option();
         String[] args = {"5"};
 
-        try {
+        assertDoesNotThrow(() -> {
             configureSourceDir(option);
             writeFile("Hi.txt", "Hi");
             writeFile("Hello.txt", "Hello");
@@ -395,9 +391,7 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
             claimStatistic = reporter.execute();
             assertThat(claimStatistic.getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(2);
             assertThat(claimStatistic.getCounter(ClaimStatistic.Counter.IGNORED)).isEqualTo(1);
-        } catch (IOException | RatException e) {
-            fail(e.getMessage(), e);
-        }
+        });
     }
 
     @OptionCollectionTest.TestFunction
@@ -407,7 +401,7 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
         // these files are excluded by default "afile~", ".#afile", "%afile%", "._afile"
         // these files are not excluded by default "afile~more", "what.#afile", "%afile%withMore", "well._afile", "build.log"
         // build.log is excluded by MAVEN.
-        try {
+        assertDoesNotThrow(() -> {
             configureSourceDir(option);
             writeFile("afile~");
             writeFile(".#afile");
@@ -430,9 +424,7 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
             claimStatistic = reporter.execute();
             assertThat(claimStatistic.getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(4);
             assertThat(claimStatistic.getCounter(ClaimStatistic.Counter.IGNORED)).isEqualTo(5);
-        } catch (IOException | RatException e) {
-            fail(e.getMessage(), e);
-        }
+        });
     }
 
     @OptionCollectionTest.TestFunction
@@ -447,7 +439,7 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
                 "# some colorful directories",
                 "red/", "blue/*/"};
 
-        try {
+        assertDoesNotThrow(() -> {
             configureSourceDir(option);
 
             writeFile(".gitignore", Arrays.asList(lines));
@@ -489,17 +481,16 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
             claimStatistic = reporter.execute();
             assertThat(claimStatistic.getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(3);
             assertThat(claimStatistic.getCounter(ClaimStatistic.Counter.IGNORED)).isEqualTo(8);
-        } catch (IOException | RatException e) {
-            fail(e.getMessage(), e);
-        }
+        });
     }
 
     // include tests
-    private void execIncludeTest(final Option option, final String[] args) {
+    private void execIncludeTest(final Option option, final String[] args, boolean addIgnored) {
         Option excludeOption = Arg.EXCLUDE.option();
         String[] notExcluded = {"B.bar", "justbaz", "notbaz"};
         String[] excluded = {"some.foo"};
-        try {
+
+        assertDoesNotThrow(() -> {
             configureSourceDir(option);
             writeFile("notbaz");
             writeFile("some.foo");
@@ -510,7 +501,7 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
             Reporter reporter = new Reporter(config);
             ClaimStatistic claimStatistic = reporter.execute();
             assertThat(claimStatistic.getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(4);
-            assertThat(claimStatistic.getCounter(ClaimStatistic.Counter.IGNORED)).isEqualTo(0);
+            assertThat(claimStatistic.getCounter(ClaimStatistic.Counter.IGNORED)).isEqualTo(addIgnored ? 1 : 0);
 
             // verify exclude removes most files.
             config = generateConfig(ImmutablePair.of(excludeOption, EXCLUDE_ARGS));
@@ -518,7 +509,7 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
             claimStatistic = reporter.execute();
             assertThat(claimStatistic.getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(1);
             // .gitignore is ignored by default as it is hidden but not counted
-            assertThat(claimStatistic.getCounter(ClaimStatistic.Counter.IGNORED)).isEqualTo(3);
+            assertThat(claimStatistic.getCounter(ClaimStatistic.Counter.IGNORED)).isEqualTo(addIgnored ? 4 : 3);
 
             // verify include pust them back
             config = generateConfig(ImmutablePair.of(option, args), ImmutablePair.of(excludeOption, EXCLUDE_ARGS));
@@ -526,15 +517,14 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
             claimStatistic = reporter.execute();
             assertThat(claimStatistic.getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(3);
             // .gitignore is ignored by default as it is hidden but not counted
-            assertThat(claimStatistic.getCounter(ClaimStatistic.Counter.IGNORED)).isEqualTo(1);
-        } catch (IOException | RatException e) {
-            fail(e.getMessage(), e);
-        }
+            assertThat(claimStatistic.getCounter(ClaimStatistic.Counter.IGNORED)).isEqualTo(addIgnored ? 2 : 1);
+        });
     }
 
     private void includeFileTest(final Option option) {
-        File outputFile = FileUtils.writeFile(baseDir, "include.txt", Arrays.asList(INCLUDE_ARGS));
-        execIncludeTest(option, new String[]{outputFile.getAbsolutePath()});
+        File ratDir = configureRatDir(option);
+        File outputFile = FileUtils.writeFile(ratDir, "include.txt", Arrays.asList(INCLUDE_ARGS));
+        execIncludeTest(option, new String[]{outputFile.getAbsolutePath()}, true);
     }
 
     @OptionCollectionTest.TestFunction
@@ -549,19 +539,20 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
 
     @OptionCollectionTest.TestFunction
     protected void includeTest() {
-        execIncludeTest(Arg.INCLUDE.find("include"), INCLUDE_ARGS);
+        execIncludeTest(Arg.INCLUDE.find("include"), INCLUDE_ARGS, false);
     }
 
     @OptionCollectionTest.TestFunction
     protected void inputIncludeTest() {
-        execIncludeTest(Arg.INCLUDE.find("input-include"), INCLUDE_ARGS);
+        execIncludeTest(Arg.INCLUDE.find("input-include"), INCLUDE_ARGS, false);
     }
 
     @OptionCollectionTest.TestFunction
     protected void inputIncludeStdTest() {
         Option option = Arg.INCLUDE_STD.find("input-include-std");
         String[] args = {StandardCollection.MISC.name()};
-        try {
+
+        assertDoesNotThrow(() -> {
             configureSourceDir(option);
 
             writeFile("afile~more");
@@ -587,15 +578,14 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
             claimStatistic = reporter.execute();
             assertThat(claimStatistic.getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(7);
             assertThat(claimStatistic.getCounter(ClaimStatistic.Counter.IGNORED)).isEqualTo(1);
-        } catch (IOException | RatException e) {
-            fail(e.getMessage(), e);
-        }
+        });
     }
 
     @OptionCollectionTest.TestFunction
     protected void inputSourceTest() {
         Option option = Arg.SOURCE.find("input-source");
-        try {
+
+        assertDoesNotThrow(() -> {
             configureSourceDir(option);
 
             writeFile("codefile");
@@ -613,9 +603,7 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
             claimStatistic = reporter.execute();
             assertThat(claimStatistic.getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(1);
             assertThat(claimStatistic.getCounter(ClaimStatistic.Counter.IGNORED)).isEqualTo(0);
-        } catch (IOException | RatException e) {
-            fail(e.getMessage(), e);
-        }
+        });
     }
 
     private ReportConfiguration addCatzLicense(ReportConfiguration config) {
@@ -628,7 +616,8 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
 
     private void execLicenseFamiliesApprovedTest(final Option option, final String[] args) {
         Pair<Option, String[]> arg1 = ImmutablePair.of(option, args);
-        try {
+
+        assertDoesNotThrow(() -> {
             configureSourceDir(option);
             // write the catz licensed text file
             writeFile("catz.txt", "SPDX-License-Identifier: catz");
@@ -647,15 +636,13 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
             assertThat(claimStatistic.getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(1);
             assertThat(claimStatistic.getCounter(ClaimStatistic.Counter.APPROVED)).isEqualTo(1);
             assertThat(claimStatistic.getCounter(ClaimStatistic.Counter.UNAPPROVED)).isEqualTo(0);
-        } catch (IOException | RatException e) {
-            fail(e.getMessage(), e);
-        }
+        });
     }
 
     @OptionCollectionTest.TestFunction
     protected void licenseFamiliesApprovedFileTest() {
         Option option = Arg.FAMILIES_APPROVED_FILE.find("license-families-approved-file");
-        File outputFile = FileUtils.writeFile(baseDir, "familiesApproved.txt", Collections.singletonList("catz"));
+        File outputFile = FileUtils.writeFile(configureRatDir(option), "familiesApproved.txt", Collections.singletonList("catz"));
         execLicenseFamiliesApprovedTest(option, new String[]{outputFile.getAbsolutePath()});
     }
 
@@ -668,7 +655,8 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
     private void execLicenseFamiliesDeniedTest(final Option option, final String[] args) {
         Pair<Option, String[]> arg1 = ImmutablePair.of(option, args);
         String bsd = ILicenseFamily.makeCategory("BSD-3");
-        try {
+
+        assertDoesNotThrow(() -> {
             configureSourceDir(option);
 
             // write the catz licensed text file
@@ -687,16 +675,14 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
             assertThat(claimStatistic.getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(1);
             assertThat(claimStatistic.getCounter(ClaimStatistic.Counter.APPROVED)).isEqualTo(0);
             assertThat(claimStatistic.getCounter(ClaimStatistic.Counter.UNAPPROVED)).isEqualTo(1);
-        } catch (IOException | RatException e) {
-            fail(e.getMessage(), e);
-        }
+        });
     }
 
     @OptionCollectionTest.TestFunction
     protected void licenseFamiliesDeniedFileTest() {
-        File outputFile = FileUtils.writeFile(baseDir, "familiesDenied.txt", Collections.singletonList("BSD-3"));
-        execLicenseFamiliesDeniedTest(Arg.FAMILIES_DENIED_FILE.find("license-families-denied-file"),
-                new String[]{outputFile.getAbsolutePath()});
+        Option option = Arg.FAMILIES_DENIED_FILE.find("license-families-denied-file");
+        File outputFile = FileUtils.writeFile(configureRatDir(option), "familiesDenied.txt", Collections.singletonList("BSD-3"));
+        execLicenseFamiliesDeniedTest(option, new String[]{outputFile.getAbsolutePath()});
     }
 
     @OptionCollectionTest.TestFunction
@@ -707,12 +693,11 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
 
 
     private void configTest(final Option option) {
-        try {
+        assertDoesNotThrow(() -> {
             configureSourceDir(option);
             String[] args = {
                     Resources.getResourceFile("OptionTools/One.xml").getAbsolutePath(),
                     Resources.getResourceFile("OptionTools/Two.xml").getAbsolutePath()};
-
             Pair<Option, String[]> arg1 = ImmutablePair.of(option, args);
 
             writeFile("bsd.txt", "SPDX-License-Identifier: BSD-3-Clause");
@@ -741,9 +726,7 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
             assertThat(claimStatistic.getCounter(ClaimStatistic.Counter.APPROVED)).isEqualTo(1);
             assertThat(claimStatistic.getCounter(ClaimStatistic.Counter.UNAPPROVED)).isEqualTo(1);
 
-        } catch (IOException | RatException e) {
-            fail(e.getMessage(), e);
-        }
+        });
     }
 
     @OptionCollectionTest.TestFunction
@@ -760,7 +743,7 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
     protected void execLicensesApprovedTest(final Option option, String[] args) {
         Pair<Option, String[]> arg1 = ImmutablePair.of(option, args);
 
-        try {
+        assertDoesNotThrow(() -> {
             configureSourceDir(option);
 
             writeFile("gpl.txt", "SPDX-License-Identifier: GPL-1.0-only");
@@ -779,18 +762,15 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
             assertThat(claimStatistic.getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(2);
             assertThat(claimStatistic.getCounter(ClaimStatistic.Counter.APPROVED)).isEqualTo(2);
             assertThat(claimStatistic.getCounter(ClaimStatistic.Counter.UNAPPROVED)).isEqualTo(0);
-
-
-        } catch (IOException | RatException e) {
-            fail(e.getMessage(), e);
-        }
+        });
     }
 
     @OptionCollectionTest.TestFunction
     protected void licensesApprovedFileTest() {
-        File outputFile = FileUtils.writeFile(baseDir, "licensesApproved.txt", Collections.singletonList("GPL1"));
-        execLicensesApprovedTest(Arg.LICENSES_APPROVED_FILE.find("licenses-approved-file"),
-                new String[]{outputFile.getAbsolutePath()});
+        Option option = Arg.LICENSES_APPROVED_FILE.find("licenses-approved-file");
+        File ratDir = configureRatDir(option);
+                File outputFile = FileUtils.writeFile(ratDir, "licensesApproved.txt", Collections.singletonList("GPL1"));
+        execLicensesApprovedTest(option, new String[]{outputFile.getAbsolutePath()});
     }
 
     @OptionCollectionTest.TestFunction
@@ -804,7 +784,7 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
         Option option = Arg.INCLUDE_STD.find("scan-hidden-directories");
         Pair<Option, String[]> arg1 = ImmutablePair.of(option, null);
 
-        try {
+        assertDoesNotThrow(() -> {
             configureSourceDir(option);
 
             writeFile("apl.txt", "SPDX-License-Identifier: Apache-2.0");
@@ -826,13 +806,11 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
             assertThat(claimStatistic.getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(2);
             assertThat(claimStatistic.getCounter(ClaimStatistic.Counter.APPROVED)).isEqualTo(1);
             assertThat(claimStatistic.getCounter(ClaimStatistic.Counter.UNAPPROVED)).isEqualTo(1);
-        } catch (IOException | RatException e) {
-            fail(e.getMessage(), e);
-        }
+        });
     }
 
     private void outTest(final Option option) {
-        try {
+        assertDoesNotThrow(() -> {
             configureSourceDir(option);
             writeFile("apl.txt", "SPDX-License-Identifier: Apache-2.0");
             File outFile = new File(sourceDir, "outexample");
@@ -849,10 +827,7 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
             String actualText = TextUtils.readFile(outFile);
             TextUtils.assertContainsExactly(1, "Apache License 2.0: 1 ", actualText);
             TextUtils.assertContainsExactly(1, "STANDARD: 1 ", actualText);
-
-        } catch (IOException | RatException e) {
-            fail(e.getMessage(), e);
-        }
+        });
     }
 
     @OptionCollectionTest.TestFunction
@@ -1006,7 +981,7 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
         XPath xPath = XPathFactory.newInstance().newXPath();
         String[] args = {null};
 
-        try {
+        assertDoesNotThrow(() -> {
             configureSourceDir(option);
             File outFile = new File(sourceDir, "out.xml");
             FileUtils.delete(outFile);
@@ -1035,10 +1010,7 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
                         throw new IllegalArgumentException("Unexpected filter: " + filter);
                 }
             }
-        } catch (IOException | RatException | SAXException |
-                 XPathExpressionException e) {
-            fail(e.getMessage(), e);
-        }
+        });
     }
 
     @OptionCollectionTest.TestFunction
@@ -1055,7 +1027,7 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
         XPath xPath = XPathFactory.newInstance().newXPath();
         String[] args = {null};
 
-        try {
+        assertDoesNotThrow(() -> {
             configureSourceDir(option);
             File outFile = new File(sourceDir, "out.xml");
             FileUtils.delete(outFile);
@@ -1084,10 +1056,7 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
                         throw new IllegalArgumentException("Unexpected filter: " + filter);
                 }
             }
-        } catch (IOException | RatException | SAXException |
-                 XPathExpressionException e) {
-            fail(e.getMessage(), e);
-        }
+        });
     }
 
     @OptionCollectionTest.TestFunction
@@ -1104,7 +1073,7 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
         XPath xPath = XPathFactory.newInstance().newXPath();
         String[] args = {null};
 
-        try {
+        assertDoesNotThrow(() -> {
             configureSourceDir(option);
             File outFile = new File(sourceDir, "out.xml");
             FileUtils.delete(outFile);
@@ -1142,10 +1111,7 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
                         throw new IllegalArgumentException("Unexpected processing " + proc);
                 }
             }
-        } catch (IOException | RatException | SAXException |
-                 XPathExpressionException e) {
-            fail(e.getMessage(), e);
-        }
+        });
     }
 
     @OptionCollectionTest.TestFunction
@@ -1157,7 +1123,7 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
         XPath xPath = XPathFactory.newInstance().newXPath();
         String[] args = {null};
 
-        try {
+        assertDoesNotThrow(() -> {
             configureSourceDir(option);
             File outFile = new File(sourceDir, "out.xml");
             ImmutablePair<Option, String[]> outputFile = ImmutablePair.of(Arg.OUTPUT_FILE.option(), new String[]{outFile.getAbsolutePath()});
@@ -1197,10 +1163,7 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
                         throw new IllegalArgumentException("Unexpected processing " + proc);
                 }
             }
-        } catch (IOException | RatException | SAXException |
-                 XPathExpressionException e) {
-            fail(e.getMessage(), e);
-        }
+        });
     }
 
     @OptionCollectionTest.TestFunction
@@ -1213,12 +1176,13 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
         Pair<Option, String[]> arg1 = ImmutablePair.of(option, new String[]{myCopyright});
         final boolean forced = Arg.EDIT_OVERWRITE.option().equals(extraOption);
         final boolean dryRun = Arg.DRY_RUN.option().equals(extraOption);
-        Pair<Option, String[]> extraArg = null;
-        if (forced || dryRun) {
-            extraArg = ImmutablePair.of(extraOption, null);
-        }
 
-        try {
+        assertDoesNotThrow(() -> {
+            Pair<Option, String[]> extraArg = null;
+            if (forced || dryRun) {
+                extraArg = ImmutablePair.of(extraOption, null);
+            }
+
             configureSourceDir(option);
             File javaFile = writeFile("Missing.java", Arrays.asList("/* no license */\n\n", "class Test {}\n"));
             File newJavaFile = new File(sourceDir, "Missing.java.new");
@@ -1247,9 +1211,7 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
                 TextUtils.assertNotContains(myCopyright, actualText);
                 assertThat(newJavaFile).exists();
             }
-        } catch (IOException | RatException e) {
-            fail(e.getMessage(), e);
-        }
+        });
     }
 
     @OptionCollectionTest.TestFunction

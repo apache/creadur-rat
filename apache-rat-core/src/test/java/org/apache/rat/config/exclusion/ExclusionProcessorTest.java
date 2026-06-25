@@ -30,7 +30,6 @@ import org.junit.jupiter.api.io.TempDir;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -44,11 +43,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.apache.rat.document.FSInfoTest.OSX;
 import static org.apache.rat.document.FSInfoTest.UNIX;
 import static org.apache.rat.document.FSInfoTest.WINDOWS;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class ExclusionProcessorTest {
-
-    final private static DocumentNameMatcher TRUE = DocumentNameMatcher.MATCHES_ALL;
-    final private static DocumentNameMatcher FALSE = DocumentNameMatcher.MATCHES_NONE;
 
     @TempDir
     private static Path tempDir;
@@ -70,10 +67,12 @@ public class ExclusionProcessorTest {
         String fn = result.localized(FileSystems.getDefault().getSeparator());
         File file = tempDir.resolve(fn.substring(1)).toFile();
         File parent = file.getParentFile();
-        if (parent.exists() && !parent.isDirectory()) {
-            parent.delete();
+        if (parent.exists() && !parent.isDirectory() && !parent.delete()) {
+            fail(() -> "Unable to delete parent: " + parent);
         }
-        parent.mkdirs();
+        if (!parent.exists() && !parent.mkdirs()) {
+            fail((() -> "Unable to create parent: " + parent));
+        }
         if (file.exists()) {
             if (file.isDirectory()) {
                 FileUtils.deleteDirectory(file);
@@ -81,7 +80,9 @@ public class ExclusionProcessorTest {
                 FileUtils.delete(file);
             }
         }
-        file.createNewFile();
+        if (!file.createNewFile()) {
+            fail(() -> "Unable to create file: " + file);
+        }
         Mockito.when(mocked.asFile()).thenReturn(file);
         return mocked;
     }
@@ -244,34 +245,6 @@ public class ExclusionProcessorTest {
         expectedMap.put("a/b/foo/x", false);
         expectedMap.put("a/b/foo/x/y",false);
         assertExclusions(basedir, "**/foo/**", expectedMap);
-    }
-
-    @ParameterizedTest
-    @MethodSource("getDocumentNames")
-    void orTest(DocumentName basedir) {
-        ExclusionProcessor underTest = new ExclusionProcessor();
-        assertThat(DocumentNameMatcher.or(Arrays.asList(TRUE, FALSE)).matches(basedir)).isTrue();
-        assertThat(DocumentNameMatcher.or(Arrays.asList(FALSE, TRUE)).matches(basedir)).isTrue();
-        assertThat(DocumentNameMatcher.or(Arrays.asList(TRUE, TRUE)).matches(basedir)).isTrue();
-        assertThat(DocumentNameMatcher.or(Arrays.asList(FALSE, FALSE)).matches(basedir)).isFalse();
-    }
-
-    @ParameterizedTest
-    @MethodSource("getDocumentNames")
-    void andTest(DocumentName basedir) {
-        ExclusionProcessor underTest = new ExclusionProcessor();
-        assertThat(DocumentNameMatcher.and(TRUE, FALSE).matches(basedir)).isFalse();
-        assertThat(DocumentNameMatcher.and(FALSE, TRUE).matches(basedir)).isFalse();
-        assertThat(DocumentNameMatcher.and(TRUE, TRUE).matches(basedir)).isTrue();
-        assertThat(DocumentNameMatcher.and(FALSE, FALSE).matches(basedir)).isFalse();
-    }
-
-    @ParameterizedTest
-    @MethodSource("getDocumentNames")
-    void notTest(DocumentName basedir) {
-        ExclusionProcessor underTest = new ExclusionProcessor();
-        assertThat(DocumentNameMatcher.not(TRUE).matches(basedir)).isFalse();
-        assertThat(DocumentNameMatcher.not(FALSE).matches(basedir)).isTrue();
     }
 
     private static Stream<Arguments> getDocumentNames() {

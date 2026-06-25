@@ -18,9 +18,8 @@
  */
 package org.apache.rat.commandline;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.Arrays;
+import java.util.Optional;
 
 import org.apache.commons.cli.Converter;
 import org.apache.commons.lang3.tuple.Pair;
@@ -73,14 +72,15 @@ public final class Converters {
     /**
      * A converter that can handle relative or absolute files.
      */
-    public static final class FileConverter implements Converter<File, NullPointerException> {
+    public static final class FileConverter implements Converter<DocumentName, NullPointerException> {
         /** The working directory to resolve relative files against. */
         private DocumentName workingDirectory;
 
         /**
          * The constructor.
+         * visible for testing
          */
-        private FileConverter() {
+        FileConverter() {
             // private construction only.
         }
 
@@ -95,24 +95,27 @@ public final class Converters {
         /**
          * Applies the conversion function to the specified file name.
          * @param fileName the file name to create a file from.
-         * @return a File.
+         * @return the DocumentName
          * @throws NullPointerException if {@code fileName} is null.
          */
-        public File apply(final String fileName) throws NullPointerException {
-            File file = new File(fileName);
-            // is this a relative file?
-            if (!fileName.startsWith(File.separator)) {
-                // check for a root provided (e.g. C:\\)"
-                if (!DocumentName.FSInfo.getDefault().rootFor(fileName).isPresent()) {
-                    // no root, resolve against workingDirectory
-                    file = new File(workingDirectory.resolve(fileName).getName()).getAbsoluteFile();
+        public DocumentName apply(final String fileName) throws NullPointerException {
+            DocumentName.FSInfo fsInfo = workingDirectory.fsInfo();
+            DocumentName.Builder builder = DocumentName.builder(fsInfo);
+            String normalizedFileName = fsInfo.normalize(fileName.trim());
+
+            Optional<String> root = fsInfo.rootFor(normalizedFileName);
+            builder.setRoot(root.orElse(workingDirectory.getRoot()));
+            if (fsInfo.startsWithRootOrSeparator(normalizedFileName)) {
+                if (normalizedFileName.startsWith(workingDirectory.getName()) ||
+                        normalizedFileName.startsWith(workingDirectory.getName().substring(workingDirectory.getRoot().length()))) {
+                    builder.setBaseName(workingDirectory.getBaseDocumentName());
+                } else {
+                    builder.setBaseName(fsInfo.dirSeparator());
                 }
+            } else {
+                builder.setBaseName(workingDirectory);
             }
-            try {
-                return file.getCanonicalFile();
-            } catch (IOException e) {
-                return file.getAbsoluteFile();
-            }
+            return  builder.setName(normalizedFileName).build();
         }
     }
 }

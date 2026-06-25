@@ -132,13 +132,13 @@ public enum Arg {
             .addOption(Option.builder().longOpt("config").hasArgs().argName("File")
                     .desc("File names for system configuration.")
                     .converter(Converters.FILE_CONVERTER)
-                    .type(File.class)
+                    .type(DocumentName.class)
                     .build())
             .addOption(Option.builder().longOpt("licenses").hasArgs().argName("File")
                     .desc("File names for system configuration.")
                     .deprecated(DeprecatedAttributes.builder().setSince("0.17").setForRemoval(true).setDescription(StdMsgs.useMsg("--config")).get())
                     .converter(Converters.FILE_CONVERTER)
-                    .type(File.class)
+                    .type(DocumentName.class)
                     .build()),
             Arg::doNotExecute
     ),
@@ -177,7 +177,7 @@ public enum Arg {
     LICENSES_APPROVED_FILE(new OptionGroup().addOption(Option.builder().longOpt("licenses-approved-file").hasArg().argName("File")
             .desc("Name of file containing comma separated lists of approved License IDs.")
             .converter(Converters.FILE_CONVERTER)
-            .type(File.class)
+            .type(DocumentName.class)
             .build()),
             (context, selected) ->
                     context.getConfiguration().addApprovedLicenseIds(processArrayFile(context, selected))),
@@ -198,7 +198,7 @@ public enum Arg {
     FAMILIES_APPROVED_FILE(new OptionGroup().addOption(Option.builder().longOpt("license-families-approved-file").hasArg().argName("File")
             .desc("Name of file containing comma separated lists of approved family IDs.")
             .converter(Converters.FILE_CONVERTER)
-            .type(File.class)
+            .type(DocumentName.class)
             .build()),
             (context, selected) -> context.getConfiguration().addApprovedLicenseCategories(processArrayFile(context, selected))
     ),
@@ -247,7 +247,7 @@ public enum Arg {
             .desc("Name of file containing comma separated lists of denied license IDs. " +
                     "These license families will be removed from the list of approved licenses. " +
                     "Once license families are removed they can not be added back.")
-            .type(File.class)
+            .type(DocumentName.class)
             .converter(Converters.FILE_CONVERTER)
             .build()),
             (context, selected) -> context.getConfiguration().removeApprovedLicenseCategories(processArrayFile(context, selected))),
@@ -294,12 +294,12 @@ public enum Arg {
                             "File names that do not start with '/' are relative to the directory where the " +
                             "argument is located.")
                     .converter(Converters.FILE_CONVERTER)
-                    .type(File.class)
+                    .type(DocumentName.class)
                     .build()),
             (context, selected) -> {
-                File[] files = getParsedOptionValues(selected, context.getCommandLine());
-                for (File f : files) {
-                    context.getConfiguration().addSource(f);
+                DocumentName[] documentNames = getParsedOptionValues(selected, context.getCommandLine());
+                for (DocumentName documentName : documentNames) {
+                    context.getConfiguration().addSource(documentName.asFile());
                 }
             }),
 
@@ -340,9 +340,9 @@ public enum Arg {
                     .build()),
             (context, selected) -> {
                 try {
-                    File excludeFileName = context.getCommandLine().getParsedOptionValue(selected);
+                    DocumentName excludeFileName = context.getCommandLine().getParsedOptionValue(selected);
                     if (excludeFileName != null) {
-                        context.getConfiguration().addExcludedPatterns(ExclusionUtils.asIterable(excludeFileName, "#"));
+                        context.getConfiguration().addExcludedPatterns(ExclusionUtils.asIterable(excludeFileName.asFile(), "#"));
                     }
                 } catch (Exception e) {
                     throw ConfigurationException.from(e);
@@ -422,9 +422,9 @@ public enum Arg {
                     .build()),
             (context, selected) -> {
                 try {
-                    File includeFileName = context.getCommandLine().getParsedOptionValue(selected);
+                    DocumentName includeFileName = context.getCommandLine().getParsedOptionValue(selected);
                     if (includeFileName != null) {
-                        context.getConfiguration().addIncludedPatterns(ExclusionUtils.asIterable(includeFileName, "#"));
+                        context.getConfiguration().addIncludedPatterns(ExclusionUtils.asIterable(includeFileName.asFile(), "#"));
                     }
                 } catch (Exception e) {
                     throw ConfigurationException.from(e);
@@ -605,22 +605,23 @@ public enum Arg {
             .addOption(Option.builder().option("o").longOpt("out").hasArg().argName("File")
                     .desc("Define the output file where to write a report to.")
                     .deprecated(DeprecatedAttributes.builder().setSince("0.17").setForRemoval(true).setDescription(StdMsgs.useMsg("--output-file")).get())
-                    .type(File.class)
+                    .type(DocumentName.class)
                     .converter(Converters.FILE_CONVERTER)
                     .build())
             .addOption(Option.builder().longOpt("output-file").hasArg().argName("File")
                     .desc("Define the output file where to write a report to.")
-                    .type(File.class)
+                    .type(DocumentName.class)
                     .converter(Converters.FILE_CONVERTER)
                     .build()),
             (context, selected) -> {
                 try {
-                    File file = context.getCommandLine().getParsedOptionValue(selected);
-                    File parent = file.getParentFile();
+                    DocumentName documentName = context.getCommandLine().getParsedOptionValue(selected);
+                    File document = documentName.asFile();
+                    File parent = document.getParentFile();
                     if (!parent.mkdirs() && !parent.isDirectory()) {
-                        DefaultLog.getInstance().error("Could not create report parent directory " + file);
+                        DefaultLog.getInstance().error("Could not create report parent directory " + documentName);
                     }
-                    context.getConfiguration().setOut(file);
+                    context.getConfiguration().setOut(document);
                 } catch (ParseException e) {
                     // we write to system out by default.
                     context.logParseException(e, selected, "System.out");
@@ -821,7 +822,8 @@ public enum Arg {
      * @return Option as a file.
      */
     private static File commandLineFile(final ArgumentContext context, final Option selected) throws ParseException {
-        return context.getCommandLine().getParsedOptionValue(selected);
+        DocumentName documentName = context.getCommandLine().getParsedOptionValue(selected);
+        return documentName.asFile();
     }
 
     /**
@@ -859,9 +861,9 @@ public enum Arg {
 
         optionCollection.getSelected(CONFIGURATION).ifPresent(
                 selected -> {
-                    File[] files = getParsedOptionValues(selected, context.getCommandLine());
-                    for (File file : files) {
-                        defaultBuilder.add(file);
+                    DocumentName[] documentNames = getParsedOptionValues(selected, context.getCommandLine());
+                    for (DocumentName documentName : documentNames) {
+                        defaultBuilder.add(documentName.asFile());
                     }
                 });
         optionCollection.getSelected(CONFIGURATION_NO_DEFAULTS).ifPresent(selected -> {

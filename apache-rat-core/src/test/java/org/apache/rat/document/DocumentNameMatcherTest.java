@@ -18,21 +18,22 @@
  */
 package org.apache.rat.document;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Predicate;
 import org.apache.commons.io.filefilter.NameFileFilter;
 import org.apache.rat.config.exclusion.plexus.MatchPatterns;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.apache.rat.document.DocumentNameMatcher.MATCHES_ALL;
 import static org.apache.rat.document.DocumentNameMatcher.MATCHES_NONE;
 
 public class DocumentNameMatcherTest {
-
     private final static DocumentNameMatcher TRUE = new DocumentNameMatcher("T", (Predicate<DocumentName>)name -> true);
     private final static DocumentNameMatcher FALSE = new DocumentNameMatcher("F", (Predicate<DocumentName>)name -> false);
     private final static DocumentNameMatcher SOME = new DocumentNameMatcher("X", (Predicate<DocumentName>)name -> false);
-    private final static DocumentName testName = DocumentName.builder().setName("testName").setBaseName("/").build();
 
     public static String processDecompose(DocumentNameMatcher matcher, DocumentName candidate) {
         StringBuilder sb = new StringBuilder();
@@ -40,24 +41,35 @@ public class DocumentNameMatcherTest {
         return sb.toString();
     }
 
-    @Test
-    public void orTest() {
+    private static List<DocumentName> testDocuments() {
+        List<DocumentName> args = new ArrayList<>();
+        for (DocumentName.FSInfo fsInfo : FSInfoTest.TEST_SUITE) {
+            args.add(DocumentName.builder(fsInfo).setName("testName").setBaseName("/").build());
+        }
+        return args;
+    }
+
+    @ParameterizedTest
+    @MethodSource("testDocuments")
+    void orTest(DocumentName testName) {
         assertThat(DocumentNameMatcher.or(TRUE, FALSE).matches(testName)).as("T,F").isTrue();
         assertThat(DocumentNameMatcher.or(FALSE, TRUE).matches(testName)).as("F,T").isTrue();
         assertThat(DocumentNameMatcher.or(TRUE, TRUE).matches(testName)).as("T,T").isTrue();
         assertThat(DocumentNameMatcher.or(FALSE, FALSE).matches(testName)).as("F,F").isFalse();
     }
 
-    @Test
-    public void andTest() {
+    @ParameterizedTest
+    @MethodSource("testDocuments")
+    void andTest(DocumentName testName) {
         assertThat(DocumentNameMatcher.and(TRUE, FALSE).matches(testName)).as("T,F").isFalse();
         assertThat(DocumentNameMatcher.and(FALSE, TRUE).matches(testName)).as("F,T").isFalse();
         assertThat(DocumentNameMatcher.and(TRUE, TRUE).matches(testName)).as("T,T").isTrue();
         assertThat(DocumentNameMatcher.and(FALSE, FALSE).matches(testName)).as("F,F").isFalse();
     }
 
-    @Test
-    public void matcherSetTest() {
+    @ParameterizedTest
+    @MethodSource("testDocuments")
+    void matcherSetTest(DocumentName testName) {
         assertThat(DocumentNameMatcher.matcherSet(TRUE, FALSE).matches(testName)).as("T,F").isTrue();
         assertThat(DocumentNameMatcher.matcherSet(FALSE, TRUE).matches(testName)).as("F,T").isFalse();
         assertThat(DocumentNameMatcher.matcherSet(TRUE, TRUE).matches(testName)).as("T,T").isTrue();
@@ -76,8 +88,9 @@ public class DocumentNameMatcherTest {
         assertThat(DocumentNameMatcher.matcherSet(SOME, SOME).toString()).as("X,X").isEqualTo("matcherSet(X, X)");
     }
 
-    @Test
-    void testDecompose() {
+    @ParameterizedTest
+    @MethodSource("testDocuments")
+    void testDecompose(DocumentName testName) {
         DocumentNameMatcher matcher1 = new DocumentNameMatcher("FileFilterTest", new NameFileFilter("File.name"));
         String result = processDecompose(matcher1, testName);
         assertThat(result).contains("FileFilterTest: >>false<<").contains("  NameFileFilter(File.name)");

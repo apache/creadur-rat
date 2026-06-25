@@ -34,6 +34,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.WordUtils;
 import org.apache.rat.OptionCollection;
 import org.apache.rat.commandline.Arg;
+import org.apache.rat.document.DocumentName;
 import org.apache.rat.ui.ArgumentTracker;
 import org.apache.rat.ui.UIOptionCollection;
 import org.apache.rat.utils.CasedString;
@@ -49,7 +50,7 @@ public final class AntOptionCollection extends UIOptionCollection<AntOption> {
     private static final Map<String, String> RENAME_MAP;
 
     /**
-     * The format for an XML element
+     * The format for an XML element.
      */
     private static final String DEFAULT_XML = "<%1$s>%%s</%1$s>%n";
 
@@ -78,6 +79,7 @@ public final class AntOptionCollection extends UIOptionCollection<AntOption> {
         ATTRIBUTE_TYPES.add(Integer.class);
         ATTRIBUTE_TYPES.add(Long.class);
         ATTRIBUTE_TYPES.add(File.class);
+        ATTRIBUTE_TYPES.add(DocumentName.class);
     }
 
     public static Map<String, String> getRenameMap() {
