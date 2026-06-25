@@ -20,6 +20,7 @@ package org.apache.rat.config.exclusion;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -64,8 +65,10 @@ public class ExclusionProcessor {
     /** Standard collections that contribute to the exclusion procession */
     private final Set<StandardCollection> excludedCollections;
     /** The last generated PathMatcher */
+    // package private for testing
     private DocumentNameMatcher lastMatcher;
     /** The base dir for the last PathMatcher */
+    // package private for testing
     private DocumentName lastMatcherBaseDir;
 
     /**
@@ -85,6 +88,44 @@ public class ExclusionProcessor {
         return new Serde();
     }
 
+    /* the folloing set of methods are here for testing purposes */
+
+    Set<String> getExcludedPatterns() {
+        return new HashSet(excludedPatterns);
+    }
+
+    Collection<DocumentNameMatcher> getExcludedPaths() {
+        return new ArrayList(excludedPaths);
+    }
+
+    Set<String> getIncludedPatterns() {
+        return new HashSet<>(includedPatterns);
+    }
+
+    Collection<DocumentNameMatcher> getIncludedPaths() {
+        return new ArrayList(includedPaths);
+    }
+
+    Collection<StandardCollection> getFileProcessors() {
+        return new HashSet<>(fileProcessors);
+    }
+
+    Set<StandardCollection> getIncludedCollections() {
+        return new HashSet(includedCollections);
+    }
+
+    Set<StandardCollection> getExcludedCollections() {
+        return new HashSet(excludedCollections);
+    }
+
+    DocumentNameMatcher getLastMatcher() {
+        return lastMatcher;
+    }
+
+    DocumentName getLastMatcherBaseDir() {
+        return lastMatcherBaseDir;
+    };
+
     /**
      * Reset the {@link #lastMatcher} and {@link #lastMatcherBaseDir} to start again
      */
@@ -99,9 +140,11 @@ public class ExclusionProcessor {
      * @return this
      */
     public ExclusionProcessor addIncludedPatterns(final Iterable<String> patterns) {
-        DefaultLog.getInstance().debug(format("Including patterns: %s", String.join(", ", patterns)));
-        patterns.forEach(includedPatterns::add);
-        resetLastMatcher();
+        if (patterns != null) {
+            DefaultLog.getInstance().debug(format("Including patterns: %s", String.join(", ", patterns)));
+            patterns.forEach(includedPatterns::add);
+            resetLastMatcher();
+        }
         return this;
     }
 
@@ -152,9 +195,11 @@ public class ExclusionProcessor {
      * @return this
      */
     public ExclusionProcessor addExcludedPatterns(final Iterable<String> patterns) {
-        DefaultLog.getInstance().debug(format("Excluding patterns: %s", String.join(", ", patterns)));
-        patterns.forEach(excludedPatterns::add);
-        resetLastMatcher();
+        if (patterns != null) {
+            DefaultLog.getInstance().debug(format("Excluding patterns: %s", String.join(", ", patterns)));
+            patterns.forEach(excludedPatterns::add);
+            resetLastMatcher();
+        }
         return this;
     }
 
@@ -190,8 +235,10 @@ public class ExclusionProcessor {
         for (DocumentNameMatcher nameMatcher : excludedPaths) {
             appendable.append(format("Excluding %s.%n", nameMatcher.toString()));
         }
+        for (DocumentNameMatcher nameMatcher : includedPaths) {
+            appendable.append(format("Including %s.%n", nameMatcher.toString()));
+        }
     }
-
 
     /**
      * Excludes the files/directories specified by a StandardCollection.
@@ -417,7 +464,6 @@ public class ExclusionProcessor {
                     default:
                         throw new NotImplementedException("Deserialization for %s is not implemented", child.getNodeName());
                 }
-
             }
         }
     }

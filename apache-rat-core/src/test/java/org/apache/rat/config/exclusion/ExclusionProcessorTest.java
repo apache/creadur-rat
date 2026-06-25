@@ -18,6 +18,9 @@
  */
 package org.apache.rat.config.exclusion;
 
+import java.io.ByteArrayInputStream;
+import java.io.StringWriter;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -26,6 +29,11 @@ import java.util.stream.Stream;
 import org.apache.commons.io.FileUtils;
 import org.apache.rat.document.DocumentNameMatcher;
 import org.apache.rat.document.DocumentName;
+import org.apache.rat.report.xml.writer.XmlWriter;
+import org.apache.rat.testhelpers.TextUtils;
+import org.apache.rat.testhelpers.XmlUtils;
+import org.apache.rat.utils.StandardXmlFactory;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
 import java.io.File;
@@ -37,6 +45,8 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Mockito;
+import org.w3c.dom.Document;
+import org.xml.sax.SAXException;
 
 import static java.lang.String.format;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -263,5 +273,193 @@ public class ExclusionProcessorTest {
         lst.add(Arguments.of(builder.setBaseName(builder.directorySeparator()).build()));
 
         return lst.stream();
+    }
+
+    @Test
+    void addNullIncludedMatcherTest() {
+        ExclusionProcessor underTest = new ExclusionProcessor();
+        assertThat(underTest.getIncludedPaths()).isEmpty();
+                underTest.addIncludedMatcher(null);
+                assertThat(underTest.getIncludedPaths()).isEmpty();
+                underTest.addIncludedMatcher(DocumentNameMatcher.MATCHES_ALL)
+                        .addIncludedMatcher(null);
+        assertThat(underTest.getIncludedPaths()).hasSize(1);
+        List<String> actualPaths = underTest.getIncludedPaths().stream().map(DocumentNameMatcher::toString).toList();
+        assertThat(actualPaths).containsExactly(DocumentNameMatcher.MATCHES_ALL.toString());
+    }
+
+    @Test
+    void addNullExcludedMatcherTest() {
+        ExclusionProcessor underTest = new ExclusionProcessor();
+        assertThat(underTest.getExcludedPaths()).isEmpty();
+        underTest.addExcludedMatcher(null);
+        assertThat(underTest.getExcludedPaths()).isEmpty();
+        underTest.addExcludedMatcher(DocumentNameMatcher.MATCHES_ALL)
+                .addExcludedMatcher(null);
+        assertThat(underTest.getExcludedPaths()).hasSize(1);
+        List<String> actualPaths = underTest.getExcludedPaths().stream().map(DocumentNameMatcher::toString).toList();
+        assertThat(actualPaths).containsExactly(DocumentNameMatcher.MATCHES_ALL.toString());
+    }
+
+    @Test
+    void addFileProcessor() {
+        ExclusionProcessor underTest = new ExclusionProcessor();
+        assertThat(underTest.getFileProcessors()).isEmpty();
+        underTest.addFileProcessor(null);
+        assertThat(underTest.getFileProcessors()).isEmpty();
+        underTest.addFileProcessor(StandardCollection.HIDDEN_FILE)
+                .addFileProcessor(null);
+        assertThat(underTest.getFileProcessors()).containsExactly(StandardCollection.HIDDEN_FILE);
+    }
+
+    @Test
+    void addNullIncludedPatternTest() {
+        ExclusionProcessor underTest = new ExclusionProcessor();
+        assertThat(underTest.getIncludedPatterns()).isEmpty();
+        underTest.addIncludedPatterns(null);
+        assertThat(underTest.getIncludedPatterns()).isEmpty();
+        underTest.addIncludedPatterns(Collections.emptyList());
+        assertThat(underTest.getIncludedPatterns()).isEmpty();
+        underTest.addIncludedPatterns(List.of("hello/world"))
+        .addIncludedPatterns(null)
+                .addIncludedPatterns(Collections.emptyList());
+        assertThat(underTest.getIncludedPatterns()).containsExactly("hello/world");
+    }
+
+    @Test
+    void addNullExcludedPatternTest() {
+        ExclusionProcessor underTest = new ExclusionProcessor();
+        assertThat(underTest.getExcludedPatterns()).isEmpty();
+        underTest.addExcludedPatterns(null);
+        assertThat(underTest.getExcludedPatterns()).isEmpty();
+        underTest.addExcludedPatterns(Collections.emptyList());
+        assertThat(underTest.getExcludedPatterns()).isEmpty();
+        underTest.addExcludedPatterns(List.of("hello/world"))
+                .addExcludedPatterns(null)
+                .addExcludedPatterns(Collections.emptyList());
+        assertThat(underTest.getExcludedPatterns()).containsExactly("hello/world");
+    }
+
+    @ParameterizedTest
+    @MethodSource("serdeTestData")
+    void serdeTest(ExclusionProcessor underTest) throws IOException, SAXException {
+        StringWriter stringWriter = new StringWriter();
+        try (XmlWriter writer = new XmlWriter(stringWriter)) {
+            underTest.serde().serialize(writer);
+        }
+        Document document = StandardXmlFactory.documentBuilder().parse(new ByteArrayInputStream(stringWriter.toString().getBytes(StandardCharsets.UTF_8)));
+        ExclusionProcessor actual = new ExclusionProcessor();
+        actual.serde().deserialize(document.getElementsByTagName("ExclusionProcessor").item(0));
+        assertThat(actual.getExcludedCollections()).containsExactlyElementsOf(underTest.getExcludedCollections());
+        assertThat(actual.getFileProcessors()).containsExactlyElementsOf(underTest.getFileProcessors());
+        assertThat(actual.getIncludedCollections()).containsExactlyElementsOf(underTest.getIncludedCollections());
+        assertThat(actual.getExcludedPatterns()).containsExactlyElementsOf(underTest.getExcludedPatterns());
+        assertThat(actual.getIncludedPatterns()).containsExactlyElementsOf(underTest.getIncludedPatterns());
+
+        // paths only match on name.  deserialized paths are not functional.
+        List<String> actualPaths = actual.getExcludedPaths().stream().map(DocumentNameMatcher::toString).toList();
+        List<String> expectedPaths = underTest.getExcludedPaths().stream().map(DocumentNameMatcher::toString).toList();
+        assertThat(actualPaths).as("excluded paths").containsExactlyElementsOf(expectedPaths);
+
+        actualPaths = actual.getIncludedPaths().stream().map(DocumentNameMatcher::toString).toList();
+        expectedPaths = underTest.getIncludedPaths().stream().map(DocumentNameMatcher::toString).toList();
+        assertThat(actualPaths).as("included paths").containsExactlyElementsOf(expectedPaths);
+    }
+
+    static List<ExclusionProcessor> serdeTestData() {
+        List<ExclusionProcessor> tests = new ArrayList<>();
+        tests.add(new ExclusionProcessor());
+
+        // single exclusions
+        tests.add(new ExclusionProcessor()
+        .addExcludedPatterns(List.of("pattern/**")));
+
+        tests.add(new ExclusionProcessor()
+       .addExcludedCollection(StandardCollection.BAZAAR));
+
+
+        tests.add(new ExclusionProcessor()
+        .addExcludedMatcher(DocumentNameMatcher.MATCHES_ALL));
+
+        // single inclusions
+        tests.add(new ExclusionProcessor()
+        .addIncludedPatterns(List.of("pattern/**")));
+
+        tests.add(new ExclusionProcessor()
+        .addIncludedCollection(StandardCollection.BAZAAR));
+
+        tests.add(new ExclusionProcessor()
+        .addIncludedMatcher(DocumentNameMatcher.MATCHES_NONE));
+
+        // full population
+        tests.add(new ExclusionProcessor()
+        .addExcludedPatterns(List.of("pattern/**", "pattern2/**"))
+        .addExcludedCollection(StandardCollection.BAZAAR)
+        .addExcludedCollection(StandardCollection.MISC)
+        .addExcludedMatcher(DocumentNameMatcher.MATCHES_ALL)
+        .addIncludedPatterns(List.of("**/pattern3", "**/pattern4"))
+                .addIncludedCollection(StandardCollection.ARCH)
+                .addIncludedCollection(StandardCollection.BITKEEPER)
+        .addIncludedMatcher(DocumentNameMatcher.MATCHES_NONE));
+
+        return tests;
+    }
+
+    @Test
+    void reportExclusionsTest() throws IOException, SAXException {
+        ExclusionProcessor underTest = new ExclusionProcessor()
+                .addExcludedPatterns(List.of("pattern/**", "pattern2/**"))
+                .addExcludedCollection(StandardCollection.BAZAAR)
+                .addExcludedCollection(StandardCollection.MISC)
+                .addFileProcessor(StandardCollection.HIDDEN_FILE)
+                .addExcludedMatcher(DocumentNameMatcher.MATCHES_ALL)
+                .addIncludedPatterns(List.of("**/pattern3", "**/pattern4"))
+                .addIncludedCollection(StandardCollection.ARCH)
+                .addIncludedCollection(StandardCollection.BITKEEPER)
+                .addIncludedMatcher(DocumentNameMatcher.MATCHES_NONE);
+
+        StringWriter writer = new StringWriter();
+        underTest.reportExclusions(writer);
+        String actual = writer.toString();
+
+        TextUtils.assertPatternInTarget("Excluding patterns:[^$]+\\Qpattern/**\\E", actual);
+        TextUtils.assertPatternInTarget("Excluding patterns:[^$]+\\Qpattern2/**\\E", actual);
+        TextUtils.assertPatternInTarget("Including patterns:[^$]+\\Q**/pattern3\\E", actual);
+        TextUtils.assertPatternInTarget("Including patterns:[^$]+\\Q**/pattern4\\E", actual);
+        assertThat(actual).contains("Excluding " + StandardCollection.BAZAAR + " collection.");
+        assertThat(actual).contains("Excluding " + StandardCollection.MISC + " collection.");
+        assertThat(actual).contains("Including " + StandardCollection.ARCH + " collection.");
+        assertThat(actual).contains("Including " + StandardCollection.BITKEEPER + " collection.");
+        assertThat(actual).contains("Processing exclude file from " + StandardCollection.HIDDEN_FILE);
+        assertThat(actual).contains("Excluding " + DocumentNameMatcher.MATCHES_ALL + ".");
+        assertThat(actual).contains("Including " + DocumentNameMatcher.MATCHES_NONE + ".");
+    }
+
+    @Test
+    void getNameMatcherTest() {
+        ExclusionProcessor underTest = new ExclusionProcessor()
+                .addExcludedPatterns(List.of("pattern/**", "pattern2/**"))
+                .addExcludedCollection(StandardCollection.BAZAAR)
+                .addExcludedCollection(StandardCollection.MISC)
+                .addFileProcessor(StandardCollection.HIDDEN_FILE)
+                .addExcludedMatcher(DocumentNameMatcher.MATCHES_ALL)
+                .addIncludedPatterns(List.of("**/pattern3", "**/pattern4"))
+                .addIncludedCollection(StandardCollection.ARCH)
+                .addIncludedCollection(StandardCollection.BITKEEPER)
+                .addIncludedMatcher(DocumentNameMatcher.MATCHES_NONE);
+
+        assertThat(underTest.getLastMatcherBaseDir()).isNull();
+        assertThat(underTest.getLastMatcher()).isNull();
+        DocumentName base = DocumentName.builder(new File(".")).build();
+
+        DocumentNameMatcher matcher = underTest.getNameMatcher(base);
+        assertThat(underTest.getLastMatcherBaseDir()).isEqualTo(base);
+        assertThat(underTest.getLastMatcher()).isEqualTo(matcher);
+
+        DocumentNameMatcher matcher2 = underTest.getNameMatcher(base);
+        assertThat(underTest.getLastMatcherBaseDir()).isEqualTo(base);
+        assertThat(underTest.getLastMatcher()).isEqualTo(matcher);
+        assertThat(underTest.getLastMatcherBaseDir()).isEqualTo(base);
+        assertThat(matcher2).isEqualTo(matcher);
     }
 }
