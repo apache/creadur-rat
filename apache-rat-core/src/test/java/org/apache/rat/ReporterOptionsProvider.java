@@ -251,7 +251,6 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
                     "*/\n\n", "class Test {}\n"));
 
             validateNoArgSetup();
-
             ReportConfiguration config = generateConfig(ImmutablePair.of(option, null));
             Reporter reporter = new Reporter(config);
             assertThatThrownBy(reporter::execute)
