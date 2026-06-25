@@ -68,6 +68,7 @@ import org.w3c.dom.Document;
 
 import static org.apache.rat.commandline.Arg.HELP_LICENSES;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Fail.fail;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
@@ -250,17 +251,11 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
                     "*/\n\n", "class Test {}\n"));
 
             validateNoArgSetup();
-
             ReportConfiguration config = generateConfig(ImmutablePair.of(option, null));
             Reporter reporter = new Reporter(config);
-            try {
-                reporter.execute();
-                fail("Should have thrown exception");
-            } catch (RatException e) {
-                ClaimStatistic claimStatistic = reporter.getClaimsStatistic();
-                ClaimValidator validator = config.getClaimValidator();
-                assertThat(validator.listIssues(claimStatistic)).containsExactlyInAnyOrder("DOCUMENT_TYPES", "LICENSE_CATEGORIES", "LICENSE_NAMES", "STANDARDS");
-            }
+            assertThatThrownBy(reporter::execute)
+                    .isInstanceOf(RatException.class)
+                            .hasMessageContaining("At least one license must be defined");
         });
     }
 
