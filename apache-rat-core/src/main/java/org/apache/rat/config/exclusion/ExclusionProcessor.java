@@ -65,8 +65,10 @@ public class ExclusionProcessor {
     /** Standard collections that contribute to the exclusion procession */
     private final Set<StandardCollection> excludedCollections;
     /** The last generated PathMatcher */
+    // package private for testing
     private DocumentNameMatcher lastMatcher;
     /** The base dir for the last PathMatcher */
+    // package private for testing
     private DocumentName lastMatcherBaseDir;
 
     /**
@@ -138,9 +140,9 @@ public class ExclusionProcessor {
      */
     public ExclusionProcessor addIncludedPatterns(final Iterable<String> patterns) {
         if (patterns != null) {
-        DefaultLog.getInstance().debug(format("Including patterns: %s", String.join(", ", patterns)));
-        patterns.forEach(includedPatterns::add);
-        resetLastMatcher();
+            DefaultLog.getInstance().debug(format("Including patterns: %s", String.join(", ", patterns)));
+            patterns.forEach(includedPatterns::add);
+            resetLastMatcher();
         }
         return this;
     }
@@ -193,9 +195,9 @@ public class ExclusionProcessor {
      */
     public ExclusionProcessor addExcludedPatterns(final Iterable<String> patterns) {
         if (patterns != null) {
-        DefaultLog.getInstance().debug(format("Excluding patterns: %s", String.join(", ", patterns)));
-        patterns.forEach(excludedPatterns::add);
-        resetLastMatcher();
+            DefaultLog.getInstance().debug(format("Excluding patterns: %s", String.join(", ", patterns)));
+            patterns.forEach(excludedPatterns::add);
+            resetLastMatcher();
         }
         return this;
     }
