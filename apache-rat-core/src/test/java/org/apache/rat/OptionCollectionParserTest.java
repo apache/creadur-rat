@@ -20,6 +20,7 @@ package org.apache.rat;
 
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.ParseException;
+import org.apache.rat.api.RatException;
 import org.apache.rat.commandline.ArgumentContext;
 import org.apache.rat.ui.UIOption;
 import org.apache.rat.ui.UIOptionCollection;
@@ -42,7 +43,7 @@ class OptionCollectionParserTest {
     private final OptionCollectionParser underTest = new OptionCollectionParser(optionCollection);
 
     @Test
-    void parseCommands() throws IOException, ParseException {
+    void parseCommands() throws RatException {
         String[] args = {"arg1", "arg2"};
         ArgumentContext ctxt = underTest.parseCommands(testPath.toFile(), args);
         assertThat(ctxt.getCommandLine().getArgList()).containsExactly(args);

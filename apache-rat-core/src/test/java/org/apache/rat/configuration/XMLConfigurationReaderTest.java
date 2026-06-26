@@ -68,7 +68,7 @@ public class XMLConfigurationReaderTest {
     }
 
     @Test
-    public void LicensesTest() throws URISyntaxException {
+    void LicensesTest() throws URISyntaxException {
         XMLConfigurationReader reader = new XMLConfigurationReader();
         URL url = XMLConfigurationReaderTest.class.getResource("/org/apache/rat/default.xml");
         reader.read(url.toURI());

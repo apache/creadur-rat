@@ -19,6 +19,7 @@
 package org.apache.rat.test;
 
 import java.io.FileWriter;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import org.apache.commons.cli.Option;
@@ -820,12 +821,12 @@ public abstract class AbstractConfigurationOptionsProvider extends AbstractOptio
                 ReportConfiguration config = generateConfig(ImmutablePair.of(option, args));
                 try (InputStream expected = StyleSheets.getStyleSheet(sheet).ioSupplier().get();
                      InputStream actual = config.getStyleSheet().get()) {
-                    String expectedStr =  IOUtils.toString(expected);
-                    String actualStr =  IOUtils.toString(actual);
-                    assertThat(actualStr).isEqualTo(expectedStr).as(() -> String.format("'%s' does not match '%s': %s != %s",
+                    String expectedStr =  IOUtils.toString(expected, StandardCharsets.UTF_8);
+                    String actualStr =  IOUtils.toString(actual, StandardCharsets.UTF_8);
+                    assertThat(actualStr).as(() -> String.format("'%s' does not match '%s': %s != %s",
                             config.getStyleSheetDescriptor().name(),
                             expectedName.getName(),
-                            actualStr, expectedStr));
+                            actualStr, expectedStr)).isEqualTo(expectedStr);
                 }
             }
         });
