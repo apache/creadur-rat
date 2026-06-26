@@ -29,8 +29,8 @@ import org.apache.rat.config.exclusion.ExclusionUtils;
 import org.apache.rat.document.DocumentName;
 import org.apache.rat.document.DocumentNameMatcher;
 import org.apache.rat.document.FileDocument;
-import org.apache.rat.report.Reportable;
 import org.apache.rat.report.RatReport;
+import org.apache.rat.report.Reportable;
 import org.apache.rat.utils.DefaultLog;
 
 /**

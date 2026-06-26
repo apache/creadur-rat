@@ -29,12 +29,9 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.io.function.IOSupplier;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.rat.ConfigurationException;
 import org.apache.rat.api.Document;
 import org.apache.rat.configuration.XMLConfigurationReader;
 import org.apache.rat.report.xml.writer.XmlWriter;
@@ -324,9 +321,16 @@ public class ClaimStatistic {
      * Serialze and deserialze the claim Statistic.
      */
     public class Serde {
+        /** The count attribute string */
         private static final String COUNT = "count";
+        /** the name attribute string */
         private static final String NAME = "name";
 
+        /**
+         * Serializes the claim statistic into an appendable.
+         * @param appendable the appendable to write to
+         * @throws IOException on error.
+         */
         public void serialize(final Appendable appendable) throws IOException {
             try (XmlWriter writer = new XmlWriter(appendable)) {
                 writer.startDocument().startElement("ClaimStatistic")
@@ -369,6 +373,11 @@ public class ClaimStatistic {
             }
         }
 
+        /**
+         * Deserializes a ClaimStatistic from an input stream.
+         * @param inputStreamSupplier the supplier of the input stream to deserialize from.
+         * @throws IOException on error.
+         */
         public void deserialize(final IOSupplier<InputStream> inputStreamSupplier) throws IOException {
             DocumentBuilder builder = StandardXmlFactory.documentBuilder();
             org.w3c.dom.Document document;

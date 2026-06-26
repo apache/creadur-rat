@@ -24,8 +24,8 @@ import java.util.Objects;
 
 import org.apache.rat.api.RatException;
 import org.apache.rat.document.DocumentName;
-import org.apache.rat.report.Reportable;
 import org.apache.rat.report.RatReport;
+import org.apache.rat.report.Reportable;
 import org.apache.rat.utils.DefaultLog;
 
 /**

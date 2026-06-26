@@ -397,10 +397,20 @@ public class ExclusionProcessor {
         }
     }
 
+    /**
+     * Serializes and deserializes the ExclusionProcessor to XML document
+     */
     public class Serde {
-        private final static String PATTERN = "pattern";
-        private final static String NAME = "name";
+        /** The pattern attribute name */
+        private static final String PATTERN = "pattern";
+        /** THe name attribute name */
+        private static final String NAME = "name";
 
+        /**
+         * Serialize the ExclusionProcessor to XML writer.
+         * @param writer the writer to serialize to.
+         * @throws IOException on Error
+         */
         public void serialize(final XmlWriter writer) throws IOException {
             writer.startElement("ExclusionProcessor");
 
@@ -431,8 +441,12 @@ public class ExclusionProcessor {
 
         }
 
-        public void deserialize(final Node n) {
-            final NodeList children = n.getChildNodes();
+        /**
+         * Deserialize from XML Document node to ExclusionProcessor
+         * @param xmlNode the node to deserialize from.
+         */
+        public void deserialize(final Node xmlNode) {
+            final NodeList children = xmlNode.getChildNodes();
             for (int i = 0; i < children.getLength(); i++) {
                 Node child = children.item(i);
                 Map<String, String> attributes = XMLConfigurationReader.attributes(child);
