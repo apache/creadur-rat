@@ -249,13 +249,7 @@ public class Reporter {
             }
             @SuppressFBWarnings("XXE_DOCUMENT")
             public Builder document(final String fileName, final DocumentName workingDirectory) {
-                DocumentBuilder builder;
-                try {
-                    builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-                } catch (ParserConfigurationException e) {
-                    throw new ConfigurationException("Unable to create DOM builder", e);
-                }
-
+                DocumentBuilder builder = StandardXmlFactory.documentBuilder();
                 File inputFile = workingDirectory.resolve(fileName).asFile();
                 try (InputStream inputStream = new FileInputStream(inputFile)) {
                     this.document = builder.parse(inputStream);
@@ -277,9 +271,9 @@ public class Reporter {
             public Builder statistic(final String fileName, final DocumentName workingDirectory) {
                 File sourceFile = workingDirectory.resolve(fileName).asFile();
                 try {
-                    ClaimStatistic statistic = new ClaimStatistic();
-                    statistic.serde().deserialize(() -> new FileInputStream(sourceFile));
-                    this.statistic = statistic;
+                    ClaimStatistic newStatistic = new ClaimStatistic();
+                    newStatistic.serde().deserialize(() -> new FileInputStream(sourceFile));
+                    this.statistic = newStatistic;
                     return this;
                 } catch (IOException e) {
                     throw new ConfigurationException("Unable to read file: " + sourceFile, e);

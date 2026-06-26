@@ -38,6 +38,7 @@ import org.apache.rat.ConfigurationException;
 import org.apache.rat.api.Document;
 import org.apache.rat.configuration.XMLConfigurationReader;
 import org.apache.rat.report.xml.writer.XmlWriter;
+import org.apache.rat.utils.StandardXmlFactory;
 import org.xml.sax.SAXException;
 
 /**
@@ -323,6 +324,8 @@ public class ClaimStatistic {
      * Serialze and deserialze the claim Statistic.
      */
     public class Serde {
+        private static final String COUNT = "count";
+        private static final String NAME = "name";
 
         public void serialize(final Appendable appendable) throws IOException {
             try (XmlWriter writer = new XmlWriter(appendable)) {
@@ -331,8 +334,8 @@ public class ClaimStatistic {
                 for (Map.Entry<String, IntCounter> entry : licenseNameMap.entrySet()) {
                     if (entry.getValue().value > 0) {
                         writer.startElement("licenseName")
-                                .attribute("count", entry.getValue().toString())
-                                .attribute("name", entry.getKey()).closeElement();
+                                .attribute(COUNT, entry.getValue().toString())
+                                .attribute(NAME, entry.getKey()).closeElement();
                     }
                 }
                 writer.closeElement()
@@ -340,8 +343,8 @@ public class ClaimStatistic {
                 for (Map.Entry<String, IntCounter> entry : licenseFamilyCategoryMap.entrySet()) {
                     if (entry.getValue().value > 0) {
                         writer.startElement("familyCategory")
-                                .attribute("count", entry.getValue().toString())
-                                .attribute("name", entry.getKey()).closeElement();
+                                .attribute(COUNT, entry.getValue().toString())
+                                .attribute(NAME, entry.getKey()).closeElement();
                     }
                 }
                 writer.closeElement()
@@ -349,8 +352,8 @@ public class ClaimStatistic {
                 for (Map.Entry<Document.Type, IntCounter> entry : documentTypeMap.entrySet()) {
                     if (entry.getValue().value > 0) {
                         writer.startElement("documentType")
-                                .attribute("count", entry.getValue().toString())
-                                .attribute("name", entry.getKey().name()).closeElement();
+                                .attribute(COUNT, entry.getValue().toString())
+                                .attribute(NAME, entry.getKey().name()).closeElement();
                     }
                 }
                 writer.closeElement()
@@ -358,8 +361,8 @@ public class ClaimStatistic {
                 for (Map.Entry<ClaimStatistic.Counter, IntCounter> entry : counterMap.entrySet()) {
                     if (entry.getValue().value > 0) {
                         writer.startElement("counter")
-                                .attribute("count", entry.getValue().toString())
-                                .attribute("name", entry.getKey().name()).closeElement();
+                                .attribute(COUNT, entry.getValue().toString())
+                                .attribute(NAME, entry.getKey().name()).closeElement();
                     }
                 }
                 writer.closeElement();
@@ -367,12 +370,7 @@ public class ClaimStatistic {
         }
 
         public void deserialize(final IOSupplier<InputStream> inputStreamSupplier) throws IOException {
-            DocumentBuilder builder;
-            try {
-                builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-            } catch (ParserConfigurationException e) {
-                throw new ConfigurationException("Unable to create DOM builder", e);
-            }
+            DocumentBuilder builder = StandardXmlFactory.documentBuilder();
             org.w3c.dom.Document document;
             try (InputStream stream = inputStreamSupplier.get()) {
                 document = builder.parse(stream);
@@ -383,24 +381,24 @@ public class ClaimStatistic {
 
             XMLConfigurationReader.nodeListConsumer(document.getElementsByTagName("licenseName"), node -> {
                 Map<String, String> attributes = XMLConfigurationReader.attributes(node);
-                incLicenseNameCount(attributes.get("name"), Integer.parseInt(attributes.get("count")));
+                incLicenseNameCount(attributes.get(NAME), Integer.parseInt(attributes.get(COUNT)));
             });
 
             XMLConfigurationReader.nodeListConsumer(document.getElementsByTagName("familyCategory"), node -> {
                 Map<String, String> attributes = XMLConfigurationReader.attributes(node);
-                incLicenseCategoryCount(attributes.get("name"), Integer.parseInt(attributes.get("count")));
+                incLicenseCategoryCount(attributes.get(NAME), Integer.parseInt(attributes.get(COUNT)));
             });
 
             XMLConfigurationReader.nodeListConsumer(document.getElementsByTagName("documentType"), node -> {
                 Map<String, String> attributes = XMLConfigurationReader.attributes(node);
-                Document.Type type = Document.Type.valueOf(attributes.get("name"));
-                incCounter(type, Integer.parseInt(attributes.get("count")));
+                Document.Type type = Document.Type.valueOf(attributes.get(NAME));
+                incCounter(type, Integer.parseInt(attributes.get(COUNT)));
             });
 
             XMLConfigurationReader.nodeListConsumer(document.getElementsByTagName("counter"), node -> {
                 Map<String, String> attributes = XMLConfigurationReader.attributes(node);
-                Counter type = Counter.valueOf(attributes.get("name"));
-                setCounter(type, Integer.parseInt(attributes.get("count")));
+                Counter type = Counter.valueOf(attributes.get(NAME));
+                setCounter(type, Integer.parseInt(attributes.get(COUNT)));
             });
         }
     }

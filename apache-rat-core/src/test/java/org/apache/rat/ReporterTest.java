@@ -94,10 +94,6 @@ public class ReporterTest {
      * always work.
      */
     private static Path tempPath;
-    /**
-     * The TestInfo for the current test.
-     */
-    private TestInfo testInfo;
 
     /**
      * The directory for the test.
@@ -128,7 +124,6 @@ public class ReporterTest {
 
     @BeforeEach
     void setUpTest(TestInfo testInfo) {
-        this.testInfo = testInfo;
         Optional<Method> testMethod = testInfo.getTestMethod();
         this.testPath = tempPath.resolve(testMethod.isPresent() ?
                         testMethod.get().getName() :
@@ -148,7 +143,6 @@ public class ReporterTest {
     @Test
     void testExecute() throws RatException, ParseException, IOException {
         File output = testPath.resolve("output.xml").toFile();
-        BaseOptionCollection optionCollection = BaseOptionCollection.builder().build();
         ArgumentContext ctxt = collectionParser.parseCommands(new File("."), new String[]{"--output-style", "xml", "--output-file", output.getPath(), basedir});
         ClaimStatistic statistic = new Reporter(ctxt.getConfiguration()).execute().getStatistic();
 
@@ -213,7 +207,6 @@ public class ReporterTest {
     @Test
     void testDefaultOutput() throws Exception {
         File output = testPath.resolve("captured.txt").toFile();
-        BaseOptionCollection optionCollection = BaseOptionCollection.builder().build();
 
         PrintStream origin = System.out;
         try (PrintStream out = new PrintStream(output)) {

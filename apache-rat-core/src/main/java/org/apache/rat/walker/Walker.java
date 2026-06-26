@@ -21,12 +21,12 @@ package org.apache.rat.walker;
 
 import org.apache.rat.api.Document;
 import org.apache.rat.document.DocumentName;
-import org.apache.rat.report.IReportable;
+import org.apache.rat.report.Reportable;
 
 /**
  * Abstract walker.
  */
-public abstract class Walker implements IReportable {
+public abstract class Walker implements Reportable {
 
     /** The document this walker is walking */
     private final Document document;

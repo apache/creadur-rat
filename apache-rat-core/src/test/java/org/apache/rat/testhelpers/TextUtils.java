@@ -40,7 +40,9 @@ public class TextUtils {
      *
      * @param pattern the pattern to match.
      * @param target  the string to match.
+     * @deprecated use  assertThat(target).containsPattern(pattern)
      */
+    @Deprecated
     public static void assertPatternInTarget(String pattern, String target) {
         assertThat(isMatching(pattern, target)).as(() -> format("Target does not match string: %s%n%s", pattern, target))
                         .isTrue();
@@ -51,7 +53,9 @@ public class TextUtils {
      *
      * @param pattern the pattern to match.
      * @param target  the string to match.
+     * @deprecated use assertThat(target).dosNotContainPattern(pattern)
      */
+    @Deprecated
     public static void assertPatternNotInTarget(String pattern, String target) {
         assertThat(isMatching(pattern, target)).as(() -> format("Target matches the pattern: %s%n%s", pattern, target))
                 .isFalse();
@@ -63,7 +67,9 @@ public class TextUtils {
      * @param pattern the pattern to match.
      * @param target  the string to match.
      * @return {@code true} if a regular expression pattern is in a string
+     * @deprecated use assertThat(target).matches(pattern)
      */
+    @Deprecated
     public static boolean isMatching(final String pattern, final String target) {
         return Pattern.compile(pattern, Pattern.MULTILINE).matcher(target).find();
     }

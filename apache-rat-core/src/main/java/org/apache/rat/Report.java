@@ -26,6 +26,7 @@ import java.nio.charset.StandardCharsets;
 
 import org.apache.commons.cli.Options;
 import org.apache.commons.io.function.IOSupplier;
+import org.apache.rat.api.RatException;
 import org.apache.rat.commandline.ArgumentContext;
 import org.apache.rat.document.RatDocumentAnalysisException;
 import org.apache.rat.help.Help;
@@ -88,7 +89,7 @@ public final class Report {
      * @return The Client output.
      * @throws Exception on error.
      */
-    static Reporter.Output generateReport(final CLIOptionCollection optionCollection, final File workingDirectory, final String[] args) throws Exception {
+    static Reporter.Output generateReport(final CLIOptionCollection optionCollection, final File workingDirectory, final String[] args) throws RatException {
         Reporter.Output output = null;
         OptionCollectionParser optionParser = new OptionCollectionParser(optionCollection);
         ArgumentContext argumentContext = optionParser.parseCommands(workingDirectory, args);

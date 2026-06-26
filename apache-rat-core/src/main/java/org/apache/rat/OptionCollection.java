@@ -47,7 +47,7 @@ import org.apache.rat.document.DocumentNameMatcher;
 import org.apache.rat.document.FileDocument;
 import org.apache.rat.help.Licenses;
 import org.apache.rat.license.LicenseSetFactory;
-import org.apache.rat.report.IReportable;
+import org.apache.rat.report.Reportable;
 import org.apache.rat.report.claim.ClaimStatistic;
 import org.apache.rat.utils.DefaultLog;
 import org.apache.rat.utils.Log.Level;
@@ -184,7 +184,7 @@ public final class OptionCollection {
             }
         }
         for (String s : commandLine.getArgs()) {
-            IReportable reportable = getReportable(new File(s), configuration);
+            Reportable reportable = getReportable(new File(s), configuration);
             if (reportable != null) {
                 configuration.addSource(reportable);
             }
@@ -209,7 +209,7 @@ public final class OptionCollection {
      * @param config the ReportConfiguration.
      * @return the IReportable instance containing the files.
      */
-    public static IReportable getReportable(final File base, final ReportConfiguration config) {
+    public static Reportable getReportable(final File base, final ReportConfiguration config) {
         File absBase = base.getAbsoluteFile();
         DocumentName documentName = DocumentName.builder(absBase).build();
         if (!absBase.exists()) {

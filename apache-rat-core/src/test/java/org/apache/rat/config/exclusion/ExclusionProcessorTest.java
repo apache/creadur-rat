@@ -31,7 +31,6 @@ import org.apache.rat.document.DocumentNameMatcher;
 import org.apache.rat.document.DocumentName;
 import org.apache.rat.report.xml.writer.XmlWriter;
 import org.apache.rat.testhelpers.TextUtils;
-import org.apache.rat.testhelpers.XmlUtils;
 import org.apache.rat.utils.StandardXmlFactory;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -406,7 +405,7 @@ public class ExclusionProcessorTest {
     }
 
     @Test
-    void reportExclusionsTest() throws IOException, SAXException {
+    void reportExclusionsTest() throws IOException {
         ExclusionProcessor underTest = new ExclusionProcessor()
                 .addExcludedPatterns(List.of("pattern/**", "pattern2/**"))
                 .addExcludedCollection(StandardCollection.BAZAAR)
@@ -422,17 +421,17 @@ public class ExclusionProcessorTest {
         underTest.reportExclusions(writer);
         String actual = writer.toString();
 
-        TextUtils.assertPatternInTarget("Excluding patterns:[^$]+\\Qpattern/**\\E", actual);
-        TextUtils.assertPatternInTarget("Excluding patterns:[^$]+\\Qpattern2/**\\E", actual);
-        TextUtils.assertPatternInTarget("Including patterns:[^$]+\\Q**/pattern3\\E", actual);
-        TextUtils.assertPatternInTarget("Including patterns:[^$]+\\Q**/pattern4\\E", actual);
-        assertThat(actual).contains("Excluding " + StandardCollection.BAZAAR + " collection.");
-        assertThat(actual).contains("Excluding " + StandardCollection.MISC + " collection.");
-        assertThat(actual).contains("Including " + StandardCollection.ARCH + " collection.");
-        assertThat(actual).contains("Including " + StandardCollection.BITKEEPER + " collection.");
-        assertThat(actual).contains("Processing exclude file from " + StandardCollection.HIDDEN_FILE);
-        assertThat(actual).contains("Excluding " + DocumentNameMatcher.MATCHES_ALL + ".");
-        assertThat(actual).contains("Including " + DocumentNameMatcher.MATCHES_NONE + ".");
+        assertThat(actual).containsPattern("Excluding patterns:[^$]+\\Qpattern/**\\E")
+                .containsPattern("Excluding patterns:[^$]+\\Qpattern2/**\\E")
+                .containsPattern("Including patterns:[^$]+\\Q**/pattern3\\E")
+                .containsPattern("Including patterns:[^$]+\\Q**/pattern4\\E")
+                .contains("Excluding " + StandardCollection.BAZAAR + " collection.")
+                .contains("Excluding " + StandardCollection.MISC + " collection.")
+                .contains("Including " + StandardCollection.ARCH + " collection.")
+                .contains("Including " + StandardCollection.BITKEEPER + " collection.")
+                .contains("Processing exclude file from " + StandardCollection.HIDDEN_FILE)
+                .contains("Excluding " + DocumentNameMatcher.MATCHES_ALL + ".")
+                .contains("Including " + DocumentNameMatcher.MATCHES_NONE + ".");
     }
 
     @Test

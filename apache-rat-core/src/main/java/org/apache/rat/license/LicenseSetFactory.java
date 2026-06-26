@@ -321,7 +321,7 @@ public class LicenseSetFactory {
      * @return a SortedSet of ILicense objects.
      */
     public UnmodifiableSortedSet<ILicense> getLicenses(final LicenseFilter filter) {
-        SortedSet<ILicense> result = new TreeSet<>();
+        SortedSet<ILicense> result;
         switch (filter) {
         case ALL:
             result = licenses;

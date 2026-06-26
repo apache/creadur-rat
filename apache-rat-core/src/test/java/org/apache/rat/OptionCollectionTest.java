@@ -30,15 +30,14 @@ import java.nio.file.Path;
 import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.DefaultParser;
+
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.rat.commandline.ArgumentContext;
 import org.apache.rat.document.DocumentName;
 import org.apache.rat.license.LicenseSetFactory;
-import org.apache.rat.report.IReportable;
+import org.apache.rat.report.Reportable;
 import org.apache.rat.test.AbstractConfigurationOptionsProvider;
 import org.apache.rat.test.utils.OptionFormatter;
 import org.apache.rat.testhelpers.TestingLog;
@@ -234,7 +233,7 @@ public class OptionCollectionTest {
         DocumentName.FSInfo fsInfo = new DocumentName.FSInfo(testPath.getFileSystem());
         String expected = fsInfo.normalize(base.getAbsolutePath());
         ReportConfiguration config = OptionCollection.parseCommands(testPath.toFile(), new String[]{fName}, o -> fail("Help called"), false);
-        IReportable reportable = OptionCollection.getReportable(base, config);
+        Reportable reportable = OptionCollection.getReportable(base, config);
         assertThat(reportable).as(() -> format("'%s' returned null", fName)).isNotNull();
         assertThat(reportable.name().getName()).isEqualTo(expected);
     }
@@ -251,7 +250,7 @@ public class OptionCollectionTest {
         reportConfiguration.addExcludedPatterns(List.of(dir2.getName()));
         assertThat(OptionCollection.getReportable(dir2, reportConfiguration)).isNull();
 
-        IReportable reportable = OptionCollection.getReportable(dir1, new ReportConfiguration());
+        Reportable reportable = OptionCollection.getReportable(dir1, new ReportConfiguration());
         assertThat(reportable).isInstanceOf(DirectoryWalker.class);
 
         File file1 = new File(dir1, "file1");

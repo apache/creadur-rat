@@ -124,7 +124,7 @@ public class ExclusionProcessor {
 
     DocumentName getLastMatcherBaseDir() {
         return lastMatcherBaseDir;
-    };
+    }
 
     /**
      * Reset the {@link #lastMatcher} and {@link #lastMatcherBaseDir} to start again
@@ -398,31 +398,34 @@ public class ExclusionProcessor {
     }
 
     public class Serde {
+        private final static String PATTERN = "pattern";
+        private final static String NAME = "name";
+
         public void serialize(final XmlWriter writer) throws IOException {
             writer.startElement("ExclusionProcessor");
 
             for (String pattern : excludedPatterns) {
-                writer.startElement("excludedPattern").attribute("pattern", pattern).closeElement();
+                writer.startElement("excludedPattern").attribute(PATTERN, pattern).closeElement();
             }
             for (StandardCollection obj : excludedCollections) {
-                writer.startElement("excludedCollection").attribute("name", obj.name()).closeElement();
+                writer.startElement("excludedCollection").attribute(NAME, obj.name()).closeElement();
             }
             for (DocumentNameMatcher obj : excludedPaths) {
-                writer.startElement("excludedPath").attribute("name", obj.toString()).closeElement();
+                writer.startElement("excludedPath").attribute(NAME, obj.toString()).closeElement();
             }
 
             for (String pattern : includedPatterns) {
-                writer.startElement("includedPattern").attribute("pattern", pattern).closeElement();
+                writer.startElement("includedPattern").attribute(PATTERN, pattern).closeElement();
             }
             for (StandardCollection obj : includedCollections) {
-                writer.startElement("includedCollection").attribute("name", obj.name()).closeElement();
+                writer.startElement("includedCollection").attribute(NAME, obj.name()).closeElement();
             }
             for (DocumentNameMatcher obj : includedPaths) {
-                writer.startElement("includedPath").attribute("name", obj.toString()).closeElement();
+                writer.startElement("includedPath").attribute(NAME, obj.toString()).closeElement();
             }
 
             for (StandardCollection obj : fileProcessors) {
-                writer.startElement("fileProcessor").attribute("name", obj.name()).closeElement();
+                writer.startElement("fileProcessor").attribute(NAME, obj.name()).closeElement();
             }
             writer.closeElement();
 
@@ -436,27 +439,27 @@ public class ExclusionProcessor {
                 StandardCollection collection;
                 switch (child.getNodeName()) {
                     case "excludedPattern":
-                        excludedPatterns.add(attributes.get("pattern"));
+                        excludedPatterns.add(attributes.get(PATTERN));
                         break;
                     case "excludedCollection":
-                        collection = StandardCollection.valueOf(attributes.get("name"));
+                        collection = StandardCollection.valueOf(attributes.get(NAME));
                         excludedCollections.add(collection);
                         break;
                     case "excludedPath":
-                        excludedPaths.add(new DocumentNameMatcher(attributes.get("name"),
+                        excludedPaths.add(new DocumentNameMatcher(attributes.get(NAME),
                                 (Predicate<DocumentName>) x -> {
                                     throw new NotImplementedException("Deserialized ExclusionProcessor can not evaluate paths");
                                 }));
                         break;
                     case "includedPattern":
-                        includedPatterns.add(attributes.get("pattern"));
+                        includedPatterns.add(attributes.get(PATTERN));
                         break;
                     case "includedCollection":
-                        collection = StandardCollection.valueOf(attributes.get("name"));
+                        collection = StandardCollection.valueOf(attributes.get(NAME));
                         includedCollections.add(collection);
                         break;
                     case "includedPath":
-                        includedPaths.add(new DocumentNameMatcher(attributes.get("name"),
+                        includedPaths.add(new DocumentNameMatcher(attributes.get(NAME),
                                 (Predicate<DocumentName>) x -> {
                                     throw new NotImplementedException("Deserialized ExclusionProcessor can not evaluate paths");
                                 }));

@@ -29,7 +29,7 @@ import org.apache.rat.config.exclusion.ExclusionUtils;
 import org.apache.rat.document.DocumentName;
 import org.apache.rat.document.DocumentNameMatcher;
 import org.apache.rat.document.FileDocument;
-import org.apache.rat.report.IReportable;
+import org.apache.rat.report.Reportable;
 import org.apache.rat.report.RatReport;
 import org.apache.rat.utils.DefaultLog;
 
@@ -37,7 +37,7 @@ import org.apache.rat.utils.DefaultLog;
  * Implementation of IReportable that traverses over a resource collection
  * internally.
  */
-public class FileListWalker implements IReportable {
+public class FileListWalker implements Reportable {
     /** The source document name. */
     private final FileDocument source;
     /** The root document name. */

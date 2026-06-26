@@ -18,7 +18,6 @@
  */
 package org.apache.rat.testhelpers;
 
-import org.apache.commons.cli.Option;
 import org.apache.rat.ui.UIOptionCollection;
 
 public final class BaseOptionCollection extends UIOptionCollection<BaseOption> {
@@ -35,6 +34,7 @@ public final class BaseOptionCollection extends UIOptionCollection<BaseOption> {
             super(BaseOption::new);
         }
 
+        @Override
         public BaseOptionCollection build() {
             return new BaseOptionCollection(this);
         }

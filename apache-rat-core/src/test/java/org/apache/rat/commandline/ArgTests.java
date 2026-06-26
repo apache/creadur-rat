@@ -62,7 +62,6 @@ public class ArgTests {
         Path workingPath = localFile.getAbsoluteFile().toPath();
         String expected = fsInfo.normalize(workingPath.resolve("./" + fileName).toString());
 
-        CommandLine commandLine = createCommandLine(new String[]{"--output-file", fileName});
         OutputFileConfig configuration = new OutputFileConfig();
         ArgumentContext ctxt = new ArgumentContext(localFile, configuration, CLIOptionCollection.INSTANCE.getOptions(), new String[]{"--output-file", fileName});
         Arg.processArgs(ctxt, CLIOptionCollection.INSTANCE);

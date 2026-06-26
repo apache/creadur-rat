@@ -37,22 +37,29 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.SortedSet;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.apache.commons.io.filefilter.DirectoryFileFilter;
+import org.apache.commons.io.function.IOSupplier;
 import org.apache.commons.io.output.CloseShieldOutputStream;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.rat.analysis.IHeaderMatcher;
+import org.apache.rat.commandline.StyleSheets;
 import org.apache.rat.config.AddLicenseHeaders;
 import org.apache.rat.config.exclusion.StandardCollection;
+import org.apache.rat.configuration.XMLConfigurationReader;
 import org.apache.rat.configuration.XMLConfigurationReaderTest;
 import org.apache.rat.document.DocumentName;
 import org.apache.rat.document.DocumentNameMatcher;
 import org.apache.rat.license.ILicense;
 import org.apache.rat.license.ILicenseFamily;
 import org.apache.rat.license.LicenseSetFactory.LicenseFilter;
-import org.apache.rat.report.IReportable;
+import org.apache.rat.report.Reportable;
+import org.apache.rat.report.claim.ClaimStatistic;
+import org.apache.rat.report.xml.writer.XmlWriter;
 import org.apache.rat.testhelpers.TestingLog;
 import org.apache.rat.testhelpers.TestingLicense;
 import org.apache.rat.testhelpers.TestingMatcher;
@@ -65,6 +72,12 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.mockito.Mockito;
+import org.w3c.dom.Node;
+import org.xml.sax.SAXException;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 
 public class ReportConfigurationTest {
 
@@ -470,10 +483,10 @@ public class ReportConfigurationTest {
     @Test
     public void reportableTest() {
         assertThat(underTest.hasSource()).isFalse();
-        IReportable reportable = mock(IReportable.class);
+        Reportable reportable = mock(Reportable.class);
         underTest.addSource(reportable);
         assertThat(underTest.hasSource()).isTrue();
-        assertThatThrownBy(() -> underTest.addSource((IReportable)null)).isExactlyInstanceOf(ConfigurationException.class)
+        assertThatThrownBy(() -> underTest.addSource((Reportable)null)).isExactlyInstanceOf(ConfigurationException.class)
                 .hasMessageContaining("Reportable may not be null.");
     }
 
@@ -530,7 +543,7 @@ public class ReportConfigurationTest {
 
 
             msg = "At least one license must be defined";
-        underTest.addSource(mock(IReportable.class));
+        underTest.addSource(mock(Reportable.class));
 
             assertThatThrownBy(underTest::validate).isExactlyInstanceOf(ConfigurationException.class)
                 .hasMessageContaining(msg);
@@ -751,4 +764,127 @@ public class ReportConfigurationTest {
             ++closeCount;
         }
     }
+
+//    @Test
+//    void serdeTest() {
+//        ReportConfiguration undertest = new ReportConfiguration();
+//        underTest.setCopyrightMessage("the copyright message");
+//
+//
+//    }
+//
+//    /*
+//        public class Serde {
+//        /**
+//         * Writes the configuration as an XML document to the appendable.
+//         *
+//         * @param appendable the Appendable to write to.
+//         * @throws IOException on error.
+//         */
+//    public void serialize(final Appendable appendable) throws IOException {
+//        try (XmlWriter writer = new XmlWriter(appendable)) {
+//            writer.startElement("ReportConfiguration")
+//                    .attribute("addingLicenses", Boolean.toString(addingLicenses))
+//                    .attribute("addingLicensesForced", Boolean.toString(addingLicensesForced))
+//                    .attribute("listFamilies", listFamilies.name())
+//                    .attribute("listLicenses", listLicenses.name())
+//                    .attribute("dryRun", Boolean.toString(dryRun))
+//                    .attribute("archiveProcessing", getArchiveProcessing().name())
+//                    .attribute("standardProcessing", getStandardProcessing().name())
+//                    .attribute("stylesheet", styleSheet.name())
+//                    .attribute("output", out.name());
+//            if (StringUtils.isNotEmpty(copyrightMessage)) {
+//                writer.startElement("copyrightMessage").content(copyrightMessage).closeElement();
+//            }
+//            writer.startElement("sources");
+//            for (File f : sources) {
+//                writer.startElement("source").attribute("name", f.getName()).closeElement();
+//            }
+//            writer.closeElement("sources").startElement("reportables");
+//            for (Reportable reportable : reportables) {
+//                writer.startElement("reportable")
+//                        .attribute("baseName", reportable.name().getBaseName())
+//                        .attribute("name", reportable.name().toString())
+//                        .attribute("class", reportable.getClass().getName()).closeElement();
+//            }
+//            writer.closeElement();
+//
+//            exclusionProcessor.serde().serialize(writer);
+//
+//            writer.startElement("claimValidator");
+//            for (ClaimStatistic.Counter counter : ClaimStatistic.Counter.values()) {
+//                writer.startElement("claimCounter")
+//                        .attribute("name", counter.name()).attribute("min", Integer.toString(claimValidator.getMin(counter)))
+//                        .attribute("max", Integer.toString(claimValidator.getMax(counter))).closeElement();
+//            }
+//            writer.closeElement();
+//        } catch (IOException e) {
+//            throw e;
+//        } catch (Exception e) {
+//            throw new IOException(e);
+//        }
+//    }
+//
+//    public void deserialize(final IOSupplier<InputStream> inputStreamSupplier, final DocumentName workingDirectory) throws IOException {
+//        DocumentBuilder builder;
+//        try {
+//            builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+//        } catch (ParserConfigurationException e) {
+//            throw new ConfigurationException("Unable to create DOM builder", e);
+//        }
+//        org.w3c.dom.Document document;
+//        try (InputStream stream = inputStreamSupplier.get()) {
+//            document = builder.parse(stream);
+//        } catch (SAXException e) {
+//            throw new IOException("Unable to read input", e);
+//        }
+//        Node node = document.getDocumentElement();
+//        if (!node.getNodeName().equals("ReportConfiguration")) {
+//            throw new IOException("Invalid ReportConfiguration");
+//        }
+//        Map<String, String> attributes = XMLConfigurationReader.attributes(node);
+//        addingLicensesForced = Boolean.parseBoolean(attributes.get("addingLicensesForced"));
+//        listFamilies = LicenseFilter.valueOf(attributes.get("listFamilies"));
+//        listLicenses = LicenseFilter.valueOf(attributes.get("listLicenses"));
+//        dryRun = Boolean.parseBoolean(attributes.get("dryRun"));
+//        archiveProcessing = ReportConfiguration.Processing.valueOf(attributes.get("archiveProcessing"));
+//        standardProcessing = ReportConfiguration.Processing.valueOf(attributes.get("standardProcessing"));
+//        String styleName = attributes.get("stylesheet");
+//        if (styleName != null) {
+//            styleSheet = StyleSheets.getStyleSheet(styleName, workingDirectory);
+//        }
+//        String outputName = attributes.get("output");
+//        if (outputName != null) {
+//            if (outputName.equals(ReportConfiguration.SYSTEM_OUT.name())) {
+//                out = ReportConfiguration.SYSTEM_OUT;
+//            } else {
+//                out = ReportConfiguration.IODescriptor.output(outputName, workingDirectory);
+//            }
+//        }
+//
+//        XMLConfigurationReader.nodeListConsumer(document.getElementsByTagName("source"), lNode -> {
+//            Map<String, String> nAttributes = XMLConfigurationReader.attributes(lNode);
+//            addSource(new File(nAttributes.get("name")));
+//        });
+//
+//        // Deserialize the reportables.
+//        XMLConfigurationReader.nodeListConsumer(document.getElementsByTagName("reportable"), lNode -> {
+//            Map<String, String> nAttributes = XMLConfigurationReader.attributes(lNode);
+//            DocumentName documentName = DocumentName.builder().setBaseName(nAttributes.get("baseName"))
+//                    .setName(nAttributes.get("name")).build();
+//            addSource(new ReportConfiguration.DeserializedReportable(documentName));
+////        });
+//
+//        exclusionProcessor.serde().deserialize(document.getElementsByTagName("ExclusionProcessor").item(0));
+//
+//        XMLConfigurationReader.nodeListConsumer(document.getElementsByTagName("claimCounter"), lNode -> {
+//            Map<String, String> nAttributes = XMLConfigurationReader.attributes(lNode);
+//            ClaimStatistic.Counter counter = ClaimStatistic.Counter.valueOf(nAttributes.get("name"));
+//            claimValidator.setMin(counter, Integer.parseInt(nAttributes.get("min")));
+//            claimValidator.setMax(counter, Integer.parseInt(nAttributes.get("max")));
+//        });
+//    }
+//}
+//
+//     */
 }

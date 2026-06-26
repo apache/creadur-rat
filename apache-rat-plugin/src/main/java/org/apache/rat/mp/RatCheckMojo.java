@@ -159,9 +159,6 @@ public class RatCheckMojo extends AbstractRatMojo {
     @Parameter(property = "rat.consoleOutput", defaultValue = "true")
     private boolean consoleOutput;
 
-    /** The reporter that this mojo uses */
-    private Reporter reporter;
-
     @Override
     protected ReportConfiguration getConfiguration() throws MojoExecutionException {
         ReportConfiguration result = super.getConfiguration();
@@ -209,8 +206,7 @@ public class RatCheckMojo extends AbstractRatMojo {
                 config.reportExclusions(logWriter);
             }
             try {
-                this.reporter = new Reporter(config);
-                Reporter.Output output = reporter.execute();
+                Reporter.Output output = new Reporter(config).execute();
                 if (verbose) {
                     output.writeSummary(logWriter);
                 }

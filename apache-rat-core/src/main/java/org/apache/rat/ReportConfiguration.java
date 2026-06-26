@@ -62,15 +62,16 @@ import org.apache.rat.license.ILicense;
 import org.apache.rat.license.ILicenseFamily;
 import org.apache.rat.license.LicenseSetFactory;
 import org.apache.rat.license.LicenseSetFactory.LicenseFilter;
-import org.apache.rat.report.IReportable;
+import org.apache.rat.report.Reportable;
 import org.apache.rat.report.RatReport;
 import org.apache.rat.report.claim.ClaimStatistic;
 import org.apache.rat.report.xml.writer.XmlWriter;
 import org.apache.rat.utils.DefaultLog;
 import org.apache.rat.utils.Log.Level;
 import org.apache.rat.utils.ReportingSet;
+import org.apache.rat.utils.StandardXmlFactory;
 import org.apache.rat.walker.FileListWalker;
-import org.apache.rat.walker.IReportableListWalker;
+import org.apache.rat.walker.ReportableListWalker;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
@@ -84,7 +85,9 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 public class ReportConfiguration {
 
     /** The IODescriptor for System.out */
-    public static final IODescriptor<OutputStream> SYSTEM_OUT = new  IODescriptor<>("System.out", () -> CloseShieldOutputStream.wrap(System.out));
+    public static final IODescriptor<OutputStream> SYSTEM_OUT =
+            // SONAR wants to require logging output, which is the wrong reporting channel for this case.
+            new IODescriptor<>("System.out", () -> CloseShieldOutputStream.wrap(System.out)); // NOSONAR
     /**
      * The styles of processing for various categories of documents.
      */
@@ -148,7 +151,7 @@ public class ReportConfiguration {
     /**
      * A list of reportables to process;
      */
-    private final List<IReportable> reportables;
+    private final List<Reportable> reportables;
 
     /**
      * A predicate to test if a path should be included in the processing.
@@ -231,7 +234,7 @@ public class ReportConfiguration {
      * Adds a Reportable as a source of files to scan.
      * @param reportable the reportable to process.
      */
-    public void addSource(final IReportable reportable) {
+    public void addSource(final Reportable reportable) {
         notNull(reportable, "Reportable may not be null.");
         reportables.add(reportable);
     }
@@ -248,9 +251,9 @@ public class ReportConfiguration {
      * Gets a builder initialized with any files specified as sources.
      * @return a configured builder.
      */
-    public IReportableListWalker.Builder getSources() {
+    public ReportableListWalker.Builder getSources() {
         DocumentName name = DocumentName.builder(new File(".")).build();
-        IReportableListWalker.Builder builder = IReportableListWalker.builder(name);
+        ReportableListWalker.Builder builder = ReportableListWalker.builder(name);
         sources.forEach(file -> builder.addReportable(new FileListWalker(new FileDocument(file, DocumentNameMatcher.MATCHES_ALL))));
         reportables.forEach(builder::addReportable);
         return builder;
@@ -908,7 +911,7 @@ public class ReportConfiguration {
                     writer.startElement("source").attribute("name", f.getName()).closeElement();
                 }
                 writer.closeElement("sources").startElement("reportables");
-                for (IReportable reportable : reportables) {
+                for (Reportable reportable : reportables) {
                     writer.startElement("reportable")
                             .attribute("baseName", reportable.name().getBaseName())
                             .attribute("name", reportable.name().toString())
@@ -933,12 +936,7 @@ public class ReportConfiguration {
         }
 
         public void deserialize(final IOSupplier<InputStream> inputStreamSupplier, final DocumentName workingDirectory) throws IOException {
-            DocumentBuilder builder;
-            try {
-                builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-            } catch (ParserConfigurationException e) {
-                throw new ConfigurationException("Unable to create DOM builder", e);
-            }
+            DocumentBuilder builder = StandardXmlFactory.documentBuilder();
             org.w3c.dom.Document document;
             try (InputStream stream = inputStreamSupplier.get()) {
                 document = builder.parse(stream);
@@ -997,7 +995,7 @@ public class ReportConfiguration {
      * A record that identifies a deserialized reportable.  Deserialized reportables are not executable.
      * @param name the name of the reportable.
      */
-    private record DeserializedReportable(DocumentName name) implements IReportable {
+    private record DeserializedReportable(DocumentName name) implements Reportable {
         @Override
         public void run(final RatReport report) throws RatException {
             throw new RatException("Attempt to run a deserialized reportable");
@@ -1021,5 +1019,5 @@ public class ReportConfiguration {
             DocumentName docName = workingDirectory.resolve(name);
             return new IODescriptor<OutputStream>(name, () -> new FileOutputStream(docName.asFile()));
         }
-    };
+    }
 }
