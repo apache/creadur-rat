@@ -66,6 +66,7 @@ import static org.apache.rat.utils.FileUtils.writeFile;
 import static org.apache.rat.testhelpers.data.DataUtils.NO_SETUP;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Fail.fail;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 /**
  * Generates a list of TestData for executing the Report.
@@ -134,7 +135,6 @@ public class ReportTestDataProvider extends AbstractTestDataProvider {
                 setup,
                 validatorData -> {
                     DefaultLog.getInstance().warn("validating execExcludeTest for " + validatorData.getBaseDir());
-                    ClaimStatistic claimStatistic = validatorData.getStatistic();
                     assertCounter(validatorData, ClaimStatistic.Counter.STANDARDS, standard.length);
                     assertCounter(validatorData, ClaimStatistic.Counter.IGNORED, ignored.length);
                     for (String fileName : ignored) {
@@ -574,7 +574,7 @@ public class ReportTestDataProvider extends AbstractTestDataProvider {
 
     protected void licensesDeniedFileTest(final Set<TestData> result, final Option option) {
         result.addAll(execLicensesDeniedTest(option, new String[]{"licensesDenied.txt"},
-                (basePath) -> writeFile(basePath.toFile(), "licensesDenied.txt", Collections.singletonList("ILLUMOS"))));
+                basePath -> writeFile(basePath.toFile(), "licensesDenied.txt", Collections.singletonList("ILLUMOS"))));
     }
 
     private List<TestData> execLicenseFamiliesApprovedTest(final Option option, final String[] args, Consumer<Path> extraSetup) {
@@ -1088,8 +1088,8 @@ public class ReportTestDataProvider extends AbstractTestDataProvider {
 
                     try {
                         String actualText = TextUtils.readFile(outFile);
-                        TextUtils.assertPatternInTarget("Apache License 2.0: \\d", actualText);
-                        TextUtils.assertPatternInTarget("STANDARD:\\s+\\d", actualText);
+                        assertThat(actualText).containsPattern("Apache License 2.0: \\d")
+                                .containsPattern("STANDARD:\\s+\\d");
                     } catch (IOException e) {
                         throw new RuntimeException(e);
                     }
@@ -1248,20 +1248,20 @@ public class ReportTestDataProvider extends AbstractTestDataProvider {
                         DefaultLog.getInstance().warn("outputStyleTest setup for " + basePath);
                         DocumentName name = DocumentName.builder().setName("fileStyleSheet.xslt")
                                 .setBaseName(basePath.toString()).build();
-                        try (FileWriter fileWriter = new FileWriter(name.asFile(), StandardCharsets.UTF_8);
-                             XmlWriter writer = new XmlWriter(fileWriter)) {
-                            writer.startDocument()
-                                    .comment(DataUtils.ASF_TEXT)
-                                    .startElement("xsl:stylesheet")
-                                    .attribute("version", "1.0")
-                                    .attribute("xmlns:xsl", "http://www.w3.org/1999/XSL/Transform")
-                                    .startElement("xsl:template")
-                                    .attribute("match", "@*|node()")
-                                    .content("Hello World")
-                                    .closeDocument();
-                        } catch (IOException e) {
-                            fail(e.getMessage(), e);
-                        }
+                        assertDoesNotThrow(() -> {
+                            try (FileWriter fileWriter = new FileWriter(name.asFile(), StandardCharsets.UTF_8);
+                                 XmlWriter writer = new XmlWriter(fileWriter)) {
+                                writer.startDocument()
+                                        .comment(DataUtils.ASF_TEXT)
+                                        .startElement("xsl:stylesheet")
+                                        .attribute("version", "1.0")
+                                        .attribute("xmlns:xsl", "http://www.w3.org/1999/XSL/Transform")
+                                        .startElement("xsl:template")
+                                        .attribute("match", "@*|node()")
+                                        .content("Hello World")
+                                        .closeDocument();
+                            }
+                        });
                     },
 
                     validatorData -> {

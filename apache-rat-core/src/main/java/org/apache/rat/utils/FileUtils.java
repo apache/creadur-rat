@@ -22,6 +22,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.Collections;
 
@@ -43,7 +44,7 @@ public final class FileUtils {
      * Deletes a file if it exists.
      * @param file the file to delete.
      */
-    public static void delete(final File file) {
+    public static void delete(final File file) throws IOException {
         if (file.exists()) {
             if (file.isDirectory()) {
                 try {
@@ -52,7 +53,7 @@ public final class FileUtils {
                     //
                 }
             } else {
-                boolean ignored = file.delete();
+                Files.delete(file.toPath());
             }
         }
     }

@@ -230,7 +230,6 @@ public class ReporterTest {
     @Test
     void testDefaultOutput() throws Exception {
         File output = testPath.resolve("captured.txt").toFile();
-        BaseOptionCollection optionCollection = BaseOptionCollection.builder().build();
 
         PrintStream origin = System.out;
         try (PrintStream out = new PrintStream(output)) {

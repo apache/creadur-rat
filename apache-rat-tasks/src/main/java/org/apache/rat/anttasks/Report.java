@@ -411,7 +411,7 @@ public class Report extends BaseAntTask {
             boolean helpLicenses = !getValues(Arg.HELP_LICENSES).isEmpty();
             removeKey(Arg.HELP_LICENSES);
             File antFileDir = new File(getProject().getProperty("ant.file")).getParentFile();
-            DocumentName name = DocumentName.builder(antFileDir).build();;
+            DocumentName name = DocumentName.builder(antFileDir).build();
             final ReportConfiguration configuration = OptionCollection.parseCommands(antFileDir, args().toArray(new String[0]),
                     o -> DefaultLog.getInstance().warn("Help option not supported"),
                     true);

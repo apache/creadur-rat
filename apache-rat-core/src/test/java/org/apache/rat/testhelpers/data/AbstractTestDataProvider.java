@@ -35,6 +35,7 @@ import org.apache.rat.commandline.Arg;
 import org.apache.rat.ui.UIOptionCollection;
 import org.apache.rat.ui.ArgumentTracker;
 import org.apache.rat.utils.DefaultLog;
+import org.apache.rat.utils.Log;
 
 /**
  * Generates a list of TestData for executing the Report.
@@ -47,7 +48,8 @@ public abstract class AbstractTestDataProvider {
     static final String[] EXCLUDE_ARGS = {"*.foo", "%regex[[A-Z]\\.bar]", "justbaz"};
     /** the list of include args */
     static final String[] INCLUDE_ARGS = {"B.bar", "justbaz"};
-    public final ImmutableList<ImmutablePair<Option, String[]>> NO_OPTIONS = ImmutableList.of(ImmutablePair.nullPair());
+    // Sonar suggests List of but we need an Immutable list.
+    public static final ImmutableList<ImmutablePair<Option, String[]>> NO_OPTIONS = ImmutableList.of(ImmutablePair.nullPair()); // NOSONAR
 
     /**
      * Generates a map of TestData indexed by the testName
@@ -110,6 +112,8 @@ public abstract class AbstractTestDataProvider {
                     case OUTPUT_LICENSES -> options.forEach(opt -> outputLicensesTest(result, opt));
                     case OUTPUT_STANDARD -> options.forEach(opt -> outputStandardTest(result, opt));
                     case OUTPUT_STYLE -> options.forEach(opt -> outputStyleTest(result, opt));
+                    case DIR -> {/* do nothing */}
+                    default -> throw new IllegalStateException("Unrecognized Arg: " + arg.name());
                 }
             }
         }
@@ -120,9 +124,9 @@ public abstract class AbstractTestDataProvider {
     private void validate(Set<TestData> result) {
         Set<Option> options = new HashSet<>(Arg.getOptions().getOptions());
         result.forEach(testData -> options.remove(testData.getOption()));
-        // TODO fix this once deprecated options are removed
+        // TODO fix this once deprecated options are removed  NOSONAR
         options.forEach(opt -> DefaultLog.getInstance().warn("Option " + ArgumentTracker.extractKey(opt) + " was not tested."));
-        //assertThat(options).describedAs("All options are not accounted for.").isEmpty();
+        //assertThat(options).describedAs("All options are not accounted for.").isEmpty(); // NOSONAR
     }
 
     protected abstract void inputExcludeFileTest(final Set<TestData> result, final Option option);
