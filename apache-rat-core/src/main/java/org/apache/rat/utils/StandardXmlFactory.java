@@ -18,8 +18,6 @@
  */
 package org.apache.rat.utils;
 
-import org.w3c.dom.Document;
-
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -28,7 +26,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
-import java.util.Map;
 import java.util.Properties;
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
@@ -79,10 +76,11 @@ public final class StandardXmlFactory {
 
     /**
      * Create a transformer with specified style sheet.
+     * @param styleIn the style sheet input stream
      * @return the transformer.
      * @throws TransformerConfigurationException on error.
      */
-    public static Transformer createTransformer(InputStream styleIn) throws TransformerConfigurationException {
+    public static Transformer createTransformer(final InputStream styleIn) throws TransformerConfigurationException {
         return createTransformer(styleIn, new Properties());
     }
 
@@ -95,7 +93,7 @@ public final class StandardXmlFactory {
      * @throws TransformerConfigurationException on error.
      */
     @SuppressFBWarnings("MALICIOUS_XSLT")
-    public static Transformer createTransformer(final InputStream styleIn, Properties transformerProperties) throws TransformerConfigurationException {
+    public static Transformer createTransformer(final InputStream styleIn, final Properties transformerProperties) throws TransformerConfigurationException {
         TransformerFactory factory = TransformerFactory.newInstance(); // NOSONAR
         factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
         factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
