@@ -62,7 +62,7 @@ config is operator-trusted, the scanned files may be untrusted.)*
 | Family | Entry point | Untrusted-input exposure | In model? |
 | --- | --- | --- | --- |
 | File walking + license matching | `Reporter`, walkers | scanned file **content/paths** | **Yes** |
-| **XML configuration reader** | `XMLConfigurationReader` | the **config** (if attacker-supplied) | **Yes** (XXE surface) |
+| **XML configuration reader** | `XMLConfigurationReader` | the **config** (if attacker-supplied) | **Yes** (XXE surface — mitigated: external entities disabled, RAT-560/#679) |
 | **Archive walker** | `ArchiveWalker` | archives in the tree (zip/jar/tar) | **Yes** (decompression-bomb surface) |
 | CLI / Ant task / Maven plugin | wrappers | invocation args (trusted caller) | wrappers — trusted |
 | **License-header insertion (write mode)** | `--addLicense` / editors | **modifies files in the audited tree** (operator-invoked) | trusted-input (§3) |
@@ -112,7 +112,7 @@ RAT's security questions only arise when that input is **untrusted**:
 caller invokes RAT (CLI/Ant/Maven) on a directory + a config
    │ trusted invocation
    ▼
-read configuration (XMLConfigurationReader) ── XXE surface if config is untrusted
+read configuration (XMLConfigurationReader) ── XXE surface if config is untrusted (mitigated: external entities disabled, RAT-560/#679)
 walk tree -> for each file: read content, match licenses
    └─ ArchiveWalker descends into zip/jar/tar ── decompression-bomb / path surface if archive is untrusted
    ▼
@@ -158,7 +158,7 @@ entities**; DOCTYPE handling is further hardened by PR #679 (§8 #2). There is n
 | scanned file content | **yes** | parsed/read; resource use |
 | scanned file paths / archive entry names | **yes** | reported as labels only — entries are read into memory, never extracted to disk, so no zip-slip / path-traversal-on-write surface *(maintainer)* |
 | archives (zip/jar/tar) in the tree | **yes** | decompression bomb / nested-archive depth |
-| RAT XML configuration | **maybe** (only if config is attacker-supplied) | XXE / external entity |
+| RAT XML configuration | **maybe** (only if config is attacker-supplied) | XXE / external entity — mitigated by RAT-560/#679 (external entities disabled) |
 | invocation arguments | no — trusted caller | — |
 
 ## §7 Adversary model
