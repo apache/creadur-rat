@@ -30,11 +30,11 @@ not report security issues on public issue trackers or mailing lists.
 
 ## Known Non-Findings
 
-- Static code analysis may report `XXE_DOCUMENT` vulnerabilities because RAT reads XML and XSLT files provided as user input.
+- Static analyzers may report `XXE_DOCUMENT` on RAT's XML/XSLT reading. As of RAT-560 ([#679](https://github.com/apache/creadur-rat/pull/679)) RAT builds its XML parsers through the hardened `StandardXmlFactory`, which disables DOCTYPE and external general/parameter entities — so XXE is actively prevented and these reports are false positives against the hardened factory.
 
-  - Configuration files and XSLT documents passed to RAT are operator-controlled configuration, not request input. Reports claiming SSRF or path traversal via these resolvers, based on the assumption that the resource name is attacker-controlled, are out of scope under the documented threat model. XML and XSLT authorship, as well as resource configuration, are privileged operations.
+  - Defense in depth: the configuration files and XSLT documents RAT reads are operator-controlled configuration, not request input, so the resource names are not attacker-controlled in the first place. Reports asserting SSRF or path traversal via these resolvers (assuming an attacker-controlled resource name) are out of scope under the documented threat model — XML and XSLT authorship, as well as resource configuration, are privileged operations.
 
-  - Applications that thread untrusted input into XML configuration or XSLT documents should validate that input before passing it to RAT. Responsibility for such validation rests with the application, not with RAT.
+  - Applications that thread untrusted input into XML configuration or XSLT documents should still validate that input before passing it to RAT. Responsibility for such validation rests with the application, not with RAT.
 
 ## Threat Model
 
