@@ -848,7 +848,7 @@ public class ReportConfigurationTest {
         public void write(int arg0) {
             throw new UnsupportedOperationException();
         }
-        
+
         @Override
         public void close() {
             ++closeCount;
