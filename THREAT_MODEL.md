@@ -6,7 +6,7 @@
   (the "License"); you may not use this file except in compliance with
   the License.  You may obtain a copy of the License at
 
-      http://www.apache.org/licenses/LICENSE-2.0
+      https://www.apache.org/licenses/LICENSE-2.0
 
   Unless required by applicable law or agreed to in writing, software
   distributed under the License is distributed on an "AS IS" BASIS,
@@ -92,7 +92,7 @@ front-end's handling generally applies to all of them. *(maintainer.)*
   the tree. This is explicitly operator-invoked against the operator's own
   (trusted) sources; a run that modifies files the operator already controls is
   `OUT-OF-MODEL: trusted-input`. (Raised by the PMC in review — write mode is
-  noted here so the boundary is explicit rather than silent.) *(maintainer.)*
+  noted here so the boundary is explicit rather than silent.) The header text RAT writes in comes from the operator-controlled license/header definition (a controlled input file), not from the scanned tree, so write mode cannot inject attacker-chosen content. *(maintainer — ottlinger / Claudenw, PR #677.)*
 - **Custom matchers / matcher extensions**
   (<https://creadur.apache.org/rat/license_def.html#Matchers>) — RAT lets the
   operator define custom matcher classes in its configuration, and a custom
