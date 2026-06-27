@@ -18,14 +18,11 @@
  */
 package org.apache.rat.utils;
 
-import org.w3c.dom.Document;
-
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
-import java.util.Map;
 import java.util.Properties;
 
 import javax.xml.XMLConstants;
@@ -40,6 +37,9 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
+
+import org.w3c.dom.Document;
+
 
 /**
  * Factory to create standard XML objects. The intention of this class is to resolve in a consistent manner the
@@ -69,10 +69,11 @@ public final class StandardXmlFactory {
 
     /**
      * Create a transformer with specified style sheet.
+     * @param styleIn the style sheet input stream
      * @return the transformer.
      * @throws TransformerConfigurationException on error.
      */
-    public static Transformer create(InputStream styleIn) throws TransformerConfigurationException {
+    public static Transformer create(final InputStream styleIn) throws TransformerConfigurationException {
         return create(styleIn, new Properties());
     }
 
@@ -84,7 +85,7 @@ public final class StandardXmlFactory {
      * @return the transformer.
      * @throws TransformerConfigurationException on error.
      */
-    public static Transformer create(final InputStream styleIn, Properties transformerProperties) throws TransformerConfigurationException {
+    public static Transformer create(final InputStream styleIn, final Properties transformerProperties) throws TransformerConfigurationException {
         TransformerFactory factory = TransformerFactory.newInstance();
         factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
         factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");

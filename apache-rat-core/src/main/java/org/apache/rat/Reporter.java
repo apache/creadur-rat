@@ -48,8 +48,6 @@ import org.apache.rat.report.xml.writer.XmlWriter;
 import org.apache.rat.utils.StandardXmlFactory;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
-
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.xml.sax.SAXException;
 
 /**
@@ -194,7 +192,6 @@ public class Reporter {
          * @param output the output stream to write to.
          * @throws RatException on error.
          */
-        @SuppressFBWarnings({"MALICIOUS_XSLT", "XXE_DTD_TRANSFORM_FACTORY", " XXE_XSLT_TRANSFORM_FACTORY"})
         public void format(final IOSupplier<InputStream> stylesheet, final IOSupplier<OutputStream> output) throws RatException {
             TransformerFactory tf = TransformerFactory.newInstance();
             Transformer transformer;
@@ -227,7 +224,6 @@ public class Reporter {
             }
         }
 
-        @SuppressFBWarnings("EI_EXPOSE_REP2")
         public static final class Builder {
             /** The document that was generated */
             private Document document;
