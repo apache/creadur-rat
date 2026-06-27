@@ -137,7 +137,7 @@ public final class StandardXmlFactory {
      * Write an XML document to a file.
      * @param document the document to write.
      */
-    public static String serializeDocument(final Document document) throws IOException, TransformerException {
+    public static String serializeDocument(final Document document) throws TransformerException {
         DOMSource source = new DOMSource(document);
         StringWriter writer = new StringWriter();
         StreamResult result = new StreamResult(writer);

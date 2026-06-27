@@ -765,8 +765,6 @@ public class ReportConfigurationTest {
     }
     @Test
     void serdeTest() throws IOException {
-        ReportConfiguration underTest = new ReportConfiguration();
-
         underTest.setAddLicenseHeaders(AddLicenseHeaders.FORCED);
         underTest.listFamilies(LicenseFilter.APPROVED);
         underTest.listLicenses(LicenseFilter.ALL);

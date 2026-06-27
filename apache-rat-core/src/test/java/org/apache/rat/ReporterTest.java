@@ -52,7 +52,6 @@ import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathFactory;
 
-import org.apache.commons.cli.ParseException;
 import org.apache.commons.io.FileUtils;
 import org.apache.rat.api.Document.Type;
 import org.apache.rat.api.RatException;

@@ -27,22 +27,17 @@ import org.apache.rat.document.DocumentNameMatcher;
 import org.apache.rat.license.LicenseSetFactory;
 import org.apache.rat.report.claim.ClaimStatistic;
 import org.apache.rat.report.claim.ClaimStatisticTest;
-import org.apache.rat.testhelpers.XmlUtils;
 import org.apache.rat.utils.FileUtils;
 import org.apache.rat.utils.StandardXmlFactory;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.w3c.dom.Document;
-import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xmlunit.assertj3.XmlAssert;
 
-import javax.xml.parsers.DocumentBuilder;
 import javax.xml.transform.TransformerException;
-import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -51,8 +46,6 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 class OutputTest {
 
@@ -90,7 +83,7 @@ class OutputTest {
     }
 
     @Test
-    void stasticReadingTest() throws IOException, SAXException, TransformerException {
+    void stasticReadingTest() throws IOException {
         Path testPath = tempPath.resolve("statisticReading");
         File testFile = testPath.toFile();
         FileUtils.mkDir(testFile);
@@ -117,7 +110,7 @@ class OutputTest {
     }
 
     @Test
-    void configurationReadingTest() throws IOException, SAXException, TransformerException {
+    void configurationReadingTest() throws IOException {
         Path testPath = tempPath.resolve("configurationReading");
         File testFile = testPath.toFile();
         FileUtils.mkDir(testFile);
