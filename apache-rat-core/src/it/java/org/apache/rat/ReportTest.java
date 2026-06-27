@@ -80,7 +80,7 @@ import static org.junit.jupiter.api.Assertions.fail;
  *      associated with the exception.</li>
  * </ul>
  */
-public class ReportTest {
+class ReportTest {
 
     private String[] asArgs(final List<String> argsList) {
         return argsList.toArray(new String[0]);
@@ -88,7 +88,7 @@ public class ReportTest {
 
     @ParameterizedTest(name = "{index} {0}")
     @MethodSource("args")
-    public void integrationTest(String testName, Document commandLineDoc) throws Exception {
+    void integrationTest(String testName, Document commandLineDoc) throws Exception {
         DefaultLog.getInstance().log(Log.Level.INFO, "Running test for " + testName);
         File baseDir = new File(commandLineDoc.getName().getName()).getParentFile();
 
@@ -119,9 +119,11 @@ public class ReportTest {
 
             File expectedMsg = new File(baseDir, "expected-message.txt");
             if (expectedMsg.exists()) {
-                String msg = IOUtils.readLines(new FileReader(expectedMsg)).get(0).trim();
-                assertThrows(RatDocumentAnalysisException.class, () -> Report.main(asArgs(argsList)),
-                        msg);
+                try (FileReader fr = new FileReader(expectedMsg)) {
+                    String msg = IOUtils.readLines(fr).get(0).trim();
+                    assertThrows(RatDocumentAnalysisException.class, () -> Report.main(asArgs(argsList)),
+                            msg);
+                }
             } else {
                 Report.main(asArgs(argsList));
             }
@@ -204,6 +206,7 @@ public class ReportTest {
          *
          * @param level the level to use when writing messages.
          */
+        @Override
         public void setLevel(final Level level) {
             this.level = level;
         }

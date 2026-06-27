@@ -591,15 +591,15 @@ public class ReporterTest {
     }
 
     private record LicenseInfo(String id, String family, boolean approval, boolean hasNotes) {
-            LicenseInfo(String id, boolean approval, boolean hasNotes) {
-                this(id, id, approval, hasNotes);
-            }
-
-            private LicenseInfo(String id, String family, boolean approval, boolean hasNotes) {
-                this.id = id;
-                this.family = ILicenseFamily.makeCategory(family);
-                this.approval = approval;
-                this.hasNotes = hasNotes;
-            }
+        LicenseInfo(String id, boolean approval, boolean hasNotes) {
+            this(id, id, approval, hasNotes);
         }
+
+        private LicenseInfo(String id, String family, boolean approval, boolean hasNotes) {
+            this.id = id;
+            this.family = ILicenseFamily.makeCategory(family);
+            this.approval = approval;
+            this.hasNotes = hasNotes;
+        }
+    }
 }

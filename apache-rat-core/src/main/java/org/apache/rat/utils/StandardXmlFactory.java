@@ -18,10 +18,18 @@
  */
 package org.apache.rat.utils;
 
+import org.w3c.dom.Document;
+
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.StringWriter;
+import java.util.Map;
+import java.util.Properties;
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 
@@ -66,17 +74,28 @@ public final class StandardXmlFactory {
      * @throws TransformerConfigurationException on error.
      */
     public static Transformer createTransformer() throws TransformerConfigurationException {
-        return createTransformer(null);
+        return createTransformer(null, new Properties());
     }
 
     /**
-     * Create a transformer with the specified stylesheet.
+     * Create a transformer with specified style sheet.
+     * @return the transformer.
+     * @throws TransformerConfigurationException on error.
+     */
+    public static Transformer createTransformer(InputStream styleIn) throws TransformerConfigurationException {
+        return createTransformer(styleIn, new Properties());
+    }
+
+    /**
+     * Create a transformer with the specified stylesheet and additional properties.
+     * By default, the output omits the XML declaration, uses XML output, indents rsult with 4 spaces.
      * @param styleIn the stylesheet to use.
+     * @param transformerProperties Additional output transformer properties.
      * @return the transformer.
      * @throws TransformerConfigurationException on error.
      */
     @SuppressFBWarnings("MALICIOUS_XSLT")
-    public static Transformer createTransformer(final InputStream styleIn) throws TransformerConfigurationException {
+    public static Transformer createTransformer(final InputStream styleIn, Properties transformerProperties) throws TransformerConfigurationException {
         TransformerFactory factory = TransformerFactory.newInstance(); // NOSONAR
         factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
         factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
@@ -87,6 +106,9 @@ public final class StandardXmlFactory {
         transformer.setOutputProperty(OutputKeys.INDENT, "yes");
         transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
         transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
+        if (transformerProperties != null) {
+            transformer.setOutputProperties(transformerProperties);
+        }
         return transformer;
     }
 
