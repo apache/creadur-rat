@@ -37,6 +37,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.SortedSet;
+import java.util.stream.Stream;
 
 import javax.xml.parsers.DocumentBuilder;
 
@@ -73,8 +74,6 @@ import org.apache.rat.walker.ReportableListWalker;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-
 /**
  * A configuration object is used by the front end to invoke the
  * {@link Reporter}. The sole purpose of the frontends is to create the
@@ -82,7 +81,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
  */
 public class ReportConfiguration {
 
-    /** The IODescriptor for System.out */
+    /** The IODescriptor for system.out */
     public static final IODescriptor<OutputStream> SYSTEM_OUT =
             // SONAR wants to require logging output, which is the wrong reporting channel for this case.
             new IODescriptor<>("System.out", () -> CloseShieldOutputStream.wrap(System.out)); // NOSONAR
@@ -152,7 +151,7 @@ public class ReportConfiguration {
     private final List<Reportable> reportables;
 
     /**
-     * A predicate to test if a path should be included in the processing.
+     * The exclusion processor that determines if a file is included or excluded.
      */
     private final ExclusionProcessor exclusionProcessor;
 
@@ -255,6 +254,15 @@ public class ReportConfiguration {
         sources.forEach(file -> builder.addReportable(new FileListWalker(new FileDocument(file, DocumentNameMatcher.MATCHES_ALL))));
         reportables.forEach(builder::addReportable);
         return builder;
+    }
+
+    // for testing access
+    Iterable<File> sources() {
+        return sources;
+    }
+
+    Stream<DocumentName> reportables() {
+        return reportables.stream().map(Reportable::name);
     }
 
     /**
@@ -440,6 +448,14 @@ public class ReportConfiguration {
     }
 
     /**
+     * Includes files that match a DocumentNameMatcher.
+     * @param matcher the DocumentNameMatcher to match.
+     */
+    public void addIncludedMatcher(final DocumentNameMatcher matcher) {
+        exclusionProcessor.addIncludedMatcher(matcher);
+    }
+
+    /**
      * Add file patterns that are to be included. These patterns override any exclusion of
      * the same files.
      * @param patterns The iterable of Strings containing the patterns.
@@ -455,6 +471,11 @@ public class ReportConfiguration {
      */
     public DocumentNameMatcher getDocumentExcluder(final DocumentName baseDir) {
         return exclusionProcessor.getNameMatcher(baseDir);
+    }
+
+    // visible for testing.
+    ExclusionProcessor getExclusionProcessor() {
+        return exclusionProcessor;
     }
 
     /**
@@ -881,7 +902,6 @@ public class ReportConfiguration {
      * Deserialized ReportConfigurations can not be executed as the reportable objects a simply named placeholders
      * and do not have access to the original object.
      */
-    @SuppressFBWarnings({"MALICIOUS_XSLT", "XXE_DOCUMENT"})
     public class Serde {
         /**
          * Writes the configuration as an XML document to the appendable.
@@ -906,7 +926,7 @@ public class ReportConfiguration {
                 }
                 writer.startElement("sources");
                 for (File f : sources) {
-                    writer.startElement("source").attribute("name", f.getName()).closeElement();
+                    writer.startElement("source").attribute("name", f.toString()).closeElement();
                 }
                 writer.closeElement("sources").startElement("reportables");
                 for (Reportable reportable : reportables) {
@@ -946,6 +966,7 @@ public class ReportConfiguration {
                 throw new IOException("Invalid ReportConfiguration");
             }
             Map<String, String> attributes = XMLConfigurationReader.attributes(node);
+            addingLicenses = Boolean.parseBoolean(attributes.get("addingLicenses"));
             addingLicensesForced = Boolean.parseBoolean(attributes.get("addingLicensesForced"));
             listFamilies = LicenseFilter.valueOf(attributes.get("listFamilies"));
             listLicenses = LicenseFilter.valueOf(attributes.get("listLicenses"));
@@ -964,6 +985,9 @@ public class ReportConfiguration {
                     out = IODescriptor.output(outputName, workingDirectory);
                 }
             }
+
+            XMLConfigurationReader.nodeListConsumer(document.getElementsByTagName("copyrightMessage"),
+                    lNode -> setCopyrightMessage(lNode.getTextContent()));
 
             XMLConfigurationReader.nodeListConsumer(document.getElementsByTagName("source"), lNode -> {
                 Map<String, String> nAttributes = XMLConfigurationReader.attributes(lNode);
@@ -1015,7 +1039,7 @@ public class ReportConfiguration {
          */
         static IODescriptor<OutputStream> output(final String name, final DocumentName workingDirectory) {
             DocumentName docName = workingDirectory.resolve(name);
-            return new IODescriptor<OutputStream>(name, () -> new FileOutputStream(docName.asFile()));
+            return new IODescriptor<>(name, () -> new FileOutputStream(docName.asFile()));
         }
     }
 }

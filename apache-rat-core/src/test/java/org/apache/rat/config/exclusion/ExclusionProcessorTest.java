@@ -30,7 +30,6 @@ import org.apache.commons.io.FileUtils;
 import org.apache.rat.document.DocumentNameMatcher;
 import org.apache.rat.document.DocumentName;
 import org.apache.rat.report.xml.writer.XmlWriter;
-import org.apache.rat.testhelpers.TextUtils;
 import org.apache.rat.utils.StandardXmlFactory;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -339,6 +338,23 @@ public class ExclusionProcessorTest {
         assertThat(underTest.getExcludedPatterns()).containsExactly("hello/world");
     }
 
+    public static void assertSame(ExclusionProcessor actual, ExclusionProcessor expected) {
+        assertThat(actual.getExcludedCollections()).containsExactlyElementsOf(expected.getExcludedCollections());
+        assertThat(actual.getFileProcessors()).containsExactlyElementsOf(expected.getFileProcessors());
+        assertThat(actual.getIncludedCollections()).containsExactlyElementsOf(expected.getIncludedCollections());
+        assertThat(actual.getExcludedPatterns()).containsExactlyElementsOf(expected.getExcludedPatterns());
+        assertThat(actual.getIncludedPatterns()).containsExactlyElementsOf(expected.getIncludedPatterns());
+
+        // paths only match on name.  deserialized paths are not functional.
+        List<String> actualPaths = actual.getExcludedPaths().stream().map(DocumentNameMatcher::toString).toList();
+        List<String> expectedPaths = expected.getExcludedPaths().stream().map(DocumentNameMatcher::toString).toList();
+        assertThat(actualPaths).as("excluded paths").containsExactlyElementsOf(expectedPaths);
+
+        actualPaths = actual.getIncludedPaths().stream().map(DocumentNameMatcher::toString).toList();
+        expectedPaths = expected.getIncludedPaths().stream().map(DocumentNameMatcher::toString).toList();
+        assertThat(actualPaths).as("included paths").containsExactlyElementsOf(expectedPaths);
+    }
+
     @ParameterizedTest
     @MethodSource("serdeTestData")
     void serdeTest(ExclusionProcessor underTest) throws IOException, SAXException {
@@ -349,20 +365,7 @@ public class ExclusionProcessorTest {
         Document document = StandardXmlFactory.documentBuilder().parse(new ByteArrayInputStream(stringWriter.toString().getBytes(StandardCharsets.UTF_8)));
         ExclusionProcessor actual = new ExclusionProcessor();
         actual.serde().deserialize(document.getElementsByTagName("ExclusionProcessor").item(0));
-        assertThat(actual.getExcludedCollections()).containsExactlyElementsOf(underTest.getExcludedCollections());
-        assertThat(actual.getFileProcessors()).containsExactlyElementsOf(underTest.getFileProcessors());
-        assertThat(actual.getIncludedCollections()).containsExactlyElementsOf(underTest.getIncludedCollections());
-        assertThat(actual.getExcludedPatterns()).containsExactlyElementsOf(underTest.getExcludedPatterns());
-        assertThat(actual.getIncludedPatterns()).containsExactlyElementsOf(underTest.getIncludedPatterns());
-
-        // paths only match on name.  deserialized paths are not functional.
-        List<String> actualPaths = actual.getExcludedPaths().stream().map(DocumentNameMatcher::toString).toList();
-        List<String> expectedPaths = underTest.getExcludedPaths().stream().map(DocumentNameMatcher::toString).toList();
-        assertThat(actualPaths).as("excluded paths").containsExactlyElementsOf(expectedPaths);
-
-        actualPaths = actual.getIncludedPaths().stream().map(DocumentNameMatcher::toString).toList();
-        expectedPaths = underTest.getIncludedPaths().stream().map(DocumentNameMatcher::toString).toList();
-        assertThat(actualPaths).as("included paths").containsExactlyElementsOf(expectedPaths);
+        assertSame(actual, underTest);
     }
 
     static List<ExclusionProcessor> serdeTestData() {

@@ -37,12 +37,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class ArgTests {
 
-    private CommandLine createCommandLine(String[] args) throws ParseException {
-        Options opts = OptionCollection.buildOptions();
-        return DefaultParser.builder().setDeprecatedHandler(DeprecationReporter.getLogReporter())
-                .setAllowPartialMatching(true).build().parse(opts, args);
-    }
-
     @ParameterizedTest(name = "{0}")
     @ValueSource(strings = { "rat.txt", "./rat.txt", "/rat.txt", "target/rat.test" })
     public void outputFileNameNoDirectoryTest(String name) throws ParseException {

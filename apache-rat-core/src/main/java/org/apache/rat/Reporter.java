@@ -48,9 +48,9 @@ import org.apache.rat.report.xml.writer.XmlWriter;
 import org.apache.rat.utils.StandardXmlFactory;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import org.xml.sax.SAXException;
 
 /**
  * Class that executes the report as defined in a {@link ReportConfiguration} and stores
@@ -245,7 +245,7 @@ public class Reporter {
                 this.document = document;
                 return this;
             }
-            @SuppressFBWarnings("XXE_DOCUMENT")
+
             public Builder document(final String fileName, final DocumentName workingDirectory) {
                 DocumentBuilder builder = StandardXmlFactory.documentBuilder();
                 File inputFile = workingDirectory.resolve(fileName).asFile();

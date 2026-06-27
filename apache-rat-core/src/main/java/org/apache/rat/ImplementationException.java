@@ -26,8 +26,8 @@ public class ImplementationException extends RuntimeException {
     private static final long serialVersionUID = 7257245932787579431L;
 
     public static ImplementationException makeInstance(final Exception e) {
-        if (e instanceof ImplementationException) {
-            return (ImplementationException) e;
+        if (e instanceof ImplementationException exists) {
+            return exists;
         }
         return new ImplementationException(e);
     }

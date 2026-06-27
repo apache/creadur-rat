@@ -478,8 +478,11 @@ public class ExclusionProcessor {
                                     throw new NotImplementedException("Deserialized ExclusionProcessor can not evaluate paths");
                                 }));
                         break;
+                    case "fileProcessor":
+                        fileProcessors.add(StandardCollection.valueOf(attributes.get(NAME)));
+                        break;
                     default:
-                        throw new NotImplementedException("Deserialization for %s is not implemented", child.getNodeName());
+                        throw new NotImplementedException(String.format("Deserialization for `%s` is not implemented", child.getNodeName()));
                 }
             }
         }

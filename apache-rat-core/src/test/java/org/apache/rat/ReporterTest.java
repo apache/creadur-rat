@@ -7,7 +7,7 @@
  * "License"); you may not use this file except in compliance   *
  * with the License.  You may obtain a copy of the License at   *
  *                                                              *
- *   http://www.apache.org/licenses/LICENSE-2.0                 *
+ *   https://www.apache.org/licenses/LICENSE-2.0                 *
  *                                                              *
  * Unless required by applicable law or agreed to in writing,   *
  * software distributed under the License is distributed on an  *
@@ -73,7 +73,6 @@ import org.apache.rat.testhelpers.data.TestData;
 import org.apache.rat.testhelpers.data.ValidatorData;
 import org.apache.rat.walker.DirectoryWalker;
 import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -141,7 +140,7 @@ public class ReporterTest {
     }
 
     @Test
-    void testExecute() throws RatException, ParseException, IOException {
+    void testExecute() throws RatException {
         File output = testPath.resolve("output.xml").toFile();
         ArgumentContext ctxt = collectionParser.parseCommands(new File("."), new String[]{"--output-style", "xml", "--output-file", output.getPath(), basedir});
         ClaimStatistic statistic = new Reporter(ctxt.getConfiguration()).execute().getStatistic();
@@ -587,15 +586,15 @@ public class ReporterTest {
     }
 
     private record LicenseInfo(String id, String family, boolean approval, boolean hasNotes) {
-            LicenseInfo(String id, boolean approval, boolean hasNotes) {
-                this(id, id, approval, hasNotes);
-            }
-
-            private LicenseInfo(String id, String family, boolean approval, boolean hasNotes) {
-                this.id = id;
-                this.family = ILicenseFamily.makeCategory(family);
-                this.approval = approval;
-                this.hasNotes = hasNotes;
-            }
+        LicenseInfo(String id, boolean approval, boolean hasNotes) {
+            this(id, id, approval, hasNotes);
         }
+
+        private LicenseInfo(String id, String family, boolean approval, boolean hasNotes) {
+            this.id = id;
+            this.family = ILicenseFamily.makeCategory(family);
+            this.approval = approval;
+            this.hasNotes = hasNotes;
+        }
+    }
 }

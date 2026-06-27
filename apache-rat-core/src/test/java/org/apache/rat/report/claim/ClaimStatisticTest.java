@@ -27,7 +27,7 @@ import java.nio.charset.StandardCharsets;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class ClaimStatisticTest {
+public class ClaimStatisticTest {
 
     @Test
     void counterTests() {
@@ -104,6 +104,29 @@ class ClaimStatisticTest {
         assertThat(underTest.getLicenseNames()).containsExactly("neg", "one", "wayToLongAName");
     }
 
+    /**
+     * Compares two claim statistics for similarity after serialization/deserialization.
+     * @param actual the deserialized verison.
+     * @param expected the original version.
+     */
+    public static void assertSame(final ClaimStatistic actual, final ClaimStatistic expected) {
+
+        assertThat(actual.getLicenseFamilyCategories()).containsExactlyElementsOf(expected.getLicenseFamilyCategories());
+        assertThat(actual.getLicenseNames()).containsExactlyElementsOf(expected.getLicenseNames());
+        assertThat(actual.getDocumentTypes()).containsExactlyElementsOf(expected.getDocumentTypes());
+        for (String cat : expected.getLicenseFamilyCategories()) {
+            assertThat(actual.getLicenseCategoryCount(cat)).isEqualTo(expected.getLicenseCategoryCount(cat));
+        }
+        for (String name : expected.getLicenseNames()) {
+            assertThat(actual.getLicenseNameCount(name)).isEqualTo(expected.getLicenseNameCount(name));
+        }
+        for (Document.Type type : expected.getDocumentTypes()) {
+            assertThat(actual.getCounter(type)).isEqualTo(expected.getCounter(type));
+        }
+        for (ClaimStatistic.Counter counter : ClaimStatistic.Counter.values()) {
+            assertThat(actual.getCounter(counter)).isEqualTo(expected.getCounter(counter));
+        }
+    }
 
     @Test
     void serdeRoundTrip() throws IOException {
@@ -120,20 +143,6 @@ class ClaimStatisticTest {
         ClaimStatistic.Serde serde2 = actual.serde();
         serde2.deserialize(() -> new ByteArrayInputStream(stringWriter.toString().getBytes(StandardCharsets.UTF_8)));
 
-        assertThat(actual.getLicenseFamilyCategories()).containsExactlyElementsOf(underTest.getLicenseFamilyCategories());
-        assertThat(actual.getLicenseNames()).containsExactlyElementsOf(underTest.getLicenseNames());
-        assertThat(actual.getDocumentTypes()).containsExactlyElementsOf(underTest.getDocumentTypes());
-        for (String cat : underTest.getLicenseFamilyCategories()) {
-            assertThat(actual.getLicenseCategoryCount(cat)).isEqualTo(underTest.getLicenseCategoryCount(cat));
-        }
-        for (String name : underTest.getLicenseNames()) {
-            assertThat(actual.getLicenseNameCount(name)).isEqualTo(underTest.getLicenseNameCount(name));
-        }
-        for (Document.Type type : underTest.getDocumentTypes()) {
-            assertThat(actual.getCounter(type)).isEqualTo(underTest.getCounter(type));
-        }
-        for (ClaimStatistic.Counter counter : ClaimStatistic.Counter.values()) {
-            assertThat(actual.getCounter(counter)).isEqualTo(underTest.getCounter(counter));
-        }
+        assertSame(actual, underTest);
     }
 }
