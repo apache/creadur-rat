@@ -18,13 +18,8 @@
  */
 package org.apache.rat.commandline;
 
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.DefaultParser;
-import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.rat.CLIOptionCollection;
-import org.apache.rat.DeprecationReporter;
-import org.apache.rat.OptionCollection;
 import org.apache.rat.ReportConfiguration;
 import org.apache.rat.document.DocumentName;
 import org.junit.jupiter.params.ParameterizedTest;
