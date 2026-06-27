@@ -19,7 +19,6 @@
 package org.apache.rat;
 
 import org.apache.commons.cli.Option;
-import org.apache.commons.cli.ParseException;
 import org.apache.rat.api.RatException;
 import org.apache.rat.commandline.ArgumentContext;
 import org.apache.rat.ui.UIOption;
@@ -29,7 +28,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.CleanupMode;
 import org.junit.jupiter.api.io.TempDir;
 
-import java.io.IOException;
 import java.nio.file.Path;
 
 import static org.assertj.core.api.Assertions.assertThat;

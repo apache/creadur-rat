@@ -35,7 +35,6 @@ import org.apache.rat.commandline.Arg;
 import org.apache.rat.ui.UIOptionCollection;
 import org.apache.rat.ui.ArgumentTracker;
 import org.apache.rat.utils.DefaultLog;
-import org.apache.rat.utils.Log;
 
 /**
  * Generates a list of TestData for executing the Report.

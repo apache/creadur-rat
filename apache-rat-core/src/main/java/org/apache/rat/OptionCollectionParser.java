@@ -88,6 +88,15 @@ public final class OptionCollectionParser {
         }
     }
 
+    private void printHelp(final ArgumentContext argumentContext) throws RatException {
+        try {
+            new Licenses(argumentContext.getConfiguration(),
+                    new PrintWriter(argumentContext.getConfiguration().getOutput().get(),
+                            false, StandardCharsets.UTF_8)).printHelp();
+        } catch (IOException e) {
+            throw new RatException("Unable to print help: " + e.getMessage(), e);
+        }
+    }
     /**
      * Parses the standard options to create a ReportConfiguration.
      *
@@ -104,13 +113,7 @@ public final class OptionCollectionParser {
             Arg.processLogLevel(argumentContext, uiOptionCollection);
             populateConfiguration(argumentContext);
             if (uiOptionCollection.isSelected(Arg.HELP_LICENSES)) {
-                try {
-                    new Licenses(argumentContext.getConfiguration(),
-                            new PrintWriter(argumentContext.getConfiguration().getOutput().get(),
-                                    false, StandardCharsets.UTF_8)).printHelp();
-                } catch (IOException e) {
-                    throw new RatException("Unable to print help: " + e.getMessage(), e);
-                }
+                printHelp(argumentContext);
             }
             return argumentContext;
         } catch (ParseException e) {
