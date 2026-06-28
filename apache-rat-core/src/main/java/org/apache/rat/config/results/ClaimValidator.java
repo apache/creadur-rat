@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.mutable.MutableInt;
 import org.apache.rat.report.claim.ClaimStatistic;
 import org.apache.rat.utils.DefaultLog;
 
@@ -35,11 +36,11 @@ public final class ClaimValidator {
     /**
      * The map of  max counter limits.
      */
-    private final ConcurrentHashMap<ClaimStatistic.Counter, Integer> max = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<ClaimStatistic.Counter, MutableInt> max = new ConcurrentHashMap<>();
     /**
      * The map of  min counter limits.
      */
-    private final ConcurrentHashMap<ClaimStatistic.Counter, Integer> min = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<ClaimStatistic.Counter, MutableInt> min = new ConcurrentHashMap<>();
     /**
      * {@code true} if errors were detected in the claim.
      */
@@ -51,8 +52,8 @@ public final class ClaimValidator {
     public ClaimValidator() {
         for (ClaimStatistic.Counter counter : ClaimStatistic.Counter.values()) {
             max.put(counter,
-                    counter.getDefaultMaxValue() < 0 ? Integer.MAX_VALUE : counter.getDefaultMaxValue());
-            min.put(counter, counter.getDefaultMinValue());
+                    new MutableInt(counter.getDefaultMaxValue() < 0 ? Integer.MAX_VALUE : counter.getDefaultMaxValue()));
+            min.put(counter, new MutableInt(counter.getDefaultMinValue()));
         }
     }
 
@@ -70,22 +71,28 @@ public final class ClaimValidator {
      * @param value the value to set. A negative value specifies no maximum value.
      */
     public void setMax(final ClaimStatistic.Counter counter, final int value) {
-        if (value < 0) {
-            max.put(counter, Integer.MAX_VALUE);
-        } else {
-            max.put(counter, value);
-        }
-        min.compute(counter, (k, v) -> v != null && v > max.get(k) ? max.get(k) : v);
+        MutableInt maxValue = max.compute(counter, (k, v) -> {
+            v.setValue(value < 0 ? Integer.MAX_VALUE : value);
+            return v; });
+        min.compute(counter, (k, v) ->  {
+            if (v.intValue() > maxValue.intValue()) {
+                v.setValue(maxValue.intValue());
+            }
+            return v; });
     }
 
     /**
-     * Sets the max value for the specified counter.
+     * Sets the min value for the specified counter.
      * @param counter the counter to set the limit for.
      * @param value the value to set. A negative value specifies no maximum value.
      */
     public void setMin(final ClaimStatistic.Counter counter, final int value) {
-        min.put(counter, value);
-        max.compute(counter, (k, v) -> v == null || v < value ? value : v);
+        min.put(counter, new MutableInt(value));
+        max.compute(counter, (k, v) -> {
+            if (v.intValue() < value) {
+                v.setValue(value);
+            }
+            return v; });
     }
 
     /**
@@ -94,8 +101,7 @@ public final class ClaimValidator {
      * @return the limit for the counter or 0 if not set.
      */
     public int getMax(final ClaimStatistic.Counter counter) {
-        Integer result = max.get(counter);
-        return result == null ? 0 : result;
+        return max.get(counter).intValue();
     }
 
     /**
@@ -104,8 +110,7 @@ public final class ClaimValidator {
      * @return the limit for the counter or 0 if not set.
      */
     public int getMin(final ClaimStatistic.Counter counter) {
-        Integer result = min.get(counter);
-        return result == null ? 0 : result;
+        return min.get(counter).intValue();
     }
 
     /**
@@ -115,7 +120,7 @@ public final class ClaimValidator {
      * @return {@code true} if the count is within the limits, {@code false} otherwise.
      */
     public boolean isValid(final ClaimStatistic.Counter counter, final int count) {
-        boolean result = max.get(counter) >= count && min.get(counter) <= count;
+        boolean result = max.get(counter).intValue() >= count && min.get(counter).intValue() <= count;
         hasErrors |= !result;
         return result;
     }
