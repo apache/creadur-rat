@@ -483,6 +483,9 @@ public class LicenseSetFactory {
      * @return the matching license or {@code null} if not found.
      */
     public static Optional<ILicense> search(final ILicense target, final SortedSet<ILicense> licenses) {
+        if (licenses == null) {
+            return Optional.empty();
+        }
         SortedSet<ILicense> part = licenses.tailSet(target);
         return Optional.ofNullable((!part.isEmpty() && part.first().compareTo(target) == 0) ? part.first() : null);
     }

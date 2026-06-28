@@ -218,7 +218,7 @@ public class SimpleLicense implements ILicense {
                 throw new ConfigurationException("'matcher' must not be null");
             }
             if (licenseFamilies == null) {
-                throw new ImplementationException("'licenseFamilies' must not be null");
+                throw new ImplementationException("License builder 'licenseFamilies' must not be null");
             }
             if (StringUtils.isBlank(familyCategory)) {
                 throw new ImplementationException("License 'family' must be specified");
