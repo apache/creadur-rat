@@ -18,10 +18,9 @@
  */
 package org.apache.rat.analysis;
 
-import java.util.Collection;
-import java.util.Set;
 import java.util.function.Predicate;
 
+import org.apache.commons.collections4.set.UnmodifiableSortedSet;
 import org.apache.rat.ConfigurationException;
 import org.apache.rat.Defaults;
 import org.apache.rat.ReportConfiguration;
@@ -80,7 +79,7 @@ public final class AnalyserFactory {
      */
     public static DocumentAnalyser createConfiguredAnalyser(final ReportConfiguration configuration) {
         LicenseSetFactory licenseSetFactory = configuration.getLicenseSetFactory();
-        Set<ILicense> licenses = licenseSetFactory.getLicenses(LicenseSetFactory.LicenseFilter.ALL);
+        UnmodifiableSortedSet<ILicense> licenses = licenseSetFactory.getLicenses(LicenseSetFactory.LicenseFilter.ALL);
         if (licenses.isEmpty()) {
             throw new ConfigurationException("At least one license must be defined");
         }
@@ -98,7 +97,7 @@ public final class AnalyserFactory {
     private static final class DefaultAnalyser implements DocumentAnalyser {
 
         /** The licenses to analyze */
-        private final Collection<ILicense> licenses;
+        private final UnmodifiableSortedSet<ILicense> licenses;
         /** the Report Configuration */
         private final ReportConfiguration configuration;
         /** The matcher for generated files */
@@ -109,7 +108,7 @@ public final class AnalyserFactory {
          * @param config the ReportConfiguration
          * @param licenses The licenses to analyse
          */
-        DefaultAnalyser(final ReportConfiguration config, final Collection<ILicense> licenses) {
+        DefaultAnalyser(final ReportConfiguration config, final UnmodifiableSortedSet<ILicense> licenses) {
             this.licenses = licenses;
             this.configuration = config;
             this.generatedMatcher = configuration.getGeneratedMatcher();

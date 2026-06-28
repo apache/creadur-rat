@@ -21,8 +21,11 @@ package org.apache.rat.analysis;
 
 import java.io.StringReader;
 
-import java.util.Collections;
+import java.util.List;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
+import org.apache.commons.collections4.set.UnmodifiableSortedSet;
 import org.apache.rat.Defaults;
 import org.apache.rat.api.Document;
 import org.apache.rat.configuration.builders.AnyBuilder;
@@ -31,19 +34,25 @@ import org.apache.rat.testhelpers.TestingDocument;
 import org.apache.rat.license.ILicense;
 import org.apache.rat.testhelpers.TestingLicense;
 import org.apache.rat.testhelpers.TestingMatcher;
-import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 public class HeaderCheckWorkerTest {
 
+    /** Create an unmodifiable sorted set from members */
+    private UnmodifiableSortedSet<ILicense> asLicenses(ILicense... licenses) {
+        SortedSet<ILicense> inner = new  TreeSet<>();
+        inner.addAll(List.of(licenses));
+        return (UnmodifiableSortedSet<ILicense>) UnmodifiableSortedSet.unmodifiableSortedSet(inner);
+    }
+
     @Test
     public void emptyInputIsUnknownTest() throws RatHeaderAnalysisException {
         final Document subject = new TestingDocument("subject");
         subject.getMetaData().setApprovalPredicate(Defaults.builder().build().getLicenseSetFactory().getApprovedLicensePredicate());
         ILicense matcher = new TestingLicense("test", "test");
-        HeaderCheckWorker worker = new HeaderCheckWorker(new TestingMatcher(), new StringReader(""), Lists.list(matcher), subject);
+        HeaderCheckWorker worker = new HeaderCheckWorker(new TestingMatcher(), new StringReader(""), asLicenses(matcher), subject);
         worker.read();
         assertThat(subject.getMetaData().unapprovedLicenses().count()).isEqualTo(1);
         assertThat(subject.getMetaData().unapprovedLicenses().toList().get(0).getLicenseFamily()).isEqualTo(ILicenseFamily.UNKNOWN);
@@ -53,7 +62,7 @@ public class HeaderCheckWorkerTest {
     public void generatedFileDetectionTest() throws Exception {
         final Document subject = new TestingDocument(new StringReader("Generated from configure.ac by autoheader"), "subject");
         IHeaderMatcher matcher = new AnyBuilder().setResource("/org/apache/rat/generation-keywords.txt").build();
-        HeaderCheckWorker worker = new HeaderCheckWorker(matcher, subject.reader(), Collections.emptyList(), subject);
+        HeaderCheckWorker worker = new HeaderCheckWorker(matcher, subject.reader(), asLicenses(), subject);
         worker.read();
         assertThat(subject.getMetaData().getDocumentType()).isEqualTo(Document.Type.IGNORED);
     }

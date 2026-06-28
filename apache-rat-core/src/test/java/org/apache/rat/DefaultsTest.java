@@ -22,6 +22,7 @@ import java.util.Arrays;
 import java.util.Set;
 import java.util.TreeSet;
 
+import org.apache.commons.collections4.set.UnmodifiableSortedSet;
 import org.apache.rat.license.ILicense;
 import org.apache.rat.license.LicenseSetFactory.LicenseFilter;
 import org.junit.jupiter.api.Test;
@@ -36,7 +37,7 @@ public class DefaultsTest {
     public void defaultConfigTest() {
         Defaults defaults = Defaults.builder().build();
 
-        Set<ILicense> licenses = defaults.getLicenseSetFactory().getLicenses(LicenseFilter.ALL);
+        UnmodifiableSortedSet<ILicense> licenses = defaults.getLicenseSetFactory().getLicenses(LicenseFilter.ALL);
 
         Set<String> names = new TreeSet<>();
         licenses.forEach(x -> names.add(x.getLicenseFamily().getFamilyCategory()));
