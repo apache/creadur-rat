@@ -7,7 +7,7 @@
  * "License"); you may not use this file except in compliance   *
  * with the License.  You may obtain a copy of the License at   *
  *                                                              *
- *   http://www.apache.org/licenses/LICENSE-2.0                 *
+ *   https://www.apache.org/licenses/LICENSE-2.0                 *
  *                                                              *
  * Unless required by applicable law or agreed to in writing,   *
  * software distributed under the License is distributed on an  *
@@ -18,30 +18,27 @@
  */
 package org.apache.rat;
 
-/**
- * An exception thrown when there is an issue with the implementation of an extension point.
- */
-public class ImplementationException extends RuntimeException {
+import org.junit.jupiter.api.Test;
 
-    private static final long serialVersionUID = 7257245932787579431L;
+import static org.assertj.core.api.Assertions.assertThat;
 
-    public static ImplementationException makeInstance(final Exception e) {
-        if (e instanceof ImplementationException exists) {
-            return exists;
-        }
-        return new ImplementationException(e);
+class ImplementationExceptionTest {
+
+    @Test
+    void fromTest() {
+        RuntimeException runTime = new RuntimeException();
+        assertThat(ImplementationException.makeInstance(runTime))
+                .isInstanceOf(ImplementationException.class)
+                .hasCause(runTime);
+
+        Exception ex = new Exception();
+        assertThat(ImplementationException.makeInstance(ex))
+                .isInstanceOf(ImplementationException.class)
+                .hasCause(ex);
+
+        ex = new ImplementationException("yee haw");
+        assertThat(ImplementationException.makeInstance(ex))
+                .isInstanceOf(ImplementationException.class)
+                .isEqualTo(ex);
     }
-
-    public ImplementationException(final String message, final Throwable cause) {
-        super(message, cause);
-    }
-
-    public ImplementationException(final String message) {
-        super(message);
-    }
-
-    public ImplementationException(final Throwable cause) {
-        super(cause);
-    }
-
 }

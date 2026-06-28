@@ -49,7 +49,8 @@ public final class Defaults {
     /** The default configuration file from the package. */
     private static final URI DEFAULT_CONFIG_URI;
     /** The path to the default configuration file. */
-    private static final String DEFAULT_CONFIG_PATH = "/org/apache/rat/default.xml";
+    // sonar wants this to be configurable.
+    private static final String DEFAULT_CONFIG_PATH = "/org/apache/rat/default.xml"; // NOSONAR
     /** The default ARCHIVES processing style. */
     public static final ReportConfiguration.Processing ARCHIVE_PROCESSING = ReportConfiguration.Processing.NOTIFICATION;
     /** The default STANDARD processing style. */

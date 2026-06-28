@@ -18,6 +18,7 @@
  */ 
 package org.apache.rat.header;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.apache.rat.DeprecationReporter;
 
 import java.io.IOException;
@@ -35,6 +36,7 @@ import java.util.regex.Pattern;
  * <p><strong>Note:</strong> use only from a single thread.</p>
  *
  */
+@SuppressFBWarnings("EI_EXPOSE_REP2")
 @Deprecated // since 0.17
 @DeprecationReporter.Info(since = "0.17", forRemoval = true)
 public class HeaderMatcher {
