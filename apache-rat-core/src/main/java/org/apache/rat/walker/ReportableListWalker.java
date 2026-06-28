@@ -24,18 +24,18 @@ import java.util.Objects;
 
 import org.apache.rat.api.RatException;
 import org.apache.rat.document.DocumentName;
-import org.apache.rat.report.IReportable;
 import org.apache.rat.report.RatReport;
+import org.apache.rat.report.Reportable;
 import org.apache.rat.utils.DefaultLog;
 
 /**
  * A Reportable that walks a list of IReportables and executes the run on each.
  */
-public final class IReportableListWalker implements IReportable {
+public final class ReportableListWalker implements Reportable {
     /** The document name for this walker. */
     private final DocumentName documentName;
     /** The list of reportables for this walker. */
-    private final List<IReportable> reportables;
+    private final List<Reportable> reportables;
 
     /**
      * Create a builder for the list walker.
@@ -50,24 +50,24 @@ public final class IReportableListWalker implements IReportable {
      * Construct the builder.
      * @param builder for the reportable.
      */
-    private IReportableListWalker(final Builder builder) {
+    private ReportableListWalker(final Builder builder) {
         this.documentName = builder.documentName;
         this.reportables = builder.reportables;
     }
 
     @Override
     public void run(final RatReport report) {
-        for (IReportable reportable : reportables) {
+        for (Reportable reportable : reportables) {
             try {
                 reportable.run(report);
             } catch (RatException e) {
-                DefaultLog.getInstance().error("Error processing " + reportable.getName(), e);
+                DefaultLog.getInstance().error("Error processing " + reportable.name(), e);
             }
         }
     }
 
     @Override
-    public DocumentName getName() {
+    public DocumentName name() {
         return documentName;
     }
 
@@ -78,7 +78,7 @@ public final class IReportableListWalker implements IReportable {
         /** The document name for the walker. */
         private final DocumentName documentName;
         /** The list of IReportable objects to execute. */
-        private List<IReportable> reportables = new ArrayList<>();
+        private List<Reportable> reportables = new ArrayList<>();
 
         /**
          * Constructs the builder.
@@ -94,7 +94,7 @@ public final class IReportableListWalker implements IReportable {
          * @param reportable the reportable to run.
          * @return this.
          */
-        public Builder addReportable(final IReportable reportable) {
+        public Builder addReportable(final Reportable reportable) {
             this.reportables.add(reportable);
             return this;
         }
@@ -104,11 +104,11 @@ public final class IReportableListWalker implements IReportable {
          * @return the reportable.
          * @throws RatException on error.
          */
-        public IReportable build() throws RatException {
+        public Reportable build() throws RatException {
             if (reportables == null) {
                 throw new RatException("Builder may only be used once");
             }
-            IReportable result = new IReportableListWalker(this);
+            Reportable result = new ReportableListWalker(this);
             this.reportables = null;
             return result;
         }
