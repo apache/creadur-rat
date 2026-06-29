@@ -169,7 +169,6 @@ class ClaimValidatorTest {
 
         assertThatThrownBy(() -> underTest.listIssues(null)).isInstanceOf(NullPointerException.class)
                 .hasMessageContaining("statistic must not be null.");
-
     }
 
     @Test
