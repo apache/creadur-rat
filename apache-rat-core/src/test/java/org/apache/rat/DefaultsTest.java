@@ -19,7 +19,6 @@
 package org.apache.rat;
 
 import java.util.Arrays;
-import java.util.Set;
 import java.util.TreeSet;
 
 import org.apache.commons.collections4.set.UnmodifiableSortedSet;
@@ -30,16 +29,16 @@ import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.assertThat;
 
 
-public class DefaultsTest {
+class DefaultsTest {
     private static final String[] FAMILIES = { "BSD-3", "GPL  ", "AL   ", "OASIS", "W3CD ", "W3C  ", "MIT  ", "CDDL1" };
 
     @Test
-    public void defaultConfigTest() {
+    void defaultConfigTest() {
         Defaults defaults = Defaults.builder().build();
 
         UnmodifiableSortedSet<ILicense> licenses = defaults.getLicenseSetFactory().getLicenses(LicenseFilter.ALL);
 
-        Set<String> names = new TreeSet<>();
+        TreeSet<String> names = new TreeSet<>();
         licenses.forEach(x -> names.add(x.getLicenseFamily().getFamilyCategory()));
         assertThat(names).hasSize(FAMILIES.length);
         names.removeAll(Arrays.asList(FAMILIES));
