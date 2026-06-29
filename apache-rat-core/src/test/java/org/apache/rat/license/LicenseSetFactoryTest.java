@@ -178,7 +178,7 @@ public class LicenseSetFactoryTest {
         SortedSet<ILicenseFamily> families = new TreeSet<>(Arrays.asList(APPROVED_FAMILIES));
         ILicenseFamily actual = LicenseSetFactory.familySearch(APPROVED_FAMILIES[0], families);
         assertThat(actual).isEqualTo(APPROVED_FAMILIES[0]);
-        actual = LicenseSetFactory.familySearch(APPROVED_FAMILIES[2].getFamilyCategory().toString(), families);
+        actual = LicenseSetFactory.familySearch(APPROVED_FAMILIES[2].getFamilyCategory(), families);
         assertThat(actual).isEqualTo(APPROVED_FAMILIES[2]);
         actual = LicenseSetFactory.familySearch("not a real category", families);
         assertThat(actual).isNull();
@@ -208,7 +208,7 @@ public class LicenseSetFactoryTest {
     @Test
     void addNullLicense() {
         LicenseSetFactory underTest = new LicenseSetFactory();
-        assertThat(underTest.getLicenses(LicenseSetFactory.LicenseFilter.ALL));
+        assertThat(underTest.getLicenses(LicenseSetFactory.LicenseFilter.ALL)).isEmpty();
         underTest.addLicense((ILicense) null);
         assertThat(underTest.getLicenses(LicenseSetFactory.LicenseFilter.ALL)).isEmpty();
         ILicense result = underTest.addLicense((ILicense.Builder) null);
@@ -228,15 +228,15 @@ public class LicenseSetFactoryTest {
 
     @Test
     void searchTest() {
-        assertThat(licenseSetFactory.search("theFamily", "TheLicense", null)).isEmpty();
+        assertThat(LicenseSetFactory.search("theFamily", "TheLicense", null)).isEmpty();
 
-        assertThat(licenseSetFactory.search("theFamily", "TheLicense", new TreeSet<>())).isEmpty();
+        assertThat(LicenseSetFactory.search("theFamily", "TheLicense", new TreeSet<>())).isEmpty();
 
         SortedSet<ILicense> set = licenseSetFactory.getLicenses(LicenseSetFactory.LicenseFilter.ALL);
-        assertThat(licenseSetFactory.search(APPROVED_FAMILIES[0].getFamilyCategory(), "TheLicense", set)).isEmpty();
+        assertThat(LicenseSetFactory.search(APPROVED_FAMILIES[0].getFamilyCategory(), "TheLicense", set)).isEmpty();
 
 
-        Optional<ILicense> optLicense = licenseSetFactory.search("AL", "AL2.0", set);
+        Optional<ILicense> optLicense = LicenseSetFactory.search("AL", "AL2.0", set);
         assertThat(optLicense).isNotEmpty();
         ILicense license = optLicense.get();
         assertThat(license.getLicenseFamily().getFamilyCategory()).isEqualTo(ILicenseFamily.makeCategory("AL"));
