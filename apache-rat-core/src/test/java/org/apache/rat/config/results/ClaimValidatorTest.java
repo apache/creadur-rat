@@ -31,73 +31,72 @@ import org.apache.rat.utils.DefaultLog;
 import org.junit.jupiter.api.Test;
 
 import static java.lang.String.format;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-public class ClaimValidatorTest {
+class ClaimValidatorTest {
 
-   @Test
-    public void initialStateTest() {
-       ClaimValidator validator = new ClaimValidator();
-       assertFalse(validator.hasErrors());
-       for (ClaimStatistic.Counter counter : ClaimStatistic.Counter.values()) {
-           int expected = counter.getDefaultMaxValue() < 0 ? Integer.MAX_VALUE : counter.getDefaultMaxValue();
-           assertEquals(expected, validator.getMax(counter), () -> format("Max value '%s' is invalid", counter));
-           assertEquals(counter.getDefaultMinValue(), validator.getMin(counter), () -> format("Min value '%s' is invalid", counter));
-           assertTrue(validator.isValid(counter, expected), () -> format("max value (%s) should not be invalid", expected));
-           assertTrue(validator.isValid(counter, counter.getDefaultMinValue()), () -> format("min value (%s) should not be invalid",
-                   counter.getDefaultMinValue()));
-       }
+    @Test
+    void initialStateTest() {
+        ClaimValidator validator = new ClaimValidator();
+        assertThat(validator.hasErrors()).isFalse();
+        for (ClaimStatistic.Counter counter : ClaimStatistic.Counter.values()) {
+            int expected = counter.getDefaultMaxValue() < 0 ? Integer.MAX_VALUE : counter.getDefaultMaxValue();
+            assertThat(validator.getMax(counter)).as(() -> format("Max value '%s' is invalid", counter)).isEqualTo(expected);
+            assertThat(validator.getMin(counter)).as(() -> format("Min value '%s' is invalid", counter)).isEqualTo(counter.getDefaultMinValue());
+            assertThat(validator.isValid(counter, expected)).as(() -> format("max value (%s) should not be invalid", expected)).isTrue();
+            assertThat(validator.isValid(counter, counter.getDefaultMinValue())).as(() -> format("min value (%s) should not be invalid",
+                    counter.getDefaultMinValue())).isTrue();
+        }
     }
 
     @Test
-    public void setMaxTest() {
+    void setMaxTest() {
         ClaimValidator validator = new ClaimValidator();
         int expected = 5;
         for (ClaimStatistic.Counter counter : ClaimStatistic.Counter.values()) {
             validator.setMax(counter, expected);
-            assertEquals(expected, validator.getMax(counter), () -> format("'%s' value is invalid", counter));
-            assertTrue(validator.isValid(counter, expected));
+            assertThat(validator.getMax(counter)).as(() -> format("'%s' value is invalid", counter)).isEqualTo(expected);
+            assertThat(validator.isValid(counter, expected)).isTrue();
         }
         expected = Integer.MAX_VALUE;
         for (ClaimStatistic.Counter counter : ClaimStatistic.Counter.values()) {
             validator.setMax(counter, -1);
-            assertEquals(expected, validator.getMax(counter), () -> format("'%s' value is invalid", counter));
-            assertTrue(validator.isValid(counter, expected));
+            assertThat(validator.getMax(counter)).as(() -> format("'%s' value is invalid", counter)).isEqualTo(expected);
+            assertThat(validator.isValid(counter, expected)).isTrue();
         }
     }
 
     @Test
-    public void setMinTest() {
+    void setMinTest() {
         ClaimValidator validator = new ClaimValidator();
         int expected = 5;
         for (ClaimStatistic.Counter counter : ClaimStatistic.Counter.values()) {
             validator.setMin(counter, expected);
-            assertEquals(expected, validator.getMin(counter), () -> format("'%s' value is invalid", counter));
-            assertTrue(validator.isValid(counter, expected));
+            assertThat(validator.getMin(counter)).as(() -> format("'%s' value is invalid", counter)).isEqualTo(expected);
+            assertThat(validator.isValid(counter, expected)).isTrue();
         }
         expected = Integer.MAX_VALUE;
         for (ClaimStatistic.Counter counter : ClaimStatistic.Counter.values()) {
             validator.setMax(counter, -1);
-            assertEquals(expected, validator.getMax(counter), () -> format("'%s' value is invalid", counter));
-            assertTrue(validator.isValid(counter, expected));
+            assertThat(validator.getMax(counter)).as(() -> format("'%s' value is invalid", counter)).isEqualTo(expected);
+            assertThat(validator.isValid(counter, expected)).isTrue();
         }
     }
 
     @Test
-    public void isValidTest() {
+    void isValidTest() {
         int expected = 5;
         for (ClaimStatistic.Counter counter : ClaimStatistic.Counter.values()) {
             ClaimValidator validator = new ClaimValidator();
-            assertFalse(validator.hasErrors());
+            assertThat(validator.hasErrors()).isFalse();
             validator.setMax(counter, expected);
-            assertTrue(validator.isValid(counter, expected), () -> format("error with %s expected", counter)) ;
-            assertFalse(validator.hasErrors(), () -> format("error with %s, counter", counter)) ;
-            assertTrue(validator.isValid(counter, expected - 1), () -> format("error with %s -1", counter)) ;
-            assertFalse(validator.hasErrors(), () -> format("error with %s, counter", counter)) ;
-            assertFalse(validator.isValid(counter, expected + 1), () -> format("error with %s +1", counter)) ;
-            assertTrue(validator.hasErrors(), () -> format("error with %s, counter", counter)) ;
+            assertThat(validator.isValid(counter, expected)).as(() -> format("error with %s expected", counter)).isTrue();
+            assertThat(validator.hasErrors()).as(() -> format("error with %s, counter", counter)).isFalse();
+            assertThat(validator.isValid(counter, expected - 1)).as(() -> format("error with %s -1", counter)).isTrue();
+            assertThat(validator.hasErrors()).as(() -> format("error with %s, counter", counter)).isFalse();
+            assertThat(validator.isValid(counter, expected + 1)).as(() -> format("error with %s +1", counter)).isFalse();
+            assertThat(validator.hasErrors()).as(() -> format("error with %s, counter", counter)).isTrue();
         }
     }
 
@@ -108,7 +107,7 @@ public class ClaimValidatorTest {
     }
 
     @Test
-    public void logIssuesTest() {
+    void logIssuesTest() {
         ClaimStatistic statistic = new ClaimStatistic();
         TestingLog log = new TestingLog();
         try {
@@ -125,7 +124,7 @@ public class ClaimValidatorTest {
                 validator.setMax(counter, expected);
                 statistic.incCounter(counter, expected);
                 validator.logIssues(statistic);
-                assertFalse(log.getCaptured().isEmpty());
+                assertThat(log.getCaptured()).isNotEmpty();
                 required.entrySet().stream().filter(e -> e.getKey() != counter)
                         .map(Map.Entry::getValue).forEach(log::assertContains);
                 if (required.entrySet().contains(counter)) {
@@ -145,7 +144,36 @@ public class ClaimValidatorTest {
     }
 
     @Test
-    public void listIssuesTest() {
+    void nullValuesTest() {
+        ClaimValidator underTest = new ClaimValidator();
+        TestingLog log = new TestingLog();
+        try {
+            DefaultLog.setInstance(log);
+            underTest.setMin(null, 5);
+            assertThat(log.getCaptured()).contains("`null` passed as argument to setMin() -- ignoring");
+            underTest.setMax(null, 10);
+            assertThat(log.getCaptured()).contains("`null` passed as argument to setMax() -- ignoring");
+            assertThat(underTest.getMin(null)).isZero();
+            assertThat(log.getCaptured()).contains("`null` passed as argument to getMin() -- returning 0");
+            assertThat(underTest.getMax(null)).isZero();
+            assertThat(log.getCaptured()).contains("`null` passed as argument to getMax() -- returning 0");
+        } finally {
+            DefaultLog.setInstance(null);
+        }
+
+        assertThatThrownBy(() -> underTest.isValid(null, 5)).isInstanceOf(NullPointerException.class)
+                .hasMessageContaining("counter must not be null.");
+
+        assertThatThrownBy(() -> underTest.logIssues(null)).isInstanceOf(NullPointerException.class)
+                .hasMessageContaining("statistic must not be null.");
+
+        assertThatThrownBy(() -> underTest.listIssues(null)).isInstanceOf(NullPointerException.class)
+                .hasMessageContaining("statistic must not be null.");
+
+    }
+
+    @Test
+    void listIssuesTest() {
         ClaimStatistic statistic = new ClaimStatistic();
         List<String> required = getRequiredCounters().stream().map(ClaimStatistic.Counter::name).toList();
 
@@ -157,13 +185,51 @@ public class ClaimValidatorTest {
             validator.setMax(counter, value);
             statistic.incCounter(counter, value);
             Collection<String> actual = validator.listIssues(statistic);
-            assertEquals(expected, actual);
+            assertThat(actual).containsExactlyElementsOf(expected);
             statistic.incCounter(counter, 1);
             expected.add(counter.name());
             expected.sort(String::compareTo);
             actual = validator.listIssues(statistic);
-            assertEquals(expected, actual);
+            assertThat(actual).containsExactlyElementsOf(expected);
             statistic.incCounter(counter, -1 - value);
         }
+    }
+
+    @Test
+    void verifyMinimumIsSetToZeroByDefault() {
+        ClaimValidator validator = new ClaimValidator();
+        validator.setMax(ClaimStatistic.Counter.IGNORED, 4711);
+        assertThat(validator.getMin(ClaimStatistic.Counter.IGNORED)).isZero();
+    }
+
+    @Test
+    void verifyHandlingIfMaximumIsLessThanZeroAndChangedTwice() {
+        ClaimValidator validator = new ClaimValidator();
+        validator.setMax(ClaimStatistic.Counter.IGNORED, -4711);
+        assertThat(validator.getMax(ClaimStatistic.Counter.IGNORED)).isEqualTo(Integer.MAX_VALUE);
+        validator.setMax(ClaimStatistic.Counter.IGNORED, 4711);
+        assertThat(validator.getMax(ClaimStatistic.Counter.IGNORED)).isEqualTo(4711);
+    }
+
+    @Test
+    void verifyHandlingIfMinAndMaxIsSetOnACounter() {
+        ClaimValidator validator = new ClaimValidator();
+        validator.setMin(ClaimStatistic.Counter.IGNORED, 4711);
+        validator.setMax(ClaimStatistic.Counter.IGNORED, -4711);
+        assertThat(validator.getMax(ClaimStatistic.Counter.IGNORED)).isEqualTo(Integer.MAX_VALUE);
+        assertThat(validator.getMin(ClaimStatistic.Counter.IGNORED)).isEqualTo(4711);
+
+        validator.setMax(ClaimStatistic.Counter.IGNORED, 4710);
+        assertThat(validator.getMax(ClaimStatistic.Counter.IGNORED)).isEqualTo(4710);
+        assertThat(validator.getMin(ClaimStatistic.Counter.IGNORED)).isEqualTo(4710);
+    }
+
+    @Test
+    void verifyHandlingIfMinimumIsChangedTwice() {
+        ClaimValidator validator = new ClaimValidator();
+        validator.setMin(ClaimStatistic.Counter.IGNORED, 4711);
+        assertThat(validator.getMin(ClaimStatistic.Counter.IGNORED)).isEqualTo(4711);
+        validator.setMin(ClaimStatistic.Counter.IGNORED, 1);
+        assertThat(validator.getMin(ClaimStatistic.Counter.IGNORED)).isEqualTo(1);
     }
 }
