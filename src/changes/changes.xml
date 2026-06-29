@@ -68,9 +68,6 @@ in order to be properly linked in site reports.
     </release>
     -->
     <release version="1.0.0-SNAPSHOT" date="xxxx-yy-zz" description="Current SNAPSHOT - release to be done">
-      <action issue="RAT-562" type="add" dev="claudenw">
-        Use MutableInt within ClaimValidator to manage different counter values and avoid un/boxing.
-      </action>
       <action issue="RAT-559" type="fix" dev="claudenw">
         Fix issues with DocumentName and DocumentNameBuilder that address errors in archive handling and Windows as operating system.
       </action>
