@@ -76,14 +76,18 @@ public final class ClaimValidator {
             DefaultLog.getInstance().warn("`null` passed as argument to setMax() -- ignoring");
             return;
         }
-        MutableInt maxValue = max.computeIfPresent(counter, (k, v) -> {
-            v.setValue(value < 0 ? Integer.MAX_VALUE : value);
-            return v; });
-        min.computeIfPresent(counter, (k, v) ->  {
-            if (v.intValue() > maxValue.intValue()) {
-                v.setValue(maxValue.intValue());
+        MutableInt maxValue = max.compute(counter, (k, v) -> {
+            MutableInt result = v == null ? new MutableInt(k.getDefaultMaxValue()) : v;
+            result.setValue(value < 0 ? Integer.MAX_VALUE : value);
+            return result;
+        });
+        min.compute(counter, (k, v) -> {
+            MutableInt result = v == null ? new MutableInt(k.getDefaultMinValue()) : v;
+            if (result.intValue() > maxValue.intValue()) {
+                result.setValue(maxValue.intValue());
             }
-            return v; });
+            return result;
+        });
     }
 
     /**
@@ -96,10 +100,10 @@ public final class ClaimValidator {
             DefaultLog.getInstance().warn("`null` passed as argument to setMin() -- ignoring");
             return;
         }
-        min.put(counter, new MutableInt(value));
-        max.computeIfPresent(counter, (k, v) -> {
-            if (v.intValue() < value) {
-                v.setValue(value);
+        max.compute(counter, (k, v) -> {
+            MutableInt result = v == null ? new MutableInt(k.getDefaultMinValue()) : v;
+            if (result.intValue() < value) {
+                result.setValue(value);
             }
             return v; });
     }
