@@ -73,14 +73,14 @@ class ClaimValidatorTest {
         int expected = 5;
         for (ClaimStatistic.Counter counter : ClaimStatistic.Counter.values()) {
             validator.setMin(counter, expected);
-            assertThat(validator.getMin(counter)).as(() -> format("'%s' value is invalid", counter)).isEqualTo(expected);
-            assertThat(validator.isValid(counter, expected)).isTrue();
+            assertThat(validator.getMin(counter)).as(() -> format("'%s' min value is invalid", counter)).isEqualTo(expected);
+            assertThat(validator.isValid(counter, expected)).as(() -> format("'%s' value is invalid", counter)).isTrue();
         }
         expected = Integer.MAX_VALUE;
         for (ClaimStatistic.Counter counter : ClaimStatistic.Counter.values()) {
             validator.setMax(counter, -1);
-            assertThat(validator.getMax(counter)).as(() -> format("'%s' value is invalid", counter)).isEqualTo(expected);
-            assertThat(validator.isValid(counter, expected)).isTrue();
+            assertThat(validator.getMax(counter)).as(() -> format("'%s' max value is invalid", counter)).isEqualTo(expected);
+            assertThat(validator.isValid(counter, expected)).as(() -> format("'%s' value is invalid", counter)).isTrue();
         }
     }
 

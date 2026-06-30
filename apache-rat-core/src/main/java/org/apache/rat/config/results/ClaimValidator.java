@@ -67,7 +67,45 @@ public final class ClaimValidator {
     }
 
     /**
+     * Sets the value unconditionally.
+     * @param result the MutableInt to set.
+     * @param value the value to set it to.
+     * @return the {@code result} argument
+     */
+    private MutableInt newValue(final MutableInt result, final int value) {
+        result.setValue(value);
+        return result;
+    }
+
+    /**
+     * Sets the {@code result.value} if it is greater than the {@code value} argument.
+     * @param result the MutableInt to set.
+     * @param value the value to set it to if it is less than the result.value
+     * @return the {@code result} argument
+     */
+    private MutableInt setMinValue(final MutableInt result, final int value) {
+        if (result.intValue() > value) {
+            result.setValue(value);
+        }
+        return result;
+    }
+
+    /**
+     * Sets the {@code result.value} if it is less than the {@code value} argument.
+     * @param result the MutableInt to set.
+     * @param value the value to set it to if it is greater than the result.value
+     * @return the {@code result} argument
+     */
+    private MutableInt setMaxValue(final MutableInt result, final int value) {
+        if (result.intValue() < value) {
+            result.setValue(value);
+        }
+        return result;
+    }
+
+    /**
      * Sets the max value for the specified counter.
+     * Will adjust the minimum if the minimum is greater than the maximum.
      * @param counter the counter to set the limit for.
      * @param value the value to set. A negative value specifies no maximum value.
      */
@@ -76,22 +114,17 @@ public final class ClaimValidator {
             DefaultLog.getInstance().warn("`null` passed as argument to setMax() -- ignoring");
             return;
         }
-        MutableInt maxValue = max.compute(counter, (k, v) -> {
-            MutableInt result = v == null ? new MutableInt(k.getDefaultMaxValue()) : v;
-            result.setValue(value < 0 ? Integer.MAX_VALUE : value);
-            return result;
-        });
-        min.compute(counter, (k, v) -> {
-            MutableInt result = v == null ? new MutableInt(k.getDefaultMinValue()) : v;
-            if (result.intValue() > maxValue.intValue()) {
-                result.setValue(maxValue.intValue());
-            }
-            return result;
-        });
+        int setValue = value < 0 ? Integer.MAX_VALUE : value;
+        MutableInt maxValue = max.compute(counter, (k, v) ->
+                v == null ? new MutableInt(setValue) : newValue(v, setValue));
+        min.compute(counter, (k, v) ->
+                v == null ? new MutableInt(k.getDefaultMinValue()) :
+                        setMinValue(v, setValue));
     }
 
     /**
      * Sets the min value for the specified counter.
+     * Will adjust the maximum if the maximum is less than the minimum.
      * @param counter the counter to set the limit for.
      * @param value the value to set. A negative value specifies no maximum value.
      */
@@ -100,12 +133,11 @@ public final class ClaimValidator {
             DefaultLog.getInstance().warn("`null` passed as argument to setMin() -- ignoring");
             return;
         }
-        max.compute(counter, (k, v) -> {
-            MutableInt result = v == null ? new MutableInt(k.getDefaultMinValue()) : v;
-            if (result.intValue() < value) {
-                result.setValue(value);
-            }
-            return v; });
+        min.compute(counter, (k, v) ->
+            v == null ? new MutableInt(value) : newValue(v, value));
+        max.compute(counter, (k, v) ->
+                v == null ? setMaxValue(new MutableInt(k.getDefaultMaxValue()), value) :
+                setMaxValue(v, value));
     }
 
     /**
