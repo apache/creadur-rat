@@ -104,11 +104,11 @@ public final class ReportableListWalker implements Reportable {
          * @return the reportable.
          * @throws RatException on error.
          */
-        public Reportable build() throws RatException {
+        public ReportableListWalker build() throws RatException {
             if (reportables == null) {
                 throw new RatException("Builder may only be used once");
             }
-            Reportable result = new ReportableListWalker(this);
+            ReportableListWalker result = new ReportableListWalker(this);
             this.reportables = null;
             return result;
         }
