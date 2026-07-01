@@ -118,7 +118,7 @@ public final class ClaimValidator {
         MutableInt maxValue = max.compute(counter, (k, v) ->
                 v == null ? new MutableInt(setValue) : newValue(v, setValue));
         min.compute(counter, (k, v) ->
-                v == null ? new MutableInt(k.getDefaultMinValue()) :
+                v == null ? new MutableInt(Math.min(k.getDefaultMinValue(), maxValue.intValue())) :
                         setMinValue(v, setValue));
     }
 
