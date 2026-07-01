@@ -172,6 +172,47 @@ class ClaimValidatorTest {
     }
 
     @Test
+    void nullCounterForMinTest() {
+        ClaimValidator underTest = new ClaimValidator(false);
+        // UNAPPROVED has a default min and max of 0
+        underTest.setMin(ClaimStatistic.Counter.UNAPPROVED, 5);
+        assertThat(underTest.getMin(ClaimStatistic.Counter.UNAPPROVED)).isEqualTo(5);
+        assertThat(underTest.getMax(ClaimStatistic.Counter.UNAPPROVED)).isEqualTo(5);
+    }
+
+    void nullCounterForMaxTest() {
+        ClaimValidator underTest = new ClaimValidator(false);
+        // UNAPPROVED has a default min and max of 0
+        underTest.setMax(ClaimStatistic.Counter.UNAPPROVED, 5);
+        assertThat(underTest.getMin(ClaimStatistic.Counter.UNAPPROVED)).isZero();
+        assertThat(underTest.getMax(ClaimStatistic.Counter.UNAPPROVED)).isEqualTo(5);
+
+        underTest.setMax(ClaimStatistic.Counter.UNAPPROVED, -1);
+        assertThat(underTest.getMin(ClaimStatistic.Counter.UNAPPROVED)).isZero();
+        assertThat(underTest.getMax(ClaimStatistic.Counter.UNAPPROVED)).isEqualTo(Integer.MAX_VALUE);
+    }
+
+    void testMinHigherThanMax() {
+        ClaimValidator underTest = new ClaimValidator();
+        // UNAPPROVED has a default min and max of 0
+        underTest.setMin(ClaimStatistic.Counter.UNAPPROVED, 5);
+        assertThat(underTest.getMin(ClaimStatistic.Counter.UNAPPROVED)).isEqualTo(5);
+        assertThat(underTest.getMax(ClaimStatistic.Counter.UNAPPROVED)).isEqualTo(5);
+    }
+
+    void testMaxLowerThanMin() {
+        ClaimValidator underTest = new ClaimValidator();
+        // UNAPPROVED has a default min and max of 0
+        underTest.setMin(ClaimStatistic.Counter.UNAPPROVED, 5);
+        assertThat(underTest.getMin(ClaimStatistic.Counter.UNAPPROVED)).isEqualTo(5);
+        assertThat(underTest.getMax(ClaimStatistic.Counter.UNAPPROVED)).isEqualTo(5);
+        underTest.setMax(ClaimStatistic.Counter.UNAPPROVED, 4);
+        assertThat(underTest.getMin(ClaimStatistic.Counter.UNAPPROVED)).isEqualTo(4);
+        assertThat(underTest.getMax(ClaimStatistic.Counter.UNAPPROVED)).isEqualTo(4);
+    }
+
+
+    @Test
     void listIssuesTest() {
         ClaimStatistic statistic = new ClaimStatistic();
         List<String> required = getRequiredCounters().stream().map(ClaimStatistic.Counter::name).toList();

@@ -49,13 +49,24 @@ public final class ClaimValidator {
 
     /**
      * Constructor.
+     * Visible for testing.
+     * @param withData if {@code true} the max and min are loaded with data from the Counter definitions.
+     */
+    ClaimValidator(final boolean withData) {
+        if (withData) {
+            for (ClaimStatistic.Counter counter : ClaimStatistic.Counter.values()) {
+                max.put(counter,
+                        new MutableInt(counter.getDefaultMaxValue() < 0 ? Integer.MAX_VALUE : counter.getDefaultMaxValue()));
+                min.put(counter, new MutableInt(counter.getDefaultMinValue()));
+            }
+        }
+
+    }
+    /**
+     * Constructor.
      */
     public ClaimValidator() {
-        for (ClaimStatistic.Counter counter : ClaimStatistic.Counter.values()) {
-            max.put(counter,
-                    new MutableInt(counter.getDefaultMaxValue() < 0 ? Integer.MAX_VALUE : counter.getDefaultMaxValue()));
-            min.put(counter, new MutableInt(counter.getDefaultMinValue()));
-        }
+        this(true);
     }
 
     /**
