@@ -180,6 +180,7 @@ class ClaimValidatorTest {
         assertThat(underTest.getMax(ClaimStatistic.Counter.UNAPPROVED)).isEqualTo(5);
     }
 
+    @Test
     void nullCounterForMaxTest() {
         ClaimValidator underTest = new ClaimValidator(false);
         // UNAPPROVED has a default min and max of 0
@@ -192,6 +193,7 @@ class ClaimValidatorTest {
         assertThat(underTest.getMax(ClaimStatistic.Counter.UNAPPROVED)).isEqualTo(Integer.MAX_VALUE);
     }
 
+    @Test
     void testMinHigherThanMax() {
         ClaimValidator underTest = new ClaimValidator();
         // UNAPPROVED has a default min and max of 0
@@ -200,6 +202,7 @@ class ClaimValidatorTest {
         assertThat(underTest.getMax(ClaimStatistic.Counter.UNAPPROVED)).isEqualTo(5);
     }
 
+    @Test
     void testMaxLowerThanMin() {
         ClaimValidator underTest = new ClaimValidator();
         // UNAPPROVED has a default min and max of 0
@@ -210,7 +213,6 @@ class ClaimValidatorTest {
         assertThat(underTest.getMin(ClaimStatistic.Counter.UNAPPROVED)).isEqualTo(4);
         assertThat(underTest.getMax(ClaimStatistic.Counter.UNAPPROVED)).isEqualTo(4);
     }
-
 
     @Test
     void listIssuesTest() {
