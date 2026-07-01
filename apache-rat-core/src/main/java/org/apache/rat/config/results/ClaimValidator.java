@@ -80,7 +80,7 @@ public final class ClaimValidator {
     /**
      * Sets the {@code result.value} if it is greater than the {@code value} argument.
      * @param result the MutableInt to set.
-     * @param value the value to set it to if it is less than the result.value
+     * @param value the value to set it to if it is less than the {@code result.value}.
      * @return the {@code result} argument
      */
     private MutableInt setMinValue(final MutableInt result, final int value) {
@@ -93,7 +93,7 @@ public final class ClaimValidator {
     /**
      * Sets the {@code result.value} if it is less than the {@code value} argument.
      * @param result the MutableInt to set.
-     * @param value the value to set it to if it is greater than the result.value
+     * @param value the value to set it to if it is greater than the {@code result.value}.
      * @return the {@code result} argument
      */
     private MutableInt setMaxValue(final MutableInt result, final int value) {
