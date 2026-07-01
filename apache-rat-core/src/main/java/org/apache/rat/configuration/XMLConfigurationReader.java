@@ -61,6 +61,8 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 /**
  * A class that reads the XML configuration file format.
  */
@@ -173,7 +175,7 @@ public final class XMLConfigurationReader implements LicenseReader, MatcherReade
      * @param list the NodeList to process
      * @param consumer the consumer to apply to each node in the list.
      */
-    private void nodeListConsumer(final NodeList list, final Consumer<Node> consumer) {
+    public static void nodeListConsumer(final NodeList list, final Consumer<Node> consumer) {
         for (int i = 0; i < list.getLength(); i++) {
             consumer.accept(list.item(i));
         }
@@ -199,7 +201,7 @@ public final class XMLConfigurationReader implements LicenseReader, MatcherReade
      * @param node The node to process
      * @return the map of attributes on the node.
      */
-    private Map<String, String> attributes(final Node node) {
+    public static Map<String, String> attributes(final Node node) {
         NamedNodeMap nnm = node.getAttributes();
         Map<String, String> result = new HashMap<>();
         for (int i = 0; i < nnm.getLength(); i++) {
@@ -606,6 +608,7 @@ public final class XMLConfigurationReader implements LicenseReader, MatcherReade
         nodeListConsumer(document.getElementsByTagName(XMLConfig.MATCHER), this::parseMatcherBuilder);
     }
 
+    @SuppressFBWarnings("URLCONNECTION_SSRF_FD")
     @Override
     public void addMatchers(final URI uri) {
         read(uri);

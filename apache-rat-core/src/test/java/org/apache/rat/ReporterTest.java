@@ -7,7 +7,7 @@
  * "License"); you may not use this file except in compliance   *
  * with the License.  You may obtain a copy of the License at   *
  *                                                              *
- *   http://www.apache.org/licenses/LICENSE-2.0                 *
+ *   https://www.apache.org/licenses/LICENSE-2.0                 *
  *                                                              *
  * Unless required by applicable law or agreed to in writing,   *
  * software distributed under the License is distributed on an  *
@@ -19,21 +19,28 @@
 package org.apache.rat;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Fail.fail;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.IOException;
 import java.io.PrintStream;
+import java.lang.reflect.Method;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.TreeMap;
+import java.util.UUID;
+import java.util.stream.Stream;
 import javax.xml.XMLConstants;
 import javax.xml.transform.Source;
 import javax.xml.transform.dom.DOMSource;
@@ -45,12 +52,10 @@ import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathFactory;
 
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.DefaultParser;
-import org.apache.commons.cli.ParseException;
 import org.apache.commons.io.FileUtils;
 import org.apache.rat.api.Document.Type;
 import org.apache.rat.api.RatException;
+import org.apache.rat.commandline.Arg;
 import org.apache.rat.commandline.ArgumentContext;
 import org.apache.rat.commandline.StyleSheets;
 import org.apache.rat.document.FileDocument;
@@ -59,11 +64,21 @@ import org.apache.rat.license.ILicenseFamily;
 import org.apache.rat.license.LicenseSetFactory;
 import org.apache.rat.report.claim.ClaimStatistic;
 import org.apache.rat.test.utils.Resources;
+import org.apache.rat.testhelpers.BaseOptionCollection;
 import org.apache.rat.testhelpers.TextUtils;
 import org.apache.rat.testhelpers.XmlUtils;
+import org.apache.rat.testhelpers.data.ReportTestDataProvider;
+import org.apache.rat.testhelpers.data.TestData;
+import org.apache.rat.testhelpers.data.ValidatorData;
 import org.apache.rat.walker.DirectoryWalker;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.io.TempDir;
+import org.junit.jupiter.api.TestInfo;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
@@ -72,22 +87,62 @@ import org.xml.sax.SAXException;
  * Tests the output of the Reporter.
  */
 public class ReporterTest {
-    @TempDir
-    File tempDirectory;
+    /**
+     * temporary file.  Not using tempDir because it does not
+     * always work.
+     */
+    private static Path tempPath;
+
+    /**
+     * The directory for the test.
+     */
+    private Path testPath;
+
+    /**
+     * Directory for the test data.
+     */
     final String basedir;
+
+    private final OptionCollectionParser collectionParser;
 
     ReporterTest() throws URISyntaxException {
         basedir = Resources.getExampleResource("exampleData").getPath();
+        collectionParser = new OptionCollectionParser(BaseOptionCollection.builder().build());
+    }
+
+    @BeforeAll
+    static void setUp() throws IOException {
+        tempPath = Files.createTempDirectory("ReporterTest");
+    }
+
+    @AfterAll
+    static void cleanup() throws IOException {
+        FileUtils.deleteDirectory(tempPath.toFile());
+    }
+
+    @BeforeEach
+    void setUpTest(TestInfo testInfo) {
+        Optional<Method> testMethod = testInfo.getTestMethod();
+        this.testPath = tempPath.resolve(testMethod.isPresent() ?
+                        testMethod.get().getName() :
+                        UUID.randomUUID().toString());
+        File file = testPath.toFile();
+        if (!file.exists()) {
+            if (!file.mkdirs()) {
+                throw new RuntimeException("Unable to create temp directory: " + file.getName());
+            }
+        } else {
+            if (!file.isDirectory()) {
+                throw new RuntimeException(file.getName() + " is NOT a directory.");
+            }
+        }
     }
 
     @Test
-    public void testExecute() throws RatException, ParseException {
-        File output = new File(tempDirectory, "testExecute");
-
-        CommandLine cl = new DefaultParser().parse(OptionCollection.buildOptions(), new String[]{"--output-style", "xml", "--output-file", output.getPath(), basedir});
-        ArgumentContext ctxt = new ArgumentContext(new File("."), cl);
-        ReportConfiguration config = OptionCollection.createConfiguration(ctxt);
-        ClaimStatistic statistic = new Reporter(config).execute();
+    void testExecute() throws RatException {
+        File output = testPath.resolve("output.xml").toFile();
+        ArgumentContext ctxt = collectionParser.parseCommands(new File("."), new String[]{"--output-style", "xml", "--output-file", output.getPath(), basedir});
+        ClaimStatistic statistic = new Reporter(ctxt.getConfiguration()).execute().getStatistic();
 
         assertThat(statistic.getCounter(Type.ARCHIVE)).isEqualTo(1);
         assertThat(statistic.getCounter(Type.BINARY)).isEqualTo(2);
@@ -136,13 +191,10 @@ public class ReporterTest {
     }
 
     @Test
-    public void testOutputOption() throws Exception {
-        File output = new File(tempDirectory, "test");
-        CommandLine commandLine = new DefaultParser().parse(OptionCollection.buildOptions(), new String[]{"-o", output.getCanonicalPath(), basedir});
-        ArgumentContext ctxt = new ArgumentContext(new File("."), commandLine);
-
-        ReportConfiguration config = OptionCollection.createConfiguration(ctxt);
-        new Reporter(config).output();
+    void testOutputOption() throws Exception {
+        File output = testPath.resolve("output.txt").toFile();
+        ArgumentContext ctxt = collectionParser.parseCommands(new File("."), new String[]{"--output-file", output.getCanonicalPath(), basedir});
+        new Reporter(ctxt.getConfiguration()).execute().format(ctxt.getConfiguration());
         assertThat(output.exists()).isTrue();
         String content = FileUtils.readFileToString(output, StandardCharsets.UTF_8);
         TextUtils.assertPatternInTarget("^! Unapproved:\\s*2 ", content);
@@ -151,17 +203,14 @@ public class ReporterTest {
     }
 
     @Test
-    public void testDefaultOutput() throws Exception {
-        File output = new File(tempDirectory, "testDefaultOutput");
+    void testDefaultOutput() throws Exception {
+        File output = testPath.resolve("captured.txt").toFile();
 
         PrintStream origin = System.out;
         try (PrintStream out = new PrintStream(output)) {
             System.setOut(out);
-            CommandLine commandLine = new DefaultParser().parse(OptionCollection.buildOptions(), new String[]{basedir});
-            ArgumentContext ctxt = new ArgumentContext(new File("."), commandLine);
-
-            ReportConfiguration config = OptionCollection.createConfiguration(ctxt);
-            new Reporter(config).output();
+            ArgumentContext ctxt = collectionParser.parseCommands(new File("."), new String[]{basedir});
+            new Reporter(ctxt.getConfiguration()).execute().format(ctxt.getConfiguration());
         } finally {
             System.setOut(origin);
         }
@@ -179,7 +228,7 @@ public class ReporterTest {
     }
 
     @Test
-    public void testXMLOutput() throws Exception {
+    void testXMLOutput() throws Exception {
         Map<String, Map<String, String>> expected = new HashMap<>();
         expected.put("/.hiddenDirectory", mapOf("isDirectory", "true", "mediaType", "application/octet-stream",
                 "type", "IGNORED"));
@@ -209,13 +258,10 @@ public class ReporterTest {
         expected.put("/tri.txt", mapOf("encoding", "ISO-8859-1", "mediaType", "text/plain",
                 "type", "STANDARD"));
 
-        File output = new File(tempDirectory, ".rat/testXMLOutput");
+        File output = testPath.resolve(".rat/testXMLOutput").toFile();
         output.getParentFile().mkdir();
-        CommandLine commandLine = new DefaultParser().parse(OptionCollection.buildOptions(), new String[]{"--output-style", "xml", "--output-file", output.getPath(), basedir});
-        ArgumentContext ctxt = new ArgumentContext(tempDirectory, commandLine);
-
-        ReportConfiguration config = OptionCollection.createConfiguration(ctxt);
-        new Reporter(config).output();
+        ArgumentContext ctxt = collectionParser.parseCommands(testPath.toFile(), new String[]{"--output-style", "xml", "--output-file", output.getPath(), basedir});
+        new Reporter(ctxt.getConfiguration()).execute().format(ctxt.getConfiguration());
 
         assertThat(output).exists();
         Document doc = XmlUtils.toDom(java.nio.file.Files.newInputStream(output.toPath()));
@@ -404,14 +450,9 @@ public class ReporterTest {
     }
 
     @Test
-    public void xmlReportTest() throws Exception {
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-
+    void xmlReportTest() throws Exception {
         ReportConfiguration configuration = initializeConfiguration();
-        configuration.setStyleSheet(StyleSheets.XML.getStyleSheet());
-        configuration.setOut(() -> out);
-        new Reporter(configuration).output();
-        Document doc = XmlUtils.toDom(new ByteArrayInputStream(out.toByteArray()));
+        Document doc = new Reporter(configuration).execute().getDocument();
 
         XPath xPath = XPathFactory.newInstance().newXPath();
 
@@ -448,7 +489,7 @@ public class ReporterTest {
     }
 
     @Test
-    public void plainReportTest() throws Exception {
+    void plainReportTest() throws Exception {
         final String NL = System.lineSeparator();
         final String SEPARATOR = "*****************************************************";
         final String HEADER = SEPARATOR + NL + //
@@ -457,10 +498,9 @@ public class ReporterTest {
                 "Generated at: ";
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         ReportConfiguration configuration = initializeConfiguration();
-        configuration.setOut(() -> out);
-        new Reporter(configuration).output();
+        configuration.setOut(new ReportConfiguration.IODescriptor<>("plainReportTest", () -> out));
+        new Reporter(configuration).execute().format(configuration);
 
-        out.flush();
         String document = out.toString();
 
         TextUtils.assertNotContains("<?xml version=\"1.0\" encoding=\"UTF-8\"?>", document);
@@ -470,14 +510,13 @@ public class ReporterTest {
     }
 
     @Test
-    public void unapprovedLicensesReportTest() throws Exception {
+    void unapprovedLicensesReportTest() throws Exception {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         ReportConfiguration configuration = initializeConfiguration();
-        configuration.setOut(() -> out);
+        configuration.setOut(new ReportConfiguration.IODescriptor<>("unapprovedLicensesReportTest", () -> out));
         configuration.setStyleSheet(this.getClass().getResource("/org/apache/rat/unapproved-licenses.xsl"));
-        new Reporter(configuration).output();
+        new Reporter(configuration).execute().format(configuration);
 
-        out.flush();
         String document = out.toString();
 
         TextUtils.assertContains("Generated at: ", document );
@@ -489,44 +528,72 @@ public class ReporterTest {
     void listLicensesReportTest() throws Exception {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         ReportConfiguration configuration = initializeConfiguration();
-        configuration.setOut(() -> out);
+        configuration.setOut(new ReportConfiguration.IODescriptor<>("listLicensesReportTest", () -> out));
         configuration.setStyleSheet(StyleSheets.UNAPPROVED_LICENSES.getStyleSheet());
         Reporter.listLicenses(configuration, LicenseSetFactory.LicenseFilter.NONE);
 
         out.flush();
         String document = out.toString();
-
         assertThat(document).contains("Licenses (NONE):");
     }
 
     @Test
     void counterMaxTest() throws Exception {
         ReportConfiguration config = initializeConfiguration();
-        Reporter reporter = new Reporter(config);
-        reporter.output();
+        Reporter.Output output = new Reporter(config).execute();
         assertThat(config.getClaimValidator().hasErrors()).isTrue();
-        assertThat(config.getClaimValidator().isValid(ClaimStatistic.Counter.UNAPPROVED, reporter.getClaimsStatistic().getCounter(ClaimStatistic.Counter.UNAPPROVED)))
+        assertThat(config.getClaimValidator().isValid(ClaimStatistic.Counter.UNAPPROVED, output.getStatistic().getCounter(ClaimStatistic.Counter.UNAPPROVED)))
                 .isFalse();
 
         config = initializeConfiguration();
         config.getClaimValidator().setMax(ClaimStatistic.Counter.UNAPPROVED, 2);
-        reporter = new Reporter(config);
-        reporter.output();
+        output = new Reporter(config).execute();
         assertThat(config.getClaimValidator().hasErrors()).isFalse();
-        assertThat(config.getClaimValidator().isValid(ClaimStatistic.Counter.UNAPPROVED, reporter.getClaimsStatistic().getCounter(ClaimStatistic.Counter.UNAPPROVED)))
+        assertThat(config.getClaimValidator().isValid(ClaimStatistic.Counter.UNAPPROVED, output.getStatistic().getCounter(ClaimStatistic.Counter.UNAPPROVED)))
                 .isTrue();
     }
 
-    private record LicenseInfo(String id, String family, boolean approval, boolean hasNotes) {
-            LicenseInfo(String id, boolean approval, boolean hasNotes) {
-                this(id, id, approval, hasNotes);
-            }
+    static Stream<Arguments> getTestData() {
+        BaseOptionCollection.Builder builder = BaseOptionCollection.builder()
+                        .unsupported(Arg.OUTPUT_FILE);
+        return new ReportTestDataProvider().getOptionTests(builder.build()).stream().map(testData ->
+                Arguments.of(testData.getTestName(), testData));
+    }
 
-            private LicenseInfo(String id, String family, boolean approval, boolean hasNotes) {
-                this.id = id;
-                this.family = ILicenseFamily.makeCategory(family);
-                this.approval = approval;
-                this.hasNotes = hasNotes;
-            }
+    @ParameterizedTest( name = "{index} {0}")
+    @MethodSource("getTestData")
+    void testReportData(String name, TestData test) throws Exception {
+        Path invokePath = testPath.resolve(test.getTestName());
+        org.apache.rat.utils.FileUtils.mkDir(invokePath.toFile());
+
+        test.setupFiles(invokePath);
+        ArgumentContext ctxt = collectionParser.parseCommands(invokePath.toFile(),
+                test.getCommandLine(invokePath.toString()));
+        if (test.expectingException()) {
+            assertThatThrownBy(() -> new Reporter(ctxt.getConfiguration()).execute()).as("Expected throws from " + name)
+                    .hasMessageContaining(test.getExpectedException().getMessage());
+            ValidatorData data = new ValidatorData(Reporter.Output.builder().configuration(ctxt.getConfiguration()).build(),
+                    invokePath.toString());
+            test.getValidator().accept(data);
+        } else {
+            Reporter.Output output = ctxt.getConfiguration() != null ? new Reporter(ctxt.getConfiguration()).execute() :
+                    Reporter.Output.builder().build();
+            ValidatorData data = new ValidatorData(output, invokePath.toString());
+            data.getOutput().format(data.getConfiguration());
+            test.getValidator().accept(data);
         }
+    }
+
+    private record LicenseInfo(String id, String family, boolean approval, boolean hasNotes) {
+        LicenseInfo(String id, boolean approval, boolean hasNotes) {
+            this(id, id, approval, hasNotes);
+        }
+
+        private LicenseInfo(String id, String family, boolean approval, boolean hasNotes) {
+            this.id = id;
+            this.family = ILicenseFamily.makeCategory(family);
+            this.approval = approval;
+            this.hasNotes = hasNotes;
+        }
+    }
 }

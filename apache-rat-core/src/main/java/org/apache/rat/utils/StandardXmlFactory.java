@@ -18,7 +18,12 @@
  */
 package org.apache.rat.utils;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.StringWriter;
+import java.util.Properties;
 
 import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
@@ -27,8 +32,14 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
+
+import org.w3c.dom.Document;
+
 
 /**
  * Factory to create standard XML objects. The intention of this class is to resolve in a consistent manner the
@@ -53,16 +64,28 @@ public final class StandardXmlFactory {
      * @throws TransformerConfigurationException on error.
      */
     public static Transformer create() throws TransformerConfigurationException {
-        return create(null);
+        return create(null, new Properties());
     }
 
     /**
-     * Create a transformer with the specified stylesheet.
-     * @param styleIn the stylesheet to use.
+     * Create a transformer with specified style sheet.
+     * @param styleIn the style sheet input stream
      * @return the transformer.
      * @throws TransformerConfigurationException on error.
      */
     public static Transformer create(final InputStream styleIn) throws TransformerConfigurationException {
+        return create(styleIn, new Properties());
+    }
+
+    /**
+     * Create a transformer with the specified stylesheet and additional properties.
+     * By default, the output omits the XML declaration, uses XML output, indents rsult with 4 spaces.
+     * @param styleIn the stylesheet to use.
+     * @param transformerProperties Additional output transformer properties.
+     * @return the transformer.
+     * @throws TransformerConfigurationException on error.
+     */
+    public static Transformer create(final InputStream styleIn, final Properties transformerProperties) throws TransformerConfigurationException {
         TransformerFactory factory = TransformerFactory.newInstance();
         factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
         factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
@@ -73,6 +96,9 @@ public final class StandardXmlFactory {
         transformer.setOutputProperty(OutputKeys.INDENT, "yes");
         transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
         transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
+        if (transformerProperties != null) {
+            transformer.setOutputProperties(transformerProperties);
+        }
         return transformer;
     }
 
@@ -93,5 +119,29 @@ public final class StandardXmlFactory {
         } catch (ParserConfigurationException e) {
             throw new IllegalStateException("No XML parser defined", e);
         }
+    }
+
+    /**
+     * Write an XML document to a file.
+     * @param document the document to write
+     * @param file the file to write to.
+     */
+    public static void writeDocument(final Document document, final File file) throws IOException, TransformerException {
+        DOMSource source = new DOMSource(document);
+        FileWriter writer = new FileWriter(file);
+        StreamResult result = new StreamResult(writer);
+        create().transform(source, result);
+    }
+
+    /**
+     * Write an XML document to a file.
+     * @param document the document to write.
+     */
+    public static String serializeDocument(final Document document) throws TransformerException {
+        DOMSource source = new DOMSource(document);
+        StringWriter writer = new StringWriter();
+        StreamResult result = new StreamResult(writer);
+        create().transform(source, result);
+        return writer.toString();
     }
 }

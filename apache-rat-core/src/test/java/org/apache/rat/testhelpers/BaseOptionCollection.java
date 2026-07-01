@@ -7,7 +7,7 @@
  * "License"); you may not use this file except in compliance   *
  * with the License.  You may obtain a copy of the License at   *
  *                                                              *
- *   http://www.apache.org/licenses/LICENSE-2.0                 *
+ *   https://www.apache.org/licenses/LICENSE-2.0                 *
  *                                                              *
  * Unless required by applicable law or agreed to in writing,   *
  * software distributed under the License is distributed on an  *
@@ -16,22 +16,27 @@
  * specific language governing permissions and limitations      *
  * under the License.                                           *
  */
-package org.apache.rat.report;
+package org.apache.rat.testhelpers;
 
-import org.apache.rat.api.RatException;
-import org.apache.rat.document.DocumentName;
+import org.apache.rat.ui.UIOptionCollection;
 
-public interface IReportable {
-    /**
-     * Adds the reportable to the RatReport.
-     * @param report the report to add the results to.
-     * @throws RatException on error.
-     */
-    void run(RatReport report) throws RatException;
+public final class BaseOptionCollection extends UIOptionCollection<BaseOption> {
+    private BaseOptionCollection(Builder builder) {
+        super(builder);
+    }
 
-    /**
-     * Returns the DocumentName for the reportable.
-     * @return the DocumentName for the reportable.
-     */
-    DocumentName getName();
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    public static final class Builder extends UIOptionCollection.Builder<BaseOption, Builder> {
+        private Builder() {
+            super(BaseOption::new);
+        }
+
+        @Override
+        public BaseOptionCollection build() {
+            return new BaseOptionCollection(this);
+        }
+    }
 }

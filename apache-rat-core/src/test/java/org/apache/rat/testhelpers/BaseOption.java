@@ -7,7 +7,7 @@
  * "License"); you may not use this file except in compliance   *
  * with the License.  You may obtain a copy of the License at   *
  *                                                              *
- *   http://www.apache.org/licenses/LICENSE-2.0                 *
+ *   https://www.apache.org/licenses/LICENSE-2.0                 *
  *                                                              *
  * Unless required by applicable law or agreed to in writing,   *
  * software distributed under the License is distributed on an  *
@@ -16,39 +16,27 @@
  * specific language governing permissions and limitations      *
  * under the License.                                           *
  */
+package org.apache.rat.testhelpers;
 
-package org.apache.rat.walker;
+import org.apache.commons.cli.Option;
+import org.apache.rat.ui.ArgumentTracker;
+import org.apache.rat.ui.UIOption;
+import org.apache.rat.ui.UIOptionCollection;
+import org.apache.rat.utils.CasedString;
 
-import org.apache.rat.api.Document;
-import org.apache.rat.document.DocumentName;
-import org.apache.rat.report.Reportable;
-
-/**
- * Abstract walker.
- */
-public abstract class Walker implements Reportable {
-
-    /** The document this walker is walking */
-    private final Document document;
-
-    /**
-     * Creates the walker
-     * @param document The document the walker is walking.
-     */
-    protected Walker(final Document document) {
-        this.document = document;
+public final class BaseOption extends UIOption<BaseOption> {
+    BaseOption(final UIOptionCollection<BaseOption> collection, Option option) {
+        super(collection, option, new CasedString(CasedString.StringCase.KEBAB, ArgumentTracker.extractKey(option)));
+    }
+    protected String cleanupName(Option option) {
+        return ArgumentTracker.extractKey(option);
     }
 
-    /**
-     * Retrieves the document from the constructor.
-     * @return the document from the constructor.
-     */
-    protected Document getDocument() {
-        return document;
+    public String getExample() {
+        return "";
     }
 
-    @Override
-    public DocumentName name() {
-        return document.getName();
+    public String getText() {
+        return "";
     }
 }

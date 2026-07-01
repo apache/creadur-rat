@@ -34,18 +34,25 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.SortedSet;
-import java.util.function.Consumer;
+import java.util.stream.Stream;
 
+import javax.xml.parsers.DocumentBuilder;
+
+import org.apache.commons.collections4.set.UnmodifiableSortedSet;
 import org.apache.commons.io.function.IOSupplier;
 import org.apache.commons.io.output.CloseShieldOutputStream;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.rat.analysis.IHeaderMatcher;
+import org.apache.rat.api.RatException;
 import org.apache.rat.commandline.StyleSheets;
 import org.apache.rat.config.AddLicenseHeaders;
 import org.apache.rat.config.exclusion.ExclusionProcessor;
 import org.apache.rat.config.exclusion.StandardCollection;
 import org.apache.rat.config.results.ClaimValidator;
+import org.apache.rat.configuration.XMLConfigurationReader;
 import org.apache.rat.configuration.builders.AnyBuilder;
 import org.apache.rat.document.DocumentName;
 import org.apache.rat.document.DocumentNameMatcher;
@@ -54,12 +61,18 @@ import org.apache.rat.license.ILicense;
 import org.apache.rat.license.ILicenseFamily;
 import org.apache.rat.license.LicenseSetFactory;
 import org.apache.rat.license.LicenseSetFactory.LicenseFilter;
-import org.apache.rat.report.IReportable;
+import org.apache.rat.report.RatReport;
+import org.apache.rat.report.Reportable;
+import org.apache.rat.report.claim.ClaimStatistic;
+import org.apache.rat.report.xml.writer.XmlWriter;
 import org.apache.rat.utils.DefaultLog;
 import org.apache.rat.utils.Log.Level;
 import org.apache.rat.utils.ReportingSet;
+import org.apache.rat.utils.StandardXmlFactory;
 import org.apache.rat.walker.FileListWalker;
-import org.apache.rat.walker.IReportableListWalker;
+import org.apache.rat.walker.ReportableListWalker;
+import org.w3c.dom.Node;
+import org.xml.sax.SAXException;
 
 /**
  * A configuration object is used by the front end to invoke the
@@ -68,6 +81,10 @@ import org.apache.rat.walker.IReportableListWalker;
  */
 public class ReportConfiguration {
 
+    /** The IODescriptor for system.out */
+    public static final IODescriptor<OutputStream> SYSTEM_OUT =
+            // SONAR wants to require logging output, which is the wrong reporting channel for this case.
+            new IODescriptor<>("System.out", () -> CloseShieldOutputStream.wrap(System.out)); // NOSONAR
     /**
      * The styles of processing for various categories of documents.
      */
@@ -117,11 +134,11 @@ public class ReportConfiguration {
     /**
      * The IOSupplier that provides the output stream to write the report to.
      */
-    private IOSupplier<OutputStream> out;
+    private IODescriptor<OutputStream> out;
     /**
      * The IOSupplier that provides the stylesheet to style the XML output.
      */
-    private IOSupplier<InputStream> styleSheet;
+    private IODescriptor<InputStream> styleSheet;
 
     /**
      * A list of files to read file names from.
@@ -131,10 +148,10 @@ public class ReportConfiguration {
     /**
      * A list of reportables to process;
      */
-    private final List<IReportable> reportables;
+    private final List<Reportable> reportables;
 
     /**
-     * A predicate to test if a path should be included in the processing.
+     * The exclusion processor that determines if a file is included or excluded.
      */
     private final ExclusionProcessor exclusionProcessor;
 
@@ -176,6 +193,10 @@ public class ReportConfiguration {
         reportables = new ArrayList<>();
     }
 
+    public Serde serde() {
+        return new Serde();
+    }
+
     /**
      * Report the excluded files to the appendable object.
      * @param appendable the appendable object to write to.
@@ -210,7 +231,7 @@ public class ReportConfiguration {
      * Adds a Reportable as a source of files to scan.
      * @param reportable the reportable to process.
      */
-    public void addSource(final IReportable reportable) {
+    public void addSource(final Reportable reportable) {
         notNull(reportable, "Reportable may not be null.");
         reportables.add(reportable);
     }
@@ -227,12 +248,21 @@ public class ReportConfiguration {
      * Gets a builder initialized with any files specified as sources.
      * @return a configured builder.
      */
-    public IReportableListWalker.Builder getSources() {
+    public ReportableListWalker.Builder getSources() {
         DocumentName name = DocumentName.builder(new File(".")).build();
-        IReportableListWalker.Builder builder = IReportableListWalker.builder(name);
+        ReportableListWalker.Builder builder = ReportableListWalker.builder(name);
         sources.forEach(file -> builder.addReportable(new FileListWalker(new FileDocument(file, DocumentNameMatcher.MATCHES_ALL))));
         reportables.forEach(builder::addReportable);
         return builder;
+    }
+
+    // for testing access
+    Iterable<File> sources() {
+        return sources;
+    }
+
+    Stream<DocumentName> reportables() {
+        return reportables.stream().map(Reportable::name);
     }
 
     /**
@@ -418,6 +448,14 @@ public class ReportConfiguration {
     }
 
     /**
+     * Includes files that match a DocumentNameMatcher.
+     * @param matcher the DocumentNameMatcher to match.
+     */
+    public void addIncludedMatcher(final DocumentNameMatcher matcher) {
+        exclusionProcessor.addIncludedMatcher(matcher);
+    }
+
+    /**
      * Add file patterns that are to be included. These patterns override any exclusion of
      * the same files.
      * @param patterns The iterable of Strings containing the patterns.
@@ -427,12 +465,17 @@ public class ReportConfiguration {
     }
 
     /**
-     * Get the DocumentNameMatcher that excludes files found in the directory tree..
+     * Get the DocumentNameMatcher that excludes files found in the directory tree.
      * @param baseDir the DocumentName for the base directory.
      * @return the DocumentNameMatcher for the base directory.
      */
     public DocumentNameMatcher getDocumentExcluder(final DocumentName baseDir) {
         return exclusionProcessor.getNameMatcher(baseDir);
+    }
+
+    // visible for testing.
+    ExclusionProcessor getExclusionProcessor() {
+        return exclusionProcessor;
     }
 
     /**
@@ -441,6 +484,15 @@ public class ReportConfiguration {
      * the report with.
      */
     public IOSupplier<InputStream> getStyleSheet() {
+        return styleSheet.ioSupplier();
+    }
+
+    /**
+     * Gets the IODescriptor of the style sheet.
+     * @return the Supplier of the InputStream that is the XSLT style sheet to style
+     * the report with.
+     */
+    public IODescriptor<InputStream> getStyleSheetDescriptor() {
         return styleSheet;
     }
 
@@ -450,7 +502,7 @@ public class ReportConfiguration {
      * multiple times.
      * @param styleSheet the XSLT style sheet to style the report with.
      */
-    public void setStyleSheet(final IOSupplier<InputStream> styleSheet) {
+    public void setStyleSheet(final IODescriptor<InputStream> styleSheet) {
         this.styleSheet = styleSheet;
     }
 
@@ -462,7 +514,7 @@ public class ReportConfiguration {
      */
     public void setFrom(final Defaults defaults) {
         licenseSetFactory.add(defaults.getLicenseSetFactory());
-        if (getStyleSheet() == null) {
+        if (getStyleSheetDescriptor() == null) {
             setStyleSheet(StyleSheets.PLAIN.getStyleSheet());
         }
         defaults.getStandardExclusion().forEach(this::addExcludedCollection);
@@ -498,19 +550,18 @@ public class ReportConfiguration {
      */
     public void setStyleSheet(final URL styleSheet) {
         Objects.requireNonNull(styleSheet, "Stylesheet file must not be null");
-        setStyleSheet(styleSheet::openStream);
+        setStyleSheet(new IODescriptor<>(styleSheet.toString(), styleSheet::openStream));
     }
 
     /**
      * Sets the supplier for the output stream. The supplier may be called multiple
      * times to provide the stream. Suppliers should prepare streams that are
      * appended to and that can be closed. If an {@code OutputStream} should not be
-     * closed consider wrapping it in a {@code CloseShieldOutputStream}
+     * closed consider wrapping it in a {@code NoCloseOutputStream}
      * @param out The OutputStream supplier that provides the output stream to write
      * the report to. A null value will use System.out.
-     * @see CloseShieldOutputStream
      */
-    public void setOut(final IOSupplier<OutputStream> out) {
+    public void setOut(final IODescriptor<OutputStream> out) {
         this.out = out;
     }
 
@@ -518,7 +569,7 @@ public class ReportConfiguration {
      * Sets the OutputStream supplier to use the specified file. The file may be
      * opened and closed several times. File is deleted first and then may be
      * repeatedly opened in append mode.
-     * @see #setOut(IOSupplier)
+     * @see #setOut(IODescriptor)
      * @param file The file to create the supplier with.
      */
     public void setOut(final File file) {
@@ -534,7 +585,7 @@ public class ReportConfiguration {
         if (!parent.mkdirs() && !parent.isDirectory()) {
             DefaultLog.getInstance().warn("Unable to create directory: " + file.getParentFile());
         }
-        setOut(() -> new FileOutputStream(file, true));
+        setOut(new IODescriptor<>(file.toString(), () -> new FileOutputStream(file, true)));
     }
 
     /**
@@ -543,7 +594,15 @@ public class ReportConfiguration {
      * @return The supplier of the output stream to write the report to.
      */
     public IOSupplier<OutputStream> getOutput() {
-        return out == null ? () -> CloseShieldOutputStream.wrap(System.out) : out;
+        return getOutputDescriptor().ioSupplier();
+    }
+
+    /**
+     * Returns the output IODescriptor.
+     * @return The IODescriptor of the output stream to write the report to.
+     */
+    public IODescriptor<OutputStream> getOutputDescriptor() {
+        return out == null ? SYSTEM_OUT : out;
     }
 
     /**
@@ -671,7 +730,7 @@ public class ReportConfiguration {
      * @param filter The LicenseFilter to filter the licenses by.
      * @return the Sorted set of approved license categories.
      */
-    public SortedSet<ILicense> getLicenses(final LicenseFilter filter) {
+    public UnmodifiableSortedSet<ILicense> getLicenses(final LicenseFilter filter) {
         return licenseSetFactory.getLicenses(filter);
     }
 
@@ -827,19 +886,160 @@ public class ReportConfiguration {
 
     /**
      * Validates that the configuration is valid.
-     * @param logger String consumer to log warning messages to.
      * @throws ConfigurationException on configuration error.
      */
-    public void validate(final Consumer<String> logger) {
+    public void validate() {
         if (!hasSource()) {
             String msg = "At least one source must be specified";
-            logger.accept(msg);
+            DefaultLog.getInstance().error(msg);
             throw new ConfigurationException(msg);
         }
-        if (licenseSetFactory.getLicenses(LicenseFilter.ALL).isEmpty()) {
-            String msg = "You must specify at least one license";
-            logger.accept(msg);
-            throw new ConfigurationException(msg);
+        licenseSetFactory.validate();
+    }
+
+    /**
+     * Serializes the ReportConfiguration into an XML document that can be deserialzed by the Serde.
+     * Deserialized ReportConfigurations can not be executed as the reportable objects a simply named placeholders
+     * and do not have access to the original object.
+     */
+    public class Serde {
+        /**
+         * Writes the configuration as an XML document to the appendable.
+         *
+         * @param appendable the Appendable to write to.
+         * @throws IOException on error.
+         */
+        public void serialize(final Appendable appendable) throws IOException {
+            try (XmlWriter writer = new XmlWriter(appendable)) {
+                writer.startElement("ReportConfiguration")
+                        .attribute("addingLicenses", Boolean.toString(addingLicenses))
+                        .attribute("addingLicensesForced", Boolean.toString(addingLicensesForced))
+                        .attribute("listFamilies", listFamilies.name())
+                        .attribute("listLicenses", listLicenses.name())
+                        .attribute("dryRun", Boolean.toString(dryRun))
+                        .attribute("archiveProcessing", getArchiveProcessing().name())
+                        .attribute("standardProcessing", getStandardProcessing().name())
+                        .attribute("stylesheet", styleSheet.name())
+                        .attribute("output", out.name());
+                if (StringUtils.isNotEmpty(copyrightMessage)) {
+                    writer.startElement("copyrightMessage").content(copyrightMessage).closeElement();
+                }
+                writer.startElement("sources");
+                for (File f : sources) {
+                    writer.startElement("source").attribute("name", f.toString()).closeElement();
+                }
+                writer.closeElement("sources").startElement("reportables");
+                for (Reportable reportable : reportables) {
+                    writer.startElement("reportable")
+                            .attribute("baseName", reportable.name().getBaseName())
+                            .attribute("name", reportable.name().toString())
+                            .attribute("class", reportable.getClass().getName()).closeElement();
+                }
+                writer.closeElement();
+
+                exclusionProcessor.serde().serialize(writer);
+
+                writer.startElement("claimValidator");
+                for (ClaimStatistic.Counter counter : ClaimStatistic.Counter.values()) {
+                    writer.startElement("claimCounter")
+                            .attribute("name", counter.name()).attribute("min", Integer.toString(claimValidator.getMin(counter)))
+                            .attribute("max", Integer.toString(claimValidator.getMax(counter))).closeElement();
+                }
+                writer.closeElement();
+            } catch (IOException e) {
+                throw e;
+            } catch (Exception e) {
+                throw new IOException(e);
+            }
+        }
+
+        public void deserialize(final IOSupplier<InputStream> inputStreamSupplier, final DocumentName workingDirectory) throws IOException {
+            DocumentBuilder builder = StandardXmlFactory.documentBuilder();
+            org.w3c.dom.Document document;
+            try (InputStream stream = inputStreamSupplier.get()) {
+                document = builder.parse(stream);
+            } catch (SAXException e) {
+                throw new IOException("Unable to read input", e);
+            }
+            Node node = document.getDocumentElement();
+            if (!node.getNodeName().equals("ReportConfiguration")) {
+                throw new IOException("Invalid ReportConfiguration");
+            }
+            Map<String, String> attributes = XMLConfigurationReader.attributes(node);
+            addingLicenses = Boolean.parseBoolean(attributes.get("addingLicenses"));
+            addingLicensesForced = Boolean.parseBoolean(attributes.get("addingLicensesForced"));
+            listFamilies = LicenseFilter.valueOf(attributes.get("listFamilies"));
+            listLicenses = LicenseFilter.valueOf(attributes.get("listLicenses"));
+            dryRun = Boolean.parseBoolean(attributes.get("dryRun"));
+            archiveProcessing = Processing.valueOf(attributes.get("archiveProcessing"));
+            standardProcessing = Processing.valueOf(attributes.get("standardProcessing"));
+            String styleName = attributes.get("stylesheet");
+            if (styleName != null) {
+                styleSheet = StyleSheets.getStyleSheet(styleName, workingDirectory);
+            }
+            String outputName = attributes.get("output");
+            if (outputName != null) {
+                if (outputName.equals(ReportConfiguration.SYSTEM_OUT.name())) {
+                    out = ReportConfiguration.SYSTEM_OUT;
+                } else {
+                    out = IODescriptor.output(outputName, workingDirectory);
+                }
+            }
+
+            XMLConfigurationReader.nodeListConsumer(document.getElementsByTagName("copyrightMessage"),
+                    lNode -> setCopyrightMessage(lNode.getTextContent()));
+
+            XMLConfigurationReader.nodeListConsumer(document.getElementsByTagName("source"), lNode -> {
+                Map<String, String> nAttributes = XMLConfigurationReader.attributes(lNode);
+                addSource(new File(nAttributes.get("name")));
+            });
+
+            // Deserialize the reportables.
+            XMLConfigurationReader.nodeListConsumer(document.getElementsByTagName("reportable"), lNode -> {
+                Map<String, String> nAttributes = XMLConfigurationReader.attributes(lNode);
+                DocumentName documentName = DocumentName.builder().setBaseName(nAttributes.get("baseName"))
+                        .setName(nAttributes.get("name")).build();
+                addSource(new DeserializedReportable(documentName));
+            });
+
+            exclusionProcessor.serde().deserialize(document.getElementsByTagName("ExclusionProcessor").item(0));
+
+            XMLConfigurationReader.nodeListConsumer(document.getElementsByTagName("claimCounter"), lNode -> {
+                Map<String, String> nAttributes = XMLConfigurationReader.attributes(lNode);
+                ClaimStatistic.Counter counter = ClaimStatistic.Counter.valueOf(nAttributes.get("name"));
+                claimValidator.setMin(counter, Integer.parseInt(nAttributes.get("min")));
+                claimValidator.setMax(counter, Integer.parseInt(nAttributes.get("max")));
+            });
+        }
+    }
+
+    /**
+     * A record that identifies a deserialized reportable.  Deserialized reportables are not executable.
+     * @param name the name of the reportable.
+     */
+    private record DeserializedReportable(DocumentName name) implements Reportable {
+        @Override
+        public void run(final RatReport report) throws RatException {
+            throw new RatException("Attempt to run a deserialized reportable");
+        }
+    }
+
+    /**
+     * An IODescriptor comprises a name and an IOSupplier.  The name should identify the contents of the stream.
+     * @param name the name of the supplier.
+     * @param ioSupplier the IOSupplier that provides either an InputStream or an OutputStream
+     * @param <T> either InputStream or OutputStream.
+     */
+    public record IODescriptor<T>(String name, IOSupplier<T> ioSupplier) {
+        /**
+         * Creates an output IODescriptor for the file name within the working directory.
+         * @param name the name of the file to open.
+         * @param workingDirectory the working directory for the file.
+         * @return the Output IODescriptor.
+         */
+        static IODescriptor<OutputStream> output(final String name, final DocumentName workingDirectory) {
+            DocumentName docName = workingDirectory.resolve(name);
+            return new IODescriptor<>(name, () -> new FileOutputStream(docName.asFile()));
         }
     }
 }

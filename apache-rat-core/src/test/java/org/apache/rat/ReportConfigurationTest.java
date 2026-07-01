@@ -24,6 +24,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
@@ -31,31 +32,41 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.SortedSet;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import org.apache.commons.io.filefilter.DirectoryFileFilter;
 import org.apache.commons.io.output.CloseShieldOutputStream;
 import org.apache.rat.analysis.IHeaderMatcher;
+import org.apache.rat.api.RatException;
+import org.apache.rat.commandline.StyleSheets;
 import org.apache.rat.config.AddLicenseHeaders;
+import org.apache.rat.config.exclusion.ExclusionProcessorTest;
 import org.apache.rat.config.exclusion.StandardCollection;
+import org.apache.rat.config.results.ClaimValidator;
 import org.apache.rat.configuration.XMLConfigurationReaderTest;
 import org.apache.rat.document.DocumentName;
 import org.apache.rat.document.DocumentNameMatcher;
 import org.apache.rat.license.ILicense;
 import org.apache.rat.license.ILicenseFamily;
 import org.apache.rat.license.LicenseSetFactory.LicenseFilter;
-import org.apache.rat.report.IReportable;
+import org.apache.rat.report.RatReport;
+import org.apache.rat.report.Reportable;
+import org.apache.rat.report.claim.ClaimStatistic;
 import org.apache.rat.testhelpers.TestingLog;
 import org.apache.rat.testhelpers.TestingLicense;
 import org.apache.rat.testhelpers.TestingMatcher;
 import org.apache.rat.utils.DefaultLog;
+import org.apache.rat.utils.Log;
 import org.apache.rat.utils.Log.Level;
 import org.apache.rat.utils.ReportingSet.Options;
 import org.junit.jupiter.api.AfterEach;
@@ -63,6 +74,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.mockito.Mockito;
+
 
 public class ReportConfigurationTest {
 
@@ -456,7 +468,7 @@ public class ReportConfigurationTest {
         assertThat(underTest.getWriter()).isNotNull();
 
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        underTest.setOut(() -> stream);
+        underTest.setOut(new ReportConfiguration.IODescriptor<>("outputTest", () -> stream));
         assertThat(underTest.getOutput().get()).isEqualTo(stream);
         PrintWriter writer = underTest.getWriter().get();
         assertThat(writer).isNotNull();
@@ -468,10 +480,10 @@ public class ReportConfigurationTest {
     @Test
     public void reportableTest() {
         assertThat(underTest.hasSource()).isFalse();
-        IReportable reportable = mock(IReportable.class);
+        Reportable reportable = mock(Reportable.class);
         underTest.addSource(reportable);
         assertThat(underTest.hasSource()).isTrue();
-        assertThatThrownBy(() -> underTest.addSource((IReportable)null)).isExactlyInstanceOf(ConfigurationException.class)
+        assertThatThrownBy(() -> underTest.addSource((Reportable)null)).isExactlyInstanceOf(ConfigurationException.class)
                 .hasMessageContaining("Reportable may not be null.");
     }
 
@@ -480,9 +492,9 @@ public class ReportConfigurationTest {
         URL url = this.getClass().getResource("ReportConfigurationTestFile");
         assertThat(url).isNotNull();
 
-        assertThat(underTest.getStyleSheet()).isNull();
+        assertThat(underTest.getStyleSheetDescriptor()).isNull();
         InputStream stream = mock(InputStream.class);
-        underTest.setStyleSheet(() -> stream);
+        underTest.setStyleSheet(new ReportConfiguration.IODescriptor<>("stylesheetTest", () -> stream));
         assertThat(underTest.getStyleSheet().get()).isEqualTo(stream);
 
         File file = mock(File.class);
@@ -515,32 +527,37 @@ public class ReportConfigurationTest {
 
     @Test
     public void testValidate() {
-        final StringBuilder sb = new StringBuilder();
+        TestingLog testLog = new TestingLog();
+        Log oldLog = DefaultLog.getInstance();
+        try {
+            DefaultLog.setInstance(testLog);
+
         String msg = "At least one source must be specified";
-        assertThatThrownBy(() -> underTest.validate(sb::append)).isExactlyInstanceOf(ConfigurationException.class)
+            assertThatThrownBy(underTest::validate).isExactlyInstanceOf(ConfigurationException.class)
                 .hasMessageContaining(msg);
-        assertThat(sb.toString()).isEqualTo(msg);
+            testLog.assertContains(msg);
+            testLog.clear();
 
 
-        sb.setLength(0);
-        msg = "You must specify at least one license";
-        underTest.addSource(mock(IReportable.class));
+            msg = "At least one license must be defined";
+        underTest.addSource(mock(Reportable.class));
 
-        assertThatThrownBy(() -> underTest.validate(sb::append)).isExactlyInstanceOf(ConfigurationException.class)
+            assertThatThrownBy(underTest::validate).isExactlyInstanceOf(ConfigurationException.class)
                 .hasMessageContaining(msg);
-        assertThat(sb.toString()).isEqualTo(msg);
+            testLog.assertContains(msg);
 
-        sb.setLength(0);
         underTest.addLicense(testingLicense("valid", "Validation testing license"));
-        underTest.validate(sb::append);
-        assertThat(sb.length()).isEqualTo(0);
+            underTest.validate();
+        } finally {
+            DefaultLog.setInstance(oldLog);
+        }
     }
     
     @Test
     public void testSetOut() throws IOException {
         ReportConfiguration config = new ReportConfiguration();
         try (OutputStreamInterceptor osi = new OutputStreamInterceptor()) {
-            config.setOut(() -> osi);
+            config.setOut(new ReportConfiguration.IODescriptor<>("testSetOut", () -> osi));
             assertThat(osi.closeCount).isEqualTo(0);
             try (OutputStream os = config.getOutput().get()) {
                 assertThat(os).isNotNull();
@@ -563,16 +580,18 @@ public class ReportConfigurationTest {
        
         // verify default collision logs WARNING
         underTest.addFamily(ILicenseFamily.builder().setLicenseFamilyCategory("CAT").setLicenseFamilyName("name2"));
-        assertThat(log.getCaptured().contains("WARN")).as("default value not WARN").isTrue();
-        assertThat(log.getCaptured().contains("CAT")).as("'CAT' not found").isTrue();
+        assertThat(log.getCaptured()).contains("WARN").contains("CAT");
         
         // verify level setting works.
         for (Level l : Level.values()) {
           log.clear();
           underTest.logFamilyCollisions(l);
           underTest.addFamily(ILicenseFamily.builder().setLicenseFamilyCategory("CAT").setLicenseFamilyName("name2"));
-          assertThat(log.getCaptured().contains("CAT")).as("'CAT' not found").isTrue();
-          assertThat(log.getCaptured().contains(l.name())).as("logging not set to "+l).isTrue();
+          if (DefaultLog.getInstance().isEnabled(l)) {
+              assertThat(log.getCaptured()).contains("CAT").contains(l.name());
+          } else {
+              assertThat(log.getCaptured()).doesNotContain("CAT").doesNotContain(l.name());
+          }
         }
     }
     
@@ -662,51 +681,52 @@ public class ReportConfigurationTest {
                 .isExactlyInstanceOf(IllegalArgumentException.class);
     }
 
-    /**
-     * Validates that the configuration contains the default approved licenses.
-     * @param config The configuration to test.
-     */
-    public static void validateDefaultApprovedLicenses(ReportConfiguration config) {
-        validateDefaultApprovedLicenses(config, 0);
-    }
     
     /**
      * Validates that the configuration contains the default approved licenses.
      * @param config The configuration to test.
      */
-    public static void validateDefaultApprovedLicenses(ReportConfiguration config, int additionalIdCount) {
-        assertThat(config.getLicenseCategories(LicenseFilter.APPROVED)).hasSize(XMLConfigurationReaderTest.APPROVED_IDS.length + additionalIdCount);
-        for (String s : XMLConfigurationReaderTest.APPROVED_IDS) {
-            assertThat(config.getLicenseCategories(LicenseFilter.APPROVED)).contains(ILicenseFamily.makeCategory(s));
+    public static void validateDefaultApprovedLicenses(ReportConfiguration config, String... additionalIds) {
+        validateLicenses(config, Arrays.asList(additionalIds), LicenseFilter.APPROVED, XMLConfigurationReaderTest.APPROVED_LICENSES);
         }
+
+    /**
+     * Validates that the configuration contains all the default licenses along with any addiitonal licenses
+     * @param config the configuration to test.
+     * @param additionalLicenses Additional licence IDs that are expected.
+     */
+    public static void validateDefaultLicenses(ReportConfiguration config, String...additionalLicenses) {
+        validateLicenses(config, Arrays.asList(additionalLicenses), LicenseFilter.ALL, XMLConfigurationReaderTest.EXPECTED_LICENSES);
     }
+
+    private static void validateLicenses(ReportConfiguration config, List<String> additionalIds, LicenseFilter filter, String[] approvedIds) {
+        List<String> expected = new ArrayList<>(Arrays.asList(approvedIds));
+        expected.addAll(additionalIds);
+        assertThat(config.getLicenses(filter).stream().map(ILicense::getId).collect(Collectors.toSet())).containsExactlyInAnyOrderElementsOf(expected);
+    }
+
 
     /**
      * Validates that the configuration contains the default license families.
      * @param config the configuration to test.
      */
     public static void validateDefaultLicenseFamilies(ReportConfiguration config, String...additionalIds) {
-        assertThat(config.getLicenseFamilies(LicenseFilter.ALL)).hasSize(XMLConfigurationReaderTest.EXPECTED_IDS.length + additionalIds.length);
-        List<String> expected = new ArrayList<>();
-        expected.addAll(Arrays.asList(XMLConfigurationReaderTest.EXPECTED_IDS));
-        expected.addAll(Arrays.asList(additionalIds));
-        for (ILicenseFamily family : config.getLicenseFamilies(LicenseFilter.ALL)) {
-            assertThat(expected).contains(family.getFamilyCategory().trim());
-        }
+        validateLicenseFamilies(config, Arrays.asList(additionalIds), LicenseFilter.ALL, XMLConfigurationReaderTest.EXPECTED_IDS);
     }
 
     /**
-     * Validates that the configuration contains the default licenses.
+     * Validates that the configuration contains the default license families.
      * @param config the configuration to test.
      */
-    public static void validateDefaultLicenses(ReportConfiguration config, String...additionalLicenses) {
-        assertThat(config.getLicenses(LicenseFilter.ALL)).hasSize(XMLConfigurationReaderTest.EXPECTED_LICENSES.length + additionalLicenses.length);
-        List<String> expected = new ArrayList<>();
-        expected.addAll(Arrays.asList(XMLConfigurationReaderTest.EXPECTED_LICENSES));
-        expected.addAll(Arrays.asList(additionalLicenses));
-        for (ILicense license : config.getLicenses(LicenseFilter.ALL)) {
-            assertThat(expected).contains(license.getId());
+    public static void validateDefaultApprovedLicenseFamilies(ReportConfiguration config, String...additionalIds) {
+        validateLicenseFamilies(config, Arrays.asList(additionalIds), LicenseFilter.APPROVED, XMLConfigurationReaderTest.APPROVED_IDS);
         }
+
+    private static void validateLicenseFamilies(ReportConfiguration config, List<String> additionalIds, LicenseFilter filter, String[] approvedIds) {
+        List<String> expected = new ArrayList<>(Arrays.asList(approvedIds));
+        expected.addAll(additionalIds);
+        assertThat(config.getLicenseFamilies(filter).stream().map(lf -> lf.getFamilyCategory().trim())
+                .collect(Collectors.toSet())).containsExactlyInAnyOrderElementsOf(expected);
     }
     
     /**
@@ -719,9 +739,68 @@ public class ReportConfigurationTest {
         assertThat(config.getCopyrightMessage()).isNull();
         assertThat(config.getStyleSheet()).withFailMessage("Stylesheet should not be null").isNotNull();
 
-        validateDefaultApprovedLicenses(config);
         validateDefaultLicenseFamilies(config);
+        validateDefaultApprovedLicenseFamilies(config);
         validateDefaultLicenses(config);
+        validateDefaultApprovedLicenses(config);
+    }
+
+    public static void assertSame(ReportConfiguration actual, ReportConfiguration expected) {
+        assertThat(actual.isAddingLicenses()).isEqualTo(expected.isAddingLicenses());
+        assertThat(actual.isAddingLicensesForced()).isEqualTo(expected.isAddingLicensesForced());
+        assertThat(actual.listFamilies()).isEqualTo(expected.listFamilies());
+        assertThat(actual.listLicenses()).isEqualTo(expected.listLicenses());
+        assertThat(actual.isDryRun()).isEqualTo(expected.isDryRun());
+        assertThat(actual.getArchiveProcessing()).isEqualTo(expected.getArchiveProcessing());
+        assertThat(actual.getStandardProcessing()).isEqualTo(expected.getStandardProcessing());
+        assertThat(actual.getStyleSheetDescriptor().name()).isEqualTo(expected.getStyleSheetDescriptor().name());
+        assertThat(actual.getOutputDescriptor().name()).isEqualTo(expected.getOutputDescriptor().name());
+
+        assertThat(actual.getCopyrightMessage()).isEqualTo(expected.getCopyrightMessage());
+
+        assertThat(actual.sources()).containsExactlyElementsOf(expected.sources());
+        assertThat(actual.reportables()).containsExactlyElementsOf(expected.reportables().toList());
+        ExclusionProcessorTest.assertSame(actual.getExclusionProcessor(), expected.getExclusionProcessor());
+
+    }
+    @Test
+    void serdeTest() throws IOException {
+        underTest.setAddLicenseHeaders(AddLicenseHeaders.FORCED);
+        underTest.listFamilies(LicenseFilter.APPROVED);
+        underTest.listLicenses(LicenseFilter.ALL);
+        underTest.setDryRun(true);
+        underTest.setArchiveProcessing(ReportConfiguration.Processing.NOTIFICATION);
+        underTest.setStandardProcessing(ReportConfiguration.Processing.ABSENCE);
+        underTest.setStyleSheet(StyleSheets.MISSING_HEADERS.getStyleSheet());
+        underTest.setOut(new File("/some/file/somewhere"));
+        underTest.setCopyrightMessage("the copyright message");
+        underTest.addSource(new File("/my/file"));
+        underTest.addSource(new TestingReportable());
+
+        underTest.addExcludedPatterns(List.of("pattern/**", "pattern2/**"));
+        underTest.addExcludedCollection(StandardCollection.BAZAAR);
+        underTest.addExcludedCollection(StandardCollection.MISC);
+        underTest.addExcludedFileProcessor(StandardCollection.HIDDEN_FILE);
+        underTest.addExcludedMatcher(DocumentNameMatcher.MATCHES_ALL);
+        underTest.addIncludedPatterns(List.of("**/pattern3", "**/pattern4"));
+        underTest.addIncludedCollection(StandardCollection.ARCH);
+        underTest.addIncludedCollection(StandardCollection.BITKEEPER);
+        underTest.addIncludedMatcher(DocumentNameMatcher.MATCHES_NONE);
+
+        ClaimValidator claimValidator = underTest.getClaimValidator();
+
+        claimValidator.setMax(ClaimStatistic.Counter.APPROVED, 5);
+        claimValidator.setMin(ClaimStatistic.Counter.APPROVED, 3);
+        claimValidator.setMax(ClaimStatistic.Counter.ARCHIVES, 10);
+        claimValidator.setMin(ClaimStatistic.Counter.BINARIES, 4);
+
+        StringWriter stringWriter = new StringWriter();
+        underTest.serde().serialize(stringWriter);
+
+        ReportConfiguration actual = new ReportConfiguration();
+        actual.serde().deserialize(() -> new ByteArrayInputStream(stringWriter.toString().getBytes(StandardCharsets.UTF_8)),
+                DocumentName.builder(new File("/rootDir")).build());
+        assertSame(actual, underTest);
     }
 
     /**
@@ -734,10 +813,26 @@ public class ReportConfigurationTest {
         public void write(int arg0) {
             throw new UnsupportedOperationException();
         }
-        
+
         @Override
         public void close() {
             ++closeCount;
+        }
+    }
+
+    /**
+     * A reportable that only reports its name.  Does no actual work.
+     */
+    static class TestingReportable implements Reportable {
+
+        @Override
+        public void run(RatReport report) throws RatException {
+            // does nothing
+        }
+
+        @Override
+        public DocumentName name() {
+            return DocumentName.builder().setBaseName("").setName("TestingReportable").build();
         }
     }
 }

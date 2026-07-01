@@ -34,7 +34,6 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
@@ -48,7 +47,7 @@ import org.apache.rat.document.DocumentNameMatcher;
 import org.apache.rat.document.FileDocument;
 import org.apache.rat.help.Licenses;
 import org.apache.rat.license.LicenseSetFactory;
-import org.apache.rat.report.IReportable;
+import org.apache.rat.report.Reportable;
 import org.apache.rat.report.claim.ClaimStatistic;
 import org.apache.rat.utils.DefaultLog;
 import org.apache.rat.utils.Log.Level;
@@ -131,27 +130,22 @@ public final class OptionCollection {
                                                     final Consumer<Options> helpCmd, final boolean noArgs) throws IOException {
 
         Options opts = buildOptions();
-        CommandLine commandLine;
+            ArgumentContext argumentContext;
         try {
-            commandLine = DefaultParser.builder().setDeprecatedHandler(DeprecationReporter.getLogReporter())
-                    .setAllowPartialMatching(true).build().parse(opts, args);
+            argumentContext = new ArgumentContext(workingDirectory, opts, args);
         } catch (ParseException e) {
-            DefaultLog.getInstance().error(e.getMessage());
-            DefaultLog.getInstance().error("Please use the \"--help\" option to see a list of valid commands and options.", e);
             System.exit(1);
             return null; // dummy return (won't be reached) to avoid Eclipse complaint about possible NPE
             // for "commandLine"
         }
-
-        ArgumentContext argumentContext = new ArgumentContext(workingDirectory, commandLine);
         Arg.processLogLevel(argumentContext, CLIOptionCollection.INSTANCE);
 
-        if (commandLine.hasOption(HELP)) {
+        if (argumentContext.getCommandLine().hasOption(HELP)) {
             helpCmd.accept(opts);
             return null;
         }
 
-        if (commandLine.hasOption(Arg.HELP_LICENSES.option())) {
+        if (argumentContext.getCommandLine().hasOption(Arg.HELP_LICENSES.option())) {
             new Licenses(createConfiguration(argumentContext), new PrintWriter(System.out, false, StandardCharsets.UTF_8)).printHelp();
             return null;
         }
@@ -183,14 +177,14 @@ public final class OptionCollection {
         Optional<Option> dirOpt = CLIOptionCollection.INSTANCE.getSelected(Arg.DIR);
         if (dirOpt.isPresent()) {
             try {
-                configuration.addSource(getReportable(commandLine.getParsedOptionValue(
-                        dirOpt.get()), configuration));
+                DocumentName directoryName = commandLine.getParsedOptionValue(dirOpt.get());
+                configuration.addSource(getReportable(directoryName.asFile(), configuration));
             } catch (ParseException e) {
                 throw new ConfigurationException("Unable to set parse " + dirOpt.get(), e);
             }
         }
         for (String s : commandLine.getArgs()) {
-            IReportable reportable = getReportable(new File(s), configuration);
+            Reportable reportable = getReportable(new File(s), configuration);
             if (reportable != null) {
                 configuration.addSource(reportable);
             }
@@ -215,7 +209,7 @@ public final class OptionCollection {
      * @param config the ReportConfiguration.
      * @return the IReportable instance containing the files.
      */
-    public static IReportable getReportable(final File base, final ReportConfiguration config) {
+    public static Reportable getReportable(final File base, final ReportConfiguration config) {
         File absBase = base.getAbsoluteFile();
         DocumentName documentName = DocumentName.builder(absBase).build();
         if (!absBase.exists()) {

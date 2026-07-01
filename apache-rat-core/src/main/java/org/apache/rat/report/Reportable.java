@@ -16,39 +16,22 @@
  * specific language governing permissions and limitations      *
  * under the License.                                           *
  */
+package org.apache.rat.report;
 
-package org.apache.rat.walker;
-
-import org.apache.rat.api.Document;
+import org.apache.rat.api.RatException;
 import org.apache.rat.document.DocumentName;
-import org.apache.rat.report.Reportable;
 
-/**
- * Abstract walker.
- */
-public abstract class Walker implements Reportable {
-
-    /** The document this walker is walking */
-    private final Document document;
+public interface Reportable {
+    /**
+     * Adds the reportable to the RatReport.
+     * @param report the report to add the results to.
+     * @throws RatException on error.
+     */
+    void run(RatReport report) throws RatException;
 
     /**
-     * Creates the walker
-     * @param document The document the walker is walking.
+     * Returns the DocumentName for the reportable.
+     * @return the DocumentName for the reportable.
      */
-    protected Walker(final Document document) {
-        this.document = document;
-    }
-
-    /**
-     * Retrieves the document from the constructor.
-     * @return the document from the constructor.
-     */
-    protected Document getDocument() {
-        return document;
-    }
-
-    @Override
-    public DocumentName name() {
-        return document.getName();
-    }
+    DocumentName name();
 }
