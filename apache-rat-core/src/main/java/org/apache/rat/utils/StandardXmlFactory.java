@@ -52,8 +52,8 @@ public final class StandardXmlFactory {
      * @return the transformer.
      * @throws TransformerConfigurationException on error.
      */
-    public static Transformer create() throws TransformerConfigurationException {
-        return create(null);
+    public static Transformer createTransformer() throws TransformerConfigurationException {
+        return createTransformer(null);
     }
 
     /**
@@ -62,8 +62,8 @@ public final class StandardXmlFactory {
      * @return the transformer.
      * @throws TransformerConfigurationException on error.
      */
-    public static Transformer create(final InputStream styleIn) throws TransformerConfigurationException {
-        TransformerFactory factory = TransformerFactory.newInstance();
+    public static Transformer createTransformer(final InputStream styleIn) throws TransformerConfigurationException {
+        TransformerFactory factory = TransformerFactory.newInstance(); // NOSONAR
         factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
         factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
         factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_STYLESHEET, "");

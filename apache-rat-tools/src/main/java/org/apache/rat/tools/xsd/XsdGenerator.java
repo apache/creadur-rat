@@ -72,7 +72,7 @@ public class XsdGenerator {
 
         try (InputStream in = generator.getInputStream();
              InputStream styleIn = StyleSheets.XML.getStyleSheet().get()) {
-            Transformer transformer = StandardXmlFactory.create(styleIn);
+            Transformer transformer = StandardXmlFactory.createTransformer(styleIn);
             transformer.transform(new StreamSource(in),
                     new StreamResult(new OutputStreamWriter(System.out, StandardCharsets.UTF_8)));
         }
