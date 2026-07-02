@@ -28,7 +28,6 @@ import java.io.PrintWriter;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 
-import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
@@ -135,8 +134,7 @@ public class Reporter {
         ClaimStatistic result = execute();
         try (OutputStream out = output.get();
              InputStream styleIn = stylesheet.get()) {
-            Transformer transformer = StandardXmlFactory.createTransformer(styleIn);
-            transformer.transform(new DOMSource(document),
+            StandardXmlFactory.createTransformer(styleIn).transform(new DOMSource(document),
                     new StreamResult(new OutputStreamWriter(out, StandardCharsets.UTF_8)));
             return result;
         } catch (TransformerException | IOException e) {
