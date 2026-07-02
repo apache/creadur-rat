@@ -427,7 +427,7 @@ public class ReportConfiguration {
     }
 
     /**
-     * Get the DocumentNameMatcher that excludes files found in the directory tree..
+     * Get the DocumentNameMatcher that excludes files found in the directory tree.
      * @param baseDir the DocumentName for the base directory.
      * @return the DocumentNameMatcher for the base directory.
      */

@@ -34,7 +34,7 @@ import org.apache.rat.report.Reportable;
 import org.apache.rat.utils.DefaultLog;
 
 /**
- * Implementation of IReportable that traverses over a resource collection
+ * Implementation of Reportable that traverses over a resource collection
  * internally.
  */
 public class FileListWalker implements Reportable {

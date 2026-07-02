@@ -29,15 +29,15 @@ import org.apache.tools.ant.types.ResourceCollection;
 import org.apache.tools.ant.types.resources.FileResource;
 
 /**
- * Implementation of IReportable that traverses over a resource collection
+ * Implementation of Reportable that traverses over a resource collection
  * internally.
  */
 class ResourceCollectionContainer implements Reportable {
-    /** The resources as collected by Ant */
+    /** The resources as collected by Ant. */
     private final ResourceCollection resources;
-    /** The report configuration being used for the report */
+    /** The report configuration being used for the report. */
     private final ReportConfiguration configuration;
-    /** The document name */
+    /** The document name. */
     private final DocumentName name;
 
     ResourceCollectionContainer(final DocumentName name, final ReportConfiguration configuration, final ResourceCollection resources) {

@@ -209,12 +209,12 @@ public final class OptionCollection {
     }
 
     /**
-     * Creates an IReportable object from the directory name and ReportConfiguration
+     * Creates a Reportable object from the directory name and ReportConfiguration
      * object.
      *
      * @param base the directory that contains the files to report on.
      * @param config the ReportConfiguration.
-     * @return the IReportable instance containing the files.
+     * @return the Reportable instance containing the files.
      */
     public static Reportable getReportable(final File base, final ReportConfiguration config) {
         File absBase = base.getAbsoluteFile();

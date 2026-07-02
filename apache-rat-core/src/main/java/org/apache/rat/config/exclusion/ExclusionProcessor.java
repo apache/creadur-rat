@@ -36,7 +36,7 @@ import static java.lang.String.format;
 
 /**
  * Processes the include and exclude patterns and applies the result against a base directory
- * to return an IReportable that contains all the reportable objects.
+ * to return a Reportable that contains all the reportable objects.
  */
 public class ExclusionProcessor {
     /** Strings that identify the files/directories to exclude */
