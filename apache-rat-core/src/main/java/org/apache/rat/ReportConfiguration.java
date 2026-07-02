@@ -38,6 +38,7 @@ import java.util.Objects;
 import java.util.SortedSet;
 import java.util.function.Consumer;
 
+import org.apache.commons.collections4.set.UnmodifiableSortedSet;
 import org.apache.commons.io.function.IOSupplier;
 import org.apache.commons.io.output.CloseShieldOutputStream;
 import org.apache.rat.analysis.IHeaderMatcher;
@@ -671,7 +672,7 @@ public class ReportConfiguration {
      * @param filter The LicenseFilter to filter the licenses by.
      * @return the Sorted set of approved license categories.
      */
-    public SortedSet<ILicense> getLicenses(final LicenseFilter filter) {
+    public UnmodifiableSortedSet<ILicense> getLicenses(final LicenseFilter filter) {
         return licenseSetFactory.getLicenses(filter);
     }
 

@@ -20,13 +20,19 @@ package org.apache.rat.license;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
+import org.apache.commons.collections4.set.UnmodifiableSortedSet;
+import org.apache.rat.ConfigurationException;
 import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.analysis.IHeaders;
+import org.apache.rat.utils.DefaultLog;
 import org.apache.rat.utils.Log;
 import org.apache.rat.utils.ReportingSet;
 
@@ -119,6 +125,31 @@ public class LicenseSetFactory {
         this();
         this.licenses.addAll(licenses);
         licenses.forEach(l -> families.addIfNotPresent(l.getLicenseFamily()));
+    }
+
+    public void validate() {
+        Log log = DefaultLog.getInstance();
+
+        // verify license definitions exist
+        if (getLicenses(LicenseFilter.ALL).isEmpty()) {
+            String msg = "At least one license must be defined";
+            log.error(msg);
+            throw new ConfigurationException(msg);
+        }
+
+        // verify that all approved license families exist
+        Set<String> exists = getLicenseFamilies(LicenseFilter.ALL)
+                .stream().map(ILicenseFamily::getFamilyCategory).collect(Collectors.toSet());
+        Set<String> approved = new HashSet<>(approvedLicenseCategories);
+        approved.removeIf(exists::contains);
+        approved.forEach(name -> log.warn(String.format("License category '%s' was approved but does not exist.", name)));
+
+        // verify that all approved licenses exist
+        exists = getLicenses(LicenseFilter.ALL)
+                .stream().map(ILicense::getId).collect(Collectors.toSet());
+        approved = new HashSet<>(approvedLicenseIds);
+        approved.removeIf(exists::contains);
+        approved.forEach(name -> log.warn(String.format("License '%s' was approved but does not exist.", name)));
     }
 
     public void add(final LicenseSetFactory other) {
@@ -289,18 +320,21 @@ public class LicenseSetFactory {
      * @param filter the types of LicenseFamily objects to return.
      * @return a SortedSet of ILicense objects.
      */
-    public SortedSet<ILicense> getLicenses(final LicenseFilter filter) {
+    public UnmodifiableSortedSet<ILicense> getLicenses(final LicenseFilter filter) {
+        SortedSet<ILicense> result;
         switch (filter) {
         case ALL:
-            return Collections.unmodifiableSortedSet(licenses);
+            result = licenses;
+            break;
         case APPROVED:
-            SortedSet<ILicense> result = new TreeSet<>();
+            result = new TreeSet<>();
             licenses.stream().filter(getApprovedLicensePredicate()).forEach(result::add);
-            return result;
+            break;
         case NONE:
         default:
-            return Collections.emptySortedSet();
+            result = Collections.emptySortedSet();
         }
+        return (UnmodifiableSortedSet<ILicense>) UnmodifiableSortedSet.unmodifiableSortedSet(result);
     }
 
     /**
@@ -449,6 +483,9 @@ public class LicenseSetFactory {
      * @return the matching license or {@code null} if not found.
      */
     public static Optional<ILicense> search(final ILicense target, final SortedSet<ILicense> licenses) {
+        if (licenses == null) {
+            return Optional.empty();
+        }
         SortedSet<ILicense> part = licenses.tailSet(target);
         return Optional.ofNullable((!part.isEmpty() && part.first().compareTo(target) == 0) ? part.first() : null);
     }
