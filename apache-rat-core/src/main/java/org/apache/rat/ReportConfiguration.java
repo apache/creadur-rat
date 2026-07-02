@@ -887,12 +887,22 @@ public class ReportConfiguration {
             return new IODescriptor<>(name, () -> new FileOutputStream(docName.asFile()));
         }
 
+        /**
+         * Creates an output IODescriptor for the file.  Does not modify for working directory..
+         * @param file the file to open.
+         * @return the Output IODescriptor.
+         */
         static IODescriptor<OutputStream> output(final File file) {
             return new IODescriptor<>(file.toString(), () -> new FileOutputStream(file, true));
         }
 
         // INPUT CONSTRUCTORS
 
+        /**
+         * Creates an input IODescriptor for the file.  Does not modify for working directory.
+         * @param file the file to open.
+         * @return the Input IODescriptor.
+         */
         static IODescriptor<InputStream> input(final File file) {
             return new IODescriptor<>(file.toString(), () -> new FileInputStream(file));
         }
