@@ -34,7 +34,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.rat.commandline.Arg;
 import org.apache.rat.commandline.ArgumentContext;
 import org.apache.rat.help.Licenses;
-import org.apache.rat.report.IReportable;
+import org.apache.rat.report.Reportable;
 import org.apache.rat.ui.UIOptionCollection;
 import org.apache.rat.utils.DefaultLog;
 
@@ -126,7 +126,7 @@ public final class OptionCollectionParser {
         final CommandLine commandLine = argumentContext.getCommandLine();
         if (!configuration.hasSource()) {
             for (String s : commandLine.getArgs()) {
-                IReportable reportable = OptionCollection.getReportable(new File(s), configuration);
+                Reportable reportable = OptionCollection.getReportable(new File(s), configuration);
                 if (reportable != null) {
                     configuration.addSource(reportable);
                 }
