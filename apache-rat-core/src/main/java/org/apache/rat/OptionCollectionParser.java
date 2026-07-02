@@ -21,6 +21,7 @@ package org.apache.rat;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.Serial;
 import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
 import java.util.Comparator;
@@ -140,6 +141,7 @@ public final class OptionCollectionParser {
      */
     private static final class OptionComparator implements Comparator<Option>, Serializable {
         /** The serial version UID.  */
+        @Serial
         private static final long serialVersionUID = 5305467873966684014L;
 
         private String getKey(final Option opt) {
