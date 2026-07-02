@@ -409,7 +409,7 @@ public class ReporterTest {
 
         ReportConfiguration configuration = initializeConfiguration();
         configuration.setStyleSheet(StyleSheets.XML.getStyleSheet());
-        configuration.setOut(() -> out);
+        configuration.setOut(new ReportConfiguration.IODescriptor("xmlReportTest", () -> out));
         new Reporter(configuration).output();
         Document doc = XmlUtils.toDom(new ByteArrayInputStream(out.toByteArray()));
 
@@ -457,7 +457,7 @@ public class ReporterTest {
                 "Generated at: ";
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         ReportConfiguration configuration = initializeConfiguration();
-        configuration.setOut(() -> out);
+        configuration.setOut(new ReportConfiguration.IODescriptor("plainReportTest", () -> out));
         new Reporter(configuration).output();
 
         out.flush();
@@ -473,7 +473,7 @@ public class ReporterTest {
     public void unapprovedLicensesReportTest() throws Exception {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         ReportConfiguration configuration = initializeConfiguration();
-        configuration.setOut(() -> out);
+        configuration.setOut(new ReportConfiguration.IODescriptor("unapprovedLicensesReportTest", () -> out));
         configuration.setStyleSheet(this.getClass().getResource("/org/apache/rat/unapproved-licenses.xsl"));
         new Reporter(configuration).output();
 
@@ -489,7 +489,7 @@ public class ReporterTest {
     void listLicensesReportTest() throws Exception {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         ReportConfiguration configuration = initializeConfiguration();
-        configuration.setOut(() -> out);
+        configuration.setOut(new ReportConfiguration.IODescriptor("listLicensesReportTest", () -> out));
         configuration.setStyleSheet(StyleSheets.UNAPPROVED_LICENSES.getStyleSheet());
         Reporter.listLicenses(configuration, LicenseSetFactory.LicenseFilter.NONE);
 

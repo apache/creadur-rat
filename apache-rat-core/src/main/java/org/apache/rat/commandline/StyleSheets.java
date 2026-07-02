@@ -25,8 +25,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Objects;
 
-import org.apache.commons.io.function.IOSupplier;
 import org.apache.rat.ConfigurationException;
+import org.apache.rat.ReportConfiguration;
 
 import static java.lang.String.format;
 
@@ -73,9 +73,11 @@ public enum StyleSheets {
      * Gets the IOSupplier for a style sheet.
      * @return an IOSupplier for the sheet.
      */
-    public IOSupplier<InputStream> getStyleSheet() {
-        return Objects.requireNonNull(StyleSheets.class.getClassLoader().getResource(format("org/apache/rat/%s.xsl", name)),
-                "missing stylesheet: " + name)::openStream;
+    public ReportConfiguration.IODescriptor<InputStream> getStyleSheet() {
+        URL url = StyleSheets.class.getClassLoader().getResource(format("org/apache/rat/%s.xsl", name));
+        Objects.requireNonNull(url, "missing stylesheet: " + name);
+        return new ReportConfiguration.IODescriptor<>(name, url::openStream);
+
     }
 
     /**
@@ -83,14 +85,14 @@ public enum StyleSheets {
      * @param name the short name for or the path to a style sheet.
      * @return the IOSupplier for the style sheet.
      */
-    public static IOSupplier<InputStream> getStyleSheet(final String name) {
+    public static ReportConfiguration.IODescriptor<InputStream> getStyleSheet(final String name) {
         URL url = StyleSheets.class.getClassLoader().getResource(format("org/apache/rat/%s.xsl", name));
         if (url != null) {
-            return url::openStream;
+            return new ReportConfiguration.IODescriptor<>(name, url::openStream);
         }
         Path p = Paths.get(name);
         if (p.toFile().exists()) {
-            return () -> Files.newInputStream(p);
+            return new ReportConfiguration.IODescriptor<>(name, () -> Files.newInputStream(p));
         }
         throw new ConfigurationException(format("Stylesheet file '%s' not found", name));
     }

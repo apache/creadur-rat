@@ -20,6 +20,7 @@ package org.apache.rat;
 
 import java.io.File;
 import java.io.FileFilter;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -68,6 +69,10 @@ import org.apache.rat.walker.IReportableListWalker;
  */
 public class ReportConfiguration {
 
+    /** The IODescriptor for system.out */
+    public static final IODescriptor<OutputStream> SYSTEM_OUT =
+            // SONAR wants to require logging output, which is the wrong reporting channel for this case.
+            new IODescriptor<>("System.out", () -> CloseShieldOutputStream.wrap(System.out)); // NOSONAR
     /**
      * The styles of processing for various categories of documents.
      */
@@ -115,13 +120,13 @@ public class ReportConfiguration {
      */
     private String copyrightMessage;
     /**
-     * The IOSupplier that provides the output stream to write the report to.
+     * The IODescriptor that provides the output stream to write the report to.
      */
-    private IOSupplier<OutputStream> out;
+    private IODescriptor<OutputStream> out;
     /**
-     * The IOSupplier that provides the stylesheet to style the XML output.
+     * The IODescriptor that provides the stylesheet to style the XML output.
      */
-    private IOSupplier<InputStream> styleSheet;
+    private IODescriptor<InputStream> styleSheet;
 
     /**
      * A list of files to read file names from.
@@ -441,16 +446,25 @@ public class ReportConfiguration {
      * the report with.
      */
     public IOSupplier<InputStream> getStyleSheet() {
+        return styleSheet == null ? null : styleSheet.ioSupplier();
+    }
+
+    /**
+     * Gets the IODescriptor with the style sheet.
+     * @return the IODescriptor that describes the XSLT style sheet to style
+     * the report with.
+     */
+    public IODescriptor<InputStream> getStyleSheetDescriptor() {
         return styleSheet;
     }
 
     /**
-     * Sets the style sheet for custom processing. The IOSupplier may be called
+     * Sets the style sheet for custom processing. The IODescriptor may be called
      * multiple times, so the input stream must be able to be opened and closed
      * multiple times.
      * @param styleSheet the XSLT style sheet to style the report with.
      */
-    public void setStyleSheet(final IOSupplier<InputStream> styleSheet) {
+    public void setStyleSheet(final IODescriptor<InputStream> styleSheet) {
         this.styleSheet = styleSheet;
     }
 
@@ -498,7 +512,7 @@ public class ReportConfiguration {
      */
     public void setStyleSheet(final URL styleSheet) {
         Objects.requireNonNull(styleSheet, "Stylesheet file must not be null");
-        setStyleSheet(styleSheet::openStream);
+        setStyleSheet(new IODescriptor<>(styleSheet.toString(), styleSheet::openStream));
     }
 
     /**
@@ -510,7 +524,7 @@ public class ReportConfiguration {
      * the report to. A null value will use System.out.
      * @see CloseShieldOutputStream
      */
-    public void setOut(final IOSupplier<OutputStream> out) {
+    public void setOut(final IODescriptor<OutputStream> out) {
         this.out = out;
     }
 
@@ -518,7 +532,7 @@ public class ReportConfiguration {
      * Sets the OutputStream supplier to use the specified file. The file may be
      * opened and closed several times. File is deleted first and then may be
      * repeatedly opened in append mode.
-     * @see #setOut(IOSupplier)
+     * @see #setOut(IODescriptor)
      * @param file The file to create the supplier with.
      */
     public void setOut(final File file) {
@@ -534,7 +548,7 @@ public class ReportConfiguration {
         if (!parent.mkdirs() && !parent.isDirectory()) {
             DefaultLog.getInstance().warn("Unable to create directory: " + file.getParentFile());
         }
-        setOut(() -> new FileOutputStream(file, true));
+        setOut(IODescriptor.output(file));
     }
 
     /**
@@ -543,7 +557,16 @@ public class ReportConfiguration {
      * @return The supplier of the output stream to write the report to.
      */
     public IOSupplier<OutputStream> getOutput() {
-        return out == null ? () -> CloseShieldOutputStream.wrap(System.out) : out;
+        return getOutputDescriptor().ioSupplier();
+    }
+
+    /**
+     * Returns the output IODescriptor. If no stream has been set returns a
+     * descriptor for System.out.
+     * @return The IODescriptor of the output stream to write the report to.
+     */
+    public IODescriptor<OutputStream> getOutputDescriptor() {
+        return out == null ? SYSTEM_OUT : out;
     }
 
     /**
@@ -840,6 +863,38 @@ public class ReportConfiguration {
             String msg = "You must specify at least one license";
             logger.accept(msg);
             throw new ConfigurationException(msg);
+        }
+    }
+
+    /**
+     * An IODescriptor comprises a name and an IOSupplier.  The name should identify the contents of the stream.
+     * @param name the name of the supplier.
+     * @param ioSupplier the IOSupplier that provides either an InputStream or an OutputStream
+     * @param <T> either InputStream or OutputStream.
+     */
+    public record IODescriptor<T>(String name, IOSupplier<T> ioSupplier) {
+
+        // OUTPUT CONSTRUCTORS
+
+        /**
+         * Creates an output IODescriptor for the file name within the working directory.
+         * @param name the name of the file to open.
+         * @param workingDirectory the working directory for the file.
+         * @return the Output IODescriptor.
+         */
+        static IODescriptor<OutputStream> output(final String name, final DocumentName workingDirectory) {
+            DocumentName docName = workingDirectory.resolve(name);
+            return new IODescriptor<>(name, () -> new FileOutputStream(docName.asFile()));
+        }
+
+        static IODescriptor<OutputStream> output(final File file) {
+            return new IODescriptor<>(file.toString(), () -> new FileOutputStream(file, true));
+        }
+
+        // INPUT CONSTRUCTORS
+
+        static IODescriptor<InputStream> input(final File file) {
+            return new IODescriptor<>(file.toString(), () -> new FileInputStream(file));
         }
     }
 }

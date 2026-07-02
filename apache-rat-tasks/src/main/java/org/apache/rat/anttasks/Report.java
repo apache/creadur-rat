@@ -416,7 +416,7 @@ public class Report extends BaseAntTask {
                     o -> DefaultLog.getInstance().warn("Help option not supported"),
                     true);
             if (getValues(Arg.OUTPUT_FILE).isEmpty()) {
-                configuration.setOut(() -> new LogOutputStream(this, Project.MSG_INFO));
+                configuration.setOut(new ReportConfiguration.IODescriptor<>("RAT output", () -> new LogOutputStream(this, Project.MSG_INFO)));
             }
             DocumentName name = DocumentName.builder(getProject().getBaseDir()).build();
             configuration.addSource(new ResourceCollectionContainer(name, configuration, nestedResources));
@@ -444,7 +444,7 @@ public class Report extends BaseAntTask {
     public void execute() {
         try {
             Reporter r = new Reporter(validate(getConfiguration()));
-            r.output(StyleSheets.PLAIN.getStyleSheet(), () -> CloseShieldOutputStream.wrap(System.out));
+            r.output(StyleSheets.PLAIN.getStyleSheet().ioSupplier(), () -> CloseShieldOutputStream.wrap(System.out));
             r.output();
         } catch (BuildException e) {
             throw e;
