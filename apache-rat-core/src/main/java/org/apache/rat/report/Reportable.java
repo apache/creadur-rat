@@ -16,32 +16,22 @@
  * specific language governing permissions and limitations      *
  * under the License.                                           *
  */
-package org.apache.rat;
+package org.apache.rat.report;
 
-/**
- * An exception thrown when there is an issue with the implementation of an extension point.
- */
-public class ImplementationException extends RuntimeException {
+import org.apache.rat.api.RatException;
+import org.apache.rat.document.DocumentName;
 
-    private static final long serialVersionUID = 7257245932787579431L;
+public interface Reportable {
+    /**
+     * Adds the reportable to the RatReport.
+     * @param report the report to add the results to.
+     * @throws RatException on error.
+     */
+    void run(RatReport report) throws RatException;
 
-    public static ImplementationException makeInstance(final Exception e) {
-        if (e instanceof ImplementationException exists) {
-            return exists;
-        }
-        return new ImplementationException(e);
-    }
-
-    public ImplementationException(final String message, final Throwable cause) {
-        super(message, cause);
-    }
-
-    public ImplementationException(final String message) {
-        super(message);
-    }
-
-    public ImplementationException(final Throwable cause) {
-        super(cause);
-    }
-
+    /**
+     * Returns the DocumentName for the reportable.
+     * @return the DocumentName for the reportable.
+     */
+    DocumentName name();
 }

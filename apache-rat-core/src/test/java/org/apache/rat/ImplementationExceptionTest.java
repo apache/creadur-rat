@@ -7,7 +7,7 @@
  * "License"); you may not use this file except in compliance   *
  * with the License.  You may obtain a copy of the License at   *
  *                                                              *
- *   http://www.apache.org/licenses/LICENSE-2.0                 *
+ *   https://www.apache.org/licenses/LICENSE-2.0                 *
  *                                                              *
  * Unless required by applicable law or agreed to in writing,   *
  * software distributed under the License is distributed on an  *
@@ -16,22 +16,29 @@
  * specific language governing permissions and limitations      *
  * under the License.                                           *
  */
-package org.apache.rat.report;
+package org.apache.rat;
 
-import org.apache.rat.api.RatException;
-import org.apache.rat.document.DocumentName;
+import org.junit.jupiter.api.Test;
 
-public interface IReportable {
-    /**
-     * Adds the reportable to the RatReport.
-     * @param report the report to add the results to.
-     * @throws RatException on error.
-     */
-    void run(RatReport report) throws RatException;
+import static org.assertj.core.api.Assertions.assertThat;
 
-    /**
-     * Returns the DocumentName for the reportable.
-     * @return the DocumentName for the reportable.
-     */
-    DocumentName getName();
+class ImplementationExceptionTest {
+
+    @Test
+    void fromTest() {
+        RuntimeException runTime = new RuntimeException();
+        assertThat(ImplementationException.makeInstance(runTime))
+                .isInstanceOf(ImplementationException.class)
+                .hasCause(runTime);
+
+        Exception ex = new Exception();
+        assertThat(ImplementationException.makeInstance(ex))
+                .isInstanceOf(ImplementationException.class)
+                .hasCause(ex);
+
+        ex = new ImplementationException("yee haw");
+        assertThat(ImplementationException.makeInstance(ex))
+                .isInstanceOf(ImplementationException.class)
+                .isEqualTo(ex);
+    }
 }

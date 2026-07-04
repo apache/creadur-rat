@@ -27,6 +27,8 @@ import org.apache.rat.config.parameters.ComponentType;
 import org.apache.rat.config.parameters.ConfigComponent;
 import org.apache.rat.config.parameters.MatcherBuilder;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 /**
  * A reference matching Matcher builder.
  * <p>
@@ -62,6 +64,7 @@ public class MatcherRefBuilder extends AbstractBuilder {
      * @param matchers the Map of ids to instances.
      * @return this builder for chaining.
      */
+    @SuppressFBWarnings(value = "EI_EXPOSE_REP2", justification = "Expected external update of matchers.")
     public MatcherRefBuilder setMatcherMap(final Map<String, IHeaderMatcher> matchers) {
         // this method is called by reflection
         this.matchers = matchers;
@@ -109,6 +112,7 @@ public class MatcherRefBuilder extends AbstractBuilder {
          * @param proxyId the id of the matcher to find.
          * @param matchers a mapping of matchers that have been found.
          */
+        @SuppressFBWarnings(value = "EI_EXPOSE_REP2", justification = "Expected external update of matchers.")
         public IHeaderMatcherProxy(final String proxyId, final Map<String, IHeaderMatcher> matchers) {
             this.proxyId = proxyId;
             this.matchers = matchers;

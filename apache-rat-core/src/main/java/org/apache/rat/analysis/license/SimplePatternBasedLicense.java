@@ -20,6 +20,7 @@ package org.apache.rat.analysis.license;
 
 import java.util.Arrays;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.apache.rat.DeprecationReporter;
 import org.apache.rat.configuration.builders.AbstractBuilder;
 import org.apache.rat.configuration.builders.AnyBuilder;
@@ -31,6 +32,7 @@ import org.apache.rat.license.ILicense;
  * @since Rat 0.8
  * @deprecated Use new configuration options
  */
+@SuppressFBWarnings("EI_EXPOSE_REP2")
 @Deprecated // Since 0.16
 @DeprecationReporter.Info(since = "0.16", forRemoval = true, use = "new configuration options")
 public class SimplePatternBasedLicense  extends BaseLicense {

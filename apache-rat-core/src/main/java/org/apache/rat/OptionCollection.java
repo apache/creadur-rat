@@ -21,6 +21,7 @@ package org.apache.rat;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.Serial;
 import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
@@ -48,7 +49,7 @@ import org.apache.rat.document.DocumentNameMatcher;
 import org.apache.rat.document.FileDocument;
 import org.apache.rat.help.Licenses;
 import org.apache.rat.license.LicenseSetFactory;
-import org.apache.rat.report.IReportable;
+import org.apache.rat.report.Reportable;
 import org.apache.rat.report.claim.ClaimStatistic;
 import org.apache.rat.utils.DefaultLog;
 import org.apache.rat.utils.Log.Level;
@@ -190,7 +191,7 @@ public final class OptionCollection {
             }
         }
         for (String s : commandLine.getArgs()) {
-            IReportable reportable = getReportable(new File(s), configuration);
+            Reportable reportable = getReportable(new File(s), configuration);
             if (reportable != null) {
                 configuration.addSource(reportable);
             }
@@ -208,14 +209,14 @@ public final class OptionCollection {
     }
 
     /**
-     * Creates an IReportable object from the directory name and ReportConfiguration
+     * Creates a Reportable object from the directory name and ReportConfiguration
      * object.
      *
      * @param base the directory that contains the files to report on.
      * @param config the ReportConfiguration.
-     * @return the IReportable instance containing the files.
+     * @return the Reportable instance containing the files.
      */
-    public static IReportable getReportable(final File base, final ReportConfiguration config) {
+    public static Reportable getReportable(final File base, final ReportConfiguration config) {
         File absBase = base.getAbsoluteFile();
         DocumentName documentName = DocumentName.builder(absBase).build();
         if (!absBase.exists()) {
@@ -242,6 +243,7 @@ public final class OptionCollection {
      */
     private static final class OptionComparator implements Comparator<Option>, Serializable {
         /** The serial version UID.  */
+        @Serial
         private static final long serialVersionUID = 5305467873966684014L;
 
         private String getKey(final Option opt) {

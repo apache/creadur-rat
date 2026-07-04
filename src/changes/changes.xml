@@ -71,6 +71,9 @@ in order to be properly linked in site reports.
       <action issue="RAT-564" type="add" dev="claudenw">
         Internal change to let LicenseSetFactory return unmodifiable license sets.
       </action>
+      <action issue="RAT-563" type="add" dev="claudenw">
+        Internal change: rename IReportable and IReportableListWalker to clarify interface structure, when doing RAT scans.
+      </action>
       <action issue="RAT-559" type="fix" dev="claudenw">
         Fix issues with DocumentName and DocumentNameBuilder that address errors in archive handling and Windows as operating system.
       </action>

@@ -20,9 +20,11 @@ package org.apache.rat.config.results;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.mutable.MutableInt;
 import org.apache.rat.report.claim.ClaimStatistic;
 import org.apache.rat.utils.DefaultLog;
 
@@ -33,13 +35,13 @@ import static java.lang.String.format;
  */
 public final class ClaimValidator {
     /**
-     * The map of  max counter limits.
+     * The map of max counter limits.
      */
-    private final ConcurrentHashMap<ClaimStatistic.Counter, Integer> max = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<ClaimStatistic.Counter, MutableInt> max = new ConcurrentHashMap<>();
     /**
-     * The map of  min counter limits.
+     * The map of min counter limits.
      */
-    private final ConcurrentHashMap<ClaimStatistic.Counter, Integer> min = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<ClaimStatistic.Counter, MutableInt> min = new ConcurrentHashMap<>();
     /**
      * {@code true} if errors were detected in the claim.
      */
@@ -47,13 +49,24 @@ public final class ClaimValidator {
 
     /**
      * Constructor.
+     * Visible for testing.
+     * @param withData if {@code true} the max and min are loaded with data from the Counter definitions.
+     */
+    ClaimValidator(final boolean withData) {
+        if (withData) {
+            for (ClaimStatistic.Counter counter : ClaimStatistic.Counter.values()) {
+                max.put(counter,
+                        new MutableInt(counter.getDefaultMaxValue() < 0 ? Integer.MAX_VALUE : counter.getDefaultMaxValue()));
+                min.put(counter, new MutableInt(counter.getDefaultMinValue()));
+            }
+        }
+
+    }
+    /**
+     * Constructor.
      */
     public ClaimValidator() {
-        for (ClaimStatistic.Counter counter : ClaimStatistic.Counter.values()) {
-            max.put(counter,
-                    counter.getDefaultMaxValue() < 0 ? Integer.MAX_VALUE : counter.getDefaultMaxValue());
-            min.put(counter, counter.getDefaultMinValue());
-        }
+        this(true);
     }
 
     /**
@@ -65,66 +78,126 @@ public final class ClaimValidator {
     }
 
     /**
+     * Sets the value unconditionally.
+     * @param result the MutableInt to set.
+     * @param value the value to set it to.
+     * @return the {@code result} argument
+     */
+    private MutableInt newValue(final MutableInt result, final int value) {
+        result.setValue(value);
+        return result;
+    }
+
+    /**
+     * Sets the {@code result.value} if it is greater than the {@code value} argument.
+     * @param result the MutableInt to set.
+     * @param value the value to set it to if it is less than the {@code result.value}.
+     * @return the {@code result} argument
+     */
+    private MutableInt setMinValue(final MutableInt result, final int value) {
+        if (result.intValue() > value) {
+            result.setValue(value);
+        }
+        return result;
+    }
+
+    /**
+     * Sets the {@code result.value} if it is less than the {@code value} argument.
+     * @param result the MutableInt to set.
+     * @param value the value to set it to if it is greater than the {@code result.value}.
+     * @return the {@code result} argument
+     */
+    private MutableInt setMaxValue(final MutableInt result, final int value) {
+        if (result.intValue() < value) {
+            result.setValue(value);
+        }
+        return result;
+    }
+
+    /**
      * Sets the max value for the specified counter.
+     * Will adjust the minimum if the minimum is greater than the maximum.
      * @param counter the counter to set the limit for.
      * @param value the value to set. A negative value specifies no maximum value.
      */
     public void setMax(final ClaimStatistic.Counter counter, final int value) {
-        if (value < 0) {
-            max.put(counter, Integer.MAX_VALUE);
-        } else {
-            max.put(counter, value);
+        if (counter == null) {
+            DefaultLog.getInstance().warn("`null` passed as argument to setMax() -- ignoring");
+            return;
         }
-        min.compute(counter, (k, v) -> v != null && v > max.get(k) ? max.get(k) : v);
+        int setValue = value < 0 ? Integer.MAX_VALUE : value;
+        MutableInt maxValue = max.compute(counter, (k, v) ->
+                v == null ? new MutableInt(setValue) : newValue(v, setValue));
+        min.compute(counter, (k, v) ->
+                v == null ? new MutableInt(Math.min(k.getDefaultMinValue(), maxValue.intValue())) :
+                        setMinValue(v, setValue));
     }
 
     /**
-     * Sets the max value for the specified counter.
+     * Sets the min value for the specified counter.
+     * Will adjust the maximum if the maximum is less than the minimum.
      * @param counter the counter to set the limit for.
      * @param value the value to set. A negative value specifies no maximum value.
      */
     public void setMin(final ClaimStatistic.Counter counter, final int value) {
-        min.put(counter, value);
-        max.compute(counter, (k, v) -> v == null || v < value ? value : v);
+        if (counter == null) {
+            DefaultLog.getInstance().warn("`null` passed as argument to setMin() -- ignoring");
+            return;
+        }
+        min.compute(counter, (k, v) ->
+            v == null ? new MutableInt(value) : newValue(v, value));
+        max.compute(counter, (k, v) ->
+                v == null ? setMaxValue(new MutableInt(k.getDefaultMaxValue()), value) :
+                setMaxValue(v, value));
     }
 
     /**
-     * Gets the limit for the specific counter.
+     * Gets the max limit for the specific counter.
      * @param counter the counter to get the limit for.
      * @return the limit for the counter or 0 if not set.
      */
     public int getMax(final ClaimStatistic.Counter counter) {
-        Integer result = max.get(counter);
-        return result == null ? 0 : result;
+        if (counter == null) {
+            DefaultLog.getInstance().warn("`null` passed as argument to getMax() -- returning 0");
+            return 0;
+        }
+        return max.get(counter).intValue();
     }
 
     /**
-     * Gets the limit for the specific counter.
+     * Gets the min limit for the specific counter.
      * @param counter the counter to get the limit for.
-     * @return the limit for the counter or 0 if not set.
+     * @return the limit for the counter or zero if not set.
      */
     public int getMin(final ClaimStatistic.Counter counter) {
-        Integer result = min.get(counter);
-        return result == null ? 0 : result;
+        if (counter == null) {
+            DefaultLog.getInstance().warn("`null` passed as argument to getMin() -- returning 0");
+            return 0;
+        }
+        return min.get(counter).intValue();
     }
 
     /**
      * Determines if the specified count is within the limits for the counter.
-     * @param counter The counter to check.
+     * @param counter the counter to check.
      * @param count the limit to check.
      * @return {@code true} if the count is within the limits, {@code false} otherwise.
+     * @throws NullPointerException if counter is {@code null}.
      */
     public boolean isValid(final ClaimStatistic.Counter counter, final int count) {
-        boolean result = max.get(counter) >= count && min.get(counter) <= count;
+        Objects.requireNonNull(counter, "counter must not be null.");
+        boolean result = max.get(counter).intValue() >= count && min.get(counter).intValue() <= count;
         hasErrors |= !result;
         return result;
     }
 
     /**
      * Logs all the invalid values as errors.
-     * @param statistic The statistics that contain the run values.
+     * @param statistic the statistics that contain the run's values.
+     * @throws NullPointerException if statistic is {@code null}.
      */
     public void logIssues(final ClaimStatistic statistic) {
+        Objects.requireNonNull(statistic, "statistic must not be null.");
         for (ClaimStatistic.Counter counter : ClaimStatistic.Counter.values()) {
             if (!isValid(counter, statistic.getCounter(counter))) {
                 DefaultLog.getInstance().error(format("Unexpected count for %s, limit is [%s,%s].  Count: %s", counter,
@@ -137,10 +210,12 @@ public final class ClaimValidator {
 
     /**
      * Creates a list of items that have issues.
-     * @param statistic The statistics that contain the run values.
+     * @param statistic the statistics that contain the run values.
      * @return a collection of counter names that are invalid.
+     * @throws NullPointerException if statistic is {@code null}.
      */
     public List<String> listIssues(final ClaimStatistic statistic) {
+        Objects.requireNonNull(statistic, "statistic must not be null.");
         List<String> result = new ArrayList<>();
         for (ClaimStatistic.Counter counter : ClaimStatistic.Counter.values()) {
             if (!isValid(counter, statistic.getCounter(counter))) {
