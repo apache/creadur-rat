@@ -30,7 +30,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
@@ -72,8 +71,7 @@ public class XsdGenerator {
 
         try (InputStream in = generator.getInputStream();
              InputStream styleIn = StyleSheets.XML.getStyleSheet().get()) {
-            Transformer transformer = StandardXmlFactory.create(styleIn);
-            transformer.transform(new StreamSource(in),
+            StandardXmlFactory.createTransformer(styleIn).transform(new StreamSource(in),
                     new StreamResult(new OutputStreamWriter(System.out, StandardCharsets.UTF_8)));
         }
     }
