@@ -29,15 +29,15 @@ import org.apache.rat.config.exclusion.ExclusionUtils;
 import org.apache.rat.document.DocumentName;
 import org.apache.rat.document.DocumentNameMatcher;
 import org.apache.rat.document.FileDocument;
-import org.apache.rat.report.IReportable;
 import org.apache.rat.report.RatReport;
+import org.apache.rat.report.Reportable;
 import org.apache.rat.utils.DefaultLog;
 
 /**
- * Implementation of IReportable that traverses over a resource collection
+ * Implementation of Reportable that traverses over a resource collection
  * internally.
  */
-public class FileListWalker implements IReportable {
+public class FileListWalker implements Reportable {
     /** The source document name. */
     private final FileDocument source;
     /** The root document name. */
@@ -72,7 +72,7 @@ public class FileListWalker implements IReportable {
     @Override
     public void run(final RatReport report) throws RatException {
         DefaultLog.getInstance().debug(String.format("Reading file name: %s due to option %s", source, Arg.SOURCE.option()));
-        DocumentName sourceName = getName();
+        DocumentName sourceName = name();
         try (Reader reader = source.reader()) {
             for (String docName : IOUtils.readLines(reader)) {
                 try {
@@ -93,7 +93,7 @@ public class FileListWalker implements IReportable {
     }
 
     @Override
-    public DocumentName getName() {
+    public DocumentName name() {
         return source.getName();
     }
 }

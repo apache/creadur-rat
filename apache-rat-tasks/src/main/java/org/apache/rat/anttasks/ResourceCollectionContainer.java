@@ -22,22 +22,22 @@ import org.apache.rat.ReportConfiguration;
 import org.apache.rat.api.RatException;
 import org.apache.rat.document.DocumentName;
 import org.apache.rat.document.FileDocument;
-import org.apache.rat.report.IReportable;
 import org.apache.rat.report.RatReport;
+import org.apache.rat.report.Reportable;
 import org.apache.tools.ant.types.Resource;
 import org.apache.tools.ant.types.ResourceCollection;
 import org.apache.tools.ant.types.resources.FileResource;
 
 /**
- * Implementation of IReportable that traverses over a resource collection
+ * Implementation of Reportable that traverses over a resource collection
  * internally.
  */
-class ResourceCollectionContainer implements IReportable {
-    /** The resources as collected by Ant */
+class ResourceCollectionContainer implements Reportable {
+    /** The resources as collected by Ant. */
     private final ResourceCollection resources;
-    /** The report configuration being used for the report */
+    /** The report configuration being used for the report. */
     private final ReportConfiguration configuration;
-    /** The document name */
+    /** The document name. */
     private final DocumentName name;
 
     ResourceCollectionContainer(final DocumentName name, final ReportConfiguration configuration, final ResourceCollection resources) {
@@ -59,7 +59,7 @@ class ResourceCollectionContainer implements IReportable {
     }
 
     @Override
-    public DocumentName getName() {
+    public DocumentName name() {
         return name;
     }
 }

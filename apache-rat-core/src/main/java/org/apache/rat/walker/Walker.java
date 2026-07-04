@@ -21,18 +21,18 @@ package org.apache.rat.walker;
 
 import org.apache.rat.api.Document;
 import org.apache.rat.document.DocumentName;
-import org.apache.rat.report.IReportable;
+import org.apache.rat.report.Reportable;
 
 /**
  * Abstract walker.
  */
-public abstract class Walker implements IReportable {
+public abstract class Walker implements Reportable {
 
-    /** The document this walker is walking */
+    /** The document this walker is walking. */
     private final Document document;
 
     /**
-     * Creates the walker
+     * Creates the walker.
      * @param document The document the walker is walking.
      */
     protected Walker(final Document document) {
@@ -48,7 +48,7 @@ public abstract class Walker implements IReportable {
     }
 
     @Override
-    public DocumentName getName() {
+    public DocumentName name() {
         return document.getName();
     }
 }
