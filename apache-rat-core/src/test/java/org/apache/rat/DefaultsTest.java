@@ -28,7 +28,6 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-
 class DefaultsTest {
     private static final String[] FAMILIES = { "BSD-3", "GPL  ", "AL   ", "OASIS", "W3CD ", "W3C  ", "MIT  ", "CDDL1" };
 
@@ -41,7 +40,7 @@ class DefaultsTest {
         TreeSet<String> names = new TreeSet<>();
         licenses.forEach(x -> names.add(x.getLicenseFamily().getFamilyCategory()));
         assertThat(names).hasSize(FAMILIES.length);
-        names.removeAll(Arrays.asList(FAMILIES));
+        Arrays.asList(FAMILIES).forEach(names::remove);
         assertThat(names).isEmpty();
     }
 }

@@ -235,7 +235,6 @@ public class LicenseSetFactoryTest {
         SortedSet<ILicense> set = licenseSetFactory.getLicenses(LicenseSetFactory.LicenseFilter.ALL);
         assertThat(LicenseSetFactory.search(APPROVED_FAMILIES[0].getFamilyCategory(), "TheLicense", set)).isEmpty();
 
-
         Optional<ILicense> optLicense = LicenseSetFactory.search("AL", "AL2.0", set);
         assertThat(optLicense).isNotEmpty();
         ILicense license = optLicense.get();

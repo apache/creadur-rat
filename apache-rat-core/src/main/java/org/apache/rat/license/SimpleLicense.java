@@ -49,7 +49,7 @@ public class SimpleLicense implements ILicense {
     /** The name of this license */
     @ConfigComponent(type = ComponentType.PARAMETER, desc = "The name of this license.")
     private final String name;
-    /** The ID for this license.  Must be unique */
+    /** The ID for this license. Must be unique. */
     @ConfigComponent(type = ComponentType.PARAMETER, desc = "The ID for this license.")
     private final String id;
 
@@ -171,7 +171,7 @@ public class SimpleLicense implements ILicense {
         /**
          * Sets the ID of the license. If the ID is not set then the ID of the license
          * family is used.
-         * @param id the ID for the license
+         * @param id the ID for the license.
          * @return this builder for chaining.
          */
         @Override
@@ -197,7 +197,7 @@ public class SimpleLicense implements ILicense {
         /**
          * Sets the name of the license. If the name is not set then the name of the
          * license family is used.
-         * @param name the name for the license
+         * @param name the name for the license.
          * @return this builder for chaining.
          */
         @Override
@@ -226,7 +226,7 @@ public class SimpleLicense implements ILicense {
 
             String familyCat = ILicenseFamily.makeCategory(familyCategory);
             Optional<ILicenseFamily> family = licenseFamilies.stream().filter(f ->  f.getFamilyCategory().equals(familyCat)).findFirst();
-            if (!family.isPresent()) {
+            if (family.isEmpty()) {
                 throw new ConfigurationException(String.format("License family '%s' not found.", familyCategory));
             }
 

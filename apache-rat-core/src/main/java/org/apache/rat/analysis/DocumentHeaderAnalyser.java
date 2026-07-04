@@ -41,7 +41,7 @@ class DocumentHeaderAnalyser implements DocumentAnalyser {
 
     /**
      * Constructs the HeaderAnalyser for the specific license.
-     * @param licenses The licenses to analyse
+     * @param licenses the licenses to analyse.
      */
     DocumentHeaderAnalyser(final IHeaderMatcher generatedMatcher, final UnmodifiableSortedSet<ILicense> licenses) {
         super();

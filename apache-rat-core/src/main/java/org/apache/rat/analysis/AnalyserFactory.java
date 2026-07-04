@@ -49,7 +49,7 @@ public final class AnalyserFactory {
      *     Note you probably do not want this as it is automatically added to {@link #createConfiguredAnalyser}.
      * </p>
      * @param approvalPredicate the predicate to approve licenses.
-     * @return A document analyser that sets the approvalPredicate in document metadata.
+     * @return a document analyser that sets the approvalPredicate in document metadata.
      */
     public static DocumentAnalyser createPolicy(final Predicate<ILicense> approvalPredicate) {
         return document -> {
@@ -74,8 +74,8 @@ public final class AnalyserFactory {
 
     /**
      * Creates a DocumentAnalyser from the report configuration.
-     * @param configuration the ReportConfiguration
-     * @return A document analyser that uses the provided licenses.
+     * @param configuration the ReportConfiguration.
+     * @return a document analyser that uses the provided licenses.
      */
     public static DocumentAnalyser createConfiguredAnalyser(final ReportConfiguration configuration) {
         LicenseSetFactory licenseSetFactory = configuration.getLicenseSetFactory();
@@ -98,15 +98,15 @@ public final class AnalyserFactory {
 
         /** The licenses to analyze */
         private final UnmodifiableSortedSet<ILicense> licenses;
-        /** the Report Configuration */
+        /** The report configuration */
         private final ReportConfiguration configuration;
         /** The matcher for generated files */
         private final IHeaderMatcher generatedMatcher;
 
         /**
          * Constructs a DocumentAnalyser for the specified license.
-         * @param config the ReportConfiguration
-         * @param licenses The licenses to analyse
+         * @param config the ReportConfiguration.
+         * @param licenses the licenses to analyse.
          */
         DefaultAnalyser(final ReportConfiguration config, final UnmodifiableSortedSet<ILicense> licenses) {
             this.licenses = licenses;
@@ -117,15 +117,13 @@ public final class AnalyserFactory {
         /**
          * Generates a predicate to filter out licenses that should not be reported.
          * @param proc the processing status to filter.
-         * @return a Predicate to do the filtering.
+         * @return a predicate to do the filtering.
          */
         private Predicate<ILicense> licenseFilter(final ReportConfiguration.Processing proc)  {
-            return license -> {
-                return switch (proc) {
-                    case PRESENCE -> !license.getLicenseFamily().equals(UnknownLicense.INSTANCE.getLicenseFamily());
-                    case ABSENCE -> true;
-                    default -> false;
-                };
+            return license -> switch (proc) {
+                case PRESENCE -> !license.getLicenseFamily().equals(UnknownLicense.INSTANCE.getLicenseFamily());
+                case ABSENCE -> true;
+                default -> false;
             };
         }
 
