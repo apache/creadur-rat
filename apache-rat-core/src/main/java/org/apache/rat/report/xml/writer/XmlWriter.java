@@ -356,7 +356,7 @@ public final class XmlWriter implements AutoCloseable {
         appendable.append(System.lineSeparator());
         currentAttributes.clear();
         try {
-            Transformer transformer = StandardXmlFactory.create();
+            Transformer transformer = StandardXmlFactory.createTransformer();
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             transformer.transform(new DOMSource(document),
                     new StreamResult(baos));

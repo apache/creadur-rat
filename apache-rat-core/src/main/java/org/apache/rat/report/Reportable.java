@@ -21,7 +21,7 @@ package org.apache.rat.report;
 import org.apache.rat.api.RatException;
 import org.apache.rat.document.DocumentName;
 
-public interface IReportable {
+public interface Reportable {
     /**
      * Adds the reportable to the RatReport.
      * @param report the report to add the results to.
@@ -33,5 +33,5 @@ public interface IReportable {
      * Returns the DocumentName for the reportable.
      * @return the DocumentName for the reportable.
      */
-    DocumentName getName();
+    DocumentName name();
 }

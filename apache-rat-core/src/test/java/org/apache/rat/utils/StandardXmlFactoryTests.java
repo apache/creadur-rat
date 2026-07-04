@@ -37,12 +37,12 @@ class StandardXmlFactoryTests {
 
     @Test
     void noArg() throws TransformerConfigurationException {
-        assertThat(StandardXmlFactory.create()).isNotNull();
+        assertThat(StandardXmlFactory.createTransformer()).isNotNull();
     }
 
     @Test
     void noEmptyInput() {
-        assertThatThrownBy(() -> StandardXmlFactory.create(InputStream.nullInputStream()))
+        assertThatThrownBy(() -> StandardXmlFactory.createTransformer(InputStream.nullInputStream()))
                 .isInstanceOf(TransformerConfigurationException.class);
     }
 

@@ -55,12 +55,12 @@ import org.apache.rat.license.ILicense;
 import org.apache.rat.license.ILicenseFamily;
 import org.apache.rat.license.LicenseSetFactory;
 import org.apache.rat.license.LicenseSetFactory.LicenseFilter;
-import org.apache.rat.report.IReportable;
+import org.apache.rat.report.Reportable;
 import org.apache.rat.utils.DefaultLog;
 import org.apache.rat.utils.Log.Level;
 import org.apache.rat.utils.ReportingSet;
 import org.apache.rat.walker.FileListWalker;
-import org.apache.rat.walker.IReportableListWalker;
+import org.apache.rat.walker.ReportableListWalker;
 
 /**
  * A configuration object is used by the front end to invoke the
@@ -136,7 +136,7 @@ public class ReportConfiguration {
     /**
      * A list of reportables to process;
      */
-    private final List<IReportable> reportables;
+    private final List<Reportable> reportables;
 
     /**
      * A predicate to test if a path should be included in the processing.
@@ -215,7 +215,7 @@ public class ReportConfiguration {
      * Adds a Reportable as a source of files to scan.
      * @param reportable the reportable to process.
      */
-    public void addSource(final IReportable reportable) {
+    public void addSource(final Reportable reportable) {
         notNull(reportable, "Reportable may not be null.");
         reportables.add(reportable);
     }
@@ -232,9 +232,9 @@ public class ReportConfiguration {
      * Gets a builder initialized with any files specified as sources.
      * @return a configured builder.
      */
-    public IReportableListWalker.Builder getSources() {
+    public ReportableListWalker.Builder getSources() {
         DocumentName name = DocumentName.builder(new File(".")).build();
-        IReportableListWalker.Builder builder = IReportableListWalker.builder(name);
+        ReportableListWalker.Builder builder = ReportableListWalker.builder(name);
         sources.forEach(file -> builder.addReportable(new FileListWalker(new FileDocument(file, DocumentNameMatcher.MATCHES_ALL))));
         reportables.forEach(builder::addReportable);
         return builder;
@@ -432,7 +432,7 @@ public class ReportConfiguration {
     }
 
     /**
-     * Get the DocumentNameMatcher that excludes files found in the directory tree..
+     * Get the DocumentNameMatcher that excludes files found in the directory tree.
      * @param baseDir the DocumentName for the base directory.
      * @return the DocumentNameMatcher for the base directory.
      */

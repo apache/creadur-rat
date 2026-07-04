@@ -52,7 +52,7 @@ import org.apache.rat.document.DocumentNameMatcher;
 import org.apache.rat.license.ILicense;
 import org.apache.rat.license.ILicenseFamily;
 import org.apache.rat.license.LicenseSetFactory.LicenseFilter;
-import org.apache.rat.report.IReportable;
+import org.apache.rat.report.Reportable;
 import org.apache.rat.testhelpers.TestingLog;
 import org.apache.rat.testhelpers.TestingLicense;
 import org.apache.rat.testhelpers.TestingMatcher;
@@ -479,10 +479,10 @@ public class ReportConfigurationTest {
     @Test
     void reportableTest() {
         assertThat(underTest.hasSource()).isFalse();
-        IReportable reportable = mock(IReportable.class);
+        Reportable reportable = mock(Reportable.class);
         underTest.addSource(reportable);
         assertThat(underTest.hasSource()).isTrue();
-        assertThatThrownBy(() -> underTest.addSource((IReportable)null)).isExactlyInstanceOf(ConfigurationException.class)
+        assertThatThrownBy(() -> underTest.addSource((Reportable)null)).isExactlyInstanceOf(ConfigurationException.class)
                 .hasMessageContaining("Reportable may not be null.");
     }
 
@@ -540,7 +540,7 @@ public class ReportConfigurationTest {
 
         sb.setLength(0);
         msg = "You must specify at least one license";
-        underTest.addSource(mock(IReportable.class));
+        underTest.addSource(mock(Reportable.class));
 
         assertThatThrownBy(() -> underTest.validate(sb::append)).isExactlyInstanceOf(ConfigurationException.class)
                 .hasMessageContaining(msg);

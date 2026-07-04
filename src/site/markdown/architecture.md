@@ -87,10 +87,10 @@ The `out` parameter specifies an `OutputStream` IOSupplier that is used to creat
 
 The `styleSheet` parameter specifies the `InputStream` IOSupplier that is used to read the stylesheet that styles the XML output.
 
-## IReportable
+## Reportable
 
-The `IReportable` parameter identifies the objects that the report should run against.
-Implementations of `IReportable` generally do things like walk directory trees, or archives.
+The `Reportable` parameter identifies the objects that the report should run against.
+Implementations of `Reportable` generally do things like walk directory trees, or archives.
 
 # Reporter
 

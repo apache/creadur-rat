@@ -21,6 +21,7 @@ package org.apache.rat;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.Serial;
 import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
 import java.util.Comparator;
@@ -34,7 +35,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.rat.commandline.Arg;
 import org.apache.rat.commandline.ArgumentContext;
 import org.apache.rat.help.Licenses;
-import org.apache.rat.report.IReportable;
+import org.apache.rat.report.Reportable;
 import org.apache.rat.ui.UIOptionCollection;
 import org.apache.rat.utils.DefaultLog;
 
@@ -126,7 +127,7 @@ public final class OptionCollectionParser {
         final CommandLine commandLine = argumentContext.getCommandLine();
         if (!configuration.hasSource()) {
             for (String s : commandLine.getArgs()) {
-                IReportable reportable = OptionCollection.getReportable(new File(s), configuration);
+                Reportable reportable = OptionCollection.getReportable(new File(s), configuration);
                 if (reportable != null) {
                     configuration.addSource(reportable);
                 }
@@ -140,6 +141,7 @@ public final class OptionCollectionParser {
      */
     private static final class OptionComparator implements Comparator<Option>, Serializable {
         /** The serial version UID.  */
+        @Serial
         private static final long serialVersionUID = 5305467873966684014L;
 
         private String getKey(final Option opt) {

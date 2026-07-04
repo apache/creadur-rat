@@ -28,13 +28,9 @@ import java.io.PrintWriter;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-import javax.xml.transform.stream.StreamSource;
 
 import org.apache.commons.io.function.IOSupplier;
 import org.apache.rat.api.RatException;
@@ -136,17 +132,9 @@ public class Reporter {
      */
     public ClaimStatistic output(final IOSupplier<InputStream> stylesheet, final IOSupplier<OutputStream> output) throws RatException {
         ClaimStatistic result = execute();
-        TransformerFactory tf = TransformerFactory.newInstance();
-        Transformer transformer;
         try (OutputStream out = output.get();
              InputStream styleIn = stylesheet.get()) {
-            transformer = tf.newTransformer(new StreamSource(styleIn));
-            transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
-            transformer.setOutputProperty(OutputKeys.METHOD, "xml");
-            transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-            transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
-            transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
-            transformer.transform(new DOMSource(document),
+            StandardXmlFactory.createTransformer(styleIn).transform(new DOMSource(document),
                     new StreamResult(new OutputStreamWriter(out, StandardCharsets.UTF_8)));
             return result;
         } catch (TransformerException | IOException e) {
