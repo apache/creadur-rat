@@ -20,8 +20,8 @@ package org.apache.rat.analysis;
 
 import java.io.IOException;
 import java.io.Reader;
-import java.util.Collection;
 
+import org.apache.commons.collections4.set.UnmodifiableSortedSet;
 import org.apache.rat.api.Document;
 import org.apache.rat.document.DocumentAnalyser;
 import org.apache.rat.license.ILicense;
@@ -35,15 +35,15 @@ import static java.lang.String.format;
 class DocumentHeaderAnalyser implements DocumentAnalyser {
 
     /** The license to analyse */
-    private final Collection<ILicense> licenses;
+    private final UnmodifiableSortedSet<ILicense> licenses;
     /** The matcher for generated headers */
     private final IHeaderMatcher generatedMatcher;
 
     /**
      * Constructs the HeaderAnalyser for the specific license.
-     * @param licenses The licenses to analyse
+     * @param licenses the licenses to analyse.
      */
-    DocumentHeaderAnalyser(final IHeaderMatcher generatedMatcher, final Collection<ILicense> licenses) {
+    DocumentHeaderAnalyser(final IHeaderMatcher generatedMatcher, final UnmodifiableSortedSet<ILicense> licenses) {
         super();
         this.generatedMatcher = generatedMatcher;
         this.licenses = licenses;
