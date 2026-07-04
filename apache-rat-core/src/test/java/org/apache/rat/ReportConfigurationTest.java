@@ -26,6 +26,7 @@ import static org.mockito.Mockito.when;
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -85,7 +86,7 @@ public class ReportConfigurationTest {
     }
 
     @Test
-    public void testAddIncludedFilter() {
+    void testAddIncludedFilter() {
         DocumentName dirName = DocumentName.builder(tempDir).build();
         underTest.addExcludedFilter(DirectoryFileFilter.INSTANCE);
         DocumentNameMatcher excluder = underTest.getDocumentExcluder(dirName);
@@ -98,7 +99,7 @@ public class ReportConfigurationTest {
     }
 
     @Test
-    public void testAddFamilies() {
+    void testAddFamilies() {
         ILicenseFamily fam1 = ILicenseFamily.builder().setLicenseFamilyCategory("FOO").setLicenseFamilyName("found on overview").build();
         ILicenseFamily fam2 = ILicenseFamily.builder().setLicenseFamilyCategory("BAR").setLicenseFamilyName("big and round").build();
         underTest.addFamilies(Arrays.asList(fam1, fam2));
@@ -109,13 +110,14 @@ public class ReportConfigurationTest {
     }
 
     @Test
-    public void testAddApprovedLicenseId() {
+    void testAddApprovedLicenseId() {
         underTest.addApprovedLicenseId("FOO");
         SortedSet<String> result = underTest.getLicenseIds(LicenseFilter.APPROVED);
         assertThat(result).hasSize(1).contains("FOO");
     }
+
     @Test
-    public void testAddAndRemoveApproveLicenseCategories() {
+    void testAddAndRemoveApproveLicenseCategories() {
         List<String> expected = new ArrayList<>();
         underTest.addLicense(new TestingLicense("Unapproved"));
 
@@ -175,7 +177,7 @@ public class ReportConfigurationTest {
     }
 
     @Test
-    public void testRemoveBeforeAddApproveLicenseCategories() {
+    void testRemoveBeforeAddApproveLicenseCategories() {
         underTest.addLicense( new TestingLicense("TheCat"));
         assertThat(underTest.getLicenseCategories(LicenseFilter.APPROVED)).isEmpty();
         assertThat(underTest.getLicenseFamilies(LicenseFilter.APPROVED)).isEmpty();
@@ -193,7 +195,7 @@ public class ReportConfigurationTest {
     }
 
     @Test
-    public void testAddAndRemoveApproveLicenseIds() {
+    void testAddAndRemoveApproveLicenseIds() {
         List<String> expected = new ArrayList<>();
         underTest.addLicense(new TestingLicense("Unapproved"));
 
@@ -273,7 +275,7 @@ public class ReportConfigurationTest {
     }
 
     @Test
-    public void removeFamilyAddLicense() {
+    void removeFamilyAddLicense() {
         addCatz();
         underTest.addApprovedLicenseCategory("catz");
         underTest.removeApprovedLicenseCategory("catz");
@@ -283,7 +285,7 @@ public class ReportConfigurationTest {
     }
 
     @Test
-    public void addFamilyRemoveLicense() {
+    void addFamilyRemoveLicense() {
         addCatz();
         underTest.addApprovedLicenseCategory("catz");
         assertThat(underTest.getLicenses(LicenseFilter.APPROVED).size()).isEqualTo(7);
@@ -292,7 +294,7 @@ public class ReportConfigurationTest {
     }
 
     @Test
-    public void removeFamilyRemoveLicense() {
+    void removeFamilyRemoveLicense() {
         addCatz();
         addDogz();
         underTest.addApprovedLicenseCategory("catz");
@@ -304,7 +306,7 @@ public class ReportConfigurationTest {
     }
 
     @Test
-    public void addFamilyAddLicense() {
+    void addFamilyAddLicense() {
         addCatz();
         addDogz();
         underTest.addApprovedLicenseCategory("catz");
@@ -314,7 +316,7 @@ public class ReportConfigurationTest {
     }
 
     @Test
-    public void testRemoveBeforeAddApproveLicenseIds() {
+    void testRemoveBeforeAddApproveLicenseIds() {
         underTest.addLicense( new TestingLicense("TheCat"));
         assertThat(underTest.getLicenseIds(LicenseFilter.APPROVED)).isEmpty();
         assertThat(underTest.getLicenses(LicenseFilter.APPROVED)).isEmpty();
@@ -335,7 +337,7 @@ public class ReportConfigurationTest {
     }
 
     @Test
-    public void testAddLicense() {
+    void testAddLicense() {
         List<ILicense> expected = new ArrayList<>();
         assertThat(underTest.getLicenses(LicenseFilter.ALL)).isEmpty();
 
@@ -353,17 +355,19 @@ public class ReportConfigurationTest {
     }
 
     @Test
-    public void copyrightMessageTest() {
+    void copyrightMessageTest() {
         assertThat(underTest.getCopyrightMessage()).isNull();
         underTest.setCopyrightMessage("This is the message");
         assertThat(underTest.getCopyrightMessage()).isEqualTo("This is the message");
     }
 
-    DocumentName mkDocumentName(File f) {
+
+    private DocumentName mkDocumentName(File f) {
         return DocumentName.builder(f).setBaseName(tempDir).build();
     }
+
     @Test
-    public void exclusionTest() {
+    void inclusionExclusionTest() {
         DocumentName baseDir = DocumentName.builder(tempDir).build();
         DocumentName foo = mkDocumentName(new File(tempDir,"foo"));
         assertThat(underTest.getDocumentExcluder(baseDir).matches(foo)).isTrue();
@@ -378,19 +382,26 @@ public class ReportConfigurationTest {
 
         underTest.addIncludedCollection(StandardCollection.HIDDEN_DIR);
         assertThat(underTest.getDocumentExcluder(baseDir).matches(hiddenDir)).isTrue();
-
+        // explicitly adding again does not change test
         underTest.addExcludedCollection(StandardCollection.HIDDEN_DIR);
         assertThat(underTest.getDocumentExcluder(baseDir).matches(hiddenDir)).isTrue();
 
-        underTest.addExcludedFilter(DirectoryFileFilter.DIRECTORY);
 
+        DocumentName percentName = mkDocumentName(new File(tempDir, "%hello%"));
+        assertThat(underTest.getDocumentExcluder(baseDir).matches(percentName)).isFalse();
+        FileFilter percentFilter = (file) -> file.getName().endsWith("%hello%");
+        underTest.addIncludedFilter(percentFilter);
+        assertThat(underTest.getDocumentExcluder(baseDir).matches(percentName)).isTrue();
+
+
+        underTest.addExcludedFilter(DirectoryFileFilter.DIRECTORY);
         File file = new File(tempDir, "newDir");
         assertThat(file.mkdirs()).as(() -> "Could not create directory " + file).isTrue();
         assertThat(underTest.getDocumentExcluder(baseDir).matches(mkDocumentName(file))).isFalse();
     }
 
     @Test
-    public void archiveProcessingTest() {
+    void archiveProcessingTest() {
         assertThat(underTest.getArchiveProcessing()).isEqualTo(ReportConfiguration.Processing.NOTIFICATION);
 
         underTest.setFrom(Defaults.builder().build());
@@ -407,7 +418,7 @@ public class ReportConfigurationTest {
     }
 
     @Test
-    public void licenseFamiliesTest() {
+    void licenseFamiliesTest() {
         assertThat(underTest.getLicenseFamilies(LicenseFilter.ALL)).isEmpty();
         assertThat(underTest.getLicenseFamilies(LicenseFilter.APPROVED)).isEmpty();
         assertThat(underTest.getLicenseFamilies(LicenseFilter.NONE)).isEmpty();
@@ -429,7 +440,7 @@ public class ReportConfigurationTest {
     }
 
     @Test
-    public void licensesTest() {
+    void licensesTest() {
         assertThat(underTest.getLicenses(LicenseFilter.ALL)).isEmpty();
         assertThat(underTest.getLicenses(LicenseFilter.APPROVED)).isEmpty();
         assertThat(underTest.getLicenses(LicenseFilter.NONE)).isEmpty();
@@ -451,7 +462,7 @@ public class ReportConfigurationTest {
     }
 
     @Test
-    public void outputTest() throws IOException {
+    void outputTest() throws IOException {
         assertThat(underTest.getOutput().get()).isExactlyInstanceOf(CloseShieldOutputStream.class);
         assertThat(underTest.getWriter()).isNotNull();
 
@@ -466,7 +477,7 @@ public class ReportConfigurationTest {
     }
 
     @Test
-    public void reportableTest() {
+    void reportableTest() {
         assertThat(underTest.hasSource()).isFalse();
         IReportable reportable = mock(IReportable.class);
         underTest.addSource(reportable);
@@ -476,13 +487,15 @@ public class ReportConfigurationTest {
     }
 
     @Test
-    public void stylesheetTest() throws IOException, URISyntaxException {
+    void stylesheetTest() throws IOException, URISyntaxException {
         URL url = this.getClass().getResource("ReportConfigurationTestFile");
         assertThat(url).isNotNull();
 
+        assertThat(underTest.getStyleSheetDescriptor()).isNull();
         assertThat(underTest.getStyleSheet()).isNull();
         InputStream stream = mock(InputStream.class);
         underTest.setStyleSheet(new ReportConfiguration.IODescriptor("stylesheetTest", () -> stream));
+        assertThat(underTest.getStyleSheetDescriptor().ioSupplier().get()).isEqualTo(stream);
         assertThat(underTest.getStyleSheet().get()).isEqualTo(stream);
 
         File file = mock(File.class);
@@ -493,10 +506,13 @@ public class ReportConfigurationTest {
         BufferedReader d = new BufferedReader(new InputStreamReader(underTest.getStyleSheet().get()));
         assertThat(d.readLine()).isEqualTo("/*");
         assertThat(d.readLine()).isEqualTo(" * Licensed to the Apache Software Foundation (ASF) under one   *");
+        d = new BufferedReader(new InputStreamReader(underTest.getStyleSheetDescriptor().ioSupplier().get()));
+        assertThat(d.readLine()).isEqualTo("/*");
+        assertThat(d.readLine()).isEqualTo(" * Licensed to the Apache Software Foundation (ASF) under one   *");
     }
 
     @Test
-    public void testFlags() {
+    void testFlags() {
         assertThat(underTest.isAddingLicenses()).isFalse();
         assertThat(underTest.isAddingLicensesForced()).isFalse();
 
@@ -514,7 +530,7 @@ public class ReportConfigurationTest {
     }
 
     @Test
-    public void testValidate() {
+    void testValidate() {
         final StringBuilder sb = new StringBuilder();
         String msg = "At least one source must be specified";
         assertThatThrownBy(() -> underTest.validate(sb::append)).isExactlyInstanceOf(ConfigurationException.class)
@@ -537,7 +553,7 @@ public class ReportConfigurationTest {
     }
     
     @Test
-    public void testSetOut() throws IOException {
+    void testSetOut() throws IOException {
         ReportConfiguration config = new ReportConfiguration();
         try (OutputStreamInterceptor osi = new OutputStreamInterceptor()) {
             config.setOut(new ReportConfiguration.IODescriptor("testSetOut",() -> osi));
@@ -556,7 +572,7 @@ public class ReportConfigurationTest {
     }
     
     @Test
-    public void logFamilyCollisionTest() {
+    void logFamilyCollisionTest() {
         // setup
         underTest.addFamily(ILicenseFamily.builder().setLicenseFamilyCategory("CAT").setLicenseFamilyName("name"));
         assertThat(log.getCaptured()).doesNotContain("CAT");
@@ -577,7 +593,7 @@ public class ReportConfigurationTest {
     }
     
     @Test
-    public void familyDuplicateOptionsTest() {
+    void familyDuplicateOptionsTest() {
         underTest.addFamily(ILicenseFamily.builder().setLicenseFamilyCategory("CAT").setLicenseFamilyName("name"));
         assertThat(log.getCaptured()).doesNotContain("CAT");
         
@@ -605,7 +621,7 @@ public class ReportConfigurationTest {
     }
 
     @Test
-    public void logLicenseCollisionTest() {
+    void logLicenseCollisionTest() {
         // setup
         ILicenseFamily family = ILicenseFamily.builder().setLicenseFamilyCategory("CAT").setLicenseFamilyName("family name").build();
         IHeaderMatcher matcher = Mockito.mock(IHeaderMatcher.class);
@@ -660,6 +676,31 @@ public class ReportConfigurationTest {
         underTest.licenseDuplicateOption(Options.FAIL);
         assertThatThrownBy(()-> underTest.addLicense(makeLicense.apply("another name")))
                 .isExactlyInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    void reportExclusionErrorTest() {
+        Appendable appendable = new Appendable(){
+            @Override
+            public Appendable append(CharSequence csq) throws IOException {
+                throw new IOException("BANG!");
+            }
+
+            @Override
+            public Appendable append(CharSequence csq, int start, int end) throws IOException {
+                throw new IOException("BANG!");
+            }
+
+            @Override
+            public Appendable append(char c) throws IOException {
+                throw new IOException("BANG!");
+            }
+        };
+
+        underTest.reportExclusions(appendable);
+        assertThat(log.getCaptured())
+                .contains("WARN: Unable to report exclusions")
+                .contains("java.io.IOException: BANG!");
     }
 
     /**

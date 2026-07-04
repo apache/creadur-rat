@@ -455,7 +455,7 @@ public class ReportConfiguration {
      * the report with.
      */
     public IODescriptor<InputStream> getStyleSheetDescriptor() {
-        return styleSheet;
+        return styleSheet == null ? null : styleSheet;
     }
 
     /**
