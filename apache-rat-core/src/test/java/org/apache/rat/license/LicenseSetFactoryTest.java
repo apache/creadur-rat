@@ -18,7 +18,12 @@
      */
 package org.apache.rat.license;
 
+import java.util.Arrays;
+import java.util.Optional;
 import java.util.SortedSet;
+import java.util.TreeSet;
+
+import org.apache.rat.ConfigurationException;
 import org.apache.rat.Defaults;
 import org.apache.rat.analysis.UnknownLicense;
 import org.apache.rat.testhelpers.TestingLicense;
@@ -27,6 +32,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatNoException;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class LicenseSetFactoryTest {
 
@@ -164,5 +171,75 @@ public class LicenseSetFactoryTest {
         assertThat(licenseSetFactory.getApprovedLicensePredicate().test(license))
                 .as("Found unapproved id " + licenseId)
                 .isFalse();
+    }
+
+    @Test
+    void familySearchTest() {
+        SortedSet<ILicenseFamily> families = new TreeSet<>(Arrays.asList(APPROVED_FAMILIES));
+        ILicenseFamily actual = LicenseSetFactory.familySearch(APPROVED_FAMILIES[0], families);
+        assertThat(actual).isEqualTo(APPROVED_FAMILIES[0]);
+        actual = LicenseSetFactory.familySearch(APPROVED_FAMILIES[2].getFamilyCategory(), families);
+        assertThat(actual).isEqualTo(APPROVED_FAMILIES[2]);
+        actual = LicenseSetFactory.familySearch("not a real category", families);
+        assertThat(actual).isNull();
+        ILicenseFamily family = ILicenseFamily.builder().setLicenseFamilyCategory("***").setLicenseFamilyName("testing").build();
+        actual = LicenseSetFactory.familySearch(family, families);
+        assertThat(actual).isNull();
+    }
+
+    @Test
+    void validateTest() {
+        LicenseSetFactory underTest = new LicenseSetFactory();
+
+        assertThatThrownBy(underTest::validate)
+                .hasMessageContaining("At least one license must be defined")
+                .isInstanceOf(ConfigurationException.class);
+
+        // set up builder and add a license
+        SortedSet<ILicenseFamily> families = new TreeSet<>();
+        families.add(ILicenseFamily.builder().setLicenseFamilyCategory("test").setLicenseFamilyName("testing family").build());
+        ILicense.Builder builder = ILicense.builder().setLicenseFamilies(families);
+        underTest.addLicense(builder.setFamily("test").setMatcher(new TestingMatcher())
+                .setName("test1").build());
+
+        assertThatNoException().isThrownBy(underTest::validate);
+    }
+
+    @Test
+    void addNullLicense() {
+        LicenseSetFactory underTest = new LicenseSetFactory();
+        assertThat(underTest.getLicenses(LicenseSetFactory.LicenseFilter.ALL)).isEmpty();
+        underTest.addLicense((ILicense) null);
+        assertThat(underTest.getLicenses(LicenseSetFactory.LicenseFilter.ALL)).isEmpty();
+        ILicense result = underTest.addLicense((ILicense.Builder) null);
+        assertThat(underTest.getLicenses(LicenseSetFactory.LicenseFilter.ALL)).isEmpty();
+        assertThat(result).isNull();
+    }
+
+    @Test
+    void addNullFamily() {
+        LicenseSetFactory underTest = new LicenseSetFactory();
+        assertThat(underTest.getLicenseFamilies(LicenseSetFactory.LicenseFilter.ALL)).isEmpty();
+        underTest.addFamily((ILicenseFamily) null);
+        assertThat(underTest.getLicenseFamilies(LicenseSetFactory.LicenseFilter.ALL)).isEmpty();
+        underTest.addFamily((ILicenseFamily.Builder) null);
+        assertThat(underTest.getLicenseFamilies(LicenseSetFactory.LicenseFilter.ALL)).isEmpty();
+    }
+
+    @Test
+    void searchTest() {
+        assertThat(LicenseSetFactory.search("theFamily", "TheLicense", null)).isEmpty();
+
+        assertThat(LicenseSetFactory.search("theFamily", "TheLicense", new TreeSet<>())).isEmpty();
+
+        SortedSet<ILicense> set = licenseSetFactory.getLicenses(LicenseSetFactory.LicenseFilter.ALL);
+        assertThat(LicenseSetFactory.search(APPROVED_FAMILIES[0].getFamilyCategory(), "TheLicense", set)).isEmpty();
+
+        Optional<ILicense> optLicense = LicenseSetFactory.search("AL", "AL2.0", set);
+        assertThat(optLicense).isNotEmpty();
+        ILicense license = optLicense.get();
+        assertThat(license.getLicenseFamily().getFamilyCategory()).isEqualTo(ILicenseFamily.makeCategory("AL"));
+        assertThat(license.getId()).isEqualTo("AL2.0");
+        assertThat(license.getName()).isEqualTo("Apache License 2.0");
     }
 }

@@ -21,17 +21,17 @@ package org.apache.rat.analysis;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.Reader;
-import java.util.Collection;
 import java.util.Locale;
 import java.util.Objects;
 
+import org.apache.commons.collections4.set.UnmodifiableSortedSet;
 import org.apache.rat.ConfigurationException;
 import org.apache.rat.analysis.matchers.FullTextMatcher;
 import org.apache.rat.api.Document;
 import org.apache.rat.license.ILicense;
 
 /**
- * Reads from a stream to check license.
+ * Reads from a stream to check for a license.
  * <p>
  * <strong>Note</strong> that this class is not thread safe.
  * </p>
@@ -54,21 +54,20 @@ public final class HeaderCheckWorker {
     /** The BufferedReader used to read the lines */
     private final BufferedReader reader;
     /** The licenses to check for match */
-    private final Collection<ILicense> licenses;
+    private final UnmodifiableSortedSet<ILicense> licenses;
     /** The document being processed */
     private final Document document;
     /**  The matcher for generated headers */
     private final IHeaderMatcher generatedMatcher;
 
-
     /**
      * Read the input and perform the header check.
      * <p>
-     * The number of lines indicates how many lines from the top of the file will be read for processing
+     * The number of lines indicates how many lines from the top of the file will be read for processing.
      *
-     * @param reader The reader for the document.
+     * @param reader the reader for the document.
      * @param numberOfLines the number of lines to read from the header.
-     * @return The IHeaders instance for the header.
+     * @return the IHeaders instance for the header.
      * @throws IOException on input failure
      */
     public static IHeaders readHeader(final BufferedReader reader, final int numberOfLines) throws IOException {
@@ -103,12 +102,12 @@ public final class HeaderCheckWorker {
      * Convenience constructor wraps given <code>Reader</code> in a
      * <code>BufferedReader</code>.
      *
-     * @param generatedMatcher The matcher for generated headers.
-     * @param reader The reader on the document. Not null.
-     * @param licenses The licenses to check against. Not null.
-     * @param name The document that is being checked. Possibly null.
+     * @param generatedMatcher the matcher for generated headers.
+     * @param reader the reader on the document. Not null.
+     * @param licenses the licenses to check against. Not null.
+     * @param name the document that is being checked. Possibly null.
      */
-    public HeaderCheckWorker(final IHeaderMatcher generatedMatcher, final Reader reader, final Collection<ILicense> licenses, final Document name) {
+    public HeaderCheckWorker(final IHeaderMatcher generatedMatcher, final Reader reader, final UnmodifiableSortedSet<ILicense> licenses, final Document name) {
         this(generatedMatcher, reader, DEFAULT_NUMBER_OF_RETAINED_HEADER_LINES, licenses, name);
     }
 
@@ -123,7 +122,7 @@ public final class HeaderCheckWorker {
      * @param document The document that is being checked. Possibly null.
      */
     public HeaderCheckWorker(final IHeaderMatcher generatedMatcher, final Reader reader,
-                             final int numberOfRetainedHeaderLine, final Collection<ILicense> licenses,
+                             final int numberOfRetainedHeaderLine, final UnmodifiableSortedSet<ILicense> licenses,
                              final Document document) {
         Objects.requireNonNull(reader, "Reader may not be null");
         Objects.requireNonNull(licenses, "Licenses may not be null");
@@ -140,7 +139,7 @@ public final class HeaderCheckWorker {
     /**
      * Read the input and perform the header check.
      *
-     * @throws RatHeaderAnalysisException on IO exception.
+     * @throws RatHeaderAnalysisException in case of I/O exceptions.
      */
     public void read() throws RatHeaderAnalysisException {
         try {

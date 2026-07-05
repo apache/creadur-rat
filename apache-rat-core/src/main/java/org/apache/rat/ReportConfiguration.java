@@ -39,6 +39,7 @@ import java.util.Objects;
 import java.util.SortedSet;
 import java.util.function.Consumer;
 
+import org.apache.commons.collections4.set.UnmodifiableSortedSet;
 import org.apache.commons.io.function.IOSupplier;
 import org.apache.commons.io.output.CloseShieldOutputStream;
 import org.apache.rat.analysis.IHeaderMatcher;
@@ -88,7 +89,6 @@ public class ReportConfiguration {
          * Description of the processing
          */
         private final String description;
-
 
         Processing(final String description) {
             this.description = description;
@@ -167,6 +167,7 @@ public class ReportConfiguration {
      * The ClaimValidator to validate min/max counts and similar claims.
      */
     private final ClaimValidator claimValidator;
+
     /**
      * Constructor
      */
@@ -250,7 +251,7 @@ public class ReportConfiguration {
 
     /**
      * Retrieves the archive processing type.
-     * @return The archive processing type.
+     * @return the archive processing type.
      */
     public Processing getArchiveProcessing() {
         return archiveProcessing == null ? Defaults.ARCHIVE_PROCESSING : archiveProcessing;
@@ -266,7 +267,7 @@ public class ReportConfiguration {
 
     /**
      * Retrieves the archive processing type.
-     * @return The archive processing type.
+     * @return the archive processing type.
      */
     public Processing getStandardProcessing() {
         return standardProcessing == null ? Defaults.STANDARD_PROCESSING : standardProcessing;
@@ -283,7 +284,7 @@ public class ReportConfiguration {
     /**
      * Set the log level for reporting collisions in the set of license families.
      * <p>NOTE: should be set before licenses or license families are added.</p>
-     * @param level The log level to use.
+     * @param level the log level to use.
      */
     public void logFamilyCollisions(final Level level) {
         licenseSetFactory.logFamilyCollisions(level);
@@ -291,7 +292,7 @@ public class ReportConfiguration {
 
     /**
      * Sets the reporting option for duplicate license families.
-     * @param state The ReportingSet.Option to use for reporting.
+     * @param state the ReportingSet.Option to use for reporting.
      */
     public void familyDuplicateOption(final ReportingSet.Options state) {
         licenseSetFactory.familyDuplicateOption(state);
@@ -299,7 +300,7 @@ public class ReportConfiguration {
 
     /**
      * Sets the log level for reporting license collisions.
-     * @param level The log level.
+     * @param level the log level.
      */
     public void logLicenseCollisions(final Level level) {
         licenseSetFactory.logLicenseCollisions(level);
@@ -425,7 +426,7 @@ public class ReportConfiguration {
     /**
      * Add file patterns that are to be included. These patterns override any exclusion of
      * the same files.
-     * @param patterns The iterable of Strings containing the patterns.
+     * @param patterns the iterable of Strings containing the patterns.
      */
     public void addIncludedPatterns(final Iterable<String> patterns) {
         exclusionProcessor.addIncludedPatterns(patterns);
@@ -472,7 +473,7 @@ public class ReportConfiguration {
      * Adds the licenses and approved licenses from the defaults object to the
      * configuration. <em>Side effect:</em> if the report should be styled and no
      * style sheet has been set the plain stylesheet from the defaults will be used.
-     * @param defaults The defaults to set.
+     * @param defaults the defaults to set.
      */
     public void setFrom(final Defaults defaults) {
         licenseSetFactory.add(defaults.getLicenseSetFactory());
@@ -520,7 +521,7 @@ public class ReportConfiguration {
      * times to provide the stream. Suppliers should prepare streams that are
      * appended to and that can be closed. If an {@code OutputStream} should not be
      * closed consider wrapping it in a {@code CloseShieldOutputStream}
-     * @param out The OutputStream supplier that provides the output stream to write
+     * @param out the OutputStream supplier that provides the output stream to write
      * the report to. A null value will use System.out.
      * @see CloseShieldOutputStream
      */
@@ -554,7 +555,7 @@ public class ReportConfiguration {
     /**
      * Returns the output stream supplier. If no stream has been set returns a
      * supplier for System.out.
-     * @return The supplier of the output stream to write the report to.
+     * @return the supplier of the output stream to write the report to.
      */
     public IOSupplier<OutputStream> getOutput() {
         return getOutputDescriptor().ioSupplier();
@@ -571,7 +572,7 @@ public class ReportConfiguration {
 
     /**
      * Gets a PrintWriter that wraps the output stream.
-     * @return A supplier for a PrintWriter that wraps the output stream.
+     * @return a supplier for a PrintWriter that wraps the output stream.
      * @see #getOutput()
      */
     public IOSupplier<PrintWriter> getWriter() {
@@ -581,7 +582,7 @@ public class ReportConfiguration {
     /**
      * Adds a license to the list of licenses. Does not add the license to the list
      * of approved licenses.
-     * @param license The license to add to the list of licenses.
+     * @param license the license to add to the list of licenses.
      */
     public void addLicense(final ILicense license) {
         licenseSetFactory.addLicense(license);
@@ -590,7 +591,7 @@ public class ReportConfiguration {
     /**
      * Adds a license to the list of licenses. Does not add the license to the list
      * of approved licenses.
-     * @param builder The license builder to build and add to the list of licenses.
+     * @param builder the license builder to build and add to the list of licenses.
      * @return The ILicense implementation that was added.
      */
     public ILicense addLicense(final ILicense.Builder builder) {
@@ -600,7 +601,7 @@ public class ReportConfiguration {
     /**
      * Adds multiple licenses to the list of licenses. Does not add the licenses to
      * the list of approved licenses.
-     * @param licenses The licenses to add.
+     * @param licenses the licenses to add.
      */
     public void addLicenses(final Collection<ILicense> licenses) {
         licenseSetFactory.addLicenses(licenses);
@@ -609,7 +610,7 @@ public class ReportConfiguration {
     /**
      * Adds a license family to the list of families. Does not add the family to the
      * list of approved licenses.
-     * @param family The license family to add to the list of license families.
+     * @param family the license family to add to the list of license families.
      */
     public void addFamily(final ILicenseFamily family) {
        licenseSetFactory.addFamily(family);
@@ -618,7 +619,7 @@ public class ReportConfiguration {
     /**
      * Adds a license family to the list of families. Does not add the family to the
      * list of approved licenses.
-     * @param builder The licenseFamily.Builder to build and add to the list of
+     * @param builder the licenseFamily.Builder to build and add to the list of
      * licenses.
      */
     public void addFamily(final ILicenseFamily.Builder builder) {
@@ -628,7 +629,7 @@ public class ReportConfiguration {
     /**
      * Adds multiple families to the list of license families. Does not add the
      * licenses to the list of approved licenses.
-     * @param families The license families to add.
+     * @param families the license families to add.
      */
     public void addFamilies(final Collection<ILicenseFamily> families) {
         families.forEach(this::addApprovedLicenseCategory);
@@ -681,7 +682,7 @@ public class ReportConfiguration {
     /**
      * Gets the SortedSet of approved license categories. <em>Once a license has
      * been removed from the approved list it cannot be re-added</em>
-     * @param filter The LicenseFilter to filter the categories by.
+     * @param filter the LicenseFilter to filter the categories by.
      * @return the Sorted set of approved license categories.
      */
     public SortedSet<String> getLicenseCategories(final LicenseFilter filter) {
@@ -691,17 +692,17 @@ public class ReportConfiguration {
     /**
      * Gets the SortedSet of approved license categories. <em>Once a license has
      * been removed from the approved list it cannot be re-added</em>
-     * @param filter The LicenseFilter to filter the licenses by.
+     * @param filter the LicenseFilter to filter the licenses by.
      * @return the Sorted set of approved license categories.
      */
-    public SortedSet<ILicense> getLicenses(final LicenseFilter filter) {
+    public UnmodifiableSortedSet<ILicense> getLicenses(final LicenseFilter filter) {
         return licenseSetFactory.getLicenses(filter);
     }
 
     /**
      * Gets the SortedSet of approved license categories. <em>Once a license has
      * been removed from the approved list it cannot be re-added</em>
-     * @param filter The LicenseFilter to filter the licenses by.
+     * @param filter the LicenseFilter to filter the licenses by.
      * @return the Sorted set of approved license categories.
      */
     public SortedSet<String> getLicenseIds(final LicenseFilter filter) {
