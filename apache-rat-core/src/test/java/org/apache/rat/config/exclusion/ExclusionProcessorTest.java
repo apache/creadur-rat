@@ -42,7 +42,6 @@ import java.util.Map;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.mockito.Mockito;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
@@ -52,6 +51,8 @@ import static org.apache.rat.document.FSInfoTest.OSX;
 import static org.apache.rat.document.FSInfoTest.UNIX;
 import static org.apache.rat.document.FSInfoTest.WINDOWS;
 import static org.junit.jupiter.api.Assertions.fail;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.when;
 
 public class ExclusionProcessorTest {
 
@@ -70,7 +71,7 @@ public class ExclusionProcessorTest {
 
     private DocumentName mkName(DocumentName baseDir, String pth) throws IOException {
         DocumentName result = baseDir.resolve(ExclusionUtils.convertSeparator(pth, "/", baseDir.getDirectorySeparator()));
-        DocumentName mocked = Mockito.spy(result);
+        DocumentName mocked = spy(result);
 
         String fn = result.localized(FileSystems.getDefault().getSeparator());
         File file = tempDir.resolve(fn.substring(1)).toFile();
@@ -91,7 +92,7 @@ public class ExclusionProcessorTest {
         if (!file.createNewFile()) {
             fail(() -> "Unable to create file: " + file);
         }
-        Mockito.when(mocked.asFile()).thenReturn(file);
+        when(mocked.asFile()).thenReturn(file);
         return mocked;
     }
 

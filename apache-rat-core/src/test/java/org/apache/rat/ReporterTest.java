@@ -21,7 +21,6 @@ package org.apache.rat;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Fail.fail;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.PrintStream;
@@ -476,19 +475,6 @@ public class ReporterTest {
         TextUtils.assertContains("Generated at: ", document );
         TextUtils.assertPatternInTarget("\\Q/Source.java\\E$", document);
         TextUtils.assertPatternInTarget("\\Q/sub/Empty.txt\\E", document);
-    }
-
-    @Test
-    void listLicensesReportTest() throws Exception {
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        ReportConfiguration configuration = initializeConfiguration();
-        configuration.setOut(new ReportConfiguration.IODescriptor<>("listLicensesReportTest", () -> out));
-        configuration.setStyleSheet(StyleSheets.UNAPPROVED_LICENSES.getStyleSheet());
-        Reporter.listLicenses(configuration, LicenseSetFactory.LicenseFilter.NONE);
-
-        out.flush();
-        String document = out.toString();
-        assertThat(document).contains("Licenses (NONE):");
     }
 
     @Test

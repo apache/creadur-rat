@@ -24,11 +24,14 @@ import org.apache.rat.config.exclusion.StandardCollection;
 import org.apache.rat.config.results.ClaimValidator;
 import org.apache.rat.document.DocumentName;
 import org.apache.rat.document.DocumentNameMatcher;
+import org.apache.rat.document.FileDocument;
 import org.apache.rat.license.LicenseSetFactory;
 import org.apache.rat.report.claim.ClaimStatistic;
 import org.apache.rat.report.claim.ClaimStatisticTest;
+import org.apache.rat.test.utils.Resources;
 import org.apache.rat.testhelpers.FileUtils;
 import org.apache.rat.utils.StandardXmlFactory;
+import org.apache.rat.walker.DirectoryWalker;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -37,15 +40,20 @@ import org.xml.sax.SAXException;
 import org.xmlunit.assertj3.XmlAssert;
 
 import javax.xml.transform.TransformerException;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 class OutputTest {
 
@@ -157,4 +165,40 @@ class OutputTest {
         Reporter.Output output = builder.build();
         ReportConfigurationTest.assertSame(output.getConfiguration(), underTest);
     }
+
+    private ReportConfiguration initializeConfiguration() throws URISyntaxException {
+        Defaults defaults = Defaults.builder().build();
+        final File elementsFile = Resources.getExampleResource("exampleData");
+        final ReportConfiguration configuration = new ReportConfiguration();
+        configuration.setFrom(defaults);
+        DocumentName documentName = DocumentName.builder(elementsFile).build();
+        configuration.addSource(new DirectoryWalker(new FileDocument(documentName, elementsFile,
+                configuration.getDocumentExcluder(documentName))));
+        return configuration;
+    }
+
+    @Test
+    void listLicensesReportTest() throws Exception {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        ReportConfiguration configuration = initializeConfiguration();
+        configuration.setOut(new ReportConfiguration.IODescriptor<>("listLicensesReportTest", () -> out));
+        configuration.setStyleSheet(StyleSheets.UNAPPROVED_LICENSES.getStyleSheet());
+        Reporter.Output output = Reporter.Output.builder()
+                .statistic(new ClaimStatistic())
+                .document(null)
+                .configuration(configuration)
+                .build();
+        output.listLicenses(LicenseSetFactory.LicenseFilter.NONE);
+
+        out.flush();
+        String document = out.toString();
+        assertThat(document).contains("Licenses (NONE):");
+        StringWriter writer = new StringWriter();
+        try (PrintWriter printWriter = new PrintWriter(writer)) {
+            output.listLicenses(printWriter, LicenseSetFactory.LicenseFilter.ALL);
+        }
+        assertThat(writer.toString()).contains("Licenses (ALL):");
+
+    }
+
 }

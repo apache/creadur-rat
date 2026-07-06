@@ -119,23 +119,6 @@ public class Reporter {
     }
 
     /**
-     * Lists the licenses on the configured output stream.
-     *
-     * @param configuration The configuration for the system
-     * @param filter        the license filter that specifies which licenses to output.
-     * @throws IOException if PrintWriter can not be retrieved from configuration.
-     */
-    public static void listLicenses(final ReportConfiguration configuration, final LicenseFilter filter) throws IOException {
-        try (PrintWriter pw = configuration.getWriter().get()) {
-            pw.format("Licenses (%s):%n", filter);
-            configuration.getLicenses(filter)
-                    .forEach(lic -> pw.format(LICENSE_FORMAT, lic.getLicenseFamily().getFamilyCategory(),
-                            lic.getLicenseFamily().getFamilyName(), lic.getNote()));
-            pw.println();
-        }
-    }
-
-    /**
      * The output from a report run.
      */
     public static final class Output {
@@ -220,19 +203,28 @@ public class Reporter {
         }
 
         /**
-         * Lists the licenses on the configured output stream.
+         * Lists the licenses on the print writer.
          *
-         * @param configuration The configuration for the system
+         * @param printWriter The print writer to write to.
+         * @param filter        the license filter that specifies which licenses to output.
+         */
+        public void listLicenses(final PrintWriter printWriter, final LicenseFilter filter) {
+            printWriter.format("Licenses (%s):%n", filter);
+            configuration.getLicenses(filter)
+                    .forEach(lic -> printWriter.format(LICENSE_FORMAT, lic.getLicenseFamily().getFamilyCategory(),
+                            lic.getLicenseFamily().getFamilyName(), lic.getNote()));
+            printWriter.println();
+        }
+
+        /**
+         * Lists the licenses on the output specified in the configuration.
+         *
          * @param filter        the license filter that specifies which licenses to output.
          * @throws IOException if PrintWriter can not be retrieved from configuration.
          */
-        public static void listLicenses(final ReportConfiguration configuration, final LicenseFilter filter) throws IOException {
+        public void listLicenses(final LicenseFilter filter) throws IOException {
             try (PrintWriter pw = configuration.getWriter().get()) {
-                pw.format("Licenses (%s):%n", filter);
-                configuration.getLicenses(filter)
-                        .forEach(lic -> pw.format(LICENSE_FORMAT, lic.getLicenseFamily().getFamilyCategory(),
-                                lic.getLicenseFamily().getFamilyName(), lic.getNote()));
-                pw.println();
+                listLicenses(pw, filter);
             }
         }
 
