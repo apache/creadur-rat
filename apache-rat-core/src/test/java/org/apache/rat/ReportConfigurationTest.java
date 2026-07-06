@@ -74,14 +74,14 @@ public class ReportConfigurationTest {
     private File tempDir;
 
     @BeforeEach
-    public void setup() {
+    void setup() {
         log = new TestingLog();
         DefaultLog.setInstance(log);
         underTest = new ReportConfiguration();
     }
 
     @AfterEach
-    public void cleanup() {
+    void cleanup() {
         DefaultLog.setInstance(null);
     }
 
@@ -620,7 +620,7 @@ public class ReportConfigurationTest {
     void logLicenseCollisionTest() {
         // setup
         ILicenseFamily family = ILicenseFamily.builder().setLicenseFamilyCategory("CAT").setLicenseFamilyName("family name").build();
-        IHeaderMatcher matcher = Mockito.mock(IHeaderMatcher.class);
+        IHeaderMatcher matcher = mock(IHeaderMatcher.class);
         when(matcher.getId()).thenReturn("Macher ID");
         underTest.addFamily(family);
         underTest.addLicense(ILicense.builder().setId("ID").setName("license name").setFamily(family.getFamilyCategory())
@@ -645,10 +645,10 @@ public class ReportConfigurationTest {
     }
     
     @Test
-    public void licenseDuplicateOptionsTest() {
+    void licenseDuplicateOptionsTest() {
         // setup
         ILicenseFamily family = ILicenseFamily.builder().setLicenseFamilyCategory("CAT").setLicenseFamilyName("family name").build();
-        IHeaderMatcher matcher = Mockito.mock(IHeaderMatcher.class);
+        IHeaderMatcher matcher = mock(IHeaderMatcher.class);
         when(matcher.getId()).thenReturn("Macher ID");
         underTest.addFamily(family);
         Function<String,ILicense> makeLicense = s -> ILicense.builder().setId("ID").setName(s).setFamily(family.getFamilyCategory())
