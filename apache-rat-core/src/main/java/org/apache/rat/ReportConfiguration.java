@@ -70,19 +70,20 @@ import org.apache.rat.walker.ReportableListWalker;
  */
 public class ReportConfiguration {
 
-    /** The IODescriptor for system.out */
+    /** The IODescriptor for {@code System.out}. */
     public static final IODescriptor<OutputStream> SYSTEM_OUT =
             // SONAR wants to require logging output, which is the wrong reporting channel for this case.
             new IODescriptor<>("System.out", () -> CloseShieldOutputStream.wrap(System.out)); // NOSONAR
+
     /**
      * The styles of processing for various categories of documents.
      */
     public enum Processing {
-        /** List file as present only */
+        /** List file as present only. */
         NOTIFICATION("List file as present"),
-        /** List all present licenses */
+        /** List all present licenses. */
         PRESENCE("List any licenses found"),
-        /** List all present licenses and unknown licenses */
+        /** List all present licenses and unknown licenses. */
         ABSENCE("List licenses found and any unknown licences");
 
         /**
@@ -115,8 +116,8 @@ public class ReportConfiguration {
      */
     private boolean addingLicensesForced;
     /**
-     * The copyright message to add if we are adding headers. Will be null if we are not
-     * adding copyright messages.
+     * The copyright message to add if we are adding headers. Will be {@code null}
+     * if we are not adding copyright messages.
      */
     private String copyrightMessage;
     /**
@@ -134,7 +135,7 @@ public class ReportConfiguration {
     private final List<File> sources;
 
     /**
-     * A list of reportables to process;
+     * A list of reportables to process.
      */
     private final List<Reportable> reportables;
 
@@ -198,7 +199,7 @@ public class ReportConfiguration {
      * Adds a file as a source of files to scan.
      * The file must be a text file that lists files to be included.
      * File within the file must be in linux format with a
-     * "/" file separator.
+     * {@code "/"} file separator.
      * @param file the file to process.
      */
     public void addSource(final File file) {
@@ -554,7 +555,7 @@ public class ReportConfiguration {
 
     /**
      * Returns the output stream supplier. If no stream has been set returns a
-     * supplier for System.out.
+     * supplier for {@code System.out}.
      * @return the supplier of the output stream to write the report to.
      */
     public IOSupplier<OutputStream> getOutput() {
@@ -563,8 +564,8 @@ public class ReportConfiguration {
 
     /**
      * Returns the output IODescriptor. If no stream has been set returns a
-     * descriptor for System.out.
-     * @return The IODescriptor of the output stream to write the report to.
+     * descriptor for {@code System.out}.
+     * @return the IODescriptor of the output stream to write the report to.
      */
     public IODescriptor<OutputStream> getOutputDescriptor() {
         return out == null ? SYSTEM_OUT : out;
@@ -592,7 +593,7 @@ public class ReportConfiguration {
      * Adds a license to the list of licenses. Does not add the license to the list
      * of approved licenses.
      * @param builder the license builder to build and add to the list of licenses.
-     * @return The ILicense implementation that was added.
+     * @return the ILicense implementation that was added.
      */
     public ILicense addLicense(final ILicense.Builder builder) {
         return licenseSetFactory.addLicense(builder);
@@ -819,12 +820,12 @@ public class ReportConfiguration {
     }
 
     /**
-     * Gets a sorted set of ILicenseFamily objects based on {@code filter}. if
-     * filter is set:
+     * Gets a sorted set of ILicenseFamily objects based on {@code filter}. If
+     * filter is set to:
      * <ul>
      * <li>{@code all} - All licenses families will be returned.</li>
-     * <li>{@code approved} - Only approved license families will be returned</li>
-     * <li>{@code none} - No license families will be returned</li>
+     * <li>{@code approved} - Only approved license families will be returned.</li>
+     * <li>{@code none} - No license families will be returned.</li>
      * </ul>
      * @param filter The license filter.
      * @return The set of defined licenses.
@@ -868,7 +869,7 @@ public class ReportConfiguration {
     }
 
     /**
-     * An IODescriptor comprises a name and an IOSupplier.  The name should identify the contents of the stream.
+     * An IODescriptor comprises a name and an IOSupplier. The name should identify the contents of the stream.
      * @param name the name of the supplier.
      * @param ioSupplier the IOSupplier that provides either an InputStream or an OutputStream
      * @param <T> either InputStream or OutputStream.
@@ -876,7 +877,6 @@ public class ReportConfiguration {
     public record IODescriptor<T>(String name, IOSupplier<T> ioSupplier) {
 
         // OUTPUT CONSTRUCTORS
-
         /**
          * Creates an output IODescriptor for the file name within the working directory.
          * @param name the name of the file to open.
@@ -889,7 +889,7 @@ public class ReportConfiguration {
         }
 
         /**
-         * Creates an output IODescriptor for the file.  Does not modify for working directory..
+         * Creates an output IODescriptor for the file. Does not modify for working directory.
          * @param file the file to open.
          * @return the Output IODescriptor.
          */
@@ -898,9 +898,8 @@ public class ReportConfiguration {
         }
 
         // INPUT CONSTRUCTORS
-
         /**
-         * Creates an input IODescriptor for the file.  Does not modify for working directory.
+         * Creates an input IODescriptor for the file. Does not modify for working directory.
          * @param file the file to open.
          * @return the Input IODescriptor.
          */

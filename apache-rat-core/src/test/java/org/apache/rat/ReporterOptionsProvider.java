@@ -75,7 +75,7 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
     static File sourceDir;
 
     /**
-     * A flag to determine if help was called
+     * A flag to determine if help was called.
      */
     final AtomicBoolean helpCalled = new AtomicBoolean(false);
 
@@ -93,7 +93,7 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
      * Forces the {@code helpCalled} flag to be reset.
      *
      * @param args the arguments.
-     * @return A ReportConfiguration
+     * @return a ReportConfiguration
      * @throws IOException on critical error.
      */
     @Override
@@ -691,7 +691,6 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
                 new String[]{"BSD-3"});
     }
 
-
     private void configTest(final Option option) {
         assertDoesNotThrow(() -> {
             configureSourceDir(option);
@@ -725,7 +724,6 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
             assertThat(claimStatistic.getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(2);
             assertThat(claimStatistic.getCounter(ClaimStatistic.Counter.APPROVED)).isEqualTo(1);
             assertThat(claimStatistic.getCounter(ClaimStatistic.Counter.UNAPPROVED)).isEqualTo(1);
-
         });
     }
 

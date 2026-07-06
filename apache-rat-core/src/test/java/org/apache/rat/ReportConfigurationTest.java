@@ -361,7 +361,6 @@ public class ReportConfigurationTest {
         assertThat(underTest.getCopyrightMessage()).isEqualTo("This is the message");
     }
 
-
     private DocumentName mkDocumentName(File f) {
         return DocumentName.builder(f).setBaseName(tempDir).build();
     }
@@ -386,13 +385,11 @@ public class ReportConfigurationTest {
         underTest.addExcludedCollection(StandardCollection.HIDDEN_DIR);
         assertThat(underTest.getDocumentExcluder(baseDir).matches(hiddenDir)).isTrue();
 
-
         DocumentName percentName = mkDocumentName(new File(tempDir, "%hello%"));
         assertThat(underTest.getDocumentExcluder(baseDir).matches(percentName)).isFalse();
         FileFilter percentFilter = file -> file.getName().endsWith("%hello%");
         underTest.addIncludedFilter(percentFilter);
         assertThat(underTest.getDocumentExcluder(baseDir).matches(percentName)).isTrue();
-
 
         underTest.addExcludedFilter(DirectoryFileFilter.DIRECTORY);
         File file = new File(tempDir, "newDir");
@@ -536,7 +533,6 @@ public class ReportConfigurationTest {
         assertThatThrownBy(() -> underTest.validate(sb::append)).isExactlyInstanceOf(ConfigurationException.class)
                 .hasMessageContaining(msg);
         assertThat(sb.toString()).isEqualTo(msg);
-
 
         sb.setLength(0);
         msg = "You must specify at least one license";
@@ -705,7 +701,7 @@ public class ReportConfigurationTest {
 
     /**
      * Validates that the configuration contains the default approved licenses.
-     * @param config The configuration to test.
+     * @param config the configuration to test.
      */
     public static void validateDefaultApprovedLicenses(ReportConfiguration config) {
         validateDefaultApprovedLicenses(config, 0);
@@ -713,7 +709,7 @@ public class ReportConfigurationTest {
     
     /**
      * Validates that the configuration contains the default approved licenses.
-     * @param config The configuration to test.
+     * @param config the configuration to test.
      */
     public static void validateDefaultApprovedLicenses(ReportConfiguration config, int additionalIdCount) {
         assertThat(config.getLicenseCategories(LicenseFilter.APPROVED)).hasSize(XMLConfigurationReaderTest.APPROVED_IDS.length + additionalIdCount);
@@ -752,7 +748,7 @@ public class ReportConfigurationTest {
     
     /**
      * Validates that the configuration matches the default.
-     * @param config The configuration to test.
+     * @param config the configuration to test.
      */
     public static void validateDefault(ReportConfiguration config) {
         assertThat(config.isAddingLicenses()).isFalse();
