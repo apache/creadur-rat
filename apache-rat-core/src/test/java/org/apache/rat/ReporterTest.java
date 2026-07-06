@@ -7,7 +7,7 @@
  * "License"); you may not use this file except in compliance   *
  * with the License.  You may obtain a copy of the License at   *
  *                                                              *
- *   http://www.apache.org/licenses/LICENSE-2.0                 *
+ *   https://www.apache.org/licenses/LICENSE-2.0                 *
  *                                                              *
  * Unless required by applicable law or agreed to in writing,   *
  * software distributed under the License is distributed on an  *
@@ -405,13 +405,8 @@ public class ReporterTest {
 
     @Test
     void xmlReportTest() throws Exception {
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-
         ReportConfiguration configuration = initializeConfiguration();
-        configuration.setStyleSheet(StyleSheets.XML.getStyleSheet());
-        configuration.setOut(new ReportConfiguration.IODescriptor("xmlReportTest", () -> out));
-        new Reporter(configuration).execute().format(configuration);
-        Document doc = XmlUtils.toDom(new ByteArrayInputStream(out.toByteArray()));
+        Document doc = new Reporter(configuration).execute().getDocument();
 
         XPath xPath = XPathFactory.newInstance().newXPath();
 
@@ -457,10 +452,9 @@ public class ReporterTest {
                 "Generated at: ";
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         ReportConfiguration configuration = initializeConfiguration();
-        configuration.setOut(new ReportConfiguration.IODescriptor("plainReportTest", () -> out));
+        configuration.setOut(new ReportConfiguration.IODescriptor<>("plainReportTest", () -> out));
         new Reporter(configuration).execute().format(configuration);
 
-        out.flush();
         String document = out.toString();
 
         TextUtils.assertNotContains("<?xml version=\"1.0\" encoding=\"UTF-8\"?>", document);
@@ -473,11 +467,10 @@ public class ReporterTest {
     void unapprovedLicensesReportTest() throws Exception {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         ReportConfiguration configuration = initializeConfiguration();
-        configuration.setOut(new ReportConfiguration.IODescriptor("unapprovedLicensesReportTest", () -> out));
+        configuration.setOut(new ReportConfiguration.IODescriptor<>("unapprovedLicensesReportTest", () -> out));
         configuration.setStyleSheet(this.getClass().getResource("/org/apache/rat/unapproved-licenses.xsl"));
         new Reporter(configuration).execute().format(configuration);
 
-        out.flush();
         String document = out.toString();
 
         TextUtils.assertContains("Generated at: ", document );
@@ -489,29 +482,26 @@ public class ReporterTest {
     void listLicensesReportTest() throws Exception {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         ReportConfiguration configuration = initializeConfiguration();
-        configuration.setOut(new ReportConfiguration.IODescriptor("listLicensesReportTest", () -> out));
+        configuration.setOut(new ReportConfiguration.IODescriptor<>("listLicensesReportTest", () -> out));
         configuration.setStyleSheet(StyleSheets.UNAPPROVED_LICENSES.getStyleSheet());
         Reporter.listLicenses(configuration, LicenseSetFactory.LicenseFilter.NONE);
 
         out.flush();
         String document = out.toString();
-
         assertThat(document).contains("Licenses (NONE):");
     }
 
     @Test
     void counterMaxTest() throws Exception {
         ReportConfiguration config = initializeConfiguration();
-        Reporter reporter = new Reporter(config);
-        Reporter.Output output = reporter.execute();
+        Reporter.Output output = new Reporter(config).execute();
         assertThat(config.getClaimValidator().hasErrors()).isTrue();
         assertThat(config.getClaimValidator().isValid(ClaimStatistic.Counter.UNAPPROVED, output.getStatistic().getCounter(ClaimStatistic.Counter.UNAPPROVED)))
                 .isFalse();
 
         config = initializeConfiguration();
         config.getClaimValidator().setMax(ClaimStatistic.Counter.UNAPPROVED, 2);
-        reporter = new Reporter(config);
-        output = reporter.execute();
+        output = new Reporter(config).execute();
         assertThat(config.getClaimValidator().hasErrors()).isFalse();
         assertThat(config.getClaimValidator().isValid(ClaimStatistic.Counter.UNAPPROVED, output.getStatistic().getCounter(ClaimStatistic.Counter.UNAPPROVED)))
                 .isTrue();

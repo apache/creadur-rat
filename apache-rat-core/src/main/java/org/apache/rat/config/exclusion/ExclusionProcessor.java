@@ -20,6 +20,7 @@ package org.apache.rat.config.exclusion;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -85,7 +86,47 @@ public class ExclusionProcessor {
         return new Serde();
     }
 
-    /** Reset the {@link #lastMatcher} and {@link #lastMatcherBaseDir} to start again */
+    /* the folloing set of methods are here for testing purposes */
+
+    Set<String> getExcludedPatterns() {
+        return new HashSet(excludedPatterns);
+    }
+
+    Collection<DocumentNameMatcher> getExcludedPaths() {
+        return new ArrayList(excludedPaths);
+    }
+
+    Set<String> getIncludedPatterns() {
+        return new HashSet<>(includedPatterns);
+    }
+
+    Collection<DocumentNameMatcher> getIncludedPaths() {
+        return new ArrayList(includedPaths);
+    }
+
+    Collection<StandardCollection> getFileProcessors() {
+        return new HashSet<>(fileProcessors);
+    }
+
+    Set<StandardCollection> getIncludedCollections() {
+        return new HashSet(includedCollections);
+    }
+
+    Set<StandardCollection> getExcludedCollections() {
+        return new HashSet(excludedCollections);
+    }
+
+    DocumentNameMatcher getLastMatcher() {
+        return lastMatcher;
+    }
+
+    DocumentName getLastMatcherBaseDir() {
+        return lastMatcherBaseDir;
+    }
+
+    /**
+     * Reset the {@link #lastMatcher} and {@link #lastMatcherBaseDir} to start again
+     */
     private void resetLastMatcher() {
         lastMatcher = null;
         lastMatcherBaseDir = null;
@@ -97,9 +138,11 @@ public class ExclusionProcessor {
      * @return this
      */
     public ExclusionProcessor addIncludedPatterns(final Iterable<String> patterns) {
+        if (patterns != null) {
         DefaultLog.getInstance().debug(format("Including patterns: %s", String.join(", ", patterns)));
         patterns.forEach(includedPatterns::add);
         resetLastMatcher();
+        }
         return this;
     }
 
@@ -150,9 +193,11 @@ public class ExclusionProcessor {
      * @return this
      */
     public ExclusionProcessor addExcludedPatterns(final Iterable<String> patterns) {
+        if (patterns != null) {
         DefaultLog.getInstance().debug(format("Excluding patterns: %s", String.join(", ", patterns)));
         patterns.forEach(excludedPatterns::add);
         resetLastMatcher();
+        }
         return this;
     }
 
@@ -188,8 +233,10 @@ public class ExclusionProcessor {
         for (DocumentNameMatcher nameMatcher : excludedPaths) {
             appendable.append(format("Excluding %s.%n", nameMatcher.toString()));
         }
+        for (DocumentNameMatcher nameMatcher : includedPaths) {
+            appendable.append(format("Including %s.%n", nameMatcher.toString()));
     }
-
+    }
 
     /**
      * Excludes the files/directories specified by a StandardCollection.
@@ -214,7 +261,7 @@ public class ExclusionProcessor {
     public DocumentNameMatcher getNameMatcher(final DocumentName basedir) {
         // if lastMatcher is not set or the basedir is not the same as the last one then
         // we have to regenerate the matching document.
-        // Otherwise we can just return the lastMatcher since there is no change.
+        // Otherwise, we can just return the lastMatcher since there is no change.
         if (lastMatcher == null || !basedir.equals(lastMatcherBaseDir)) {
             lastMatcherBaseDir = basedir;
 
@@ -347,6 +394,7 @@ public class ExclusionProcessor {
             }
         }
     }
+
     /**
      * Serializes and deserializes the ExclusionProcessor to XML document
      */

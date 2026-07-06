@@ -111,6 +111,7 @@ public class Reporter {
 
     /**
      * Gets the output from the last {@link #execute} call or {@code null} if {@link #execute} has not been called.
+     *
      * @return the output
      */
     public Output getOutput() {
@@ -119,8 +120,9 @@ public class Reporter {
 
     /**
      * Lists the licenses on the configured output stream.
+     *
      * @param configuration The configuration for the system
-     * @param filter the license filter that specifies which licenses to output.
+     * @param filter        the license filter that specifies which licenses to output.
      * @throws IOException if PrintWriter can not be retrieved from configuration.
      */
     public static void listLicenses(final ReportConfiguration configuration, final LicenseFilter filter) throws IOException {
@@ -137,7 +139,9 @@ public class Reporter {
      * The output from a report run.
      */
     public static final class Output {
-        /** The XML output document */
+        /**
+         * The XML output document
+         */
         private final Document document;
         /**
          * The claim statics from the execution that generated the document.
@@ -151,6 +155,7 @@ public class Reporter {
 
         /**
          * Create an output with statistics.
+         *
          * @param builder the Builder
          */
         private Output(final Builder builder) {
@@ -161,98 +166,104 @@ public class Reporter {
 
         public static Builder builder() {
             return new Builder();
-    }
+        }
 
         /**
          * Gets the document that was generated during execution.
+         *
          * @return the document that was generated during execution.
          */
         public Document getDocument() {
             return document;
         }
 
-    /**
-     * Get the claim statistics from the run.
-     *
-     * @return the claim statistics.
-     */
-    public ClaimStatistic getStatistic() {
-        return statistic;
-    }
+        /**
+         * Get the claim statistics from the run.
+         *
+         * @return the claim statistics.
+         */
+        public ClaimStatistic getStatistic() {
+            return statistic;
+        }
 
         public ReportConfiguration getConfiguration() {
             return configuration;
         }
-    /**
+
+        /**
          * Formats the report to the output and using the stylesheet found in the report configuration.
          *
          * @param config s RAT report configuration.
-     * @throws RatException on error.
-     */
+         * @throws RatException on error.
+         */
         public void format(final ReportConfiguration config) throws RatException {
             format(config.getStyleSheet(), config.getOutput());
-    }
+        }
 
-    /**
+        /**
          * Formats the report to the specified output using the stylesheet. It is safe to call this method more than once
-     * in order to generate multiple reports from the same run.
-     *
-     * @param stylesheet the style sheet to use for XSLT formatting.
-     * @param output the output stream to write to.
-     * @throws RatException on error.
-     */
+         * in order to generate multiple reports from the same run.
+         *
+         * @param stylesheet the style sheet to use for XSLT formatting.
+         * @param output     the output stream to write to.
+         * @throws RatException on error.
+         */
         public void format(final IOSupplier<InputStream> stylesheet, final IOSupplier<OutputStream> output) throws RatException {
 
-        try (OutputStream out = output.get();
-             InputStream styleIn = stylesheet.get()) {
-            StandardXmlFactory.createTransformer(styleIn).transform(new DOMSource(document),
-                    new StreamResult(new OutputStreamWriter(out, StandardCharsets.UTF_8)));
-        } catch (TransformerException | IOException e) {
-            throw new RatException(e);
+            try (OutputStream out = output.get();
+                 InputStream styleIn = stylesheet.get()) {
+                StandardXmlFactory.createTransformer(styleIn).transform(new DOMSource(document),
+                        new StreamResult(new OutputStreamWriter(out, StandardCharsets.UTF_8)));
+            } catch (TransformerException | IOException e) {
+                throw new RatException(e);
+            }
         }
-    }
 
-    /**
-     * Lists the licenses on the configured output stream.
-     * @param configuration The configuration for the system
-     * @param filter the license filter that specifies which licenses to output.
-     * @throws IOException if PrintWriter can not be retrieved from configuration.
-     */
-    public static void listLicenses(final ReportConfiguration configuration, final LicenseFilter filter) throws IOException {
-        try (PrintWriter pw = configuration.getWriter().get()) {
-            pw.format("Licenses (%s):%n", filter);
-            configuration.getLicenses(filter)
-                    .forEach(lic -> pw.format(LICENSE_FORMAT, lic.getLicenseFamily().getFamilyCategory(),
-                            lic.getLicenseFamily().getFamilyName(), lic.getNote()));
-            pw.println();
+        /**
+         * Lists the licenses on the configured output stream.
+         *
+         * @param configuration The configuration for the system
+         * @param filter        the license filter that specifies which licenses to output.
+         * @throws IOException if PrintWriter can not be retrieved from configuration.
+         */
+        public static void listLicenses(final ReportConfiguration configuration, final LicenseFilter filter) throws IOException {
+            try (PrintWriter pw = configuration.getWriter().get()) {
+                pw.format("Licenses (%s):%n", filter);
+                configuration.getLicenses(filter)
+                        .forEach(lic -> pw.format(LICENSE_FORMAT, lic.getLicenseFamily().getFamilyCategory(),
+                                lic.getLicenseFamily().getFamilyName(), lic.getNote()));
+                pw.println();
+            }
         }
-    }
 
-    /**
-     * Writes a text summary of issues with the run.
-     * @param appendable the appendable to write to.
-     * @throws IOException on error.
-     */
-    public void writeSummary(final Appendable appendable) throws IOException {
-        appendable.append("RAT summary:").append(System.lineSeparator());
-        for (ClaimStatistic.Counter counter : ClaimStatistic.Counter.values()) {
-            appendable.append("  ").append(counter.displayName()).append(":  ")
+        /**
+         * Writes a text summary of issues with the run.
+         *
+         * @param appendable the appendable to write to.
+         * @throws IOException on error.
+         */
+        public void writeSummary(final Appendable appendable) throws IOException {
+            appendable.append("RAT summary:").append(System.lineSeparator());
+            for (ClaimStatistic.Counter counter : ClaimStatistic.Counter.values()) {
+                appendable.append("  ").append(counter.displayName()).append(":  ")
                         .append(Integer.toString(statistic.getCounter(counter)))
-                    .append(System.lineSeparator());
+                        .append(System.lineSeparator());
+            }
         }
-    }
 
         public static final class Builder {
-            /** The document that was generated */
+            /**
+             * The document that was generated
+             */
             private Document document;
             /**
              * The claim statistic from the execution that generated the document.
              * May be empty if the Document was read from disk.
              */
             private ClaimStatistic statistic;
-    /**
+            /**
              * The configuration that generated the document
-     */
+             */
             private ReportConfiguration configuration;
 
             public Builder document(final Document document) {

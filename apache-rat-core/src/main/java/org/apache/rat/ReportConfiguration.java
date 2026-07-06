@@ -39,6 +39,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.SortedSet;
 import java.util.function.Consumer;
+import java.util.stream.Stream;
 
 import javax.xml.parsers.DocumentBuilder;
 
@@ -153,7 +154,7 @@ public class ReportConfiguration {
     private final List<Reportable> reportables;
 
     /**
-     * A predicate to test if a path should be included in the processing.
+     * The exclusion processor that determines if a file is included or excluded.
      */
     private final ExclusionProcessor exclusionProcessor;
 
@@ -257,6 +258,16 @@ public class ReportConfiguration {
         sources.forEach(file -> builder.addReportable(new FileListWalker(new FileDocument(file, DocumentNameMatcher.MATCHES_ALL))));
         reportables.forEach(builder::addReportable);
         return builder;
+    }
+
+    // for testing access
+    Iterable<File> sources() {
+        return sources;
+    }
+
+    // for testing access
+    Stream<DocumentName> reportables() {
+        return reportables.stream().map(Reportable::name);
     }
 
     /**
@@ -442,6 +453,14 @@ public class ReportConfiguration {
     }
 
     /**
+     * Includes files that match a DocumentNameMatcher.
+     * @param matcher the DocumentNameMatcher to match.
+     */
+    public void addIncludedMatcher(final DocumentNameMatcher matcher) {
+        exclusionProcessor.addIncludedMatcher(matcher);
+    }
+
+    /**
      * Add file patterns that are to be included. These patterns override any exclusion of
      * the same files.
      * @param patterns the iterable of Strings containing the patterns.
@@ -457,6 +476,11 @@ public class ReportConfiguration {
      */
     public DocumentNameMatcher getDocumentExcluder(final DocumentName baseDir) {
         return exclusionProcessor.getNameMatcher(baseDir);
+    }
+
+    // visible for testing.
+    ExclusionProcessor getExclusionProcessor() {
+        return exclusionProcessor;
     }
 
     /**
