@@ -86,14 +86,14 @@ public class ExclusionProcessor {
         return new Serde();
     }
 
-    /* the folloing set of methods are here for testing purposes */
+    /* the following set of methods are here for testing purposes */
 
     Set<String> getExcludedPatterns() {
-        return new HashSet(excludedPatterns);
+        return new HashSet<>(excludedPatterns);
     }
 
     Collection<DocumentNameMatcher> getExcludedPaths() {
-        return new ArrayList(excludedPaths);
+        return new ArrayList<>(excludedPaths);
     }
 
     Set<String> getIncludedPatterns() {
@@ -101,7 +101,7 @@ public class ExclusionProcessor {
     }
 
     Collection<DocumentNameMatcher> getIncludedPaths() {
-        return new ArrayList(includedPaths);
+        return new ArrayList<>(includedPaths);
     }
 
     Collection<StandardCollection> getFileProcessors() {
@@ -109,11 +109,11 @@ public class ExclusionProcessor {
     }
 
     Set<StandardCollection> getIncludedCollections() {
-        return new HashSet(includedCollections);
+        return new HashSet<>(includedCollections);
     }
 
     Set<StandardCollection> getExcludedCollections() {
-        return new HashSet(excludedCollections);
+        return new HashSet<>(excludedCollections);
     }
 
     DocumentNameMatcher getLastMatcher() {

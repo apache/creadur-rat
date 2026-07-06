@@ -18,8 +18,6 @@
  */
 package org.apache.rat.utils;
 
-import org.w3c.dom.Document;
-
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -38,6 +36,8 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
+
+import org.w3c.dom.Document;
 
 /**
  * Factory to create standard XML objects. The intention of this class is to resolve in a consistent manner the
