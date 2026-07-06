@@ -51,15 +51,15 @@ public final class Report {
         ReportConfiguration configuration = OptionCollection.parseCommands(new File("."), args, Report::printUsage);
         if (configuration != null) {
             configuration.validate(DefaultLog.getInstance()::error);
-            Reporter reporter = new Reporter(configuration);
-            reporter.output();
-            reporter.writeSummary(DefaultLog.getInstance().asWriter());
+            Reporter.Output output = new Reporter(configuration).execute();
+            output.format(configuration);
+            output.writeSummary(DefaultLog.getInstance().asWriter());
 
             if (configuration.getClaimValidator().hasErrors()) {
-                configuration.getClaimValidator().logIssues(reporter.getClaimsStatistic());
+                configuration.getClaimValidator().logIssues(output.getStatistic());
                 throw new RatDocumentAnalysisException(format("Issues with %s",
                         String.join(", ",
-                                configuration.getClaimValidator().listIssues(reporter.getClaimsStatistic()))));
+                                configuration.getClaimValidator().listIssues(output.getStatistic()))));
             }
         }
     }

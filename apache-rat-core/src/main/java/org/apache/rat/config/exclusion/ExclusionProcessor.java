@@ -22,15 +22,22 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.NotImplementedException;
+import org.apache.rat.configuration.XMLConfigurationReader;
 import org.apache.rat.document.DocumentName;
 import org.apache.rat.document.DocumentNameMatcher;
+import org.apache.rat.report.xml.writer.XmlWriter;
 import org.apache.rat.utils.DefaultLog;
 import org.apache.rat.utils.ExtendedIterator;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import static java.lang.String.format;
 
@@ -72,6 +79,10 @@ public class ExclusionProcessor {
         fileProcessors = new HashSet<>();
         includedCollections = new HashSet<>();
         excludedCollections = new HashSet<>();
+    }
+
+    public Serde serde() {
+        return new Serde();
     }
 
     /** Reset the {@link #lastMatcher} and {@link #lastMatcherBaseDir} to start again */
@@ -336,5 +347,94 @@ public class ExclusionProcessor {
             }
         }
     }
+    /**
+     * Serializes and deserializes the ExclusionProcessor to XML document
+     */
+    public class Serde {
+        /** The pattern attribute name */
+        private static final String PATTERN = "pattern";
+        /** THe name attribute name */
+        private static final String NAME = "name";
 
+        /**
+         * Serialize the ExclusionProcessor to XML writer.
+         * @param writer the writer to serialize to.
+         * @throws IOException on Error
+         */
+        public void serialize(final XmlWriter writer) throws IOException {
+            writer.startElement("ExclusionProcessor");
+
+            for (String pattern : excludedPatterns) {
+                writer.startElement("excludedPattern").attribute(PATTERN, pattern).closeElement();
+            }
+            for (StandardCollection obj : excludedCollections) {
+                writer.startElement("excludedCollection").attribute(NAME, obj.name()).closeElement();
+            }
+            for (DocumentNameMatcher obj : excludedPaths) {
+                writer.startElement("excludedPath").attribute(NAME, obj.toString()).closeElement();
+            }
+
+            for (String pattern : includedPatterns) {
+                writer.startElement("includedPattern").attribute(PATTERN, pattern).closeElement();
+            }
+            for (StandardCollection obj : includedCollections) {
+                writer.startElement("includedCollection").attribute(NAME, obj.name()).closeElement();
+            }
+            for (DocumentNameMatcher obj : includedPaths) {
+                writer.startElement("includedPath").attribute(NAME, obj.toString()).closeElement();
+            }
+
+            for (StandardCollection obj : fileProcessors) {
+                writer.startElement("fileProcessor").attribute(NAME, obj.name()).closeElement();
+            }
+            writer.closeElement();
+
+        }
+
+        /**
+         * Deserialize from XML Document node to ExclusionProcessor
+         * @param xmlNode the node to deserialize from.
+         */
+        public void deserialize(final Node xmlNode) {
+            final NodeList children = xmlNode.getChildNodes();
+            for (int i = 0; i < children.getLength(); i++) {
+                Node child = children.item(i);
+                Map<String, String> attributes = XMLConfigurationReader.attributes(child);
+                StandardCollection collection;
+                switch (child.getNodeName()) {
+                    case "excludedPattern":
+                        excludedPatterns.add(attributes.get(PATTERN));
+                        break;
+                    case "excludedCollection":
+                        collection = StandardCollection.valueOf(attributes.get(NAME));
+                        excludedCollections.add(collection);
+                        break;
+                    case "excludedPath":
+                        excludedPaths.add(new DocumentNameMatcher(attributes.get(NAME),
+                                (Predicate<DocumentName>) x -> {
+                                    throw new NotImplementedException("Deserialized ExclusionProcessor can not evaluate paths");
+                                }));
+                        break;
+                    case "includedPattern":
+                        includedPatterns.add(attributes.get(PATTERN));
+                        break;
+                    case "includedCollection":
+                        collection = StandardCollection.valueOf(attributes.get(NAME));
+                        includedCollections.add(collection);
+                        break;
+                    case "includedPath":
+                        includedPaths.add(new DocumentNameMatcher(attributes.get(NAME),
+                                (Predicate<DocumentName>) x -> {
+                                    throw new NotImplementedException("Deserialized ExclusionProcessor can not evaluate paths");
+                                }));
+                        break;
+                    case "fileProcessor":
+                        fileProcessors.add(StandardCollection.valueOf(attributes.get(NAME)));
+                        break;
+                    default:
+                        throw new NotImplementedException(String.format("Deserialization for `%s` is not implemented", child.getNodeName()));
+                }
+            }
+        }
+    }
 }

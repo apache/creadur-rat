@@ -87,7 +87,7 @@ public class ReporterTest {
         CommandLine cl = new DefaultParser().parse(OptionCollection.buildOptions(), new String[]{"--output-style", "xml", "--output-file", output.getPath(), basedir});
         ArgumentContext ctxt = new ArgumentContext(new File("."), cl);
         ReportConfiguration config = OptionCollection.createConfiguration(ctxt);
-        ClaimStatistic statistic = new Reporter(config).execute();
+        ClaimStatistic statistic = new Reporter(config).execute().getStatistic();
 
         assertThat(statistic.getCounter(Type.ARCHIVE)).isEqualTo(1);
         assertThat(statistic.getCounter(Type.BINARY)).isEqualTo(2);
@@ -142,7 +142,7 @@ public class ReporterTest {
         ArgumentContext ctxt = new ArgumentContext(new File("."), commandLine);
 
         ReportConfiguration config = OptionCollection.createConfiguration(ctxt);
-        new Reporter(config).output();
+        new Reporter(config).execute().format(config);
         assertThat(output.exists()).isTrue();
         String content = FileUtils.readFileToString(output, StandardCharsets.UTF_8);
         TextUtils.assertPatternInTarget("^! Unapproved:\\s*2 ", content);
@@ -161,7 +161,7 @@ public class ReporterTest {
             ArgumentContext ctxt = new ArgumentContext(new File("."), commandLine);
 
             ReportConfiguration config = OptionCollection.createConfiguration(ctxt);
-            new Reporter(config).output();
+            new Reporter(config).execute().format(config);
         } finally {
             System.setOut(origin);
         }
@@ -215,7 +215,7 @@ public class ReporterTest {
         ArgumentContext ctxt = new ArgumentContext(tempDirectory, commandLine);
 
         ReportConfiguration config = OptionCollection.createConfiguration(ctxt);
-        new Reporter(config).output();
+        new Reporter(config).execute().format(config);
 
         assertThat(output).exists();
         Document doc = XmlUtils.toDom(java.nio.file.Files.newInputStream(output.toPath()));
@@ -410,7 +410,7 @@ public class ReporterTest {
         ReportConfiguration configuration = initializeConfiguration();
         configuration.setStyleSheet(StyleSheets.XML.getStyleSheet());
         configuration.setOut(new ReportConfiguration.IODescriptor("xmlReportTest", () -> out));
-        new Reporter(configuration).output();
+        new Reporter(configuration).execute().format(configuration);
         Document doc = XmlUtils.toDom(new ByteArrayInputStream(out.toByteArray()));
 
         XPath xPath = XPathFactory.newInstance().newXPath();
@@ -458,7 +458,7 @@ public class ReporterTest {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         ReportConfiguration configuration = initializeConfiguration();
         configuration.setOut(new ReportConfiguration.IODescriptor("plainReportTest", () -> out));
-        new Reporter(configuration).output();
+        new Reporter(configuration).execute().format(configuration);
 
         out.flush();
         String document = out.toString();
@@ -475,7 +475,7 @@ public class ReporterTest {
         ReportConfiguration configuration = initializeConfiguration();
         configuration.setOut(new ReportConfiguration.IODescriptor("unapprovedLicensesReportTest", () -> out));
         configuration.setStyleSheet(this.getClass().getResource("/org/apache/rat/unapproved-licenses.xsl"));
-        new Reporter(configuration).output();
+        new Reporter(configuration).execute().format(configuration);
 
         out.flush();
         String document = out.toString();
@@ -503,17 +503,17 @@ public class ReporterTest {
     void counterMaxTest() throws Exception {
         ReportConfiguration config = initializeConfiguration();
         Reporter reporter = new Reporter(config);
-        reporter.output();
+        Reporter.Output output = reporter.execute();
         assertThat(config.getClaimValidator().hasErrors()).isTrue();
-        assertThat(config.getClaimValidator().isValid(ClaimStatistic.Counter.UNAPPROVED, reporter.getClaimsStatistic().getCounter(ClaimStatistic.Counter.UNAPPROVED)))
+        assertThat(config.getClaimValidator().isValid(ClaimStatistic.Counter.UNAPPROVED, output.getStatistic().getCounter(ClaimStatistic.Counter.UNAPPROVED)))
                 .isFalse();
 
         config = initializeConfiguration();
         config.getClaimValidator().setMax(ClaimStatistic.Counter.UNAPPROVED, 2);
         reporter = new Reporter(config);
-        reporter.output();
+        output = reporter.execute();
         assertThat(config.getClaimValidator().hasErrors()).isFalse();
-        assertThat(config.getClaimValidator().isValid(ClaimStatistic.Counter.UNAPPROVED, reporter.getClaimsStatistic().getCounter(ClaimStatistic.Counter.UNAPPROVED)))
+        assertThat(config.getClaimValidator().isValid(ClaimStatistic.Counter.UNAPPROVED, output.getStatistic().getCounter(ClaimStatistic.Counter.UNAPPROVED)))
                 .isTrue();
     }
 

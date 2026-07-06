@@ -443,10 +443,11 @@ public class RatReportMojo extends AbstractRatMojo implements MavenMultiPageRepo
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
                 config.setOut(new ReportConfiguration.IODescriptor("RAT output", () -> baos));
                 Reporter reporter = new Reporter(config);
-                reporter.output();
+                Reporter.Output output = reporter.execute();
                 if (verbose) {
-                    reporter.writeSummary(logWriter);
+                    output.writeSummary(logWriter);
                 }
+                output.format(config);
                 sink.text(baos.toString(StandardCharsets.UTF_8.name()));
             } catch (IOException | MojoExecutionException | RatException e) {
                 throw new MavenReportException(e.getMessage(), e);

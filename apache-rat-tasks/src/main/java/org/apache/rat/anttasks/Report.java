@@ -443,9 +443,11 @@ public class Report extends BaseAntTask {
     @Override
     public void execute() {
         try {
-            Reporter r = new Reporter(validate(getConfiguration()));
-            r.output(StyleSheets.PLAIN.getStyleSheet().ioSupplier(), () -> CloseShieldOutputStream.wrap(System.out));
-            r.output();
+            ReportConfiguration config = validate(getConfiguration());
+            Reporter r = new Reporter(config);
+            Reporter.Output output = r.execute();
+            output.format(StyleSheets.PLAIN.getStyleSheet().ioSupplier(), () -> CloseShieldOutputStream.wrap(System.out));
+            output.format(config);
         } catch (BuildException e) {
             throw e;
         } catch (Exception ioex) {

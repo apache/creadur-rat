@@ -71,8 +71,8 @@ public enum StyleSheets {
     }
 
     /**
-     * Gets the IOSupplier for a style sheet.
-     * @return an IOSupplier for the sheet.
+     * Gets the IODescriptor for a style sheet.
+     * @return an IODescriptor for the sheet.
      */
     public ReportConfiguration.IODescriptor<InputStream> getStyleSheet() {
         URL url = StyleSheets.class.getClassLoader().getResource(format("org/apache/rat/%s.xsl", name));
@@ -81,9 +81,9 @@ public enum StyleSheets {
     }
 
     /**
-     * Gets the IOSupplier for a style sheet.
+     * Gets the IODescriptor for a style sheet.
      * @param name the short name for or the path to a style sheet.
-     * @return the IOSupplier for the style sheet.
+     * @return the IODescriptor for the style sheet.
      */
     public static ReportConfiguration.IODescriptor<InputStream> getStyleSheet(final String name) {
         URL url = StyleSheets.class.getClassLoader().getResource(format("org/apache/rat/%s.xsl", name));
