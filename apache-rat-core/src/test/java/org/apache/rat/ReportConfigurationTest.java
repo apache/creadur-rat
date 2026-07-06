@@ -389,7 +389,7 @@ public class ReportConfigurationTest {
 
         DocumentName percentName = mkDocumentName(new File(tempDir, "%hello%"));
         assertThat(underTest.getDocumentExcluder(baseDir).matches(percentName)).isFalse();
-        FileFilter percentFilter = (file) -> file.getName().endsWith("%hello%");
+        FileFilter percentFilter = file -> file.getName().endsWith("%hello%");
         underTest.addIncludedFilter(percentFilter);
         assertThat(underTest.getDocumentExcluder(baseDir).matches(percentName)).isTrue();
 
