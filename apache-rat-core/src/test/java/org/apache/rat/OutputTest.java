@@ -18,6 +18,8 @@
  */
 package org.apache.rat;
 
+import org.apache.commons.io.function.IOSupplier;
+import org.apache.rat.api.RatException;
 import org.apache.rat.commandline.StyleSheets;
 import org.apache.rat.config.AddLicenseHeaders;
 import org.apache.rat.config.exclusion.StandardCollection;
@@ -31,6 +33,7 @@ import org.apache.rat.report.claim.ClaimStatisticTest;
 import org.apache.rat.test.utils.Resources;
 import org.apache.rat.testhelpers.FileUtils;
 import org.apache.rat.utils.StandardXmlFactory;
+import org.apache.rat.utils.StandardXmlFactoryTests;
 import org.apache.rat.walker.DirectoryWalker;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -45,6 +48,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.net.URISyntaxException;
@@ -54,6 +58,7 @@ import java.nio.file.Path;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class OutputTest {
 
@@ -115,6 +120,43 @@ class OutputTest {
 
         Reporter.Output output = builder.build();
         ClaimStatisticTest.assertSame(output.getStatistic(), underTest);
+    }
+
+    @Test
+    void readingBadFileTestTest() throws IOException, URISyntaxException, SAXException {
+        Path testPath = tempPath.resolve("stasticReadingBadFileTest");
+        File testFile = testPath.toFile();
+        FileUtils.mkDir(testFile);
+        DocumentName workingDirectory = DocumentName.builder(testPath.toFile()).setBaseName(testFile).build();
+        DocumentName documentFile = workingDirectory.resolve("statistic.xml");
+        Reporter.Output.Builder builder = Reporter.Output.builder();
+        assertThatThrownBy(() -> builder.statistic(documentFile.getName(), workingDirectory))
+                .isInstanceOf(ConfigurationException.class)
+                .hasMessageContaining("Unable to read file: " + testPath.resolve("statistic.xml"));
+    }
+
+    @Test
+    void ReadingBadFileTest() throws IOException, URISyntaxException, SAXException {
+        Path testPath = tempPath.resolve("stasticReadingBadFileTest");
+        File testFile = testPath.toFile();
+        FileUtils.mkDir(testFile);
+        DocumentName workingDirectory = DocumentName.builder(testPath.toFile()).setBaseName(testFile).build();
+        DocumentName documentFile = workingDirectory.resolve("missing.file");
+        Reporter.Output.Builder builder = Reporter.Output.builder();
+        assertThatThrownBy(() -> builder.configuration(documentFile.getName(), workingDirectory))
+                .as("statistic read")
+                .isInstanceOf(ConfigurationException.class)
+                .hasMessageContaining("Unable to read file: " + testPath.resolve("missing.file"));
+
+        assertThatThrownBy(() -> builder.configuration(documentFile.getName(), workingDirectory))
+                .as("configuration read")
+                .isInstanceOf(ConfigurationException.class)
+                .hasMessageContaining("Unable to read file: " + testPath.resolve("missing.file"));
+
+        assertThatThrownBy(() -> builder.document(documentFile.getName(), workingDirectory))
+                .as("document read")
+                .isInstanceOf(ConfigurationException.class)
+                .hasMessageContaining("Unable to read file: " + testPath.resolve("missing.file"));
     }
 
     @Test
@@ -198,7 +240,57 @@ class OutputTest {
             output.listLicenses(printWriter, LicenseSetFactory.LicenseFilter.ALL);
         }
         assertThat(writer.toString()).contains("Licenses (ALL):");
+    }
+
+    @Test
+    void formatTest() throws URISyntaxException, IOException, SAXException {
+        Reporter.Output output = Reporter.Output.builder()
+                .statistic(new ClaimStatistic())
+                .document(StandardXmlFactoryTests.simpleDocument())
+                .configuration(new ReportConfiguration())
+                .build();
+
+        IOSupplier<InputStream> badStyleSheet = () -> new InputStream() {
+            @Override
+            public int read() throws IOException {
+                throw new IOException("Expected exception.");
+            }
+        };
+        assertThatThrownBy(() -> output.format(badStyleSheet, ReportConfiguration.SYSTEM_OUT.ioSupplier()))
+                .as("badStyleSheet")
+                .isInstanceOf(RatException.class)
+                .hasMessageContaining("Expected exception")
+                .hasCauseInstanceOf(TransformerException.class);
+
+        IOSupplier<InputStream> missingStyleSheet = () -> {throw new IOException("Expected exception.");};
+
+
+        assertThatThrownBy(() -> output.format(missingStyleSheet, ReportConfiguration.SYSTEM_OUT.ioSupplier()))
+                .as("missingStyleSheet")
+                .isInstanceOf(RatException.class)
+                .hasMessageContaining("Expected exception")
+                .hasCauseInstanceOf(IOException.class);
+
+        IOSupplier<OutputStream> badOutput = () -> new OutputStream() {
+            @Override
+            public void write(int b) throws IOException {
+                throw new IOException("Expected exception.");
+            }
+        };
+        assertThatThrownBy(() -> output.format(StyleSheets.XML.getStyleSheet().ioSupplier(), badOutput))
+                .as("badOutput")
+                .isInstanceOf(RatException.class)
+                .hasMessageContaining("Expected exception")
+                .hasCauseInstanceOf(TransformerException.class);
+
+        IOSupplier<OutputStream> missingOutput = () ->  {throw new IOException("Expected exception.");};
+        assertThatThrownBy(() -> output.format(StyleSheets.XML.getStyleSheet().ioSupplier(), missingOutput))
+                .as("missingOutput")
+                .isInstanceOf(RatException.class)
+                .hasMessageContaining("Expected exception")
+                .hasCauseInstanceOf(IOException.class);
 
     }
+
 
 }

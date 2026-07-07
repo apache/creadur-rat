@@ -18,14 +18,22 @@
  */
 package org.apache.rat.utils;
 
+import org.apache.rat.report.xml.writer.XmlWriter;
 import org.junit.jupiter.api.Test;
+import org.w3c.dom.Document;
+import org.xml.sax.SAXException;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.StringWriter;
+import java.nio.charset.StandardCharsets;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -33,7 +41,25 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 /**
  * Tests for StandardXmlFactory.
  */
-class StandardXmlFactoryTests {
+public class StandardXmlFactoryTests {
+
+    public static final String SIMPLE_DOCUMENT_TEXT =  """
+                <first>
+                    <second attr1="one"/>
+                </first>
+                """;
+
+    public static Document simpleDocument() throws IOException, SAXException {
+        StringWriter writer = new StringWriter();
+        try (XmlWriter xmlWriter = new XmlWriter(writer)) {
+            xmlWriter.startDocument().startElement("first")
+                    .startElement("second")
+                    .attribute("attr1", "one")
+                    .closeDocument();
+        }
+        return StandardXmlFactory.documentBuilder()
+                .parse(new ByteArrayInputStream(writer.toString().getBytes(StandardCharsets.UTF_8)));
+    }
 
     @Test
     void noArg() throws TransformerConfigurationException {
@@ -62,6 +88,18 @@ class StandardXmlFactoryTests {
     void goodDocumentBuilderTest() {
         assertThat(StandardXmlFactory.documentBuilder())
                 .isNotNull();
+    }
+
+    @Test
+    void serializeDocumentTest() throws IOException, SAXException, TransformerException {
+        String result = StandardXmlFactory.serializeDocument(simpleDocument());
+        assertThat(result).isEqualTo(SIMPLE_DOCUMENT_TEXT);
+    }
+
+    @Test
+    void serializeEmptyDocumentYieldsEmtpyString() throws TransformerException {
+        Document document = StandardXmlFactory.documentBuilder().newDocument();
+        assertThat(StandardXmlFactory.serializeDocument(document)).isEmpty();
     }
 
     /**

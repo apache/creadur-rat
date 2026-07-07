@@ -37,6 +37,7 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
+import org.apache.commons.lang3.StringUtils;
 import org.w3c.dom.Document;
 
 /**
@@ -123,8 +124,9 @@ public final class StandardXmlFactory {
     public static String serializeDocument(final Document document) throws TransformerException {
         DOMSource source = new DOMSource(document);
         StringWriter writer = new StringWriter();
-        StreamResult result = new StreamResult(writer);
-        createTransformer().transform(source, result);
-        return writer.toString();
+        StreamResult sink = new StreamResult(writer);
+        createTransformer().transform(source, sink);
+        String result = writer.toString();
+        return StringUtils.defaultIfBlank(result, "");
     }
 }

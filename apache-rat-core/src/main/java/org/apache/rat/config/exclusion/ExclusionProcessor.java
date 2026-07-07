@@ -448,39 +448,33 @@ public class ExclusionProcessor {
             for (int i = 0; i < children.getLength(); i++) {
                 Node child = children.item(i);
                 Map<String, String> attributes = XMLConfigurationReader.attributes(child);
-                StandardCollection collection;
                 switch (child.getNodeName()) {
-                    case "excludedPattern":
+                    case "excludedPattern" ->
                         excludedPatterns.add(attributes.get(PATTERN));
-                        break;
-                    case "excludedCollection":
-                        collection = StandardCollection.valueOf(attributes.get(NAME));
-                        excludedCollections.add(collection);
-                        break;
-                    case "excludedPath":
+
+                    case "excludedCollection" ->
+                        excludedCollections.add(StandardCollection.valueOf(attributes.get(NAME)));
+
+                    case "excludedPath" ->
                         excludedPaths.add(new DocumentNameMatcher(attributes.get(NAME),
                                 (Predicate<DocumentName>) x -> {
                                     throw new NotImplementedException("Deserialized ExclusionProcessor can not evaluate paths");
                                 }));
-                        break;
-                    case "includedPattern":
+
+                    case "includedPattern" ->
                         includedPatterns.add(attributes.get(PATTERN));
-                        break;
-                    case "includedCollection":
-                        collection = StandardCollection.valueOf(attributes.get(NAME));
-                        includedCollections.add(collection);
-                        break;
-                    case "includedPath":
+
+                    case "includedCollection" ->
+                        includedCollections.add(StandardCollection.valueOf(attributes.get(NAME)));
+
+                    case "includedPath" ->
                         includedPaths.add(new DocumentNameMatcher(attributes.get(NAME),
                                 (Predicate<DocumentName>) x -> {
                                     throw new NotImplementedException("Deserialized ExclusionProcessor can not evaluate paths");
                                 }));
-                        break;
-                    case "fileProcessor":
+
+                    case "fileProcessor" ->
                         fileProcessors.add(StandardCollection.valueOf(attributes.get(NAME)));
-                        break;
-                    default:
-                        throw new NotImplementedException(String.format("Deserialization for `%s` is not implemented", child.getNodeName()));
                 }
             }
         }

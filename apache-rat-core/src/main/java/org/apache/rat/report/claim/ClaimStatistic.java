@@ -190,24 +190,12 @@ public class ClaimStatistic {
     public void incCounter(final Document.Type documentType, final int value) {
         documentTypeMap.compute(documentType, (k, v) -> updateCounter(Counter.DOCUMENT_TYPES, v, value));
         switch (documentType) {
-            case STANDARD:
-                incCounter(Counter.STANDARDS, value);
-                break;
-            case ARCHIVE:
-                incCounter(Counter.ARCHIVES, value);
-                break;
-            case BINARY:
-                incCounter(Counter.BINARIES, value);
-                break;
-            case NOTICE:
-                incCounter(Counter.NOTICES, value);
-                break;
-            case UNKNOWN:
-                incCounter(Counter.UNKNOWN, value);
-                break;
-            case IGNORED:
-                incCounter(Counter.IGNORED, value);
-                break;
+            case STANDARD -> incCounter(Counter.STANDARDS, value);
+            case ARCHIVE -> incCounter(Counter.ARCHIVES, value);
+            case BINARY -> incCounter(Counter.BINARIES, value);
+            case NOTICE -> incCounter(Counter.NOTICES, value);
+            case UNKNOWN -> incCounter(Counter.UNKNOWN, value);
+            case IGNORED -> incCounter(Counter.IGNORED, value);
         }
     }
 

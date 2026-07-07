@@ -35,6 +35,7 @@ import java.util.Map;
 import java.util.TreeMap;
 import javax.xml.XMLConstants;
 import javax.xml.transform.Source;
+import javax.xml.transform.TransformerException;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Schema;
@@ -55,9 +56,11 @@ import org.apache.rat.document.FileDocument;
 import org.apache.rat.document.DocumentName;
 import org.apache.rat.license.ILicenseFamily;
 import org.apache.rat.report.claim.ClaimStatistic;
+import org.apache.rat.report.claim.ClaimStatisticTest;
 import org.apache.rat.test.utils.Resources;
 import org.apache.rat.testhelpers.TextUtils;
 import org.apache.rat.testhelpers.XmlUtils;
+import org.apache.rat.utils.StandardXmlFactory;
 import org.apache.rat.walker.DirectoryWalker;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -133,6 +136,18 @@ public class ReporterTest {
     }
 
     @Test
+    void testExecuteNoSource() throws ParseException, RatException, TransformerException {
+        File output = new File(tempDirectory, "testExecuteNoSource");
+
+        CommandLine cl = new DefaultParser().parse(OptionCollection.buildOptions(), new String[]{"--output-style", "xml", "--output-file", output.getPath()});
+        ArgumentContext ctxt = new ArgumentContext(new File("."), cl);
+        ReportConfiguration config = OptionCollection.createConfiguration(ctxt);
+        Reporter.Output result = new Reporter(config).execute();
+        assertThat(StandardXmlFactory.serializeDocument(result.getDocument())).isEmpty();
+        ClaimStatisticTest.assertSame(result.getStatistic(), new ClaimStatistic());
+    }
+
+    @Test
     void testOutputOption() throws Exception {
         File output = new File(tempDirectory, "test");
         CommandLine commandLine = new DefaultParser().parse(OptionCollection.buildOptions(), new String[]{"-o", output.getCanonicalPath(), basedir});
@@ -145,6 +160,18 @@ public class ReporterTest {
         TextUtils.assertPatternInTarget("^! Unapproved:\\s*2 ", content);
         assertThat(content).contains("/Source.java");
         assertThat(content).contains("/sub/Empty.txt");
+    }
+
+    @Test
+    void testGetOutputMethod() throws Exception {
+        File output = new File(tempDirectory, "test");
+        CommandLine commandLine = new DefaultParser().parse(OptionCollection.buildOptions(), new String[]{"-o", output.getCanonicalPath(), basedir});
+        ArgumentContext ctxt = new ArgumentContext(new File("."), commandLine);
+
+        ReportConfiguration config = OptionCollection.createConfiguration(ctxt);
+        Reporter reporter = new Reporter(config);
+        Reporter.Output expected = reporter.execute();
+        assertThat(reporter.getOutput()).isEqualTo(expected);
     }
 
     @Test

@@ -326,6 +326,28 @@ public class ExclusionProcessorTest {
     }
 
     @Test
+    void addNullIncludedCollectionTest() {
+        ExclusionProcessor underTest = new ExclusionProcessor();
+        assertThat(underTest.getIncludedCollections()).isEmpty();
+        underTest.addIncludedCollection(null);
+        assertThat(underTest.getIncludedCollections()).isEmpty();
+        underTest.addIncludedCollection(StandardCollection.HIDDEN_FILE)
+                .addIncludedCollection(null);
+        assertThat(underTest.getIncludedCollections()).containsExactly(StandardCollection.HIDDEN_FILE);
+    }
+
+    @Test
+    void addNullExcludedCollectionTest() {
+        ExclusionProcessor underTest = new ExclusionProcessor();
+        assertThat(underTest.getExcludedCollections()).isEmpty();
+        underTest.addExcludedCollection(null);
+        assertThat(underTest.getExcludedCollections()).isEmpty();
+        underTest.addExcludedCollection(StandardCollection.HIDDEN_FILE)
+                .addExcludedCollection(null);
+        assertThat(underTest.getExcludedCollections()).containsExactly(StandardCollection.HIDDEN_FILE);
+    }
+
+    @Test
     void addNullExcludedPatternTest() {
         ExclusionProcessor underTest = new ExclusionProcessor();
         assertThat(underTest.getExcludedPatterns()).isEmpty();

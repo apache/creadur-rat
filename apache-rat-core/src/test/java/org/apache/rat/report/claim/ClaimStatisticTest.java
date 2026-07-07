@@ -32,23 +32,27 @@ public class ClaimStatisticTest {
     @Test
     void counterTests() {
         ClaimStatistic underTest = new ClaimStatistic();
-        assertThat(underTest.getCounter(ClaimStatistic.Counter.APPROVED)).isZero();
-        underTest.incCounter(ClaimStatistic.Counter.APPROVED, 1);
-        assertThat(underTest.getCounter(ClaimStatistic.Counter.APPROVED)).isEqualTo(1);
-        underTest.incCounter(ClaimStatistic.Counter.APPROVED, -2);
-        assertThat(underTest.getCounter(ClaimStatistic.Counter.APPROVED)).isEqualTo(-1);
-        underTest.setCounter(ClaimStatistic.Counter.APPROVED, Integer.MAX_VALUE);
-        assertThat(underTest.getCounter(ClaimStatistic.Counter.APPROVED)).isEqualTo(Integer.MAX_VALUE);
+        for (ClaimStatistic.Counter counter : ClaimStatistic.Counter.values()) {
+            assertThat(underTest.getCounter(counter)).isZero();
+            underTest.incCounter(counter, 1);
+            assertThat(underTest.getCounter(counter)).isEqualTo(1);
+            underTest.incCounter(counter, -2);
+            assertThat(underTest.getCounter(counter)).isEqualTo(-1);
+            underTest.setCounter(counter, Integer.MAX_VALUE);
+            assertThat(underTest.getCounter(counter)).isEqualTo(Integer.MAX_VALUE);
+        }
     }
 
     @Test
     void typeTests() {
         ClaimStatistic underTest = new ClaimStatistic();
-        assertThat(underTest.getCounter(Document.Type.NOTICE)).isZero();
-        underTest.incCounter(Document.Type.NOTICE, 1);
-        assertThat(underTest.getCounter(Document.Type.NOTICE)).isEqualTo(1);
-        underTest.incCounter(Document.Type.NOTICE, -2);
-        assertThat(underTest.getCounter(Document.Type.NOTICE)).isEqualTo(-1);
+        for (Document.Type docType : Document.Type.values()) {
+            assertThat(underTest.getCounter(docType)).isZero();
+            underTest.incCounter(docType, 1);
+            assertThat(underTest.getCounter(docType)).isEqualTo(1);
+            underTest.incCounter(docType, -2);
+            assertThat(underTest.getCounter(docType)).isEqualTo(-1);
+        }
     }
 
     @Test
