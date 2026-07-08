@@ -25,8 +25,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Objects;
 
-import org.apache.commons.io.function.IOSupplier;
 import org.apache.rat.ConfigurationException;
+import org.apache.rat.ReportConfiguration;
 
 import static java.lang.String.format;
 
@@ -39,19 +39,20 @@ public enum StyleSheets {
      */
     PLAIN("plain-rat", "The default style."),
     /**
-     * The missing header report style sheet
+     * The missing header report style sheet.
      */
     MISSING_HEADERS("missing-headers", "Produces a report of files that are missing headers."),
     /**
-     * The unapproved licenses report
+     * The unapproved licenses report.
      */
     UNAPPROVED_LICENSES("unapproved-licenses", "Produces a report of the files with unapproved licenses."),
     /**
-     * The plain style sheet. The current default.
+     * The pretty-printed XML style sheet.
      */
     XML("xml", "Produces output in pretty-printed XML.");
+
     /**
-     * The name of the style sheet. Must map to bundled resource xslt file
+     * The name of the style sheet. Must map to bundled resource XSLT file
      */
     private final String name;
     /**
@@ -61,8 +62,8 @@ public enum StyleSheets {
 
     /**
      * Constructor.
-     * @param name the name of the xslt file.
-     * @param description What this xslt produces.
+     * @param name the name of the XSLT file.
+     * @param description what this XSLT produces.
      */
     StyleSheets(final String name, final String description) {
         this.name = name;
@@ -73,9 +74,10 @@ public enum StyleSheets {
      * Gets the IOSupplier for a style sheet.
      * @return an IOSupplier for the sheet.
      */
-    public IOSupplier<InputStream> getStyleSheet() {
-        return Objects.requireNonNull(StyleSheets.class.getClassLoader().getResource(format("org/apache/rat/%s.xsl", name)),
-                "missing stylesheet: " + name)::openStream;
+    public ReportConfiguration.IODescriptor<InputStream> getStyleSheet() {
+        URL url = StyleSheets.class.getClassLoader().getResource(format("org/apache/rat/%s.xsl", name));
+        Objects.requireNonNull(url, "missing stylesheet: " + name);
+        return new ReportConfiguration.IODescriptor<>(name, url::openStream);
     }
 
     /**
@@ -83,29 +85,29 @@ public enum StyleSheets {
      * @param name the short name for or the path to a style sheet.
      * @return the IOSupplier for the style sheet.
      */
-    public static IOSupplier<InputStream> getStyleSheet(final String name) {
+    public static ReportConfiguration.IODescriptor<InputStream> getStyleSheet(final String name) {
         URL url = StyleSheets.class.getClassLoader().getResource(format("org/apache/rat/%s.xsl", name));
         if (url != null) {
-            return url::openStream;
+            return new ReportConfiguration.IODescriptor<>(name, url::openStream);
         }
         Path p = Paths.get(name);
         if (p.toFile().exists()) {
-            return () -> Files.newInputStream(p);
+            return new ReportConfiguration.IODescriptor<>(name, () -> Files.newInputStream(p));
         }
         throw new ConfigurationException(format("Stylesheet file '%s' not found", name));
     }
 
     /**
-     * Gets the name of the xslt file.
-     * @return the name of the xslt file, without the extension.
+     * Gets the name of the XSLT file.
+     * @return the name of the XSLT file, without the extension.
      */
     public String arg() {
         return name;
     }
 
     /**
-     * Gets the description of the xslt file.
-     * @return the description of the xslt file.
+     * Gets the description of the XSLT file.
+     * @return the description of the XSLT file.
      */
     public String desc() {
         return desc;

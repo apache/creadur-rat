@@ -234,7 +234,7 @@ public class RatCheckMojo extends AbstractRatMojo {
                        !config.getClaimValidator().isValid(ClaimStatistic.Counter.UNAPPROVED, statistics.getCounter(ClaimStatistic.Counter.UNAPPROVED))) {
                    try {
                        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                       reporter.output(StyleSheets.UNAPPROVED_LICENSES.getStyleSheet(), () -> baos);
+                       reporter.output(StyleSheets.UNAPPROVED_LICENSES.getStyleSheet().ioSupplier(), () -> baos);
                        getLog().warn(baos.toString(StandardCharsets.UTF_8));
                    } catch (RuntimeException rte) {
                        throw rte;

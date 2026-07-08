@@ -90,7 +90,6 @@ public class RatReportMojo extends AbstractRatMojo implements MavenMultiPageRepo
     @Parameter(property = "outputEncoding", defaultValue = "${project.reporting.outputEncoding}", readonly = true)
     private String outputEncoding;
 
-
     /**
      * The local repository.
      */
@@ -153,9 +152,7 @@ public class RatReportMojo extends AbstractRatMojo implements MavenMultiPageRepo
         }
 
         File outputDirectory = new File(getOutputDirectory());
-
         String filename = getOutputName() + ".html";
-
         Locale locale = Locale.getDefault();
 
         try {
@@ -182,7 +179,6 @@ public class RatReportMojo extends AbstractRatMojo implements MavenMultiPageRepo
                     // render report
                     getSiteRenderer().mergeDocumentIntoSite(writer, sink, siteContext);
                 }
-
             }
 
             // copy generated resources also
@@ -264,7 +260,6 @@ public class RatReportMojo extends AbstractRatMojo implements MavenMultiPageRepo
             this.sinkFactory = sinkFactory;
 
             if (!(sink instanceof SiteRendererSink)) {
-
                 generateReportManually(locale);
             } else {
                 executeReport(locale);
@@ -446,7 +441,7 @@ public class RatReportMojo extends AbstractRatMojo implements MavenMultiPageRepo
                     config.reportExclusions(logWriter);
                 }
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                config.setOut(() -> baos);
+                config.setOut(new ReportConfiguration.IODescriptor("RAT output", () -> baos));
                 Reporter reporter = new Reporter(config);
                 reporter.output();
                 if (verbose) {

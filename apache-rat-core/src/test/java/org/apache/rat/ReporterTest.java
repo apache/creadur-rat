@@ -81,7 +81,7 @@ public class ReporterTest {
     }
 
     @Test
-    public void testExecute() throws RatException, ParseException {
+    void testExecute() throws RatException, ParseException {
         File output = new File(tempDirectory, "testExecute");
 
         CommandLine cl = new DefaultParser().parse(OptionCollection.buildOptions(), new String[]{"--output-style", "xml", "--output-file", output.getPath(), basedir});
@@ -136,7 +136,7 @@ public class ReporterTest {
     }
 
     @Test
-    public void testOutputOption() throws Exception {
+    void testOutputOption() throws Exception {
         File output = new File(tempDirectory, "test");
         CommandLine commandLine = new DefaultParser().parse(OptionCollection.buildOptions(), new String[]{"-o", output.getCanonicalPath(), basedir});
         ArgumentContext ctxt = new ArgumentContext(new File("."), commandLine);
@@ -151,7 +151,7 @@ public class ReporterTest {
     }
 
     @Test
-    public void testDefaultOutput() throws Exception {
+    void testDefaultOutput() throws Exception {
         File output = new File(tempDirectory, "testDefaultOutput");
 
         PrintStream origin = System.out;
@@ -179,7 +179,7 @@ public class ReporterTest {
     }
 
     @Test
-    public void testXMLOutput() throws Exception {
+    void testXMLOutput() throws Exception {
         Map<String, Map<String, String>> expected = new HashMap<>();
         expected.put("/.hiddenDirectory", mapOf("isDirectory", "true", "mediaType", "application/octet-stream",
                 "type", "IGNORED"));
@@ -404,12 +404,12 @@ public class ReporterTest {
     }
 
     @Test
-    public void xmlReportTest() throws Exception {
+    void xmlReportTest() throws Exception {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
 
         ReportConfiguration configuration = initializeConfiguration();
         configuration.setStyleSheet(StyleSheets.XML.getStyleSheet());
-        configuration.setOut(() -> out);
+        configuration.setOut(new ReportConfiguration.IODescriptor("xmlReportTest", () -> out));
         new Reporter(configuration).output();
         Document doc = XmlUtils.toDom(new ByteArrayInputStream(out.toByteArray()));
 
@@ -448,7 +448,7 @@ public class ReporterTest {
     }
 
     @Test
-    public void plainReportTest() throws Exception {
+    void plainReportTest() throws Exception {
         final String NL = System.lineSeparator();
         final String SEPARATOR = "*****************************************************";
         final String HEADER = SEPARATOR + NL + //
@@ -457,7 +457,7 @@ public class ReporterTest {
                 "Generated at: ";
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         ReportConfiguration configuration = initializeConfiguration();
-        configuration.setOut(() -> out);
+        configuration.setOut(new ReportConfiguration.IODescriptor("plainReportTest", () -> out));
         new Reporter(configuration).output();
 
         out.flush();
@@ -470,10 +470,10 @@ public class ReporterTest {
     }
 
     @Test
-    public void unapprovedLicensesReportTest() throws Exception {
+    void unapprovedLicensesReportTest() throws Exception {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         ReportConfiguration configuration = initializeConfiguration();
-        configuration.setOut(() -> out);
+        configuration.setOut(new ReportConfiguration.IODescriptor("unapprovedLicensesReportTest", () -> out));
         configuration.setStyleSheet(this.getClass().getResource("/org/apache/rat/unapproved-licenses.xsl"));
         new Reporter(configuration).output();
 
@@ -489,7 +489,7 @@ public class ReporterTest {
     void listLicensesReportTest() throws Exception {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         ReportConfiguration configuration = initializeConfiguration();
-        configuration.setOut(() -> out);
+        configuration.setOut(new ReportConfiguration.IODescriptor("listLicensesReportTest", () -> out));
         configuration.setStyleSheet(StyleSheets.UNAPPROVED_LICENSES.getStyleSheet());
         Reporter.listLicenses(configuration, LicenseSetFactory.LicenseFilter.NONE);
 
