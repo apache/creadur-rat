@@ -126,7 +126,7 @@ git clone https://gitbox.apache.org/repos/asf/creadur-rat.git
 
 ** Building RAT
 
- Build RAT with {{{https://maven.apache.org/}Apache Maven}} preferably version ${mavenVersion} or later.
+ Build RAT with {{{https://maven.apache.org/}Apache Maven}} preferably version ${minimalMavenBuildVersion} or later.
 
  RAT requires Java 17, but due to an existing JDK-error ({{{https://issues.apache.org/jira/browse/RAT-497}RAT-497}}) Javadoc cannot be generated with Java 17, use Java 21 instead.
 

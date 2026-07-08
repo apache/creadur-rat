@@ -24,11 +24,6 @@
   </parent>
   <artifactId>apache-rat-testdata</artifactId>
   <name>Apache Creadur RAT::Testdata</name>
-  <properties>
-    <maven.compiler.source>${javaVersion}</maven.compiler.source>
-    <maven.compiler.target>${javaVersion}</maven.compiler.target>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-  </properties>
   <build>
     <pluginManagement>
       <plugins>
