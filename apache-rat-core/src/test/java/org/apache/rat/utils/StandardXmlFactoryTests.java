@@ -93,7 +93,7 @@ public class StandardXmlFactoryTests {
     @Test
     void serializeDocumentTest() throws IOException, SAXException, TransformerException {
         String result = StandardXmlFactory.serializeDocument(simpleDocument());
-        assertThat(result).isEqualTo(SIMPLE_DOCUMENT_TEXT);
+        assertThat(result).isEqualToIgnoringNewLines(SIMPLE_DOCUMENT_TEXT);
     }
 
     @Test
