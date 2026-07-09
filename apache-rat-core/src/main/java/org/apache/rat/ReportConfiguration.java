@@ -41,9 +41,6 @@ import java.util.SortedSet;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 
-import javax.xml.parsers.DocumentBuilder;
-
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.apache.commons.collections4.set.UnmodifiableSortedSet;
 import org.apache.commons.io.function.IOSupplier;
 import org.apache.commons.io.output.CloseShieldOutputStream;
@@ -77,6 +74,7 @@ import org.apache.rat.walker.ReportableListWalker;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
  * A configuration object is used by the front end to invoke the
