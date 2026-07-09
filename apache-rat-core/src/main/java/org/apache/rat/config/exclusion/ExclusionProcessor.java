@@ -475,6 +475,9 @@ public class ExclusionProcessor {
 
                     case "fileProcessor" ->
                         fileProcessors.add(StandardCollection.valueOf(attributes.get(NAME)));
+
+                    default ->
+                        DefaultLog.getInstance().error(String.format("Unknown child node '%s'", child.getNodeName()));
                 }
             }
         }

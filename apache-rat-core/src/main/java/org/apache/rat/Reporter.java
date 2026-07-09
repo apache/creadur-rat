@@ -264,10 +264,9 @@ public class Reporter {
             }
 
             public Builder document(final String fileName, final DocumentName workingDirectory) {
-                DocumentBuilder builder = StandardXmlFactory.documentBuilder();
                 File inputFile = workingDirectory.resolve(fileName).asFile();
                 try (InputStream inputStream = new FileInputStream(inputFile)) {
-                    this.document = builder.parse(inputStream);
+                    this.document = StandardXmlFactory.documentBuilder().parse(inputStream);
                 } catch (SAXException | IOException e) {
                     throw new ConfigurationException("Unable to read file: " + inputFile, e);
                 }

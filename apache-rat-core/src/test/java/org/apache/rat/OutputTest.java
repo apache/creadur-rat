@@ -96,7 +96,7 @@ class OutputTest {
     }
 
     @Test
-    void stasticReadingTest() throws IOException {
+    void statisticReadingTest() throws IOException {
         Path testPath = tempPath.resolve("statisticReading");
         File testFile = testPath.toFile();
         FileUtils.mkDir(testFile);
@@ -104,7 +104,7 @@ class OutputTest {
         DocumentName documentFile = workingDirectory.resolve("statistic.xml");
 
         ClaimStatistic underTest = new ClaimStatistic();
-        underTest.incLicenseCategoryCount("familyCagegory", 1);
+        underTest.incLicenseCategoryCount("familyCategory", 1);
         underTest.incCounter(ClaimStatistic.Counter.APPROVED, 2);
         underTest.incCounter(org.apache.rat.api.Document.Type.IGNORED, 3);
         underTest.incLicenseNameCount("licenseName", 4);
@@ -123,37 +123,25 @@ class OutputTest {
     }
 
     @Test
-    void readingBadFileTestTest() throws IOException, URISyntaxException, SAXException {
-        Path testPath = tempPath.resolve("stasticReadingBadFileTest");
-        File testFile = testPath.toFile();
-        FileUtils.mkDir(testFile);
-        DocumentName workingDirectory = DocumentName.builder(testPath.toFile()).setBaseName(testFile).build();
-        DocumentName documentFile = workingDirectory.resolve("statistic.xml");
-        Reporter.Output.Builder builder = Reporter.Output.builder();
-        assertThatThrownBy(() -> builder.statistic(documentFile.getName(), workingDirectory))
-                .isInstanceOf(ConfigurationException.class)
-                .hasMessageContaining("Unable to read file: " + testPath.resolve("statistic.xml"));
-    }
-
-    @Test
-    void ReadingBadFileTest() throws IOException, URISyntaxException, SAXException {
-        Path testPath = tempPath.resolve("stasticReadingBadFileTest");
+    void ReadingBadFileTest() {
+        Path testPath = tempPath.resolve("readingBadFileTest");
         File testFile = testPath.toFile();
         FileUtils.mkDir(testFile);
         DocumentName workingDirectory = DocumentName.builder(testPath.toFile()).setBaseName(testFile).build();
         DocumentName documentFile = workingDirectory.resolve("missing.file");
+        String name = documentFile.getName();
         Reporter.Output.Builder builder = Reporter.Output.builder();
-        assertThatThrownBy(() -> builder.configuration(documentFile.getName(), workingDirectory))
+        assertThatThrownBy(() -> builder.statistic(name, workingDirectory))
                 .as("statistic read")
                 .isInstanceOf(ConfigurationException.class)
                 .hasMessageContaining("Unable to read file: " + testPath.resolve("missing.file"));
 
-        assertThatThrownBy(() -> builder.configuration(documentFile.getName(), workingDirectory))
+        assertThatThrownBy(() -> builder.configuration(name, workingDirectory))
                 .as("configuration read")
                 .isInstanceOf(ConfigurationException.class)
                 .hasMessageContaining("Unable to read file: " + testPath.resolve("missing.file"));
 
-        assertThatThrownBy(() -> builder.document(documentFile.getName(), workingDirectory))
+        assertThatThrownBy(() -> builder.document(name, workingDirectory))
                 .as("document read")
                 .isInstanceOf(ConfigurationException.class)
                 .hasMessageContaining("Unable to read file: " + testPath.resolve("missing.file"));
@@ -243,7 +231,7 @@ class OutputTest {
     }
 
     @Test
-    void formatTest() throws URISyntaxException, IOException, SAXException {
+    void formatTest() throws IOException, SAXException {
         Reporter.Output output = Reporter.Output.builder()
                 .statistic(new ClaimStatistic())
                 .document(StandardXmlFactoryTests.simpleDocument())

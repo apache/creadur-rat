@@ -43,6 +43,7 @@ import java.util.stream.Stream;
 
 import javax.xml.parsers.DocumentBuilder;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.apache.commons.collections4.set.UnmodifiableSortedSet;
 import org.apache.commons.io.function.IOSupplier;
 import org.apache.commons.io.output.CloseShieldOutputStream;
@@ -954,6 +955,7 @@ public class ReportConfiguration {
      * Deserialized ReportConfigurations can not be executed as the reportable objects a simply named placeholders
      * and do not have access to the original object.
      */
+    @SuppressFBWarnings("EI_EXPOSE_REP2")
     public class Serde {
         /**
          * Writes the configuration as an XML document to the appendable.
@@ -1006,10 +1008,9 @@ public class ReportConfiguration {
         }
 
         public void deserialize(final IOSupplier<InputStream> inputStreamSupplier, final DocumentName workingDirectory) throws IOException {
-            DocumentBuilder builder = StandardXmlFactory.documentBuilder();
             org.w3c.dom.Document document;
             try (InputStream stream = inputStreamSupplier.get()) {
-                document = builder.parse(stream);
+                document = StandardXmlFactory.documentBuilder().parse(stream);
             } catch (SAXException e) {
                 throw new IOException("Unable to read input", e);
             }

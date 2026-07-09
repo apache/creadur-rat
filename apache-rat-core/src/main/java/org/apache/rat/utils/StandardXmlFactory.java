@@ -23,6 +23,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
+import java.nio.charset.StandardCharsets;
 
 import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
@@ -37,6 +38,7 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.apache.commons.lang3.StringUtils;
 import org.w3c.dom.Document;
 
@@ -72,6 +74,7 @@ public final class StandardXmlFactory {
      * @return the transformer.
      * @throws TransformerConfigurationException on error.
      */
+    @SuppressFBWarnings("MALICIOUS_XSLT")
     public static Transformer createTransformer(final InputStream styleIn) throws TransformerConfigurationException {
         TransformerFactory factory = TransformerFactory.newInstance(); // NOSONAR
         factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
@@ -112,7 +115,7 @@ public final class StandardXmlFactory {
      */
     public static void writeDocument(final Document document, final File file) throws IOException, TransformerException {
         DOMSource source = new DOMSource(document);
-        FileWriter writer = new FileWriter(file);
+        FileWriter writer = new FileWriter(file, StandardCharsets.UTF_8);
         StreamResult result = new StreamResult(writer);
         createTransformer().transform(source, result);
     }
