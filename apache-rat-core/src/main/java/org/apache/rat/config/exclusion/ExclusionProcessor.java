@@ -87,7 +87,6 @@ public class ExclusionProcessor {
     }
 
     /* the following set of methods are here for testing purposes */
-
     Set<String> getExcludedPatterns() {
         return new HashSet<>(excludedPatterns);
     }
@@ -125,7 +124,7 @@ public class ExclusionProcessor {
     }
 
     /**
-     * Reset the {@link #lastMatcher} and {@link #lastMatcherBaseDir} to start again
+     * Reset the {@link #lastMatcher} and {@link #lastMatcherBaseDir} to start again.
      */
     private void resetLastMatcher() {
         lastMatcher = null;
@@ -133,8 +132,8 @@ public class ExclusionProcessor {
     }
 
     /**
-     * Add the Iterable of strings to the collection of file/directory patters to ignore.
-     * @param patterns the patterns to add
+     * Add the iterable of strings to the collection of file/directory patters to ignore.
+     * @param patterns the patterns to add.
      * @return this
      */
     public ExclusionProcessor addIncludedPatterns(final Iterable<String> patterns) {
@@ -235,7 +234,7 @@ public class ExclusionProcessor {
         }
         for (DocumentNameMatcher nameMatcher : includedPaths) {
             appendable.append(format("Including %s.%n", nameMatcher.toString()));
-    }
+        }
     }
 
     /**
@@ -396,7 +395,7 @@ public class ExclusionProcessor {
     }
 
     /**
-     * Serializes and deserializes the ExclusionProcessor to XML document
+     * Serializes and deserializes the ExclusionProcessor to an XML document.
      */
     public class Serde {
         /** The pattern attribute name */
@@ -436,11 +435,10 @@ public class ExclusionProcessor {
                 writer.startElement("fileProcessor").attribute(NAME, obj.name()).closeElement();
             }
             writer.closeElement();
-
         }
 
         /**
-         * Deserialize from XML Document node to ExclusionProcessor
+         * Deserialize from XML Document node to ExclusionProcessor.
          * @param xmlNode the node to deserialize from.
          */
         public void deserialize(final Node xmlNode) {
@@ -458,7 +456,7 @@ public class ExclusionProcessor {
                     case "excludedPath" ->
                         excludedPaths.add(new DocumentNameMatcher(attributes.get(NAME),
                                 (Predicate<DocumentName>) x -> {
-                                    throw new NotImplementedException("Deserialized ExclusionProcessor can not evaluate paths");
+                                    throw new NotImplementedException("Deserialized ExclusionProcessor can not evaluate excluded paths");
                                 }));
 
                     case "includedPattern" ->
@@ -470,7 +468,7 @@ public class ExclusionProcessor {
                     case "includedPath" ->
                         includedPaths.add(new DocumentNameMatcher(attributes.get(NAME),
                                 (Predicate<DocumentName>) x -> {
-                                    throw new NotImplementedException("Deserialized ExclusionProcessor can not evaluate paths");
+                                    throw new NotImplementedException("Deserialized ExclusionProcessor can not evaluate included paths");
                                 }));
 
                     case "fileProcessor" ->

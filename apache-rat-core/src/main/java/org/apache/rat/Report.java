@@ -66,7 +66,7 @@ public final class Report {
 
     /**
      * Prints the usage message on {@code System.out}.
-     * @param opts The defined options.
+     * @param opts the defined options.
      */
     private static void printUsage(final Options opts) {
         new Help(System.out).printUsage(opts);

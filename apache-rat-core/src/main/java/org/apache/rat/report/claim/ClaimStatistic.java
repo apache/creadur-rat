@@ -127,7 +127,7 @@ public class ClaimStatistic {
         return new Serde();
     }
     /**
-     * Converts null counter to 0.
+     * Converts {@code null} counter to 0.
      *
      * @param counter the Counter to retrieve the value from.
      * @return 0 if counter is {@code null} or counter value otherwise.
@@ -218,10 +218,10 @@ public class ClaimStatistic {
     }
 
     /**
-     * Updates the intCounter with the value and if the intCounter was null creates a new one and registers the
+     * Updates the intCounter with the value and if the intCounter was {@code null} creates a new one and registers the
      * creation as a counter type.
      * @param counter the Type of the counter.
-     * @param intCounter the IntCounter to update. May be null.
+     * @param intCounter the IntCounter to update. May be {@code null}.
      * @param value the value to add to the int counter.
      * @return the intCounter if it was not {@code null}, a new IntCounter otherwise.
      */
@@ -306,17 +306,17 @@ public class ClaimStatistic {
     }
 
     /**
-     * Serialze and deserialze the claim Statistic.
+     * Serialize and deserialize the claim Statistic.
      */
     public class Serde {
-        /** The count attribute string */
+        /** The count attribute string. */
         private static final String COUNT = "count";
-        /** the name attribute string */
+        /** The name attribute string. */
         private static final String NAME = "name";
 
         /**
          * Serializes the claim statistic into an appendable.
-         * @param appendable the appendable to write to
+         * @param appendable the appendable to write to.
          * @throws IOException on error.
          */
         public void serialize(final Appendable appendable) throws IOException {
@@ -369,9 +369,9 @@ public class ClaimStatistic {
         public void deserialize(final IOSupplier<InputStream> inputStreamSupplier) throws IOException {
             DocumentBuilder builder = StandardXmlFactory.documentBuilder();
             org.w3c.dom.Document document;
+
             try (InputStream stream = inputStreamSupplier.get()) {
                 document = builder.parse(stream);
-
             } catch (SAXException e) {
                 throw new IOException("Unable to read input", e);
             }

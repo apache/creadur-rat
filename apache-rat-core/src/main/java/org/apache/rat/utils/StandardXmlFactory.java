@@ -111,7 +111,7 @@ public final class StandardXmlFactory {
 
     /**
      * Write an XML document to a file.
-     * @param document the document to write
+     * @param document the document to write.
      * @param file the file to write to.
      */
     public static void writeDocument(final Document document, final File file) throws IOException, TransformerException {

@@ -100,7 +100,7 @@ public class ReportConfiguration {
         ABSENCE("List licenses found and any unknown licences");
 
         /**
-         * Description of the processing
+         * Description of the processing.
          */
         private final String description;
 
@@ -124,19 +124,23 @@ public class ReportConfiguration {
      * {@code true} if we are adding license headers to the files.
      */
     private boolean addingLicenses;
+
     /**
      * {@code true} if we are adding license headers in place (no *.new files)
      */
     private boolean addingLicensesForced;
+
     /**
      * The copyright message to add if we are adding headers. Will be {@code null}
      * if we are not adding copyright messages.
      */
     private String copyrightMessage;
+
     /**
      * The IODescriptor that provides the output stream to write the report to.
      */
     private IODescriptor<OutputStream> out;
+
     /**
      * The IODescriptor that provides the stylesheet to style the XML output.
      */
@@ -161,22 +165,27 @@ public class ReportConfiguration {
      * The default filter for displaying families.
      */
     private LicenseFilter listFamilies;
+
     /**
      * The default filter for displaying licenses.
      */
     private LicenseFilter listLicenses;
+
     /**
      * {@code true} if this is a dry run and no processing is to take place.
      */
     private boolean dryRun;
+
     /**
      * How to process ARCHIVE document types.
      */
     private Processing archiveProcessing;
+
     /**
      * How to process STANDARD document types.
      */
     private Processing standardProcessing;
+
     /**
      * The ClaimValidator to validate min/max counts and similar claims.
      */
@@ -279,7 +288,7 @@ public class ReportConfiguration {
 
     /**
      * Retrieves the archive processing type.
-     * @return The archive processing type.
+     * @return the archive processing type.
      */
     public Processing getArchiveProcessing() {
         return archiveProcessing == null ? Defaults.ARCHIVE_PROCESSING : archiveProcessing;
@@ -294,16 +303,16 @@ public class ReportConfiguration {
     }
 
     /**
-     * Retrieves the archive processing type.
-     * @return The archive processing type.
+     * Retrieves the standard processing type.
+     * @return the standard processing type.
      */
     public Processing getStandardProcessing() {
         return standardProcessing == null ? Defaults.STANDARD_PROCESSING : standardProcessing;
     }
 
     /**
-     * Sets the archive processing type. If not set will default to NOTIFICATION.
-     * @param standardProcessing the type of processing archives should have.
+     * Sets the standard processing type. If not set will default to NOTIFICATION.
+     * @param standardProcessing the type of processing standard files should have.
      */
     public void setStandardProcessing(final Processing standardProcessing) {
         this.standardProcessing = standardProcessing;
@@ -312,7 +321,7 @@ public class ReportConfiguration {
     /**
      * Set the log level for reporting collisions in the set of license families.
      * <p>NOTE: should be set before licenses or license families are added.</p>
-     * @param level The log level to use.
+     * @param level the log level to use.
      */
     public void logFamilyCollisions(final Level level) {
         licenseSetFactory.logFamilyCollisions(level);
@@ -320,7 +329,7 @@ public class ReportConfiguration {
 
     /**
      * Sets the reporting option for duplicate license families.
-     * @param state The ReportingSet.Option to use for reporting.
+     * @param state the ReportingSet.Option to use for reporting.
      */
     public void familyDuplicateOption(final ReportingSet.Options state) {
         licenseSetFactory.familyDuplicateOption(state);
@@ -328,7 +337,7 @@ public class ReportConfiguration {
 
     /**
      * Sets the log level for reporting license collisions.
-     * @param level The log level.
+     * @param level the log level.
      */
     public void logLicenseCollisions(final Level level) {
         licenseSetFactory.logLicenseCollisions(level);
@@ -336,7 +345,7 @@ public class ReportConfiguration {
 
     /**
      * Sets the reporting option for duplicate licenses.
-     * @param state the ReportingSt.Option to use for reporting.
+     * @param state the ReportingSet.Option to use for reporting.
      */
     public void licenseDuplicateOption(final ReportingSet.Options state) {
         licenseSetFactory.licenseDuplicateOption(state);
@@ -563,7 +572,7 @@ public class ReportConfiguration {
      * appended to and that can be closed. If an {@code OutputStream} should not be
      * closed consider wrapping it in a {@code CloseShieldOutputStream}
      * @param out the OutputStream supplier that provides the output stream to write
-     * the report to. A null value will use System.out.
+     * the report to. A {@code null} value will use {@code System.out}.
      * @see CloseShieldOutputStream
      */
     public void setOut(final IODescriptor<OutputStream> out) {
@@ -586,6 +595,7 @@ public class ReportConfiguration {
                 DefaultLog.getInstance().warn("Unable to delete file: " + file);
             }
         }
+
         File parent = file.getParentFile();
         if (!parent.mkdirs() && !parent.isDirectory()) {
             DefaultLog.getInstance().warn("Unable to create directory: " + file.getParentFile());
@@ -685,7 +695,7 @@ public class ReportConfiguration {
     }
 
     /**
-     * Adds a license family category (id) to the list of approved licenses
+     * Adds a license family category (id) to the list of approved licenses.
      * @param familyCategory the category to add.
      */
     public void addApprovedLicenseCategory(final String familyCategory) {
@@ -867,8 +877,8 @@ public class ReportConfiguration {
      * <li>{@code approved} - Only approved license families will be returned.</li>
      * <li>{@code none} - No license families will be returned.</li>
      * </ul>
-     * @param filter The license filter.
-     * @return The set of defined licenses.
+     * @param filter the license filter.
+     * @return the set of defined licenses.
      */
     public SortedSet<ILicenseFamily> getLicenseFamilies(final LicenseFilter filter) {
         return licenseSetFactory.getLicenseFamilies(filter);
@@ -911,7 +921,7 @@ public class ReportConfiguration {
     /**
      * An IODescriptor comprises a name and an IOSupplier. The name should identify the contents of the stream.
      * @param name the name of the supplier.
-     * @param ioSupplier the IOSupplier that provides either an InputStream or an OutputStream
+     * @param ioSupplier the IOSupplier that provides either an InputStream or an OutputStream.
      * @param <T> either InputStream or OutputStream.
      */
     public record IODescriptor<T>(String name, IOSupplier<T> ioSupplier) {
@@ -949,8 +959,8 @@ public class ReportConfiguration {
     }
 
     /**
-     * Serializes the ReportConfiguration into an XML document that can be deserialzed by the Serde.
-     * Deserialized ReportConfigurations can not be executed as the reportable objects a simply named placeholders
+     * Serializes the ReportConfiguration into an XML document that can be deserialized by the Serde.
+     * Deserialized ReportConfigurations can not be executed as the reportable objects use named placeholders
      * and do not have access to the original object.
      */
     @SuppressFBWarnings("EI_EXPOSE_REP2")
@@ -1065,7 +1075,7 @@ public class ReportConfiguration {
     }
 
     /**
-     * A record that identifies a deserialized reportable.  Deserialized reportables are not executable.
+     * A record that identifies a deserialized reportable. Deserialized reportables are not executable.
      * @param name the name of the reportable.
      */
     private record DeserializedReportable(DocumentName name) implements Reportable {

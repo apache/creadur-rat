@@ -57,7 +57,7 @@ public class Reporter {
     private static final String LICENSE_FORMAT = "%s:\t%s%n\t\t%s%n";
 
     /**
-     * The configuration for the report
+     * The configuration for the report.
      */
     private final ReportConfiguration configuration;
 
@@ -122,7 +122,7 @@ public class Reporter {
      */
     public static final class Output {
         /**
-         * The XML output document
+         * The XML output document.
          */
         private final Document document;
         /**
@@ -131,7 +131,7 @@ public class Reporter {
          */
         private final ClaimStatistic statistic;
         /**
-         * The configuration that generated the document
+         * The configuration that generated the document.
          */
         private final ReportConfiguration configuration;
 
@@ -175,7 +175,7 @@ public class Reporter {
         /**
          * Formats the report to the output and using the stylesheet found in the report configuration.
          *
-         * @param config s RAT report configuration.
+         * @param config the RAT report configuration.
          * @throws RatException on error.
          */
         public void format(final ReportConfiguration config) throws RatException {
@@ -187,11 +187,10 @@ public class Reporter {
          * in order to generate multiple reports from the same run.
          *
          * @param stylesheet the style sheet to use for XSLT formatting.
-         * @param output     the output stream to write to.
+         * @param output the output stream to write to.
          * @throws RatException on error.
          */
         public void format(final IOSupplier<InputStream> stylesheet, final IOSupplier<OutputStream> output) throws RatException {
-
             try (OutputStream out = output.get();
                  InputStream styleIn = stylesheet.get()) {
                 StandardXmlFactory.createTransformer(styleIn).transform(new DOMSource(document),
@@ -204,8 +203,8 @@ public class Reporter {
         /**
          * Lists the licenses on the print writer.
          *
-         * @param printWriter The print writer to write to.
-         * @param filter        the license filter that specifies which licenses to output.
+         * @param printWriter the print writer to write to.
+         * @param filter the license filter that specifies which licenses to output.
          */
         public void listLicenses(final PrintWriter printWriter, final LicenseFilter filter) {
             printWriter.format("Licenses (%s):%n", filter);
@@ -218,7 +217,7 @@ public class Reporter {
         /**
          * Lists the licenses on the output specified in the configuration.
          *
-         * @param filter        the license filter that specifies which licenses to output.
+         * @param filter the license filter that specifies which licenses to output.
          * @throws IOException if PrintWriter can not be retrieved from configuration.
          */
         public void listLicenses(final LicenseFilter filter) throws IOException {
@@ -244,7 +243,7 @@ public class Reporter {
 
         public static final class Builder {
             /**
-             * The document that was generated
+             * The document that was generated.
              */
             private Document document;
             /**

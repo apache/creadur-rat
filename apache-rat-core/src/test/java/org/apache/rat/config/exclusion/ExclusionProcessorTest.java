@@ -368,7 +368,7 @@ public class ExclusionProcessorTest {
         assertThat(actual.getExcludedPatterns()).containsExactlyElementsOf(expected.getExcludedPatterns());
         assertThat(actual.getIncludedPatterns()).containsExactlyElementsOf(expected.getIncludedPatterns());
 
-        // paths only match on name.  deserialized paths are not functional.
+        // Paths only match on name. Deserialized paths are not functional.
         List<String> actualPaths = actual.getExcludedPaths().stream().map(DocumentNameMatcher::toString).toList();
         List<String> expectedPaths = expected.getExcludedPaths().stream().map(DocumentNameMatcher::toString).toList();
         assertThat(actualPaths).as("excluded paths").containsExactlyElementsOf(expectedPaths);
@@ -401,7 +401,6 @@ public class ExclusionProcessorTest {
 
         tests.add(new ExclusionProcessor()
        .addExcludedCollection(StandardCollection.BAZAAR));
-
 
         tests.add(new ExclusionProcessor()
         .addExcludedMatcher(DocumentNameMatcher.MATCHES_ALL));
