@@ -68,6 +68,9 @@ in order to be properly linked in site reports.
     </release>
     -->
     <release version="1.0.0-SNAPSHOT" date="xxxx-yy-zz" description="Current SNAPSHOT - release to be done">
+      <action issue="RAT-570" type="add" dev="claudenw">
+        Internal change: Introduced a Reporter.Output class that encapsulates the execution configuration, the generated XML document, and the ClaimStatistic containing counts for file types, licenses, license categories, and other all of RAT run statistics.
+      </action>
       <action issue="RAT-568" type="add" dev="claudenw">
         Internal change to prepare a better UI testing: create and utilize an IODescriptor that will have a name associated with the current IOSupplier that is in use.
       </action>
