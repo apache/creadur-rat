@@ -110,11 +110,10 @@ public class ClaimStatisticTest {
 
     /**
      * Compares two claim statistics for similarity after serialization/deserialization.
-     * @param actual the deserialized verison.
+     * @param actual the deserialized version.
      * @param expected the original version.
      */
     public static void assertSame(final ClaimStatistic actual, final ClaimStatistic expected) {
-
         assertThat(actual.getLicenseFamilyCategories()).containsExactlyElementsOf(expected.getLicenseFamilyCategories());
         assertThat(actual.getLicenseNames()).containsExactlyElementsOf(expected.getLicenseNames());
         assertThat(actual.getDocumentTypes()).containsExactlyElementsOf(expected.getDocumentTypes());
@@ -135,7 +134,7 @@ public class ClaimStatisticTest {
     @Test
     void serdeRoundTrip() throws IOException {
         ClaimStatistic underTest = new ClaimStatistic();
-        underTest.incLicenseCategoryCount("familyCagegory", 1);
+        underTest.incLicenseCategoryCount("familyCategory", 1);
         underTest.incCounter(ClaimStatistic.Counter.APPROVED, 2);
         underTest.incCounter(Document.Type.IGNORED, 3);
         underTest.incLicenseNameCount("licenseName", 4);

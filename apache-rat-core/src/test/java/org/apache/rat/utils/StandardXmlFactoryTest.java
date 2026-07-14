@@ -41,7 +41,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 /**
  * Tests for StandardXmlFactory.
  */
-public class StandardXmlFactoryTests {
+public class StandardXmlFactoryTest {
 
     public static final String SIMPLE_DOCUMENT_TEXT =  """
                 <first>
@@ -97,7 +97,7 @@ public class StandardXmlFactoryTests {
     }
 
     @Test
-    void serializeEmptyDocumentYieldsEmtpyString() throws TransformerException {
+    void serializeEmptyDocumentYieldsEmptyString() throws TransformerException {
         Document document = StandardXmlFactory.documentBuilder().newDocument();
         assertThat(StandardXmlFactory.serializeDocument(document)).isEmpty();
     }

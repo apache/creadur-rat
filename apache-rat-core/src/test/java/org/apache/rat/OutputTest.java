@@ -33,7 +33,7 @@ import org.apache.rat.report.claim.ClaimStatisticTest;
 import org.apache.rat.test.utils.Resources;
 import org.apache.rat.testhelpers.FileUtils;
 import org.apache.rat.utils.StandardXmlFactory;
-import org.apache.rat.utils.StandardXmlFactoryTests;
+import org.apache.rat.utils.StandardXmlFactoryTest;
 import org.apache.rat.walker.DirectoryWalker;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -123,7 +123,7 @@ class OutputTest {
     }
 
     @Test
-    void ReadingBadFileTest() {
+    void readingBadFileTest() {
         Path testPath = tempPath.resolve("readingBadFileTest");
         File testFile = testPath.toFile();
         FileUtils.mkDir(testFile);
@@ -234,7 +234,7 @@ class OutputTest {
     void formatTest() throws IOException, SAXException {
         Reporter.Output output = Reporter.Output.builder()
                 .statistic(new ClaimStatistic())
-                .document(StandardXmlFactoryTests.simpleDocument())
+                .document(StandardXmlFactoryTest.simpleDocument())
                 .configuration(new ReportConfiguration())
                 .build();
 
@@ -279,6 +279,4 @@ class OutputTest {
                 .hasCauseInstanceOf(IOException.class);
 
     }
-
-
 }

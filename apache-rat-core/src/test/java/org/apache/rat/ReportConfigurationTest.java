@@ -845,7 +845,7 @@ public class ReportConfigurationTest {
     }
 
     /**
-     * A reportable that only reports its name.  Does no actual work.
+     * A reportable that only reports its name. Does no actual work.
      */
     static class TestingReportable implements Reportable {
 
