@@ -31,6 +31,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
 
+import javax.inject.Inject;
+
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.doxia.sink.SinkFactory;
@@ -45,7 +47,6 @@ import org.apache.maven.doxia.tools.SiteTool;
 import org.apache.maven.doxia.tools.SiteToolException;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
@@ -114,13 +115,13 @@ public class RatReportMojo extends AbstractRatMojo implements MavenMultiPageRepo
     /**
      * SiteTool.
      */
-    @Component
+    @Inject
     protected SiteTool siteTool;
 
     /**
      * Doxia Site Renderer component.
      */
-    @Component
+    @Inject
     protected SiteRenderer siteRenderer;
 
     /**
