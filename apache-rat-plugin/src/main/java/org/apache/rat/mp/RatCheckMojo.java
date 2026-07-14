@@ -53,7 +53,8 @@ import static java.lang.String.format;
 @Mojo(name = "check", defaultPhase = LifecyclePhase.VALIDATE, threadSafe = true)
 public class RatCheckMojo extends AbstractRatMojo {
 
-    /** The default output file if no other is specified.
+    /**
+     * The default output file if no other is specified.
      * @deprecated Use &lt;outputFile&gt; instead.
      */
     @Deprecated
@@ -61,7 +62,7 @@ public class RatCheckMojo extends AbstractRatMojo {
     private File defaultReportFile;
 
     /**
-     * The defined build directory
+     * The defined build directory.
      */
     @Parameter(defaultValue = "${project.build.directory}", readonly = true)
     private String buildDirectory;
@@ -84,7 +85,7 @@ public class RatCheckMojo extends AbstractRatMojo {
      * or "xml" for the raw XML report. Alternatively you can give the path of an
      * XSL transformation that will be applied on the raw XML to produce the report
      * written to the output file.
-     * @deprecated Use setStyleSheet or xml instead.
+     * @deprecated Use setStyleSheet or "xml" instead.
      */
     @Deprecated
     @Parameter(property = "rat.outputStyle")
