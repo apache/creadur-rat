@@ -147,7 +147,6 @@ public class ExclusionProcessorTest {
     @MethodSource("getDocumentNames")
     void addExcludedPatternsTest(DocumentName basedir) throws IOException {
         Map<String,Boolean> expectedMap = new HashMap<>();
-
         expectedMap.put("a/b/foo", true);
         expectedMap.put("b/foo", true);
         expectedMap.put("foo", false);

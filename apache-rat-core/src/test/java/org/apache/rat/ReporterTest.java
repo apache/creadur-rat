@@ -85,8 +85,8 @@ public class ReporterTest {
         File output = new File(tempDirectory, "testExecute");
 
         CommandLine cl = new DefaultParser().parse(OptionCollection.buildOptions(), new String[]{"--output-style", "xml", "--output-file", output.getPath(), basedir});
-        ArgumentContext ctxt = new ArgumentContext(new File("."), cl);
-        ReportConfiguration config = OptionCollection.createConfiguration(ctxt);
+        ArgumentContext context = new ArgumentContext(new File("."), cl);
+        ReportConfiguration config = OptionCollection.createConfiguration(context);
         ClaimStatistic statistic = new Reporter(config).execute().getStatistic();
 
         assertThat(statistic.getCounter(Type.ARCHIVE)).isEqualTo(1);
@@ -140,8 +140,8 @@ public class ReporterTest {
         File output = new File(tempDirectory, "testExecuteNoSource");
 
         CommandLine cl = new DefaultParser().parse(OptionCollection.buildOptions(), new String[]{"--output-style", "xml", "--output-file", output.getPath()});
-        ArgumentContext ctxt = new ArgumentContext(new File("."), cl);
-        ReportConfiguration config = OptionCollection.createConfiguration(ctxt);
+        ArgumentContext context = new ArgumentContext(new File("."), cl);
+        ReportConfiguration config = OptionCollection.createConfiguration(context);
         Reporter.Output result = new Reporter(config).execute();
         assertThat(StandardXmlFactory.serializeDocument(result.getDocument())).isEmpty();
         ClaimStatisticTest.assertSame(result.getStatistic(), new ClaimStatistic());
@@ -151,9 +151,9 @@ public class ReporterTest {
     void testOutputOption() throws Exception {
         File output = new File(tempDirectory, "test");
         CommandLine commandLine = new DefaultParser().parse(OptionCollection.buildOptions(), new String[]{"-o", output.getCanonicalPath(), basedir});
-        ArgumentContext ctxt = new ArgumentContext(new File("."), commandLine);
+        ArgumentContext context = new ArgumentContext(new File("."), commandLine);
 
-        ReportConfiguration config = OptionCollection.createConfiguration(ctxt);
+        ReportConfiguration config = OptionCollection.createConfiguration(context);
         new Reporter(config).execute().format(config);
         assertThat(output.exists()).isTrue();
         String content = FileUtils.readFileToString(output, StandardCharsets.UTF_8);
@@ -166,9 +166,9 @@ public class ReporterTest {
     void testGetOutputMethod() throws Exception {
         File output = new File(tempDirectory, "test");
         CommandLine commandLine = new DefaultParser().parse(OptionCollection.buildOptions(), new String[]{"-o", output.getCanonicalPath(), basedir});
-        ArgumentContext ctxt = new ArgumentContext(new File("."), commandLine);
+        ArgumentContext context = new ArgumentContext(new File("."), commandLine);
 
-        ReportConfiguration config = OptionCollection.createConfiguration(ctxt);
+        ReportConfiguration config = OptionCollection.createConfiguration(context);
         Reporter reporter = new Reporter(config);
         Reporter.Output expected = reporter.execute();
         assertThat(reporter.getOutput()).isEqualTo(expected);
@@ -182,9 +182,9 @@ public class ReporterTest {
         try (PrintStream out = new PrintStream(output)) {
             System.setOut(out);
             CommandLine commandLine = new DefaultParser().parse(OptionCollection.buildOptions(), new String[]{basedir});
-            ArgumentContext ctxt = new ArgumentContext(new File("."), commandLine);
+            ArgumentContext context = new ArgumentContext(new File("."), commandLine);
 
-            ReportConfiguration config = OptionCollection.createConfiguration(ctxt);
+            ReportConfiguration config = OptionCollection.createConfiguration(context);
             new Reporter(config).execute().format(config);
         } finally {
             System.setOut(origin);
@@ -236,9 +236,9 @@ public class ReporterTest {
         File output = new File(tempDirectory, ".rat/testXMLOutput");
         output.getParentFile().mkdir();
         CommandLine commandLine = new DefaultParser().parse(OptionCollection.buildOptions(), new String[]{"--output-style", "xml", "--output-file", output.getPath(), basedir});
-        ArgumentContext ctxt = new ArgumentContext(tempDirectory, commandLine);
+        ArgumentContext context = new ArgumentContext(tempDirectory, commandLine);
 
-        ReportConfiguration config = OptionCollection.createConfiguration(ctxt);
+        ReportConfiguration config = OptionCollection.createConfiguration(context);
         new Reporter(config).execute().format(config);
 
         assertThat(output).exists();
@@ -331,7 +331,7 @@ public class ReporterTest {
      * Finds a node via xpath on the document. And then checks family, approval and
      * type of elements of the node.
      *
-     * @param doc The document to check
+     * @param doc the document to check
      * @param xpath the XPath instance to use.
      * @param resource the xpath statement to locate the node.
      * @param licenseInfo the license info for the node. (can be null)

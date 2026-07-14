@@ -506,7 +506,7 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
             // .gitignore is ignored by default as it is hidden but not counted
             assertThat(output.getStatistic().getCounter(ClaimStatistic.Counter.IGNORED)).isEqualTo(addIgnored ? 4 : 3);
 
-            // verify include pust them back
+            // verify include put them back
             config = generateConfig(ImmutablePair.of(option, args), ImmutablePair.of(excludeOption, EXCLUDE_ARGS));
             reporter = new Reporter(config);
             output = reporter.execute();
@@ -653,8 +653,6 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
 
         assertDoesNotThrow(() -> {
             configureSourceDir(option);
-
-            // write the catz licensed text file
             writeFile("bsd.txt", "SPDX-License-Identifier: BSD-3-Clause");
 
             ReportConfiguration config = generateConfig();
