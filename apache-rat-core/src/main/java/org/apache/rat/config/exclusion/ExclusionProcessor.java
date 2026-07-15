@@ -82,8 +82,8 @@ public class ExclusionProcessor {
         excludedCollections = new HashSet<>();
     }
 
-    public Serde serde() {
-        return new Serde();
+    public SerDes serde() {
+        return new SerDes();
     }
 
     /* the following set of methods are here for testing purposes */
@@ -397,7 +397,7 @@ public class ExclusionProcessor {
     /**
      * Serializes and deserializes the ExclusionProcessor to an XML document.
      */
-    public class Serde {
+    public class SerDes {
         /** The pattern attribute name */
         private static final String PATTERN = "pattern";
         /** THe name attribute name */

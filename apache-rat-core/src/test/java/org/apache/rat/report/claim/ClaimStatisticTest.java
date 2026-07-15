@@ -139,12 +139,12 @@ public class ClaimStatisticTest {
         underTest.incCounter(Document.Type.IGNORED, 3);
         underTest.incLicenseNameCount("licenseName", 4);
 
-        ClaimStatistic.Serde serde = underTest.serde();
+        ClaimStatistic.SerDes serDes = underTest.serde();
         StringWriter stringWriter = new StringWriter();
-        serde.serialize(stringWriter);
+        serDes.serialize(stringWriter);
         ClaimStatistic actual = new ClaimStatistic();
-        ClaimStatistic.Serde serde2 = actual.serde();
-        serde2.deserialize(() -> new ByteArrayInputStream(stringWriter.toString().getBytes(StandardCharsets.UTF_8)));
+        ClaimStatistic.SerDes serDes2 = actual.serde();
+        serDes2.deserialize(() -> new ByteArrayInputStream(stringWriter.toString().getBytes(StandardCharsets.UTF_8)));
 
         assertSame(actual, underTest);
     }

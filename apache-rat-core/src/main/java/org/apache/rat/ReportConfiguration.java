@@ -205,8 +205,8 @@ public class ReportConfiguration {
         reportables = new ArrayList<>();
     }
 
-    public Serde serde() {
-        return new Serde();
+    public SerDes serde() {
+        return new SerDes();
     }
 
     /**
@@ -964,7 +964,7 @@ public class ReportConfiguration {
      * and do not have access to the original object.
      */
     @SuppressFBWarnings("EI_EXPOSE_REP2")
-    public class Serde {
+    public class SerDes {
         /**
          * Writes the configuration as an XML document to the appendable.
          *

@@ -109,9 +109,9 @@ class OutputTest {
         underTest.incCounter(org.apache.rat.api.Document.Type.IGNORED, 3);
         underTest.incLicenseNameCount("licenseName", 4);
 
-        ClaimStatistic.Serde serde = underTest.serde();
+        ClaimStatistic.SerDes serDes = underTest.serde();
         StringWriter stringWriter = new StringWriter();
-        serde.serialize(stringWriter);
+        serDes.serialize(stringWriter);
         try (FileOutputStream fos = new FileOutputStream(documentFile.asFile())) {
             fos.write(stringWriter.toString().getBytes(StandardCharsets.UTF_8));
         }

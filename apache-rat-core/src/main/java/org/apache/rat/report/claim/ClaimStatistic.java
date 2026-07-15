@@ -123,8 +123,8 @@ public class ClaimStatistic {
     /** Map of counter type to value */
     private final ConcurrentHashMap<ClaimStatistic.Counter, IntCounter> counterMap = new ConcurrentHashMap<>();
 
-    public Serde serde() {
-        return new Serde();
+    public SerDes serde() {
+        return new SerDes();
     }
     /**
      * Converts {@code null} counter to 0.
@@ -308,7 +308,7 @@ public class ClaimStatistic {
     /**
      * Serialize and deserialize the claim Statistic.
      */
-    public class Serde {
+    public class SerDes {
         /** The count attribute string. */
         private static final String COUNT = "count";
         /** The name attribute string. */
