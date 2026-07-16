@@ -378,19 +378,19 @@ public class ExclusionProcessorTest {
     }
 
     @ParameterizedTest
-    @MethodSource("serdeTestData")
-    void serdeTest(ExclusionProcessor underTest) throws IOException, SAXException {
+    @MethodSource("serDesTestData")
+    void serDesTest(ExclusionProcessor underTest) throws IOException, SAXException {
         StringWriter stringWriter = new StringWriter();
         try (XmlWriter writer = new XmlWriter(stringWriter)) {
-            underTest.serde().serialize(writer);
+            underTest.serDes().serialize(writer);
         }
         Document document = StandardXmlFactory.documentBuilder().parse(new ByteArrayInputStream(stringWriter.toString().getBytes(StandardCharsets.UTF_8)));
         ExclusionProcessor actual = new ExclusionProcessor();
-        actual.serde().deserialize(document.getElementsByTagName("ExclusionProcessor").item(0));
+        actual.serDes().deserialize(document.getElementsByTagName("ExclusionProcessor").item(0));
         assertSame(actual, underTest);
     }
 
-    static List<ExclusionProcessor> serdeTestData() {
+    static List<ExclusionProcessor> serDesTestData() {
         List<ExclusionProcessor> tests = new ArrayList<>();
         tests.add(new ExclusionProcessor());
 

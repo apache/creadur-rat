@@ -284,7 +284,7 @@ public class Reporter {
                 File sourceFile = workingDirectory.resolve(fileName).asFile();
                 try {
                     ClaimStatistic newStatistic = new ClaimStatistic();
-                    newStatistic.serde().deserialize(() -> new FileInputStream(sourceFile));
+                    newStatistic.serDes().deserialize(() -> new FileInputStream(sourceFile));
                     this.statistic = newStatistic;
                     return this;
                 } catch (IOException e) {
@@ -301,7 +301,7 @@ public class Reporter {
                 File configurationFile = workingDirectory.resolve(fileName).asFile();
                 try {
                     ReportConfiguration config = new ReportConfiguration();
-                    config.serde().deserialize(() -> new FileInputStream(configurationFile), workingDirectory);
+                    config.serDes().deserialize(() -> new FileInputStream(configurationFile), workingDirectory);
                     this.configuration = config;
                     return this;
                 } catch (IOException e) {

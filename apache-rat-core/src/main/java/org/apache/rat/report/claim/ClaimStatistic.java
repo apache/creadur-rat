@@ -123,7 +123,7 @@ public class ClaimStatistic {
     /** Map of counter type to value */
     private final ConcurrentHashMap<ClaimStatistic.Counter, IntCounter> counterMap = new ConcurrentHashMap<>();
 
-    public SerDes serde() {
+    public SerDes serDes() {
         return new SerDes();
     }
     /**

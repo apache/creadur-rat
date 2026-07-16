@@ -205,7 +205,7 @@ public class ReportConfiguration {
         reportables = new ArrayList<>();
     }
 
-    public SerDes serde() {
+    public SerDes serDes() {
         return new SerDes();
     }
 
@@ -999,7 +999,7 @@ public class ReportConfiguration {
                 }
                 writer.closeElement();
 
-                exclusionProcessor.serde().serialize(writer);
+                exclusionProcessor.serDes().serialize(writer);
 
                 writer.startElement("claimValidator");
                 for (ClaimStatistic.Counter counter : ClaimStatistic.Counter.values()) {
@@ -1063,7 +1063,7 @@ public class ReportConfiguration {
                 addSource(new DeserializedReportable(documentName));
             });
 
-            exclusionProcessor.serde().deserialize(document.getElementsByTagName("ExclusionProcessor").item(0));
+            exclusionProcessor.serDes().deserialize(document.getElementsByTagName("ExclusionProcessor").item(0));
 
             XMLConfigurationReader.nodeListConsumer(document.getElementsByTagName("claimCounter"), lNode -> {
                 Map<String, String> nAttributes = XMLConfigurationReader.attributes(lNode);

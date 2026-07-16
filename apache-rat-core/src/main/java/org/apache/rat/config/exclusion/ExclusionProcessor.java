@@ -82,7 +82,7 @@ public class ExclusionProcessor {
         excludedCollections = new HashSet<>();
     }
 
-    public SerDes serde() {
+    public SerDes serDes() {
         return new SerDes();
     }
 

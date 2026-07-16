@@ -109,7 +109,7 @@ class OutputTest {
         underTest.incCounter(org.apache.rat.api.Document.Type.IGNORED, 3);
         underTest.incLicenseNameCount("licenseName", 4);
 
-        ClaimStatistic.SerDes serDes = underTest.serde();
+        ClaimStatistic.SerDes serDes = underTest.serDes();
         StringWriter stringWriter = new StringWriter();
         serDes.serialize(stringWriter);
         try (FileOutputStream fos = new FileOutputStream(documentFile.asFile())) {
@@ -184,7 +184,7 @@ class OutputTest {
         claimValidator.setMin(ClaimStatistic.Counter.BINARIES, 4);
 
         StringWriter stringWriter = new StringWriter();
-        underTest.serde().serialize(stringWriter);
+        underTest.serDes().serialize(stringWriter);
 
         try (FileOutputStream fos = new FileOutputStream(documentFile.asFile())) {
             fos.write(stringWriter.toString().getBytes(StandardCharsets.UTF_8));

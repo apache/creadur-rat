@@ -788,7 +788,7 @@ public class ReportConfigurationTest {
 
     }
     @Test
-    void serdeTest() throws IOException {
+    void serDesTest() throws IOException {
         underTest.setAddLicenseHeaders(AddLicenseHeaders.FORCED);
         underTest.listFamilies(LicenseFilter.APPROVED);
         underTest.listLicenses(LicenseFilter.ALL);
@@ -819,10 +819,10 @@ public class ReportConfigurationTest {
         claimValidator.setMin(ClaimStatistic.Counter.BINARIES, 4);
 
         StringWriter stringWriter = new StringWriter();
-        underTest.serde().serialize(stringWriter);
+        underTest.serDes().serialize(stringWriter);
 
         ReportConfiguration actual = new ReportConfiguration();
-        actual.serde().deserialize(() -> new ByteArrayInputStream(stringWriter.toString().getBytes(StandardCharsets.UTF_8)),
+        actual.serDes().deserialize(() -> new ByteArrayInputStream(stringWriter.toString().getBytes(StandardCharsets.UTF_8)),
                 DocumentName.builder(new File("/rootDir")).build());
         assertSame(actual, underTest);
     }

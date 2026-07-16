@@ -132,18 +132,18 @@ public class ClaimStatisticTest {
     }
 
     @Test
-    void serdeRoundTrip() throws IOException {
+    void serDesRoundTrip() throws IOException {
         ClaimStatistic underTest = new ClaimStatistic();
         underTest.incLicenseCategoryCount("familyCategory", 1);
         underTest.incCounter(ClaimStatistic.Counter.APPROVED, 2);
         underTest.incCounter(Document.Type.IGNORED, 3);
         underTest.incLicenseNameCount("licenseName", 4);
 
-        ClaimStatistic.SerDes serDes = underTest.serde();
+        ClaimStatistic.SerDes serDes = underTest.serDes();
         StringWriter stringWriter = new StringWriter();
         serDes.serialize(stringWriter);
         ClaimStatistic actual = new ClaimStatistic();
-        ClaimStatistic.SerDes serDes2 = actual.serde();
+        ClaimStatistic.SerDes serDes2 = actual.serDes();
         serDes2.deserialize(() -> new ByteArrayInputStream(stringWriter.toString().getBytes(StandardCharsets.UTF_8)));
 
         assertSame(actual, underTest);
