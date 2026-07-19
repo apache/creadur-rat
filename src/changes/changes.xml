@@ -68,6 +68,9 @@ in order to be properly linked in site reports.
     </release>
     -->
     <release version="1.0.0-SNAPSHOT" date="xxxx-yy-zz" description="Current SNAPSHOT - release to be done">
+      <action issue="RAT-570" type="add" dev="claudenw">
+        Internal change: Introduced a Reporter.Output class that encapsulates the execution configuration, the generated XML document, and the ClaimStatistic containing counts for file types, licenses, license categories, and other all of RAT run statistics.
+      </action>
       <action issue="RAT-572" type="add" dev="pottlinger" due-to="Christopher Tubbs">
         After dropping JDK8 support in r0.18 we rely on ASF parent pom to enforce minimal Maven version 3.9.16 and minimal JDK version 17. Cleanup build and dependency management to rely more on ASF parent pom.
       </action>

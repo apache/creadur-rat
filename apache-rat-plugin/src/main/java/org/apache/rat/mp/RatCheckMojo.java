@@ -36,6 +36,7 @@ import org.apache.rat.Reporter;
 import org.apache.rat.commandline.Arg;
 import org.apache.rat.commandline.StyleSheets;
 import org.apache.rat.config.exclusion.StandardCollection;
+import org.apache.rat.config.results.ClaimValidator;
 import org.apache.rat.license.LicenseSetFactory.LicenseFilter;
 import org.apache.rat.report.claim.ClaimStatistic;
 import org.apache.rat.utils.DefaultLog;
@@ -52,7 +53,8 @@ import static java.lang.String.format;
 @Mojo(name = "check", defaultPhase = LifecyclePhase.VALIDATE, threadSafe = true)
 public class RatCheckMojo extends AbstractRatMojo {
 
-    /** The default output file if no other is specified.
+    /**
+     * The default output file if no other is specified.
      * @deprecated Use &lt;outputFile&gt; instead.
      */
     @Deprecated
@@ -60,7 +62,7 @@ public class RatCheckMojo extends AbstractRatMojo {
     private File defaultReportFile;
 
     /**
-     * The defined build directory
+     * The defined build directory.
      */
     @Parameter(defaultValue = "${project.build.directory}", readonly = true)
     private String buildDirectory;
@@ -83,7 +85,7 @@ public class RatCheckMojo extends AbstractRatMojo {
      * or "xml" for the raw XML report. Alternatively you can give the path of an
      * XSL transformation that will be applied on the raw XML to produce the report
      * written to the output file.
-     * @deprecated Use setStyleSheet or xml instead.
+     * @deprecated Use setStyleSheet or "xml" instead.
      */
     @Deprecated
     @Parameter(property = "rat.outputStyle")
@@ -158,9 +160,6 @@ public class RatCheckMojo extends AbstractRatMojo {
     @Parameter(property = "rat.consoleOutput", defaultValue = "true")
     private boolean consoleOutput;
 
-    /** The reporter that this mojo uses */
-    private Reporter reporter;
-
     @Override
     protected ReportConfiguration getConfiguration() throws MojoExecutionException {
         ReportConfiguration result = super.getConfiguration();
@@ -208,12 +207,12 @@ public class RatCheckMojo extends AbstractRatMojo {
                 config.reportExclusions(logWriter);
             }
             try {
-                this.reporter = new Reporter(config);
-                reporter.output();
+                Reporter.Output output = new Reporter(config).execute();
                 if (verbose) {
-                    reporter.writeSummary(logWriter);
+                    output.writeSummary(logWriter);
                 }
-                check(config);
+                output.format(config);
+                check(output);
             } catch (MojoFailureException e) {
                 throw e;
             } catch (Exception e) {
@@ -224,17 +223,18 @@ public class RatCheckMojo extends AbstractRatMojo {
         }
     }
 
-    protected void check(final ReportConfiguration config) throws MojoFailureException {
-        ClaimStatistic statistics = reporter.getClaimsStatistic();
+    protected void check(final Reporter.Output output) throws MojoFailureException {
+        ClaimStatistic statistics = output.getStatistic();
+        ClaimValidator validator = output.getConfiguration().getClaimValidator();
         try {
-           reporter.writeSummary(DefaultLog.getInstance().asWriter(Log.Level.DEBUG));
-           if (config.getClaimValidator().hasErrors()) {
-               config.getClaimValidator().logIssues(statistics);
+           output.writeSummary(DefaultLog.getInstance().asWriter(Log.Level.DEBUG));
+           if (validator.hasErrors()) {
+               validator.logIssues(statistics);
                if (consoleOutput &&
-                       !config.getClaimValidator().isValid(ClaimStatistic.Counter.UNAPPROVED, statistics.getCounter(ClaimStatistic.Counter.UNAPPROVED))) {
+                       !validator.isValid(ClaimStatistic.Counter.UNAPPROVED, statistics.getCounter(ClaimStatistic.Counter.UNAPPROVED))) {
                    try {
                        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                       reporter.output(StyleSheets.UNAPPROVED_LICENSES.getStyleSheet().ioSupplier(), () -> baos);
+                       output.format(StyleSheets.UNAPPROVED_LICENSES.getStyleSheet().ioSupplier(), () -> baos);
                        getLog().warn(baos.toString(StandardCharsets.UTF_8));
                    } catch (RuntimeException rte) {
                        throw rte;
@@ -244,7 +244,7 @@ public class RatCheckMojo extends AbstractRatMojo {
                }
 
                String msg = format("Counter(s) %s exceeded minimum or maximum values. See RAT report in: '%s'.",
-                       String.join(", ", config.getClaimValidator().listIssues(statistics)),
+                       String.join(", ", validator.listIssues(statistics)),
                        getRatTxtFile());
 
                if (!ignoreErrors) {

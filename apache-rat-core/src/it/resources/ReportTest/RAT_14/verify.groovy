@@ -68,7 +68,8 @@ ReportConfiguration configuration = OptionCollection.parseCommands(src, myArgs, 
 assertNotNull(configuration)
 configuration.validate(DefaultLog.getInstance().&error)
 Reporter reporter = new Reporter(configuration)
-ClaimStatistic statistic = reporter.execute()
+Reporter.Output output = reporter.execute()
+ClaimStatistic statistic = output.getStatistic()
 
 assertEquals(3, statistic.getCounter(ClaimStatistic.Counter.APPROVED))
 assertEquals(2, statistic.getCounter(ClaimStatistic.Counter.ARCHIVES))

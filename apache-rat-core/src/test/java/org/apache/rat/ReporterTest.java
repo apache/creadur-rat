@@ -7,7 +7,7 @@
  * "License"); you may not use this file except in compliance   *
  * with the License.  You may obtain a copy of the License at   *
  *                                                              *
- *   http://www.apache.org/licenses/LICENSE-2.0                 *
+ *   https://www.apache.org/licenses/LICENSE-2.0                 *
  *                                                              *
  * Unless required by applicable law or agreed to in writing,   *
  * software distributed under the License is distributed on an  *
@@ -21,7 +21,6 @@ package org.apache.rat;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Fail.fail;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.PrintStream;
@@ -36,6 +35,7 @@ import java.util.Map;
 import java.util.TreeMap;
 import javax.xml.XMLConstants;
 import javax.xml.transform.Source;
+import javax.xml.transform.TransformerException;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Schema;
@@ -52,15 +52,15 @@ import org.apache.commons.io.FileUtils;
 import org.apache.rat.api.Document.Type;
 import org.apache.rat.api.RatException;
 import org.apache.rat.commandline.ArgumentContext;
-import org.apache.rat.commandline.StyleSheets;
 import org.apache.rat.document.FileDocument;
 import org.apache.rat.document.DocumentName;
 import org.apache.rat.license.ILicenseFamily;
-import org.apache.rat.license.LicenseSetFactory;
 import org.apache.rat.report.claim.ClaimStatistic;
+import org.apache.rat.report.claim.ClaimStatisticTest;
 import org.apache.rat.test.utils.Resources;
 import org.apache.rat.testhelpers.TextUtils;
 import org.apache.rat.testhelpers.XmlUtils;
+import org.apache.rat.utils.StandardXmlFactory;
 import org.apache.rat.walker.DirectoryWalker;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -85,9 +85,9 @@ public class ReporterTest {
         File output = new File(tempDirectory, "testExecute");
 
         CommandLine cl = new DefaultParser().parse(OptionCollection.buildOptions(), new String[]{"--output-style", "xml", "--output-file", output.getPath(), basedir});
-        ArgumentContext ctxt = new ArgumentContext(new File("."), cl);
-        ReportConfiguration config = OptionCollection.createConfiguration(ctxt);
-        ClaimStatistic statistic = new Reporter(config).execute();
+        ArgumentContext context = new ArgumentContext(new File("."), cl);
+        ReportConfiguration config = OptionCollection.createConfiguration(context);
+        ClaimStatistic statistic = new Reporter(config).execute().getStatistic();
 
         assertThat(statistic.getCounter(Type.ARCHIVE)).isEqualTo(1);
         assertThat(statistic.getCounter(Type.BINARY)).isEqualTo(2);
@@ -136,18 +136,42 @@ public class ReporterTest {
     }
 
     @Test
+    void testExecuteNoSource() throws ParseException, RatException, TransformerException {
+        File output = new File(tempDirectory, "testExecuteNoSource");
+
+        CommandLine cl = new DefaultParser().parse(OptionCollection.buildOptions(), new String[]{"--output-style", "xml", "--output-file", output.getPath()});
+        ArgumentContext context = new ArgumentContext(new File("."), cl);
+        ReportConfiguration config = OptionCollection.createConfiguration(context);
+        Reporter.Output result = new Reporter(config).execute();
+        assertThat(StandardXmlFactory.serializeDocument(result.getDocument())).isEmpty();
+        ClaimStatisticTest.assertSame(result.getStatistic(), new ClaimStatistic());
+    }
+
+    @Test
     void testOutputOption() throws Exception {
         File output = new File(tempDirectory, "test");
         CommandLine commandLine = new DefaultParser().parse(OptionCollection.buildOptions(), new String[]{"-o", output.getCanonicalPath(), basedir});
-        ArgumentContext ctxt = new ArgumentContext(new File("."), commandLine);
+        ArgumentContext context = new ArgumentContext(new File("."), commandLine);
 
-        ReportConfiguration config = OptionCollection.createConfiguration(ctxt);
-        new Reporter(config).output();
+        ReportConfiguration config = OptionCollection.createConfiguration(context);
+        new Reporter(config).execute().format(config);
         assertThat(output.exists()).isTrue();
         String content = FileUtils.readFileToString(output, StandardCharsets.UTF_8);
         TextUtils.assertPatternInTarget("^! Unapproved:\\s*2 ", content);
         assertThat(content).contains("/Source.java");
         assertThat(content).contains("/sub/Empty.txt");
+    }
+
+    @Test
+    void testGetOutputMethod() throws Exception {
+        File output = new File(tempDirectory, "test");
+        CommandLine commandLine = new DefaultParser().parse(OptionCollection.buildOptions(), new String[]{"-o", output.getCanonicalPath(), basedir});
+        ArgumentContext context = new ArgumentContext(new File("."), commandLine);
+
+        ReportConfiguration config = OptionCollection.createConfiguration(context);
+        Reporter reporter = new Reporter(config);
+        Reporter.Output expected = reporter.execute();
+        assertThat(reporter.getOutput()).isEqualTo(expected);
     }
 
     @Test
@@ -158,10 +182,10 @@ public class ReporterTest {
         try (PrintStream out = new PrintStream(output)) {
             System.setOut(out);
             CommandLine commandLine = new DefaultParser().parse(OptionCollection.buildOptions(), new String[]{basedir});
-            ArgumentContext ctxt = new ArgumentContext(new File("."), commandLine);
+            ArgumentContext context = new ArgumentContext(new File("."), commandLine);
 
-            ReportConfiguration config = OptionCollection.createConfiguration(ctxt);
-            new Reporter(config).output();
+            ReportConfiguration config = OptionCollection.createConfiguration(context);
+            new Reporter(config).execute().format(config);
         } finally {
             System.setOut(origin);
         }
@@ -212,10 +236,10 @@ public class ReporterTest {
         File output = new File(tempDirectory, ".rat/testXMLOutput");
         output.getParentFile().mkdir();
         CommandLine commandLine = new DefaultParser().parse(OptionCollection.buildOptions(), new String[]{"--output-style", "xml", "--output-file", output.getPath(), basedir});
-        ArgumentContext ctxt = new ArgumentContext(tempDirectory, commandLine);
+        ArgumentContext context = new ArgumentContext(tempDirectory, commandLine);
 
-        ReportConfiguration config = OptionCollection.createConfiguration(ctxt);
-        new Reporter(config).output();
+        ReportConfiguration config = OptionCollection.createConfiguration(context);
+        new Reporter(config).execute().format(config);
 
         assertThat(output).exists();
         Document doc = XmlUtils.toDom(java.nio.file.Files.newInputStream(output.toPath()));
@@ -307,7 +331,7 @@ public class ReporterTest {
      * Finds a node via xpath on the document. And then checks family, approval and
      * type of elements of the node.
      *
-     * @param doc The document to check
+     * @param doc the document to check
      * @param xpath the XPath instance to use.
      * @param resource the xpath statement to locate the node.
      * @param licenseInfo the license info for the node. (can be null)
@@ -405,13 +429,8 @@ public class ReporterTest {
 
     @Test
     void xmlReportTest() throws Exception {
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-
         ReportConfiguration configuration = initializeConfiguration();
-        configuration.setStyleSheet(StyleSheets.XML.getStyleSheet());
-        configuration.setOut(new ReportConfiguration.IODescriptor("xmlReportTest", () -> out));
-        new Reporter(configuration).output();
-        Document doc = XmlUtils.toDom(new ByteArrayInputStream(out.toByteArray()));
+        Document doc = new Reporter(configuration).execute().getDocument();
 
         XPath xPath = XPathFactory.newInstance().newXPath();
 
@@ -457,10 +476,9 @@ public class ReporterTest {
                 "Generated at: ";
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         ReportConfiguration configuration = initializeConfiguration();
-        configuration.setOut(new ReportConfiguration.IODescriptor("plainReportTest", () -> out));
-        new Reporter(configuration).output();
+        configuration.setOut(new ReportConfiguration.IODescriptor<>("plainReportTest", () -> out));
+        new Reporter(configuration).execute().format(configuration);
 
-        out.flush();
         String document = out.toString();
 
         TextUtils.assertNotContains("<?xml version=\"1.0\" encoding=\"UTF-8\"?>", document);
@@ -473,11 +491,10 @@ public class ReporterTest {
     void unapprovedLicensesReportTest() throws Exception {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         ReportConfiguration configuration = initializeConfiguration();
-        configuration.setOut(new ReportConfiguration.IODescriptor("unapprovedLicensesReportTest", () -> out));
+        configuration.setOut(new ReportConfiguration.IODescriptor<>("unapprovedLicensesReportTest", () -> out));
         configuration.setStyleSheet(this.getClass().getResource("/org/apache/rat/unapproved-licenses.xsl"));
-        new Reporter(configuration).output();
+        new Reporter(configuration).execute().format(configuration);
 
-        out.flush();
         String document = out.toString();
 
         TextUtils.assertContains("Generated at: ", document );
@@ -486,34 +503,18 @@ public class ReporterTest {
     }
 
     @Test
-    void listLicensesReportTest() throws Exception {
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        ReportConfiguration configuration = initializeConfiguration();
-        configuration.setOut(new ReportConfiguration.IODescriptor("listLicensesReportTest", () -> out));
-        configuration.setStyleSheet(StyleSheets.UNAPPROVED_LICENSES.getStyleSheet());
-        Reporter.listLicenses(configuration, LicenseSetFactory.LicenseFilter.NONE);
-
-        out.flush();
-        String document = out.toString();
-
-        assertThat(document).contains("Licenses (NONE):");
-    }
-
-    @Test
     void counterMaxTest() throws Exception {
         ReportConfiguration config = initializeConfiguration();
-        Reporter reporter = new Reporter(config);
-        reporter.output();
+        Reporter.Output output = new Reporter(config).execute();
         assertThat(config.getClaimValidator().hasErrors()).isTrue();
-        assertThat(config.getClaimValidator().isValid(ClaimStatistic.Counter.UNAPPROVED, reporter.getClaimsStatistic().getCounter(ClaimStatistic.Counter.UNAPPROVED)))
+        assertThat(config.getClaimValidator().isValid(ClaimStatistic.Counter.UNAPPROVED, output.getStatistic().getCounter(ClaimStatistic.Counter.UNAPPROVED)))
                 .isFalse();
 
         config = initializeConfiguration();
         config.getClaimValidator().setMax(ClaimStatistic.Counter.UNAPPROVED, 2);
-        reporter = new Reporter(config);
-        reporter.output();
+        output = new Reporter(config).execute();
         assertThat(config.getClaimValidator().hasErrors()).isFalse();
-        assertThat(config.getClaimValidator().isValid(ClaimStatistic.Counter.UNAPPROVED, reporter.getClaimsStatistic().getCounter(ClaimStatistic.Counter.UNAPPROVED)))
+        assertThat(config.getClaimValidator().isValid(ClaimStatistic.Counter.UNAPPROVED, output.getStatistic().getCounter(ClaimStatistic.Counter.UNAPPROVED)))
                 .isTrue();
     }
 

@@ -29,7 +29,6 @@ import java.util.Set;
 
 import org.apache.commons.cli.Option;
 import org.apache.commons.io.filefilter.IOFileFilter;
-import org.apache.commons.io.output.CloseShieldOutputStream;
 import org.apache.rat.ConfigurationException;
 import org.apache.rat.DeprecationReporter;
 import org.apache.rat.ImplementationException;
@@ -443,9 +442,11 @@ public class Report extends BaseAntTask {
     @Override
     public void execute() {
         try {
-            Reporter r = new Reporter(validate(getConfiguration()));
-            r.output(StyleSheets.PLAIN.getStyleSheet().ioSupplier(), () -> CloseShieldOutputStream.wrap(System.out));
-            r.output();
+            ReportConfiguration config = validate(getConfiguration());
+            Reporter r = new Reporter(config);
+            Reporter.Output output = r.execute();
+            output.format(StyleSheets.PLAIN.getStyleSheet().ioSupplier(), ReportConfiguration.SYSTEM_OUT.ioSupplier());
+            output.format(config);
         } catch (BuildException e) {
             throw e;
         } catch (Exception ioex) {

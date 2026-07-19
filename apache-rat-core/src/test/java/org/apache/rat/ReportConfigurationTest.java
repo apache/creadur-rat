@@ -24,6 +24,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileFilter;
@@ -32,9 +33,11 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -44,15 +47,21 @@ import java.util.function.Function;
 import org.apache.commons.io.filefilter.DirectoryFileFilter;
 import org.apache.commons.io.output.CloseShieldOutputStream;
 import org.apache.rat.analysis.IHeaderMatcher;
+import org.apache.rat.api.RatException;
+import org.apache.rat.commandline.StyleSheets;
 import org.apache.rat.config.AddLicenseHeaders;
+import org.apache.rat.config.exclusion.ExclusionProcessorTest;
 import org.apache.rat.config.exclusion.StandardCollection;
+import org.apache.rat.config.results.ClaimValidator;
 import org.apache.rat.configuration.XMLConfigurationReaderTest;
 import org.apache.rat.document.DocumentName;
 import org.apache.rat.document.DocumentNameMatcher;
 import org.apache.rat.license.ILicense;
 import org.apache.rat.license.ILicenseFamily;
 import org.apache.rat.license.LicenseSetFactory.LicenseFilter;
+import org.apache.rat.report.RatReport;
 import org.apache.rat.report.Reportable;
+import org.apache.rat.report.claim.ClaimStatistic;
 import org.apache.rat.testhelpers.TestingLog;
 import org.apache.rat.testhelpers.TestingLicense;
 import org.apache.rat.testhelpers.TestingMatcher;
@@ -463,7 +472,7 @@ public class ReportConfigurationTest {
         assertThat(underTest.getWriter()).isNotNull();
 
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        underTest.setOut(new ReportConfiguration.IODescriptor("outputTest", () -> stream));
+        underTest.setOut(new ReportConfiguration.IODescriptor<>("outputTest", () -> stream));
         assertThat(underTest.getOutput().get()).isEqualTo(stream);
         PrintWriter writer = underTest.getWriter().get();
         assertThat(writer).isNotNull();
@@ -490,7 +499,7 @@ public class ReportConfigurationTest {
         assertThat(underTest.getStyleSheetDescriptor()).isNull();
         assertThat(underTest.getStyleSheet()).isNull();
         InputStream stream = mock(InputStream.class);
-        underTest.setStyleSheet(new ReportConfiguration.IODescriptor("stylesheetTest", () -> stream));
+        underTest.setStyleSheet(new ReportConfiguration.IODescriptor<>("stylesheetTest", () -> stream));
         assertThat(underTest.getStyleSheetDescriptor().ioSupplier().get()).isEqualTo(stream);
         assertThat(underTest.getStyleSheet().get()).isEqualTo(stream);
 
@@ -551,7 +560,7 @@ public class ReportConfigurationTest {
     void testSetOut() throws IOException {
         ReportConfiguration config = new ReportConfiguration();
         try (OutputStreamInterceptor osi = new OutputStreamInterceptor()) {
-            config.setOut(new ReportConfiguration.IODescriptor("testSetOut",() -> osi));
+            config.setOut(new ReportConfiguration.IODescriptor<>("testSetOut",() -> osi));
             assertThat(osi.closeCount).isEqualTo(0);
             try (OutputStream os = config.getOutput().get()) {
                 assertThat(os).isNotNull();
@@ -760,6 +769,64 @@ public class ReportConfigurationTest {
         validateDefaultLicenses(config);
     }
 
+    public static void assertSame(ReportConfiguration actual, ReportConfiguration expected) {
+        assertThat(actual.isAddingLicenses()).isEqualTo(expected.isAddingLicenses());
+        assertThat(actual.isAddingLicensesForced()).isEqualTo(expected.isAddingLicensesForced());
+        assertThat(actual.listFamilies()).isEqualTo(expected.listFamilies());
+        assertThat(actual.listLicenses()).isEqualTo(expected.listLicenses());
+        assertThat(actual.isDryRun()).isEqualTo(expected.isDryRun());
+        assertThat(actual.getArchiveProcessing()).isEqualTo(expected.getArchiveProcessing());
+        assertThat(actual.getStandardProcessing()).isEqualTo(expected.getStandardProcessing());
+        assertThat(actual.getStyleSheetDescriptor().name()).isEqualTo(expected.getStyleSheetDescriptor().name());
+        assertThat(actual.getOutputDescriptor().name()).isEqualTo(expected.getOutputDescriptor().name());
+
+        assertThat(actual.getCopyrightMessage()).isEqualTo(expected.getCopyrightMessage());
+
+        assertThat(actual.sources()).containsExactlyElementsOf(expected.sources());
+        assertThat(actual.reportables()).containsExactlyElementsOf(expected.reportables().toList());
+        ExclusionProcessorTest.assertSame(actual.getExclusionProcessor(), expected.getExclusionProcessor());
+
+    }
+    @Test
+    void serDesTest() throws IOException {
+        underTest.setAddLicenseHeaders(AddLicenseHeaders.FORCED);
+        underTest.listFamilies(LicenseFilter.APPROVED);
+        underTest.listLicenses(LicenseFilter.ALL);
+        underTest.setDryRun(true);
+        underTest.setArchiveProcessing(ReportConfiguration.Processing.NOTIFICATION);
+        underTest.setStandardProcessing(ReportConfiguration.Processing.ABSENCE);
+        underTest.setStyleSheet(StyleSheets.MISSING_HEADERS.getStyleSheet());
+        underTest.setOut(new File("/some/file/somewhere"));
+        underTest.setCopyrightMessage("the copyright message");
+        underTest.addSource(new File("/my/file"));
+        underTest.addSource(new TestingReportable());
+
+        underTest.addExcludedPatterns(List.of("pattern/**", "pattern2/**"));
+        underTest.addExcludedCollection(StandardCollection.BAZAAR);
+        underTest.addExcludedCollection(StandardCollection.MISC);
+        underTest.addExcludedFileProcessor(StandardCollection.HIDDEN_FILE);
+        underTest.addExcludedMatcher(DocumentNameMatcher.MATCHES_ALL);
+        underTest.addIncludedPatterns(List.of("**/pattern3", "**/pattern4"));
+        underTest.addIncludedCollection(StandardCollection.ARCH);
+        underTest.addIncludedCollection(StandardCollection.BITKEEPER);
+        underTest.addIncludedMatcher(DocumentNameMatcher.MATCHES_NONE);
+
+        ClaimValidator claimValidator = underTest.getClaimValidator();
+
+        claimValidator.setMax(ClaimStatistic.Counter.APPROVED, 5);
+        claimValidator.setMin(ClaimStatistic.Counter.APPROVED, 3);
+        claimValidator.setMax(ClaimStatistic.Counter.ARCHIVES, 10);
+        claimValidator.setMin(ClaimStatistic.Counter.BINARIES, 4);
+
+        StringWriter stringWriter = new StringWriter();
+        underTest.serDes().serialize(stringWriter);
+
+        ReportConfiguration actual = new ReportConfiguration();
+        actual.serDes().deserialize(() -> new ByteArrayInputStream(stringWriter.toString().getBytes(StandardCharsets.UTF_8)),
+                DocumentName.builder(new File("/rootDir")).build());
+        assertSame(actual, underTest);
+    }
+
     /**
      * A class to act as an output stream and count the number of close operations.
      */
@@ -774,6 +841,22 @@ public class ReportConfigurationTest {
         @Override
         public void close() {
             ++closeCount;
+        }
+    }
+
+    /**
+     * A reportable that only reports its name. Does no actual work.
+     */
+    static class TestingReportable implements Reportable {
+
+        @Override
+        public void run(RatReport report) throws RatException {
+            // does nothing
+        }
+
+        @Override
+        public DocumentName name() {
+            return DocumentName.builder().setBaseName("").setName("TestingReportable").build();
         }
     }
 }

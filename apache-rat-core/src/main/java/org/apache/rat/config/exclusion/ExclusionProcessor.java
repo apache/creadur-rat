@@ -20,17 +20,25 @@ package org.apache.rat.config.exclusion;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.NotImplementedException;
+import org.apache.rat.configuration.XMLConfigurationReader;
 import org.apache.rat.document.DocumentName;
 import org.apache.rat.document.DocumentNameMatcher;
+import org.apache.rat.report.xml.writer.XmlWriter;
 import org.apache.rat.utils.DefaultLog;
 import org.apache.rat.utils.ExtendedIterator;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import static java.lang.String.format;
 
@@ -74,21 +82,66 @@ public class ExclusionProcessor {
         excludedCollections = new HashSet<>();
     }
 
-    /** Reset the {@link #lastMatcher} and {@link #lastMatcherBaseDir} to start again */
+    public SerDes serDes() {
+        return new SerDes();
+    }
+
+    /* the following set of methods are here for testing purposes */
+    Set<String> getExcludedPatterns() {
+        return new HashSet<>(excludedPatterns);
+    }
+
+    Collection<DocumentNameMatcher> getExcludedPaths() {
+        return new ArrayList<>(excludedPaths);
+    }
+
+    Set<String> getIncludedPatterns() {
+        return new HashSet<>(includedPatterns);
+    }
+
+    Collection<DocumentNameMatcher> getIncludedPaths() {
+        return new ArrayList<>(includedPaths);
+    }
+
+    Collection<StandardCollection> getFileProcessors() {
+        return new HashSet<>(fileProcessors);
+    }
+
+    Set<StandardCollection> getIncludedCollections() {
+        return new HashSet<>(includedCollections);
+    }
+
+    Set<StandardCollection> getExcludedCollections() {
+        return new HashSet<>(excludedCollections);
+    }
+
+    DocumentNameMatcher getLastMatcher() {
+        return lastMatcher;
+    }
+
+    DocumentName getLastMatcherBaseDir() {
+        return lastMatcherBaseDir;
+    }
+
+    /**
+     * Reset the {@link #lastMatcher} and {@link #lastMatcherBaseDir} to start again.
+     */
     private void resetLastMatcher() {
         lastMatcher = null;
         lastMatcherBaseDir = null;
     }
 
     /**
-     * Add the Iterable of strings to the collection of file/directory patters to ignore.
-     * @param patterns the patterns to add
+     * Add the iterable of strings to the collection of file/directory patters to ignore.
+     * @param patterns the patterns to add.
      * @return this
      */
     public ExclusionProcessor addIncludedPatterns(final Iterable<String> patterns) {
+        if (patterns != null) {
         DefaultLog.getInstance().debug(format("Including patterns: %s", String.join(", ", patterns)));
         patterns.forEach(includedPatterns::add);
         resetLastMatcher();
+        }
         return this;
     }
 
@@ -139,9 +192,11 @@ public class ExclusionProcessor {
      * @return this
      */
     public ExclusionProcessor addExcludedPatterns(final Iterable<String> patterns) {
+        if (patterns != null) {
         DefaultLog.getInstance().debug(format("Excluding patterns: %s", String.join(", ", patterns)));
         patterns.forEach(excludedPatterns::add);
         resetLastMatcher();
+        }
         return this;
     }
 
@@ -177,8 +232,10 @@ public class ExclusionProcessor {
         for (DocumentNameMatcher nameMatcher : excludedPaths) {
             appendable.append(format("Excluding %s.%n", nameMatcher.toString()));
         }
+        for (DocumentNameMatcher nameMatcher : includedPaths) {
+            appendable.append(format("Including %s.%n", nameMatcher.toString()));
+        }
     }
-
 
     /**
      * Excludes the files/directories specified by a StandardCollection.
@@ -203,7 +260,7 @@ public class ExclusionProcessor {
     public DocumentNameMatcher getNameMatcher(final DocumentName basedir) {
         // if lastMatcher is not set or the basedir is not the same as the last one then
         // we have to regenerate the matching document.
-        // Otherwise we can just return the lastMatcher since there is no change.
+        // Otherwise, we can just return the lastMatcher since there is no change.
         if (lastMatcher == null || !basedir.equals(lastMatcherBaseDir)) {
             lastMatcherBaseDir = basedir;
 
@@ -337,4 +394,90 @@ public class ExclusionProcessor {
         }
     }
 
+    /**
+     * Serializes and deserializes the ExclusionProcessor to an XML document.
+     */
+    public class SerDes {
+        /** The pattern attribute name */
+        private static final String PATTERN = "pattern";
+        /** THe name attribute name */
+        private static final String NAME = "name";
+
+        /**
+         * Serialize the ExclusionProcessor to XML writer.
+         * @param writer the writer to serialize to.
+         * @throws IOException on Error
+         */
+        public void serialize(final XmlWriter writer) throws IOException {
+            writer.startElement("ExclusionProcessor");
+
+            for (String pattern : excludedPatterns) {
+                writer.startElement("excludedPattern").attribute(PATTERN, pattern).closeElement();
+            }
+            for (StandardCollection obj : excludedCollections) {
+                writer.startElement("excludedCollection").attribute(NAME, obj.name()).closeElement();
+            }
+            for (DocumentNameMatcher obj : excludedPaths) {
+                writer.startElement("excludedPath").attribute(NAME, obj.toString()).closeElement();
+            }
+
+            for (String pattern : includedPatterns) {
+                writer.startElement("includedPattern").attribute(PATTERN, pattern).closeElement();
+            }
+            for (StandardCollection obj : includedCollections) {
+                writer.startElement("includedCollection").attribute(NAME, obj.name()).closeElement();
+            }
+            for (DocumentNameMatcher obj : includedPaths) {
+                writer.startElement("includedPath").attribute(NAME, obj.toString()).closeElement();
+            }
+
+            for (StandardCollection obj : fileProcessors) {
+                writer.startElement("fileProcessor").attribute(NAME, obj.name()).closeElement();
+            }
+            writer.closeElement();
+        }
+
+        /**
+         * Deserialize from XML Document node to ExclusionProcessor.
+         * @param xmlNode the node to deserialize from.
+         */
+        public void deserialize(final Node xmlNode) {
+            final NodeList children = xmlNode.getChildNodes();
+            for (int i = 0; i < children.getLength(); i++) {
+                Node child = children.item(i);
+                Map<String, String> attributes = XMLConfigurationReader.attributes(child);
+                switch (child.getNodeName()) {
+                    case "excludedPattern" ->
+                        excludedPatterns.add(attributes.get(PATTERN));
+
+                    case "excludedCollection" ->
+                        excludedCollections.add(StandardCollection.valueOf(attributes.get(NAME)));
+
+                    case "excludedPath" ->
+                        excludedPaths.add(new DocumentNameMatcher(attributes.get(NAME),
+                                (Predicate<DocumentName>) x -> {
+                                    throw new NotImplementedException("Deserialized ExclusionProcessor can not evaluate excluded paths");
+                                }));
+
+                    case "includedPattern" ->
+                        includedPatterns.add(attributes.get(PATTERN));
+
+                    case "includedCollection" ->
+                        includedCollections.add(StandardCollection.valueOf(attributes.get(NAME)));
+
+                    case "includedPath" ->
+                        includedPaths.add(new DocumentNameMatcher(attributes.get(NAME),
+                                (Predicate<DocumentName>) x -> {
+                                    throw new NotImplementedException("Deserialized ExclusionProcessor can not evaluate included paths");
+                                }));
+
+                    case "fileProcessor" ->
+                        fileProcessors.add(StandardCollection.valueOf(attributes.get(NAME)));
+
+                    default ->
+                        DefaultLog.getInstance().error(String.format("Unknown child node '%s'", child.getNodeName()));
+                }
+            }
+        }
+    }
 }

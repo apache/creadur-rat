@@ -19,14 +19,24 @@
 
 package org.apache.rat.report.claim;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import javax.xml.parsers.DocumentBuilder;
+
+import org.apache.commons.io.function.IOSupplier;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.rat.api.Document;
+import org.apache.rat.configuration.XMLConfigurationReader;
+import org.apache.rat.report.xml.writer.XmlWriter;
+import org.apache.rat.utils.StandardXmlFactory;
+import org.xml.sax.SAXException;
 
 /**
  * This class provides a numerical overview about
@@ -100,7 +110,7 @@ public class ClaimStatistic {
          * @return displayName of the counter, capitalized and without underscores.
          */
         public String displayName() {
-            return StringUtils.capitalize(name().replaceAll("_", " ").toLowerCase(Locale.ROOT));
+            return StringUtils.capitalize(name().replace("_", " ").toLowerCase(Locale.ROOT));
         }
     }
 
@@ -113,8 +123,11 @@ public class ClaimStatistic {
     /** Map of counter type to value */
     private final ConcurrentHashMap<ClaimStatistic.Counter, IntCounter> counterMap = new ConcurrentHashMap<>();
 
+    public SerDes serDes() {
+        return new SerDes();
+    }
     /**
-     * Converts null counter to 0.
+     * Converts {@code null} counter to 0.
      *
      * @param counter the Counter to retrieve the value from.
      * @return 0 if counter is {@code null} or counter value otherwise.
@@ -139,6 +152,15 @@ public class ClaimStatistic {
      */
     public void incCounter(final Counter counter, final int value) {
         counterMap.compute(counter, (k, v) -> v == null ? new IntCounter().increment(value) : v.increment(value));
+    }
+
+    /**
+     * Increments the counts for the counter.
+     * @param counter the counter to increment.
+     * @param value the value to increment the counter by.
+     */
+    public void setCounter(final Counter counter, final int value) {
+        counterMap.put(counter, new IntCounter().increment(value));
     }
 
     /**
@@ -168,24 +190,12 @@ public class ClaimStatistic {
     public void incCounter(final Document.Type documentType, final int value) {
         documentTypeMap.compute(documentType, (k, v) -> updateCounter(Counter.DOCUMENT_TYPES, v, value));
         switch (documentType) {
-            case STANDARD:
-                incCounter(Counter.STANDARDS, value);
-                break;
-            case ARCHIVE:
-                incCounter(Counter.ARCHIVES, value);
-                break;
-            case BINARY:
-                incCounter(Counter.BINARIES, value);
-                break;
-            case NOTICE:
-                incCounter(Counter.NOTICES, value);
-                break;
-            case UNKNOWN:
-                incCounter(Counter.UNKNOWN, value);
-                break;
-            case IGNORED:
-                incCounter(Counter.IGNORED, value);
-                break;
+            case STANDARD -> incCounter(Counter.STANDARDS, value);
+            case ARCHIVE -> incCounter(Counter.ARCHIVES, value);
+            case BINARY -> incCounter(Counter.BINARIES, value);
+            case NOTICE -> incCounter(Counter.NOTICES, value);
+            case UNKNOWN -> incCounter(Counter.UNKNOWN, value);
+            case IGNORED -> incCounter(Counter.IGNORED, value);
         }
     }
 
@@ -208,10 +218,10 @@ public class ClaimStatistic {
     }
 
     /**
-     * Updates the intCounter with the value and if the intCounter was null creates a new one and registers the
+     * Updates the intCounter with the value and if the intCounter was {@code null} creates a new one and registers the
      * creation as a counter type.
      * @param counter the Type of the counter.
-     * @param intCounter the IntCounter to update. May be null.
+     * @param intCounter the IntCounter to update. May be {@code null}.
      * @param value the value to add to the int counter.
      * @return the intCounter if it was not {@code null}, a new IntCounter otherwise.
      */
@@ -287,6 +297,106 @@ public class ClaimStatistic {
          */
         public int value() {
             return value;
+        }
+
+        @Override
+        public String toString() {
+            return String.valueOf(value);
+        }
+    }
+
+    /**
+     * Serialize and deserialize the claim Statistic.
+     */
+    public class SerDes {
+        /** The count attribute string. */
+        private static final String COUNT = "count";
+        /** The name attribute string. */
+        private static final String NAME = "name";
+
+        /**
+         * Serializes the claim statistic into an appendable.
+         * @param appendable the appendable to write to.
+         * @throws IOException on error.
+         */
+        public void serialize(final Appendable appendable) throws IOException {
+            try (XmlWriter writer = new XmlWriter(appendable)) {
+                writer.startDocument().startElement("ClaimStatistic")
+                        .startElement("licenseNameMap");
+                for (Map.Entry<String, IntCounter> entry : licenseNameMap.entrySet()) {
+                    if (entry.getValue().value > 0) {
+                        writer.startElement("licenseName")
+                                .attribute(COUNT, entry.getValue().toString())
+                                .attribute(NAME, entry.getKey()).closeElement();
+                    }
+                }
+                writer.closeElement()
+                        .startElement("licenseFamilyCategoryMap");
+                for (Map.Entry<String, IntCounter> entry : licenseFamilyCategoryMap.entrySet()) {
+                    if (entry.getValue().value > 0) {
+                        writer.startElement("familyCategory")
+                                .attribute(COUNT, entry.getValue().toString())
+                                .attribute(NAME, entry.getKey()).closeElement();
+                    }
+                }
+                writer.closeElement()
+                        .startElement("documentTypeMap");
+                for (Map.Entry<Document.Type, IntCounter> entry : documentTypeMap.entrySet()) {
+                    if (entry.getValue().value > 0) {
+                        writer.startElement("documentType")
+                                .attribute(COUNT, entry.getValue().toString())
+                                .attribute(NAME, entry.getKey().name()).closeElement();
+                    }
+                }
+                writer.closeElement()
+                        .startElement("counterMap");
+                for (Map.Entry<ClaimStatistic.Counter, IntCounter> entry : counterMap.entrySet()) {
+                    if (entry.getValue().value > 0) {
+                        writer.startElement("counter")
+                                .attribute(COUNT, entry.getValue().toString())
+                                .attribute(NAME, entry.getKey().name()).closeElement();
+                    }
+                }
+                writer.closeElement();
+            }
+        }
+
+        /**
+         * Deserializes a ClaimStatistic from an input stream.
+         * @param inputStreamSupplier the supplier of the input stream to deserialize from.
+         * @throws IOException on error.
+         */
+        public void deserialize(final IOSupplier<InputStream> inputStreamSupplier) throws IOException {
+            DocumentBuilder builder = StandardXmlFactory.documentBuilder();
+            org.w3c.dom.Document document;
+
+            try (InputStream stream = inputStreamSupplier.get()) {
+                document = builder.parse(stream);
+            } catch (SAXException e) {
+                throw new IOException("Unable to read input", e);
+            }
+
+            XMLConfigurationReader.nodeListConsumer(document.getElementsByTagName("licenseName"), node -> {
+                Map<String, String> attributes = XMLConfigurationReader.attributes(node);
+                incLicenseNameCount(attributes.get(NAME), Integer.parseInt(attributes.get(COUNT)));
+            });
+
+            XMLConfigurationReader.nodeListConsumer(document.getElementsByTagName("familyCategory"), node -> {
+                Map<String, String> attributes = XMLConfigurationReader.attributes(node);
+                incLicenseCategoryCount(attributes.get(NAME), Integer.parseInt(attributes.get(COUNT)));
+            });
+
+            XMLConfigurationReader.nodeListConsumer(document.getElementsByTagName("documentType"), node -> {
+                Map<String, String> attributes = XMLConfigurationReader.attributes(node);
+                Document.Type type = Document.Type.valueOf(attributes.get(NAME));
+                incCounter(type, Integer.parseInt(attributes.get(COUNT)));
+            });
+
+            XMLConfigurationReader.nodeListConsumer(document.getElementsByTagName("counter"), node -> {
+                Map<String, String> attributes = XMLConfigurationReader.attributes(node);
+                Counter type = Counter.valueOf(attributes.get(NAME));
+                setCounter(type, Integer.parseInt(attributes.get(COUNT)));
+            });
         }
     }
 }
