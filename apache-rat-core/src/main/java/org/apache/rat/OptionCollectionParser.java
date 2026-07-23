@@ -57,6 +57,10 @@ public final class OptionCollectionParser {
         this.uiOptionCollection = optionCollection;
     }
 
+    public UIOptionCollection<?> getOptionCollection() {
+        return uiOptionCollection;
+    }
+
     /**
      * Parses the standard options to create a ReportConfiguration.
      *

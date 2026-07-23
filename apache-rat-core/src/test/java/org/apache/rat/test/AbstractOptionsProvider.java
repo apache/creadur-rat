@@ -72,7 +72,7 @@ public abstract class AbstractOptionsProvider implements ArgumentsProvider {
      */
     public static void preserveData(File baseDir, String targetDir) {
         final Path recordPath = FileSystems.getDefault().getPath("target", targetDir);
-        recordPath.toFile().mkdirs();
+        org.apache.rat.utils.FileUtils.mkDir(recordPath.toFile());
         try {
             FileUtils.copyDirectory(baseDir, recordPath.toFile());
         } catch (IOException e) {

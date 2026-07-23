@@ -20,8 +20,10 @@ package org.apache.rat.commandline;
 
 import java.io.File;
 
+import org.apache.commons.cli.AlreadySelectedException;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
+import org.apache.commons.cli.OptionGroup;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.rat.OptionCollectionParser;
@@ -55,7 +57,7 @@ public final class ArgumentContext {
     public ArgumentContext(final File workingDirectory, final ReportConfiguration configuration, final Options opts, final String[] args)
             throws ParseException {
         this.workingDirectory = DocumentName.builder(workingDirectory).build();
-        this.commandLine = OptionCollectionParser.parseCommandLine(opts, args);
+        this.commandLine = OptionCollectionParser.parseCommandLine(clearSelected(opts), args);
         this.configuration = configuration;
     }
 
@@ -71,10 +73,28 @@ public final class ArgumentContext {
     }
 
     /**
+     * Clears the group selections in the options.
+     * @param options the options to clear.
+     * @return the options with all selections cleared.
+     */
+    private static Options clearSelected(final Options options) {
+        for (Option opt : options.getOptions()) {
+            OptionGroup group = options.getOptionGroup(opt);
+            if (group != null) {
+                try {
+                    group.setSelected(null);
+                } catch (AlreadySelectedException e) {
+                    throw new RuntimeException("Unexpected error with null argument", e);
+                }
+            }
+        }
+        return options;
+    }
+    /**
      * Process the arguments specified in this context.
      */
     public void processArgs(final UIOptionCollection<?> uiOptionCollection) {
-        Arg.processArgs(this,  uiOptionCollection);
+        Arg.processArgs(this, uiOptionCollection);
     }
 
     /**

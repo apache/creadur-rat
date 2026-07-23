@@ -615,7 +615,17 @@ public enum Arg {
                     .build()),
             (context, selected) -> {
                 try {
+                    String optionValue = context.getCommandLine().getOptionValue(selected);
                     DocumentName documentName = context.getCommandLine().getParsedOptionValue(selected);
+                    if (documentName == null) {
+                        DefaultLog.getInstance().error(String.format("Can not get option: %s/%s (%s) from %s with value of %s",
+                                selected.getOpt(), selected.getLongOpt(), selected.getDescription(), selected.getKey(),
+                                optionValue));
+                        for (Option opt : context.getCommandLine().getOptions()) {
+                            DefaultLog.getInstance().error(String.format("Available option: '%s' = '%s'",
+                                    opt.getKey(), opt.getValue()));
+                        }
+                    }
                     File document = documentName.asFile();
                     File parent = document.getParentFile();
                     if (!parent.mkdirs() && !parent.isDirectory()) {
