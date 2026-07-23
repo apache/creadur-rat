@@ -19,6 +19,7 @@
 package org.apache.rat.test;
 
 import java.io.FileWriter;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import org.apache.commons.cli.Option;
@@ -80,7 +81,7 @@ public abstract class AbstractConfigurationOptionsProvider extends AbstractOptio
      */
     public static void preserveData(File baseDir, String targetDir) {
         final Path recordPath = FileSystems.getDefault().getPath("target", targetDir);
-        org.apache.rat.testhelpers.FileUtils.mkDir(recordPath.toFile());
+        org.apache.rat.utils.FileUtils.mkDir(recordPath.toFile());
         try {
             FileUtils.copyDirectory(baseDir, recordPath.toFile());
         } catch (IOException e) {
@@ -232,10 +233,10 @@ public abstract class AbstractConfigurationOptionsProvider extends AbstractOptio
 
         writeFile(".gitignore", Arrays.asList(lines));
         File dir = new File(baseDir, "red");
-        org.apache.rat.testhelpers.FileUtils.mkDir(dir);
+        org.apache.rat.utils.FileUtils.mkDir(dir);
         dir = new File(baseDir, "blue");
         dir = new File(dir, "fish");
-        org.apache.rat.testhelpers.FileUtils.mkDir(dir);
+        org.apache.rat.utils.FileUtils.mkDir(dir);
 
         assertDoesNotThrow(() -> {
             ReportConfiguration config = generateConfig(ImmutablePair.of(option, args));
@@ -800,6 +801,7 @@ public abstract class AbstractConfigurationOptionsProvider extends AbstractOptio
     private void styleSheetTest(final Option option) {
         // copy the dummy stylesheet so that we have a local file for users of the testing jar.
         File file = new File(baseDir, "stylesheet-" + option.getLongOpt());
+        DocumentName workingDirectory = DocumentName.builder(file.getParentFile()).build();
         try (
                 InputStream in = ReporterTest.class.getResourceAsStream("MatcherContainerResource.txt");
                 OutputStream out = Files.newOutputStream(file.toPath())) {
@@ -815,12 +817,16 @@ public abstract class AbstractConfigurationOptionsProvider extends AbstractOptio
         // run the test
         String[] args = {null};
         assertDoesNotThrow(() -> {
-            for (String sheet : new String[]{"plain-rat", "missing-headers", "unapproved-licenses", file.getAbsolutePath()}) {
+            for (String sheet : new String[]{"plain-rat", "missing-headers", "unapproved-licenses", "stylesheet-" + option.getLongOpt()}) {
                 args[0] = sheet;
                 ReportConfiguration config = generateConfig(ImmutablePair.of(option, args));
-                try (InputStream expected = StyleSheets.getStyleSheet(sheet).ioSupplier().get();
+                try (InputStream expected = StyleSheets.getStyleSheet(sheet, workingDirectory).ioSupplier().get();
                      InputStream actual = config.getStyleSheet().get()) {
-                    assertThat(IOUtils.contentEquals(expected, actual)).as(() -> String.format("'%s' does not match", sheet)).isTrue();
+                    String expectedStr =  IOUtils.toString(expected, StandardCharsets.UTF_8);
+                    String actualStr =  IOUtils.toString(actual, StandardCharsets.UTF_8);
+                    assertThat(actualStr).as(() -> String.format("'%s' is not correct: %s != %s",
+                            config.getStyleSheetDescriptor().name(),
+                            actualStr, expectedStr)).isEqualTo(expectedStr);
                 }
             }
         });
@@ -845,7 +851,7 @@ public abstract class AbstractConfigurationOptionsProvider extends AbstractOptio
     protected void xmlTest() {
         assertDoesNotThrow(() -> {
             ReportConfiguration config = generateConfig(ImmutablePair.of(Arg.OUTPUT_STYLE.find("xml"), null));
-            try (InputStream expected = StyleSheets.getStyleSheet("xml").ioSupplier().get();
+            try (InputStream expected = StyleSheets.getStyleSheet("xml", null).ioSupplier().get();
                  InputStream actual = config.getStyleSheet().get()) {
                 assertThat(IOUtils.contentEquals(expected, actual)).as("'xml' does not match").isTrue();
             }

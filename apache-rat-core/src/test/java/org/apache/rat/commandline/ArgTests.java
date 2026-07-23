@@ -18,13 +18,8 @@
  */
 package org.apache.rat.commandline;
 
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.DefaultParser;
-import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.rat.CLIOptionCollection;
-import org.apache.rat.DeprecationReporter;
-import org.apache.rat.OptionCollection;
 import org.apache.rat.ReportConfiguration;
 import org.apache.rat.document.DocumentName;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -36,12 +31,6 @@ import java.nio.file.Path;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class ArgTests {
-
-    private CommandLine createCommandLine(String[] args) throws ParseException {
-        Options opts = OptionCollection.buildOptions();
-        return DefaultParser.builder().setDeprecatedHandler(DeprecationReporter.getLogReporter())
-                .setAllowPartialMatching(true).build().parse(opts, args);
-    }
 
     @ParameterizedTest(name = "{0}")
     @ValueSource(strings = { "rat.txt", "./rat.txt", "/rat.txt", "target/rat.test" })
@@ -62,9 +51,8 @@ public class ArgTests {
         Path workingPath = localFile.getAbsoluteFile().toPath();
         String expected = fsInfo.normalize(workingPath.resolve("./" + fileName).toString());
 
-        CommandLine commandLine = createCommandLine(new String[]{"--output-file", fileName});
         OutputFileConfig configuration = new OutputFileConfig();
-        ArgumentContext ctxt = new ArgumentContext(localFile, configuration, commandLine);
+        ArgumentContext ctxt = new ArgumentContext(localFile, configuration, CLIOptionCollection.INSTANCE.getOptions(), new String[]{"--output-file", fileName});
         Arg.processArgs(ctxt, CLIOptionCollection.INSTANCE);
         if (name.equals("/rat.txt")) {
             assertThat(fsInfo.normalize(configuration.actual.getAbsolutePath())).isEqualTo(localFileName.getRoot() + "rat.txt");

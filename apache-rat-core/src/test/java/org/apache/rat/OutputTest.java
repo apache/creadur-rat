@@ -30,8 +30,8 @@ import org.apache.rat.document.FileDocument;
 import org.apache.rat.license.LicenseSetFactory;
 import org.apache.rat.report.claim.ClaimStatistic;
 import org.apache.rat.report.claim.ClaimStatisticTest;
+import org.apache.rat.utils.FileUtils;
 import org.apache.rat.test.utils.Resources;
-import org.apache.rat.testhelpers.FileUtils;
 import org.apache.rat.utils.StandardXmlFactory;
 import org.apache.rat.utils.StandardXmlFactoryTest;
 import org.apache.rat.walker.DirectoryWalker;
@@ -71,7 +71,11 @@ class OutputTest {
 
     @AfterAll
     static void teardown() {
-        FileUtils.delete(tempPath.toFile());
+        try {
+            FileUtils.delete(tempPath.toFile());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Test

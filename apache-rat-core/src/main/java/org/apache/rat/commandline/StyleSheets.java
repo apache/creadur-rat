@@ -27,6 +27,7 @@ import java.util.Objects;
 
 import org.apache.rat.ConfigurationException;
 import org.apache.rat.ReportConfiguration;
+import org.apache.rat.document.DocumentName;
 
 import static java.lang.String.format;
 
@@ -49,8 +50,11 @@ public enum StyleSheets {
     /**
      * The pretty-printed XML style sheet.
      */
-    XML("xml", "Produces output in pretty-printed XML.");
-
+    XML("xml", "Produces output in pretty-printed XML."),
+    /**
+     * Official HTML5 stylesheet.
+     */
+    XHTML5("xhtml5", "Produces a HTML5 report");
     /**
      * The name of the style sheet. Must map to bundled resource XSLT file
      */
@@ -85,12 +89,15 @@ public enum StyleSheets {
      * @param name the short name for or the path to a style sheet.
      * @return the IODescriptor for the style sheet.
      */
-    public static ReportConfiguration.IODescriptor<InputStream> getStyleSheet(final String name) {
+    public static ReportConfiguration.IODescriptor<InputStream> getStyleSheet(final String name, final DocumentName workingDirectory) {
         URL url = StyleSheets.class.getClassLoader().getResource(format("org/apache/rat/%s.xsl", name));
         if (url != null) {
             return new ReportConfiguration.IODescriptor<>(name, url::openStream);
-        }
-        Path p = Paths.get(name);
+        };
+        // normalize the stylesheet name and resolve it against the working directory so that relative names are resolved
+        // on the workingDirectory but fully qualified names are resolved against the root directory.
+        String normalizedName = workingDirectory.fsInfo().normalize(name);
+        Path p = Paths.get(workingDirectory.getName()).resolve(normalizedName);
         if (p.toFile().exists()) {
             return new ReportConfiguration.IODescriptor<>(name, () -> Files.newInputStream(p));
         }

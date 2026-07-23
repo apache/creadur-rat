@@ -72,7 +72,7 @@ public abstract class AbstractOptionsProvider implements ArgumentsProvider {
      */
     public static void preserveData(File baseDir, String targetDir) {
         final Path recordPath = FileSystems.getDefault().getPath("target", targetDir);
-        recordPath.toFile().mkdirs();
+        org.apache.rat.utils.FileUtils.mkDir(recordPath.toFile());
         try {
             FileUtils.copyDirectory(baseDir, recordPath.toFile());
         } catch (IOException e) {
@@ -170,7 +170,7 @@ public abstract class AbstractOptionsProvider implements ArgumentsProvider {
     }
 
     protected File writeFile(final String name, final Iterable<String> lines) {
-        return org.apache.rat.testhelpers.FileUtils.writeFile(baseDir, name, lines);
+        return org.apache.rat.utils.FileUtils.writeFile(baseDir, name, lines);
     }
 
     final protected DocumentName mkDocName(final String name) {

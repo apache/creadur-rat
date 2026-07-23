@@ -30,8 +30,7 @@ import java.nio.file.Path;
 import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.DefaultParser;
+
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.lang3.tuple.Pair;
@@ -44,6 +43,7 @@ import org.apache.rat.test.utils.OptionFormatter;
 import org.apache.rat.testhelpers.TestingLog;
 import org.apache.rat.utils.CasedString;
 import org.apache.rat.utils.DefaultLog;
+import org.apache.rat.utils.FileUtils;
 import org.apache.rat.utils.Log;
 import org.apache.rat.walker.ArchiveWalker;
 import org.apache.rat.walker.DirectoryWalker;
@@ -181,6 +181,7 @@ public class OptionCollectionTest {
     public void testDeprecatedUseLogged() throws IOException {
         TestingLog log = new TestingLog();
         try {
+            FileUtils.mkDir(testPath.resolve("target").toFile());
             DefaultLog.setInstance(log);
             String[] args = {"--dir", "target", "-a"};
             ReportConfiguration config = OptionCollection.parseCommands(testPath.toFile(), args, o -> fail("Help printed"), true);
@@ -220,8 +221,7 @@ public class OptionCollectionTest {
     @Test
     public void testDefaultConfiguration() throws ParseException {
         String[] empty = {};
-        CommandLine cl = new DefaultParser().parse(OptionCollection.buildOptions(), empty);
-        ArgumentContext context = new ArgumentContext(new File("."), cl);
+        ArgumentContext context = new ArgumentContext(new File("."), OptionCollection.buildOptions(), empty);
         ReportConfiguration config = OptionCollection.createConfiguration(context);
         ReportConfigurationTest.validateDefault(config);
     }

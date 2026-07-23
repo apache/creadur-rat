@@ -20,7 +20,6 @@ package org.apache.rat;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -54,7 +53,7 @@ import org.apache.rat.report.claim.ClaimStatistic;
 import org.apache.rat.test.AbstractOptionsProvider;
 import org.apache.rat.test.utils.OptionFormatter;
 import org.apache.rat.test.utils.Resources;
-import org.apache.rat.testhelpers.FileUtils;
+import org.apache.rat.utils.FileUtils;
 import org.apache.rat.testhelpers.TestingLog;
 import org.apache.rat.testhelpers.TextUtils;
 import org.apache.rat.testhelpers.XmlUtils;
@@ -115,16 +114,24 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
         return config;
     }
 
-    private File configureRatDir(Option option) {
-        configureSourceDir(option);
-        File result = new File(sourceDir, ".rat");
-        FileUtils.mkDir(result);
-        return result;
-    }
-
+    /**
+     * Creates the srcDir.,.
+     * @param option the name for the srcDir.
+     */
     private void configureSourceDir(Option option) {
         sourceDir = new File(baseDir, OptionFormatter.getName(option));
         FileUtils.mkDir(sourceDir);
+    }
+
+    /**
+     * Creates the option/.rat directory
+     * @param option the name for the sourceDirectory.
+     */
+    private File configureRatDir(Option option) {
+        configureSourceDir(option);
+        File ratDir = new File(sourceDir, ".rat");
+        FileUtils.mkDir(ratDir);
+        return ratDir;
     }
 
     private void validateNoArgSetup() throws IOException, RatException {
@@ -229,8 +236,7 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
     @OptionCollectionTest.TestFunction
     protected void licensesDeniedFileTest() {
         Option option = Arg.LICENSES_DENIED_FILE.find("licenses-denied-file");
-        File ratDir = configureRatDir(option);
-        File outputFile = FileUtils.writeFile(ratDir, "licensesDenied.txt", Collections.singletonList("ILLUMOS"));
+        File outputFile = FileUtils.writeFile(configureRatDir(option), "licensesDenied.txt", Collections.singletonList("ILLUMOS"));
         execLicensesDeniedTest(option, new String[]{outputFile.getAbsolutePath()});
     }
 
@@ -241,7 +247,6 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
                     "*/\n\n", "class Test {}\n"));
 
             validateNoArgSetup();
-
             ReportConfiguration config = generateConfig(ImmutablePair.of(option, null));
             Reporter reporter = new Reporter(config);
             assertThatThrownBy(reporter::execute)
@@ -278,7 +283,7 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
             arg[0] = "Unapproved:1";
             config = generateConfig(ImmutablePair.of(option, arg));
             reporter = new Reporter(config);
-            output = reporter.execute();
+            output  = reporter.execute();
             validator = config.getClaimValidator();
             assertThat(validator.listIssues(output.getStatistic())).isEmpty();
         });
@@ -309,8 +314,13 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
         });
     }
 
-    // exclude tests
-    private void execExcludeTest(final Option option, final String[] args, final boolean addIgnored) {
+    /**
+     * Runs the exclude tests.
+     * @param option The exclude option to run.
+     * @param args the arguments for the command line.
+     * @param includesRatDir @{code true} if the .rat directory was created.
+     */
+    private void execExcludeTest(final Option option, final String[] args, final boolean includesRatDir) {
         String[] notExcluded = {"notbaz", "well._afile"};
         String[] excluded = {"some.foo", "B.bar", "justbaz"};
 
@@ -326,20 +336,19 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
             Reporter reporter = new Reporter(config);
             Reporter.Output output = reporter.execute();
             assertThat(output.getStatistic().getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(5);
-            assertThat(output.getStatistic().getCounter(ClaimStatistic.Counter.IGNORED)).isEqualTo(addIgnored ? 1 : 0);
+            assertThat(output.getStatistic().getCounter(ClaimStatistic.Counter.IGNORED)).isEqualTo(includesRatDir ? 1 : 0);
 
             // filter out source
             config = generateConfig(ImmutablePair.of(option, args));
             reporter = new Reporter(config);
             output = reporter.execute();
             assertThat(output.getStatistic().getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(2);
-            assertThat(output.getStatistic().getCounter(ClaimStatistic.Counter.IGNORED)).isEqualTo(addIgnored ? 4 : 3);
+            assertThat(output.getStatistic().getCounter(ClaimStatistic.Counter.IGNORED)).isEqualTo(includesRatDir ? 4 : 3);
         });
     }
 
     private void excludeFileTest(final Option option) {
-        File ratDir = configureRatDir(option);
-        File outputFile = FileUtils.writeFile(ratDir, "exclude.txt", Arrays.asList(EXCLUDE_ARGS));
+        File outputFile = FileUtils.writeFile(configureRatDir(option), "exclude.txt", Arrays.asList(EXCLUDE_ARGS));
         execExcludeTest(option, new String[]{outputFile.getAbsolutePath()}, true);
     }
 
@@ -479,8 +488,13 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
         });
     }
 
-    // include tests
-    private void execIncludeTest(final Option option, final String[] args, boolean addIgnored) {
+    /**
+     * Runs the include tests.
+     * @param option The include option to run.
+     * @param args the arguments for the command line.
+     * @param includesRatDir @{code true} if the .rat directory was created.
+     */
+    private void execIncludeTest(final Option option, final String[] args, final boolean includesRatDir) {
         Option excludeOption = Arg.EXCLUDE.option();
         String[] notExcluded = {"B.bar", "justbaz", "notbaz"};
         String[] excluded = {"some.foo"};
@@ -496,29 +510,29 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
             Reporter reporter = new Reporter(config);
             Reporter.Output output = reporter.execute();
             assertThat(output.getStatistic().getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(4);
-            assertThat(output.getStatistic().getCounter(ClaimStatistic.Counter.IGNORED)).isEqualTo(addIgnored ? 1 : 0);
+
+            assertThat(output.getStatistic().getCounter(ClaimStatistic.Counter.IGNORED)).isEqualTo(includesRatDir ? 1 : 0);
 
             // verify exclude removes most files.
             config = generateConfig(ImmutablePair.of(excludeOption, EXCLUDE_ARGS));
             reporter = new Reporter(config);
-            output = reporter.execute();
+            output  = reporter.execute();
             assertThat(output.getStatistic().getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(1);
             // .gitignore is ignored by default as it is hidden but not counted
-            assertThat(output.getStatistic().getCounter(ClaimStatistic.Counter.IGNORED)).isEqualTo(addIgnored ? 4 : 3);
+            assertThat(output.getStatistic().getCounter(ClaimStatistic.Counter.IGNORED)).isEqualTo(includesRatDir ? 4 : 3);
 
             // verify include put them back
             config = generateConfig(ImmutablePair.of(option, args), ImmutablePair.of(excludeOption, EXCLUDE_ARGS));
             reporter = new Reporter(config);
-            output = reporter.execute();
+            output  = reporter.execute();
             assertThat(output.getStatistic().getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(3);
             // .gitignore is ignored by default as it is hidden but not counted
-            assertThat(output.getStatistic().getCounter(ClaimStatistic.Counter.IGNORED)).isEqualTo(addIgnored ? 2 : 1);
+            assertThat(output.getStatistic().getCounter(ClaimStatistic.Counter.IGNORED)).isEqualTo(includesRatDir ? 2 : 1 );
         });
     }
 
     private void includeFileTest(final Option option) {
-        File ratDir = configureRatDir(option);
-        File outputFile = FileUtils.writeFile(ratDir, "include.txt", Arrays.asList(INCLUDE_ARGS));
+        File outputFile = FileUtils.writeFile(configureRatDir(option), "include.txt", Arrays.asList(INCLUDE_ARGS));
         execIncludeTest(option, new String[]{outputFile.getAbsolutePath()}, true);
     }
 
@@ -570,7 +584,7 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
 
             config = generateConfig(excludes, ImmutablePair.of(option, args));
             reporter = new Reporter(config);
-            output = reporter.execute();
+            output  = reporter.execute();
             assertThat(output.getStatistic().getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(7);
             assertThat(output.getStatistic().getCounter(ClaimStatistic.Counter.IGNORED)).isEqualTo(1);
         });
@@ -595,7 +609,7 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
 
             config = generateConfig(ImmutablePair.of(option, new String[]{inputFile.getAbsolutePath()}));
             reporter = new Reporter(config);
-            output = reporter.execute();
+            output  = reporter.execute();
             assertThat(output.getStatistic().getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(1);
             assertThat(output.getStatistic().getCounter(ClaimStatistic.Counter.IGNORED)).isZero();
         });
@@ -627,7 +641,7 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
 
             config = addCatzLicense(generateConfig(arg1));
             reporter = new Reporter(config);
-            output = reporter.execute();
+            output  = reporter.execute();
             assertThat(output.getStatistic().getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(1);
             assertThat(output.getStatistic().getCounter(ClaimStatistic.Counter.APPROVED)).isEqualTo(1);
             assertThat(output.getStatistic().getCounter(ClaimStatistic.Counter.UNAPPROVED)).isZero();
@@ -664,7 +678,7 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
 
             config = generateConfig(arg1);
             reporter = new Reporter(config);
-            output = reporter.execute();
+            output  = reporter.execute();
             assertThat(output.getStatistic().getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(1);
             assertThat(output.getStatistic().getCounter(ClaimStatistic.Counter.APPROVED)).isZero();
             assertThat(output.getStatistic().getCounter(ClaimStatistic.Counter.UNAPPROVED)).isEqualTo(1);
@@ -704,7 +718,7 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
 
             config = generateConfig(arg1);
             reporter = new Reporter(config);
-            output = reporter.execute();
+            output  = reporter.execute();
             assertThat(output.getStatistic().getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(2);
             assertThat(output.getStatistic().getCounter(ClaimStatistic.Counter.APPROVED)).isEqualTo(2);
             assertThat(output.getStatistic().getCounter(ClaimStatistic.Counter.UNAPPROVED)).isZero();
@@ -713,7 +727,7 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
 
             config = generateConfig(arg1, arg2);
             reporter = new Reporter(config);
-            output = reporter.execute();
+            output  = reporter.execute();
             assertThat(output.getStatistic().getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(2);
             assertThat(output.getStatistic().getCounter(ClaimStatistic.Counter.APPROVED)).isEqualTo(1);
             assertThat(output.getStatistic().getCounter(ClaimStatistic.Counter.UNAPPROVED)).isEqualTo(1);
@@ -749,7 +763,7 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
 
             config = generateConfig(arg1);
             reporter = new Reporter(config);
-            output = reporter.execute();
+            output  = reporter.execute();
             assertThat(output.getStatistic().getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(2);
             assertThat(output.getStatistic().getCounter(ClaimStatistic.Counter.APPROVED)).isEqualTo(2);
             assertThat(output.getStatistic().getCounter(ClaimStatistic.Counter.UNAPPROVED)).isZero();
@@ -759,8 +773,7 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
     @OptionCollectionTest.TestFunction
     protected void licensesApprovedFileTest() {
         Option option = Arg.LICENSES_APPROVED_FILE.find("licenses-approved-file");
-        File ratDir = configureRatDir(option);
-                File outputFile = FileUtils.writeFile(ratDir, "licensesApproved.txt", Collections.singletonList("GPL1"));
+        File outputFile = FileUtils.writeFile(configureRatDir(option), "licensesApproved.txt", Collections.singletonList("GPL1"));
         execLicensesApprovedTest(option, new String[]{outputFile.getAbsolutePath()});
     }
 
@@ -793,7 +806,7 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
 
             config = generateConfig(arg1);
             reporter = new Reporter(config);
-            output = reporter.execute();
+            output  = reporter.execute();
             assertThat(output.getStatistic().getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(2);
             assertThat(output.getStatistic().getCounter(ClaimStatistic.Counter.APPROVED)).isEqualTo(1);
             assertThat(output.getStatistic().getCounter(ClaimStatistic.Counter.UNAPPROVED)).isEqualTo(1);
@@ -858,18 +871,21 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
                 String actualText = baos.toString(StandardCharsets.UTF_8);
                 switch (sheet) {
                     case MISSING_HEADERS:
-                        TextUtils.assertContainsExactly(1, "Files with missing headers:" + System.lineSeparator() +
-                                "  /stylesheet", actualText);
+                        assertThat(actualText).containsOnlyOnce("Files with missing headers:" + System.lineSeparator() +
+                                "  /stylesheet");
                         break;
                     case PLAIN:
-                        TextUtils.assertContainsExactly(1, "Unknown license: 1 ", actualText);
-                        TextUtils.assertContainsExactly(1, "?????: 1 ", actualText);
+                        assertThat(actualText).containsOnlyOnce("Unknown license: 1 ");
+                        assertThat(actualText).containsOnlyOnce("?????: 1 ");
                         break;
                     case XML:
-                        TextUtils.assertContainsExactly(1, "<resource encoding=\"ISO-8859-1\" mediaType=\"text/plain\" name=\"/stylesheet\" type=\"STANDARD\">", actualText);
+                        assertThat(actualText).containsOnlyOnce("<resource encoding=\"ISO-8859-1\" mediaType=\"text/plain\" name=\"/stylesheet\" type=\"STANDARD\">");
                         break;
                     case UNAPPROVED_LICENSES:
-                        TextUtils.assertContainsExactly(1, "Files with unapproved licenses:" + System.lineSeparator() + "  /stylesheet", actualText);
+                        assertThat(actualText).containsOnlyOnce("Files with unapproved licenses:" + System.lineSeparator() + "  /stylesheet");
+                        break;
+                    case XHTML5:
+                        assertThat(actualText).containsPattern("<td>Approved<\\/td>\\s+<td>\\d+<\\/td>\\s+<td>A count of approved licenses.<\\/td>");
                         break;
                     default:
                         fail("No test for stylesheet " + sheet);
@@ -930,7 +946,7 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
             String actualText = baos.toString(StandardCharsets.UTF_8);
             TextUtils.assertContainsExactly(1, "<resource encoding=\"ISO-8859-1\" mediaType=\"text/plain\" name=\"/stylesheet\" type=\"STANDARD\">", actualText);
 
-            try (InputStream expected = StyleSheets.getStyleSheet("xml").ioSupplier().get();
+            try (InputStream expected = StyleSheets.getStyleSheet("xml", null).ioSupplier().get();
                  InputStream actual = config.getStyleSheet().get()) {
                 assertThat(IOUtils.contentEquals(expected, actual)).as("'xml' does not match").isTrue();
             }
@@ -974,16 +990,12 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
 
         assertDoesNotThrow(() -> {
             configureSourceDir(option);
-            File outFile = new File(sourceDir, "out.xml");
-            FileUtils.delete(outFile);
-            ImmutablePair<Option, String[]> outputFile = ImmutablePair.of(Arg.OUTPUT_FILE.option(), new String[]{outFile.getAbsolutePath()});
-            ImmutablePair<Option, String[]> stylesheet = ImmutablePair.of(Arg.OUTPUT_STYLE.option(), new String[]{StyleSheets.XML.arg()});
             for (LicenseSetFactory.LicenseFilter filter : LicenseSetFactory.LicenseFilter.values()) {
                 args[0] = filter.name();
-                ReportConfiguration config = generateConfig(outputFile, stylesheet, ImmutablePair.of(option, args));
+                ReportConfiguration config = generateConfig(ImmutablePair.of(option, args));
                 Reporter reporter = new Reporter(config);
-                reporter.execute().format(config);
-                Document document = XmlUtils.toDom(new FileInputStream(outFile));
+                Reporter.Output output = reporter.execute();
+                Document document = output.getDocument();
                 switch (filter) {
                     case ALL:
                         XmlUtils.assertIsPresent(filter.name(), document, xPath, "/rat-report/rat-config/licenses/license[@id='AL2.0']");
@@ -1020,16 +1032,12 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
 
         assertDoesNotThrow(() -> {
             configureSourceDir(option);
-            File outFile = new File(sourceDir, "out.xml");
-            FileUtils.delete(outFile);
-            ImmutablePair<Option, String[]> outputFile = ImmutablePair.of(Arg.OUTPUT_FILE.option(), new String[]{outFile.getAbsolutePath()});
-            ImmutablePair<Option, String[]> stylesheet = ImmutablePair.of(Arg.OUTPUT_STYLE.option(), new String[]{StyleSheets.XML.arg()});
             for (LicenseSetFactory.LicenseFilter filter : LicenseSetFactory.LicenseFilter.values()) {
                 args[0] = filter.name();
-                ReportConfiguration config = generateConfig(outputFile, stylesheet, ImmutablePair.of(option, args));
+                ReportConfiguration config = generateConfig(ImmutablePair.of(option, args));
                 Reporter reporter = new Reporter(config);
-                reporter.execute().format(config);
-                Document document = XmlUtils.toDom(Files.newInputStream(outFile.toPath()));
+                Reporter.Output output = reporter.execute();
+                Document document = output.getDocument();
                 switch (filter) {
                     case ALL:
                         XmlUtils.assertIsPresent(filter.name(), document, xPath, "/rat-report/rat-config/families/family[@id='AL']");
@@ -1083,7 +1091,7 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
                 Reporter reporter = new Reporter(config);
                 reporter.execute().format(config);
 
-                Document document = XmlUtils.toDom(Files.newInputStream(outFile.toPath()));
+                Document document = reporter.execute().getDocument();
                 XmlUtils.assertIsPresent(proc.name(), document, xPath, "/rat-report/resource[@name='/dummy.jar']");
                 switch (proc) {
                     case ABSENCE:
@@ -1131,9 +1139,9 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
                 args[0] = proc.name();
                 ReportConfiguration config = generateConfig(outputFile, stylesheet, ImmutablePair.of(option, args));
                 Reporter reporter = new Reporter(config);
-                reporter.execute().format(config);
+                Reporter.Output output = reporter.execute();
 
-                Document document = XmlUtils.toDom(Files.newInputStream(outFile.toPath()));
+                Document document = output.getDocument();
                 XmlUtils.assertIsPresent(proc.name(), document, xPath, testDoc);
                 XmlUtils.assertIsPresent(proc.name(), document, xPath, missingDoc);
 

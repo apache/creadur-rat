@@ -32,6 +32,7 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.rat.api.RatException;
 import org.apache.rat.commandline.Arg;
 import org.apache.rat.commandline.ArgumentContext;
 import org.apache.rat.help.Licenses;
@@ -56,17 +57,20 @@ public final class OptionCollectionParser {
         this.uiOptionCollection = optionCollection;
     }
 
+    public UIOptionCollection<?> getOptionCollection() {
+        return uiOptionCollection;
+    }
+
     /**
      * Parses the standard options to create a ReportConfiguration.
      *
      * @param workingDirectory The directory to resolve relative file names against.
      * @param args the arguments to parse
      * @return the ArgumentContext for the process.
-     * @throws IOException on error.
-     * @throws ParseException on option parsing error.
+     * @throws RatException on error.
      */
     public ArgumentContext parseCommands(final File workingDirectory, final String[] args)
-            throws IOException, ParseException {
+            throws RatException {
         return parseCommands(workingDirectory, args, uiOptionCollection.getOptions());
     }
 
@@ -77,8 +81,7 @@ public final class OptionCollectionParser {
      * @return the CommandLine
      * @throws ParseException on option parsing error.
      */
-    //@VisibleForTesting
-    CommandLine parseCommandLine(final Options opts, final String[] args) throws ParseException {
+    public static CommandLine parseCommandLine(final Options opts, final String[] args) throws ParseException {
         try {
             return DefaultParser.builder().setDeprecatedHandler(DeprecationReporter.getLogReporter())
                     .setAllowPartialMatching(true).build().parse(opts, args);
@@ -89,6 +92,15 @@ public final class OptionCollectionParser {
         }
     }
 
+    private void printHelp(final ArgumentContext argumentContext) throws RatException {
+        try {
+            new Licenses(argumentContext.getConfiguration(),
+                    new PrintWriter(argumentContext.getConfiguration().getOutput().get(),
+                            false, StandardCharsets.UTF_8)).printHelp();
+        } catch (IOException e) {
+            throw new RatException("Unable to print help: " + e.getMessage(), e);
+        }
+    }
     /**
      * Parses the standard options to create a ReportConfiguration.
      *
@@ -96,22 +108,21 @@ public final class OptionCollectionParser {
      * @param args the arguments to parse.
      * @param options An Options object containing Apache command line options.
      * @return the ArgumentContext for the process.
-     * @throws IOException on error.
-     * @throws ParseException on option parsing error.
+     * @throws RatException on error.
      */
     private ArgumentContext parseCommands(final File workingDirectory, final String[] args,
-                                                                       final Options options) throws IOException, ParseException {
-        CommandLine commandLine = parseCommandLine(options, args);
-        ArgumentContext argumentContext = new ArgumentContext(workingDirectory, commandLine);
-        Arg.processLogLevel(argumentContext, uiOptionCollection);
-        populateConfiguration(argumentContext);
-        if (uiOptionCollection.isSelected(Arg.HELP_LICENSES)) {
-            new Licenses(argumentContext.getConfiguration(),
-                    new PrintWriter(argumentContext.getConfiguration().getOutput().get(),
-                            false, StandardCharsets.UTF_8)).printHelp();
+                                                                       final Options options) throws RatException {
+        try {
+            ArgumentContext argumentContext = new ArgumentContext(workingDirectory, options, args);
+            Arg.processLogLevel(argumentContext, uiOptionCollection);
+            populateConfiguration(argumentContext);
+            if (uiOptionCollection.isSelected(Arg.HELP_LICENSES)) {
+                printHelp(argumentContext);
+            }
+            return argumentContext;
+        } catch (ParseException e) {
+            throw new RatException("Unable to parse command line: " + e.getMessage(), e);
         }
-
-        return argumentContext;
     }
 
     /**
