@@ -801,6 +801,7 @@ public abstract class AbstractConfigurationOptionsProvider extends AbstractOptio
     private void styleSheetTest(final Option option) {
         // copy the dummy stylesheet so that we have a local file for users of the testing jar.
         File file = new File(baseDir, "stylesheet-" + option.getLongOpt());
+        DocumentName workingDirectory = DocumentName.builder(file.getParentFile()).build();
         try (
                 InputStream in = ReporterTest.class.getResourceAsStream("MatcherContainerResource.txt");
                 OutputStream out = Files.newOutputStream(file.toPath())) {
@@ -819,13 +820,12 @@ public abstract class AbstractConfigurationOptionsProvider extends AbstractOptio
             for (String sheet : new String[]{"plain-rat", "missing-headers", "unapproved-licenses", "stylesheet-" + option.getLongOpt()}) {
                 args[0] = sheet;
                 ReportConfiguration config = generateConfig(ImmutablePair.of(option, args));
-                try (InputStream expected = StyleSheets.getStyleSheet(sheet).ioSupplier().get();
+                try (InputStream expected = StyleSheets.getStyleSheet(sheet, workingDirectory).ioSupplier().get();
                      InputStream actual = config.getStyleSheet().get()) {
                     String expectedStr =  IOUtils.toString(expected, StandardCharsets.UTF_8);
                     String actualStr =  IOUtils.toString(actual, StandardCharsets.UTF_8);
-                    assertThat(actualStr).as(() -> String.format("'%s' does not match '%s': %s != %s",
+                    assertThat(actualStr).as(() -> String.format("'%s' is not correct: %s != %s",
                             config.getStyleSheetDescriptor().name(),
-                            expectedName.getName(),
                             actualStr, expectedStr)).isEqualTo(expectedStr);
                 }
             }
@@ -851,7 +851,7 @@ public abstract class AbstractConfigurationOptionsProvider extends AbstractOptio
     protected void xmlTest() {
         assertDoesNotThrow(() -> {
             ReportConfiguration config = generateConfig(ImmutablePair.of(Arg.OUTPUT_STYLE.find("xml"), null));
-            try (InputStream expected = StyleSheets.getStyleSheet("xml").ioSupplier().get();
+            try (InputStream expected = StyleSheets.getStyleSheet("xml", null).ioSupplier().get();
                  InputStream actual = config.getStyleSheet().get()) {
                 assertThat(IOUtils.contentEquals(expected, actual)).as("'xml' does not match").isTrue();
             }

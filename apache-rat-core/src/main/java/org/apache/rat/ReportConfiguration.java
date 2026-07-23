@@ -38,7 +38,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.SortedSet;
-import java.util.function.Consumer;
 import java.util.stream.Stream;
 
 import org.apache.commons.collections4.set.UnmodifiableSortedSet;
@@ -1031,7 +1030,7 @@ public class ReportConfiguration {
             standardProcessing = Processing.valueOf(attributes.get("standardProcessing"));
             String styleName = attributes.get("stylesheet");
             if (styleName != null) {
-                styleSheet = StyleSheets.getStyleSheet(styleName);
+                styleSheet = StyleSheets.getStyleSheet(styleName, workingDirectory);
             }
             String outputName = attributes.get("output");
             if (outputName != null) {

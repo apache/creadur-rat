@@ -39,8 +39,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.TreeMap;
-import java.util.stream.Stream;
 import java.util.UUID;
+import java.util.stream.Stream;
 import java.util.regex.Pattern;
 import javax.xml.XMLConstants;
 import javax.xml.transform.Source;
@@ -59,7 +59,6 @@ import org.apache.rat.api.Document.Type;
 import org.apache.rat.api.RatException;
 import org.apache.rat.commandline.Arg;
 import org.apache.rat.commandline.ArgumentContext;
-import org.apache.rat.commandline.StyleSheets;
 import org.apache.rat.document.FileDocument;
 import org.apache.rat.document.DocumentName;
 import org.apache.rat.license.ILicenseFamily;
@@ -68,7 +67,6 @@ import org.apache.rat.report.claim.ClaimStatisticTest;
 import org.apache.rat.test.utils.Resources;
 import org.apache.rat.testhelpers.BaseOption;
 import org.apache.rat.testhelpers.BaseOptionCollection;
-import org.apache.rat.testhelpers.TextUtils;
 import org.apache.rat.testhelpers.XmlUtils;
 import org.apache.rat.testhelpers.data.ReportTestDataProvider;
 import org.apache.rat.testhelpers.data.TestData;
@@ -283,7 +281,7 @@ public class ReporterTest {
                 "type", "STANDARD"));
 
         File output = testPath.resolve(".rat/testXMLOutput").toFile();
-        output.getParentFile().mkdirs();
+        org.apache.rat.utils.FileUtils.mkDir(output.getParentFile());
         ArgumentContext ctxt = collectionParser.parseCommands(testPath.toFile(), new String[]{"--output-style", "xml", "--output-file", output.getPath(), basedir});
         new Reporter(ctxt.getConfiguration()).execute().format(ctxt.getConfiguration());
 

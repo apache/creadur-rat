@@ -32,7 +32,6 @@ import javax.xml.parsers.DocumentBuilder;
 
 import org.apache.commons.io.function.IOSupplier;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.rat.ConfigurationException;
 import org.apache.rat.api.Document;
 import org.apache.rat.configuration.XMLConfigurationReader;
 import org.apache.rat.report.xml.writer.XmlWriter;

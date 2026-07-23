@@ -871,21 +871,21 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
                 String actualText = baos.toString(StandardCharsets.UTF_8);
                 switch (sheet) {
                     case MISSING_HEADERS:
-                        TextUtils.assertContainsExactly(1, "Files with missing headers:" + System.lineSeparator() +
-                                "  /stylesheet", actualText);
+                        assertThat(actualText).containsOnlyOnce("Files with missing headers:" + System.lineSeparator() +
+                                "  /stylesheet");
                         break;
                     case PLAIN:
-                        TextUtils.assertContainsExactly(1, "Unknown license: 1 ", actualText);
-                        TextUtils.assertContainsExactly(1, "?????: 1 ", actualText);
+                        assertThat(actualText).containsOnlyOnce("Unknown license: 1 ");
+                        assertThat(actualText).containsOnlyOnce("?????: 1 ");
                         break;
                     case XML:
-                        TextUtils.assertContainsExactly(1, "<resource encoding=\"ISO-8859-1\" mediaType=\"text/plain\" name=\"/stylesheet\" type=\"STANDARD\">", actualText);
+                        assertThat(actualText).containsOnlyOnce("<resource encoding=\"ISO-8859-1\" mediaType=\"text/plain\" name=\"/stylesheet\" type=\"STANDARD\">");
                         break;
                     case UNAPPROVED_LICENSES:
-                        TextUtils.assertContainsExactly(1, "Files with unapproved licenses:" + System.lineSeparator() + "  /stylesheet", actualText);
+                        assertThat(actualText).containsOnlyOnce("Files with unapproved licenses:" + System.lineSeparator() + "  /stylesheet");
                         break;
                     case XHTML5:
-                        TextUtils.assertPatternInTarget("<td>Approved<\\/td>\\s+<td>\\d+<\\/td>\\s+<td>A count of approved licenses.<\\/td>", actualText);
+                        assertThat(actualText).containsPattern("<td>Approved<\\/td>\\s+<td>\\d+<\\/td>\\s+<td>A count of approved licenses.<\\/td>");
                         break;
                     default:
                         fail("No test for stylesheet " + sheet);
@@ -946,7 +946,7 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
             String actualText = baos.toString(StandardCharsets.UTF_8);
             TextUtils.assertContainsExactly(1, "<resource encoding=\"ISO-8859-1\" mediaType=\"text/plain\" name=\"/stylesheet\" type=\"STANDARD\">", actualText);
 
-            try (InputStream expected = StyleSheets.getStyleSheet("xml").ioSupplier().get();
+            try (InputStream expected = StyleSheets.getStyleSheet("xml", null).ioSupplier().get();
                  InputStream actual = config.getStyleSheet().get()) {
                 assertThat(IOUtils.contentEquals(expected, actual)).as("'xml' does not match").isTrue();
             }
@@ -994,8 +994,8 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
                 args[0] = filter.name();
                 ReportConfiguration config = generateConfig(ImmutablePair.of(option, args));
                 Reporter reporter = new Reporter(config);
-                reporter.execute().format(config);
-                Document document = XmlUtils.toDom(new FileInputStream(outFile));
+                Reporter.Output output = reporter.execute();
+                Document document = output.getDocument();
                 switch (filter) {
                     case ALL:
                         XmlUtils.assertIsPresent(filter.name(), document, xPath, "/rat-report/rat-config/licenses/license[@id='AL2.0']");
@@ -1036,8 +1036,8 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
                 args[0] = filter.name();
                 ReportConfiguration config = generateConfig(ImmutablePair.of(option, args));
                 Reporter reporter = new Reporter(config);
-                reporter.execute().format(config);
-                Document document = XmlUtils.toDom(Files.newInputStream(outFile.toPath()));
+                Reporter.Output output = reporter.execute();
+                Document document = output.getDocument();
                 switch (filter) {
                     case ALL:
                         XmlUtils.assertIsPresent(filter.name(), document, xPath, "/rat-report/rat-config/families/family[@id='AL']");

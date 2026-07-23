@@ -543,21 +543,20 @@ public class ReportConfigurationTest {
         try {
             DefaultLog.setInstance(testLog);
 
-        String msg = "At least one source must be specified";
+            String msg = "At least one source must be specified";
             assertThatThrownBy(underTest::validate).isExactlyInstanceOf(ConfigurationException.class)
-                .hasMessageContaining(msg);
+                    .hasMessageContaining(msg);
             testLog.assertContains(msg);
             testLog.clear();
 
 
             msg = "At least one license must be defined";
-        underTest.addSource(mock(IReportable.class));
-
+            underTest.addSource(mock(Reportable.class));
             assertThatThrownBy(underTest::validate).isExactlyInstanceOf(ConfigurationException.class)
-                .hasMessageContaining(msg);
+                    .hasMessageContaining(msg);
             testLog.assertContains(msg);
 
-        underTest.addLicense(testingLicense("valid", "Validation testing license"));
+            underTest.addLicense(testingLicense("valid", "Validation testing license"));
             underTest.validate();
         } finally {
             DefaultLog.setInstance(oldLog);
