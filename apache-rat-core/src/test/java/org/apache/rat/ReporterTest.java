@@ -26,7 +26,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
-import java.io.PrintWriter;
 import java.lang.reflect.Method;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
@@ -55,7 +54,6 @@ import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathFactory;
 
-import org.apache.commons.cli.Option;
 import org.apache.commons.io.FileUtils;
 import org.apache.rat.api.Document.Type;
 import org.apache.rat.api.RatException;
@@ -72,8 +70,6 @@ import org.apache.rat.testhelpers.XmlUtils;
 import org.apache.rat.testhelpers.data.ReportTestDataProvider;
 import org.apache.rat.testhelpers.data.TestData;
 import org.apache.rat.testhelpers.data.ValidatorData;
-import org.apache.rat.utils.DefaultLog;
-import org.apache.rat.utils.Log;
 import org.apache.rat.utils.StandardXmlFactory;
 import org.apache.rat.walker.DirectoryWalker;
 import org.junit.jupiter.api.AfterAll;
@@ -518,8 +514,9 @@ public class ReporterTest {
 
         String document = out.toString();
 
-        assertThat(document).doesNotContainPattern("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-        assertThat(document).as(() -> "'Generated at' is not present in \n" + document).startsWith(HEADER);
+        assertThat(document).as(() -> "'Generated at' is not present in \n" + document)
+                .doesNotContainPattern("<?xml version=\"1.0\" encoding=\"UTF-8\"?>")
+                .startsWith(HEADER);
 
         verifyStandardContent(document);
     }

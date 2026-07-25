@@ -537,7 +537,7 @@ public class ReportConfigurationTest {
     }
 
     @Test
-    public void testValidate() {
+    void testValidate() {
         TestingLog testLog = new TestingLog();
         Log oldLog = DefaultLog.getInstance();
         try {
@@ -722,7 +722,7 @@ public class ReportConfigurationTest {
      */
     public static void validateDefaultApprovedLicenses(ReportConfiguration config, String... additionalIds) {
         validateLicenses(config, Arrays.asList(additionalIds), LicenseFilter.APPROVED, XMLConfigurationReaderTest.APPROVED_LICENSES);
-        }
+    }
 
     /**
      * Validates that the configuration contains all the default licenses along with any addiitonal licenses

@@ -129,9 +129,8 @@ public final class OptionCollection {
      */
     public static ReportConfiguration parseCommands(final File workingDirectory, final String[] args,
                                                     final Consumer<Options> helpCmd, final boolean noArgs) throws IOException {
-
         Options opts = buildOptions();
-            ArgumentContext argumentContext;
+        ArgumentContext argumentContext;
         try {
             argumentContext = new ArgumentContext(workingDirectory, opts, args);
         } catch (ParseException e) {

@@ -37,6 +37,7 @@ import org.apache.rat.commandline.Arg;
 import org.apache.rat.commandline.ArgumentContext;
 import org.apache.rat.help.Licenses;
 import org.apache.rat.report.Reportable;
+import org.apache.rat.ui.UIOption;
 import org.apache.rat.ui.UIOptionCollection;
 import org.apache.rat.utils.DefaultLog;
 
@@ -45,20 +46,22 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 /**
  * Uses the AbstractOptionCollection to parse the command line options.
  * Contains utility methods to ReportConfiguration from the options and an array of arguments.
+ *
+ * @param <T> The UIOption type that this parser is handeling.
  */
 @SuppressFBWarnings("EI_EXPOSE_REP2")
-public final class OptionCollectionParser {
+public final class OptionCollectionParser<T extends UIOption<T>> {
     /**
      * The OptionCollection that we are working with.
      */
-    private final UIOptionCollection<?> uiOptionCollection;
+    private final UIOptionCollection<T> uiOptionCollection;
 
-    public OptionCollectionParser(final UIOptionCollection<?> optionCollection) {
+    /**
+     * Constructor.
+     * @param optionCollection  The option collection to use for
+     */
+    public OptionCollectionParser(final UIOptionCollection<T> optionCollection) {
         this.uiOptionCollection = optionCollection;
-    }
-
-    public UIOptionCollection<?> getOptionCollection() {
-        return uiOptionCollection;
     }
 
     /**
@@ -92,7 +95,8 @@ public final class OptionCollectionParser {
         }
     }
 
-    private void printHelp(final ArgumentContext argumentContext) throws RatException {
+    // visible for testing
+    void printHelp(final ArgumentContext argumentContext) throws RatException {
         try {
             new Licenses(argumentContext.getConfiguration(),
                     new PrintWriter(argumentContext.getConfiguration().getOutput().get(),
@@ -110,7 +114,8 @@ public final class OptionCollectionParser {
      * @return the ArgumentContext for the process.
      * @throws RatException on error.
      */
-    private ArgumentContext parseCommands(final File workingDirectory, final String[] args,
+    // visible for testing
+    ArgumentContext parseCommands(final File workingDirectory, final String[] args,
                                                                        final Options options) throws RatException {
         try {
             ArgumentContext argumentContext = new ArgumentContext(workingDirectory, options, args);

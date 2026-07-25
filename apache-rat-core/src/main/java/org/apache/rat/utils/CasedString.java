@@ -62,7 +62,7 @@ public final class CasedString {
      * @param segments the segments of the string.
      */
     public CasedString(final StringCase stringCase, final String[] segments) {
-        this.segments = segments;
+        this.segments = segments.length == 0 ? StringCase.NULL_SEGMENT : segments;
         this.stringCase = stringCase;
     }
 
@@ -72,7 +72,15 @@ public final class CasedString {
      * @return the new CasedString.
      */
     public CasedString as(final StringCase stringCase) {
-        return stringCase.name.equals(this.stringCase.name) ? this : new CasedString(stringCase, Arrays.copyOf(this.segments, this.segments.length));
+        return stringCase.name.equals(this.stringCase.name) ? this : new CasedString(stringCase, copySegments());
+    }
+
+    private String[] copySegments() {
+        return this.segments.length == 0 ? StringCase.NULL_SEGMENT : Arrays.copyOf(this.segments, this.segments.length);
+    }
+
+    public boolean isNull() {
+        return segments.length == 0;
     }
 
     /**

@@ -21,6 +21,7 @@ package org.apache.rat.documentation.options;
 import org.apache.commons.cli.Option;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.WordUtils;
+import org.apache.rat.ConfigurationException;
 import org.apache.rat.ui.UIOption;
 import org.apache.rat.ui.UIOptionCollection;
 import org.apache.rat.utils.CasedString;
@@ -108,6 +109,9 @@ public final class MavenOption extends UIOption<MavenOption> {
             sb.append(format("%s@Deprecated%n", indent));
         }
         String fname = name.toCase(CasedString.StringCase.CAMEL);
+        if (fname == null) {
+            throw new ConfigurationException("Name can not be null");
+        }
         String args = option.hasArg() ? "String" : "boolean";
         if (multiple) {
             if (!(fname.endsWith("s") || fname.endsWith("Approved") || fname.endsWith("Denied"))) {
