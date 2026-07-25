@@ -93,7 +93,7 @@ public enum StyleSheets {
         URL url = StyleSheets.class.getClassLoader().getResource(format("org/apache/rat/%s.xsl", name));
         if (url != null) {
             return new ReportConfiguration.IODescriptor<>(name, url::openStream);
-        };
+        }
         // normalize the stylesheet name and resolve it against the working directory so that relative names are resolved
         // on the workingDirectory but fully qualified names are resolved against the root directory.
         String normalizedName = workingDirectory.fsInfo().normalize(name);

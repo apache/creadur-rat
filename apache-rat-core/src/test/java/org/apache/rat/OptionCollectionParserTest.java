@@ -35,6 +35,9 @@ import java.nio.file.Path;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 class OptionCollectionParserTest {
 
@@ -65,7 +68,7 @@ class OptionCollectionParserTest {
         TestingLog testingLog = new TestingLog();
         try {
             DefaultLog.setInstance(testingLog);
-            assertThatThrownBy(() -> OptionCollectionParser.parseCommandLine(options, new String[0]))
+            assertThatThrownBy(() -> underTest.parseCommandLine(options, new String[0]))
                     .isInstanceOf(ParseException.class);
         } finally {
             DefaultLog.setInstance(null);
@@ -82,6 +85,40 @@ class OptionCollectionParserTest {
         assertThatThrownBy(() -> underTest.printHelp(ctxt))
                 .isInstanceOf(RatException.class)
                 .hasMessageContaining("Unable to print help: Bad Supplier");
+    }
+
+    /**
+     * A UIOption implementation to support testing.
+     */
+    static class TestOption extends UIOption<TestOption> {
+
+        /**
+         * Constructor.
+         *
+         * @param optionCollection the collection the UIOption belongs to.
+         * @param option           The CLI option
+         */
+        protected <C extends UIOptionCollection<TestOption>> TestOption(C optionCollection, Option option) {
+            super(optionCollection, option, new CasedString(CasedString.StringCase.CAMEL, option.getKey()));
+        }
+        assertThat(testingLog.getCaptured()).containsOnlyOnce("Please use the \"--help\" option to see a list of valid commands and options.");
+    }
+
+    @Test
+    void printHelpExceptionTest() throws ParseException {
+        Options options = new Options();
+        ReportConfiguration cfg = new ReportConfiguration();
+        ArgumentContext ctxt = new ArgumentContext(testPath.toFile(), cfg, options, new String[0]);
+        cfg.setOut(new ReportConfiguration.IODescriptor("Bad Supplier", () -> { throw new IOException("Bad Supplier");}));
+        assertThatThrownBy(() -> underTest.printHelp(ctxt))
+                .isInstanceOf(RatException.class)
+                .hasMessageContaining("Unable to print help: Bad Supplier");
+    }
+
+        @Override
+        public String getText() {
+            return "text for " + option.toString();
+        }
     }
 
     /**
