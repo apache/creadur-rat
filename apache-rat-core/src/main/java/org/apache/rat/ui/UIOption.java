@@ -70,7 +70,9 @@ public abstract class UIOption<T extends UIOption<T>> {
         this.optionCollection = builder.optionCollection;
         this.option = builder.option;
         this.name = builder.name;
-
+        if (name.isNull()) {
+            throw new IllegalArgumentException("UIOption name may not be null");
+        }
         OptionCollection.ArgumentType argType;
         if (option.hasArg()) {
             if (option.getArgName() == null) {
