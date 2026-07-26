@@ -930,7 +930,7 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
             String actualText = baos.toString(StandardCharsets.UTF_8);
             TextUtils.assertContainsExactly(1, "<resource encoding=\"ISO-8859-1\" mediaType=\"text/plain\" name=\"/stylesheet\" type=\"STANDARD\">", actualText);
 
-            try (InputStream expected = StyleSheets.getStyleSheet("xml", null).ioSupplier().get();
+            try (InputStream expected = StyleSheets.getStyleSheet("xml").ioSupplier().get();
                  InputStream actual = config.getStyleSheet().get()) {
                 assertThat(IOUtils.contentEquals(expected, actual)).as("'xml' does not match").isTrue();
             }

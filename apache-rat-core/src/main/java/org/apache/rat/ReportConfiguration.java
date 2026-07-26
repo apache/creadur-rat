@@ -1036,7 +1036,7 @@ public class ReportConfiguration {
             standardProcessing = Processing.valueOf(attributes.get("standardProcessing"));
             String styleName = attributes.get("stylesheet");
             if (styleName != null) {
-                styleSheet = StyleSheets.getStyleSheet(styleName, workingDirectory);
+                styleSheet = StyleSheets.getStyleSheet(styleName);
             }
             String outputName = attributes.get("output");
             if (outputName != null) {

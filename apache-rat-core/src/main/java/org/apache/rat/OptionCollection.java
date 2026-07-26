@@ -42,7 +42,6 @@ import org.apache.commons.cli.ParseException;
 import org.apache.rat.api.Document;
 import org.apache.rat.commandline.Arg;
 import org.apache.rat.commandline.ArgumentContext;
-import org.apache.rat.commandline.Converters;
 import org.apache.rat.commandline.StyleSheets;
 import org.apache.rat.config.exclusion.StandardCollection;
 import org.apache.rat.document.DocumentName;
@@ -146,7 +145,6 @@ public final class OptionCollection {
         }
 
         ArgumentContext argumentContext = new ArgumentContext(workingDirectory, commandLine);
-        Converters.FILE_CONVERTER.setWorkingDirectory(argumentContext.getWorkingDirectory());
         Arg.processLogLevel(argumentContext, CLIOptionCollection.INSTANCE);
 
         if (commandLine.hasOption(HELP)) {
@@ -186,8 +184,8 @@ public final class OptionCollection {
         Optional<Option> dirOpt = CLIOptionCollection.INSTANCE.getSelected(Arg.DIR);
         if (dirOpt.isPresent()) {
             try {
-                DocumentName directoryName = commandLine.getParsedOptionValue(dirOpt.get());
-                configuration.addSource(getReportable(directoryName.asFile(), configuration));
+                configuration.addSource(getReportable(commandLine.getParsedOptionValue(
+                        dirOpt.get()), configuration));
             } catch (ParseException e) {
                 throw new ConfigurationException("Unable to set parse " + dirOpt.get(), e);
             }
