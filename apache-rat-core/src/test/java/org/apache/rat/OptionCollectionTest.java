@@ -180,6 +180,7 @@ public class OptionCollectionTest {
     @Test
     public void testDeprecatedUseLogged() throws IOException {
         TestingLog log = new TestingLog();
+        assertThat(testPath.resolve("target").toFile().mkdir()).isTrue();
         try {
             DefaultLog.setInstance(log);
             String[] args = {"--dir", "target", "-a"};

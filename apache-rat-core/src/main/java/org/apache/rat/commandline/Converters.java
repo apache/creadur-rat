@@ -115,7 +115,7 @@ public final class Converters {
             } else {
                 builder.setBaseName(workingDirectory);
             }
-            return  builder.setName(normalizedFileName).build();
+            return builder.setName(normalizedFileName).build();
         }
     }
 }
