@@ -65,10 +65,8 @@ public class ExclusionProcessor {
     /** Standard collections that contribute to the exclusion procession */
     private final Set<StandardCollection> excludedCollections;
     /** The last generated PathMatcher */
-    // package private for testing
     private DocumentNameMatcher lastMatcher;
     /** The base dir for the last PathMatcher */
-    // package private for testing
     private DocumentName lastMatcherBaseDir;
 
     /**
