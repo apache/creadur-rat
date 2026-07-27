@@ -120,6 +120,16 @@ public final class OptionCollection {
 
     /**
      * Parses the standard options to create a ReportConfiguration.
+     * <p>
+     * This method is {@code synchronized} because it uses shared mutable state:
+     * the {@link Arg} enum's {@code OptionGroup} instances (whose {@code selected}
+     * field is mutated by {@link DefaultParser#parse}), and
+     * {@link org.apache.rat.commandline.Converters#FILE_CONVERTER} (whose
+     * {@code workingDirectory} field is set during argument processing).
+     * Without synchronization, parallel Maven reactor threads (e.g. {@code mvn -T4})
+     * corrupt each other's parse state, causing options like {@code --input-exclude}
+     * to be silently skipped.
+     * </p>
      *
      * @param workingDirectory The directory to resolve relative file names against.
      * @param args the arguments to parse.
@@ -128,7 +138,7 @@ public final class OptionCollection {
      * @return a ReportConfiguration or {@code null} if Help was printed.
      * @throws IOException on error.
      */
-    public static ReportConfiguration parseCommands(final File workingDirectory, final String[] args,
+    public static synchronized ReportConfiguration parseCommands(final File workingDirectory, final String[] args,
                                                     final Consumer<Options> helpCmd, final boolean noArgs) throws IOException {
 
         Options opts = buildOptions();
