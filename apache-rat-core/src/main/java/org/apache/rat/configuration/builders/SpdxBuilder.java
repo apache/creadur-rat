@@ -81,15 +81,6 @@ public class SpdxBuilder extends AbstractBuilder {
         return FACTORY.get().create(name);
     }
 
-    /**
-     * Removes the thread-local factory for the current thread, releasing
-     * resources. Should be called during cleanup in multi-threaded
-     * environments.
-     */
-    public static void removeFactory() {
-        FACTORY.remove();
-    }
-
     @Override
     public String toString() {
         return "SpdxBuilder: " + name;

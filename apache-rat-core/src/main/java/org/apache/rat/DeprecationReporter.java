@@ -94,14 +94,6 @@ public final class DeprecationReporter {
     }
 
     /**
-     * Removes the reporter for the current thread, allowing the
-     * {@link ThreadLocal} entry to be garbage-collected.
-     */
-    public static void removeLogReporter() {
-        CONSUMER.remove();
-    }
-
-    /**
      * Log Deprecated class use.
      * @param clazz the Deprecated class to log
      */

@@ -55,16 +55,6 @@ public final class DefaultLog implements Log {
     }
 
     /**
-     * Removes the log instance for the current thread, allowing the
-     * {@link ThreadLocal} entry to be garbage-collected. Subsequent calls
-     * to {@link #getInstance()} on this thread will return a fresh
-     * {@code DefaultLog}.
-     */
-    public static void removeInstance() {
-        INSTANCE.remove();
-    }
-
-    /**
      * Creates a new instance of the default log.
      * @return A new instance of the default log.
      */
