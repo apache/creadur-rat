@@ -40,18 +40,29 @@ import org.apache.rat.config.parameters.ConfigComponent;
  * SPDX identifiers are specified by the Software Package Data Exchange(R) also
  * known as SPDX(R) project from the Linux foundation.
  * </p>
+ * <p>
+ * Each factory instance maintains its own matcher map and per-document match
+ * state ({@code lastMatch}, {@code checked}). In multi-threaded environments
+ * (e.g. parallel Maven builds), use {@link #newInstance()} or a
+ * {@code ThreadLocal<SPDXMatcherFactory>} to obtain a per-thread factory
+ * instead of the shared {@link #INSTANCE}.
+ * </p>
  *
  * @see <a href="https://spdx.dev/ids/">List of Ids at spdx.dev</a>
  */
 public final class SPDXMatcherFactory {
 
     /**
-     * The collection of all matchers produced by this factory.
+     * The collection of all matchers produced by this factory instance.
      */
-    private static final Map<String, SPDXMatcherFactory.Match> MATCHER_MAP = new HashMap<>();
+    private final Map<String, SPDXMatcherFactory.Match> matcherMap = new HashMap<>();
 
     /**
-     * The instance of this factory.
+     * The shared instance of this factory.
+     * <p>
+     * <b>Not thread-safe</b> — in multi-threaded environments use
+     * {@link #newInstance()} to create per-thread instances instead.
+     * </p>
      */
     public static final SPDXMatcherFactory INSTANCE = new SPDXMatcherFactory();
 
@@ -77,10 +88,23 @@ public final class SPDXMatcherFactory {
     private boolean checked;
 
     /**
-     * Constructor.
+     * Constructor. Creates a new factory with its own matcher map and match state.
      */
-    private SPDXMatcherFactory() {
+    SPDXMatcherFactory() {
         lastMatch = new HashSet<>();
+    }
+
+    /**
+     * Creates a new SPDXMatcherFactory instance.
+     * <p>
+     * Use this method to obtain a per-thread factory for multi-threaded
+     * environments instead of the shared {@link #INSTANCE}.
+     * </p>
+     *
+     * @return a new SPDXMatcherFactory instance.
+     */
+    public static SPDXMatcherFactory newInstance() {
+        return new SPDXMatcherFactory();
     }
 
     /**
@@ -101,10 +125,10 @@ public final class SPDXMatcherFactory {
         if (StringUtils.isBlank(spdxId)) {
             throw new ConfigurationException("'SPDX' type matcher requires a name");
         }
-        Match matcher = MATCHER_MAP.get(spdxId);
+        Match matcher = matcherMap.get(spdxId);
         if (matcher == null) {
             matcher = new Match(spdxId);
-            MATCHER_MAP.put(spdxId, matcher);
+            matcherMap.put(spdxId, matcher);
         }
         return matcher;
     }

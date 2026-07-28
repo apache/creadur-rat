@@ -27,9 +27,23 @@ import org.apache.rat.config.parameters.MatcherBuilder;
 
 /**
  * A builder for SPDX matchers.
+ * <p>
+ * Uses a {@code ThreadLocal} factory so that each thread in a parallel Maven
+ * build gets its own {@link SPDXMatcherFactory} instance with isolated match
+ * state. This prevents two threads scanning different documents from
+ * cross-contaminating each other's SPDX identifier results.
+ * </p>
  */
 @MatcherBuilder(SPDXMatcherFactory.Match.class)
 public class SpdxBuilder extends AbstractBuilder {
+
+    /**
+     * Per-thread SPDXMatcherFactory. Each thread gets its own factory with
+     * its own matcher map and per-document match state ({@code lastMatch},
+     * {@code checked}).
+     */
+    private static final ThreadLocal<SPDXMatcherFactory> FACTORY = ThreadLocal.withInitial(SPDXMatcherFactory::newInstance);
+
     /** The SPDX name */
     private String name;
 
@@ -64,7 +78,16 @@ public class SpdxBuilder extends AbstractBuilder {
 
     @Override
     public SPDXMatcherFactory.Match build() {
-        return SPDXMatcherFactory.INSTANCE.create(name);
+        return FACTORY.get().create(name);
+    }
+
+    /**
+     * Removes the thread-local factory for the current thread, releasing
+     * resources. Should be called during cleanup in multi-threaded
+     * environments.
+     */
+    public static void removeFactory() {
+        FACTORY.remove();
     }
 
     @Override
