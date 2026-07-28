@@ -27,6 +27,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 
 import org.apache.rat.config.exclusion.fileProcessors.AbstractFileProcessorBuilder;
 import org.apache.rat.config.exclusion.fileProcessors.BazaarIgnoreBuilder;
@@ -56,7 +57,7 @@ public enum StandardCollection {
      * The files and directories created by a Bazaar source code control based tool.
      */
     BAZAAR("The files and directories created by a Bazaar source code control based tool.",
-            Arrays.asList("**/.bzr/**", "**/.bzrignore"), null, new BazaarIgnoreBuilder()),
+            Arrays.asList("**/.bzr/**", "**/.bzrignore"), null, BazaarIgnoreBuilder::new),
     /**
      * The files and directories created by a Bitkeeper source code control based tool.
      */
@@ -75,7 +76,7 @@ public enum StandardCollection {
                     "**/*.orig", "**/*.rej", "**/.del-*",
                     "**/*.a", "**/*.old", "**/*.o", "**/*.obj", "**/*.so", "**/*.exe",
                     "**/*.Z", "**/*.elc", "**/*.ln", "**/core"),
-            null, new CVSIgnoreBuilder()),
+            null, CVSIgnoreBuilder::new),
     /**
      * The files and directories created by a DARCS source code control based tool.
      */
@@ -96,7 +97,7 @@ public enum StandardCollection {
         "and (unless RAT_NO_GIT_GLOBAL_IGNORE is specified) the global gitignore.",
             Arrays.asList("**/.git/**", "**/.gitignore"),
             null,
-            new GitIgnoreBuilder()
+            GitIgnoreBuilder::new
     ),
     /**
      * The hidden directories. Directories with names that start with {@code .}
@@ -170,7 +171,7 @@ public enum StandardCollection {
      * The files and directories created by a Mercurial source code control based tool.
      */
     MERCURIAL("The files and directories created by a Mercurial source code control based tool.",
-            Arrays.asList("**/.hg/**", "**/.hgignore"), null, new HgIgnoreBuilder()),
+            Arrays.asList("**/.hg/**", "**/.hgignore"), null, HgIgnoreBuilder::new),
     /**
      * The set of miscellaneous files generally left by editors and the like.
      */
@@ -227,17 +228,24 @@ public enum StandardCollection {
     private final Collection<String> patterns;
     /** A document name matcher supplier to create a document name matcher. May be null */
     private final DocumentNameMatcher staticDocumentNameMatcher;
-    /** The AbstractFileProcessorBuilder to process the exclude file associated with this exclusion. May be {@code null}. */
-    private final AbstractFileProcessorBuilder fileProcessorBuilder;
+    /**
+     * Supplier for the AbstractFileProcessorBuilder. A Supplier is used instead of a direct
+     * instance because these builders contain mutable state ({@code levelBuilders}, and in the
+     * case of {@link HgIgnoreBuilder}, a mutable {@code state} field). Enum constants are
+     * singletons, so storing a shared builder instance would cause concurrent threads in a
+     * parallel Maven build to corrupt each other's state. The supplier creates a fresh builder
+     * for each invocation, ensuring thread safety.
+     */
+    private final Supplier<AbstractFileProcessorBuilder> fileProcessorBuilderSupplier;
     /** The description of this collection */
     private final String desc;
 
     StandardCollection(final String desc, final Collection<String> patterns, final DocumentNameMatcher documentNameMatcher,
-                       final AbstractFileProcessorBuilder fileProcessorBuilder) {
+                       final Supplier<AbstractFileProcessorBuilder> fileProcessorBuilderSupplier) {
         this.desc = desc;
         this.patterns = patterns == null ? Collections.emptyList() : new HashSet<>(patterns);
         this.staticDocumentNameMatcher = documentNameMatcher;
-        this.fileProcessorBuilder = fileProcessorBuilder;
+        this.fileProcessorBuilderSupplier = fileProcessorBuilderSupplier;
     }
 
     /**
@@ -294,8 +302,8 @@ public enum StandardCollection {
     public ExtendedIterator<AbstractFileProcessorBuilder> fileProcessorBuilder() {
         List<AbstractFileProcessorBuilder> lst = new ArrayList<>();
         for (StandardCollection sc : getCollections()) {
-            if (sc.fileProcessorBuilder != null) {
-                lst.add(sc.fileProcessorBuilder);
+            if (sc.fileProcessorBuilderSupplier != null) {
+                lst.add(sc.fileProcessorBuilderSupplier.get());
             }
         }
         return ExtendedIterator.create(lst.iterator());
