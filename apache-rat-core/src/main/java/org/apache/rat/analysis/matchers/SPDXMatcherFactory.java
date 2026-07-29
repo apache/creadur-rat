@@ -59,11 +59,10 @@ public final class SPDXMatcherFactory {
 
     /**
      * The shared instance of this factory.
-     * <p>
-     * <b>Not thread-safe</b> — in multi-threaded environments use
-     * {@link #newInstance()} to create per-thread instances instead.
-     * </p>
+     * @deprecated Not thread-safe. Use {@link #newInstance()} to create
+     * per-thread instances instead. Will be removed in 1.0.0.
      */
+    @Deprecated
     public static final SPDXMatcherFactory INSTANCE = new SPDXMatcherFactory();
 
     /**
@@ -90,7 +89,7 @@ public final class SPDXMatcherFactory {
     /**
      * Constructor. Creates a new factory with its own matcher map and match state.
      */
-    SPDXMatcherFactory() {
+    private SPDXMatcherFactory() {
         lastMatch = new HashSet<>();
     }
 
@@ -125,12 +124,7 @@ public final class SPDXMatcherFactory {
         if (StringUtils.isBlank(spdxId)) {
             throw new ConfigurationException("'SPDX' type matcher requires a name");
         }
-        Match matcher = matcherMap.get(spdxId);
-        if (matcher == null) {
-            matcher = new Match(spdxId);
-            matcherMap.put(spdxId, matcher);
-        }
-        return matcher;
+        return matcherMap.computeIfAbsent(spdxId, Match::new);
     }
 
     /**
