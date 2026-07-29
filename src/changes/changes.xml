@@ -68,6 +68,12 @@ in order to be properly linked in site reports.
     </release>
     -->
     <release version="1.0.0-SNAPSHOT" date="xxxx-yy-zz" description="Current SNAPSHOT - release to be done">
+      <action issue="RAT-553" type="add" dev="pottlinger" due-to="Guillaume Nodet">
+        Fix NPE with parallel builds in SCM ignore parsers.
+      </action>
+      <action issue="RAT-573" type="add" dev="pottlinger" due-to="Guillaume Nodet">
+        Make RAT safe for parallel builds.
+      </action>
       <action issue="RAT-570" type="add" dev="claudenw">
         Internal change: Introduced a Reporter.Output class that encapsulates the execution configuration, the generated XML document, and the ClaimStatistic containing counts for file types, licenses, license categories, and other all of RAT run statistics.
       </action>

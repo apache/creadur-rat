@@ -21,9 +21,9 @@ package org.apache.rat.configuration;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.WordUtils;
@@ -88,7 +88,7 @@ public final class MatcherBuilderTracker {
     }
 
     private MatcherBuilderTracker() {
-        matcherBuilders = new HashMap<>();
+        matcherBuilders = new ConcurrentHashMap<>();
     }
 
     /**

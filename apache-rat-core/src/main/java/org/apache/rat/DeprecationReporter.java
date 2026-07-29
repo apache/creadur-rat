@@ -42,9 +42,14 @@ public final class DeprecationReporter {
     }
 
     /**
-     * The consumer that is used for deprecation reporting.
+     * The per-thread consumer that is used for deprecation reporting.
+     * <p>
+     * Stored in a {@link ThreadLocal} so that each thread (e.g. parallel Maven
+     * reactor threads) gets its own reporter and does not interfere with
+     * reporters set by other threads.
+     * </p>
      */
-    private static Consumer<Option> consumer = getDefault();
+    private static final ThreadLocal<Consumer<Option>> CONSUMER = ThreadLocal.withInitial(DeprecationReporter::getDefault);
 
     /**
      * Get the default reporter.
@@ -70,7 +75,7 @@ public final class DeprecationReporter {
      * @return The consumer that will log usage of deprecated operations to the default log.
      */
     public static Consumer<Option> getLogReporter() {
-        return consumer;
+        return CONSUMER.get();
     }
 
     /**
@@ -78,14 +83,14 @@ public final class DeprecationReporter {
      * @param consumer The consumer that will do the reporting.
      */
     public static void setLogReporter(final Consumer<Option> consumer) {
-        DeprecationReporter.consumer = consumer;
+        CONSUMER.set(consumer);
     }
 
     /**
-     * Rests the consumer to the default consumer.
+     * Resets the consumer to the default consumer.
      */
     public static void resetLogReporter() {
-        DeprecationReporter.consumer = getDefault();
+        CONSUMER.set(getDefault());
     }
 
     /**

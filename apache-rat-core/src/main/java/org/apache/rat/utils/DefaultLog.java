@@ -22,30 +22,35 @@ import org.apache.rat.api.EnvVar;
 
 /**
  * A default implementation of Log that writes to {@code System.out} and {@code System.err}.
+ * <p>
+ * The singleton instance is stored in a {@link ThreadLocal} so that each thread
+ * (e.g. parallel Maven reactor threads) gets its own logger and does not
+ * interfere with loggers set by other threads.
+ * </p>
  */
 public final class DefaultLog implements Log {
     /**
-     * The instance of the default log.
+     * The per-thread instance of the default log.
      */
-    private static Log instance = new DefaultLog();
+    private static final ThreadLocal<Log> INSTANCE = ThreadLocal.withInitial(DefaultLog::new);
 
     /**
-     * Retrieves the DefaultLog instance.
+     * Retrieves the DefaultLog instance for the current thread.
      * @return the Default log instance.
      */
     public static Log getInstance() {
-        return instance;
+        return INSTANCE.get();
     }
 
     /**
-     * Sets the default log instance.
-     * If not set an instance of DefaultLog will be returned
+     * Sets the default log instance for the current thread.
+     * If not set an instance of DefaultLog will be returned.
      * @param newInstance a Log to use as the default.
      * @return the old instance.
      */
     public static Log setInstance(final Log newInstance) {
-        Log result = instance;
-        instance = newInstance == null ? new DefaultLog() : newInstance;
+        Log result = INSTANCE.get();
+        INSTANCE.set(newInstance == null ? new DefaultLog() : newInstance);
         return result;
     }
 
