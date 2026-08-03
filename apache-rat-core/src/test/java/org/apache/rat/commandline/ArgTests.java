@@ -30,11 +30,12 @@ import java.nio.file.Path;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class ArgTests {
+class ArgTests {
+    private CLIOptionCollection cliOptionCollection = new CLIOptionCollection();
 
     @ParameterizedTest(name = "{0}")
     @ValueSource(strings = { "rat.txt", "./rat.txt", "/rat.txt", "target/rat.test" })
-    public void outputFileNameNoDirectoryTest(String name) throws ParseException {
+    void outputFileNameNoDirectoryTest(String name) throws ParseException {
         class OutputFileConfig extends ReportConfiguration {
             private File actual = null;
 
@@ -52,8 +53,8 @@ public class ArgTests {
         String expected = fsInfo.normalize(workingPath.resolve("./" + fileName).toString());
 
         OutputFileConfig configuration = new OutputFileConfig();
-        ArgumentContext ctxt = new ArgumentContext(localFile, configuration, CLIOptionCollection.INSTANCE.getOptions(), new String[]{"--output-file", fileName});
-        Arg.processArgs(ctxt, CLIOptionCollection.INSTANCE);
+        ArgumentContext ctxt = new ArgumentContext(localFile, configuration, cliOptionCollection.getOptions(), new String[]{"--output-file", fileName});
+        Arg.processArgs(ctxt, cliOptionCollection);
         if (name.equals("/rat.txt")) {
             assertThat(fsInfo.normalize(configuration.actual.getAbsolutePath())).isEqualTo(localFileName.getRoot() + "rat.txt");
         } else {

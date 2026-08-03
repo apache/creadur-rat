@@ -49,6 +49,11 @@ public final class AntDocumentation {
     private final File outputDir;
 
     /**
+     * THe Ant Option collection instance.
+     */
+    private final AntOptionCollection antOptions = new AntOptionCollection();
+
+    /**
      * Creates APT documentation files for Ant.
      * Requires 1 argument:
      * <ol>
@@ -83,7 +88,7 @@ public final class AntDocumentation {
     }
 
     public void execute() {
-        List<AntOption> options = AntOptionCollection.INSTANCE.getMappedOptions().toList();
+        List<AntOption> options = antOptions.getMappedOptions().toList();
         writeAttributes(options);
         writeElements(options);
         printValueTypes();
@@ -151,7 +156,7 @@ public final class AntDocumentation {
         List<List<String>> table = new ArrayList<>();
         table.add(Arrays.asList("Value Type", "Description"));
 
-        AntOptionCollection.INSTANCE.getMappedOptions()
+        antOptions.getMappedOptions()
                 .map(antOption -> Arrays.asList(antOption.getName(), antOption.getDescription()))
                 .forEach(table::add);
 

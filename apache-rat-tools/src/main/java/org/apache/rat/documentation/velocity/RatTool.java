@@ -48,6 +48,7 @@ import org.apache.rat.documentation.options.MavenOptionCollection;
 import org.apache.rat.help.AbstractHelp;
 import org.apache.rat.license.ILicense;
 import org.apache.rat.license.LicenseSetFactory;
+import org.apache.rat.ui.UIOption;
 import org.apache.velocity.tools.config.DefaultKey;
 import org.apache.velocity.tools.config.ValidScope;
 
@@ -87,6 +88,22 @@ public class RatTool {
     private final LicenseSetFactory licenseSetFactory;
 
     /**
+     * The Client option instance
+     */
+    // visible for testing
+    private final CLIOptionCollection cliOptions = new CLIOptionCollection();
+
+    /**
+     * The ANT option instance.
+     */
+    private final AntOptionCollection antOptions = new AntOptionCollection();
+
+    /**
+     * The Maven option instance
+     */
+    private final MavenOptionCollection mavenOptions = new MavenOptionCollection();
+
+    /**
      * Constructor.
      */
     public RatTool() {
@@ -99,8 +116,8 @@ public class RatTool {
      * @return the list of command line options.
      */
     public List<Option> options() {
-        return CLIOptionCollection.INSTANCE.getMappedOptions()
-        .map(CLIOption::getOption).toList();
+        return cliOptions.getMappedOptions()
+        .map(UIOption::getOption).toList();
     }
 
     /**
@@ -108,7 +125,7 @@ public class RatTool {
      * @return a map client option name to Ant Option.
      */
     public Map<String, AntOption> antOptions() {
-        return AntOptionCollection.INSTANCE.getOptionMap();
+        return antOptions.getOptionMap();
     }
 
     /**
@@ -116,7 +133,7 @@ public class RatTool {
      * @return a map client option name to CLI Option.
      */
     public Map<String, CLIOption> cliOptions() {
-        return CLIOptionCollection.INSTANCE.getOptionMap();
+        return cliOptions.getOptionMap();
     }
 
     /**
@@ -124,7 +141,7 @@ public class RatTool {
      * @return a map client option name to Maven Option.
      */
     public Map<String, MavenOption> mvnOptions() {
-        return MavenOptionCollection.INSTANCE.getOptionMap();
+        return mavenOptions.getOptionMap();
     }
 
     /**

@@ -50,6 +50,7 @@ import org.apache.rat.document.DocumentName;
 import org.apache.rat.document.DocumentNameMatcher;
 import org.apache.rat.license.LicenseSetFactory;
 import org.apache.rat.report.claim.ClaimStatistic.Counter;
+import org.apache.rat.ui.ArgumentTracker;
 import org.apache.rat.ui.UIOptionCollection;
 import org.apache.rat.utils.DefaultLog;
 import org.apache.rat.utils.Log;
@@ -260,10 +261,20 @@ public enum Arg {
             .type(Pair.class)
             .build()),
             (context, selected) -> {
-                for (String arg : context.getCommandLine().getOptionValues(selected)) {
-                    Pair<Counter, Integer> pair = Converters.COUNTER_CONVERTER.apply(arg);
-                    int limit = pair.getValue();
-                    context.getConfiguration().getClaimValidator().setMax(pair.getKey(), limit < 0 ? Integer.MAX_VALUE : limit);
+                String[] values = context.getCommandLine().getOptionValues(selected);
+                if (values == null) {
+                    DefaultLog.getInstance().error(String.format("Unable to read %s (%s)", ArgumentTracker.extractName(selected),
+                            ArgumentTracker.extractKey(selected)));
+                    for (Option option : context.getCommandLine().getOptions()) {
+                        DefaultLog.getInstance().error(String.format("  Option: %s (%s)", ArgumentTracker.extractName(option),
+                                ArgumentTracker.extractKey(option)));
+                    }
+                } else {
+                    for (String arg : context.getCommandLine().getOptionValues(selected)) {
+                        Pair<Counter, Integer> pair = Converters.COUNTER_CONVERTER.apply(arg);
+                        int limit = pair.getValue();
+                        context.getConfiguration().getClaimValidator().setMax(pair.getKey(), limit < 0 ? Integer.MAX_VALUE : limit);
+                    }
                 }
             }),
 

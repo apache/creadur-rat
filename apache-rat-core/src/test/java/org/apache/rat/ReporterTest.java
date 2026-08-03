@@ -65,6 +65,7 @@ import org.apache.rat.license.ILicenseFamily;
 import org.apache.rat.report.claim.ClaimStatistic;
 import org.apache.rat.report.claim.ClaimStatisticTest;
 import org.apache.rat.test.utils.Resources;
+import org.apache.rat.testhelpers.BaseOption;
 import org.apache.rat.testhelpers.BaseOptionCollection;
 import org.apache.rat.testhelpers.XmlUtils;
 import org.apache.rat.testhelpers.data.ReportTestDataProvider;
@@ -104,11 +105,11 @@ public class ReporterTest {
      */
     final String basedir;
 
-    private final OptionCollectionParser collectionParser;
+    private final OptionCollectionParser<BaseOption> collectionParser;
 
     ReporterTest() throws URISyntaxException {
         basedir = Resources.getExampleResource("exampleData").getPath();
-        collectionParser = new OptionCollectionParser(BaseOptionCollection.builder().build());
+        collectionParser = new OptionCollectionParser<>(new BaseOptionCollection());
     }
 
     @BeforeAll
@@ -553,9 +554,9 @@ public class ReporterTest {
     }
 
     static Stream<Arguments> getTestData() {
-        BaseOptionCollection.Builder builder = BaseOptionCollection.builder()
+        BaseOptionCollection.Builder builder = new BaseOptionCollection.Builder()
                         .unsupported(Arg.OUTPUT_FILE);
-        return new ReportTestDataProvider().getOptionTests(builder.build()).stream().map(testData ->
+        return new ReportTestDataProvider().getOptionTests(new BaseOptionCollection(builder)).stream().map(testData ->
                 Arguments.of(testData.getTestName(), testData));
     }
 

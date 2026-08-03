@@ -21,6 +21,8 @@ package org.apache.rat.ui;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Function;
+
 import org.apache.commons.cli.AlreadySelectedException;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.OptionGroup;
@@ -41,9 +43,10 @@ public class UIOptionCollectionTest {
             super(new Builder());
 
         }
+
         private static class Builder extends UIOptionCollection.Builder<TestingUIOption, Builder> {
             Builder() {
-                super(TestingUIOption::new);
+                super(TestingUIOption.TestingUIOptionBuilder::new);
                         uiOption(UI_OPTION)
                         .uiOption(DEPRECATED_UI_OPTION)
                         .unsupported(Arg.COUNTER_MAX)
@@ -54,10 +57,10 @@ public class UIOptionCollectionTest {
         }
     }
 
-    static class TestingUIOption extends UIOption<TestingUIOption> {
+    public static class TestingUIOption extends UIOption<TestingUIOption> {
 
-        TestingUIOption(final UIOptionCollection<TestingUIOption> collection, final Option option) {
-            super(collection, option, ArgumentTracker.extractName(option).as(CasedString.StringCase.DOT));
+        private TestingUIOption(final TestingUIOptionBuilder builder) {
+            super(builder);
         }
 
         @Override
@@ -73,6 +76,19 @@ public class UIOptionCollectionTest {
         @Override
         public String getText() {
             return "Short and long options for " + cleanupName(option);
+        }
+
+        public static class TestingUIOptionBuilder extends UIOption.Builder<TestingUIOption, TestingUIOptionBuilder> {
+
+            @Override
+            protected Function<Option, CasedString> getNameFactory() {
+                return o -> ArgumentTracker.extractName(option()).as(CasedString.StringCase.DOT);
+            }
+
+            @Override
+            protected TestingUIOption doBuild() {
+                return new TestingUIOption(this);
+            }
         }
     }
 

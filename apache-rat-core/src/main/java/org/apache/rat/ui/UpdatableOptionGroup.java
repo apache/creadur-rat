@@ -65,6 +65,7 @@ public final class UpdatableOptionGroup extends OptionGroup {
     public Stream<Option> getDisableOptions() {
         return disabledOptions.stream();
     }
+
     /**
      * Reset the group so that all disabled options are re-enabled.
      */

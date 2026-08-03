@@ -111,7 +111,7 @@ public final class CasedString {
             return false;
         }
         CasedString that = (CasedString) o;
-        return Objects.deepEquals(getSegments(), that.getSegments()) && Objects.equals(stringCase, that.stringCase);
+        return Objects.equals(stringCase, that.stringCase) && Objects.deepEquals(getSegments(), that.getSegments());
     }
 
     @Override

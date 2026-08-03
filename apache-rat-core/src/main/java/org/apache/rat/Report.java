@@ -48,6 +48,7 @@ public final class Report {
      */
     public static void main(final String[] args) throws Exception {
         DefaultLog.getInstance().info(new VersionInfo().toString());
+        CLIOptionCollection cliOptionCollection = new CLIOptionCollection();
 
         if (args == null || args.length == 0) {
             DefaultLog.getInstance().info("Please use the \"--help\" option to see a " +
@@ -55,7 +56,7 @@ public final class Report {
             System.exit(0);
         }
 
-        Reporter.Output result = generateReport(CLIOptionCollection.INSTANCE, new File("."), args);
+        Reporter.Output result = generateReport(cliOptionCollection, new File("."), args);
         if (result != null) {
             result.writeSummary(DefaultLog.getInstance().asWriter());
 

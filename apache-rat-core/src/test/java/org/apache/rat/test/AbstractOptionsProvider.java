@@ -64,6 +64,10 @@ public abstract class AbstractOptionsProvider implements ArgumentsProvider {
      * The directory to place test data in.
      */
     protected final File baseDir;
+    /**
+     * THe name of the provider of the options
+     */
+    protected final String providerName;
 
     /**
      * Copy the runtime data to the "target" directory.
@@ -85,7 +89,7 @@ public abstract class AbstractOptionsProvider implements ArgumentsProvider {
     }
 
     protected void addTest(OptionCollectionTest.OptionTest test) {
-        testMap.put(test.toString(), test);
+        testMap.put(test.name(), test);
     }
 
     /**
@@ -96,12 +100,21 @@ public abstract class AbstractOptionsProvider implements ArgumentsProvider {
         return DocumentName.builder(baseDir).build();
     }
 
-    protected AbstractOptionsProvider(final File baseDir) {
+    protected AbstractOptionsProvider(final String providerName, final File baseDir) {
+        this.providerName = providerName;
         this.baseDir = baseDir;
     }
 
-    protected void validate(final Collection<String> unsupportedArgs) {
+    private void removeUnsupportedArgs(final Collection<String> unsupportedArgs) {
         unsupportedArgs.forEach(testMap::remove);
+//        for (String unsupportedArg : unsupportedArgs) {
+//            testMap.values().stream().filter(optionTest -> unsupportedArg.equals(optionTest.name()))
+//                    .map(OptionCollectionTest.OptionTest::name).forEach(name -> testMap.remove(name));
+//        }
+    }
+
+    protected void validate(final Collection<String> unsupportedArgs) {
+        removeUnsupportedArgs(unsupportedArgs);
         verifyAllMethodsDefinedAndNeeded(unsupportedArgs);
     }
 
@@ -131,7 +144,7 @@ public abstract class AbstractOptionsProvider implements ArgumentsProvider {
         if (!argNames.isEmpty()) {
             fail("Extra methods defined: " + String.join(", ", argNames));
         }
-        unsupportedArgs.forEach(testMap::remove);
+        removeUnsupportedArgs(unsupportedArgs);
     }
 
     @SafeVarargs

@@ -96,9 +96,10 @@ public class ReportOptionTest  {
     }
 
     final static class AntOptionsProvider extends AbstractConfigurationOptionsProvider implements ArgumentsProvider {
+        private AntOptionCollection antOptionCollection = new AntOptionCollection();
 
         public AntOptionsProvider() {
-            super(BaseAntTask.unsupportedArgs(), testPath.toFile());
+            super("AntTask", BaseAntTask.unsupportedArgs(), testPath.toFile());
         }
 
         protected ReportConfiguration generateConfig(final List<Pair<Option, String[]>> args) {
@@ -138,7 +139,7 @@ public class ReportOptionTest  {
             final String name;
 
             BuildTask(Option option) {
-                this(AntOptionCollection.INSTANCE.getMappedOption(option).get().getName());
+                this(antOptionCollection.getMappedOption(option).get().getName());
             }
 
             BuildTask() {
@@ -154,7 +155,7 @@ public class ReportOptionTest  {
                 Map<String, String> attributes = new HashMap<>();
                 if (args.get(0).getKey() != null) {
                     for (Pair<Option, String[]> pair : args) {
-                        AntOption argOption = AntOptionCollection.INSTANCE.getMappedOption(pair.getKey()).get();
+                        AntOption argOption = antOptionCollection.getMappedOption(pair.getKey()).get();
                         if (argOption.isAttribute()) {
                             String value = pair.getValue() == null ? "true" : pair.getValue()[0];
                             attributes.put(argOption.getName(), value);

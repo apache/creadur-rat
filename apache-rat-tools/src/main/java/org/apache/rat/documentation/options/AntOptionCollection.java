@@ -35,30 +35,24 @@ import org.apache.commons.text.WordUtils;
 import org.apache.rat.OptionCollection;
 import org.apache.rat.commandline.Arg;
 import org.apache.rat.document.DocumentName;
-import org.apache.rat.ui.ArgumentTracker;
 import org.apache.rat.ui.UIOptionCollection;
-import org.apache.rat.utils.CasedString;
 
 import static java.lang.String.format;
 
 /**
- * The collection of AntOptions equivalent to the CLI options
- * with any unsupported options removed.
+ * The collection of AntOptions.
  */
 public final class AntOptionCollection extends UIOptionCollection<AntOption> {
     /** mapping of standard name to non-conflicting name. */
-    private static final Map<String, String> RENAME_MAP;
-
+    static final Map<String, String> RENAME_MAP;
     /**
      * The format for an XML element.
      */
     private static final String DEFAULT_XML = "<%1$s>%%s</%1$s>%n";
-
     /** Attributes that are required for example data. */
     private static final Map<String, Map<String, String>> REQUIRED_ATTRIBUTES = new HashMap<>();
     /** The list of data types that are specified as XML attributes in Ant build.xml documents */
     private static final List<Class<?>> ATTRIBUTE_TYPES = new ArrayList<>();
-
     /** The map of option name conversions. */
     private final Map<Option, Option> conversionMap;
 
@@ -82,21 +76,38 @@ public final class AntOptionCollection extends UIOptionCollection<AntOption> {
         ATTRIBUTE_TYPES.add(DocumentName.class);
     }
 
+    /**
+     * Gets the map of standard Option names that are renamed to fit the Ant naming process.
+     * @return the map of renamed Options.
+     */
     public static Map<String, String> getRenameMap() {
         return new TreeMap<>(RENAME_MAP);
     }
 
-    /** The instance of the AntOptionCollection */
-    public static final AntOptionCollection INSTANCE = new Builder().build();
-
+    /** Creates an instance of the AntOption Collection.
+     */
+    public AntOptionCollection() {
+        this(new Builder());
+    }
     /**
      * Create an instance.
      */
     private AntOptionCollection(final Builder builder) {
-        super(builder);
+        super(new Builder());
         conversionMap = builder.conversions;
     }
 
+    @Override
+    public String rename(final Option option) {
+        String key = super.rename(option);
+        return StringUtils.defaultIfEmpty(RENAME_MAP.get(key), key);
+    }
+
+    /**
+     * Returns the set of Antoptions that the argument was converted From.
+     * @param antOption the AntOption to check.
+     * @return returns a Set of AntOptoins that were converted to the argument. May be an empty set.
+     */
     public Set<AntOption> convertedFrom(final AntOption antOption) {
         return conversionMap.entrySet().stream().filter(e -> e.getValue().equals(antOption.getOption()))
                 .map(e -> getMappedOption(e.getKey()))
@@ -115,16 +126,31 @@ public final class AntOptionCollection extends UIOptionCollection<AntOption> {
         return opt == null ? antOption : getMappedOption(opt).orElse(antOption);
     }
 
+    /**
+     * Returns {@code true} if this argument is an attribute to the ANT RAT call.
+     * @param antOption the AntOption to check.
+     * @return {@code true} if this argument is an attribute to the ANT RAT call.
+     */
     public boolean isAttribute(final AntOption antOption) {
         Option opt = antOption.getOption();
         return (!opt.hasArg() || opt.getArgs() == 1) && convertedFrom(antOption).isEmpty() &&
                 ATTRIBUTE_TYPES.contains(opt.getType());
     }
 
+    /**
+     * Gets a map of attributes that are required for the example data.
+     * @param name the attribute name to lookup.
+     * @return the map of attributes that are required for the example data.
+     */
     public Map<String, String> getRequiredAttributes(final String name) {
         return REQUIRED_ATTRIBUTES.get(name);
     }
 
+    /**
+     * Gets the ANT build type for the ArgumentType
+     * @param type ArgumentType to get the ANT build type for.
+     * @return the ANT build type for the ArgumentType
+     */
     BuildType buildType(final OptionCollection.ArgumentType type) {
         return switch (type) {
             case FILE, DIRORARCHIVE -> new BuildType("filename") {
@@ -147,37 +173,6 @@ public final class AntOptionCollection extends UIOptionCollection<AntOption> {
         };
     }
 
-    public static Builder builder() {
-        return new Builder();
-    }
-
-    /**
-     * Provides a new name for an option if it is renamed in the collection.
-     * @param name the option name.
-     * @return the collection name, may be the same as the option name.
-     */
-    static String rename(final String name) {
-        return StringUtils.defaultIfEmpty(RENAME_MAP.get(name), name);
-    }
-
-    /**
-     * Creates the name for the option based on rules for conversion of CLI option names.
-     * @param option the standard option.
-     * @return the new Option name as a CasedString.
-     */
-    static CasedString createName(final Option option) {
-        List<String> pluralEndings = List.of("approved", "denied");
-        String name = rename(ArgumentTracker.extractKey(option));
-        CasedString casedName = new CasedString(CasedString.StringCase.KEBAB, name);
-        String[] segments = casedName.getSegments();
-        String lastSegment = segments[segments.length - 1];
-        if (option.hasArgs() && !lastSegment.endsWith("s") && !pluralEndings.contains(lastSegment)) {
-            segments[segments.length - 1] += "s";
-            casedName = new CasedString(CasedString.StringCase.KEBAB, segments);
-        }
-        return casedName.as(CasedString.StringCase.PASCAL);
-    }
-
     /**
      * The Builder for the AntOptionCollection.
      */
@@ -186,7 +181,7 @@ public final class AntOptionCollection extends UIOptionCollection<AntOption> {
         private final Map<Option, Option> conversions = new HashMap<>();
 
         private Builder() {
-            super(AntOption::new);
+            super(AntOption.AntOptionBuilder::new);
             Arg.getOptions().getOptions()
                     .stream().filter(o -> Objects.isNull(o.getLongOpt()))
                     .forEach(this::unsupported);
@@ -205,11 +200,12 @@ public final class AntOptionCollection extends UIOptionCollection<AntOption> {
                     .convert(Arg.EXCLUDE_STD, Arg.EXCLUDE);
         }
 
-        @Override
-        public AntOptionCollection build() {
-            return new AntOptionCollection(this);
-        }
-
+        /**
+         * Converts one Arg type to another.
+         * @param from the Arg to convert from
+         * @param to the Arg to convert to.
+         * @return this
+         */
         public Builder convert(final Arg from, final Arg to) {
             Option mapTo = to.option();
             for (Option option : from.group().getOptions()) {
@@ -269,6 +265,12 @@ public final class AntOptionCollection extends UIOptionCollection<AntOption> {
             return format("<%1$s>%2$s</%1$s>%n", delegateOption.getName(), inner);
         }
 
+        /**
+         * Gets a string comprising the Ant XML pattern for the specified AntOption.
+         * @param antOption the ant option to get XML example for
+         * @param data the data for the option.
+         * @return an ANT XML formatted option.
+         */
         public String getXml(final AntOption antOption, final String data) {
             AntOption delegateOption = antOption.getActualAntOption();
             if (delegateOption.isAttribute()) {
@@ -278,6 +280,11 @@ public final class AntOptionCollection extends UIOptionCollection<AntOption> {
             }
         }
 
+        /**
+         * Gets a test name for the AntOption.
+         * @param antOption the Ant Option being tested
+         * @return the test name for this type.
+         */
         public String testName(final AntOption antOption) {
             return addExt ? format("%s_%s", antOption.getName(), antOption.getArgName()) : antOption.getName();
         }

@@ -185,7 +185,7 @@ public class GeneratedReportTest {
      */
     static Stream<Arguments> generatedData() {
 
-        List<AntOption> options = AntOptionCollection.INSTANCE.getMappedOptions().toList();
+        List<AntOption> options = new AntOptionCollection().getMappedOptions().toList();
 
         List<Arguments> lst = new ArrayList<>();
 
@@ -228,11 +228,7 @@ public class GeneratedReportTest {
             if (body == null) {
                 xml.append(format("      <%1$s>%2$s</%1$s>%n", actualOption.getName(), getData(option)));
             } else {
-//                if (actualOption.argCount() == 1) {
-//                    xml.append(format("      <%s %s=\"%s\" />%n", actualOption.getName(), createAttribute(option), getData(option)));
-//                } else {
                 xml.append(format("      <%1$s>%2$s</%1$s>%n", actualOption.getName(), body));
-//                }
             }
         }
 

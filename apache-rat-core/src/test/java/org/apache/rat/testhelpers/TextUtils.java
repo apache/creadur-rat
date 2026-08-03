@@ -78,7 +78,9 @@ public class TextUtils {
      * Asserts that a string is contained within another string.
      * @param find The string to find.
      * @param target The string to search.
+     * @deprecated use assertThat(target).contains(find)
      */
+    @Deprecated
     public static void assertContains(final String find, final String target) {
         assertThat(target.contains(find)).as(() -> format("Target does not contain the text: %s%n%s", find, target))
                 .isTrue();
@@ -89,7 +91,9 @@ public class TextUtils {
      * @param times The number of times to find the string in the target.
      * @param find The string to find.
      * @param target The string to search.
+     * @deprecated use assertThat(target).containsExactly(find)
      */
+    @Deprecated
     public static void assertContainsExactly(int times, String find, String target) {
         String t = target;
         for (int i = 0; i < times; i++) {
@@ -105,7 +109,9 @@ public class TextUtils {
      * Asserts that a string is not contained within another string.
      * @param find The string to find.
      * @param target The string to search.
+     * @deprecated use assertThat(target).doesNotContain(find)
      */
+    @Deprecated
     public static void assertNotContains(final String find, final String target) {
         assertThat(target.contains(find)).as(() -> format("Target contains the text: %s%n%s", find , target))
                 .isFalse();

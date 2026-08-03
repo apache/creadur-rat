@@ -50,6 +50,8 @@ import org.apache.rat.help.Licenses;
 import org.apache.rat.license.LicenseSetFactory;
 import org.apache.rat.report.Reportable;
 import org.apache.rat.report.claim.ClaimStatistic;
+import org.apache.rat.ui.ArgumentTracker;
+import org.apache.rat.ui.UIOptionCollection;
 import org.apache.rat.utils.DefaultLog;
 import org.apache.rat.utils.Log.Level;
 import org.apache.rat.walker.ArchiveWalker;
@@ -66,6 +68,11 @@ public final class OptionCollection {
     private OptionCollection() {
         // do not instantiate
     }
+
+    /**
+     * The collection of UI Options.
+     */
+    private static UIOptionCollection baseOptionCollection = new CLIOptionCollection();
 
     /**
      * The Option comparator to sort the help.
@@ -138,7 +145,7 @@ public final class OptionCollection {
             return null; // dummy return (won't be reached) to avoid Eclipse complaint about possible NPE
             // for "commandLine"
         }
-        Arg.processLogLevel(argumentContext, CLIOptionCollection.INSTANCE);
+        Arg.processLogLevel(argumentContext, baseOptionCollection);
 
         if (argumentContext.getCommandLine().hasOption(HELP)) {
             helpCmd.accept(opts);
@@ -171,25 +178,37 @@ public final class OptionCollection {
      * @see #parseCommands(File, String[], Consumer, boolean)
      */
     public static ReportConfiguration createConfiguration(final ArgumentContext argumentContext) {
-        argumentContext.processArgs(CLIOptionCollection.INSTANCE);
-        final ReportConfiguration configuration = argumentContext.getConfiguration();
-        final CommandLine commandLine = argumentContext.getCommandLine();
-        Optional<Option> dirOpt = CLIOptionCollection.INSTANCE.getSelected(Arg.DIR);
-        if (dirOpt.isPresent()) {
-            try {
-                DocumentName directoryName = commandLine.getParsedOptionValue(dirOpt.get());
-                configuration.addSource(getReportable(directoryName.asFile(), configuration));
-            } catch (ParseException e) {
-                throw new ConfigurationException("Unable to set parse " + dirOpt.get(), e);
+        try {
+            argumentContext.processArgs(baseOptionCollection);
+            final ReportConfiguration configuration = argumentContext.getConfiguration();
+            final CommandLine commandLine = argumentContext.getCommandLine();
+            Optional<Option> dirOpt = baseOptionCollection.getSelected(Arg.DIR);
+            if (dirOpt.isPresent()) {
+                try {
+                    DocumentName directoryName = commandLine.getParsedOptionValue(dirOpt.get());
+                    configuration.addSource(getReportable(directoryName.asFile(), configuration));
+                } catch (ParseException e) {
+                    throw new ConfigurationException("Unable to set parse " + dirOpt.get(), e);
+                }
             }
-        }
-        for (String s : commandLine.getArgs()) {
-            Reportable reportable = getReportable(new File(s), configuration);
-            if (reportable != null) {
-                configuration.addSource(reportable);
+            for (String s : commandLine.getArgs()) {
+                Reportable reportable = getReportable(new File(s), configuration);
+                if (reportable != null) {
+                    configuration.addSource(reportable);
+                }
             }
+            return configuration;
+        } catch (RuntimeException e) {
+            try (PrintWriter pw = new PrintWriter(DefaultLog.getInstance().asWriter(Level.ERROR))) {
+                pw.println("Unable to create Configuration: " + e.getMessage());
+                pw.println("=== Command line options ===");
+                for (Option opt : argumentContext.getCommandLine().getOptions()) {
+                    pw.printf("   %s: %s%n", ArgumentTracker.extractKey(opt), String.join(", ", opt.getValues()));
+                }
+            }
+            throw new ConfigurationException("Unable to create Configuration", e);
         }
-        return configuration;
+
     }
 
     /**
@@ -198,7 +217,8 @@ public final class OptionCollection {
      * @return the Options comprised of the Options defined in this class.
      */
     public static Options buildOptions() {
-        return CLIOptionCollection.INSTANCE.getOptions();
+        baseOptionCollection.resetSelected();
+        return baseOptionCollection.getOptions();
     }
 
     /**

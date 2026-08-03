@@ -21,13 +21,19 @@ package org.apache.rat.testhelpers;
 import org.apache.commons.cli.Option;
 import org.apache.rat.ui.ArgumentTracker;
 import org.apache.rat.ui.UIOption;
-import org.apache.rat.ui.UIOptionCollection;
 import org.apache.rat.utils.CasedString;
 
+import java.util.function.Function;
+
 public final class BaseOption extends UIOption<BaseOption> {
-    BaseOption(final UIOptionCollection<BaseOption> collection, Option option) {
-        super(collection, option, new CasedString(CasedString.StringCase.KEBAB, ArgumentTracker.extractKey(option)));
+    BaseOption(BaseOptionBuilder builder) {
+        super(builder);
     }
+
+    public Builder builder() {
+        return new BaseOptionBuilder();
+    }
+
     protected String cleanupName(Option option) {
         return ArgumentTracker.extractKey(option);
     }
@@ -38,5 +44,18 @@ public final class BaseOption extends UIOption<BaseOption> {
 
     public String getText() {
         return "";
+    }
+
+    public static class BaseOptionBuilder extends UIOption.Builder<BaseOption, BaseOptionBuilder> {
+
+        @Override
+        protected Function<Option, CasedString> getNameFactory() {
+            return ArgumentTracker::extractName;
+        }
+
+        @Override
+        protected BaseOption doBuild() {
+            return new BaseOption(this);
+        }
     }
 }

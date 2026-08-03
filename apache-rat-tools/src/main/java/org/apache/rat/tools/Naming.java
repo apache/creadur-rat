@@ -81,10 +81,28 @@ public final class Naming {
             .addOption(INCLUDE_DEPRECATED)
             .addOption(WIDTH);
 
-    /**
-     * No instantiation of utility class.
-     */
-    private Naming() { }
+    /** The porsed command line */
+    private final CommandLine cl;
+    /** The width of the output */
+    private final int width;
+    /** The Maven options */
+    private final MavenOptionCollection mavenCollection = new MavenOptionCollection();
+    /** The Ant options */
+    private final AntOptionCollection antCollection = new AntOptionCollection();
+    /** The filter to include only non-deprecated long options */
+    private final Predicate<Option> filter;
+    /** The columns to display */
+    private final List<String> columns;
+    /** if {@code true} then show Maven options */
+    private final boolean showMaven;
+    /** if {@code true} then show Ant options */
+    private final boolean showAnt;
+    /** if {@code true} then show CLI options */
+    private final boolean addCLI;
+    /** if {@code true} then include deprecated options in output. */
+    private final boolean includeDeprecated;
+    /** The function to display the description of the option */
+    private final Function<Option, String> descriptionFunction;
 
     /**
      * Creates the CSV file.
@@ -101,43 +119,43 @@ public final class Naming {
             System.err.println("At least one argument is required: path to file is missing.");
             return;
         }
-        CommandLine cl = DefaultParser.builder().build().parse(OPTIONS, args);
-        int width = Math.max(cl.getParsedOptionValue(WIDTH, AbstractHelp.HELP_WIDTH), AbstractHelp.HELP_WIDTH);
+        Naming naming = new Naming(args);
+        naming.write();
+    }
+    /**
+     * No instantiation of utility class.
+     */
+    private Naming(final String[] args) throws ParseException {
+        cl = DefaultParser.builder().build().parse(OPTIONS, args);
 
-        boolean showMaven = cl.hasOption(MAVEN);
-        MavenOptionCollection mavenCollection = MavenOptionCollection.INSTANCE;
+        width = Math.max(cl.getParsedOptionValue(WIDTH, AbstractHelp.HELP_WIDTH), AbstractHelp.HELP_WIDTH);
+        showMaven = cl.hasOption(MAVEN);
+        showAnt = cl.hasOption(ANT);
+        addCLI = cl.hasOption(CLI);
+        includeDeprecated = cl.hasOption(INCLUDE_DEPRECATED);
+        filter = o -> o.hasLongOpt() && (!o.isDeprecated() || includeDeprecated);
 
-        boolean showAnt = cl.hasOption(ANT);
-        AntOptionCollection antCollection = AntOptionCollection.INSTANCE;
-
-        boolean includeDeprecated = cl.hasOption(INCLUDE_DEPRECATED);
-        Predicate<Option> filter = o -> o.hasLongOpt() && (!o.isDeprecated() || includeDeprecated);
-
-        List<String> columns = new ArrayList<>();
-
-        if (cl.hasOption(CLI)) {
-            columns.add("CLI");
+        List<String> columnsBuilder = new ArrayList<>();
+        if (addCLI) {
+            columnsBuilder.add("CLI");
         }
-
         if (showAnt) {
-            columns.add("Ant");
+            columnsBuilder.add("Ant");
         }
-
         if (showMaven) {
-            columns.add("Maven");
+            columnsBuilder.add("Maven");
         }
-        columns.add("Description");
-        columns.add("Argument Type");
+        columnsBuilder.add("Description");
+        columnsBuilder.add("Argument Type");
+        columns = columnsBuilder;
 
-        Function<Option, String> descriptionFunction;
-
-        if (cl.hasOption(CLI) || !showAnt && !showMaven) {
+        if (addCLI || !showAnt && !showMaven) {
             descriptionFunction = o -> {
                 StringBuilder desc = new StringBuilder();
-            if (o.isDeprecated()) {
-                desc.append("[").append(o.getDeprecated().toString()).append("] ");
-            }
-            return desc.append(StringUtils.defaultIfEmpty(o.getDescription(), "")).toString();
+                if (o.isDeprecated()) {
+                    desc.append("[").append(o.getDeprecated().toString()).append("] ");
+                }
+                return desc.append(StringUtils.defaultIfEmpty(o.getDescription(), "")).toString();
             };
         } else if (showAnt) {
             descriptionFunction = o -> {
@@ -163,61 +181,56 @@ public final class Naming {
                 return desc.toString();
             };
         }
+    }
 
+    private void write() throws IOException {
         try (Writer underWriter = cl.getArgs().length != 0 ?
                 new FileWriter(cl.getArgs()[0], StandardCharsets.UTF_8) : new OutputStreamWriter(System.out, StandardCharsets.UTF_8)) {
             if (cl.hasOption(CSV)) {
-                printCSV(columns, filter, cl.hasOption(CLI), showMaven, showAnt, descriptionFunction, underWriter);
-            }
-            else {
-                printText(columns, filter, cl.hasOption(CLI), showMaven, showAnt, descriptionFunction, underWriter, width);
+                printCSV(underWriter);
+            } else {
+                printText(underWriter);
             }
         }
     }
 
-    private static List<String> fillColumns(final List<String> columns, final Option option, final boolean addCLI, final boolean showMaven,
-                                            final boolean showAnt, final Function<Option, String> descriptionFunction) {
-        AntOptionCollection antCollection = AntOptionCollection.INSTANCE;
-        MavenOptionCollection mavenCollection = MavenOptionCollection.INSTANCE;
 
+    private List<String> fillColumns(final Option option) {
+        List<String> columnsBuilder = new ArrayList<>();
         if (addCLI) {
             if (option.hasLongOpt()) {
-                columns.add("--" + option.getLongOpt());
+                columnsBuilder.add("--" + option.getLongOpt());
             } else {
-                columns.add("-" + option.getOpt());
+                columnsBuilder.add("-" + option.getOpt());
             }
         }
         if (showAnt) {
-            antCollection.getMappedOption(option).ifPresentOrElse(antOption -> columns.add(antOption.getExample()),
-                    () -> columns.add(" "));
+            antCollection.getMappedOption(option).ifPresentOrElse(antOption -> columnsBuilder.add(antOption.getExample()),
+                    () -> columnsBuilder.add(" "));
         }
         if (showMaven) {
-            mavenCollection.getMappedOption(option).ifPresentOrElse(mavenOption -> columns.add(mavenOption.getExample()),
-                    () -> columns.add(" "));
+            mavenCollection.getMappedOption(option).ifPresentOrElse(mavenOption -> columnsBuilder.add(mavenOption.getExample()),
+                    () -> columnsBuilder.add(" "));
         }
 
-        columns.add(descriptionFunction.apply(option));
-        columns.add(option.hasArgName() ? option.getArgName() : option.hasArgs() ? "Strings" : option.hasArg() ? "String" : "-- none --");
-        columns.add(option.hasArgName() ? option.getArgName() : option.hasArgs() ? "Strings" : option.hasArg() ? "String" : "-- none --");
-        columns.add(option.hasArgName() ? option.getArgName() : option.hasArgs() ? "Strings" : option.hasArg() ? "String" : "-- none --");
-        return columns;
+        columnsBuilder.add(descriptionFunction.apply(option));
+        columnsBuilder.add(option.hasArgName() ? option.getArgName() : option.hasArgs() ? "Strings" : option.hasArg() ? "String" : "-- none --");
+        return columnsBuilder;
     }
 
-    private static void printCSV(final List<String> columns, final Predicate<Option> filter, final boolean addCLI, final boolean showMaven,
-                                 final boolean showAnt, final Function<Option, String> descriptionFunction,
-                                 final Writer underWriter) throws IOException {
+    private void printCSV(final Appendable underWriter) throws IOException {
         try (CSVPrinter printer = new CSVPrinter(underWriter, CSVFormat.DEFAULT.builder().setQuoteMode(QuoteMode.ALL).get())) {
             printer.printRecord(columns);
             for (Option option : OptionCollection.buildOptions().getOptions()) {
                 if (filter.test(option)) {
                     columns.clear();
-                    printer.printRecord(fillColumns(columns, option, addCLI, showMaven, showAnt, descriptionFunction));
+                    printer.printRecord(fillColumns(option));
                 }
             }
         }
     }
 
-    private static int[] calculateColumnWidth(final int width, final int columnCount, final List<List<String>> page) {
+    private int[] calculateColumnWidth(final int width, final int columnCount, final List<List<String>> page) {
         int[] columnWidth = new int[columnCount];
         for (List<String> row : page) {
             for (int i = 0; i < columnCount; i++) {
@@ -246,9 +259,7 @@ public final class Naming {
         return columnWidth;
     }
 
-    private static void printText(final List<String> columns, final Predicate<Option> filter, final boolean addCLI,
-                                  final boolean showMaven, final boolean showAnt,
-                                  final Function<Option, String> descriptionFunction, final Writer underWriter, final int width) throws IOException {
+    private void printText(final Appendable underWriter) throws IOException {
         List<List<String>> page = new ArrayList<>();
 
         int columnCount = columns.size();
@@ -256,7 +267,7 @@ public final class Naming {
 
         for (Option option : OptionCollection.buildOptions().getOptions()) {
             if (filter.test(option)) {
-                page.add(fillColumns(new ArrayList<>(), option, addCLI, showMaven, showAnt, descriptionFunction));
+                page.add(fillColumns(option));
             }
         }
         int[] columnWidth = calculateColumnWidth(width, columnCount, page);
