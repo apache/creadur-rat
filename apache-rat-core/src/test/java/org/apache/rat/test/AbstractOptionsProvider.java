@@ -107,10 +107,6 @@ public abstract class AbstractOptionsProvider implements ArgumentsProvider {
 
     private void removeUnsupportedArgs(final Collection<String> unsupportedArgs) {
         unsupportedArgs.forEach(testMap::remove);
-//        for (String unsupportedArg : unsupportedArgs) {
-//            testMap.values().stream().filter(optionTest -> unsupportedArg.equals(optionTest.name()))
-//                    .map(OptionCollectionTest.OptionTest::name).forEach(name -> testMap.remove(name));
-//        }
     }
 
     protected void validate(final Collection<String> unsupportedArgs) {
