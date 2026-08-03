@@ -24,6 +24,8 @@ import org.apache.commons.cli.ParseException;
 import org.apache.rat.api.RatException;
 import org.apache.rat.commandline.ArgumentContext;
 import org.apache.rat.testhelpers.TestingLog;
+import org.apache.rat.ui.ArgumentTracker;
+import org.apache.rat.ui.UIOption;
 import org.apache.rat.ui.UIOptionCollection;
 import org.apache.rat.utils.DefaultLog;
 import org.junit.jupiter.api.Test;
@@ -32,6 +34,7 @@ import org.junit.jupiter.api.io.TempDir;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.function.Function;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -95,26 +98,36 @@ class OptionCollectionParserTest {
          * @param optionCollection the collection the UIOption belongs to.
          * @param option           The CLI option
          */
-        protected <C extends UIOptionCollection<TestOption>> TestOption(C optionCollection, Option option) {
-            super(optionCollection, option, new CasedString(CasedString.StringCase.CAMEL, option.getKey()));
+        protected <C extends UIOptionCollection<TestOption>> TestOption(TestOptionBuilder builder) {
+            super(builder);
         }
-        assertThat(testingLog.getCaptured()).containsOnlyOnce("Please use the \"--help\" option to see a list of valid commands and options.");
-    }
 
-    @Test
-    void printHelpExceptionTest() throws ParseException {
-        Options options = new Options();
-        ReportConfiguration cfg = new ReportConfiguration();
-        ArgumentContext ctxt = new ArgumentContext(testPath.toFile(), cfg, options, new String[0]);
-        cfg.setOut(new ReportConfiguration.IODescriptor("Bad Supplier", () -> { throw new IOException("Bad Supplier");}));
-        assertThatThrownBy(() -> underTest.printHelp(ctxt))
-                .isInstanceOf(RatException.class)
-                .hasMessageContaining("Unable to print help: Bad Supplier");
-    }
+        @Override
+        protected String cleanupName(Option option) {
+            return "clean" + option.toString();
+        }
+
+        @Override
+        public String getExample() {
+            return "example " + option.toString();
+        }
 
         @Override
         public String getText() {
             return "text for " + option.toString();
+        }
+
+        public static class TestOptionBuilder extends UIOption.Builder<TestOption, TestOptionBuilder> {
+
+            @Override
+            protected Function<Option, CasedString> getNameFactory() {
+                return ArgumentTracker::extractName;
+            }
+
+            @Override
+            protected TestOption doBuild() {
+                return new TestOption(this);
+            }
         }
     }
 

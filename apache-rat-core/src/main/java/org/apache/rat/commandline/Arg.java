@@ -47,6 +47,7 @@ import org.apache.rat.document.DocumentName;
 import org.apache.rat.document.DocumentNameMatcher;
 import org.apache.rat.license.LicenseSetFactory;
 import org.apache.rat.report.claim.ClaimStatistic.Counter;
+import org.apache.rat.ui.ArgumentTracker;
 import org.apache.rat.ui.UIOptionCollection;
 import org.apache.rat.utils.DefaultLog;
 import org.apache.rat.utils.Log;

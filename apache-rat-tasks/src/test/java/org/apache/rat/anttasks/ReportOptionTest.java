@@ -99,7 +99,7 @@ public class ReportOptionTest  {
         private final AntOptionCollection antOptionCollection = new AntOptionCollection();
 
         public AntOptionsProvider() {
-            super(BaseAntTask.unsupportedArgs(), testPath.toFile());
+            super("AntTask", BaseAntTask.unsupportedArgs(), testPath.toFile());
         }
 
         protected ReportConfiguration generateConfig(final List<Pair<Option, String[]>> args) {

@@ -80,7 +80,7 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
     final AtomicBoolean helpCalled = new AtomicBoolean(false);
 
     public ReporterOptionsProvider() {
-        super(ReporterOptionsTest.testPath.toFile());
+        super("ReporterOptionsProvider", ReporterOptionsTest.testPath.toFile());
         processTestFunctionAnnotations();
         testMap.put("addLicense", this::addLicenseTest);
         testMap.remove("add-license");

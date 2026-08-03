@@ -104,13 +104,12 @@ public class ReporterTest {
      * Directory for the test data.
      */
     final String basedir;
-    private final OptionCollectionParser collectionParser;
 
     private final OptionCollectionParser<BaseOption> collectionParser;
 
     ReporterTest() throws URISyntaxException {
         basedir = Resources.getExampleResource("exampleData").getPath();
-        collectionParser = new OptionCollectionParser(BaseOptionCollection.builder().build());
+        collectionParser = new OptionCollectionParser<>(new BaseOptionCollection());
     }
 
     @BeforeAll
