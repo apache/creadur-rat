@@ -19,11 +19,13 @@
 package org.apache.rat;
 
 import org.apache.commons.cli.Option;
+import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
+import org.apache.rat.api.RatException;
 import org.apache.rat.commandline.ArgumentContext;
-import org.apache.rat.ui.UIOption;
+import org.apache.rat.testhelpers.TestingLog;
 import org.apache.rat.ui.UIOptionCollection;
-import org.apache.rat.utils.CasedString;
+import org.apache.rat.utils.DefaultLog;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.CleanupMode;
 import org.junit.jupiter.api.io.TempDir;
@@ -32,6 +34,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class OptionCollectionParserTest {
 
@@ -39,10 +42,10 @@ class OptionCollectionParserTest {
     static Path testPath;
 
     private final TestOptionCollection optionCollection = new TestOptionCollection();
-    private final OptionCollectionParser underTest = new OptionCollectionParser(optionCollection);
+    private final OptionCollectionParser<TestOption> underTest = new OptionCollectionParser<>(optionCollection);
 
     @Test
-    void parseCommands() throws IOException, ParseException {
+    void parseCommands() throws RatException {
         String[] args = {"arg1", "arg2"};
         ArgumentContext ctxt = underTest.parseCommands(testPath.toFile(), args);
         assertThat(ctxt.getCommandLine().getArgList()).containsExactly(args);
@@ -55,34 +58,35 @@ class OptionCollectionParserTest {
         assertThat(ctxt.getCommandLine().getArgList()).containsExactly(args);
     }
 
-    static class TestOption extends UIOption<TestOption> {
-
-        /**
-         * Constructor.
-         *
-         * @param optionCollection the collection the UIOption belongs to.
-         * @param option           The CLI option
-         */
-        protected <C extends UIOptionCollection<TestOption>> TestOption(C optionCollection, Option option) {
-            super(optionCollection, option, new CasedString(CasedString.StringCase.CAMEL, option.getKey()));
+    @Test
+    void parseCommandLineParseExceptionTest() {
+        Options options = new Options();
+        options.addOption(Option.builder("req").required().build());
+        TestingLog testingLog = new TestingLog();
+        try {
+            DefaultLog.setInstance(testingLog);
+            assertThatThrownBy(() -> underTest.parseCommandLine(options, new String[0]))
+                    .isInstanceOf(ParseException.class);
+        } finally {
+            DefaultLog.setInstance(null);
         }
-
-        @Override
-        protected String cleanupName(Option option) {
-            return "clean" + option.toString();
-        }
-
-        @Override
-        public String getExample() {
-            return "example " + option.toString();
-        }
-
-        @Override
-        public String getText() {
-            return "text for " + option.toString();
-        }
+        assertThat(testingLog.getCaptured()).containsOnlyOnce("Please use the \"--help\" option to see a list of valid commands and options.");
     }
 
+    @Test
+    void printHelpExceptionTest() throws ParseException {
+        Options options = new Options();
+        ReportConfiguration cfg = new ReportConfiguration();
+        ArgumentContext ctxt = new ArgumentContext(testPath.toFile(), cfg, options, new String[0]);
+        cfg.setOut(new ReportConfiguration.IODescriptor("Bad Supplier", () -> { throw new IOException("Bad Supplier");}));
+        assertThatThrownBy(() -> underTest.printHelp(ctxt))
+                .isInstanceOf(RatException.class)
+                .hasMessageContaining("Unable to print help: Bad Supplier");
+    }
+
+    /**
+     * A UIOptionCollection implementation for testing.  Contains TestOptions.
+     */
     static class TestOptionCollection extends UIOptionCollection<TestOption> {
         /**
          * Construct the UIOptionCollection from the builder.
@@ -93,7 +97,7 @@ class OptionCollectionParserTest {
 
         static class TestCollectionBuilder extends UIOptionCollection.Builder<TestOption, TestCollectionBuilder> {
             TestCollectionBuilder() {
-                super(TestOption::new);
+                super(TestOption.TestOptionBuilder::new);
             }
         }
     }

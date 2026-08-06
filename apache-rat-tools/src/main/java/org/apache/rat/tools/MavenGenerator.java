@@ -74,6 +74,9 @@ public final class MavenGenerator {
         String packageName = args[0];
         String className = args[1];
         String destDir = args[2];
+
+        final MavenOptionCollection mavenOptions = new MavenOptionCollection();
+
         String pkgName = String.join(File.separator, new CasedString(StringCase.DOT, packageName).getSegments());
         File file = new File(new File(new File(destDir), pkgName), className + ".java");
         System.out.println("Creating " + file);
@@ -91,16 +94,16 @@ public final class MavenGenerator {
                         for (Map.Entry<?, ?> entry : MavenOptionCollection.getRenameMap().entrySet()) {
                             writer.append(format("        xlateName.put(\"%s\", \"%s\");%n", entry.getKey(), entry.getValue()));
                         }
-                        for (Option option : MavenOptionCollection.INSTANCE.getUnsupportedOptions().getOptions()) {
+                        for (Option option : mavenOptions.getUnsupportedOptions().getOptions()) {
                             writer.append(format("        unsupportedArgs.add(\"%s\");%n", argsKey(option)));
                         }
-                        for (MavenOption option : MavenOptionCollection.INSTANCE.getMappedOptions().filter(MavenOption::isDeprecated).toList()) {
+                        for (MavenOption option : mavenOptions.getMappedOptions().filter(MavenOption::isDeprecated).toList()) {
                             writer.append(format("        deprecatedArgs.put(\"%s\", \"%s\");%n", argsKey(option.getOption()),
                                     format("Use of deprecated option '%s'. %s", option.getName(), option.getDeprecated())));
                         }
                         break;
                     case "${methods}":
-                        writeMethods(writer);
+                        writeMethods(mavenOptions, writer);
                         break;
                     case "${package}":
                         writer.append(format("package %s;%n", packageName));
@@ -162,8 +165,8 @@ public final class MavenGenerator {
         return sb.append(format("     */%n")).toString();
     }
 
-    private static void writeMethods(final FileWriter writer) throws IOException {
-        for (MavenOption option : MavenOptionCollection.INSTANCE.getMappedOptions().toList()) {
+    private static void writeMethods(final MavenOptionCollection mavenOptions, final FileWriter writer) throws IOException {
+        for (MavenOption option : mavenOptions.getMappedOptions().toList()) {
             writer.append(getComment(option))
                     .append(option.getMethodSignature("    ", option.hasArgs())).append(" {").append(System.lineSeparator())
                     .append(getBody(option))

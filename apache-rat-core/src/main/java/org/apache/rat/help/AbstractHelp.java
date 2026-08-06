@@ -55,6 +55,11 @@ public abstract class AbstractHelp {
     protected final VersionInfo versionInfo;
 
     /**
+     * The collection of client options.
+     */
+    protected final CLIOptionCollection cliOptionCollection = new CLIOptionCollection();
+
+    /**
      * Base class to perform help output.
      */
     protected AbstractHelp() {
@@ -185,7 +190,7 @@ public abstract class AbstractHelp {
                     optBuf.append(END_OF_OPTION_MSG);
                 }
                 // check for default value
-                String defaultValue = CLIOptionCollection.INSTANCE.defaultValue(option);
+                String defaultValue = cliOptionCollection.defaultValue(option);
                 if (defaultValue != null) {
                     optBuf.append(format(" (Default value = %s)", defaultValue));
                 }

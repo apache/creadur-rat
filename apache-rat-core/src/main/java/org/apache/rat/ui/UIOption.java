@@ -21,7 +21,9 @@ package org.apache.rat.ui;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -38,27 +40,37 @@ import static java.lang.String.format;
  * @param <T> the concrete implementation of AbstractOption.
  */
 public abstract class UIOption<T extends UIOption<T>> {
-    /** The pattern to match CLI options in text */
+    /**
+     * The pattern to match CLI options in text
+     */
     protected static final Pattern PATTERN = Pattern.compile("-?-([A-Za-z0-9]+-?)+"); // NOSONAR
-    /** The actual UI-specific name for the option */
+    /**
+     * The actual UI-specific name for the option
+     */
     protected final Option option;
-    /** The name for the option */
+    /**
+     * The name for the option
+     */
     protected final CasedString name;
-    /** The argument type for this option */
+    /**
+     * The argument type for this option
+     */
     protected final OptionCollection.ArgumentType argumentType;
-    /** The AbstractOptionCollection associated with this AbstractOption */
+    /**
+     * The AbstractOptionCollection associated with this AbstractOption
+     */
     protected final UIOptionCollection<T> optionCollection;
 
     /**
      * Constructor.
      *
-     * @param option The CLI option
-     * @param name the UI-specific name for the option
+     * @param builder UIOption builder.
      */
-    protected <C extends UIOptionCollection<T>> UIOption(final C optionCollection, final Option option, final CasedString name) {
-        this.optionCollection = optionCollection;
-        this.option = option;
-        this.name = name;
+    protected UIOption(final Builder<T, ?> builder) {
+        this.optionCollection = builder.optionCollection;
+        this.option = builder.option;
+        this.name = builder.name;
+
         OptionCollection.ArgumentType argType;
         if (option.hasArg()) {
             if (option.getArgName() == null) {
@@ -77,9 +89,24 @@ public abstract class UIOption<T extends UIOption<T>> {
         this.argumentType = argType;
     }
 
+    @Override
+    public boolean equals(final Object o) {
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        UIOption<?> uiOption = (UIOption<?>) o;
+        return getOption().equals(uiOption.getOption()) && name.equals(uiOption.name) && argumentType == uiOption.argumentType;
+    }
+
+    @Override
+    public int hashCode() {
+        return name.hashCode();
+    }
+
     /**
      * Gets the AbstractOptionCollection that this option is a member of.
      * @return the AbstractOptionCollection that this option is a member of.
+     * @param <X> The collection type to return.
      */
     public final <X extends UIOptionCollection<T>> X getOptionCollection() {
         return (X) optionCollection;
@@ -240,6 +267,108 @@ public abstract class UIOption<T extends UIOption<T>> {
      * @return the deprecated string if the option is deprecated, or an empty string otherwise.
      */
     public final String getDeprecated() {
-        return  option.isDeprecated() ? cleanup(StringUtils.defaultIfEmpty(option.getDeprecated().toString(), StringUtils.EMPTY)) : StringUtils.EMPTY;
+        return option.isDeprecated() ? cleanup(StringUtils.defaultIfEmpty(option.getDeprecated().toString(), StringUtils.EMPTY)) : StringUtils.EMPTY;
+    }
+
+    /**
+     * The abstract UIOption Builder.
+     * @param <T> the concrete type of the UIOption this builder produces.
+     * @param <B> the concrete type of this builder.
+     */
+    public abstract static class Builder<T extends UIOption<T>, B extends Builder<T, B>> {
+        /**
+         * The collection to add the new UI Option to.
+         */
+        private UIOptionCollection<T> optionCollection;
+        /**
+         * THe base option that is being mapped.
+         */
+        private Option option;
+        /**
+         * The UI name of this option.
+         */
+        private CasedString name = CasedString.NULL;
+        /**
+         * Constructor.
+         */
+        protected Builder() {
+        }
+
+        /**
+         * Returns a function to convert an Option to a CasedString that is the native name for the option.
+         * @return a function to convert an Option to a CasedString that is the native name for the option.
+         */
+        protected abstract Function<Option, CasedString> getNameFactory();
+
+        /**
+         * Gets the option.
+         * @return the option or {@code null} if the option is not set.
+         */
+        protected final Option option() {
+            return option;
+        }
+
+        /**
+         * Gets the UIOptionCollection that the options will be added to.
+         * @return UIOptionCollection that the options will be added to.
+         */
+        protected final UIOptionCollection<T> optionCollection() {
+            return optionCollection;
+        }
+
+        /**
+         * Returns this builder cast to the builder type.
+         * Useful for implementing fluent builders.
+         * @return this builder.
+         */
+        protected final B self() {
+            return (B) this;
+        }
+
+        /**
+         * Sets the UIOptionCollection that the UIOptions will be added to.
+         * @param optionCollection the UIOptionCollection that the UIOptions will be added to.
+         * @return this
+         */
+        public B optionCollection(final UIOptionCollection<T> optionCollection) {
+            this.optionCollection = optionCollection;
+            return self();
+        }
+
+        /**
+         * Sets the Option that the UIOption will be generated from.
+         * @param option to build the UIOption from.
+         * @return this
+         */
+        public B option(final Option option) {
+            Objects.requireNonNull(option, "Option may not be null");
+            this.option = option;
+            this.name = getNameFactory().apply(option);
+            if (this.name == null || this.name.isNull()) {
+                throw new IllegalArgumentException("name for " + option + " may not be null or contain a null value");
+            }
+            return self();
+        }
+
+        /**
+         * Executes the final build.
+         * @return An instance of the UIOption.
+         * @throws IllegalArgumentException if values are not set correctly.
+         */
+        protected abstract T doBuild() throws IllegalArgumentException;
+
+        /**
+         * Builds the UIOption.
+         * @return the UIOption.
+         * @throws IllegalArgumentException if values are not set correctly.
+         */
+        public final T build() throws IllegalArgumentException {
+            Objects.requireNonNull(optionCollection, "OptionCollection may not be null");
+            Objects.requireNonNull(option, "Option may not be null");
+            if (name == null || name.isNull()) {
+                throw new IllegalArgumentException("name may not be null or contain a null value");
+            }
+            return doBuild();
+        }
     }
 }

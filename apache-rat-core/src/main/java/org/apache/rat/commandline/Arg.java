@@ -977,8 +977,8 @@ public enum Arg {
         try {
             Class<? extends T> clazz = (Class<? extends T>) selected.getType();
             String[] values = commandLine.getOptionValues(selected);
-            T[] result = (T[]) Array.newInstance(clazz, values.length);
-            for (int i = 0; i < values.length; i++) {
+            T[] result = (T[]) Array.newInstance(clazz, values == null ? 0 : values.length);
+            for (int i = 0; i < result.length; i++) {
                 result[i] = clazz.cast(selected.getConverter().apply(values[i]));
             }
             return result;
