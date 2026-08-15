@@ -26,6 +26,8 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.regex.Pattern;
+
+import org.apache.commons.cli.Option;
 import org.apache.commons.io.IOUtils;
 
 /**
@@ -75,6 +77,18 @@ public class TextUtils {
      */
     public static void assertContains(final String find, final String target) {
         assertThat(target.contains(find)).as(() -> format("Target does not contain the text: %s%n%s", find, target))
+                .isTrue();
+    }
+
+    /**
+     * Asserts that a string is contained within another string and allows to print the related option.
+     * @param option The current option to search in via parameter find.
+     * @param find The string to find.
+     * @param target The string to search.
+     */
+    public static void assertContains(final Option option, final String find, final String target) {
+        assertThat(target.contains(find)).as(() ->
+                        format("Target option '%s' is not properly found in the text: %s%n%s", option, find, target))
                 .isTrue();
     }
 
