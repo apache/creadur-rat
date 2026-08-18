@@ -20,8 +20,10 @@ package org.apache.rat.analysis.matchers;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTimeoutPreemptively;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -209,6 +211,26 @@ public class CopyrightMatcherTest {
         assertTrue(undertest.matches(headers));
         headers = AbstractMatcherTest.makeHeaders("Copyright A big conglomerate with a long name", null);
         assertFalse(undertest.matches(headers));
+    }
+
+    /**
+     * Guards against RAT-574: matching a large header (as produced by the first
+     * {@literal numberOfRetainedHeaderLines} lines of a file) containing a
+     * "copyright" keyword but none of the registered owner/date must not hang.
+     * A single-line owner that fails to match caused the regex engine to scan for
+     * a match far beyond the keyword with no limit.
+     */
+    @Test
+    void largeHeaderWithUnmatchedCopyrightCompletes() {
+        CopyrightMatcher undertest = new CopyrightMatcher("2000", null, "The Apache Software Foundation");
+        final StringBuilder header = new StringBuilder(200_000);
+        header.append("# Copyright (C) 2019-2026 Some one else\n");
+        for (int i = 0; i < 2000; i++) {
+            header.append("          -------------------------- ---- ----\n");
+        }
+        header.append("description: 'a very long yaml document with lots of ---- dashes ---- ----'\n");
+        final IHeaders headers = AbstractMatcherTest.makeHeaders(header.toString(), null);
+        assertTimeoutPreemptively(Duration.ofSeconds(10), () -> assertFalse(undertest.matches(headers)));
     }
 
 }
