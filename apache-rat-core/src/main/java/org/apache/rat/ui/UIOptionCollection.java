@@ -26,18 +26,20 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.TreeMap;
-import java.util.function.BiFunction;
+import java.util.function.Supplier;
 import java.util.stream.Stream;
 
+import org.apache.commons.cli.AlreadySelectedException;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.rat.Defaults;
 import org.apache.rat.commandline.Arg;
 import org.apache.rat.utils.Log;
 
 /**
  * A collection of options supported by the UI. This includes RAT options and UI specific options.
- * @param <T> the AbstractOption implementation.
+ * @param <T> the UIOption implementation.
  */
 public class UIOptionCollection<T extends UIOption<T>> {
     /** map of ARG to the associated UpdatableOptionGroup */
@@ -53,18 +55,12 @@ public class UIOptionCollection<T extends UIOption<T>> {
     private final Map <Option, String> defaultValues;
 
     /**
-     * The function to generate a concrete BaseOption instance.
-     */
-    private final BiFunction<UIOptionCollection<T>, Option, T> mapper;
-
-    /**
      * Construct the UIOptionCollection from the builder.
-     * @param builder the builder to build from.
+     * @param builder the Builder to build from.
      */
     protected UIOptionCollection(final Builder<T, ?> builder) {
-        Objects.requireNonNull(builder.mapper, "Builder.mapper");
+        Objects.requireNonNull(builder.uiOptionBuilderSupplier, "Builder.mapper");
         argMap = new TreeMap<>();
-        mapper = builder.mapper;
         supportedRatOptions = new UpdatableOptionGroupCollection();
 
         for (Arg arg : Arg.values()) {
@@ -75,15 +71,28 @@ public class UIOptionCollection<T extends UIOption<T>> {
             supportedRatOptions.findGroups(opt).forEach(group -> group.disableOption(opt));
         }
         uiOptions = new HashMap<>();
+        UIOption.Builder<T, ?> optBuilder = builder.uiOptionBuilderSupplier.get();
+        optBuilder.optionCollection(this);
         supportedRatOptions.options().getOptions()
-                .forEach(option -> uiOptions.put(option, mapper.apply(this, option)));
+                .forEach(option -> uiOptions.put(option, optBuilder.option(option).build()));
         builder.uiOptions.stream().filter(option -> !uiOptions.containsKey(option))
-                .forEach(option -> uiOptions.put(option, mapper.apply(this, option)));
+                .forEach(option -> uiOptions.put(option, optBuilder.option(option).build()));
         defaultValues = new HashMap<>(builder.defaultValues);
     }
 
     /**
-     * Checks if an Arg is selected.
+     * Extracts the UI based name string for an option.
+     * The default implementation return the string returned by {@link ArgumentTracker#extractKey(Option)}
+     *
+     * @param option the option to create the name for.
+     * @return the name for the option in the UICollection name, may be the same as the option name.
+     */
+    public String rename(final Option option) {
+        return ArgumentTracker.extractKey(option);
+    }
+
+    /**
+     * Checks if an {@link Arg} is selected.
      * @param arg the Arg to check.
      * @return {@code true} if the arg is selected.
      */
@@ -93,8 +102,8 @@ public class UIOptionCollection<T extends UIOption<T>> {
     }
 
     /**
-     * Gets the selected Option for the arg.
-     * @param arg the arg to check.
+     * Gets the selected Option for an Arg.
+     * @param arg the Arg to get the Option for..
      * @return an Optional containing the selected option, or an empty Optional if none was selected.
      */
     public final Optional<Option> getSelected(final Arg arg) {
@@ -111,42 +120,56 @@ public class UIOptionCollection<T extends UIOption<T>> {
     }
 
     /**
+     * Resets the groups in the Args so that they are unused and ready to detect the next set of arguments.
+     */
+    public void resetSelected() {
+        argMap.values().forEach(uog -> {
+            try {
+                uog.setSelected(null);
+            } catch (AlreadySelectedException e) {
+                throw new RuntimeException(e);
+            }
+        });
+    }
+
+    /**
      * Gets the collection of unsupported Options.
-     * @return the Options comprised for the unsupported options.
+     * @return the Options comprising the unsupported options.
      */
     public final Options getUnsupportedOptions() {
         return supportedRatOptions.unsupportedOptions();
     }
 
     /**
-     * Gets the UiOption instance for the Option.
+     * Gets the UIOption instance for the Option.
      * @param option the option to find the instance of.
-     * @return a UIOption instance that wraps the option.
+     * @return an Optional containing the UIOption for the option, or an empty Optional if the option is not in the UI.
      */
     public final Optional<T> getMappedOption(final Option option) {
         return Optional.ofNullable(uiOptions.get(option));
     }
 
     /**
-     * Gets an Options that contains the RAT Arg defined Option instances that are understood by this collection.
+     * Gets an Options that contains the Options and OptionGroups are understood by this collection.
      * OptionGroups are registered in the resulting Options object.
-     * @return an Options that contains the RAT Arg defined Option instances that are understood by this collection.
+     * @return an Options that contains the {@link Arg} defined Option instances that are understood by this collection as well as
+     * any additional custom Options.
      */
     public final Options getOptions() {
         return supportedRatOptions.options().addOptions(additionalOptions());
     }
 
     /**
-     * Gets the Stream of AbstractOption implementations understood by this collection.
-     * @return the Stream of AbstractOption implementations understood by this collection.
+     * Gets the Stream of UIOption implementations understood by this collection.
+     * @return the Stream of UIOption implementations understood by this collection.
      */
     public final Stream<T> getMappedOptions() {
         return uiOptions.values().stream();
     }
 
     /**
-     * Gets a map client option name to specified AbstractOption implementation.
-     * @return a map client option name to specified AbstractOption implementation
+     * Gets a map client option name to the specified UIOption implementation.
+     * @return a map client option name to thge specified UIOption implementation.
      */
     public final Map<String, T> getOptionMap() {
         Map<String, T> result = new TreeMap<>();
@@ -155,8 +178,8 @@ public class UIOptionCollection<T extends UIOption<T>> {
     }
 
     /**
-     * Gets the additional options understood by this collection.
-     * @return the additional options understood by this collection.
+     * Gets the additional Options understood by this collection.
+     * @return the additional Options understood by this collection.
      */
     public final Options additionalOptions() {
         Options options = new Options();
@@ -176,11 +199,28 @@ public class UIOptionCollection<T extends UIOption<T>> {
     }
 
     /**
-     * Builder for a BaseOptionCollection.
-     * @param <T> the concreate type of the BaseOption.
-     * @param <S> the concrete type being built.
+     * Gets the description for the Option.
+     * Default implementation is based on the description in the option itself as well as the deprecated state.
+     * @param option the option to get the description for.
+     * @return the description of the option.
      */
-    protected static class Builder<T extends UIOption<T>, S extends Builder<T, S>> {
+    public String getDescription(final Option option) {
+        StringBuilder desc = new StringBuilder();
+        getMappedOption(option).ifPresent(uiOption -> {
+            if (uiOption.isDeprecated()) {
+                desc.append("[").append(uiOption.getDeprecated()).append("] ");
+            }
+            desc.append(StringUtils.defaultIfEmpty(uiOption.getDescription(), ""));
+        });
+        return desc.toString();
+    }
+
+    /**
+     * Builder for a UIOptionCollection.
+     * @param <T> the concreate type of the UIOption.
+     * @param <B> the concrete type the Builder.
+     */
+    protected static class Builder<T extends UIOption<T>, B extends Builder<T, B>> {
         /** set of additional UI specific options */
         private final List<Option> uiOptions;
         /**
@@ -191,13 +231,13 @@ public class UIOptionCollection<T extends UIOption<T>> {
         /** The list of unsupported RAT options. */
         protected final List<Option> unsupportedRatOptions;
         /** The function to convert an option into a UIOption. */
-        private final BiFunction<UIOptionCollection<T>, Option, T> mapper;
+        private final Supplier<UIOption.Builder<T, ?>> uiOptionBuilderSupplier;
 
         /**
-         * Constructor for the builder.
+         * Constructor for the UI option collection builder.
          */
-        protected Builder(final BiFunction<UIOptionCollection<T>, Option, T> mapper) {
-            this.mapper = mapper;
+        protected Builder(final Supplier<UIOption.Builder<T, ?>> uiOptionBiulderSupplier) {
+            this.uiOptionBuilderSupplier = uiOptionBiulderSupplier;
             uiOptions = new ArrayList<>();
             defaultValues = new HashMap<>();
             unsupportedRatOptions = new ArrayList<>();
@@ -209,59 +249,51 @@ public class UIOptionCollection<T extends UIOption<T>> {
         }
 
         /**
-         * Build the UIOptionCollection.
-         * @return the UIOptionCollection.
+         * Returns this cast to {@code <B>} class.
+         * @return this as {@code <B>} class.
          */
-        public UIOptionCollection<T> build() {
-            return new UIOptionCollection<>(this);
+        protected final B self() {
+            return (B) this;
         }
 
         /**
-         * Returns this cast to {@code <S>} class.
-         * @return this as {@code <S>} class.
-         */
-        protected final S self() {
-            return (S) this;
-        }
-
-        /**
-         * Add a UI option to the collection.
-         * @param uiOption the UI Option to add.
+         * Add an Option to the collection as a UIOption.
+         * @param option the Option to add.
          * @return this
          */
-        public S uiOption(final Option uiOption) {
-            uiOptions.add(uiOption);
+        public B uiOption(final Option option) {
+            uiOptions.add(option);
             return self();
         }
 
         /**
-         * Add a UI options to the collection.
-         * @param uiOption the UIOptions ({@code <T>} objects) to add.
+         * Add multiple Option instances to the collection as UIOptions.
+         * @param options the Option instances to add.
          * @return this
          */
-        public S uiOptions(final Option... uiOption) {
-            uiOptions.addAll(Arrays.asList(uiOption));
+        public B uiOptions(final Option... options) {
+            uiOptions.addAll(Arrays.asList(options));
             return self();
         }
 
         /**
-         * Register an option as unsupported.
-         * @param option the option that is not be supported. This should be an option in the
+         * Register an Option as unsupported.
+         * @param option the Option that is not be supported. This should be an option in the
          * {@link Arg} collection.
          * @return this
          */
-        public S unsupported(final Option option) {
+        public B unsupported(final Option option) {
             unsupportedRatOptions.add(option);
             return self();
         }
 
         /**
-         * Register multiple options as unsupported.
+         * Register multiple Options as unsupported.
          * Will ignore all the options associated with the specified Arg.
          * @param arg The Arg to ignore.
          * @return this
          */
-        public S unsupported(final Arg arg) {
+        public B unsupported(final Arg arg) {
             unsupportedRatOptions.addAll(arg.group().getOptions());
             return self();
         }
@@ -272,7 +304,7 @@ public class UIOptionCollection<T extends UIOption<T>> {
          * @param value the value for the option.
          * @return this
          */
-        public S defaultValue(final Option option, final String value) {
+        public B defaultValue(final Option option, final String value) {
             defaultValues.put(option, value);
             return self();
         }
@@ -283,7 +315,7 @@ public class UIOptionCollection<T extends UIOption<T>> {
          * @param value the value for the option.
          * @return this
          */
-        public S defaultValue(final Arg arg, final String value) {
+        public B defaultValue(final Arg arg, final String value) {
             return defaultValue(arg.option(), value);
         }
     }

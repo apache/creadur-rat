@@ -26,10 +26,12 @@ import java.io.File;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class CLIOptionTest {
-    final CLIOption optionA = new CLIOption(CLIOptionCollection.INSTANCE, new Option("a", false, "short key"));
-    final CLIOption optionB = new CLIOption(CLIOptionCollection.INSTANCE, Option.builder("b").longOpt("bee").hasArg().desc("two key").build());
-    final CLIOption optionC = new CLIOption(CLIOptionCollection.INSTANCE, Option.builder().longOpt("sea").hasArgs().type(File.class).desc("long key").build());
-    final CLIOption optionD = new CLIOption(CLIOptionCollection.INSTANCE, Option.builder().longOpt("dee").hasArgs().argName("dede").desc("long key").build());
+    final CLIOptionCollection cliOptionCollection = new CLIOptionCollection();
+    final CLIOption.CLIBuilder builder = new CLIOption.CLIBuilder().optionCollection(cliOptionCollection);
+    final CLIOption optionA = builder.option(new Option("a", false, "short key")).build();
+    final CLIOption optionB = builder.option(Option.builder("b").longOpt("bee").hasArg().desc("two key").build()).build();
+    final CLIOption optionC = builder.option(Option.builder().longOpt("sea").hasArgs().type(File.class).desc("long key").build()).build();
+    final CLIOption optionD = builder.option(Option.builder().longOpt("dee").hasArgs().argName("dede").desc("long key").build()).build();
 
     @Test
     void getText() {
