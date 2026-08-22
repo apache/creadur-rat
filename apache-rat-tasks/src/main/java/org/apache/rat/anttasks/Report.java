@@ -410,14 +410,15 @@ public class Report extends BaseAntTask {
         try {
             boolean helpLicenses = !getValues(Arg.HELP_LICENSES).isEmpty();
             removeKey(Arg.HELP_LICENSES);
-
-            final ReportConfiguration configuration = OptionCollection.parseCommands(new File("."), args().toArray(new String[0]),
+            File antFileDir = new File(getProject().getProperty("ant.file")).getParentFile();
+            DocumentName name = DocumentName.builder(antFileDir).build();
+            final ReportConfiguration configuration = OptionCollection.parseCommands(antFileDir, args().toArray(new String[0]),
                     o -> DefaultLog.getInstance().warn("Help option not supported"),
                     true);
             if (getValues(Arg.OUTPUT_FILE).isEmpty()) {
                 configuration.setOut(new ReportConfiguration.IODescriptor<>("RAT output", () -> new LogOutputStream(this, Project.MSG_INFO)));
             }
-            DocumentName name = DocumentName.builder(getProject().getBaseDir()).build();
+
             configuration.addSource(new ResourceCollectionContainer(name, configuration, nestedResources));
             configuration.addApprovedLicenseCategories(deprecatedConfig.approvedLicenseCategories);
             configuration.removeApprovedLicenseCategories(deprecatedConfig.removedLicenseCategories);
@@ -459,7 +460,7 @@ public class Report extends BaseAntTask {
      */
     protected ReportConfiguration validate(final ReportConfiguration cfg) {
         try {
-            cfg.validate(s -> log(s, Project.MSG_WARN));
+            cfg.validate();
         } catch (ConfigurationException e) {
             throw new BuildException(e.getMessage(), e.getCause());
         }
@@ -475,7 +476,7 @@ public class Report extends BaseAntTask {
      * @deprecated use &lt;editCopyright&gt; amd &lt;editOverwrite&gt; instead.
      */
     @Deprecated
-    public static class AddLicenseHeaders extends EnumeratedAttribute {
+    public static final class AddLicenseHeaders extends EnumeratedAttribute {
         /**
          * add license headers and create *.new file
          */

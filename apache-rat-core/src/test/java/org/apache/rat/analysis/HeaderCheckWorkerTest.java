@@ -40,11 +40,10 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 class HeaderCheckWorkerTest {
 
-    /**
-     * Create an unmodifiable sorted set from members
-     */
+    /** Create an unmodifiable sorted set from members */
     private UnmodifiableSortedSet<ILicense> asLicenses(ILicense... licenses) {
-        SortedSet<ILicense> inner = new TreeSet<>(List.of(licenses));
+        SortedSet<ILicense> inner = new  TreeSet<>();
+        inner.addAll(List.of(licenses));
         return (UnmodifiableSortedSet<ILicense>) UnmodifiableSortedSet.unmodifiableSortedSet(inner);
     }
 

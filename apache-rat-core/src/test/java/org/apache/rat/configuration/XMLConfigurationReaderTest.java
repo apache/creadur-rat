@@ -52,6 +52,10 @@ public class XMLConfigurationReaderTest {
     public static final String[] EXPECTED_LICENSES = {"AL1.0", "AL1.1", "AL2.0", "BSD-3", "DOJO", "TMF", "CDDL1", "ILLUMOS", "GPL1", "GPL2",
             "GPL3", "MIT", "OASIS", "W3C", "W3CD"};
 
+    public static final String[] APPROVED_LICENSES = { "AL1.0", "AL1.1", "AL2.0", "BSD-3", "DOJO", "TMF", "CDDL1", "ILLUMOS",
+            "MIT", "OASIS", "W3C", "W3CD" };
+
+
     @Test
     void approvedLicenseIdTest() throws URISyntaxException {
         XMLConfigurationReader reader = new XMLConfigurationReader();
@@ -59,9 +63,8 @@ public class XMLConfigurationReaderTest {
         assertThat(url).isNotNull();
         reader.read(url.toURI());
 
-        Collection<String> readCategories = reader.approvedLicenseId();
-        assertThat(readCategories.toArray(new String[readCategories.size()]))
-                .containsExactly(APPROVED_IDS);
+        Collection<String> actual = reader.approvedLicenseId();
+        assertThat(actual).containsExactlyInAnyOrder(APPROVED_IDS);
     }
 
     @Test
@@ -77,10 +80,12 @@ public class XMLConfigurationReaderTest {
     void LicenseFamiliesTest() throws URISyntaxException {
         XMLConfigurationReader reader = new XMLConfigurationReader();
         URL url = XMLConfigurationReaderTest.class.getResource("/org/apache/rat/default.xml");
+        assertThat(url).isNotNull();
         reader.read(url.toURI());
 
-        assertThat(reader.readFamilies().stream().map(x -> x.getFamilyCategory().trim()).toArray(String[]::new))
-                .containsExactly(EXPECTED_IDS);
+        Collection<String> actual = reader.readFamilies().stream().map(lf -> lf.getFamilyCategory().trim())
+                .toList();
+        assertThat(actual).containsExactlyInAnyOrder(EXPECTED_IDS);
     }
 
     private void checkMatcher(String name, Class<? extends AbstractBuilder> clazz) {

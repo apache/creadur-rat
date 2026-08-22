@@ -30,7 +30,10 @@ class UIOptionTest {
     @Test
     void cleanup() {
         optionCollection = new UIOptionCollectionTest.TestingUIOptionCollection();
-        underTest = new UIOptionCollectionTest.TestingUIOption(optionCollection, new Option("a", false, "An option"));
+        underTest = new UIOptionCollectionTest.TestingUIOption.TestingUIOptionBuilder()
+                .optionCollection(optionCollection)
+                .option(new Option("a", false, "An option"))
+                .build();
         String s = underTest.cleanup("The name is --output-licenses because I said so");
         assertThat(s).isEqualTo("The name is output.licenses because I said so");
 

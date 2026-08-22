@@ -124,12 +124,13 @@ public final class AntGenerator {
             System.err.println("At least three arguments are required: package, simple class name, target directory.");
             return;
         }
+        final AntOptionCollection antOptions = new AntOptionCollection();
 
         String packageName = args[0];
         String className = args[1];
         String destDir = args[2];
 
-        List<AntOption> options = AntOptionCollection.INSTANCE.getMappedOptions().toList();
+        List<AntOption> options = antOptions.getMappedOptions().toList();
 
         String pkgName = String.join(File.separator, new CasedString(StringCase.DOT, packageName).getSegments());
         File file = new File(new File(new File(destDir), pkgName), className + ".java");
@@ -150,12 +151,12 @@ public final class AntGenerator {
                             writer.append(format("        xlateName.put(\"%s\", \"%s\");%n", entry.getKey(), entry.getValue()));
                         }
 
-                        for (Option option : AntOptionCollection.INSTANCE.getUnsupportedOptions()
+                        for (Option option : antOptions.getUnsupportedOptions()
                                 .getOptions()) {
                             writer.append(format("        unsupportedArgs.add(\"%s\");%n", argsKey(option)));
                         }
 
-                        for (AntOption option : AntOptionCollection.INSTANCE.getMappedOptions().filter(AntOption::isDeprecated).toList()) {
+                        for (AntOption option : antOptions.getMappedOptions().filter(AntOption::isDeprecated).toList()) {
                             writer.append(format("        deprecatedArgs.put(\"%s\", \"%s\");%n", argsKey(option.getOption()),
                                     format("Use of deprecated option '%s'. %s", option.getName(), option.getDeprecated())));
                         }

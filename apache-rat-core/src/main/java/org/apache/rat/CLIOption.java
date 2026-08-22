@@ -18,19 +18,21 @@
  */
 package org.apache.rat;
 
+import java.util.function.Function;
+
 import org.apache.commons.cli.Option;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.rat.ui.ArgumentTracker;
 import org.apache.rat.ui.UIOption;
-import org.apache.rat.ui.UIOptionCollection;
+import org.apache.rat.utils.CasedString;
 
 /**
  * The CLI option definition.
  */
 public final class CLIOption extends UIOption<CLIOption> {
 
-    public CLIOption(final UIOptionCollection<CLIOption> collection, final Option option) {
-        super(collection, option, ArgumentTracker.extractName(option));
+    private CLIOption(final CLIBuilder builder) {
+        super(builder);
     }
 
     @Override
@@ -69,5 +71,21 @@ public final class CLIOption extends UIOption<CLIOption> {
             }
         }
         return sb.toString();
+    }
+
+    /**
+     * Builder for a CLI Option.
+     */
+    public static class CLIBuilder extends UIOption.Builder<CLIOption, CLIBuilder> {
+
+        @Override
+        protected Function<Option, CasedString> getNameFactory() {
+            return ArgumentTracker::extractName;
+        }
+
+        @Override
+        protected CLIOption doBuild() {
+            return new CLIOption(this);
+        }
     }
 }

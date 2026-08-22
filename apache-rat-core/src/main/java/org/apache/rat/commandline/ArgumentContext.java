@@ -20,9 +20,13 @@ package org.apache.rat.commandline;
 
 import java.io.File;
 
+import org.apache.commons.cli.AlreadySelectedException;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
+import org.apache.commons.cli.OptionGroup;
+import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
+import org.apache.rat.OptionCollectionParser;
 import org.apache.rat.ReportConfiguration;
 import org.apache.rat.document.DocumentName;
 import org.apache.rat.ui.UIOptionCollection;
@@ -46,28 +50,51 @@ public final class ArgumentContext {
      * Creates a context with the specified configuration.
      * @param workingDirectory the directory from which relative file names will be resolved.
      * @param configuration The configuration that is being built.
-     * @param commandLine The command line that is building the configuration.
+     * @param opts the Options for the command line.
+     * @param args the arguments for the options.
+     * @throws ParseException if the options can not parse the arguments.
      */
-    public ArgumentContext(final File workingDirectory, final ReportConfiguration configuration, final CommandLine commandLine) {
+    public ArgumentContext(final File workingDirectory, final ReportConfiguration configuration, final Options opts, final String[] args)
+            throws ParseException {
         this.workingDirectory = DocumentName.builder(workingDirectory).build();
-        this.commandLine = commandLine;
+        this.commandLine = OptionCollectionParser.parseCommandLine(clearSelected(opts), args);
         this.configuration = configuration;
     }
 
     /**
      * Creates a context with an empty configuration.
      * @param workingDirectory The directory from which to resolve relative file names.
-     * @param commandLine The command line.
+     * @param opts the Options for the command line.
+     * @param args the arguments for the options.
+     * @throws ParseException if the options can not parse the arguments.
      */
-    public ArgumentContext(final File workingDirectory, final CommandLine commandLine) {
-        this(workingDirectory, new ReportConfiguration(), commandLine);
+    public ArgumentContext(final File workingDirectory, final Options opts, final String[] args) throws ParseException {
+        this(workingDirectory, new ReportConfiguration(), opts, args);
     }
 
+    /**
+     * Clears the group selections in the options.
+     * @param options the options to clear.
+     * @return the options with all selections cleared.
+     */
+    private static Options clearSelected(final Options options) {
+        for (Option opt : options.getOptions()) {
+            OptionGroup group = options.getOptionGroup(opt);
+            if (group != null) {
+                try {
+                    group.setSelected(null);
+                } catch (AlreadySelectedException e) {
+                    throw new RuntimeException("Unexpected error with null argument", e);
+                }
+            }
+        }
+        return options;
+    }
     /**
      * Process the arguments specified in this context.
      */
     public void processArgs(final UIOptionCollection<?> uiOptionCollection) {
-        Arg.processArgs(this,  uiOptionCollection);
+        Arg.processArgs(this, uiOptionCollection);
     }
 
     /**

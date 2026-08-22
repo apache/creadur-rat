@@ -198,7 +198,7 @@ public class ReportTest extends AbstractRatAntTaskTest {
             buildRule.executeTarget("testNoLicenseMatchers");
             fail("Expected Exception");
         } catch (BuildException e) {
-            final String expect = "at least one license";
+            final String expect = "At least one license";
             assertThat(e.getMessage()).describedAs("Expected " + expect).contains(expect);
         }
     }
