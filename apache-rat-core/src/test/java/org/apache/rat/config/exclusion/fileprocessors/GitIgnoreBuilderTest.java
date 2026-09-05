@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.rat.config.exclusion.fileProcessors;
+package org.apache.rat.config.exclusion.fileprocessors;
 
 import java.io.File;
 import java.net.URISyntaxException;
