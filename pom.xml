@@ -47,7 +47,7 @@ agnostic home for software distribution comprehension and audit tools.
     <sonar.host.url>https://sonarcloud.io</sonar.host.url>
     <!-- taken from https://maven.apache.org/guides/mini/guide-reproducible-builds.html, updated by maven-release-plugin -->
     <project.build.outputTimestamp>2026-03-11T23:25:45Z</project.build.outputTimestamp>
-    <ant.version>1.10.17</ant.version>
+    <ant.version>1.10.18</ant.version>
     <assertj.version>4.0.0-M1</assertj.version>
     <!-- this is the target Java version that this project supports at runtime -->
     <javaVersion>17</javaVersion>
