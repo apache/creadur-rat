@@ -47,7 +47,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
  * Uses the AbstractOptionCollection to parse the command line options.
  * Contains utility methods to ReportConfiguration from the options and an array of arguments.
  *
- * @param <T> The UIOption type that this parser is handeling.
+ * @param <T> The UIOption type that this parser is handling.
  */
 @SuppressFBWarnings("EI_EXPOSE_REP2")
 public final class OptionCollectionParser<T extends UIOption<T>> {
@@ -58,7 +58,7 @@ public final class OptionCollectionParser<T extends UIOption<T>> {
 
     /**
      * Constructor.
-     * @param optionCollection  The option collection to use for
+     * @param optionCollection the option collection to use for.
      */
     public OptionCollectionParser(final UIOptionCollection<T> optionCollection) {
         this.uiOptionCollection = optionCollection;
@@ -67,8 +67,8 @@ public final class OptionCollectionParser<T extends UIOption<T>> {
     /**
      * Parses the standard options to create a ReportConfiguration.
      *
-     * @param workingDirectory The directory to resolve relative file names against.
-     * @param args the arguments to parse
+     * @param workingDirectory the directory to resolve relative file names against.
+     * @param args the arguments to parse.
      * @return the ArgumentContext for the process.
      * @throws RatException on error.
      */
@@ -105,12 +105,13 @@ public final class OptionCollectionParser<T extends UIOption<T>> {
             throw new RatException("Unable to print help: " + e.getMessage(), e);
         }
     }
+
     /**
      * Parses the standard options to create a ReportConfiguration.
      *
      * @param workingDirectory The directory to resolve relative file names against.
      * @param args the arguments to parse.
-     * @param options An Options object containing Apache command line options.
+     * @param options an Options object containing Apache command line options.
      * @return the ArgumentContext for the process.
      * @throws RatException on error.
      */
@@ -133,7 +134,7 @@ public final class OptionCollectionParser<T extends UIOption<T>> {
     /**
      * Create the report configuration.
      * Note: this method is package private for testing.
-     * You probably want one of the {@code ParseCommands} methods.
+     * You probably want one of the {@code parseCommands(..)} methods.
      * @param argumentContext The context to execute in.
      * @return a ReportConfiguration
      */
@@ -153,7 +154,7 @@ public final class OptionCollectionParser<T extends UIOption<T>> {
     }
 
     /**
-     * This class implements the {@code Comparator} interface for comparing Options.
+     * This class implements the {@code Comparator} interface for comparing options.
      */
     private static final class OptionComparator implements Comparator<Option>, Serializable {
         /** The serial version UID.  */
@@ -169,8 +170,8 @@ public final class OptionCollectionParser<T extends UIOption<T>> {
          * positive integer as the first argument is less than, equal to, or greater
          * than the second.
          *
-         * @param opt1 The first Option to be compared.
-         * @param opt2 The second Option to be compared.
+         * @param opt1 the first Option to be compared.
+         * @param opt2 the second Option to be compared.
          * @return a negative integer, zero, or a positive integer as the first argument
          * is less than, equal to, or greater than the second.
          */
