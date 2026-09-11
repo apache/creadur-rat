@@ -170,8 +170,8 @@ public class Help extends BaseAntTask {
         protected StringBuffer renderOptions(final StringBuffer sb, final int width, final Options options, final int leftPad, final int descPad) {
             final String dpad = createPadding(descPad);
             // first create list containing only <lpad>-a,--aaa where
-            // -a is opt and --aaa is long opt; in parallel look for
-            // the longest opt string this list will then be used to
+            // -a is option and --aaa is long option; in parallel look for
+            // the longest option string this list will then be used to
             // sort options ascending
             String optionTitle = " -- Option --";
             String exampleTitle = " -- Example --";

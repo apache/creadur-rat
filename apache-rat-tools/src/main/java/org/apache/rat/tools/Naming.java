@@ -81,7 +81,7 @@ public final class Naming {
             .addOption(INCLUDE_DEPRECATED)
             .addOption(WIDTH);
 
-    /** The porsed command line */
+    /** The parsed command line */
     private final CommandLine cl;
     /** The width of the output */
     private final int outputWidth;
@@ -95,13 +95,13 @@ public final class Naming {
     private final Predicate<Option> filter;
     /** The columns to display */
     private final List<String> columns;
-    /** if {@code true} then show Maven options */
+    /** If {@code true} then show Maven options */
     private final boolean showMaven;
-    /** if {@code true} then show Ant options */
+    /** If {@code true} then show Ant options */
     private final boolean showAnt;
-    /** if {@code true} then show CLI options */
+    /** If {@code true} then show CLI options */
     private final boolean addCLI;
-    /** if {@code true} then include deprecated options in output. */
+    /** If {@code true} then include deprecated options in output. */
     private final boolean includeDeprecated;
     /** The function to display the description of the option */
     private final Function<Option, String> descriptionFunction;
@@ -167,7 +167,6 @@ public final class Naming {
             }
         }
     }
-
 
     private List<String> fillColumns(final Option option) {
         List<String> columnsBuilder = new ArrayList<>();
@@ -259,11 +258,11 @@ public final class Naming {
                 page.add(fillColumns(option));
             }
         }
+
         int[] columnWidth = calculateColumnWidth(outputWidth, columnCount, page);
         HelpFormatter helpFormatter;
         helpFormatter = new HelpFormatter.Builder().get();
         helpFormatter.setWidth(outputWidth);
-
 
         List<Deque<String>> entries = new ArrayList<>();
         CharArrayWriter cWriter = new CharArrayWriter();
@@ -295,8 +294,8 @@ public final class Naming {
      * Prints the entries by printing the items from the queues until all queues are empty.
      *
      * @param entries the list queues of text for each column.
-     * @param appendable the appendable to write hte text to.
-     * @param columnWidth the with of the columns.
+     * @param appendable the appendable to write the text to.
+     * @param columnWidth the width of the columns.
      */
     private void printLines(final List<Deque<String>> entries, final Appendable appendable, final int[] columnWidth) throws IOException {
         boolean cont = true;
@@ -317,6 +316,5 @@ public final class Naming {
             }
             appendable.append(System.lineSeparator());
         }
-
     }
 }

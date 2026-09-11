@@ -78,7 +78,7 @@ public final class AntOption extends UIOption<AntOption> {
     }
 
     /**
-     * Gets the set of options that are mapped to this option.  This is used to allow one implementation to answer for
+     * Gets the set of options that are mapped to this option. This is used to allow one implementation to answer for
      * multiple options.
      * @return the set of options that are mapped to this option.
      */
@@ -108,7 +108,7 @@ public final class AntOption extends UIOption<AntOption> {
     }
 
     /**
-     * Cleans up the name of this AntOption.  Used in documentation.
+     * Cleans up the name of this AntOption. Used in documentation.
      * Returns either {@code <name>} or {@code name attribute}.
      * @return the cleaned up name.
      */
@@ -159,10 +159,10 @@ public final class AntOption extends UIOption<AntOption> {
 
         /**
          * Gets an example Ant XML report call using ant option with the specified attributes and child elements.
-         * @param data The data value for this option.
-         * @param attributes A map of attribute keys and values.
+         * @param data the data value for this option.
+         * @param attributes a map of attribute keys and values.
          * @param childElements a list of child elements for the example
-         * @return example Ant XML report call using ant option with the specified attributes and child elements.
+         * @return example Ant XML report call using Ant option with the specified attributes and child elements.
          */
         public String getExample(final String data, final Map<String, String> attributes, final List<String> childElements) {
             return "<rat:report" +
@@ -174,8 +174,8 @@ public final class AntOption extends UIOption<AntOption> {
 
         /**
          * Creates a string comprising the attributes for the Ant XML report call.
-         * @param data The data value for this option.
-         * @param attributes A map of attribute keys and values.
+         * @param data the data value for this option.
+         * @param attributes a map of attribute keys and values.
          * @return a string comprising all the attribute keys and values for the Ant XML report element.
          */
         public String getExampleAttributes(final String data, final Map<String, String> attributes) {
