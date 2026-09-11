@@ -153,7 +153,7 @@ public abstract class UIOption<T extends UIOption<T>> {
             Matcher matcher = PATTERN.matcher(workingStr);
             while (matcher.find()) {
                 String key = matcher.group();
-                String optKey = (1 == key.indexOf('-', 1)) ?  key.substring(2) : key.substring(1);
+                String optKey = key.substring(1 == key.indexOf('-', 1) ?  2 : 1);
                 Optional<Option> maybeResult = getOptionCollection().getOptions().getOptions().stream()
                                 .filter(o -> optKey.equals(o.getOpt()) || optKey.equals(o.getLongOpt())).findFirst();
                 maybeResult.ifPresent(value -> maps.put(key, cleanupName(value)));
