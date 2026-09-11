@@ -27,11 +27,13 @@ import org.apache.rat.test.utils.Resources;
 import org.apache.rat.document.DocumentName;
 import org.junit.jupiter.api.Test;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.nio.charset.Charset;
 import java.nio.charset.MalformedInputException;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
@@ -40,6 +42,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.SortedSet;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -52,7 +55,7 @@ public class TikaProcessorTest {
      * @see <a href="https://issues.apache.org/jira/browse/RAT-81">RAT-81</a>
      */
     @Test
-    public void RAT81() {
+    void RAT81() {
         // create a document that throws a MalformedInputException
         Document doc = mkDocument(new InputStream() {
             @Override
@@ -64,7 +67,7 @@ public class TikaProcessorTest {
     }
 
     @Test
-    public void UTF16_input() throws Exception {
+    void UTF16_input() throws Exception {
         Document doc = mkDocument(Resources.getResourceStream("/binaries/UTF16_with_signature.xml"),
                 DocumentNameMatcher.MATCHES_ALL);
         TikaProcessor.process(doc);
@@ -80,48 +83,48 @@ public class TikaProcessorTest {
     }
 
     @Test
-    public void UTF8_input() throws Exception {
+    void UTF8_input() throws Exception {
         FileDocument doc = mkDocument("/binaries/UTF8_with_signature.xml");
         TikaProcessor.process(doc);
         assertEquals(Document.Type.STANDARD, doc.getMetaData().getDocumentType());
     }
 
     @Test
-    public void RAT178Test() {
+    void RAT178Test() {
         FileDocument doc = new FileDocument(new File("/not_a_real_file"), DocumentNameMatcher.MATCHES_ALL);
         assertThrows(RatDocumentAnalysisException.class, () ->TikaProcessor.process(doc));
     }
 
     @Test
-    public void missNamedBinaryTest() throws Exception {
+    void missNamedBinaryTest() throws Exception {
         FileDocument doc = mkDocument("/binaries/Image-png.not");
         TikaProcessor.process(doc);
         assertEquals(Document.Type.BINARY, doc.getMetaData().getDocumentType());
     }
 
     @Test
-    public void plainTextTest() throws Exception {
+    void plainTextTest() throws Exception {
         FileDocument doc = mkDocument(Resources.getExampleResource("exampleData/Text.txt"));
         TikaProcessor.process(doc);
         assertEquals(Document.Type.STANDARD, doc.getMetaData().getDocumentType());
     }
 
     @Test
-    public void emptyFileTest() throws Exception {
+    void emptyFileTest() throws Exception {
         FileDocument doc = mkDocument(Resources.getExampleResource("exampleData/sub/Empty.txt"));
         TikaProcessor.process(doc);
         assertEquals(Document.Type.STANDARD, doc.getMetaData().getDocumentType());
     }
 
     @Test
-    public void javaFileWithChineseCharacters_RAT301() throws Exception {
+    void javaFileWithChineseCharacters_RAT301() throws Exception {
         FileDocument doc = mkDocument("/tikaFiles/standard/ChineseCommentsJava.java");
         TikaProcessor.process(doc);
         assertEquals(Document.Type.STANDARD, doc.getMetaData().getDocumentType());
     }
 
     @Test
-    public void testTikaFiles() throws RatDocumentAnalysisException {
+    void testTikaFiles() throws RatDocumentAnalysisException {
         File dir = new File("src/test/resources/tikaFiles");
         Map<String, Document.Type> unseenMime = TikaProcessor.getDocumentTypeMap();
         ClaimStatistic statistic = new ClaimStatistic();
@@ -142,6 +145,22 @@ public class TikaProcessorTest {
         for (Document.Type type : Document.Type.values()) {
             System.out.format("Tested %s %s files%n", statistic.getCounter(type), type);
         }
+    }
+
+    @Test
+    void testDetectionOfInvalidData() throws IOException {
+        byte[] invalidData = new byte[] {
+                0x00, (byte) 0xFF, 0x00, (byte) 0xFE,
+                0x01, (byte) 0x80, 0x00, 0x7F
+        };
+        // as Tika works with a probabilistic encoding detection it does not return NO encoding
+        assertThat(TikaProcessor.detectCharset(new ByteArrayInputStream(invalidData), null)).isEqualTo(Charset.forName("Windows-1258"));
+    }
+
+    @Test
+    void testEmptyFileEncoding() throws IOException {
+        byte[] empty = {};
+        assertThat(TikaProcessor.detectCharset(new ByteArrayInputStream(empty), null)).isNull();
     }
 
     /**

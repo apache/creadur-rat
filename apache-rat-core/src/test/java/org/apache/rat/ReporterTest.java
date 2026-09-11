@@ -207,30 +207,30 @@ public class ReporterTest {
         Map<String, Map<String, String>> expected = new HashMap<>();
         expected.put("/.hiddenDirectory", mapOf("isDirectory", "true", "mediaType", "application/octet-stream",
                 "type", "IGNORED"));
-        expected.put("/ILoggerFactory.java", mapOf("encoding", "ISO-8859-1", "mediaType", "text/x-java-source",
+        expected.put("/ILoggerFactory.java", mapOf("encoding", "windows-1252", "mediaType", "text/x-java-source",
                 "type", "STANDARD"));
         expected.put("/Image.png", mapOf("mediaType", "image/png", "type", "BINARY"));
-        expected.put("/LICENSE", mapOf("encoding", "ISO-8859-1", "mediaType", "text/plain", "type", "NOTICE"));
-        expected.put("/NOTICE", mapOf("encoding", "ISO-8859-1", "mediaType", "text/plain", "type", "NOTICE"));
-        expected.put("/Source.java", mapOf("encoding", "ISO-8859-1", "mediaType", "text/x-java-source",
+        expected.put("/LICENSE", mapOf("encoding", "windows-1252", "mediaType", "text/plain", "type", "NOTICE"));
+        expected.put("/NOTICE", mapOf("encoding", "windows-1252", "mediaType", "text/plain", "type", "NOTICE"));
+        expected.put("/Source.java", mapOf("encoding", "windows-1252", "mediaType", "text/x-java-source",
                 "type", "STANDARD"));
-        expected.put("/Text.txt", mapOf("encoding", "ISO-8859-1", "mediaType", "text/plain",
+        expected.put("/Text.txt", mapOf("encoding", "windows-1252", "mediaType", "text/plain",
                 "type", "STANDARD"));
-        expected.put("/TextHttps.txt", mapOf("encoding", "ISO-8859-1", "mediaType", "text/plain",
+        expected.put("/TextHttps.txt", mapOf("encoding", "windows-1252", "mediaType", "text/plain",
                 "type", "STANDARD"));
-        expected.put("/Xml.xml", mapOf("encoding", "ISO-8859-1", "mediaType", "application/xml",
+        expected.put("/Xml.xml", mapOf("encoding", "windows-1252", "mediaType", "application/xml",
                 "type", "STANDARD"));
-        expected.put("/buildr.rb", mapOf("encoding", "ISO-8859-1", "mediaType", "text/x-ruby",
+        expected.put("/buildr.rb", mapOf("encoding", "windows-1252", "mediaType", "text/x-ruby",
                 "type", "STANDARD"));
         expected.put("/dummy.jar", mapOf("mediaType", "application/java-archive",
                 "type", "ARCHIVE"));
-        expected.put("/generated.txt", mapOf("encoding", "ISO-8859-1", "mediaType", "text/plain",
+        expected.put("/generated.txt", mapOf("encoding", "windows-1252", "mediaType", "text/plain",
                 "type", "IGNORED"));
         expected.put("/plain.json", mapOf("mediaType", "application/json",
                 "type", "BINARY"));
-        expected.put("/sub/Empty.txt", mapOf("encoding", "UTF-8", "mediaType", "text/plain",
+        expected.put("/sub/Empty.txt", mapOf("encoding", "windows-1252", "mediaType", "text/plain",
                 "type", "STANDARD"));
-        expected.put("/tri.txt", mapOf("encoding", "ISO-8859-1", "mediaType", "text/plain",
+        expected.put("/tri.txt", mapOf("encoding", "windows-1252", "mediaType", "text/plain",
                 "type", "STANDARD"));
 
         File output = new File(tempDirectory, ".rat/testXMLOutput");

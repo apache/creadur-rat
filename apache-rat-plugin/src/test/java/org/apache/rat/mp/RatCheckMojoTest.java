@@ -153,7 +153,7 @@ public class RatCheckMojoTest {
                 mapOf("mediaType", "application/octet-stream", "type", "IGNORED"));
 
         XmlUtils.assertAttributes(document, xPath, "/rat-report/resource[@name='/pom.xml']",
-                mapOf("mediaType", "application/xml", "type", "STANDARD", "encoding", "ISO-8859-1"));
+                mapOf("mediaType", "application/xml", "type", "STANDARD", "encoding", "windows-1252"));
     }
 
     private static Map<String, String> mapOf(String... parts) {
@@ -291,7 +291,7 @@ public class RatCheckMojoTest {
         XmlUtils.assertAttributes(document, xPath, "/rat-report/resource[@name='/pom.xml']",
                 "mediaType", "application/xml", "type", "IGNORED", "isDirectory", "false");
         XmlUtils.assertAttributes(document, xPath, "/rat-report/resource[@name='/src/main/java/nl/basjes/something/Something.java']",
-                "mediaType", "text/x-java-source", "type", "STANDARD", "encoding", "ISO-8859-1");
+                "mediaType", "text/x-java-source", "type", "STANDARD", "encoding", "windows-1252");
         XmlUtils.assertAttributes(document, xPath, "/rat-report/resource[@name='/src/main/java/nl/basjes/something/Something.java']/license",
                 "approval", "true", "family", ILicenseFamily.makeCategory("CC"), "id", "CC-BY-NC-ND", "name",
                 "Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International");

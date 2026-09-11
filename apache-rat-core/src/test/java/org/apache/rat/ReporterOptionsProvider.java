@@ -866,7 +866,7 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
                         TextUtils.assertContainsExactly(1, "?????: 1 ", actualText);
                         break;
                     case XML:
-                        TextUtils.assertContainsExactly(1, "<resource encoding=\"ISO-8859-1\" mediaType=\"text/plain\" name=\"/stylesheet\" type=\"STANDARD\">", actualText);
+                        TextUtils.assertContainsExactly(1, "<resource encoding=\"windows-1252\" mediaType=\"text/plain\" name=\"/stylesheet\" type=\"STANDARD\">", actualText);
                         break;
                     case UNAPPROVED_LICENSES:
                         TextUtils.assertContainsExactly(1, "Files with unapproved licenses:" + System.lineSeparator() + "  /stylesheet", actualText);
@@ -928,7 +928,7 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
             assertThat(output.getStatistic().getCounter(ClaimStatistic.Counter.UNAPPROVED)).isEqualTo(1);
             output.format(config);
             String actualText = baos.toString(StandardCharsets.UTF_8);
-            TextUtils.assertContainsExactly(1, "<resource encoding=\"ISO-8859-1\" mediaType=\"text/plain\" name=\"/stylesheet\" type=\"STANDARD\">", actualText);
+            TextUtils.assertContainsExactly(1, "<resource encoding=\"windows-1252\" mediaType=\"text/plain\" name=\"/stylesheet\" type=\"STANDARD\">", actualText);
 
             try (InputStream expected = StyleSheets.getStyleSheet("xml").ioSupplier().get();
                  InputStream actual = config.getStyleSheet().get()) {

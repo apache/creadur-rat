@@ -74,7 +74,7 @@ SPDX-License-Identifier: Apache-2.0
 			</path>
 		</pathconvert>
 		<property name="expectedOutputXML"
-			value='&lt;resource encoding="ISO-8859-1" mediaType="application/xml" name="/report-normal-operation.xml" type="STANDARD"' />
+			value='&lt;resource encoding="windows-1252" mediaType="application/xml" name="/report-normal-operation.xml" type="STANDARD"' />
 		<property name="expectedOutputXML2" value='family="AL   "' />
 	</target>
 

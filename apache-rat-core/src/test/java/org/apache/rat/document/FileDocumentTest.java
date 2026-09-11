@@ -18,9 +18,11 @@
  */ 
 package org.apache.rat.document;
 
+import java.io.IOException;
 import java.nio.file.Path;
 import org.apache.commons.io.FileUtils;
 import org.apache.rat.api.Document;
+import org.apache.rat.api.MetaData;
 import org.apache.rat.test.utils.Resources;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -31,6 +33,10 @@ import java.io.Reader;
 import org.junit.jupiter.api.io.TempDir;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.when;
 
 public class FileDocumentTest {
     private Document document;
@@ -63,5 +69,24 @@ public class FileDocumentTest {
     public void getName() {
         final DocumentName name = document.getName();
         assertThat(name).isNotNull();
+    }
+
+    /**
+     * As MetaData is set within the constructor of the underlying document,
+     * we use a combination of spy and mock to explicitly cover this code branch.
+     */
+    @Test
+    void handleFlowIfNoEncodingFound() {
+        Document spyDocument = spy(document);
+        MetaData mockMetaData = mock(MetaData.class);
+
+        when(spyDocument.getMetaData()).thenReturn(mockMetaData);
+        assertThat(spyDocument.getMetaData()).isSameAs(mockMetaData);
+
+        IOException expectedException = assertThrows(IOException.class, spyDocument::reader);
+        assertThat(expectedException.getMessage()).startsWith("No charset detected for document");
+
+        // just raise test coverage and test uncovered branch
+        assertThat(spyDocument.equals(document.getName())).isFalse();
     }
 }

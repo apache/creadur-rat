@@ -20,13 +20,14 @@ package org.apache.rat.api;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.Reader;
+import java.nio.charset.Charset;
 import java.util.SortedSet;
 
 import org.apache.rat.analysis.TikaProcessor;
 import org.apache.rat.document.DocumentName;
 import org.apache.rat.document.DocumentNameMatcher;
-import org.apache.tika.parser.txt.CharsetDetector;
 
 /**
  * The representation of a document being scanned.
@@ -104,19 +105,24 @@ public abstract class Document implements Comparable<Document> {
     }
 
     /**
-     * Reads the contents of this document.
+     * Reads the contents of this document and
+     * relies on the charset detection of the underlying Tika processor.
+     *
      * @return <code>Reader</code> not null
      * @throws IOException if this document cannot be read.
      */
     public Reader reader() throws IOException {
-        final int bytesForCharsetDetection = 256;
-        CharsetDetector charsetDetector = new CharsetDetector(bytesForCharsetDetection);
-        // RAT-494: Tika's CharsetDetector.getReader() may return null if the read can not be constructed due to I/O or encoding errors
-        Reader result = charsetDetector.getReader(TikaProcessor.markSupportedInputStream(inputStream()), getMetaData().getCharset().name());
-        if (result == null) {
-            throw new IOException(String.format("Can not read document `%s`", getName()));
+        final Charset charset = getMetaData().getCharset();
+        if (charset == null) {
+            throw new IOException(
+                    String.format(
+                            "No charset detected for document `%s`",
+                            getName()));
         }
-        return result;
+
+        return new InputStreamReader(
+                TikaProcessor.markSupportedInputStream(inputStream()),
+                charset);
     }
 
     /**

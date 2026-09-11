@@ -24,6 +24,7 @@ import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.nio.charset.UnsupportedCharsetException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.rat.api.Document;
@@ -32,19 +33,29 @@ import org.apache.rat.document.RatDocumentAnalysisException;
 import org.apache.rat.document.guesser.NoteGuesser;
 import org.apache.rat.utils.DefaultLog;
 import org.apache.tika.Tika;
+import org.apache.tika.detect.DefaultEncodingDetector;
+import org.apache.tika.detect.EncodingDetector;
+import org.apache.tika.detect.EncodingResult;
+import org.apache.tika.io.TikaInputStream;
 import org.apache.tika.metadata.Metadata;
 import org.apache.tika.metadata.TikaCoreProperties;
 import org.apache.tika.mime.MediaType;
-import org.apache.tika.parser.txt.CharsetDetector;
-import org.apache.tika.parser.txt.CharsetMatch;
+import org.apache.tika.parser.ParseContext;
 
 /**
  * A wrapping around the Tika processor.
  */
 public final class TikaProcessor {
 
-    /** The Tika parser */
+    /** The Tika parser. */
     private static final Tika TIKA = new Tika();
+
+    /** The Tika encoding detector. */
+    private static final EncodingDetector ENCODING_DETECTOR = new DefaultEncodingDetector();
+
+    /** Due to performance reasons we do not read the whole file for charset detection (RAT-494). */
+    private static final int BYTES_FOR_CHARSET_DETECTION = 256;
+
     /** A map of mime type string to non-BINARY types.
      * "text" types are already handled somewhere else
      * BINARY unless listed here
@@ -165,21 +176,31 @@ public final class TikaProcessor {
      * @throws IOException on IO error.
      * @throws UnsupportedCharsetException on unsupported charset.
      */
-    private static Charset detectCharset(final InputStream stream, final DocumentName documentName) throws IOException, UnsupportedCharsetException {
-        final int bytesForCharsetDetection = 256;
-        CharsetDetector encodingDetector = new CharsetDetector(bytesForCharsetDetection);
-        encodingDetector.setText(stream);
-        CharsetMatch charsetMatch = encodingDetector.detect();
-        if (charsetMatch != null) {
-            try {
-                return Charset.forName(charsetMatch.getName());
-            } catch (UnsupportedCharsetException e) {
-                DefaultLog.getInstance().warn(String.format("Unsupported character set '%s' in file '%s'",
-                        charsetMatch.getName(), documentName));
-                throw e;
+    static Charset detectCharset(final InputStream stream, final DocumentName documentName) throws IOException, UnsupportedCharsetException {
+        stream.mark(BYTES_FOR_CHARSET_DETECTION);
+        try {
+            byte[] sample = stream.readNBytes(BYTES_FOR_CHARSET_DETECTION);
+            if (sample.length == 0) {
+              DefaultLog.getInstance().debug(String.format("No contents in file '%s'", documentName));
+              return null;
             }
+
+            Metadata metadata = new Metadata();
+            ParseContext parseContext = new ParseContext();
+
+            try (TikaInputStream tis = TikaInputStream.get(sample, metadata)) {
+                List<EncodingResult> results = ENCODING_DETECTOR.detect(tis, metadata, parseContext);
+
+                if (results.isEmpty()) {
+                    DefaultLog.getInstance().warn(String.format("No encoding found for file '%s'", documentName));
+                    return null;
+                }
+
+                return results.get(0).getCharset();
+            }
+        } finally {
+          stream.reset();
         }
-        return null;
     }
 
     /**
