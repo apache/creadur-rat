@@ -30,7 +30,7 @@ public final class BaseOption extends UIOption<BaseOption> {
         super(builder);
     }
 
-    public Builder builder() {
+    public UIOption.Builder<BaseOption, BaseOptionBuilder> builder() {
         return new BaseOptionBuilder();
     }
 

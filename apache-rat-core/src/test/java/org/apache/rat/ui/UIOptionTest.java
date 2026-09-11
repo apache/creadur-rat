@@ -24,22 +24,25 @@ import org.apache.rat.OptionCollection;
 import org.apache.rat.TestOption;
 import org.apache.rat.utils.CasedString;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.function.Function;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+@ExtendWith(MockitoExtension.class)
 class UIOptionTest {
-    private UIOption<UIOptionCollectionTest.TestingUIOption> underTest;
-    private UIOptionCollectionTest.TestingUIOptionCollection optionCollection;
+    @Mock
+    private UIOptionCollection<TestOption> mockOptionCollection;
 
     @Test
     void cleanup() {
-        optionCollection = new UIOptionCollectionTest.TestingUIOptionCollection();
-        underTest = new UIOptionCollectionTest.TestingUIOption.TestingUIOptionBuilder().option(new Option("a", false, "An option"))
+        UIOptionCollectionTest.TestingUIOptionCollection optionCollection = new UIOptionCollectionTest.TestingUIOptionCollection();
+        UIOption<UIOptionCollectionTest.TestingUIOption> underTest = new UIOptionCollectionTest.TestingUIOption.TestingUIOptionBuilder().option(new Option("a", false, "An option"))
                 .optionCollection(optionCollection).build();
         String s = underTest.cleanup("The name is --output-licenses because I said so");
         assertThat(s).isEqualTo("The name is output.licenses because I said so");
@@ -51,11 +54,11 @@ class UIOptionTest {
     @Test
     void equalsTest() {
         TestOption opt = new TestOption.TestOptionBuilder().option(Option.builder("a").hasArg().build())
-                .optionCollection(mock(UIOptionCollection.class))
+                .optionCollection(mockOptionCollection)
                 .build();
 
         TestOption opt2 = new TestOption.TestOptionBuilder().option(Option.builder("a").hasArg().build())
-                .optionCollection(mock(UIOptionCollection.class))
+                .optionCollection(mockOptionCollection)
                 .build();
 
         assertThat(opt).isEqualTo(opt2)
@@ -65,7 +68,7 @@ class UIOptionTest {
         opt2 = new TestOption.TestOptionBuilder().option(Option.builder("a").hasArg()
                         .argName("file")
                 .build())
-                .optionCollection(mock(UIOptionCollection.class))
+                .optionCollection(mockOptionCollection)
                 .build();
         assertThat(opt).isNotEqualTo(opt2)
                 .hasSameHashCodeAs(opt2);
@@ -77,7 +80,7 @@ class UIOptionTest {
             }
         }.option(Option.builder("a").hasArg()
                         .build())
-                .optionCollection(mock(UIOptionCollection.class))
+                .optionCollection(mockOptionCollection)
                 .build();
         assertThat(opt).isNotEqualTo(opt2)
                 .doesNotHaveSameHashCodeAs(opt2);
@@ -85,16 +88,15 @@ class UIOptionTest {
 
     @Test
     void defaultValueTest() {
-        UIOptionCollection<TestOption> collection = mock(UIOptionCollection.class);
         TestOption opt = new TestOption.TestOptionBuilder().option(Option.builder("a").hasArg().build())
-                .optionCollection(collection)
+                .optionCollection(mockOptionCollection)
                 .build();
 
         assertThat(opt.getDefaultValue()).isNull();
 
-        when(collection.defaultValue(any(Option.class))).thenReturn("yeehaw");
+        when(mockOptionCollection.defaultValue(any(Option.class))).thenReturn("yeehaw");
         opt = new TestOption.TestOptionBuilder().option(Option.builder("a").hasArg().build())
-                .optionCollection(collection)
+                .optionCollection(mockOptionCollection)
                 .build();
         assertThat(opt.getDefaultValue()).isEqualTo("yeehaw");
     }
@@ -102,7 +104,7 @@ class UIOptionTest {
     @Test
     void getCasedName() {
         TestOption opt = new TestOption.TestOptionBuilder().option(Option.builder("hello-world").hasArg().build())
-                .optionCollection(mock(UIOptionCollection.class))
+                .optionCollection(mockOptionCollection)
                 .build();
         CasedString casedName = opt.getCasedName();
         assertThat(casedName).hasToString("hello-world");
@@ -111,13 +113,13 @@ class UIOptionTest {
     @Test
     void getDescriptionName() {
         TestOption opt = new TestOption.TestOptionBuilder().option(Option.builder("hello-world").hasArg().build())
-                .optionCollection(mock(UIOptionCollection.class))
+                .optionCollection(mockOptionCollection)
                 .build();
         assertThat(opt.getDescription()).isNull();
 
         opt = new TestOption.TestOptionBuilder().option(Option.builder("hello-world").hasArg()
                 .desc("This is the description").build())
-                .optionCollection(mock(UIOptionCollection.class))
+                .optionCollection(mockOptionCollection)
                 .build();
         assertThat(opt.getDescription()).isEqualTo("This is the description");
     }
@@ -125,75 +127,73 @@ class UIOptionTest {
     @Test
     void getArgName() {
         TestOption opt = new TestOption.TestOptionBuilder().option(Option.builder("hello-world").build())
-                .optionCollection(mock(UIOptionCollection.class))
+                .optionCollection(mockOptionCollection)
                 .build();
 
         assertThat(opt.getArgName()).isEmpty();
 
         opt = new TestOption.TestOptionBuilder().option(Option.builder("hello-world").hasArg().build())
-                .optionCollection(mock(UIOptionCollection.class))
+                .optionCollection(mockOptionCollection)
                 .build();
 
         assertThat(opt.getArgName()).isEqualTo("Arg");
 
         opt = new TestOption.TestOptionBuilder().option(Option.builder("hello-world").hasArg()
                 .argName("file").build())
-                .optionCollection(mock(UIOptionCollection.class))
+                .optionCollection(mockOptionCollection)
                 .build();
 
         assertThat(opt.getArgName()).isEqualTo("File");
 
         opt = new TestOption.TestOptionBuilder().option(Option.builder("hello-world").hasArg()
                         .argName("dummy").build())
-                .optionCollection(mock(UIOptionCollection.class))
+                .optionCollection(mockOptionCollection)
                 .build();
 
         assertThat(opt.getArgName()).isEqualTo("Arg");
-
     }
 
     @Test
     void getArgType() {
         TestOption opt = new TestOption.TestOptionBuilder().option(Option.builder("hello-world").build())
-                .optionCollection(mock(UIOptionCollection.class))
+                .optionCollection(mockOptionCollection)
                 .build();
 
         assertThat(opt.getArgType()).isEqualTo(OptionCollection.ArgumentType.NONE);
 
         opt = new TestOption.TestOptionBuilder().option(Option.builder("hello-world").hasArg().build())
-                .optionCollection(mock(UIOptionCollection.class))
+                .optionCollection(mockOptionCollection)
                 .build();
 
         assertThat(opt.getArgType()).isEqualTo(OptionCollection.ArgumentType.ARG);
 
         opt = new TestOption.TestOptionBuilder().option(Option.builder("hello-world").hasArg()
                         .argName("file").build())
-                .optionCollection(mock(UIOptionCollection.class))
+                .optionCollection(mockOptionCollection)
                 .build();
 
         assertThat(opt.getArgType()).isEqualTo(OptionCollection.ArgumentType.FILE);
 
         opt = new TestOption.TestOptionBuilder().option(Option.builder("hello-world").hasArg()
                         .argName("dummy").build())
-                .optionCollection(mock(UIOptionCollection.class))
+                .optionCollection(mockOptionCollection)
                 .build();
 
         assertThat(opt.getArgType()).isEqualTo(OptionCollection.ArgumentType.ARG);
-
     }
 
     @Test
     void isRequired() {
         TestOption opt = new TestOption.TestOptionBuilder().option(Option.builder("hello-world")
                 .hasArg().build())
-                .optionCollection(mock(UIOptionCollection.class))
+                .optionCollection(mockOptionCollection)
                 .build();
 
         assertThat(opt.isRequired()).isFalse();
 
         opt = new TestOption.TestOptionBuilder().option(Option.builder("hello-world")
                         .hasArg().required(true).build())
-                .optionCollection(mock(UIOptionCollection.class))
+                .optionCollection(mockOptionCollection)
                 .build();
 
         assertThat(opt.isRequired()).isTrue();
@@ -203,7 +203,7 @@ class UIOptionTest {
     void argCheck() {
         TestOption opt = new TestOption.TestOptionBuilder().option(Option.builder("hello-world")
                         .build())
-                .optionCollection(mock(UIOptionCollection.class))
+                .optionCollection(mockOptionCollection)
                 .build();
 
         assertThat(opt.hasArg()).isFalse();
@@ -211,14 +211,14 @@ class UIOptionTest {
 
         opt = new TestOption.TestOptionBuilder().option(Option.builder("hello-world")
                         .hasArg().build())
-                .optionCollection(mock(UIOptionCollection.class))
+                .optionCollection(mockOptionCollection)
                 .build();
         assertThat(opt.hasArg()).isTrue();
         assertThat(opt.hasArgs()).isFalse();
 
         opt = new TestOption.TestOptionBuilder().option(Option.builder("hello-world")
                         .hasArgs().build())
-                .optionCollection(mock(UIOptionCollection.class))
+                .optionCollection(mockOptionCollection)
                 .build();
         assertThat(opt.hasArg()).isTrue();
         assertThat(opt.hasArgs()).isTrue();
@@ -228,23 +228,21 @@ class UIOptionTest {
     void getDeprecated() {
         TestOption opt = new TestOption.TestOptionBuilder().option(Option.builder("hello-world")
                         .build())
-                .optionCollection(mock(UIOptionCollection.class))
+                .optionCollection(mockOptionCollection)
                 .build();
 
         assertThat(opt.getDeprecated()).isEmpty();
 
         opt = new TestOption.TestOptionBuilder().option(Option.builder("hello-world")
                 .deprecated().build())
-                .optionCollection(mock(UIOptionCollection.class))
+                .optionCollection(mockOptionCollection)
                 .build();
         assertThat(opt.getDeprecated()).isEqualTo("Deprecated");
 
         opt = new TestOption.TestOptionBuilder().option(Option.builder("hello-world")
                         .deprecated(new DeprecatedAttributes.Builder().setSince("fádo fádo").get()).build())
-                .optionCollection(mock(UIOptionCollection.class))
+                .optionCollection(mockOptionCollection)
                 .build();
         assertThat(opt.getDeprecated()).isEqualTo("Deprecated since fádo fádo");
-
     }
-
 }

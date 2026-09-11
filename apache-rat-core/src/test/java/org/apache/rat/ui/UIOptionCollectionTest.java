@@ -52,7 +52,6 @@ public class UIOptionCollectionTest {
                         .unsupported(Arg.COUNTER_MAX)
                         .unsupported(Arg.EXCLUDE.option())
                         .defaultValue(UI_OPTION, "foo");
-
             }
         }
     }
