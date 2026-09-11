@@ -48,6 +48,7 @@ import org.apache.rat.documentation.options.MavenOptionCollection;
 import org.apache.rat.help.AbstractHelp;
 import org.apache.rat.license.ILicense;
 import org.apache.rat.license.LicenseSetFactory;
+import org.apache.rat.ui.UIOption;
 import org.apache.velocity.tools.config.DefaultKey;
 import org.apache.velocity.tools.config.ValidScope;
 
@@ -83,8 +84,26 @@ public class RatTool {
     // TODO remove this when velocity-tools 3.3 is available // NOSONAR
     private static final String[] APT_CHARS = charParser("\\~=-+*[]<>{}");
 
-    /** The license factory this tool uses. */
+    /**
+     * The license factory this tool uses.
+     */
     private final LicenseSetFactory licenseSetFactory;
+
+    /**
+     * The client option instance.
+     */
+    // visible for testing
+    private final CLIOptionCollection cliOptions = new CLIOptionCollection();
+
+    /**
+     * The Ant option instance.
+     */
+    private final AntOptionCollection antOptions = new AntOptionCollection();
+
+    /**
+     * The Maven option instance.
+     */
+    private final MavenOptionCollection mavenOptions = new MavenOptionCollection();
 
     /**
      * Constructor.
@@ -99,8 +118,8 @@ public class RatTool {
      * @return the list of command line options.
      */
     public List<Option> options() {
-        return CLIOptionCollection.INSTANCE.getMappedOptions()
-        .map(CLIOption::getOption).toList();
+        return cliOptions.getMappedOptions()
+        .map(UIOption::getOption).toList();
     }
 
     /**
@@ -108,7 +127,7 @@ public class RatTool {
      * @return a map client option name to Ant Option.
      */
     public Map<String, AntOption> antOptions() {
-        return AntOptionCollection.INSTANCE.getOptionMap();
+        return antOptions.getOptionMap();
     }
 
     /**
@@ -116,7 +135,7 @@ public class RatTool {
      * @return a map client option name to CLI Option.
      */
     public Map<String, CLIOption> cliOptions() {
-        return CLIOptionCollection.INSTANCE.getOptionMap();
+        return cliOptions.getOptionMap();
     }
 
     /**
@@ -124,7 +143,7 @@ public class RatTool {
      * @return a map client option name to Maven Option.
      */
     public Map<String, MavenOption> mvnOptions() {
-        return MavenOptionCollection.INSTANCE.getOptionMap();
+        return mavenOptions.getOptionMap();
     }
 
     /**
@@ -183,8 +202,8 @@ public class RatTool {
     }
 
     /**
-     * Gets the set of Matchers.
-     * @return the set of Matchers.
+     * Gets the set of matchers.
+     * @return the set of matchers.
      */
     public Set<Matcher> matchers() {
         Set<Matcher> documentationSet = new TreeSet<>(Comparator.comparing(Matcher::getName));

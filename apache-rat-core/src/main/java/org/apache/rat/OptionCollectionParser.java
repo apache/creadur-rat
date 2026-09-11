@@ -21,21 +21,18 @@ package org.apache.rat;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.io.Serial;
-import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
-import java.util.Comparator;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.DefaultParser;
-import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.rat.api.RatException;
 import org.apache.rat.commandline.Arg;
 import org.apache.rat.commandline.ArgumentContext;
 import org.apache.rat.help.Licenses;
 import org.apache.rat.report.Reportable;
+import org.apache.rat.ui.UIOption;
 import org.apache.rat.ui.UIOptionCollection;
 import org.apache.rat.utils.DefaultLog;
 
@@ -44,29 +41,34 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 /**
  * Uses the AbstractOptionCollection to parse the command line options.
  * Contains utility methods to ReportConfiguration from the options and an array of arguments.
+ *
+ * @param <T> The UIOption type that this parser is handling.
  */
 @SuppressFBWarnings("EI_EXPOSE_REP2")
-public final class OptionCollectionParser {
+public final class OptionCollectionParser<T extends UIOption<T>> {
     /**
      * The OptionCollection that we are working with.
      */
-    private final UIOptionCollection<?> uiOptionCollection;
+    private final UIOptionCollection<T> uiOptionCollection;
 
-    public OptionCollectionParser(final UIOptionCollection<?> optionCollection) {
+    /**
+     * Constructor.
+     * @param optionCollection the option collection to use for.
+     */
+    public OptionCollectionParser(final UIOptionCollection<T> optionCollection) {
         this.uiOptionCollection = optionCollection;
     }
 
     /**
      * Parses the standard options to create a ReportConfiguration.
      *
-     * @param workingDirectory The directory to resolve relative file names against.
-     * @param args the arguments to parse
+     * @param workingDirectory the directory to resolve relative file names against.
+     * @param args the arguments to parse.
      * @return the ArgumentContext for the process.
-     * @throws IOException on error.
-     * @throws ParseException on option parsing error.
+     * @throws RatException on error.
      */
     public ArgumentContext parseCommands(final File workingDirectory, final String[] args)
-            throws IOException, ParseException {
+            throws RatException {
         return parseCommands(workingDirectory, args, uiOptionCollection.getOptions());
     }
 
@@ -77,8 +79,7 @@ public final class OptionCollectionParser {
      * @return the CommandLine
      * @throws ParseException on option parsing error.
      */
-    //@VisibleForTesting
-    CommandLine parseCommandLine(final Options opts, final String[] args) throws ParseException {
+    public static CommandLine parseCommandLine(final Options opts, final String[] args) throws ParseException {
         try {
             return DefaultParser.builder().setDeprecatedHandler(DeprecationReporter.getLogReporter())
                     .setAllowPartialMatching(true).build().parse(opts, args);
@@ -89,35 +90,46 @@ public final class OptionCollectionParser {
         }
     }
 
+    // visible for testing
+    void printHelp(final ArgumentContext argumentContext) throws RatException {
+        try {
+            new Licenses(argumentContext.getConfiguration(),
+                    new PrintWriter(argumentContext.getConfiguration().getOutput().get(),
+                            false, StandardCharsets.UTF_8)).printHelp();
+        } catch (IOException e) {
+            throw new RatException("Unable to print help: " + e.getMessage(), e);
+        }
+    }
+
     /**
      * Parses the standard options to create a ReportConfiguration.
      *
      * @param workingDirectory The directory to resolve relative file names against.
      * @param args the arguments to parse.
-     * @param options An Options object containing Apache command line options.
+     * @param options an Options object containing Apache command line options.
      * @return the ArgumentContext for the process.
-     * @throws IOException on error.
-     * @throws ParseException on option parsing error.
+     * @throws RatException on error.
      */
-    private ArgumentContext parseCommands(final File workingDirectory, final String[] args,
-                                                                       final Options options) throws IOException, ParseException {
-        CommandLine commandLine = parseCommandLine(options, args);
-        ArgumentContext argumentContext = new ArgumentContext(workingDirectory, commandLine);
-        Arg.processLogLevel(argumentContext, uiOptionCollection);
-        populateConfiguration(argumentContext);
-        if (uiOptionCollection.isSelected(Arg.HELP_LICENSES)) {
-            new Licenses(argumentContext.getConfiguration(),
-                    new PrintWriter(argumentContext.getConfiguration().getOutput().get(),
-                            false, StandardCharsets.UTF_8)).printHelp();
+    // visible for testing
+    ArgumentContext parseCommands(final File workingDirectory, final String[] args,
+                                                                       final Options options) throws RatException {
+        try {
+            ArgumentContext argumentContext = new ArgumentContext(workingDirectory, options, args);
+            Arg.processLogLevel(argumentContext, uiOptionCollection);
+            populateConfiguration(argumentContext);
+            if (uiOptionCollection.isSelected(Arg.HELP_LICENSES)) {
+                printHelp(argumentContext);
+            }
+            return argumentContext;
+        } catch (ParseException e) {
+            throw new RatException("Unable to parse command line: " + e.getMessage(), e);
         }
-
-        return argumentContext;
     }
 
     /**
      * Create the report configuration.
      * Note: this method is package private for testing.
-     * You probably want one of the {@code ParseCommands} methods.
+     * You probably want one of the {@code parseCommands(..)} methods.
      * @param argumentContext The context to execute in.
      * @return a ReportConfiguration
      */
@@ -134,33 +146,5 @@ public final class OptionCollectionParser {
             }
         }
         return configuration;
-    }
-
-    /**
-     * This class implements the {@code Comparator} interface for comparing Options.
-     */
-    private static final class OptionComparator implements Comparator<Option>, Serializable {
-        /** The serial version UID.  */
-        @Serial
-        private static final long serialVersionUID = 5305467873966684014L;
-
-        private String getKey(final Option opt) {
-            return StringUtils.defaultIfBlank(opt.getOpt(), opt.getLongOpt());
-        }
-
-        /**
-         * Compares its two arguments for order. Returns a negative integer, zero, or a
-         * positive integer as the first argument is less than, equal to, or greater
-         * than the second.
-         *
-         * @param opt1 The first Option to be compared.
-         * @param opt2 The second Option to be compared.
-         * @return a negative integer, zero, or a positive integer as the first argument
-         * is less than, equal to, or greater than the second.
-         */
-        @Override
-        public int compare(final Option opt1, final Option opt2) {
-            return getKey(opt1).compareToIgnoreCase(getKey(opt2));
-        }
     }
 }

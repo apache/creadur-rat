@@ -16,31 +16,28 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.rat.config.exclusion.fileProcessors;
+package org.apache.rat.config.exclusion.fileprocessors;
 
-import org.apache.rat.config.exclusion.MatcherSet;
-import org.apache.rat.document.DocumentNameMatcher;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
-public class CVSIgnoreBuilderTest extends AbstractIgnoreBuilderTest {
+public class BazaarIgnoreBuilderTest extends AbstractIgnoreBuilderTest {
 
     @Test
     public void processExampleFileTest() throws IOException {
         String[] lines = {
-                "thingone thingtwo", System.lineSeparator(), "one_fish", "two_fish", "", "red_* blue_*"};
+                "# a comment", "*.elc", "*.pyc", "*~", System.lineSeparator(),
+                "# switch to regexp syntax.",  "RE:^\\.pc" };
 
-        List<String> matching = Arrays.asList("thingone", "thingtwo", "one_fish", "two_fish", "red_fish", "blue_fish");
-        List<String> notMatching = Arrays.asList("thing", "two", "fish_red", "subdir/two_fish", "subdir/red_fish", "subdir/blue_fish");
+        List<String> matching = Arrays.asList("test.elc", "test.pyc", "test.thing~", ".pc");
+        List<String> notMatching = Arrays.asList("test.foo", ".pc/stuff", "subidr/test.elc");
 
-        writeFile(".cvsignore", Arrays.asList(lines));
+        writeFile(".bzrignore", Arrays.asList(lines));
 
-        CVSIgnoreBuilder processor = new CVSIgnoreBuilder();
-        DocumentNameMatcher matcher = MatcherSet.merge(processor.build(baseName)).createMatcher();
-
-        assertCorrect(new CVSIgnoreBuilder(), matching, notMatching);
+        assertCorrect(new BazaarIgnoreBuilder(), matching, notMatching);
     }
+
 }

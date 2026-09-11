@@ -22,7 +22,6 @@ import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
-import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.cli.Options;
@@ -39,12 +38,11 @@ public class Help extends AbstractHelp {
     /**
      * An array of notes to go at the bottom of the help output
      */
-    protected static final List<String> NOTES = Collections.unmodifiableList(List.of(
+    protected static final List<String> NOTES = List.of(
             "RAT highlights possible issues.",
             "RAT reports require interpretation.",
             "RAT often requires some tuning before it runs well against a project.",
-            "RAT relies on heuristics: it may miss issues")
-    );
+            "RAT relies on heuristics: it may miss issues");
 
     /** The writer this instance writes to */
     protected final PrintWriter writer;

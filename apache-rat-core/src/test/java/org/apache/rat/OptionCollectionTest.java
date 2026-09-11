@@ -30,8 +30,6 @@ import java.nio.file.Path;
 import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.lang3.tuple.Pair;
@@ -220,8 +218,7 @@ public class OptionCollectionTest {
     @Test
     public void testDefaultConfiguration() throws ParseException {
         String[] empty = {};
-        CommandLine cl = new DefaultParser().parse(OptionCollection.buildOptions(), empty);
-        ArgumentContext context = new ArgumentContext(new File("."), cl);
+        ArgumentContext context = new ArgumentContext(new File("."), OptionCollection.buildOptions(), empty);
         ReportConfiguration config = OptionCollection.createConfiguration(context);
         ReportConfigurationTest.validateDefault(config);
     }

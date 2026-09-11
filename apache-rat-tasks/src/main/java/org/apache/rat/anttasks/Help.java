@@ -170,8 +170,8 @@ public class Help extends BaseAntTask {
         protected StringBuffer renderOptions(final StringBuffer sb, final int width, final Options options, final int leftPad, final int descPad) {
             final String dpad = createPadding(descPad);
             // first create list containing only <lpad>-a,--aaa where
-            // -a is opt and --aaa is long opt; in parallel look for
-            // the longest opt string this list will then be used to
+            // -a is option and --aaa is long option; in parallel look for
+            // the longest option string this list will then be used to
             // sort options ascending
             String optionTitle = " -- Option --";
             String exampleTitle = " -- Example --";
@@ -179,7 +179,7 @@ public class Help extends BaseAntTask {
             int max = optionTitle.length();
             int maxExample = exampleTitle.length();
             final List<AntOption> optList = new ArrayList<>();
-            AntOptionCollection.INSTANCE.getMappedOptions().forEach(optList::add);
+            new AntOptionCollection().getMappedOptions().forEach(optList::add);
             optList.sort(Comparator.comparing(UIOption::getName));
             List<String> exampleList = new ArrayList<>();
             for (final AntOption option : optList) {

@@ -42,6 +42,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class RatToolTest {
     final RatTool underTest = new RatTool();
+    final CLIOptionCollection cliOptionCollection = new CLIOptionCollection();
+    final AntOptionCollection antOptionCollection = new AntOptionCollection();
+    final MavenOptionCollection mavenOptionCollection = new MavenOptionCollection();
 
     @Test
     void environmentVariables() {
@@ -57,13 +60,13 @@ public class RatToolTest {
     void antOptions() {
         Map<String, AntOption> options = underTest.antOptions();
         assertThat(options).isNotEmpty();
-        assertThat(options.values()).containsExactlyInAnyOrderElementsOf(AntOptionCollection.INSTANCE.getMappedOptions().toList());
+        assertThat(options.values()).containsExactlyInAnyOrderElementsOf(antOptionCollection.getMappedOptions().toList());
     }
 
     @Test
     void options() {
         List<Option> options = underTest.options();
-        assertThat(options).isNotEmpty().containsExactlyInAnyOrderElementsOf(CLIOptionCollection.INSTANCE.getMappedOptions()
+        assertThat(options).isNotEmpty().containsExactlyInAnyOrderElementsOf(cliOptionCollection.getMappedOptions()
                     .map(CLIOption::getOption).toList());
     }
 
@@ -71,14 +74,14 @@ public class RatToolTest {
     void cliOptions() {
         Map<String, CLIOption> options = underTest.cliOptions();
         assertThat(options).isNotEmpty();
-        assertThat(options.values()).containsExactlyInAnyOrderElementsOf(CLIOptionCollection.INSTANCE.getMappedOptions().toList());
+        assertThat(options.values()).containsExactlyInAnyOrderElementsOf(cliOptionCollection.getMappedOptions().toList());
     }
 
     @Test
     void mvnOptions() {
         Map<String, MavenOption> options = underTest.mvnOptions();
         assertThat(options).isNotEmpty();
-        assertThat(options.values()).containsExactlyInAnyOrderElementsOf(MavenOptionCollection.INSTANCE.getMappedOptions().toList());
+        assertThat(options.values()).containsExactlyInAnyOrderElementsOf(mavenOptionCollection.getMappedOptions().toList());
     }
 
     @Test

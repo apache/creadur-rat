@@ -51,6 +51,9 @@ import org.apache.rat.help.Licenses;
 import org.apache.rat.license.LicenseSetFactory;
 import org.apache.rat.report.Reportable;
 import org.apache.rat.report.claim.ClaimStatistic;
+import org.apache.rat.ui.ArgumentTracker;
+import org.apache.rat.ui.UIOption;
+import org.apache.rat.ui.UIOptionCollection;
 import org.apache.rat.utils.DefaultLog;
 import org.apache.rat.utils.Log.Level;
 import org.apache.rat.walker.ArchiveWalker;
@@ -67,6 +70,11 @@ public final class OptionCollection {
     private OptionCollection() {
         // do not instantiate
     }
+
+    /**
+     * The collection of UI Options.
+     */
+    private static final UIOptionCollection<? extends UIOption<?>> BASE_OPTION_COLLECTION = new CLIOptionCollection();
 
     /**
      * The Option comparator to sort the help.
@@ -122,8 +130,8 @@ public final class OptionCollection {
      * Parses the standard options to create a ReportConfiguration.
      * <p>
      * This method is {@code synchronized} because it uses shared mutable state:
-     * the {@link Arg} enum's {@code OptionGroup} instances (whose {@code selected}
-     * field is mutated by {@link DefaultParser#parse}), and
+     * the {@link #BASE_OPTION_COLLECTION}'s {@code OptionGroup} instances (whose {@code selected}
+     * field is mutated by {@link DefaultParser#parse(Options, String[])}), and
      * {@link org.apache.rat.commandline.Converters#FILE_CONVERTER} (whose
      * {@code workingDirectory} field is set during argument processing).
      * Without synchronization, parallel Maven reactor threads (e.g. {@code mvn -T4})
@@ -140,29 +148,23 @@ public final class OptionCollection {
      */
     public static synchronized ReportConfiguration parseCommands(final File workingDirectory, final String[] args,
                                                     final Consumer<Options> helpCmd, final boolean noArgs) throws IOException {
-
         Options opts = buildOptions();
-        CommandLine commandLine;
+        ArgumentContext argumentContext;
         try {
-            commandLine = DefaultParser.builder().setDeprecatedHandler(DeprecationReporter.getLogReporter())
-                    .setAllowPartialMatching(true).build().parse(opts, args);
+            argumentContext = new ArgumentContext(workingDirectory, opts, args);
         } catch (ParseException e) {
-            DefaultLog.getInstance().error(e.getMessage());
-            DefaultLog.getInstance().error("Please use the \"--help\" option to see a list of valid commands and options.", e);
             System.exit(1);
             return null; // dummy return (won't be reached) to avoid Eclipse complaint about possible NPE
             // for "commandLine"
         }
+        Arg.processLogLevel(argumentContext, BASE_OPTION_COLLECTION);
 
-        ArgumentContext argumentContext = new ArgumentContext(workingDirectory, commandLine);
-        Arg.processLogLevel(argumentContext, CLIOptionCollection.INSTANCE);
-
-        if (commandLine.hasOption(HELP)) {
+        if (argumentContext.getCommandLine().hasOption(HELP)) {
             helpCmd.accept(opts);
             return null;
         }
 
-        if (commandLine.hasOption(Arg.HELP_LICENSES.option())) {
+        if (argumentContext.getCommandLine().hasOption(Arg.HELP_LICENSES.option())) {
             new Licenses(createConfiguration(argumentContext), new PrintWriter(System.out, false, StandardCharsets.UTF_8)).printHelp();
             return null;
         }
@@ -180,33 +182,46 @@ public final class OptionCollection {
 
     /**
      * Create the report configuration.
-     * Note: this method is package private for testing.
-     * You probably want one of the {@code ParseCommands} methods.
+     * Note: this method is visible for testing.
+     * You probably want one of the {@code parseCommands(...)} methods instead.
      * @param argumentContext The context to execute in.
      * @return a ReportConfiguration
      * @see #parseCommands(File, String[], Consumer)
      * @see #parseCommands(File, String[], Consumer, boolean)
      */
     public static ReportConfiguration createConfiguration(final ArgumentContext argumentContext) {
-        argumentContext.processArgs(CLIOptionCollection.INSTANCE);
-        final ReportConfiguration configuration = argumentContext.getConfiguration();
-        final CommandLine commandLine = argumentContext.getCommandLine();
-        Optional<Option> dirOpt = CLIOptionCollection.INSTANCE.getSelected(Arg.DIR);
-        if (dirOpt.isPresent()) {
-            try {
-                configuration.addSource(getReportable(commandLine.getParsedOptionValue(
-                        dirOpt.get()), configuration));
-            } catch (ParseException e) {
-                throw new ConfigurationException("Unable to set parse " + dirOpt.get(), e);
+        try {
+            argumentContext.processArgs(BASE_OPTION_COLLECTION);
+            final ReportConfiguration configuration = argumentContext.getConfiguration();
+            final CommandLine commandLine = argumentContext.getCommandLine();
+            Optional<Option> dirOpt = BASE_OPTION_COLLECTION.getSelected(Arg.DIR);
+            dirOpt.ifPresent(opt -> {
+                try {
+                    File directoryName = commandLine.getParsedOptionValue(opt);
+                    configuration.addSource(getReportable(directoryName, configuration));
+                } catch (ParseException e) {
+                    throw new ConfigurationException("Unable to set parse " + dirOpt.get(), e);
+                }
+            });
+            for (String s : commandLine.getArgs()) {
+                Reportable reportable = getReportable(new File(s), configuration);
+                if (reportable != null) {
+                    configuration.addSource(reportable);
+                }
             }
-        }
-        for (String s : commandLine.getArgs()) {
-            Reportable reportable = getReportable(new File(s), configuration);
-            if (reportable != null) {
-                configuration.addSource(reportable);
+            return configuration;
+        } catch (RuntimeException e) {
+            try (PrintWriter pw = new PrintWriter(DefaultLog.getInstance().asWriter(Level.ERROR))) {
+                pw.println("Unable to create configuration: " + e.getMessage());
+                pw.println("=== Command line options ===");
+                for (Option opt : argumentContext.getCommandLine().getOptions()) {
+                    String[] values = opt.getValues();
+                    pw.printf("   %s: %s%n", ArgumentTracker.extractKey(opt), values == null ? "" : String.join(", ", values));
+                }
             }
+            throw new ConfigurationException("Unable to create configuration", e);
         }
-        return configuration;
+
     }
 
     /**
@@ -215,7 +230,8 @@ public final class OptionCollection {
      * @return the Options comprised of the Options defined in this class.
      */
     public static Options buildOptions() {
-        return CLIOptionCollection.INSTANCE.getOptions();
+        BASE_OPTION_COLLECTION.resetSelected();
+        return BASE_OPTION_COLLECTION.getOptions();
     }
 
     /**
@@ -297,7 +313,7 @@ public final class OptionCollection {
         EXPRESSION("Expression", () -> "A file matching pattern usually of the form used in Ant build files and " +
                 "'.gitignore' files (see https://ant.apache.org/manual/dirtasks.html#patterns for examples). " +
                 "Regular expression patterns may be specified by surrounding the pattern with '%regex[' and ']'. " +
-                "For example '%regex[[A-Z].*]' would match files and directories that start with uppercase latin letters."),
+                "For example '%regex[[A-Z].*]' would match files and directories that start with uppercase Latin letters."),
         /**
          * A license filter.
          */

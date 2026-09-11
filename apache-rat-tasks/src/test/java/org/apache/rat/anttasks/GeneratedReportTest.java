@@ -185,7 +185,7 @@ public class GeneratedReportTest {
      */
     static Stream<Arguments> generatedData() {
 
-        List<AntOption> options = AntOptionCollection.INSTANCE.getMappedOptions().toList();
+        List<AntOption> options = new AntOptionCollection().getMappedOptions().toList();
 
         List<Arguments> lst = new ArrayList<>();
 
@@ -228,11 +228,7 @@ public class GeneratedReportTest {
             if (body == null) {
                 xml.append(format("      <%1$s>%2$s</%1$s>%n", actualOption.getName(), getData(option)));
             } else {
-//                if (actualOption.argCount() == 1) {
-//                    xml.append(format("      <%s %s=\"%s\" />%n", actualOption.getName(), createAttribute(option), getData(option)));
-//                } else {
                 xml.append(format("      <%1$s>%2$s</%1$s>%n", actualOption.getName(), body));
-//                }
             }
         }
 
@@ -345,87 +341,82 @@ public class GeneratedReportTest {
         }
     }
 
-    private static class AntTestListener implements BuildListener {
-        private final int logLevel;
-        private final StringBuilder logBuffer;
-        private final StringBuilder fullLogBuffer;
-
-        /**
-         * Constructs a test listener which will ignore log events
-         * above the given level.
-         */
-        public AntTestListener(String name, StringBuilder fullLogBuffer, int logLevel) {
-            this.logBuffer = new StringBuilder();
-            this.fullLogBuffer = fullLogBuffer;
-            this.logLevel = logLevel;
-        }
-
-        /**
-         * Fired before any targets are started.
-         */
-        public void buildStarted(BuildEvent event) {
-        }
-
-        /**
-         * Fired after the last target has finished. This event
-         * will still be thrown if an error occurred during the build.
-         *
-         * @see BuildEvent#getException()
-         */
-        public void buildFinished(BuildEvent event) {
-        }
-
-        /**
-         * Fired when a target is started.
-         *
-         * @see BuildEvent#getTarget()
-         */
-        public void targetStarted(BuildEvent event) {
-        }
-
-        /**
-         * Fired when a target has finished. This event will
-         * still be thrown if an error occurred during the build.
-         *
-         * @see BuildEvent#getException()
-         */
-        public void targetFinished(BuildEvent event) {
-        }
-
-        /**
-         * Fired when a task is started.
-         *
-         * @see BuildEvent#getTask()
-         */
-        public void taskStarted(BuildEvent event) {
-        }
-
-        /**
-         * Fired when a task has finished. This event will still
-         * be thrown if an error occurred during the build.
-         *
-         * @see BuildEvent#getException()
-         */
-        public void taskFinished(BuildEvent event) {
-        }
-
-        /**
-         * Fired whenever a message is logged.
-         *
-         * @see BuildEvent#getMessage()
-         * @see BuildEvent#getPriority()
-         */
-        public void messageLogged(BuildEvent event) {
-            if (event.getPriority() > logLevel) {
-                // ignore event
-                return;
+    private record AntTestListener(int logLevel, StringBuilder logBuffer,
+                                   StringBuilder fullLogBuffer) implements BuildListener {
+            /**
+             * Constructs a test listener which will ignore log events
+             * above the given level.
+             */
+            public AntTestListener(String name, StringBuilder fullLogBuffer, int logLevel) {
+                this(logLevel, new StringBuilder(), fullLogBuffer);
             }
-            if (event.getPriority() <= Project.MSG_INFO) {
-                logBuffer.append(format("[%s] %s%n", Report.fromProjectLevel(event.getPriority()), event.getMessage()));
+
+            /**
+             * Fired before any targets are started.
+             */
+            public void buildStarted(BuildEvent event) {
             }
-            fullLogBuffer.append(format("[%s] %s%n", Report.fromProjectLevel(event.getPriority()), event.getMessage()));
+
+            /**
+             * Fired after the last target has finished. This event
+             * will still be thrown if an error occurred during the build.
+             *
+             * @see BuildEvent#getException()
+             */
+            public void buildFinished(BuildEvent event) {
+            }
+
+            /**
+             * Fired when a target is started.
+             *
+             * @see BuildEvent#getTarget()
+             */
+            public void targetStarted(BuildEvent event) {
+            }
+
+            /**
+             * Fired when a target has finished. This event will
+             * still be thrown if an error occurred during the build.
+             *
+             * @see BuildEvent#getException()
+             */
+            public void targetFinished(BuildEvent event) {
+            }
+
+            /**
+             * Fired when a task is started.
+             *
+             * @see BuildEvent#getTask()
+             */
+            public void taskStarted(BuildEvent event) {
+            }
+
+            /**
+             * Fired when a task has finished. This event will still
+             * be thrown if an error occurred during the build.
+             *
+             * @see BuildEvent#getException()
+             */
+            public void taskFinished(BuildEvent event) {
+            }
+
+            /**
+             * Fired whenever a message is logged.
+             *
+             * @see BuildEvent#getMessage()
+             * @see BuildEvent#getPriority()
+             */
+            public void messageLogged(BuildEvent event) {
+                if (event.getPriority() > logLevel) {
+                    // ignore event
+                    return;
+                }
+                if (event.getPriority() <= Project.MSG_INFO) {
+                    logBuffer.append(format("[%s] %s%n", Report.fromProjectLevel(event.getPriority()), event.getMessage()));
+                }
+                fullLogBuffer.append(format("[%s] %s%n", Report.fromProjectLevel(event.getPriority()), event.getMessage()));
+            }
         }
-    }
 
     protected static class AntOutputStream extends OutputStream {
         private final StringBuilder buffer;

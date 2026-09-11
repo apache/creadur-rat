@@ -27,9 +27,10 @@ import org.junit.jupiter.api.Test;
 public class MavenOptionTest {
     @Test
     void getDeprecatedTest() {
+        MavenOptionCollection mavenOptionCollection = new MavenOptionCollection();
         for (Option option : Arg.getOptions().getOptions()) {
             if (option.isDeprecated()) {
-                MavenOptionCollection.INSTANCE.getMappedOption(option).ifPresent( mavenOption -> //
+                mavenOptionCollection.getMappedOption(option).ifPresent( mavenOption -> //
                         TextUtils.assertPatternNotInTarget("\\-\\- ", mavenOption.getDeprecated()));
             }
         }

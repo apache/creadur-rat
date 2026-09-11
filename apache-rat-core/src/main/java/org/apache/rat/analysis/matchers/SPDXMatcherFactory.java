@@ -62,7 +62,7 @@ public final class SPDXMatcherFactory {
      * @deprecated Not thread-safe. Use {@link #newInstance()} to create
      * per-thread instances instead. Will be removed in 1.0.0.
      */
-    @Deprecated
+    @Deprecated(forRemoval = true)
     public static final SPDXMatcherFactory INSTANCE = new SPDXMatcherFactory();
 
     /**
