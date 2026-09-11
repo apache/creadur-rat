@@ -401,22 +401,22 @@ public class ReporterTest {
 
     private void verifyStandardContent(final String document) {
         assertThat(document)
-                .containsPattern(Pattern.compile("^  Notices:\\s*2 ", Pattern.MULTILINE))
-                .containsPattern(Pattern.compile("^  Binaries:\\s*2 ", Pattern.MULTILINE))
-                .containsPattern(Pattern.compile("^  Archives:\\s*1 ", Pattern.MULTILINE))
-                .containsPattern(Pattern.compile("^  Standards:\\s*8 ", Pattern.MULTILINE))
-                .containsPattern(Pattern.compile("^  Ignored:\\s*2 ", Pattern.MULTILINE))
+                .containsPattern(Pattern.compile("^ {2}Notices:\\s*2 ", Pattern.MULTILINE))
+                .containsPattern(Pattern.compile("^ {2}Binaries:\\s*2 ", Pattern.MULTILINE))
+                .containsPattern(Pattern.compile("^ {2}Archives:\\s*1 ", Pattern.MULTILINE))
+                .containsPattern(Pattern.compile("^ {2}Standards:\\s*8 ", Pattern.MULTILINE))
+                .containsPattern(Pattern.compile("^ {2}Ignored:\\s*2 ", Pattern.MULTILINE))
                 .containsPattern(Pattern.compile("^! Unapproved:\\s*2 ", Pattern.MULTILINE))
-                .containsPattern(Pattern.compile("^  Unknown:\\s*2 ", Pattern.MULTILINE))
+                .containsPattern(Pattern.compile("^ {2}Unknown:\\s*2 ", Pattern.MULTILINE))
                 .containsPattern(Pattern.compile("^Apache License 2.0: 5 ", Pattern.MULTILINE))
                 .containsPattern(Pattern.compile("^BSD 3 clause: 1 ", Pattern.MULTILINE))
                 .containsPattern(Pattern.compile("^The MIT License: 1 ", Pattern.MULTILINE))
                 .containsPattern(Pattern.compile("^The Telemanagement Forum License: 1 ", Pattern.MULTILINE))
                 .containsPattern(Pattern.compile("^Unknown license: 2 ", Pattern.MULTILINE))
                 .containsPattern(Pattern.compile("^\\Q?????\\E: 2 ", Pattern.MULTILINE))
-                .containsPattern(Pattern.compile("^AL   : 5 ", Pattern.MULTILINE))
+                .containsPattern(Pattern.compile("^AL {3}: 5 ", Pattern.MULTILINE))
                 .containsPattern(Pattern.compile("^BSD-3: 2 ", Pattern.MULTILINE))
-                .containsPattern(Pattern.compile("^MIT  : 1 ", Pattern.MULTILINE))
+                .containsPattern(Pattern.compile("^MIT {2}: 1 ", Pattern.MULTILINE))
                 .containsPattern(
                         Pattern.compile("^Files with unapproved licenses\\s+\\*+\\s+" //
                         + "\\Q/Source.java\\E\\s+" //
