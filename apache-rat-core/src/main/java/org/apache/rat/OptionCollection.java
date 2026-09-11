@@ -52,6 +52,7 @@ import org.apache.rat.license.LicenseSetFactory;
 import org.apache.rat.report.Reportable;
 import org.apache.rat.report.claim.ClaimStatistic;
 import org.apache.rat.ui.ArgumentTracker;
+import org.apache.rat.ui.UIOption;
 import org.apache.rat.ui.UIOptionCollection;
 import org.apache.rat.utils.DefaultLog;
 import org.apache.rat.utils.Log.Level;
@@ -73,7 +74,7 @@ public final class OptionCollection {
     /**
      * The collection of UI Options.
      */
-    private static final UIOptionCollection BASE_OPTION_COLLECTION = new CLIOptionCollection();
+    private static final UIOptionCollection<? extends UIOption<?>> BASE_OPTION_COLLECTION = new CLIOptionCollection();
 
     /**
      * The Option comparator to sort the help.

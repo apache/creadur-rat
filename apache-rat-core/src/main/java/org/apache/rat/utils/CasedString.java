@@ -46,7 +46,6 @@ public final class CasedString {
         return sb.toString();
     };
     /** A null cased string. */
-    // must follow CAMEL_JOINER def.
     public static final CasedString NULL = new CasedString(StringCase.KEBAB, CasedString.StringCase.NULL_SEGMENT);
 
     /**

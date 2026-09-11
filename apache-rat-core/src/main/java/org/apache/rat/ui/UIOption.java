@@ -366,7 +366,7 @@ public abstract class UIOption<T extends UIOption<T>> {
             Objects.requireNonNull(optionCollection, "OptionCollection may not be null");
             Objects.requireNonNull(option, "Option may not be null");
             if (name == null || name.isNull()) {
-                throw new IllegalArgumentException("name may not be null or contain a null value");
+                throw new IllegalArgumentException("name must not be null or contain a null value");
             }
             return doBuild();
         }

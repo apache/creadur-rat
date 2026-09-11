@@ -977,7 +977,12 @@ public enum Arg {
         try {
             Class<? extends T> clazz = (Class<? extends T>) selected.getType();
             String[] values = commandLine.getOptionValues(selected);
-            T[] result = (T[]) Array.newInstance(clazz, values == null ? 0 : values.length);
+            if (values == null) {
+                // this should not happen since w should only get into this method when an option is selected and has already passed
+                // the "it has data" check.
+                throw new ConfigurationException(format("'%s' command line option did not have any values", selected));
+            }
+            T[] result = (T[]) Array.newInstance(clazz, values.length);
             for (int i = 0; i < result.length; i++) {
                 result[i] = clazz.cast(selected.getConverter().apply(values[i]));
             }

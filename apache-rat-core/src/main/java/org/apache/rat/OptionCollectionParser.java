@@ -21,17 +21,12 @@ package org.apache.rat;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.io.Serial;
-import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
-import java.util.Comparator;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.DefaultParser;
-import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.rat.api.RatException;
 import org.apache.rat.commandline.Arg;
 import org.apache.rat.commandline.ArgumentContext;
@@ -151,33 +146,5 @@ public final class OptionCollectionParser<T extends UIOption<T>> {
             }
         }
         return configuration;
-    }
-
-    /**
-     * This class implements the {@code Comparator} interface for comparing options.
-     */
-    private static final class OptionComparator implements Comparator<Option>, Serializable {
-        /** The serial version UID.  */
-        @Serial
-        private static final long serialVersionUID = 5305467873966684014L;
-
-        private String getKey(final Option opt) {
-            return StringUtils.defaultIfBlank(opt.getOpt(), opt.getLongOpt());
-        }
-
-        /**
-         * Compares its two arguments for order. Returns a negative integer, zero, or a
-         * positive integer as the first argument is less than, equal to, or greater
-         * than the second.
-         *
-         * @param opt1 the first Option to be compared.
-         * @param opt2 the second Option to be compared.
-         * @return a negative integer, zero, or a positive integer as the first argument
-         * is less than, equal to, or greater than the second.
-         */
-        @Override
-        public int compare(final Option opt1, final Option opt2) {
-            return getKey(opt1).compareToIgnoreCase(getKey(opt2));
-        }
     }
 }
