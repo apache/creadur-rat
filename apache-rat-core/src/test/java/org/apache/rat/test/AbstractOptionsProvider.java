@@ -64,6 +64,10 @@ public abstract class AbstractOptionsProvider implements ArgumentsProvider {
      * The directory to place test data in.
      */
     protected final File baseDir;
+    /**
+     * THe name of the provider of the options
+     */
+    protected final String providerName;
 
     /**
      * Copy the runtime data to the "target" directory.
@@ -72,7 +76,7 @@ public abstract class AbstractOptionsProvider implements ArgumentsProvider {
      */
     public static void preserveData(File baseDir, String targetDir) {
         final Path recordPath = FileSystems.getDefault().getPath("target", targetDir);
-        recordPath.toFile().mkdirs();
+        org.apache.rat.utils.FileUtils.mkDir(recordPath.toFile());
         try {
             FileUtils.copyDirectory(baseDir, recordPath.toFile());
         } catch (IOException e) {
@@ -85,7 +89,7 @@ public abstract class AbstractOptionsProvider implements ArgumentsProvider {
     }
 
     protected void addTest(OptionCollectionTest.OptionTest test) {
-        testMap.put(test.toString(), test);
+        testMap.put(test.name(), test);
     }
 
     /**
@@ -96,12 +100,17 @@ public abstract class AbstractOptionsProvider implements ArgumentsProvider {
         return DocumentName.builder(baseDir).build();
     }
 
-    protected AbstractOptionsProvider(final File baseDir) {
+    protected AbstractOptionsProvider(final String providerName, final File baseDir) {
+        this.providerName = providerName;
         this.baseDir = baseDir;
     }
 
-    protected void validate(final Collection<String> unsupportedArgs) {
+    private void removeUnsupportedArgs(final Collection<String> unsupportedArgs) {
         unsupportedArgs.forEach(testMap::remove);
+    }
+
+    protected void validate(final Collection<String> unsupportedArgs) {
+        removeUnsupportedArgs(unsupportedArgs);
         verifyAllMethodsDefinedAndNeeded(unsupportedArgs);
     }
 
@@ -131,7 +140,7 @@ public abstract class AbstractOptionsProvider implements ArgumentsProvider {
         if (!argNames.isEmpty()) {
             fail("Extra methods defined: " + String.join(", ", argNames));
         }
-        unsupportedArgs.forEach(testMap::remove);
+        removeUnsupportedArgs(unsupportedArgs);
     }
 
     @SafeVarargs
@@ -170,7 +179,7 @@ public abstract class AbstractOptionsProvider implements ArgumentsProvider {
     }
 
     protected File writeFile(final String name, final Iterable<String> lines) {
-        return org.apache.rat.testhelpers.FileUtils.writeFile(baseDir, name, lines);
+        return org.apache.rat.utils.FileUtils.writeFile(baseDir, name, lines);
     }
 
     final protected DocumentName mkDocName(final String name) {

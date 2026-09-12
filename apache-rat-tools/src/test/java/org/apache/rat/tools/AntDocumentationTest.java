@@ -45,14 +45,15 @@ class AntDocumentationTest {
 
     @BeforeEach
     void setup(@TempDir(cleanup = CleanupMode.NEVER) Path path) {
-        optionCollection = AntOptionCollection.INSTANCE;
+        optionCollection = new AntOptionCollection();
         testPath = path;
         underTest = new AntDocumentation(path.toFile());
     }
 
     @Test
     void writeAttributes() throws IOException {
-        List<AntOption> antOptions = options.getOptions().stream().map(opt -> new AntOption(optionCollection, opt)).toList();
+        AntOption.AntOptionBuilder builder = new AntOption.AntOptionBuilder().optionCollection(optionCollection);
+        List<AntOption> antOptions = options.getOptions().stream().map(opt -> builder.option(opt).build()).toList();
         underTest.writeAttributes(antOptions);
         File result = new File(testPath.toFile(), "report_attributes.txt");
         assertThat(result).exists();
@@ -63,7 +64,8 @@ class AntDocumentationTest {
 
     @Test
     void writeElements() throws IOException {
-        List<AntOption> antOptions = options.getOptions().stream().map(opt -> new AntOption(optionCollection, opt)).toList();
+        AntOption.AntOptionBuilder builder = new AntOption.AntOptionBuilder().optionCollection(optionCollection);
+        List<AntOption> antOptions = options.getOptions().stream().map(opt -> builder.option(opt).build()).toList();
         underTest.writeElements(antOptions);
         File result = new File(testPath.toFile(), "report_elements.txt");
         assertThat(result).exists();

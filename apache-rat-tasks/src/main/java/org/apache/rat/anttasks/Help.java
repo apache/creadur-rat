@@ -179,7 +179,7 @@ public class Help extends BaseAntTask {
             int max = optionTitle.length();
             int maxExample = exampleTitle.length();
             final List<AntOption> optList = new ArrayList<>();
-            AntOptionCollection.INSTANCE.getMappedOptions().forEach(optList::add);
+            new AntOptionCollection().getMappedOptions().forEach(optList::add);
             optList.sort(Comparator.comparing(UIOption::getName));
             List<String> exampleList = new ArrayList<>();
             for (final AntOption option : optList) {

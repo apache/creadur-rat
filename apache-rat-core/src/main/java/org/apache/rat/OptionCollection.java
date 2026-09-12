@@ -35,7 +35,6 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
@@ -51,6 +50,8 @@ import org.apache.rat.help.Licenses;
 import org.apache.rat.license.LicenseSetFactory;
 import org.apache.rat.report.Reportable;
 import org.apache.rat.report.claim.ClaimStatistic;
+import org.apache.rat.ui.ArgumentTracker;
+import org.apache.rat.ui.UIOptionCollection;
 import org.apache.rat.utils.DefaultLog;
 import org.apache.rat.utils.Log.Level;
 import org.apache.rat.walker.ArchiveWalker;
@@ -67,6 +68,11 @@ public final class OptionCollection {
     private OptionCollection() {
         // do not instantiate
     }
+
+    /**
+     * The collection of UI Options.
+     */
+    private static UIOptionCollection baseOptionCollection = new CLIOptionCollection();
 
     /**
      * The Option comparator to sort the help.
@@ -140,29 +146,23 @@ public final class OptionCollection {
      */
     public static synchronized ReportConfiguration parseCommands(final File workingDirectory, final String[] args,
                                                     final Consumer<Options> helpCmd, final boolean noArgs) throws IOException {
-
         Options opts = buildOptions();
-        CommandLine commandLine;
+        ArgumentContext argumentContext;
         try {
-            commandLine = DefaultParser.builder().setDeprecatedHandler(DeprecationReporter.getLogReporter())
-                    .setAllowPartialMatching(true).build().parse(opts, args);
+            argumentContext = new ArgumentContext(workingDirectory, opts, args);
         } catch (ParseException e) {
-            DefaultLog.getInstance().error(e.getMessage());
-            DefaultLog.getInstance().error("Please use the \"--help\" option to see a list of valid commands and options.", e);
             System.exit(1);
             return null; // dummy return (won't be reached) to avoid Eclipse complaint about possible NPE
             // for "commandLine"
         }
+        Arg.processLogLevel(argumentContext, baseOptionCollection);
 
-        ArgumentContext argumentContext = new ArgumentContext(workingDirectory, commandLine);
-        Arg.processLogLevel(argumentContext, CLIOptionCollection.INSTANCE);
-
-        if (commandLine.hasOption(HELP)) {
+        if (argumentContext.getCommandLine().hasOption(HELP)) {
             helpCmd.accept(opts);
             return null;
         }
 
-        if (commandLine.hasOption(Arg.HELP_LICENSES.option())) {
+        if (argumentContext.getCommandLine().hasOption(Arg.HELP_LICENSES.option())) {
             new Licenses(createConfiguration(argumentContext), new PrintWriter(System.out, false, StandardCharsets.UTF_8)).printHelp();
             return null;
         }
@@ -188,25 +188,37 @@ public final class OptionCollection {
      * @see #parseCommands(File, String[], Consumer, boolean)
      */
     public static ReportConfiguration createConfiguration(final ArgumentContext argumentContext) {
-        argumentContext.processArgs(CLIOptionCollection.INSTANCE);
-        final ReportConfiguration configuration = argumentContext.getConfiguration();
-        final CommandLine commandLine = argumentContext.getCommandLine();
-        Optional<Option> dirOpt = CLIOptionCollection.INSTANCE.getSelected(Arg.DIR);
-        if (dirOpt.isPresent()) {
-            try {
-                configuration.addSource(getReportable(commandLine.getParsedOptionValue(
-                        dirOpt.get()), configuration));
-            } catch (ParseException e) {
-                throw new ConfigurationException("Unable to set parse " + dirOpt.get(), e);
+        try {
+            argumentContext.processArgs(baseOptionCollection);
+            final ReportConfiguration configuration = argumentContext.getConfiguration();
+            final CommandLine commandLine = argumentContext.getCommandLine();
+            Optional<Option> dirOpt = baseOptionCollection.getSelected(Arg.DIR);
+            if (dirOpt.isPresent()) {
+                try {
+                    DocumentName directoryName = commandLine.getParsedOptionValue(dirOpt.get());
+                    configuration.addSource(getReportable(directoryName.asFile(), configuration));
+                } catch (ParseException e) {
+                    throw new ConfigurationException("Unable to set parse " + dirOpt.get(), e);
+                }
             }
-        }
-        for (String s : commandLine.getArgs()) {
-            Reportable reportable = getReportable(new File(s), configuration);
-            if (reportable != null) {
-                configuration.addSource(reportable);
+            for (String s : commandLine.getArgs()) {
+                Reportable reportable = getReportable(new File(s), configuration);
+                if (reportable != null) {
+                    configuration.addSource(reportable);
+                }
             }
+            return configuration;
+        } catch (RuntimeException e) {
+            try (PrintWriter pw = new PrintWriter(DefaultLog.getInstance().asWriter(Level.ERROR))) {
+                pw.println("Unable to create Configuration: " + e.getMessage());
+                pw.println("=== Command line options ===");
+                for (Option opt : argumentContext.getCommandLine().getOptions()) {
+                    pw.printf("   %s: %s%n", ArgumentTracker.extractKey(opt), String.join(", ", opt.getValues()));
+                }
+            }
+            throw new ConfigurationException("Unable to create Configuration", e);
         }
-        return configuration;
+
     }
 
     /**
@@ -215,7 +227,8 @@ public final class OptionCollection {
      * @return the Options comprised of the Options defined in this class.
      */
     public static Options buildOptions() {
-        return CLIOptionCollection.INSTANCE.getOptions();
+        baseOptionCollection.resetSelected();
+        return baseOptionCollection.getOptions();
     }
 
     /**

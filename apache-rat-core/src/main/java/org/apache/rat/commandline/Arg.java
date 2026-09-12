@@ -50,6 +50,7 @@ import org.apache.rat.document.DocumentName;
 import org.apache.rat.document.DocumentNameMatcher;
 import org.apache.rat.license.LicenseSetFactory;
 import org.apache.rat.report.claim.ClaimStatistic.Counter;
+import org.apache.rat.ui.ArgumentTracker;
 import org.apache.rat.ui.UIOptionCollection;
 import org.apache.rat.utils.DefaultLog;
 import org.apache.rat.utils.Log;
@@ -218,7 +219,7 @@ public enum Arg {
      * Option to read a file licenses to be removed from the approved list.
      */
     LICENSES_DENIED_FILE(new OptionGroup().addOption(Option.builder().longOpt("licenses-denied-file")
-            .hasArg().argName("File").type(File.class)
+            .hasArg().argName("File").type(DocumentName.class)
             .converter(Converters.FILE_CONVERTER)
             .desc("Name of file containing comma separated lists of the denied license IDs. " +
                     "These licenses will be removed from the list of approved licenses. " +
@@ -260,10 +261,20 @@ public enum Arg {
             .type(Pair.class)
             .build()),
             (context, selected) -> {
-                for (String arg : context.getCommandLine().getOptionValues(selected)) {
-                    Pair<Counter, Integer> pair = Converters.COUNTER_CONVERTER.apply(arg);
-                    int limit = pair.getValue();
-                    context.getConfiguration().getClaimValidator().setMax(pair.getKey(), limit < 0 ? Integer.MAX_VALUE : limit);
+                String[] values = context.getCommandLine().getOptionValues(selected);
+                if (values == null) {
+                    DefaultLog.getInstance().error(String.format("Unable to read %s (%s)", ArgumentTracker.extractName(selected),
+                            ArgumentTracker.extractKey(selected)));
+                    for (Option option : context.getCommandLine().getOptions()) {
+                        DefaultLog.getInstance().error(String.format("  Option: %s (%s)", ArgumentTracker.extractName(option),
+                                ArgumentTracker.extractKey(option)));
+                    }
+                } else {
+                    for (String arg : context.getCommandLine().getOptionValues(selected)) {
+                        Pair<Counter, Integer> pair = Converters.COUNTER_CONVERTER.apply(arg);
+                        int limit = pair.getValue();
+                        context.getConfiguration().getClaimValidator().setMax(pair.getKey(), limit < 0 ? Integer.MAX_VALUE : limit);
+                    }
                 }
             }),
 
@@ -326,14 +337,14 @@ public enum Arg {
      */
     EXCLUDE_FILE(new OptionGroup()
             .addOption(Option.builder("E").longOpt("exclude-file")
-                    .argName("File").hasArg().type(File.class)
+                    .argName("File").hasArg().type(DocumentName.class)
                     .converter(Converters.FILE_CONVERTER)
                     .deprecated(DeprecatedAttributes.builder().setForRemoval(true).setSince("0.17")
                             .setDescription(StdMsgs.useMsg("--input-exclude-file")).get())
                     .desc("Reads <Expression> entries from a file. Entries will be excluded from processing.")
                     .build())
             .addOption(Option.builder().longOpt("input-exclude-file")
-                    .argName("File").hasArg().type(File.class)
+                    .argName("File").hasArg().type(DocumentName.class)
                     .converter(Converters.FILE_CONVERTER)
                     .desc("Reads <Expression> entries from a file. Entries will be excluded from processing.")
                     .build()),
@@ -408,12 +419,12 @@ public enum Arg {
      */
     INCLUDE_FILE(new OptionGroup()
             .addOption(Option.builder().longOpt("input-include-file")
-                    .argName("File").hasArg().type(File.class)
+                    .argName("File").hasArg().type(DocumentName.class)
                     .converter(Converters.FILE_CONVERTER)
                     .desc("Reads <Expression> entries from a file. Entries will override excluded files.")
                     .build())
             .addOption(Option.builder().longOpt("includes-file")
-                    .argName("File").hasArg().type(File.class)
+                    .argName("File").hasArg().type(DocumentName.class)
                     .converter(Converters.FILE_CONVERTER)
                     .desc("Reads <Expression> entries from a file. Entries will override excluded files.")
                     .deprecated(DeprecatedAttributes.builder().setForRemoval(true).setSince("0.17")
@@ -485,7 +496,8 @@ public enum Arg {
      * Stop processing an input stream and declare an input file.
      */
     DIR(new OptionGroup().addOption(Option.builder().option("d").longOpt("dir").hasArg()
-            .type(File.class)
+            .type(DocumentName.class)
+            .converter(Converters.FILE_CONVERTER)
             .desc("Used to indicate end of list when using options that take multiple arguments.").argName("DirOrArchive")
             .deprecated(DeprecatedAttributes.builder().setForRemoval(true).setSince("0.17")
                     .setDescription("Use the standard '--' to signal the end of arguments.").get()).build()),
@@ -517,14 +529,14 @@ public enum Arg {
                 if ("x".equals(key)) {
                     // display deprecated message.
                     context.getCommandLine().hasOption("x");
-                    context.getConfiguration().setStyleSheet(StyleSheets.getStyleSheet("xml"));
+                    context.getConfiguration().setStyleSheet(StyleSheets.getStyleSheet("xml", context.getWorkingDirectory()));
                 } else {
                     String[] style = context.getCommandLine().getOptionValues(selected);
                     if (style.length != 1) {
                         DefaultLog.getInstance().error("Please specify a single stylesheet");
                         throw new ConfigurationException("Please specify a single stylesheet");
                     }
-                    context.getConfiguration().setStyleSheet(StyleSheets.getStyleSheet(style[0]));
+                    context.getConfiguration().setStyleSheet(StyleSheets.getStyleSheet(style[0], context.getWorkingDirectory()));
                 }
             }),
 
@@ -614,7 +626,17 @@ public enum Arg {
                     .build()),
             (context, selected) -> {
                 try {
+                    String optionValue = context.getCommandLine().getOptionValue(selected);
                     DocumentName documentName = context.getCommandLine().getParsedOptionValue(selected);
+                    if (documentName == null) {
+                        DefaultLog.getInstance().error(String.format("Can not get option: %s/%s (%s) from %s with value of %s",
+                                selected.getOpt(), selected.getLongOpt(), selected.getDescription(), selected.getKey(),
+                                optionValue));
+                        for (Option opt : context.getCommandLine().getOptions()) {
+                            DefaultLog.getInstance().error(String.format("Available option: '%s' = '%s'",
+                                    opt.getKey(), opt.getValue()));
+                        }
+                    }
                     File document = documentName.asFile();
                     File parent = document.getParentFile();
                     if (!parent.mkdirs() && !parent.isDirectory()) {
@@ -977,8 +999,8 @@ public enum Arg {
         try {
             Class<? extends T> clazz = (Class<? extends T>) selected.getType();
             String[] values = commandLine.getOptionValues(selected);
-            T[] result = (T[]) Array.newInstance(clazz, values.length);
-            for (int i = 0; i < values.length; i++) {
+            T[] result = (T[]) Array.newInstance(clazz, values == null ? 0 : values.length);
+            for (int i = 0; i < result.length; i++) {
                 result[i] = clazz.cast(selected.getConverter().apply(values[i]));
             }
             return result;

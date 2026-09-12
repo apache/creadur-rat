@@ -26,9 +26,7 @@ import java.util.TreeMap;
 import org.apache.commons.cli.Option;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.rat.commandline.Arg;
-import org.apache.rat.ui.ArgumentTracker;
 import org.apache.rat.ui.UIOptionCollection;
-import org.apache.rat.utils.CasedString;
 
 /**
  * The collection of MavenOptions equivalent to the CLI options
@@ -47,10 +45,9 @@ public final class MavenOptionCollection extends UIOptionCollection<MavenOption>
     }
 
     /**
-     * The instance of the MavenOptionCollection.
+     * Gets the Map of renamed Options indexed by original option name.
+     * @return the map of renamed Options indexed by original option name.
      */
-    public static final MavenOptionCollection INSTANCE = new Builder().build();
-
     public static Map<String, String> getRenameMap() {
         return new TreeMap<>(RENAME_MAP);
     }
@@ -58,33 +55,14 @@ public final class MavenOptionCollection extends UIOptionCollection<MavenOption>
     /**
      * Create an instance.
      */
-    private MavenOptionCollection(final Builder builder) {
-        super(builder);
+    public MavenOptionCollection() {
+        super(new Builder());
     }
 
-    public static Builder builder() {
-        return new Builder();
-    }
-
-    /**
-     * Provides a new name for an option if it is renamed in the collection.
-     *
-     * @param name the option name.
-     * @return the collection name, may be the same as the option name.
-     */
-    static String rename(final String name) {
-        return StringUtils.defaultIfEmpty(RENAME_MAP.get(name), name);
-    }
-
-    /**
-     * Creates the name for the option based on rules for conversion of CLI option names.
-     *
-     * @param option the standard option.
-     * @return the new Option name as a CasedString.
-     */
-    static CasedString createName(final Option option) {
-        String name = rename(ArgumentTracker.extractKey(option));
-        return new CasedString(CasedString.StringCase.KEBAB, name).as(CasedString.StringCase.PASCAL);
+    @Override
+    public String rename(final Option option) {
+        String key = super.rename(option);
+        return StringUtils.defaultIfEmpty(RENAME_MAP.get(key), key);
     }
 
     /**
@@ -92,16 +70,11 @@ public final class MavenOptionCollection extends UIOptionCollection<MavenOption>
      */
     public static final class Builder extends UIOptionCollection.Builder<MavenOption, Builder> {
         private Builder() {
-            super(MavenOption::new);
+            super(MavenOption.MavenOptionBuilder::new);
             Arg.getOptions().getOptions()
                     .stream().filter(o -> Objects.isNull(o.getLongOpt()))
                     .forEach(this::unsupported);
             unsupported(Arg.DIR).unsupported(Arg.LOG_LEVEL);
-        }
-
-        @Override
-        public MavenOptionCollection build() {
-            return new MavenOptionCollection(this);
         }
     }
 }

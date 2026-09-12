@@ -27,7 +27,7 @@ import javax.xml.xpath.XPathFactory;
 import org.apache.rat.api.RatException;
 import org.apache.rat.report.claim.ClaimStatistic;
 import org.apache.rat.test.AbstractConfigurationOptionsProvider;
-import org.apache.rat.testhelpers.FileUtils;
+import org.apache.rat.utils.FileUtils;
 import org.apache.rat.testhelpers.XmlUtils;
 import org.apache.rat.utils.DefaultLog;
 import org.apache.rat.utils.Log;

@@ -247,7 +247,7 @@ public class RatCheckMojoTest {
         assertThat(config.isAddingLicenses()).as("Should not be adding licenses").isFalse();
         assertThat(config.isAddingLicensesForced()).as("Should not be forcing licenses").isFalse();
 
-        ReportConfigurationTest.validateDefaultApprovedLicenses(config, 1);
+        ReportConfigurationTest.validateDefaultApprovedLicenses(config, "CC-BY-NC-ND");
         assertThat(config.getLicenseCategories(LicenseFilter.APPROVED)).doesNotContain(ILicenseFamily.makeCategory("YAL"))
                 .contains(ILicenseFamily.makeCategory("CC"));
         ReportConfigurationTest.validateDefaultLicenseFamilies(config, "YAL", "CC");
@@ -332,7 +332,7 @@ public class RatCheckMojoTest {
         assertThat(config.getCopyrightMessage()).isNull();
         assertThat(config.getStyleSheet()).withFailMessage("Stylesheet should not be null").isNotNull();
 
-        ReportConfigurationTest.validateDefaultApprovedLicenses(config, 1);
+        ReportConfigurationTest.validateDefaultApprovedLicenses(config, "BSD");
         ReportConfigurationTest.validateDefaultLicenseFamilies(config, "BSD", "CC BY");
         ReportConfigurationTest.validateDefaultLicenses(config, "BSD", "CC BY");
 

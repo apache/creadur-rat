@@ -82,7 +82,7 @@ public class OptionMojoTest {
         private RatCheckMojo mojo = null;
 
         public MojoOptionsProvider() {
-            super(BaseRatMojo.unsupportedArgs(), testPath.toFile());
+            super("MavenMojo", BaseRatMojo.unsupportedArgs(), testPath.toFile());
         }
 
        private RatCheckMojo generateMojo(List<Pair<Option, String[]>> args) throws IOException {

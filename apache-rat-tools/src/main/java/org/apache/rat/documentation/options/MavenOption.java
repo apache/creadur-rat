@@ -18,17 +18,19 @@
  */
 package org.apache.rat.documentation.options;
 
+import java.util.function.Function;
+
 import org.apache.commons.cli.Option;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.WordUtils;
+import org.apache.rat.ConfigurationException;
 import org.apache.rat.ui.UIOption;
-import org.apache.rat.ui.UIOptionCollection;
 import org.apache.rat.utils.CasedString;
 
 import static java.lang.String.format;
 
 /**
- * A representation of a Maven option based on a CLI option.
+ * A representation of a Maven option based on an Option.
  */
 public final class MavenOption extends UIOption<MavenOption> {
 
@@ -38,10 +40,10 @@ public final class MavenOption extends UIOption<MavenOption> {
     /**
      * Constructor.
      *
-     * @param option The CLI option
+     * @param builder The MavenOption builder.
      */
-    MavenOption(final UIOptionCollection<MavenOption> collection, final Option option) {
-        super(collection, option, MavenOptionCollection.createName(option));
+    private MavenOption(final MavenOptionBuilder builder) {
+        super(builder);
     }
 
     @Override
@@ -60,7 +62,8 @@ public final class MavenOption extends UIOption<MavenOption> {
     @Override
     protected String cleanupName(final Option option) {
         // only parse the option if we need to.
-        return option == this.option ? format(XML_FMT, this.name) : format(XML_FMT, MavenOptionCollection.createName(option));
+        return option == this.option ? format(XML_FMT, this.name) : format(XML_FMT,
+                MavenOptionBuilder.createName(optionCollection.rename(option)));
     }
 
     @Override
@@ -102,29 +105,43 @@ public final class MavenOption extends UIOption<MavenOption> {
         return sb.toString();
     }
 
+    /**
+     * Gets the Maven Mojo method signature for this Option.
+     * @param indent the number of spaces to indent the text.
+     * @param multiple {@code true} if this option takes multiple arguments.
+     * @return the method signature for this Option.
+     */
     public String getMethodSignature(final String indent, final boolean multiple) {
         StringBuilder sb = new StringBuilder();
         if (isDeprecated()) {
             sb.append(format("%s@Deprecated%n", indent));
         }
-        String fname = name.toCase(CasedString.StringCase.CAMEL);
+        // the camel case name for this option.
+        String camelName = name.toCase(CasedString.StringCase.CAMEL);
+        if (camelName == null) {
+            throw new ConfigurationException("Name can not be null");
+        }
         String args = option.hasArg() ? "String" : "boolean";
         if (multiple) {
-            if (!(fname.endsWith("s") || fname.endsWith("Approved") || fname.endsWith("Denied"))) {
-                fname = fname + "s";
+            if (!(camelName.endsWith("s") || camelName.endsWith("Approved") || camelName.endsWith("Denied"))) {
+                camelName = camelName + "s";
             }
             args = args + "[]";
         }
 
         return sb.append(format("%1$s%5$s%n%1$spublic void set%3$s(%4$s %2$s)",
-                        indent, name, fname, args, getPropertyAnnotation(fname)))
+                        indent, name, camelName, args, getParameterAnnotation(camelName)))
                 .toString();
     }
 
-
-    public String getPropertyAnnotation(final String fname) {
+    /**
+     * Creates the {@code @Parameter} annotation for this option.
+     * @param camelName The camel cased name for this option.
+     * @return the string that is the parameter annotation.
+     */
+    public String getParameterAnnotation(final String camelName) {
         StringBuilder sb = new StringBuilder("@Parameter");
-        String property = option.hasArgs() ? null : format("property = \"rat.%s\"", fname);
+        String property = option.hasArgs() ? null : format("property = \"rat.%s\"", camelName);
         String defaultValue = option.isDeprecated() ? null : getDefaultValue();
         if (property != null || defaultValue != null) {
             sb.append("(");
@@ -137,5 +154,31 @@ public final class MavenOption extends UIOption<MavenOption> {
             sb.append(")");
         }
         return sb.toString();
+    }
+
+    /**
+     * The builder for the MavenOptions.
+     */
+    public static class MavenOptionBuilder extends UIOption.Builder<MavenOption, MavenOptionBuilder> {
+
+        @Override
+        protected Function<Option, CasedString> getNameFactory() {
+            return o -> createName(optionCollection().rename(o));
+        }
+
+        @Override
+        protected MavenOption doBuild() {
+            return new MavenOption(this);
+        }
+
+        /**
+         * Create the cased name
+         * @param key the renamed key from the collection.
+         * @return the name for the key.
+         * @see MavenOptionCollection#rename(Option)
+         */
+        static CasedString createName(final String key) {
+            return new CasedString(CasedString.StringCase.KEBAB, key).as(CasedString.StringCase.PASCAL);
+        }
     }
 }

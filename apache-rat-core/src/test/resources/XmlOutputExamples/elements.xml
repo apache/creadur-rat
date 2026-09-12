@@ -1,4 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+ This file does intentionally *NOT* contain an AL license header,
+ because it is used in the test suite.
+-->
 <rat-report timestamp="2024-03-29T15:04:42+01:00">
     <resource name="src/test/resources/elements/ILoggerFactory.java" type="STANDARD">
         <license approval="true" family="MIT  " id="MIT" name="The MIT License"/>
@@ -8,16 +12,6 @@
     <resource name="src/test/resources/elements/NOTICE" type="NOTICE"/>
     <resource name="src/test/resources/elements/Source.java" type="STANDARD">
         <license approval="false" family="?????" id="?????" name="Unknown license"/>
-        <sample><![CDATA[ package elements;
-
-/*
- * This file does intentionally *NOT* contain an AL license header,
- * because it is used in the test suite.
- */
-public class Source {
-
-}
- ]]></sample>
     </resource>
     <resource name="src/test/resources/elements/Text.txt" type="STANDARD">
         <license approval="true" family="AL   " id="AL" name="Apache License 2.0"/>

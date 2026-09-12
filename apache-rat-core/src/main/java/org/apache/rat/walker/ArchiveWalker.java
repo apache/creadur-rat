@@ -20,12 +20,15 @@
 package org.apache.rat.walker;
 
 import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
+import java.util.SortedSet;
 
 import org.apache.commons.compress.archivers.ArchiveEntry;
 import org.apache.commons.compress.archivers.ArchiveException;
@@ -34,9 +37,9 @@ import org.apache.commons.compress.archivers.ArchiveStreamFactory;
 import org.apache.commons.io.IOUtils;
 import org.apache.rat.api.Document;
 import org.apache.rat.api.RatException;
-import org.apache.rat.document.ArchiveEntryDocument;
 import org.apache.rat.document.ArchiveEntryName;
 import org.apache.rat.document.DocumentName;
+import org.apache.rat.document.DocumentNameMatcher;
 import org.apache.rat.report.RatReport;
 import org.apache.rat.utils.DefaultLog;
 
@@ -87,13 +90,29 @@ public class ArchiveWalker extends Walker {
             ArchiveEntry entry;
             while ((entry = input.getNextEntry()) != null) {
                 if (!entry.isDirectory() && input.canReadEntryData(entry)) {
-                    DocumentName innerName = DocumentName.builder().setName(entry.getName())
+                    final DocumentName innerName = DocumentName.builder().setName(entry.getName())
                             .setBaseName(".").build();
-                    if (this.getDocument().getNameMatcher().matches(innerName)) {
+                    final DocumentNameMatcher documentNameMatcher = getDocument().getNameMatcher();
+                    if (documentNameMatcher.matches(innerName)) {
+                        ArchiveEntryName entryName = new ArchiveEntryName(getDocument().getName(), entry.getName());
                         ByteArrayOutputStream baos = new ByteArrayOutputStream();
                         IOUtils.copy(input, baos);
-                        ArchiveEntryName entryName = new ArchiveEntryName(getDocument().getName(), entry.getName());
-                        result.add(new ArchiveEntryDocument(entryName, baos.toByteArray(), getDocument().getNameMatcher()));
+                        result.add(new Document(entryName, documentNameMatcher) {
+                            @Override
+                            public InputStream inputStream() {
+                                return new ByteArrayInputStream(baos.toByteArray());
+                            }
+
+                            @Override
+                            public boolean isDirectory() {
+                                return false;
+                            }
+
+                            @Override
+                            public SortedSet<Document> listChildren() {
+                                return Collections.emptySortedSet();
+                            }
+                        });
                     }
                 }
             }

@@ -21,20 +21,20 @@ package org.apache.rat;
 import org.apache.commons.cli.Option;
 import org.apache.rat.ui.UIOptionCollection;
 
+/**
+ * The collection of CLI Options.
+ */
 public final class CLIOptionCollection extends UIOptionCollection<CLIOption> {
     /** The Help option */
     static final Option HELP = new Option("?", "help", false, "Print help for the RAT command line interface and exit.");
 
-    /** The instance of the collection */
-    public static final CLIOptionCollection INSTANCE = new CLIOptionCollection();
-
-    private CLIOptionCollection() {
+    public CLIOptionCollection() {
         super(new Builder().uiOption(HELP));
     }
 
     private static final class Builder extends UIOptionCollection.Builder<CLIOption, Builder> {
         private Builder() {
-            super(CLIOption::new);
+            super(CLIOption.CLIBuilder::new);
         }
     }
 }

@@ -22,25 +22,27 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Function;
 
 import org.apache.commons.cli.Option;
 import org.apache.rat.ui.UIOption;
 import org.apache.rat.ui.UIOptionCollection;
+import org.apache.rat.utils.CasedString;
 
 import static java.lang.String.format;
 
 /**
  * A class that wraps the CLI option and provides Ant specific values.
  */
-public class AntOption extends UIOption<AntOption> {
+public final class AntOption extends UIOption<AntOption> {
 
     /**
      * Constructor.
      *
-     * @param option the option to wrap.
+     * @param builder the AntOptionBuilder
      */
-    public AntOption(final UIOptionCollection<AntOption> collection, final Option option) {
-        super(collection, option, AntOptionCollection.createName(option));
+    private AntOption(final AntOptionBuilder builder) {
+        super(builder);
     }
 
     /**
@@ -76,7 +78,8 @@ public class AntOption extends UIOption<AntOption> {
     }
 
     /**
-     * Gets the set of options that are mapped to this option.
+     * Gets the set of options that are mapped to this option.  This is used to allow one implementation to answer for
+     * multiple options.
      * @return the set of options that are mapped to this option.
      */
     public Set<AntOption> convertedFrom() {
@@ -104,15 +107,28 @@ public class AntOption extends UIOption<AntOption> {
         return antOption.cleanupName();
     }
 
+    /**
+     * Cleans up the name of this AntOption.  Used in documentation.
+     * Returns either {@code <name>} or {@code name attribute}.
+     * @return the cleaned up name.
+     */
     public String cleanupName() {
         String fmt = isAttribute() ? "%s attribute" : "<%s>";
         return format(fmt, name);
     }
 
+    /**
+     * Gets the AntOptionCollection this AntOption is associated with.
+     * @return the AntOptionCollection this AntOption is associated with.
+     */
     AntOptionCollection getAntCollection() {
         return getOptionCollection();
     }
 
+    /**
+     * Gets the Ant build type for this option.
+     * @return the Ant build type for this option.
+     */
     public AntOptionCollection.BuildType buildType() {
         return getAntCollection().buildType(this.getArgType());
     }
@@ -192,6 +208,56 @@ public class AntOption extends UIOption<AntOption> {
                 childElements.forEach(x -> result.append(x).append("\n"));
             }
             return result.toString();
+        }
+    }
+
+    /**
+     * The Builder for AntOptions.
+     */
+    public static class AntOptionBuilder extends UIOption.Builder<AntOption, AntOptionBuilder> {
+
+        public AntOptionBuilder() {
+        }
+
+        /**
+         * returns the function to convert an Option to its Ant based cased name.
+         * @return the function to convert an Option to its Ant based cased name.
+         */
+        protected Function<Option, CasedString> getNameFactory() {
+            return this::createName;
+        }
+
+        @Override
+        public AntOptionBuilder optionCollection(final UIOptionCollection<AntOption> optionCollection) {
+            if (optionCollection instanceof AntOptionCollection) {
+                return super.optionCollection(optionCollection);
+            }
+            throw new IllegalArgumentException("Option collection must be instance of AntOptionCollection");
+        }
+
+        @Override
+        protected AntOption doBuild() {
+            return new AntOption(this);
+        }
+
+        /**
+         * Creates the name for the option based on rules for conversion of Option names.
+         * Ant names are in PASCAL format.
+         * @param option the standard option.
+         * @return a new CasedString comprising the name of the AntOption.
+         * @see CasedString.StringCase#PASCAL
+         */
+        CasedString createName(final Option option) {
+            List<String> pluralEndings = List.of("approved", "denied");
+            String name = optionCollection().rename(option);
+            CasedString casedName = new CasedString(CasedString.StringCase.KEBAB, name);
+            String[] segments = casedName.getSegments();
+            String lastSegment = segments[segments.length - 1];
+            if (option.hasArgs() && !lastSegment.endsWith("s") && !pluralEndings.contains(lastSegment)) {
+                segments[segments.length - 1] += "s";
+                casedName = new CasedString(CasedString.StringCase.KEBAB, segments);
+            }
+            return casedName.as(CasedString.StringCase.PASCAL);
         }
     }
 }

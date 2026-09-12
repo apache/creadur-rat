@@ -19,6 +19,7 @@
 package org.apache.rat.test;
 
 import java.io.FileWriter;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import org.apache.commons.cli.Option;
@@ -80,7 +81,7 @@ public abstract class AbstractConfigurationOptionsProvider extends AbstractOptio
      */
     public static void preserveData(File baseDir, String targetDir) {
         final Path recordPath = FileSystems.getDefault().getPath("target", targetDir);
-        org.apache.rat.testhelpers.FileUtils.mkDir(recordPath.toFile());
+        org.apache.rat.utils.FileUtils.mkDir(recordPath.toFile());
         try {
             FileUtils.copyDirectory(baseDir, recordPath.toFile());
         } catch (IOException e) {
@@ -103,57 +104,57 @@ public abstract class AbstractConfigurationOptionsProvider extends AbstractOptio
         return baseDir;
     }
 
-    protected AbstractConfigurationOptionsProvider(final Collection<String> unsupportedArgs, final File baseDir) {
-        super(setup(baseDir));
-        addTest(OptionCollectionTest.OptionTest.namedTest("addLicense", this::addLicenseTest));
-        addTest(OptionCollectionTest.OptionTest.namedTest("config", this::configTest));
-        addTest(OptionCollectionTest.OptionTest.namedTest("configuration-no-defaults", this::configurationNoDefaultsTest));
-        addTest(OptionCollectionTest.OptionTest.namedTest("copyright", this::copyrightTest));
-        addTest(OptionCollectionTest.OptionTest.namedTest("counter-min", this::counterMinTest));
-        addTest(OptionCollectionTest.OptionTest.namedTest("counter-max", this::counterMaxTest));
-        addTest(OptionCollectionTest.OptionTest.namedTest("dir", () -> DefaultLog.getInstance().info("--dir has no valid test")));
-        addTest(OptionCollectionTest.OptionTest.namedTest("dry-run", this::dryRunTest));
-        addTest(OptionCollectionTest.OptionTest.namedTest("edit-copyright", this::editCopyrightTest));
-        addTest(OptionCollectionTest.OptionTest.namedTest("edit-license", this::editLicenseTest));
-        addTest(OptionCollectionTest.OptionTest.namedTest("edit-overwrite", this::editOverwriteTest));
-        addTest(OptionCollectionTest.OptionTest.namedTest("exclude", this::excludeTest));
-        addTest(OptionCollectionTest.OptionTest.namedTest("exclude-file", this::excludeFileTest));
-        addTest(OptionCollectionTest.OptionTest.namedTest("force", this::forceTest));
-        addTest(OptionCollectionTest.OptionTest.namedTest("help-licenses", this::helpLicenses));
-        addTest(OptionCollectionTest.OptionTest.namedTest("include", this::includeTest));
-        addTest(OptionCollectionTest.OptionTest.namedTest("includes-file", this::includesFileTest));
-        addTest(OptionCollectionTest.OptionTest.namedTest("input-exclude", this::inputExcludeTest));
-        addTest(OptionCollectionTest.OptionTest.namedTest("input-exclude-file", this::inputExcludeFileTest));
-        addTest(OptionCollectionTest.OptionTest.namedTest("input-exclude-parsed-scm", this::inputExcludeParsedScmTest));
-        addTest(OptionCollectionTest.OptionTest.namedTest("input-exclude-std", this::inputExcludeStdTest));
-        addTest(OptionCollectionTest.OptionTest.namedTest("input-exclude-size", this::inputExcludeSizeTest));
-        addTest(OptionCollectionTest.OptionTest.namedTest("input-include", this::inputIncludeTest));
-        addTest(OptionCollectionTest.OptionTest.namedTest("input-include-file", this::inputIncludeFileTest));
-        addTest(OptionCollectionTest.OptionTest.namedTest("input-include-std", this::inputIncludeStdTest));
-        addTest(OptionCollectionTest.OptionTest.namedTest("input-source", this::inputSourceTest));
-        addTest(OptionCollectionTest.OptionTest.namedTest("license-families-approved", this::licenseFamiliesApprovedTest));
-        addTest(OptionCollectionTest.OptionTest.namedTest("license-families-approved-file", this::licenseFamiliesApprovedFileTest));
-        addTest(OptionCollectionTest.OptionTest.namedTest("license-families-denied", this::licenseFamiliesDeniedTest));
-        addTest(OptionCollectionTest.OptionTest.namedTest("license-families-denied-file", this::licenseFamiliesDeniedFileTest));
-        addTest(OptionCollectionTest.OptionTest.namedTest("licenses", this::licensesTest));
-        addTest(OptionCollectionTest.OptionTest.namedTest("licenses-approved", this::licensesApprovedTest));
-        addTest(OptionCollectionTest.OptionTest.namedTest("licenses-approved-file", this::licensesApprovedFileTest));
-        addTest(OptionCollectionTest.OptionTest.namedTest("licenses-denied", this::licensesDeniedTest));
-        addTest(OptionCollectionTest.OptionTest.namedTest("licenses-denied-file", this::licensesDeniedFileTest));
-        addTest(OptionCollectionTest.OptionTest.namedTest("list-families", this::listFamiliesTest));
-        addTest(OptionCollectionTest.OptionTest.namedTest("list-licenses", this::listLicensesTest));
-        addTest(OptionCollectionTest.OptionTest.namedTest("log-level", this::logLevelTest));
-        addTest(OptionCollectionTest.OptionTest.namedTest("no-default-licenses", this::noDefaultsTest));
-        addTest(OptionCollectionTest.OptionTest.namedTest("out", this::outTest));
-        addTest(OptionCollectionTest.OptionTest.namedTest("output-archive", this::outputArchiveTest));
-        addTest(OptionCollectionTest.OptionTest.namedTest("output-families", this::outputFamiliesTest));
-        addTest(OptionCollectionTest.OptionTest.namedTest("output-file", this::outputFileTest));
-        addTest(OptionCollectionTest.OptionTest.namedTest("output-licenses", this::outputLicensesTest));
-        addTest(OptionCollectionTest.OptionTest.namedTest("output-standard", this::outputStandardTest));
-        addTest(OptionCollectionTest.OptionTest.namedTest("output-style", this::outputStyleTest));
-        addTest(OptionCollectionTest.OptionTest.namedTest("scan-hidden-directories", this::scanHiddenDirectoriesTest));
-        addTest(OptionCollectionTest.OptionTest.namedTest("stylesheet", this::styleSheetTest));
-        addTest(OptionCollectionTest.OptionTest.namedTest("xml", this::xmlTest));
+    protected AbstractConfigurationOptionsProvider(final String providerName, final Collection<String> unsupportedArgs, final File baseDir) {
+        super(providerName, setup(baseDir));
+        addTest(OptionCollectionTest.OptionTest.namedTest(providerName, "addLicense", this::addLicenseTest));
+        addTest(OptionCollectionTest.OptionTest.namedTest(providerName, "config", this::configTest));
+        addTest(OptionCollectionTest.OptionTest.namedTest(providerName, "configuration-no-defaults", this::configurationNoDefaultsTest));
+        addTest(OptionCollectionTest.OptionTest.namedTest(providerName, "copyright", this::copyrightTest));
+        addTest(OptionCollectionTest.OptionTest.namedTest(providerName, "counter-min", this::counterMinTest));
+        addTest(OptionCollectionTest.OptionTest.namedTest(providerName, "counter-max", this::counterMaxTest));
+        addTest(OptionCollectionTest.OptionTest.namedTest(providerName, "dir", () -> DefaultLog.getInstance().info("--dir has no valid test")));
+        addTest(OptionCollectionTest.OptionTest.namedTest(providerName, "dry-run", this::dryRunTest));
+        addTest(OptionCollectionTest.OptionTest.namedTest(providerName, "edit-copyright", this::editCopyrightTest));
+        addTest(OptionCollectionTest.OptionTest.namedTest(providerName, "edit-license", this::editLicenseTest));
+        addTest(OptionCollectionTest.OptionTest.namedTest(providerName, "edit-overwrite", this::editOverwriteTest));
+        addTest(OptionCollectionTest.OptionTest.namedTest(providerName, "exclude", this::excludeTest));
+        addTest(OptionCollectionTest.OptionTest.namedTest(providerName, "exclude-file", this::excludeFileTest));
+        addTest(OptionCollectionTest.OptionTest.namedTest(providerName, "force", this::forceTest));
+        addTest(OptionCollectionTest.OptionTest.namedTest(providerName, "help-licenses", this::helpLicenses));
+        addTest(OptionCollectionTest.OptionTest.namedTest(providerName, "include", this::includeTest));
+        addTest(OptionCollectionTest.OptionTest.namedTest(providerName, "includes-file", this::includesFileTest));
+        addTest(OptionCollectionTest.OptionTest.namedTest(providerName, "input-exclude", this::inputExcludeTest));
+        addTest(OptionCollectionTest.OptionTest.namedTest(providerName, "input-exclude-file", this::inputExcludeFileTest));
+        addTest(OptionCollectionTest.OptionTest.namedTest(providerName, "input-exclude-parsed-scm", this::inputExcludeParsedScmTest));
+        addTest(OptionCollectionTest.OptionTest.namedTest(providerName, "input-exclude-std", this::inputExcludeStdTest));
+        addTest(OptionCollectionTest.OptionTest.namedTest(providerName, "input-exclude-size", this::inputExcludeSizeTest));
+        addTest(OptionCollectionTest.OptionTest.namedTest(providerName, "input-include", this::inputIncludeTest));
+        addTest(OptionCollectionTest.OptionTest.namedTest(providerName, "input-include-file", this::inputIncludeFileTest));
+        addTest(OptionCollectionTest.OptionTest.namedTest(providerName, "input-include-std", this::inputIncludeStdTest));
+        addTest(OptionCollectionTest.OptionTest.namedTest(providerName, "input-source", this::inputSourceTest));
+        addTest(OptionCollectionTest.OptionTest.namedTest(providerName, "license-families-approved", this::licenseFamiliesApprovedTest));
+        addTest(OptionCollectionTest.OptionTest.namedTest(providerName, "license-families-approved-file", this::licenseFamiliesApprovedFileTest));
+        addTest(OptionCollectionTest.OptionTest.namedTest(providerName, "license-families-denied", this::licenseFamiliesDeniedTest));
+        addTest(OptionCollectionTest.OptionTest.namedTest(providerName, "license-families-denied-file", this::licenseFamiliesDeniedFileTest));
+        addTest(OptionCollectionTest.OptionTest.namedTest(providerName, "licenses", this::licensesTest));
+        addTest(OptionCollectionTest.OptionTest.namedTest(providerName, "licenses-approved", this::licensesApprovedTest));
+        addTest(OptionCollectionTest.OptionTest.namedTest(providerName, "licenses-approved-file", this::licensesApprovedFileTest));
+        addTest(OptionCollectionTest.OptionTest.namedTest(providerName, "licenses-denied", this::licensesDeniedTest));
+        addTest(OptionCollectionTest.OptionTest.namedTest(providerName, "licenses-denied-file", this::licensesDeniedFileTest));
+        addTest(OptionCollectionTest.OptionTest.namedTest(providerName, "list-families", this::listFamiliesTest));
+        addTest(OptionCollectionTest.OptionTest.namedTest(providerName, "list-licenses", this::listLicensesTest));
+        addTest(OptionCollectionTest.OptionTest.namedTest(providerName, "log-level", this::logLevelTest));
+        addTest(OptionCollectionTest.OptionTest.namedTest(providerName, "no-default-licenses", this::noDefaultsTest));
+        addTest(OptionCollectionTest.OptionTest.namedTest(providerName, "out", this::outTest));
+        addTest(OptionCollectionTest.OptionTest.namedTest(providerName, "output-archive", this::outputArchiveTest));
+        addTest(OptionCollectionTest.OptionTest.namedTest(providerName, "output-families", this::outputFamiliesTest));
+        addTest(OptionCollectionTest.OptionTest.namedTest(providerName, "output-file", this::outputFileTest));
+        addTest(OptionCollectionTest.OptionTest.namedTest(providerName, "output-licenses", this::outputLicensesTest));
+        addTest(OptionCollectionTest.OptionTest.namedTest(providerName, "output-standard", this::outputStandardTest));
+        addTest(OptionCollectionTest.OptionTest.namedTest(providerName, "output-style", this::outputStyleTest));
+        addTest(OptionCollectionTest.OptionTest.namedTest(providerName, "scan-hidden-directories", this::scanHiddenDirectoriesTest));
+        addTest(OptionCollectionTest.OptionTest.namedTest(providerName, "stylesheet", this::styleSheetTest));
+        addTest(OptionCollectionTest.OptionTest.namedTest(providerName, "xml", this::xmlTest));
         super.validate(unsupportedArgs);
     }
 
@@ -232,10 +233,10 @@ public abstract class AbstractConfigurationOptionsProvider extends AbstractOptio
 
         writeFile(".gitignore", Arrays.asList(lines));
         File dir = new File(baseDir, "red");
-        org.apache.rat.testhelpers.FileUtils.mkDir(dir);
+        org.apache.rat.utils.FileUtils.mkDir(dir);
         dir = new File(baseDir, "blue");
         dir = new File(dir, "fish");
-        org.apache.rat.testhelpers.FileUtils.mkDir(dir);
+        org.apache.rat.utils.FileUtils.mkDir(dir);
 
         assertDoesNotThrow(() -> {
             ReportConfiguration config = generateConfig(ImmutablePair.of(option, args));
@@ -800,6 +801,7 @@ public abstract class AbstractConfigurationOptionsProvider extends AbstractOptio
     private void styleSheetTest(final Option option) {
         // copy the dummy stylesheet so that we have a local file for users of the testing jar.
         File file = new File(baseDir, "stylesheet-" + option.getLongOpt());
+        DocumentName workingDirectory = DocumentName.builder(file.getParentFile()).build();
         try (
                 InputStream in = ReporterTest.class.getResourceAsStream("MatcherContainerResource.txt");
                 OutputStream out = Files.newOutputStream(file.toPath())) {
@@ -815,12 +817,16 @@ public abstract class AbstractConfigurationOptionsProvider extends AbstractOptio
         // run the test
         String[] args = {null};
         assertDoesNotThrow(() -> {
-            for (String sheet : new String[]{"plain-rat", "missing-headers", "unapproved-licenses", file.getAbsolutePath()}) {
+            for (String sheet : new String[]{"plain-rat", "missing-headers", "unapproved-licenses", "stylesheet-" + option.getLongOpt()}) {
                 args[0] = sheet;
                 ReportConfiguration config = generateConfig(ImmutablePair.of(option, args));
-                try (InputStream expected = StyleSheets.getStyleSheet(sheet).ioSupplier().get();
+                try (InputStream expected = StyleSheets.getStyleSheet(sheet, workingDirectory).ioSupplier().get();
                      InputStream actual = config.getStyleSheet().get()) {
-                    assertThat(IOUtils.contentEquals(expected, actual)).as(() -> String.format("'%s' does not match", sheet)).isTrue();
+                    String expectedStr =  IOUtils.toString(expected, StandardCharsets.UTF_8);
+                    String actualStr =  IOUtils.toString(actual, StandardCharsets.UTF_8);
+                    assertThat(actualStr).as(() -> String.format("'%s' is not correct: %s != %s",
+                            config.getStyleSheetDescriptor().name(),
+                            actualStr, expectedStr)).isEqualTo(expectedStr);
                 }
             }
         });
@@ -845,7 +851,7 @@ public abstract class AbstractConfigurationOptionsProvider extends AbstractOptio
     protected void xmlTest() {
         assertDoesNotThrow(() -> {
             ReportConfiguration config = generateConfig(ImmutablePair.of(Arg.OUTPUT_STYLE.find("xml"), null));
-            try (InputStream expected = StyleSheets.getStyleSheet("xml").ioSupplier().get();
+            try (InputStream expected = StyleSheets.getStyleSheet("xml", null).ioSupplier().get();
                  InputStream actual = config.getStyleSheet().get()) {
                 assertThat(IOUtils.contentEquals(expected, actual)).as("'xml' does not match").isTrue();
             }
