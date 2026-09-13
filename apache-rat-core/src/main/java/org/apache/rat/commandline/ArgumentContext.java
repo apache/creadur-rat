@@ -20,6 +20,7 @@ package org.apache.rat.commandline;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -88,7 +89,7 @@ public final class ArgumentContext {
     public static String toString(final Option option) {
         return String.format("Option[%s v:[%s]",
                 StringUtils.defaultIfEmpty(option.getLongOpt(), option.getOpt()),
-                option.getValues() == null ? new String[0] : option.getValues()
+                option.getValues() == null ? "[]" : Arrays.toString(option.getValues())
                 );
     }
     /**
@@ -160,9 +161,9 @@ public final class ArgumentContext {
     }
 
     /**
-     * Gets the option value or {@code null}} if it is not set on the command line.
-     * @param selected the option to retreive the value for.
-     * @return the option value or {@code null}} if it is not set.
+     * Gets the option value or {@code null} if it is not set on the command line.
+     * @param selected the option to retrieve the value for.
+     * @return the option value or {@code null} if it is not set.
      */
     public String getOptionValue(final Option selected) {
         return commandLine.getOptionValue(selected);
@@ -171,7 +172,7 @@ public final class ArgumentContext {
     /**
      * Gets the list of option values from the command line.
      * @param selected the option to get values for.
-     * @return The list of options from the command line.  May be an empty list but never {@code null}
+     * @return The list of options from the command line. Might be an empty list but never {@code null}.
      */
     public List<String> getOptionValues(final Option selected) {
         String[] result = commandLine.getOptionValues(selected);
@@ -181,7 +182,7 @@ public final class ArgumentContext {
     /**
      * Gets the parsed option value from the command line.
      * @param selected the option to get value for.
-     * @return the parsed value or null if not found.
+     * @return the parsed value or {@code null} if not found.
      * @param <T> the expected parsed value type.
      */
     public <T> T getParsedOptionValue(final Option selected) {
@@ -216,9 +217,8 @@ public final class ArgumentContext {
      * @param <T> the expected parsed value type.
      */
     public <T> List<T> getParsedOptionValues(final Option selected) {
-        return this.getParsedOptionValues(selected, () -> Collections.emptyList());
+        return this.getParsedOptionValues(selected, Collections::emptyList);
     }
-
 
     /**
      * Gets the parsed option values from the command line.
@@ -230,7 +230,7 @@ public final class ArgumentContext {
     public <T> List<T> getParsedOptionValues(final Option selected, final Supplier<List<T>> defaultSupplier) {
         Objects.requireNonNull(selected);
         Objects.requireNonNull(defaultSupplier);
-        Class<? extends T> clazz = (Class<? extends T>) selected.getType();
+
         List<String> strings = getOptionValues(selected);
         if (strings.isEmpty()) {
             return defaultSupplier.get();
@@ -273,7 +273,8 @@ public final class ArgumentContext {
     }
 
     /**
-     * Creates a visual desciption of the CommandLine.  This used to be provided by the {@code CommandLine.toString()}
+     * Creates a visual description of the CommandLine.
+     * This used to be provided by the {@code CommandLine.toString()}
      * method, but that has been removed.
      * @param commandLine the command line to format.
      * @return a String representation of the command line suitable for debugging.

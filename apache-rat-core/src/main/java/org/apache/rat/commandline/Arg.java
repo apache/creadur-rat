@@ -34,7 +34,6 @@ import org.apache.commons.cli.DeprecatedAttributes;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.OptionGroup;
 import org.apache.commons.cli.Options;
-import org.apache.commons.cli.ParseException;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.rat.ConfigurationException;
@@ -778,7 +777,7 @@ public enum Arg {
      * @param selected the selected option.
      * @return Option as a file.
      */
-    private static File commandLineFile(final ArgumentContext context, final Option selected) throws ParseException {
+    private static File commandLineFile(final ArgumentContext context, final Option selected) {
         DocumentName documentName = context.getParsedOptionValue(selected);
         return documentName.asFile();
     }
@@ -800,9 +799,6 @@ public enum Arg {
             return result;
         } catch (IOException e) {
             throw new ConfigurationException(e);
-
-        } catch (ParseException e) {
-            throw ConfigurationException.from(e);
         }
     }
 
