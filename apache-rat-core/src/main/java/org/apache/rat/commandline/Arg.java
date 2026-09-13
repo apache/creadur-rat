@@ -540,9 +540,7 @@ public enum Arg {
                     .converter(s -> LicenseSetFactory.LicenseFilter.valueOf(s.toUpperCase()))
                     .deprecated(DeprecatedAttributes.builder().setSince("0.17").setForRemoval(true).setDescription(StdMsgs.useMsg("--output-licenses")).get())
                     .build()),
-            (context, selected) -> {
-                    context.getConfiguration().listLicenses(context.getParsedOptionValue(selected, () -> Defaults.LIST_LICENSES));
-            }),
+            (context, selected) -> context.getConfiguration().listLicenses(context.getParsedOptionValue(selected, () -> Defaults.LIST_LICENSES))),
 
     /**
      * Specifies the license families that should be included in the output.
@@ -557,9 +555,7 @@ public enum Arg {
                     .converter(s -> LicenseSetFactory.LicenseFilter.valueOf(s.toUpperCase()))
                     .deprecated(DeprecatedAttributes.builder().setSince("0.17").setForRemoval(true).setDescription(StdMsgs.useMsg("--output-families")).get())
                     .build()),
-            (context, selected) -> {
-                    context.getConfiguration().listFamilies(context.getParsedOptionValue(selected, () -> Defaults.LIST_FAMILIES));
-            }),
+            (context, selected) -> context.getConfiguration().listFamilies(context.getParsedOptionValue(selected, () -> Defaults.LIST_FAMILIES))),
 
     /**
      * Specifies the log level to log messages at.
@@ -623,9 +619,7 @@ public enum Arg {
                     .desc("Specifies the level of detail in ARCHIVE file reporting.")
                     .converter(s -> ReportConfiguration.Processing.valueOf(s.toUpperCase()))
                     .build()),
-            (context, selected) -> {
-                context.getConfiguration().setArchiveProcessing(context.getParsedOptionValue(selected, () -> Defaults.ARCHIVE_PROCESSING));
-            }
+            (context, selected) -> context.getConfiguration().setArchiveProcessing(context.getParsedOptionValue(selected, () -> Defaults.ARCHIVE_PROCESSING))
     ),
 
     /**
@@ -636,9 +630,8 @@ public enum Arg {
                     .desc("Specifies the level of detail in STANDARD file reporting.")
                     .converter(s -> ReportConfiguration.Processing.valueOf(s.toUpperCase()))
                     .build()),
-            (context, selected) -> {
-                context.getConfiguration().setStandardProcessing(context.getParsedOptionValue(selected, () -> Defaults.STANDARD_PROCESSING));
-            }),
+            (context, selected) ->
+                    context.getConfiguration().setStandardProcessing(context.getParsedOptionValue(selected, () -> Defaults.STANDARD_PROCESSING))),
 
     /**
      * Provide license definition listing of registered licenses.
