@@ -192,7 +192,6 @@ public final class OptionCollection {
         try {
             argumentContext.processArgs(BASE_OPTION_COLLECTION);
             final ReportConfiguration configuration = argumentContext.getConfiguration();
-            //final CommandLine commandLine = argumentContext.getCommandLine();
             Optional<Option> dirOpt = BASE_OPTION_COLLECTION.getSelected(Arg.DIR);
             dirOpt.ifPresent(opt -> {
                     File directoryName = argumentContext.getParsedOptionValue(opt);
