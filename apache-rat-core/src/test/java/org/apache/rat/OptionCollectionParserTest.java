@@ -48,14 +48,14 @@ class OptionCollectionParserTest {
     void parseCommands() throws RatException {
         String[] args = {"arg1", "arg2"};
         ArgumentContext ctxt = underTest.parseCommands(testPath.toFile(), args);
-        assertThat(ctxt.getCommandLine().getArgList()).containsExactly(args);
+        assertThat(ctxt.getArgs()).containsExactly(args);
 
         String[] cmds = new String[] {"--input-exclude-size", "5", "arg1", "arg2"};
         ctxt = underTest.parseCommands(testPath.toFile(), cmds);
         StringBuilder sb = new StringBuilder();
         ctxt.getConfiguration().reportExclusions(sb);
         assertThat(sb.toString()).contains("Excluding File size < 5 bytes.");
-        assertThat(ctxt.getCommandLine().getArgList()).containsExactly(args);
+        assertThat(ctxt.getArgs()).containsExactly(args);
     }
 
     @Test

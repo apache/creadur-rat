@@ -137,9 +137,8 @@ public final class OptionCollectionParser<T extends UIOption<T>> {
     private ReportConfiguration populateConfiguration(final ArgumentContext argumentContext) {
         argumentContext.processArgs(uiOptionCollection);
         final ReportConfiguration configuration = argumentContext.getConfiguration();
-        final CommandLine commandLine = argumentContext.getCommandLine();
         if (!configuration.hasSource()) {
-            for (String s : commandLine.getArgs()) {
+            for (String s : argumentContext.getArgs()) {
                 Reportable reportable = OptionCollection.getReportable(new File(s), configuration);
                 if (reportable != null) {
                     configuration.addSource(reportable);

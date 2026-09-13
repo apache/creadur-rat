@@ -21,25 +21,21 @@ package org.apache.rat.commandline;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.Array;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Predicate;
 
 import org.apache.commons.cli.AlreadySelectedException;
-import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.DeprecatedAttributes;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.OptionGroup;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.rat.ConfigurationException;
 import org.apache.rat.Defaults;
@@ -169,7 +165,8 @@ public enum Arg {
             .type(String[].class)
             .build()),
             (context, selected) ->
-                context.getConfiguration().addApprovedLicenseIds(processArrayArg(context, selected))
+                  context.getConfiguration().addApprovedLicenseIds(context.getParsedOptionValue(selected))
+
     ),
 
     /**
@@ -191,7 +188,7 @@ public enum Arg {
             .converter(Converters.TEXT_LIST_CONVERTER)
             .type(String[].class)
             .build()),
-            (context, selected) -> context.getConfiguration().addApprovedLicenseCategories(processArrayArg(context, selected))),
+            (context, selected) -> context.getConfiguration().addApprovedLicenseCategories(context.getParsedOptionValue(selected))),
 
     /**
      * Option that specifies approved license families from a file.
@@ -214,7 +211,7 @@ public enum Arg {
             .converter(Converters.TEXT_LIST_CONVERTER)
             .type(String[].class)
             .build()),
-            (context, selected) -> context.getConfiguration().removeApprovedLicenseIds(processArrayArg(context, selected))),
+            (context, selected) -> context.getConfiguration().removeApprovedLicenseIds(context.getParsedOptionValue(selected))),
 
     /**
      * Option to read a file licenses to be removed from the approved list.
@@ -239,7 +236,7 @@ public enum Arg {
             .converter(Converters.TEXT_LIST_CONVERTER)
             .type(String[].class)
             .build()),
-            (context, selected) -> context.getConfiguration().removeApprovedLicenseCategories(processArrayArg(context, selected))),
+            (context, selected) -> context.getConfiguration().removeApprovedLicenseCategories(context.getParsedOptionValue(selected))),
 
     /**
      * Option to read a list of license families to remove from the approved list.
@@ -262,7 +259,7 @@ public enum Arg {
             .type(Pair.class)
             .build()),
             (context, selected) -> {
-                for (String arg : context.getCommandLine().getOptionValues(selected)) {
+                for (String arg : context.getOptionValues(selected)) {
                     Pair<Counter, Integer> pair = Converters.COUNTER_CONVERTER.apply(arg);
                     int limit = pair.getValue();
                     context.getConfiguration().getClaimValidator().setMax(pair.getKey(), limit < 0 ? Integer.MAX_VALUE : limit);
@@ -278,7 +275,7 @@ public enum Arg {
             .type(Pair.class)
             .build()),
             (context, selected) -> {
-                for (String arg : context.getCommandLine().getOptionValues(selected)) {
+                for (String arg : context.getOptionValues(selected)) {
                     Pair<Counter, Integer> pair = Converters.COUNTER_CONVERTER.apply(arg);
                     context.getConfiguration().getClaimValidator().setMin(pair.getKey(), pair.getValue());
                 }
@@ -298,7 +295,7 @@ public enum Arg {
                     .type(DocumentName.class)
                     .build()),
             (context, selected) -> {
-                DocumentName[] documentNames = getParsedOptionValues(selected, context.getCommandLine());
+                List<DocumentName> documentNames = context.getParsedOptionValues(selected);
                 for (DocumentName documentName : documentNames) {
                     context.getConfiguration().addSource(documentName.asFile());
                 }
@@ -317,9 +314,9 @@ public enum Arg {
                     .desc("Excludes files matching <Expression>.")
                     .build()),
             (context, selected) -> {
-                String[] excludes = context.getCommandLine().getOptionValues(selected);
-                if (excludes != null) {
-                    context.getConfiguration().addExcludedPatterns(Arrays.asList(excludes));
+                List<String> excludes = context.getOptionValues(selected);
+                if (!excludes.isEmpty()) {
+                    context.getConfiguration().addExcludedPatterns(excludes);
                 }
             }),
 
@@ -341,7 +338,7 @@ public enum Arg {
                     .build()),
             (context, selected) -> {
                 try {
-                    DocumentName excludeFileName = context.getCommandLine().getParsedOptionValue(selected);
+                    DocumentName excludeFileName = context.getParsedOptionValue(selected);
                     if (excludeFileName != null) {
                         context.getConfiguration().addExcludedPatterns(ExclusionUtils.asIterable(excludeFileName.asFile(), "#"));
                     }
@@ -360,7 +357,7 @@ public enum Arg {
                     .type(StandardCollection.class)
                     .build()),
             (context, selected) -> {
-                for (String s : context.getCommandLine().getOptionValues(selected)) {
+                for (String s : context.getOptionValues(selected)) {
                     context.getConfiguration().addExcludedCollection(StandardCollection.valueOf(s));
                 }
             }),
@@ -375,7 +372,7 @@ public enum Arg {
                     .build()),
             (context, selected) -> {
                 try {
-                    final int maxSize = context.getCommandLine().getParsedOptionValue(selected);
+                    final int maxSize = context.getParsedOptionValue(selected);
                     DocumentNameMatcher matcher = new DocumentNameMatcher(String.format("File size < %s bytes", maxSize),
                             (Predicate<DocumentName>) documentName -> {
                                 File f = new File(documentName.getName());
@@ -399,9 +396,9 @@ public enum Arg {
                             .setDescription(StdMsgs.useMsg("--input-include")).get())
                     .build()),
             (context, selected) -> {
-                String[] includes = context.getCommandLine().getOptionValues(selected);
-                if (includes != null) {
-                    context.getConfiguration().addIncludedPatterns(Arrays.asList(includes));
+                List<String> includes = context.getOptionValues(selected);
+                if (!includes.isEmpty()) {
+                    context.getConfiguration().addIncludedPatterns(includes);
                 }
             }),
 
@@ -423,7 +420,7 @@ public enum Arg {
                     .build()),
             (context, selected) -> {
                 try {
-                    DocumentName includeFileName = context.getCommandLine().getParsedOptionValue(selected);
+                    DocumentName includeFileName = context.getParsedOptionValue(selected);
                     if (includeFileName != null) {
                         context.getConfiguration().addIncludedPatterns(ExclusionUtils.asIterable(includeFileName.asFile(), "#"));
                     }
@@ -449,10 +446,10 @@ public enum Arg {
             ),
             (context, selected) -> {
                 // display deprecation log if needed.
-                if (context.getCommandLine().hasOption("scan-hidden-directories")) {
+                if (context.hasOption("scan-hidden-directories")) {
                     context.getConfiguration().addIncludedCollection(StandardCollection.HIDDEN_DIR);
                 } else {
-                    for (String s : context.getCommandLine().getOptionValues(selected)) {
+                    for (String s : context.getOptionValues(selected)) {
                         context.getConfiguration().addIncludedCollection(StandardCollection.valueOf(s));
                     }
                 }
@@ -470,7 +467,7 @@ public enum Arg {
                     .type(StandardCollection.class)
                     .build()),
             (context, selected) -> {
-                StandardCollection[] collections = getParsedOptionValues(selected, context.getCommandLine());
+                List<StandardCollection> collections = context.getParsedOptionValues(selected);
                 final ReportConfiguration configuration = context.getConfiguration();
                 for (StandardCollection collection : collections) {
                     if (collection == StandardCollection.ALL) {
@@ -518,15 +515,15 @@ public enum Arg {
                 String key = selected.getKey(); // is not null due to above isSelected()-call
                 if ("x".equals(key)) {
                     // display deprecated message.
-                    context.getCommandLine().hasOption("x");
+                    context.hasOption("x");
                     context.getConfiguration().setStyleSheet(StyleSheets.getStyleSheet("xml"));
                 } else {
-                    String[] style = context.getCommandLine().getOptionValues(selected);
-                    if (style.length != 1) {
+                    List<String> style = context.getOptionValues(selected);
+                    if (style.size() != 1) {
                         DefaultLog.getInstance().error("Please specify a single stylesheet");
                         throw new ConfigurationException("Please specify a single stylesheet");
                     }
-                    context.getConfiguration().setStyleSheet(StyleSheets.getStyleSheet(style[0]));
+                    context.getConfiguration().setStyleSheet(StyleSheets.getStyleSheet(style.get(0)));
                 }
             }),
 
@@ -544,11 +541,7 @@ public enum Arg {
                     .deprecated(DeprecatedAttributes.builder().setSince("0.17").setForRemoval(true).setDescription(StdMsgs.useMsg("--output-licenses")).get())
                     .build()),
             (context, selected) -> {
-                try {
-                    context.getConfiguration().listLicenses(context.getCommandLine().getParsedOptionValue(selected));
-                } catch (ParseException e) {
-                    context.logParseException(e, selected, Defaults.LIST_LICENSES);
-                }
+                    context.getConfiguration().listLicenses(context.getParsedOptionValue(selected, () -> Defaults.LIST_LICENSES));
             }),
 
     /**
@@ -565,11 +558,7 @@ public enum Arg {
                     .deprecated(DeprecatedAttributes.builder().setSince("0.17").setForRemoval(true).setDescription(StdMsgs.useMsg("--output-families")).get())
                     .build()),
             (context, selected) -> {
-                try {
-                    context.getConfiguration().listFamilies(context.getCommandLine().getParsedOptionValue(selected));
-                } catch (ParseException e) {
-                    context.logParseException(e, selected, Defaults.LIST_FAMILIES);
-                }
+                    context.getConfiguration().listFamilies(context.getParsedOptionValue(selected, () -> Defaults.LIST_FAMILIES));
             }),
 
     /**
@@ -582,11 +571,8 @@ public enum Arg {
             .build()),
             (context, selected) -> {
                 Log dLog = DefaultLog.getInstance();
-                try {
-                    dLog.setLevel(context.getCommandLine().getParsedOptionValue(selected));
-                } catch (ParseException e) {
-                    logParseException(DefaultLog.getInstance(), e, selected, context.getCommandLine(), dLog.getLevel());
-                }
+                Log.Level ll = dLog.getLevel();
+                dLog.setLevel(context.getParsedOptionValue(selected, () -> ll));
             }),
 
     /**
@@ -615,18 +601,17 @@ public enum Arg {
                     .converter(Converters.FILE_CONVERTER)
                     .build()),
             (context, selected) -> {
-                try {
-                    DocumentName documentName = context.getCommandLine().getParsedOptionValue(selected);
+                DocumentName documentName = context.getParsedOptionValue(selected, () -> {
+                    context.getConfiguration().setOut(ReportConfiguration.SYSTEM_OUT);
+                    return null;
+                });
+                if (documentName != null) {
                     File document = documentName.asFile();
                     File parent = document.getParentFile();
                     if (!parent.mkdirs() && !parent.isDirectory()) {
                         DefaultLog.getInstance().error("Could not create report parent directory " + documentName);
                     }
                     context.getConfiguration().setOut(document);
-                } catch (ParseException e) {
-                    // we write to system out by default.
-                    context.logParseException(e, selected, "System.out");
-                    context.getConfiguration().setOut(ReportConfiguration.SYSTEM_OUT);
                 }
             }),
 
@@ -639,11 +624,7 @@ public enum Arg {
                     .converter(s -> ReportConfiguration.Processing.valueOf(s.toUpperCase()))
                     .build()),
             (context, selected) -> {
-                try {
-                    context.getConfiguration().setArchiveProcessing(context.getCommandLine().getParsedOptionValue(selected));
-                } catch (ParseException e) {
-                    context.logParseException(e, selected, Defaults.ARCHIVE_PROCESSING);
-                }
+                context.getConfiguration().setArchiveProcessing(context.getParsedOptionValue(selected, () -> Defaults.ARCHIVE_PROCESSING));
             }
     ),
 
@@ -656,11 +637,7 @@ public enum Arg {
                     .converter(s -> ReportConfiguration.Processing.valueOf(s.toUpperCase()))
                     .build()),
             (context, selected) -> {
-                try {
-                    context.getConfiguration().setStandardProcessing(context.getCommandLine().getParsedOptionValue(selected));
-                } catch (ParseException e) {
-                    context.logParseException(e, selected, Defaults.STANDARD_PROCESSING);
-                }
+                context.getConfiguration().setStandardProcessing(context.getParsedOptionValue(selected, () -> Defaults.STANDARD_PROCESSING));
             }),
 
     /**
@@ -790,30 +767,16 @@ public enum Arg {
     private static void processEditArgs(final ArgumentContext context, final UIOptionCollection<?> optionCollection) {
         optionCollection.getSelected(EDIT_ADD).ifPresent(option -> {
             // prints deprecation
-            context.getCommandLine().hasOption(option);
+            context.hasOption(option);
             boolean force = optionCollection.isSelected(EDIT_OVERWRITE);
             if (force) {
                 // prints deprecation
-                optionCollection.getSelected(EDIT_OVERWRITE).ifPresent(context.getCommandLine()::hasOption);
+                optionCollection.getSelected(EDIT_OVERWRITE).ifPresent(context::hasOption);
             }
             context.getConfiguration().setAddLicenseHeaders(force ? AddLicenseHeaders.FORCED : AddLicenseHeaders.TRUE);
             optionCollection.getSelected(EDIT_COPYRIGHT).
-                    ifPresent(editOption -> context.getConfiguration().setCopyrightMessage(context.getCommandLine().getOptionValue(editOption)));
+                    ifPresent(editOption -> context.getConfiguration().setCopyrightMessage(context.getOptionValue(editOption)));
         });
-    }
-
-    /**
-     * Gets the list of Strings that are arguments for the option.
-     * @param context the ArgumentContext containing the command line.
-     * @param selected the selected option.
-     * @return the list of Strings that are arguments.
-     */
-    private static List<String> processArrayArg(final ArgumentContext context, final Option selected) {
-        try {
-            return Arrays.asList(context.getCommandLine().getParsedOptionValue(selected));
-        } catch (ParseException e) {
-            throw new ConfigurationException(e);
-        }
     }
 
     /**
@@ -823,7 +786,7 @@ public enum Arg {
      * @return Option as a file.
      */
     private static File commandLineFile(final ArgumentContext context, final Option selected) throws ParseException {
-        DocumentName documentName = context.getCommandLine().getParsedOptionValue(selected);
+        DocumentName documentName = context.getParsedOptionValue(selected);
         return documentName.asFile();
     }
 
@@ -838,8 +801,8 @@ public enum Arg {
         try (InputStream in = Files.newInputStream(commandLineFile(context, selected)
                 .toPath())) {
             for (String line : IOUtils.readLines(in, StandardCharsets.UTF_8)) {
-                String[] ids = Converters.TEXT_LIST_CONVERTER.apply(line);
-                result.addAll(Arrays.asList(ids));
+                List<String> ids = Converters.TEXT_LIST_CONVERTER.apply(line);
+                result.addAll(ids);
             }
             return result;
         } catch (IOException e) {
@@ -862,14 +825,14 @@ public enum Arg {
 
         optionCollection.getSelected(CONFIGURATION).ifPresent(
                 selected -> {
-                    DocumentName[] documentNames = getParsedOptionValues(selected, context.getCommandLine());
+                    List<DocumentName> documentNames = context.getParsedOptionValues(selected);
                     for (DocumentName documentName : documentNames) {
                         defaultBuilder.add(documentName.asFile());
                     }
                 });
         optionCollection.getSelected(CONFIGURATION_NO_DEFAULTS).ifPresent(selected -> {
             // display deprecation log if needed.
-            context.getCommandLine().hasOption(selected);
+            context.hasOption(selected);
             defaultBuilder.noDefault();
         });
         context.getConfiguration().setFrom(defaultBuilder.build());
@@ -892,21 +855,6 @@ public enum Arg {
                 INCLUDE, INCLUDE_FILE, INCLUDE_STD)) {
             arg.execute(context, optionCollection);
         }
-    }
-
-    /**
-     * Logs a ParseException as a warning.
-     *
-     * @param log the Log to write to
-     * @param exception the parse exception to log
-     * @param opt the option being processed
-     * @param cl the command line being processed
-     * @param defaultValue The default value the option is being set to.
-     */
-    private static void logParseException(final Log log, final ParseException exception, final Option opt, final CommandLine cl, final Object defaultValue) {
-        log.warn(format("Invalid %s specified: %s ", opt.getOpt(), cl.getOptionValue(opt)));
-        log.warn(format("%s set to: %s", opt.getOpt(), defaultValue));
-        log.debug(exception);
     }
 
     /**
@@ -973,29 +921,6 @@ public enum Arg {
             }
         }
         return null;
-    }
-
-    private static <T> T[] getParsedOptionValues(final Option selected, final CommandLine commandLine) {
-        try {
-            Class<? extends T> clazz = (Class<? extends T>) selected.getType();
-            String[] values = commandLine.getOptionValues(selected);
-            if (values == null) {
-                // this should not happen since w should only get into this method when an option is selected and has already passed
-                // the "it has data" check.
-                String optString = String.format("Option[%s v:[%s]]",
-                  StringUtils.defaultIfEmpty(selected.getLongOpt(), selected.getKey()), String.join(",", selected.getValues() == null ? new String[0] : selected.getValues()));
-                throw new ConfigurationException(format("'%s' command line option (of '%s') did not have any values", optString,
-                        ArgumentContext.commandLineDescription(commandLine)));
-            }
-            T[] result = (T[]) Array.newInstance(clazz, values.length);
-            for (int i = 0; i < result.length; i++) {
-                result[i] = clazz.cast(selected.getConverter().apply(values[i]));
-            }
-            return result;
-        } catch (Throwable t) {
-            throw new ConfigurationException(format("'%s' converter for %s '%s' does not produce a class of type %s", selected,
-                    selected.getKey(), selected.getConverter().getClass().getName(), selected.getType()), t);
-        }
     }
 
     /**

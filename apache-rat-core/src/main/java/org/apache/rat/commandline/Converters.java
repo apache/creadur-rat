@@ -19,6 +19,8 @@
 package org.apache.rat.commandline;
 
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 import org.apache.commons.cli.Converter;
@@ -60,13 +62,13 @@ public final class Converters {
     };
 
     /**
-     * Converts a comma separated list into an array of strings.
+     * Converts a comma separated list into a List of strings.
      */
-    public static final Converter<String[], ConfigurationException> TEXT_LIST_CONVERTER = arg -> {
+    public static final Converter<List<String>, ConfigurationException> TEXT_LIST_CONVERTER = arg -> {
         if (arg == null) {
-            return null;
+            return Collections.emptyList();
         }
-        return Arrays.stream(arg.split(",")).map(String::trim).toArray(String[]::new);
+        return Arrays.stream(arg.split(",")).map(String::trim).toList();
     };
 
     /**

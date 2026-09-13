@@ -20,7 +20,10 @@ package org.apache.rat.commandline;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
+import java.util.function.Supplier;
 
 import org.apache.commons.cli.AlreadySelectedException;
 import org.apache.commons.cli.CommandLine;
@@ -29,11 +32,13 @@ import org.apache.commons.cli.OptionGroup;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.rat.ConfigurationException;
 import org.apache.rat.OptionCollectionParser;
 import org.apache.rat.ReportConfiguration;
 import org.apache.rat.document.DocumentName;
 import org.apache.rat.ui.UIOptionCollection;
 import org.apache.rat.utils.DefaultLog;
+import org.apache.rat.utils.Log;
 
 import static java.lang.String.format;
 
@@ -76,6 +81,17 @@ public final class ArgumentContext {
     }
 
     /**
+     * Gets a logging/debug string describing the Option.
+     * @param option the option to describe.
+     * @return the logging/debug string describing the Option.
+     */
+    public static String toString(final Option option) {
+        return String.format("Option[%s v:[%s]",
+                StringUtils.defaultIfEmpty(option.getLongOpt(), option.getOpt()),
+                option.getValues() == null ? new String[0] : option.getValues()
+                );
+    }
+    /**
      * Clears the group selections in the options.
      * @param options the options to clear.
      * @return the options with all selections cleared.
@@ -110,11 +126,130 @@ public final class ArgumentContext {
     }
 
     /**
-     * Gets the command line.
-     * @return the command line that is driving the configuration.
+     * Gets the Options from the command line.
+     * @return the Options from the command line.
      */
-    public CommandLine getCommandLine() {
-        return commandLine;
+    public Option[] getOptions() {
+        return commandLine.getOptions();
+    }
+
+    /**
+     * Gets the arguments that followed all options on the command line.
+     * @return the arguments that followed all options.
+     */
+    public List<String> getArgs() {
+        return commandLine.getArgList();
+    }
+
+    /**
+     * Determines if option was specified on the command line.
+     * @param option the option to check.
+     * @return {@code true}, if option was specified on the command line.
+     */
+    public boolean hasOption(final Option option) {
+        return commandLine.hasOption(option);
+    }
+
+    /**
+     * Determines if option was specified on the command line.
+     * @param option the option to check.
+     * @return {@code true}, if option was specified on the command line.
+     */
+    public boolean hasOption(final String option) {
+        return commandLine.hasOption(option);
+    }
+
+    /**
+     * Gets the option value or {@code null}} if it is not set on the command line.
+     * @param selected the option to retreive the value for.
+     * @return the option value or {@code null}} if it is not set.
+     */
+    public String getOptionValue(final Option selected) {
+        return commandLine.getOptionValue(selected);
+    }
+
+    /**
+     * Gets the list of option values from the command line.
+     * @param selected the option to get values for.
+     * @return The list of options from the command line.  May be an empty list but never {@code null}
+     */
+    public List<String> getOptionValues(final Option selected) {
+        String[] result = commandLine.getOptionValues(selected);
+        return result == null ? Collections.emptyList() : List.of(result);
+    }
+
+    /**
+     * Gets the parsed option value from the command line.
+     * @param selected the option to get value for.
+     * @return the parsed value or null if not found.
+     * @param <T> the expected parsed value type.
+     */
+    public <T> T getParsedOptionValue(final Option selected) {
+        return this.getParsedOptionValue(selected, () -> null);
+    }
+
+    /**
+     * Gets the parsed option value from the command line.
+     * @param selected the option to get value for.
+     * @param defaultSupplier a supplier of default values.
+     * @return the parsed value or default value if not found.
+     * @param <T> the expected parsed value type.
+     */
+    public <T> T getParsedOptionValue(final Option selected, final Supplier<T> defaultSupplier) {
+        Objects.requireNonNull(selected);
+        Objects.requireNonNull(defaultSupplier);
+        try {
+            return commandLine.getParsedOptionValue(selected, defaultSupplier);
+        } catch (ParseException e) {
+            logParseException(e, selected);
+            throw new ConfigurationException(format("'%s' converter '%s' does not produce a class of type %s",
+                    toString(selected),
+                    selected.getConverter().getClass().getName(),
+                    selected.getType()), e);
+        }
+    }
+
+    /**
+     * Gets the parsed option values from the command line.
+     * @param selected the option to get value for.
+     * @return the parsed value list an empty list if not found.
+     * @param <T> the expected parsed value type.
+     */
+    public <T> List<T> getParsedOptionValues(final Option selected) {
+        return this.getParsedOptionValues(selected, () -> Collections.emptyList());
+    }
+
+
+    /**
+     * Gets the parsed option values from the command line.
+     * @param selected the option to get value for.
+     * @param defaultSupplier a supplier of default value list.
+     * @return the parsed value list or default value if not found.
+     * @param <T> the expected parsed value type.
+     */
+    public <T> List<T> getParsedOptionValues(final Option selected, final Supplier<List<T>> defaultSupplier) {
+        Objects.requireNonNull(selected);
+        Objects.requireNonNull(defaultSupplier);
+        Class<? extends T> clazz = (Class<? extends T>) selected.getType();
+        List<String> strings = getOptionValues(selected);
+        if (strings.isEmpty()) {
+            return defaultSupplier.get();
+        }
+        List<T> result = new ArrayList<>();
+        for (String value : strings) {
+            try {
+                result.add((T) selected.getConverter().apply(value));
+            } catch (Throwable e) {
+                if (e instanceof Error err) {
+                    throw err;
+                }
+                throw new ConfigurationException(format("'%s' converter '%s' does not produce a class of type %s",
+                        toString(selected),
+                        selected.getConverter().getClass().getName(),
+                        selected.getType()), e);
+            }
+        }
+        return result;
     }
 
     /**
@@ -126,15 +261,15 @@ public final class ArgumentContext {
     }
 
     /**
-     * Logs a ParseException as a warning.
+     * Logs a ParseException as a warning and the exception itself as a debug.
      * @param exception the parse exception to log.
      * @param opt the option being processed.
-     * @param defaultValue The default value the option is being set to.
      */
-    public void logParseException(final ParseException exception, final Option opt, final Object defaultValue) {
-        DefaultLog.getInstance().warn(format("Invalid %s specified: %s ", opt, commandLine.getOptionValue(opt)));
-        DefaultLog.getInstance().warn(format("%s set to: %s", opt, defaultValue));
-        DefaultLog.getInstance().debug(exception);
+    public void logParseException(final ParseException exception, final Option opt) {
+        DefaultLog.getInstance().warn(format("Invalid %s specified: %s ", toString(opt), commandLine.getOptionValue(opt)));
+        if (DefaultLog.getInstance().isEnabled(Log.Level.DEBUG)) {
+            DefaultLog.getInstance().debug(exception);
+        }
     }
 
     /**
@@ -146,8 +281,8 @@ public final class ArgumentContext {
     public static String commandLineDescription(final CommandLine commandLine) {
         List<String> options = new ArrayList<>();
         for (Option opt : commandLine.getOptions()) {
-            options.add(String.format("Option[%s v:[%s]]", StringUtils.defaultIfEmpty(opt.getLongOpt(), opt.getKey()), String.join(",", opt.getValues()== null ?
-                    new String [0] : opt.getValues())));
+            options.add(String.format("Option[%s v:[%s]]", StringUtils.defaultIfEmpty(opt.getLongOpt(), opt.getKey()),
+                    String.join(",", opt.getValues() == null ? new String [0] : opt.getValues())));
         }
         return new StringBuilder()
                 .append("[ CommandLine: [ options: ")

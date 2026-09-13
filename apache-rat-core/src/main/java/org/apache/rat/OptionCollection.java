@@ -34,7 +34,6 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
@@ -159,12 +158,12 @@ public final class OptionCollection {
         }
         Arg.processLogLevel(argumentContext, BASE_OPTION_COLLECTION);
 
-        if (argumentContext.getCommandLine().hasOption(HELP)) {
+        if (argumentContext.hasOption(HELP)) {
             helpCmd.accept(opts);
             return null;
         }
 
-        if (argumentContext.getCommandLine().hasOption(Arg.HELP_LICENSES.option())) {
+        if (argumentContext.hasOption(Arg.HELP_LICENSES.option())) {
             new Licenses(createConfiguration(argumentContext), new PrintWriter(System.out, false, StandardCharsets.UTF_8)).printHelp();
             return null;
         }
@@ -193,17 +192,13 @@ public final class OptionCollection {
         try {
             argumentContext.processArgs(BASE_OPTION_COLLECTION);
             final ReportConfiguration configuration = argumentContext.getConfiguration();
-            final CommandLine commandLine = argumentContext.getCommandLine();
+            //final CommandLine commandLine = argumentContext.getCommandLine();
             Optional<Option> dirOpt = BASE_OPTION_COLLECTION.getSelected(Arg.DIR);
             dirOpt.ifPresent(opt -> {
-                try {
-                    File directoryName = commandLine.getParsedOptionValue(opt);
+                    File directoryName = argumentContext.getParsedOptionValue(opt);
                     configuration.addSource(getReportable(directoryName, configuration));
-                } catch (ParseException e) {
-                    throw new ConfigurationException("Unable to set parse " + dirOpt.get(), e);
-                }
             });
-            for (String s : commandLine.getArgs()) {
+            for (String s : argumentContext.getArgs()) {
                 Reportable reportable = getReportable(new File(s), configuration);
                 if (reportable != null) {
                     configuration.addSource(reportable);
@@ -214,7 +209,7 @@ public final class OptionCollection {
             try (PrintWriter pw = new PrintWriter(DefaultLog.getInstance().asWriter(Level.ERROR))) {
                 pw.println("Unable to create configuration: " + e.getMessage());
                 pw.println("=== Command line options ===");
-                for (Option opt : argumentContext.getCommandLine().getOptions()) {
+                for (Option opt : argumentContext.getOptions()) {
                     String[] values = opt.getValues();
                     pw.printf("   %s: %s%n", ArgumentTracker.extractKey(opt), values == null ? "" : String.join(", ", values));
                 }
