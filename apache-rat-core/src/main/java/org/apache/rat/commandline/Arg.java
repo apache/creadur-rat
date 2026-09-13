@@ -981,7 +981,8 @@ public enum Arg {
             if (values == null) {
                 // this should not happen since w should only get into this method when an option is selected and has already passed
                 // the "it has data" check.
-                String optString = String.format("Option[%s v:[%s]]", StringUtils.defaultIfEmpty(selected.getLongOpt(), selected.getKey()), String.join(",", selected.getValues()));
+                String optString = String.format("Option[%s v:[%s]]",
+                  StringUtils.defaultIfEmpty(selected.getLongOpt(), selected.getKey()), String.join(",", selected.getValues()));
                 throw new ConfigurationException(format("'%s' command line option (of '%s') did not have any values", optString,
                         ArgumentContext.commandLineDescription(commandLine)));
             }
