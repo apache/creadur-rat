@@ -38,6 +38,7 @@ import org.apache.commons.cli.OptionGroup;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.rat.ConfigurationException;
 import org.apache.rat.Defaults;
@@ -980,7 +981,8 @@ public enum Arg {
             if (values == null) {
                 // this should not happen since w should only get into this method when an option is selected and has already passed
                 // the "it has data" check.
-                throw new ConfigurationException(format("'%s' command line option (of '%s') did not have any values", selected,
+                String optString = String.format("Option[%s v:[%s]]", StringUtils.defaultIfEmpty(selected.getLongOpt(), selected.getKey()), String.join(",", selected.getValues()));
+                throw new ConfigurationException(format("'%s' command line option (of '%s') did not have any values", optString,
                         ArgumentContext.commandLineDescription(commandLine)));
             }
             T[] result = (T[]) Array.newInstance(clazz, values.length);

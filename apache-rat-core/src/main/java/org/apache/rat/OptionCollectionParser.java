@@ -114,6 +114,7 @@ public final class OptionCollectionParser<T extends UIOption<T>> {
     ArgumentContext parseCommands(final File workingDirectory, final String[] args,
                                                                        final Options options) throws RatException {
         try {
+            uiOptionCollection.resetSelected();
             ArgumentContext argumentContext = new ArgumentContext(workingDirectory, options, args);
             Arg.processLogLevel(argumentContext, uiOptionCollection);
             populateConfiguration(argumentContext);
