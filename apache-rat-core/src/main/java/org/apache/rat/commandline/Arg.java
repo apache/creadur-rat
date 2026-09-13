@@ -26,6 +26,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Predicate;
@@ -982,7 +983,7 @@ public enum Arg {
                 // this should not happen since w should only get into this method when an option is selected and has already passed
                 // the "it has data" check.
                 String optString = String.format("Option[%s v:[%s]]",
-                  StringUtils.defaultIfEmpty(selected.getLongOpt(), selected.getKey()), String.join(",", selected.getValues()));
+                  StringUtils.defaultIfEmpty(selected.getLongOpt(), selected.getKey()), String.join(",", selected.getValues() == null ? new String[0] : selected.getValues()));
                 throw new ConfigurationException(format("'%s' command line option (of '%s') did not have any values", optString,
                         ArgumentContext.commandLineDescription(commandLine)));
             }

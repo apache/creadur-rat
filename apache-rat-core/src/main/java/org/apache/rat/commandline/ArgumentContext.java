@@ -146,7 +146,8 @@ public final class ArgumentContext {
     public static String commandLineDescription(final CommandLine commandLine) {
         List<String> options = new ArrayList<>();
         for (Option opt : commandLine.getOptions()) {
-            options.add(String.format("Option[%s v:[%s]]", StringUtils.defaultIfEmpty(opt.getLongOpt(), opt.getKey()), String.join(",", opt.getValues())));
+            options.add(String.format("Option[%s v:[%s]]", StringUtils.defaultIfEmpty(opt.getLongOpt(), opt.getKey()), String.join(",", opt.getValues()== null ?
+                    new String [0] : opt.getValues())));
         }
         return new StringBuilder()
                 .append("[ CommandLine: [ options: ")
