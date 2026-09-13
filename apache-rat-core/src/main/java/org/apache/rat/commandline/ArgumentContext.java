@@ -19,6 +19,8 @@
 package org.apache.rat.commandline;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.commons.cli.AlreadySelectedException;
 import org.apache.commons.cli.CommandLine;
@@ -26,6 +28,7 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.OptionGroup;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.rat.OptionCollectionParser;
 import org.apache.rat.ReportConfiguration;
 import org.apache.rat.document.DocumentName;
@@ -132,5 +135,25 @@ public final class ArgumentContext {
         DefaultLog.getInstance().warn(format("Invalid %s specified: %s ", opt, commandLine.getOptionValue(opt)));
         DefaultLog.getInstance().warn(format("%s set to: %s", opt, defaultValue));
         DefaultLog.getInstance().debug(exception);
+    }
+
+    /**
+     * Creates a visual desciption of the CommandLine.  This used to be provided by the {@code CommandLine.toString()}
+     * method, but that has been removed.
+     * @param commandLine the command line to format.
+     * @return a String representation of the command line suitable for debugging.
+     */
+    public static String commandLineDescription(final CommandLine commandLine) {
+        List<String> options = new ArrayList<>();
+        for (Option opt : commandLine.getOptions()) {
+            options.add(String.format("Option[%s v:[%s]]", StringUtils.defaultIfEmpty(opt.getLongOpt(), opt.getKey()), String.join(",", opt.getValues())));
+        }
+        return new StringBuilder()
+                .append("[ CommandLine: [ options: ")
+                .append(options)
+                .append(" ] [ args: ")
+                .append(commandLine.getArgList().toString())
+                .append(" ] ]")
+                .toString();
     }
 }

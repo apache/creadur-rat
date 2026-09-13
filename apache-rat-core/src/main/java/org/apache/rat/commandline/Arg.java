@@ -980,7 +980,8 @@ public enum Arg {
             if (values == null) {
                 // this should not happen since w should only get into this method when an option is selected and has already passed
                 // the "it has data" check.
-                throw new ConfigurationException(format("'%s' command line option did not have any values", selected));
+                throw new ConfigurationException(format("'%s' command line option (of '%s') did not have any values", selected,
+                        ArgumentContext.commandLineDescription(commandLine)));
             }
             T[] result = (T[]) Array.newInstance(clazz, values.length);
             for (int i = 0; i < result.length; i++) {

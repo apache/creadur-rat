@@ -55,6 +55,7 @@ import javax.xml.xpath.XPathFactory;
 import org.apache.commons.io.FileUtils;
 import org.apache.rat.api.Document.Type;
 import org.apache.rat.api.RatException;
+import org.apache.rat.commandline.Arg;
 import org.apache.rat.commandline.ArgumentContext;
 import org.apache.rat.document.FileDocument;
 import org.apache.rat.document.DocumentName;
@@ -106,6 +107,7 @@ public class ReporterTest {
     @BeforeAll
     static void setUp() throws IOException {
         tempPath = Files.createTempDirectory("ReporterTest");
+        Arg.reset();
     }
 
     @AfterAll
