@@ -239,7 +239,7 @@ public final class ArgumentContext {
         for (String value : strings) {
             try {
                 result.add((T) selected.getConverter().apply(value));
-            } catch (Throwable e) {
+            } catch (Throwable e) { // NOSONAR - need to catch Throwable here due to CommonsCLI's API
                 if (e instanceof Error err) {
                     throw err;
                 }
