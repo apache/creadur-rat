@@ -19,4 +19,4 @@
 /**
  * Custom file processors to handles exclusions defined in various formats.
  */
-package org.apache.rat.config.exclusion.fileProcessors;
+package org.apache.rat.config.exclusion.fileprocessors;

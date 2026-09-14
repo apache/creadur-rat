@@ -70,7 +70,10 @@ in order to be properly linked in site reports.
     <release version="1.0.0-SNAPSHOT" date="xxxx-yy-zz" description="Current SNAPSHOT - release to be done">
       <action issue="RAT-532" type="add" dev="pottlinger">
         Update to Tika 4.0.0: new charset detection logic in Tika returns different values compared to 3.x before, such as windows-1252 instead of ISO-8859-1.
-     </action>
+      </action>
+      <action issue="RAT-541" type="add" dev="claudenw">
+        Refactor UIOption, AntOption and MavenOption to improve multi-threaded usage and provide a clearer separation of responsibilities.
+      </action>
       <action issue="RAT-574" type="add" dev="claudenw" due-to="Romain Manni-Bucau">
         Fix recursive regex walking in CopyrightMatcher by introducing a threshold of 1000 characters instead of reading the whole rest of the input file.
       </action>
