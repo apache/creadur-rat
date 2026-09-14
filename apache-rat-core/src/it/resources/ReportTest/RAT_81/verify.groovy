@@ -32,7 +32,8 @@ NodeList nodeList = XmlUtils.getNodeList(doc, xPath, "/rat-report/resource[@name
 assertEquals(1, nodeList.getLength())
 node = nodeList.item(0)
 attributes = node.getAttributes()
-assertEquals("IBM500", attributes.getNamedItem("encoding").getNodeValue())
+// pre-Tika4: recognized as IBM500 instead of IBM1047
+assertEquals("IBM1047", attributes.getNamedItem("encoding").getNodeValue())
 assertEquals("text/plain", attributes.getNamedItem("mediaType").getNodeValue())
 assertEquals("STANDARD", attributes.getNamedItem("type").getNodeValue())
 nodeList = XmlUtils.getNodeList(node, xPath, "license")
@@ -45,7 +46,7 @@ nodeList = XmlUtils.getNodeList(doc, xPath, "/rat-report/resource[@name='/UTF8.t
 assertEquals(1, nodeList.getLength())
 node = nodeList.item(0)
 attributes = node.getAttributes()
-assertEquals("ISO-8859-1", attributes.getNamedItem("encoding").getNodeValue())
+assertEquals("windows-1252", attributes.getNamedItem("encoding").getNodeValue())
 assertEquals("text/plain", attributes.getNamedItem("mediaType").getNodeValue())
 assertEquals("STANDARD", attributes.getNamedItem("type").getNodeValue())
 nodeList = XmlUtils.getNodeList(node, xPath, "license")
