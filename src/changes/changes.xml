@@ -68,6 +68,9 @@ in order to be properly linked in site reports.
     </release>
     -->
     <release version="1.0.0-SNAPSHOT" date="xxxx-yy-zz" description="Current SNAPSHOT - release to be done">
+      <action issue="RAT-541" type="add" dev="claudenw">
+        Refactor UIOption, AntOption and MavenOption to improve multi-threaded usage and provide a clearer separation of responsibilities.
+      </action>
       <action issue="RAT-553" type="add" dev="pottlinger" due-to="Guillaume Nodet">
         Fix NPE with parallel builds in SCM ignore parsers.
       </action>
