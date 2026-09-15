@@ -88,50 +88,6 @@ class OptionCollectionParserTest {
     }
 
     /**
-     * A UIOption implementation to support testing.
-     */
-    static class TestOption extends UIOption<TestOption> {
-
-        /**
-         * Constructor.
-         *
-         * @param optionCollection the collection the UIOption belongs to.
-         * @param option           The CLI option
-         */
-        protected <C extends UIOptionCollection<TestOption>> TestOption(TestOptionBuilder builder) {
-            super(builder);
-        }
-
-        @Override
-        protected String cleanupName(Option option) {
-            return "clean" + option.toString();
-        }
-
-        @Override
-        public String getExample() {
-            return "example " + option.toString();
-        }
-
-        @Override
-        public String getText() {
-            return "text for " + option.toString();
-        }
-
-        public static class TestOptionBuilder extends UIOption.Builder<TestOption, TestOptionBuilder> {
-
-            @Override
-            protected Function<Option, CasedString> getNameFactory() {
-                return ArgumentTracker::extractName;
-            }
-
-            @Override
-            protected TestOption doBuild() {
-                return new TestOption(this);
-            }
-        }
-    }
-
-    /**
      * A UIOptionCollection implementation for testing. Contains TestOptions.
      */
     static class TestOptionCollection extends UIOptionCollection<TestOption> {

@@ -37,7 +37,7 @@ import static java.lang.String.format;
 /**
  * A description of a component.
  */
-public final class Description {
+public class Description {
     /** The type of component this describes */
     private final ComponentType type;
     /**

@@ -59,7 +59,7 @@ public abstract class ChildContainerBuilder extends AbstractBuilder {
      */
     public AbstractBuilder setResource(final String resourceName) {
         // this method is called by reflection
-        URL url = AbstractBuilder.class.getResource(resourceName);
+        URL url = this.getClass().getResource(resourceName);
         if (url == null) {
             throw new ConfigurationException("Unable to read matching text file: " + resourceName);
         }

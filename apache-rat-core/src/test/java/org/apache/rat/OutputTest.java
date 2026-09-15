@@ -71,11 +71,7 @@ class OutputTest {
 
     @AfterAll
     static void teardown() {
-        try {
-            FileUtils.delete(tempPath.toFile());
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        FileUtils.delete(tempPath.toFile());
     }
 
     @Test

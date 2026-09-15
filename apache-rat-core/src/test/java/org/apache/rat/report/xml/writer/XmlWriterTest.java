@@ -16,8 +16,11 @@
  * specific language governing permissions and limitations      *
  * under the License.                                           *
  */ 
-package org.apache.rat.report.xml.writer;
+package org.apache.rat.report.xml.writer.impl.base;
 
+import org.apache.rat.report.xml.writer.InvalidXmlException;
+import org.apache.rat.report.xml.writer.OperationNotAllowedException;
+import org.apache.rat.report.xml.writer.XmlWriter;
 import org.apache.rat.testhelpers.XmlUtils;
 import org.junit.jupiter.api.Test;
 import org.w3c.dom.Document;

@@ -66,9 +66,10 @@ myArgs[3] = src.getAbsolutePath()
 
 ReportConfiguration configuration = OptionCollection.parseCommands(src, myArgs, { opts -> })
 assertNotNull(configuration)
-configuration.validate()
+configuration.validate(DefaultLog.getInstance().&error)
 Reporter reporter = new Reporter(configuration)
-ClaimStatistic statistic = reporter.execute().getStatistic()
+Reporter.Output output = reporter.execute()
+ClaimStatistic statistic = output.getStatistic()
 
 assertEquals(3, statistic.getCounter(ClaimStatistic.Counter.APPROVED))
 assertEquals(2, statistic.getCounter(ClaimStatistic.Counter.ARCHIVES))

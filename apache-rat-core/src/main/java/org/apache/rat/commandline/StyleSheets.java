@@ -89,15 +89,12 @@ public enum StyleSheets {
      * @param name the short name for or the path to a style sheet.
      * @return the IODescriptor for the style sheet.
      */
-    public static ReportConfiguration.IODescriptor<InputStream> getStyleSheet(final String name, final DocumentName workingDirectory) {
+    public static ReportConfiguration.IODescriptor<InputStream> getStyleSheet(final String name) {
         URL url = StyleSheets.class.getClassLoader().getResource(format("org/apache/rat/%s.xsl", name));
         if (url != null) {
             return new ReportConfiguration.IODescriptor<>(name, url::openStream);
         }
-        // normalize the stylesheet name and resolve it against the working directory so that relative names are resolved
-        // on the workingDirectory but fully qualified names are resolved against the root directory.
-        String normalizedName = workingDirectory.fsInfo().normalize(name);
-        Path p = Paths.get(workingDirectory.getName()).resolve(normalizedName);
+        Path p = Paths.get(name);
         if (p.toFile().exists()) {
             return new ReportConfiguration.IODescriptor<>(name, () -> Files.newInputStream(p));
         }

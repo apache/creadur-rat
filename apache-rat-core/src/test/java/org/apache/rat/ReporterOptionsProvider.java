@@ -283,7 +283,7 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
             arg[0] = "Unapproved:1";
             config = generateConfig(ImmutablePair.of(option, arg));
             reporter = new Reporter(config);
-            output  = reporter.execute();
+            output = reporter.execute();
             validator = config.getClaimValidator();
             assertThat(validator.listIssues(output.getStatistic())).isEmpty();
         });
@@ -510,13 +510,12 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
             Reporter reporter = new Reporter(config);
             Reporter.Output output = reporter.execute();
             assertThat(output.getStatistic().getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(4);
-
             assertThat(output.getStatistic().getCounter(ClaimStatistic.Counter.IGNORED)).isEqualTo(includesRatDir ? 1 : 0);
 
             // verify exclude removes most files.
             config = generateConfig(ImmutablePair.of(excludeOption, EXCLUDE_ARGS));
             reporter = new Reporter(config);
-            output  = reporter.execute();
+            output = reporter.execute();
             assertThat(output.getStatistic().getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(1);
             // .gitignore is ignored by default as it is hidden but not counted
             assertThat(output.getStatistic().getCounter(ClaimStatistic.Counter.IGNORED)).isEqualTo(includesRatDir ? 4 : 3);
@@ -524,7 +523,7 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
             // verify include put them back
             config = generateConfig(ImmutablePair.of(option, args), ImmutablePair.of(excludeOption, EXCLUDE_ARGS));
             reporter = new Reporter(config);
-            output  = reporter.execute();
+            output = reporter.execute();
             assertThat(output.getStatistic().getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(3);
             // .gitignore is ignored by default as it is hidden but not counted
             assertThat(output.getStatistic().getCounter(ClaimStatistic.Counter.IGNORED)).isEqualTo(includesRatDir ? 2 : 1 );
@@ -584,7 +583,7 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
 
             config = generateConfig(excludes, ImmutablePair.of(option, args));
             reporter = new Reporter(config);
-            output  = reporter.execute();
+            output = reporter.execute();
             assertThat(output.getStatistic().getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(7);
             assertThat(output.getStatistic().getCounter(ClaimStatistic.Counter.IGNORED)).isEqualTo(1);
         });
@@ -609,7 +608,7 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
 
             config = generateConfig(ImmutablePair.of(option, new String[]{inputFile.getAbsolutePath()}));
             reporter = new Reporter(config);
-            output  = reporter.execute();
+            output = reporter.execute();
             assertThat(output.getStatistic().getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(1);
             assertThat(output.getStatistic().getCounter(ClaimStatistic.Counter.IGNORED)).isZero();
         });
@@ -641,7 +640,7 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
 
             config = addCatzLicense(generateConfig(arg1));
             reporter = new Reporter(config);
-            output  = reporter.execute();
+            output = reporter.execute();
             assertThat(output.getStatistic().getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(1);
             assertThat(output.getStatistic().getCounter(ClaimStatistic.Counter.APPROVED)).isEqualTo(1);
             assertThat(output.getStatistic().getCounter(ClaimStatistic.Counter.UNAPPROVED)).isZero();
@@ -678,7 +677,7 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
 
             config = generateConfig(arg1);
             reporter = new Reporter(config);
-            output  = reporter.execute();
+            output = reporter.execute();
             assertThat(output.getStatistic().getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(1);
             assertThat(output.getStatistic().getCounter(ClaimStatistic.Counter.APPROVED)).isZero();
             assertThat(output.getStatistic().getCounter(ClaimStatistic.Counter.UNAPPROVED)).isEqualTo(1);
@@ -718,7 +717,7 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
 
             config = generateConfig(arg1);
             reporter = new Reporter(config);
-            output  = reporter.execute();
+            output = reporter.execute();
             assertThat(output.getStatistic().getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(2);
             assertThat(output.getStatistic().getCounter(ClaimStatistic.Counter.APPROVED)).isEqualTo(2);
             assertThat(output.getStatistic().getCounter(ClaimStatistic.Counter.UNAPPROVED)).isZero();
@@ -727,7 +726,7 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
 
             config = generateConfig(arg1, arg2);
             reporter = new Reporter(config);
-            output  = reporter.execute();
+            output = reporter.execute();
             assertThat(output.getStatistic().getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(2);
             assertThat(output.getStatistic().getCounter(ClaimStatistic.Counter.APPROVED)).isEqualTo(1);
             assertThat(output.getStatistic().getCounter(ClaimStatistic.Counter.UNAPPROVED)).isEqualTo(1);
@@ -806,7 +805,7 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
 
             config = generateConfig(arg1);
             reporter = new Reporter(config);
-            output  = reporter.execute();
+            output = reporter.execute();
             assertThat(output.getStatistic().getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(2);
             assertThat(output.getStatistic().getCounter(ClaimStatistic.Counter.APPROVED)).isEqualTo(1);
             assertThat(output.getStatistic().getCounter(ClaimStatistic.Counter.UNAPPROVED)).isEqualTo(1);
@@ -946,7 +945,7 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
             String actualText = baos.toString(StandardCharsets.UTF_8);
             TextUtils.assertContainsExactly(1, "<resource encoding=\"ISO-8859-1\" mediaType=\"text/plain\" name=\"/stylesheet\" type=\"STANDARD\">", actualText);
 
-            try (InputStream expected = StyleSheets.getStyleSheet("xml", null).ioSupplier().get();
+            try (InputStream expected = StyleSheets.getStyleSheet("xml").ioSupplier().get();
                  InputStream actual = config.getStyleSheet().get()) {
                 assertThat(IOUtils.contentEquals(expected, actual)).as("'xml' does not match").isTrue();
             }

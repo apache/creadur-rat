@@ -460,7 +460,7 @@ public class Report extends BaseAntTask {
      */
     protected ReportConfiguration validate(final ReportConfiguration cfg) {
         try {
-            cfg.validate();
+            cfg.validate(s -> log(s, Project.MSG_WARN));
         } catch (ConfigurationException e) {
             throw new BuildException(e.getMessage(), e.getCause());
         }
