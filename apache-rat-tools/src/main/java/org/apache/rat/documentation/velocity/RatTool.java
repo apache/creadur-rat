@@ -84,22 +84,24 @@ public class RatTool {
     // TODO remove this when velocity-tools 3.3 is available // NOSONAR
     private static final String[] APT_CHARS = charParser("\\~=-+*[]<>{}");
 
-    /** The license factory this tool uses. */
+    /**
+     * The license factory this tool uses.
+     */
     private final LicenseSetFactory licenseSetFactory;
 
     /**
-     * The Client option instance
+     * The client option instance.
      */
     // visible for testing
     private final CLIOptionCollection cliOptions = new CLIOptionCollection();
 
     /**
-     * The ANT option instance.
+     * The Ant option instance.
      */
     private final AntOptionCollection antOptions = new AntOptionCollection();
 
     /**
-     * The Maven option instance
+     * The Maven option instance.
      */
     private final MavenOptionCollection mavenOptions = new MavenOptionCollection();
 
@@ -200,8 +202,8 @@ public class RatTool {
     }
 
     /**
-     * Gets the set of Matchers.
-     * @return the set of Matchers.
+     * Gets the set of matchers.
+     * @return the set of matchers.
      */
     public Set<Matcher> matchers() {
         Set<Matcher> documentationSet = new TreeSet<>(Comparator.comparing(Matcher::getName));

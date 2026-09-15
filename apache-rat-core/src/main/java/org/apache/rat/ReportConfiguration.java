@@ -38,6 +38,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.SortedSet;
+import java.util.function.Consumer;
 import java.util.stream.Stream;
 
 import org.apache.commons.collections4.set.UnmodifiableSortedSet;
@@ -901,15 +902,20 @@ public class ReportConfiguration {
 
     /**
      * Validates that the configuration is valid.
+     * @param logger String consumer to log warning messages to.
      * @throws ConfigurationException on configuration error.
      */
-    public void validate() {
+    public void validate(final Consumer<String> logger) {
         if (!hasSource()) {
             String msg = "At least one source must be specified";
-            DefaultLog.getInstance().error(msg);
+            logger.accept(msg);
             throw new ConfigurationException(msg);
         }
-        licenseSetFactory.validate();
+        if (licenseSetFactory.getLicenses(LicenseFilter.ALL).isEmpty()) {
+            String msg = "You must specify at least one license";
+            logger.accept(msg);
+            throw new ConfigurationException(msg);
+        }
     }
 
     /**
@@ -1030,7 +1036,7 @@ public class ReportConfiguration {
             standardProcessing = Processing.valueOf(attributes.get("standardProcessing"));
             String styleName = attributes.get("stylesheet");
             if (styleName != null) {
-                styleSheet = StyleSheets.getStyleSheet(styleName, workingDirectory);
+                styleSheet = StyleSheets.getStyleSheet(styleName);
             }
             String outputName = attributes.get("output");
             if (outputName != null) {

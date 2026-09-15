@@ -52,14 +52,14 @@ class OptionCollectionParserTest {
     void parseCommands() throws RatException {
         String[] args = {"arg1", "arg2"};
         ArgumentContext ctxt = underTest.parseCommands(testPath.toFile(), args);
-        assertThat(ctxt.getCommandLine().getArgList()).containsExactly(args);
+        assertThat(ctxt.getArgs()).containsExactly(args);
 
         String[] cmds = new String[] {"--input-exclude-size", "5", "arg1", "arg2"};
         ctxt = underTest.parseCommands(testPath.toFile(), cmds);
         StringBuilder sb = new StringBuilder();
         ctxt.getConfiguration().reportExclusions(sb);
         assertThat(sb.toString()).contains("Excluding File size < 5 bytes.");
-        assertThat(ctxt.getCommandLine().getArgList()).containsExactly(args);
+        assertThat(ctxt.getArgs()).containsExactly(args);
     }
 
     @Test
@@ -86,50 +86,6 @@ class OptionCollectionParserTest {
         assertThatThrownBy(() -> underTest.printHelp(ctxt))
                 .isInstanceOf(RatException.class)
                 .hasMessageContaining("Unable to print help: Bad Supplier");
-    }
-
-    /**
-     * A UIOption implementation to support testing.
-     */
-    static class TestOption extends UIOption<TestOption> {
-
-        /**
-         * Constructor.
-         *
-         * @param optionCollection the collection the UIOption belongs to.
-         * @param option           The CLI option
-         */
-        protected <C extends UIOptionCollection<TestOption>> TestOption(TestOptionBuilder builder) {
-            super(builder);
-        }
-
-        @Override
-        protected String cleanupName(Option option) {
-            return "clean" + option.toString();
-        }
-
-        @Override
-        public String getExample() {
-            return "example " + option.toString();
-        }
-
-        @Override
-        public String getText() {
-            return "text for " + option.toString();
-        }
-
-        public static class TestOptionBuilder extends UIOption.Builder<TestOption, TestOptionBuilder> {
-
-            @Override
-            protected Function<Option, CasedString> getNameFactory() {
-                return ArgumentTracker::extractName;
-            }
-
-            @Override
-            protected TestOption doBuild() {
-                return new TestOption(this);
-            }
-        }
     }
 
     /**

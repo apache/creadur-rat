@@ -177,10 +177,11 @@ public class XsdGenerator {
     }
 
     private void writeMatcherElements() throws IOException {
+        MatcherBuilderTracker tracker = MatcherBuilderTracker.instance();
         writer.open(Type.ELEMENT, "name", XMLConfig.MATCHER, "abstract", "true").close(Type.ELEMENT);
 
         // matchers
-        for (Class<?> clazz : MatcherBuilderTracker.instance().getClasses()) {
+        for (Class<?> clazz : tracker.getClasses()) {
             Description desc = DescriptionBuilder.buildMap(clazz);
             if (desc != null) {
                 boolean hasResourceAttr = false;

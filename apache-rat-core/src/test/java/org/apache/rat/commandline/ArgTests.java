@@ -31,7 +31,7 @@ import java.nio.file.Path;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class ArgTests {
-    private CLIOptionCollection cliOptionCollection = new CLIOptionCollection();
+    private final CLIOptionCollection cliOptionCollection = new CLIOptionCollection();
 
     @ParameterizedTest(name = "{0}")
     @ValueSource(strings = { "rat.txt", "./rat.txt", "/rat.txt", "target/rat.test" })

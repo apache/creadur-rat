@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.rat.config.exclusion.fileProcessors;
+package org.apache.rat.config.exclusion.fileprocessors;
 
 import java.util.Optional;
 import java.util.function.Consumer;

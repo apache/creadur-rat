@@ -45,7 +45,7 @@ public final class MavenOptionCollection extends UIOptionCollection<MavenOption>
     }
 
     /**
-     * Gets the Map of renamed Options indexed by original option name.
+     * Gets the map of renamed Options indexed by original option name.
      * @return the map of renamed Options indexed by original option name.
      */
     public static Map<String, String> getRenameMap() {

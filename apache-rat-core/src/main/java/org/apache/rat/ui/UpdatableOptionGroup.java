@@ -48,7 +48,7 @@ public final class UpdatableOptionGroup extends OptionGroup {
 
     /**
      * Disable an option in the group.
-     * @param option The option to disable.
+     * @param option the option to disable.
      */
     public void disableOption(final Option option) {
         disabledOptions.add(option);

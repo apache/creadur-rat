@@ -42,7 +42,7 @@ import org.apache.commons.cli.ParseException;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
 import org.apache.commons.csv.QuoteMode;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.rat.CLIOptionCollection;
 import org.apache.rat.OptionCollection;
 import org.apache.rat.documentation.options.AntOptionCollection;
 import org.apache.rat.documentation.options.MavenOptionCollection;
@@ -81,25 +81,27 @@ public final class Naming {
             .addOption(INCLUDE_DEPRECATED)
             .addOption(WIDTH);
 
-    /** The porsed command line */
+    /** The parsed command line */
     private final CommandLine cl;
     /** The width of the output */
-    private final int width;
+    private final int outputWidth;
     /** The Maven options */
     private final MavenOptionCollection mavenCollection = new MavenOptionCollection();
     /** The Ant options */
     private final AntOptionCollection antCollection = new AntOptionCollection();
+    /** The CLI options */
+    private final CLIOptionCollection cliCollection = new CLIOptionCollection();
     /** The filter to include only non-deprecated long options */
     private final Predicate<Option> filter;
     /** The columns to display */
     private final List<String> columns;
-    /** if {@code true} then show Maven options */
+    /** If {@code true} then show Maven options */
     private final boolean showMaven;
-    /** if {@code true} then show Ant options */
+    /** If {@code true} then show Ant options */
     private final boolean showAnt;
-    /** if {@code true} then show CLI options */
+    /** If {@code true} then show CLI options */
     private final boolean addCLI;
-    /** if {@code true} then include deprecated options in output. */
+    /** If {@code true} then include deprecated options in output. */
     private final boolean includeDeprecated;
     /** The function to display the description of the option */
     private final Function<Option, String> descriptionFunction;
@@ -128,7 +130,7 @@ public final class Naming {
     private Naming(final String[] args) throws ParseException {
         cl = DefaultParser.builder().build().parse(OPTIONS, args);
 
-        width = Math.max(cl.getParsedOptionValue(WIDTH, AbstractHelp.HELP_WIDTH), AbstractHelp.HELP_WIDTH);
+        outputWidth = Math.max(cl.getParsedOptionValue(WIDTH, AbstractHelp.HELP_WIDTH), AbstractHelp.HELP_WIDTH);
         showMaven = cl.hasOption(MAVEN);
         showAnt = cl.hasOption(ANT);
         addCLI = cl.hasOption(CLI);
@@ -148,38 +150,12 @@ public final class Naming {
         columnsBuilder.add("Description");
         columnsBuilder.add("Argument Type");
         columns = columnsBuilder;
-
         if (addCLI || !showAnt && !showMaven) {
-            descriptionFunction = o -> {
-                StringBuilder desc = new StringBuilder();
-                if (o.isDeprecated()) {
-                    desc.append("[").append(o.getDeprecated().toString()).append("] ");
-                }
-                return desc.append(StringUtils.defaultIfEmpty(o.getDescription(), "")).toString();
-            };
+            descriptionFunction = cliCollection::getDescription;
         } else if (showAnt) {
-            descriptionFunction = o -> {
-                StringBuilder desc = new StringBuilder();
-                antCollection.getMappedOption(o).ifPresent(
-                        antOption -> {
-                            if (antOption.isDeprecated()) {
-                                desc.append("[").append(antOption.getDeprecated()).append("] ");
-                            }
-                            desc.append(StringUtils.defaultIfEmpty(antOption.getDescription(), ""));
-                        });
-                return desc.toString();
-            };
+            descriptionFunction = antCollection::getDescription;
         } else {
-            descriptionFunction = o -> {
-                StringBuilder desc = new StringBuilder();
-                mavenCollection.getMappedOption(o).ifPresent(mavenOption -> {
-                    if (mavenOption.isDeprecated()) {
-                        desc.append("[").append(mavenOption.getDeprecated()).append("] ");
-                    }
-                    desc.append(StringUtils.defaultIfEmpty(mavenOption.getDescription(), ""));
-                });
-                return desc.toString();
-            };
+            descriptionFunction = mavenCollection::getDescription;
         }
     }
 
@@ -193,7 +169,6 @@ public final class Naming {
             }
         }
     }
-
 
     private List<String> fillColumns(final Option option) {
         List<String> columnsBuilder = new ArrayList<>();
@@ -214,8 +189,23 @@ public final class Naming {
         }
 
         columnsBuilder.add(descriptionFunction.apply(option));
-        columnsBuilder.add(option.hasArgName() ? option.getArgName() : option.hasArgs() ? "Strings" : option.hasArg() ? "String" : "-- none --");
+        columnsBuilder.add(getOptionArgumentName(option));
         return columnsBuilder;
+    }
+
+    /**
+     * Extracts the option argument name for the documentation.
+     * @param option the option to extract the argument name from.
+     * @return the argument name.
+     */
+    private String getOptionArgumentName(final Option option) {
+        if (option.hasArgName()) {
+            return option.getArgName();
+        }
+        if (option.hasArgs()) {
+            return "Strings";
+        }
+        return option.hasArg() ? "String" : "-- none --";
     }
 
     private void printCSV(final Appendable underWriter) throws IOException {
@@ -259,7 +249,7 @@ public final class Naming {
         return columnWidth;
     }
 
-    private void printText(final Appendable underWriter) throws IOException {
+    private void printText(final Appendable appendable) throws IOException {
         List<List<String>> page = new ArrayList<>();
 
         int columnCount = columns.size();
@@ -270,11 +260,11 @@ public final class Naming {
                 page.add(fillColumns(option));
             }
         }
-        int[] columnWidth = calculateColumnWidth(width, columnCount, page);
+
+        int[] columnWidth = calculateColumnWidth(outputWidth, columnCount, page);
         HelpFormatter helpFormatter;
         helpFormatter = new HelpFormatter.Builder().get();
-        helpFormatter.setWidth(width);
-
+        helpFormatter.setWidth(outputWidth);
 
         List<Deque<String>> entries = new ArrayList<>();
         CharArrayWriter cWriter = new CharArrayWriter();
@@ -297,26 +287,36 @@ public final class Naming {
                 entries.add(entryLines);
                 cWriter.reset();
             }
-            // print the entries by printing the items from the queues until all queues are empty.
-            boolean cont = true;
-            while (cont) {
-                cont = false;
-                for (int columnNumber = 0; columnNumber < entries.size(); columnNumber++) {
-                    Deque<String> queue = entries.get(columnNumber);
-                    if (queue.isEmpty()) {
-                        underWriter.append(AbstractHelp.createPadding(columnWidth[columnNumber] + 2));
-                    } else {
-                        String ln = queue.pop();
-                        underWriter.append(ln);
-                        underWriter.append(AbstractHelp.createPadding(columnWidth[columnNumber] - ln.length() + 2));
-                        if (!queue.isEmpty()) {
-                            cont = true;
-                        }
+            printLines(entries, appendable, columnWidth);
+            appendable.append(System.lineSeparator());
+        }
+    }
+
+    /**
+     * Prints the entries by printing the items from the queues until all queues are empty.
+     *
+     * @param entries the list queues of text for each column.
+     * @param appendable the appendable to write the text to.
+     * @param columnWidth the width of the columns.
+     */
+    private void printLines(final List<Deque<String>> entries, final Appendable appendable, final int[] columnWidth) throws IOException {
+        boolean cont = true;
+        while (cont) {
+            cont = false;
+            for (int columnNumber = 0; columnNumber < entries.size(); columnNumber++) {
+                Deque<String> queue = entries.get(columnNumber);
+                if (queue.isEmpty()) {
+                    appendable.append(AbstractHelp.createPadding(columnWidth[columnNumber] + 2));
+                } else {
+                    String ln = queue.pop();
+                    appendable.append(ln);
+                    appendable.append(AbstractHelp.createPadding(columnWidth[columnNumber] - ln.length() + 2));
+                    if (!queue.isEmpty()) {
+                        cont = true;
                     }
                 }
-                underWriter.append(System.lineSeparator());
             }
-            underWriter.append(System.lineSeparator());
+            appendable.append(System.lineSeparator());
         }
     }
 }

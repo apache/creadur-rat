@@ -30,7 +30,6 @@ import java.nio.file.Path;
 import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
-
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.lang3.tuple.Pair;
@@ -43,7 +42,6 @@ import org.apache.rat.test.utils.OptionFormatter;
 import org.apache.rat.testhelpers.TestingLog;
 import org.apache.rat.utils.CasedString;
 import org.apache.rat.utils.DefaultLog;
-import org.apache.rat.utils.FileUtils;
 import org.apache.rat.utils.Log;
 import org.apache.rat.walker.ArchiveWalker;
 import org.apache.rat.walker.DirectoryWalker;

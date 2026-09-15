@@ -341,20 +341,15 @@ public class GeneratedReportTest {
         }
     }
 
-    private static class AntTestListener implements BuildListener {
-        private final int logLevel;
-        private final StringBuilder logBuffer;
-        private final StringBuilder fullLogBuffer;
-
-        /**
-         * Constructs a test listener which will ignore log events
-         * above the given level.
-         */
-        public AntTestListener(String name, StringBuilder fullLogBuffer, int logLevel) {
-            this.logBuffer = new StringBuilder();
-            this.fullLogBuffer = fullLogBuffer;
-            this.logLevel = logLevel;
-        }
+    private record AntTestListener(int logLevel, StringBuilder logBuffer,
+                                   StringBuilder fullLogBuffer) implements BuildListener {
+            /**
+             * Constructs a test listener which will ignore log events
+             * above the given level.
+             */
+            public AntTestListener(String name, StringBuilder fullLogBuffer, int logLevel) {
+                this(logLevel, new StringBuilder(), fullLogBuffer);
+            }
 
         /**
          * Fired before any targets are started.

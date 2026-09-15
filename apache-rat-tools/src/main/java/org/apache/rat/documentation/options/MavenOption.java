@@ -30,11 +30,13 @@ import org.apache.rat.utils.CasedString;
 import static java.lang.String.format;
 
 /**
- * A representation of a Maven option based on an Option.
+ * A representation of a Maven option based on an option.
  */
 public final class MavenOption extends UIOption<MavenOption> {
 
-    /** The format to start an XML entity */
+    /**
+     * The format to start an XML entity.
+     */
     private static final String XML_FMT = "<%s>";
 
     /**
@@ -62,7 +64,7 @@ public final class MavenOption extends UIOption<MavenOption> {
     @Override
     protected String cleanupName(final Option option) {
         // only parse the option if we need to.
-        return option == this.option ? format(XML_FMT, this.name) : format(XML_FMT,
+        return format(XML_FMT, option == this.option ? this.name :
                 MavenOptionBuilder.createName(optionCollection.rename(option)));
     }
 
@@ -119,7 +121,7 @@ public final class MavenOption extends UIOption<MavenOption> {
         // the camel case name for this option.
         String camelName = name.toCase(CasedString.StringCase.CAMEL);
         if (camelName == null) {
-            throw new ConfigurationException("Name can not be null");
+            throw new ConfigurationException("Name must not be null");
         }
         String args = option.hasArg() ? "String" : "boolean";
         if (multiple) {
@@ -136,7 +138,7 @@ public final class MavenOption extends UIOption<MavenOption> {
 
     /**
      * Creates the {@code @Parameter} annotation for this option.
-     * @param camelName The camel cased name for this option.
+     * @param camelName the camel cased name for this option.
      * @return the string that is the parameter annotation.
      */
     public String getParameterAnnotation(final String camelName) {

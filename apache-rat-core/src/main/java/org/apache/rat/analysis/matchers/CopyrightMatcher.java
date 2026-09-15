@@ -73,6 +73,14 @@ public final class CopyrightMatcher extends AbstractHeaderMatcher {
     private static final String TWO_PART = "\\W+((" + COPYRIGHT_SYMBOL_DEFN + ")\\W+)?%s,?\\W+%s";
     /** Format string to build a pattern to match two dates */
     private static final String DOUBLE_DATE_FMT = "%s\\W*-\\W*%s";
+    /**
+     * The maximum number of characters following the "copyright" keyword that are
+     * inspected when looking for a date/owner. The date and owner immediately
+     * follow the keyword, and bounding the search prevents the regex engine from
+     * backtracking over an arbitrarily large header (which can hang RAT on files
+     * like large YAML documents).
+     */
+    private static final int MAX_COPYRIGHT_MATCH_LENGTH = 1000;
     /** String to build a pattern to match an arbitrary date (year) */
     private static final String ARBITRARY_DATE = "[0-9]{4}";
     /** The built Pattern for matching "Copyright date owner" */
@@ -203,13 +211,23 @@ public final class CopyrightMatcher extends AbstractHeaderMatcher {
             Matcher matcher = COPYRIGHT_PATTERN.matcher(headers.raw());
             if (matcher.find()) {
                 String buffer = headers.raw().substring(matcher.end());
+                // The date/owner must immediately follow the "copyright" keyword. Use
+                // lookingAt() (anchored to the start of the buffer) rather than find()
+                // so the regex engine does not re-scan the entire (potentially large)
+                // raw header looking for a match, which can cause catastrophic
+                // backtracking on files with many otherwise non-matching lines.
+                // Additionally bound the inspected region so any single match attempt
+                // cannot scan an unbounded amount of header data.
+                if (buffer.length() > MAX_COPYRIGHT_MATCH_LENGTH) {
+                    buffer = buffer.substring(0, MAX_COPYRIGHT_MATCH_LENGTH);
+                }
                 matcher = dateOwnerPattern.matcher(buffer);
-                if (matcher.find() && matcher.start() == 0) {
+                if (matcher.lookingAt()) {
                     return true;
                 }
                 if (ownerDatePattern != null) {
                     matcher = ownerDatePattern.matcher(buffer);
-                    return matcher.find() && matcher.start() == 0;
+                    return matcher.lookingAt();
                 }
             }
         }

@@ -113,7 +113,6 @@ class ArgumentTrackerTest {
     @Test
     void invalidAbstractOption() {
         Option option = Option.builder().longOpt("notAValidOption").build();
-
         TestingUIOption invalidOption = new TestingUIOption.TestingUIOptionBuilder()
                 .optionCollection(testingUIOptionCollection).option(option).build();
         underTest.addArg(invalidOption, "foo");

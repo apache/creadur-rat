@@ -160,7 +160,7 @@ public abstract class AbstractHelp {
                 if (option.hasArg()) {
                     final String argName = option.getArgName();
                     if (argName != null && argName.isEmpty()) {
-                        // if the option has a blank argname
+                        // if the option has a blank argName
                         optBuf.append(' ');
                     } else {
                         optBuf.append(option.hasLongOpt() ? helpFormatter.getLongOptSeparator() : " ");

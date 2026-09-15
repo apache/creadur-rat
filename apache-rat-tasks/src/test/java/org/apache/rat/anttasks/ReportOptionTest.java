@@ -96,7 +96,7 @@ public class ReportOptionTest  {
     }
 
     final static class AntOptionsProvider extends AbstractConfigurationOptionsProvider implements ArgumentsProvider {
-        private AntOptionCollection antOptionCollection = new AntOptionCollection();
+        private final AntOptionCollection antOptionCollection = new AntOptionCollection();
 
         public AntOptionsProvider() {
             super("AntTask", BaseAntTask.unsupportedArgs(), testPath.toFile());

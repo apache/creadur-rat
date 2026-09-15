@@ -45,6 +45,8 @@ public final class CasedString {
         Arrays.stream(strings).map(s -> s == null ? "" : s).forEach(token -> sb.append(WordUtils.capitalize(token.toLowerCase(Locale.ROOT))));
         return sb.toString();
     };
+    /** A null cased string. */
+    public static final CasedString NULL = new CasedString(StringCase.KEBAB, CasedString.StringCase.NULL_SEGMENT);
 
     /**
      * Creates a cased string by parsing the string argument for the specific case.

@@ -32,6 +32,7 @@ import java.util.stream.Stream;
 import org.apache.commons.cli.AlreadySelectedException;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.rat.Defaults;
 import org.apache.rat.commandline.Arg;
 import org.apache.rat.utils.Log;
@@ -168,7 +169,7 @@ public class UIOptionCollection<T extends UIOption<T>> {
 
     /**
      * Gets a map client option name to the specified UIOption implementation.
-     * @return a map client option name to thge specified UIOption implementation.
+     * @return a map client option name to the specified UIOption implementation.
      */
     public final Map<String, T> getOptionMap() {
         Map<String, T> result = new TreeMap<>();
@@ -198,12 +199,29 @@ public class UIOptionCollection<T extends UIOption<T>> {
     }
 
     /**
+     * Gets the description for the Option.
+     * Default implementation is based on the description in the option itself as well as the deprecated state.
+     * @param option the option to get the description for.
+     * @return the description of the option.
+     */
+    public String getDescription(final Option option) {
+        StringBuilder desc = new StringBuilder();
+        getMappedOption(option).ifPresent(uiOption -> {
+            if (uiOption.isDeprecated()) {
+                desc.append("[").append(uiOption.getDeprecated()).append("] ");
+            }
+            desc.append(StringUtils.defaultIfEmpty(uiOption.getDescription(), ""));
+        });
+        return desc.toString();
+    }
+
+    /**
      * Builder for a UIOptionCollection.
      * @param <T> the concreate type of the UIOption.
      * @param <B> the concrete type the Builder.
      */
     protected static class Builder<T extends UIOption<T>, B extends Builder<T, B>> {
-        /** set of additional UI specific options */
+        /** Set of additional UI specific options. */
         private final List<Option> uiOptions;
         /**
          * Map of option to overridden default value. Generally applies to supported RAT options but may be

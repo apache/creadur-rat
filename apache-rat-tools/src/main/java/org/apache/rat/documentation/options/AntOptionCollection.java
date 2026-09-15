@@ -51,7 +51,7 @@ public final class AntOptionCollection extends UIOptionCollection<AntOption> {
     private static final String DEFAULT_XML = "<%1$s>%%s</%1$s>%n";
     /** Attributes that are required for example data. */
     private static final Map<String, Map<String, String>> REQUIRED_ATTRIBUTES = new HashMap<>();
-    /** The list of data types that are specified as XML attributes in Ant build.xml documents */
+    /** The list of data types that are specified as XML attributes in Ant build.xml documents. */
     private static final List<Class<?>> ATTRIBUTE_TYPES = new ArrayList<>();
     /** The map of option name conversions. */
     private final Map<Option, Option> conversionMap;
@@ -84,11 +84,13 @@ public final class AntOptionCollection extends UIOptionCollection<AntOption> {
         return new TreeMap<>(RENAME_MAP);
     }
 
-    /** Creates an instance of the AntOption Collection.
+    /**
+     * Creates an instance of the AntOption Collection.
      */
     public AntOptionCollection() {
         this(new Builder());
     }
+
     /**
      * Create an instance.
      */
@@ -104,9 +106,9 @@ public final class AntOptionCollection extends UIOptionCollection<AntOption> {
     }
 
     /**
-     * Returns the set of Antoptions that the argument was converted From.
+     * Returns the set of AntOptions that the argument was converted from.
      * @param antOption the AntOption to check.
-     * @return returns a Set of AntOptoins that were converted to the argument. May be an empty set.
+     * @return returns a Set of AntOptions that were converted to the argument. May be an empty set.
      */
     public Set<AntOption> convertedFrom(final AntOption antOption) {
         return conversionMap.entrySet().stream().filter(e -> e.getValue().equals(antOption.getOption()))
@@ -127,9 +129,9 @@ public final class AntOptionCollection extends UIOptionCollection<AntOption> {
     }
 
     /**
-     * Returns {@code true} if this argument is an attribute to the ANT RAT call.
+     * Returns {@code true} if this argument is an attribute to the Ant RAT call.
      * @param antOption the AntOption to check.
-     * @return {@code true} if this argument is an attribute to the ANT RAT call.
+     * @return {@code true} if this argument is an attribute to the Ant RAT call.
      */
     public boolean isAttribute(final AntOption antOption) {
         Option opt = antOption.getOption();
@@ -147,9 +149,9 @@ public final class AntOptionCollection extends UIOptionCollection<AntOption> {
     }
 
     /**
-     * Gets the ANT build type for the ArgumentType
-     * @param type ArgumentType to get the ANT build type for.
-     * @return the ANT build type for the ArgumentType
+     * Gets the Ant build type for the ArgumentType
+     * @param type ArgumentType to get the Ant build type for.
+     * @return the Ant build type for the ArgumentType
      */
     BuildType buildType(final OptionCollection.ArgumentType type) {
         return switch (type) {
@@ -202,7 +204,7 @@ public final class AntOptionCollection extends UIOptionCollection<AntOption> {
 
         /**
          * Converts one Arg type to another.
-         * @param from the Arg to convert from
+         * @param from the Arg to convert from.
          * @param to the Arg to convert to.
          * @return this
          */
@@ -226,7 +228,7 @@ public final class AntOptionCollection extends UIOptionCollection<AntOption> {
          */
         private final String tag;
         /**
-         * If True adds the tag as the test extension.
+         * If {@code true} adds the tag as the test extension.
          */
         private final boolean addExt;
 

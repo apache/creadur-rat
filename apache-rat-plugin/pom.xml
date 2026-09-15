@@ -428,7 +428,7 @@
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-testing</artifactId>
-      <version>2.1.0</version>
+      <version>2.2.0</version>
       <exclusions>
         <exclusion>
           <!-- we need as optional dependencies -->
@@ -445,7 +445,7 @@
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-utils</artifactId>
-      <version>3.6.1</version>
+      <version>3.6.2</version>
     </dependency>
     <dependency>
       <groupId>org.apache.commons</groupId>

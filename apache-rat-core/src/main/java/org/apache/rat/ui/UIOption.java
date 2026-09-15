@@ -69,7 +69,7 @@ public abstract class UIOption<T extends UIOption<T>> {
     protected UIOption(final Builder<T, ?> builder) {
         this.optionCollection = builder.optionCollection;
         this.option = builder.option;
-        this.name = builder.name();
+        this.name = builder.name;
 
         OptionCollection.ArgumentType argType;
         if (option.hasArg()) {
@@ -100,12 +100,13 @@ public abstract class UIOption<T extends UIOption<T>> {
 
     @Override
     public int hashCode() {
-        return getName().hashCode();
+        return name.hashCode();
     }
 
     /**
      * Gets the AbstractOptionCollection that this option is a member of.
      * @return the AbstractOptionCollection that this option is a member of.
+     * @param <X> The collection type to return.
      */
     public final <X extends UIOptionCollection<T>> X getOptionCollection() {
         return (X) optionCollection;
@@ -152,7 +153,7 @@ public abstract class UIOption<T extends UIOption<T>> {
             Matcher matcher = PATTERN.matcher(workingStr);
             while (matcher.find()) {
                 String key = matcher.group();
-                String optKey = (1 == key.indexOf('-', 1)) ?  key.substring(2) : key.substring(1);
+                String optKey = key.substring(1 == key.indexOf('-', 1) ?  2 : 1);
                 Optional<Option> maybeResult = getOptionCollection().getOptions().getOptions().stream()
                                 .filter(o -> optKey.equals(o.getOpt()) || optKey.equals(o.getLongOpt())).findFirst();
                 maybeResult.ifPresent(value -> maps.put(key, cleanupName(value)));
@@ -283,7 +284,10 @@ public abstract class UIOption<T extends UIOption<T>> {
          * THe base option that is being mapped.
          */
         private Option option;
-
+        /**
+         * The UI name of this option.
+         */
+        private CasedString name = CasedString.NULL;
         /**
          * Constructor.
          */
@@ -345,12 +349,17 @@ public abstract class UIOption<T extends UIOption<T>> {
          * @return this
          */
         public B option(final Option option) {
+            Objects.requireNonNull(option, "Option may not be null");
             this.option = option;
+            this.name = getNameFactory().apply(option);
+            if (this.name == null || this.name.isNull()) {
+                throw new IllegalArgumentException("name for " + option + " may not be null or contain a null value");
+            }
             return self();
         }
 
         /**
-         * Executes the final build.  Implemetation should use the builder to construct an instance of {@link <></>}
+         * Executes the final build.
          * @return An instance of the UIOption.
          * @throws IllegalArgumentException if values are not set correctly.
          */
@@ -364,9 +373,8 @@ public abstract class UIOption<T extends UIOption<T>> {
         public final T build() throws IllegalArgumentException {
             Objects.requireNonNull(optionCollection, "OptionCollection may not be null");
             Objects.requireNonNull(option, "Option may not be null");
-            CasedString name = name();
             if (name == null || name.isNull()) {
-                throw new IllegalArgumentException("name may not be null or contain a null value");
+                throw new IllegalArgumentException("name must not be null or contain a null value");
             }
             return doBuild();
         }

@@ -28,6 +28,9 @@ public final class CLIOptionCollection extends UIOptionCollection<CLIOption> {
     /** The Help option */
     static final Option HELP = new Option("?", "help", false, "Print help for the RAT command line interface and exit.");
 
+    /**
+     * Constructs the CLIOption collection.
+     */
     public CLIOptionCollection() {
         super(new Builder().uiOption(HELP));
     }

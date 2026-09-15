@@ -28,6 +28,7 @@ public final class BaseOptionCollection extends UIOptionCollection<BaseOption> {
     public BaseOptionCollection(Builder builder) {
         super(builder);
     }
+
     public static final class Builder extends UIOptionCollection.Builder<BaseOption, Builder> {
         public Builder() {
             super(BaseOption.BaseOptionBuilder::new);
