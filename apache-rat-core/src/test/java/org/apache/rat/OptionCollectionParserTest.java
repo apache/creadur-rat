@@ -24,6 +24,8 @@ import org.apache.commons.cli.ParseException;
 import org.apache.rat.api.RatException;
 import org.apache.rat.commandline.ArgumentContext;
 import org.apache.rat.testhelpers.TestingLog;
+import org.apache.rat.ui.ArgumentTracker;
+import org.apache.rat.ui.UIOption;
 import org.apache.rat.ui.UIOptionCollection;
 import org.apache.rat.utils.DefaultLog;
 import org.junit.jupiter.api.Test;
@@ -32,6 +34,7 @@ import org.junit.jupiter.api.io.TempDir;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.function.Function;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -65,7 +68,7 @@ class OptionCollectionParserTest {
         TestingLog testingLog = new TestingLog();
         try {
             DefaultLog.setInstance(testingLog);
-            assertThatThrownBy(() -> OptionCollectionParser.parseCommandLine(options, new String[0]))
+            assertThatThrownBy(() -> underTest.parseCommandLine(options, new String[0]))
                     .isInstanceOf(ParseException.class);
         } finally {
             DefaultLog.setInstance(null);

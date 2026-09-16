@@ -24,6 +24,8 @@ import org.apache.rat.testhelpers.TextUtils;
 
 import org.junit.jupiter.api.Test;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 public class MavenOptionTest {
     @Test
     void getDeprecatedTest() {
@@ -31,7 +33,7 @@ public class MavenOptionTest {
         for (Option option : Arg.getOptions().getOptions()) {
             if (option.isDeprecated()) {
                 mavenOptionCollection.getMappedOption(option).ifPresent( mavenOption -> //
-                        TextUtils.assertPatternNotInTarget("\\-\\- ", mavenOption.getDeprecated()));
+                        assertThat(mavenOption.getDeprecated()).doesNotContainPattern("\\-\\- "));
             }
         }
     }

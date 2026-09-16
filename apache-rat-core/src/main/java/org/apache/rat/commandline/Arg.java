@@ -165,7 +165,6 @@ public enum Arg {
             .build()),
             (context, selected) ->
                   context.getConfiguration().addApprovedLicenseIds(context.getParsedOptionValue(selected))
-
     ),
 
     /**

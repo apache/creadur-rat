@@ -560,7 +560,7 @@ public class ReportConfigurationTest {
     void testSetOut() throws IOException {
         ReportConfiguration config = new ReportConfiguration();
         try (OutputStreamInterceptor osi = new OutputStreamInterceptor()) {
-            config.setOut(new ReportConfiguration.IODescriptor<>("testSetOut",() -> osi));
+            config.setOut(new ReportConfiguration.IODescriptor<>("testSetOut", () -> osi));
             assertThat(osi.closeCount).isEqualTo(0);
             try (OutputStream os = config.getOutput().get()) {
                 assertThat(os).isNotNull();
@@ -591,8 +591,11 @@ public class ReportConfigurationTest {
           log.clear();
           underTest.logFamilyCollisions(l);
           underTest.addFamily(ILicenseFamily.builder().setLicenseFamilyCategory("CAT").setLicenseFamilyName("name2"));
-          assertThat(log.getCaptured().contains("CAT")).as("'CAT' not found").isTrue();
-          assertThat(log.getCaptured().contains(l.name())).as("logging not set to "+l).isTrue();
+          if (DefaultLog.getInstance().isEnabled(l)) {
+              assertThat(log.getCaptured()).contains("CAT").contains(l.name());
+          } else {
+              assertThat(log.getCaptured()).doesNotContain("CAT").doesNotContain(l.name());
+          }
         }
     }
     
@@ -714,10 +717,11 @@ public class ReportConfigurationTest {
     public static void validateDefaultApprovedLicenses(ReportConfiguration config) {
         validateDefaultApprovedLicenses(config, 0);
     }
-    
+
     /**
      * Validates that the configuration contains the default approved licenses.
      * @param config the configuration to test.
+     * @param additionalIdCount the number of additional licence IDs that are expected.
      */
     public static void validateDefaultApprovedLicenses(ReportConfiguration config, int additionalIdCount) {
         assertThat(config.getLicenseCategories(LicenseFilter.APPROVED)).hasSize(XMLConfigurationReaderTest.APPROVED_IDS.length + additionalIdCount);
@@ -767,6 +771,7 @@ public class ReportConfigurationTest {
         validateDefaultApprovedLicenses(config);
         validateDefaultLicenseFamilies(config);
         validateDefaultLicenses(config);
+        validateDefaultApprovedLicenses(config);
     }
 
     public static void assertSame(ReportConfiguration actual, ReportConfiguration expected) {
@@ -837,7 +842,7 @@ public class ReportConfigurationTest {
         public void write(int arg0) {
             throw new UnsupportedOperationException();
         }
-        
+
         @Override
         public void close() {
             ++closeCount;

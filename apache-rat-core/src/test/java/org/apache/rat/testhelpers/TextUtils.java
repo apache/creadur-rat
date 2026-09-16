@@ -40,7 +40,9 @@ public class TextUtils {
      *
      * @param pattern the pattern to match.
      * @param target  the string to match.
+     * @deprecated use  assertThat(target).containsPattern(pattern)
      */
+    @Deprecated
     public static void assertPatternInTarget(String pattern, String target) {
         assertThat(isMatching(pattern, target)).as(() -> format("Target does not match string: %s%n%s", pattern, target))
                         .isTrue();
@@ -51,7 +53,9 @@ public class TextUtils {
      *
      * @param pattern the pattern to match.
      * @param target  the string to match.
+     * @deprecated use assertThat(target).dosNotContainPattern(pattern)
      */
+    @Deprecated
     public static void assertPatternNotInTarget(String pattern, String target) {
         assertThat(isMatching(pattern, target)).as(() -> format("Target matches the pattern: %s%n%s", pattern, target))
                 .isFalse();
@@ -63,46 +67,11 @@ public class TextUtils {
      * @param pattern the pattern to match.
      * @param target  the string to match.
      * @return {@code true} if a regular expression pattern is in a string
+     * @deprecated use assertThat(target).matches(pattern)
      */
+    @Deprecated
     public static boolean isMatching(final String pattern, final String target) {
         return Pattern.compile(pattern, Pattern.MULTILINE).matcher(target).find();
-    }
-
-    /**
-     * Asserts that a string is contained within another string.
-     * @param find The string to find.
-     * @param target The string to search.
-     */
-    public static void assertContains(final String find, final String target) {
-        assertThat(target.contains(find)).as(() -> format("Target does not contain the text: %s%n%s", find, target))
-                .isTrue();
-    }
-
-    /**
-     * Asserts that a string is contained exactly a specified number of times within another string.
-     * @param times The number of times to find the string in the target.
-     * @param find The string to find.
-     * @param target The string to search.
-     */
-    public static void assertContainsExactly(int times, String find, String target) {
-        String t = target;
-        for (int i = 0; i < times; i++) {
-            assertThat(t.contains(find)).as(() -> format("Target does not contain %s copies of %s%n%s", times, find, target))
-                    .isTrue();
-            t = t.substring(t.indexOf(find) + find.length());
-        }
-        assertThat(t.contains(find)).as(() -> format("Target contains more than %s copies of %s%n%s", times, find, target))
-                .isFalse();
-    }
-
-    /**
-     * Asserts that a string is not contained within another string.
-     * @param find The string to find.
-     * @param target The string to search.
-     */
-    public static void assertNotContains(final String find, final String target) {
-        assertThat(target.contains(find)).as(() -> format("Target contains the text: %s%n%s", find , target))
-                .isFalse();
     }
 
     /**

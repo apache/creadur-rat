@@ -42,10 +42,10 @@ public class HelpTest {
 
         for (Option option : opts.getOptions()) {
             if (option.getOpt() != null) {
-                TextUtils.assertContains("-" + option.getOpt() + (option.getLongOpt() == null ? " " : ","), result);
+                assertThat(result).contains("-" + option.getOpt() + (option.getLongOpt() == null ? " " : ","));
             }
             if (option.getLongOpt() != null) {
-                TextUtils.assertContains("--" + option.getLongOpt() + " ", result);
+                assertThat(result).contains("--" + option.getLongOpt() + " ");
             }
         }
 
@@ -63,7 +63,7 @@ public class HelpTest {
         for (Option option : opts.getOptions()) {
             if (option.getArgName() != null) {
                 assertTrue(argTypes.contains(option.getArgName()), () -> format("Argument '%s' is missing from list", option.getArgName()));
-                TextUtils.assertPatternInTarget(format("^<%s>", option.getArgName()), result);
+                assertThat(result).containsPattern(format("^<%s>", option.getArgName()));
             }
         }
         assertThat(result).doesNotContain("..");

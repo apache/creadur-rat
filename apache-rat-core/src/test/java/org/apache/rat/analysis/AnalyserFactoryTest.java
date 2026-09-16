@@ -185,9 +185,7 @@ public class AnalyserFactoryTest {
                 Resources.getResourceFile("/jira/RAT147/unix-newlines.txt.bin"), DocumentNameMatcher.MATCHES_ALL);
         analyser.analyse(document);
         String result = buildReport(document);
-        TextUtils.assertPatternInTarget(
-                "<resource name='/jira/RAT147/unix-newlines.txt.bin' type='STANDARD'",
-                result);
+        assertThat(result).containsPattern("<resource name='/jira/RAT147/unix-newlines.txt.bin' type='STANDARD'");
     }
 
     @Test
@@ -196,9 +194,7 @@ public class AnalyserFactoryTest {
                 Resources.getResourceFile("/jira/RAT147/windows-newlines.txt.bin"), DocumentNameMatcher.MATCHES_ALL);
         analyser.analyse(document);
         String result = buildReport(document);
-        TextUtils.assertPatternInTarget(
-                "<resource name='/jira/RAT147/windows-newlines.txt.bin' type='STANDARD'",
-                result);
+        assertThat(result).containsPattern("<resource name='/jira/RAT147/windows-newlines.txt.bin' type='STANDARD'");
     }
 
     @Test

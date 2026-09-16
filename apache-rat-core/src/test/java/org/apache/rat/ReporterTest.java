@@ -19,6 +19,7 @@
 package org.apache.rat;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Fail.fail;
 
 import java.io.ByteArrayOutputStream;
@@ -39,6 +40,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.TreeMap;
 import java.util.UUID;
+import java.util.stream.Stream;
 import java.util.regex.Pattern;
 import javax.xml.XMLConstants;
 import javax.xml.transform.Source;
@@ -66,6 +68,9 @@ import org.apache.rat.test.utils.Resources;
 import org.apache.rat.testhelpers.BaseOption;
 import org.apache.rat.testhelpers.BaseOptionCollection;
 import org.apache.rat.testhelpers.XmlUtils;
+import org.apache.rat.testhelpers.data.ReportTestDataProvider;
+import org.apache.rat.testhelpers.data.TestData;
+import org.apache.rat.testhelpers.data.ValidatorData;
 import org.apache.rat.utils.StandardXmlFactory;
 import org.apache.rat.walker.DirectoryWalker;
 import org.junit.jupiter.api.AfterAll;
@@ -73,6 +78,9 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInfo;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
@@ -134,6 +142,7 @@ public class ReporterTest {
     @Test
     void testExecute() throws RatException {
         File output = testPath.resolve("output.xml").toFile();
+        BaseOptionCollection optionCollection = BaseOptionCollection.builder().build();
         ArgumentContext ctxt = collectionParser.parseCommands(new File("."), new String[]{"--output-style", "xml", "--output-file", output.getPath(), basedir});
         ClaimStatistic statistic = new Reporter(ctxt.getConfiguration()).execute().getStatistic();
 
@@ -271,7 +280,7 @@ public class ReporterTest {
                 "type", "STANDARD"));
 
         File output = testPath.resolve(".rat/testXMLOutput").toFile();
-        output.getParentFile().mkdirs();
+        org.apache.rat.utils.FileUtils.mkDir(output.getParentFile());
         ArgumentContext ctxt = collectionParser.parseCommands(testPath.toFile(), new String[]{"--output-style", "xml", "--output-file", output.getPath(), basedir});
         new Reporter(ctxt.getConfiguration()).execute().format(ctxt.getConfiguration());
 
@@ -546,16 +555,47 @@ public class ReporterTest {
                 .isTrue();
     }
 
-    private record LicenseInfo(String id, String family, boolean approval, boolean hasNotes) {
-            LicenseInfo(String id, boolean approval, boolean hasNotes) {
-                this(id, id, approval, hasNotes);
-            }
+    static Stream<Arguments> getTestData() {
+        BaseOptionCollection.Builder builder = BaseOptionCollection.builder()
+                        .unsupported(Arg.OUTPUT_FILE);
+        return new ReportTestDataProvider().getOptionTests(builder.build()).stream().map(testData ->
+                Arguments.of(testData.getTestName(), testData));
+    }
 
-            private LicenseInfo(String id, String family, boolean approval, boolean hasNotes) {
-                this.id = id;
-                this.family = ILicenseFamily.makeCategory(family);
-                this.approval = approval;
-                this.hasNotes = hasNotes;
-            }
+    @ParameterizedTest( name = "{index} {0}")
+    @MethodSource("getTestData")
+    void testReportData(String name, TestData test) throws Exception {
+        Path invokePath = testPath.resolve(test.getTestName());
+        org.apache.rat.utils.FileUtils.mkDir(invokePath.toFile());
+
+        test.setupFiles(invokePath);
+        ArgumentContext ctxt = collectionParser.parseCommands(invokePath.toFile(),
+                test.getCommandLine(invokePath.toString()));
+        if (test.expectingException()) {
+            assertThatThrownBy(() -> new Reporter(ctxt.getConfiguration()).execute()).as("Expected throws from " + name)
+                    .hasMessageContaining(test.getExpectedException().getMessage());
+            ValidatorData data = new ValidatorData(Reporter.Output.builder().configuration(ctxt.getConfiguration()).build(),
+                    invokePath.toString());
+            test.getValidator().accept(data);
+        } else {
+            Reporter.Output output = ctxt.getConfiguration() != null ? new Reporter(ctxt.getConfiguration()).execute() :
+                    Reporter.Output.builder().build();
+            ValidatorData data = new ValidatorData(output, invokePath.toString());
+            data.getOutput().format(data.getConfiguration());
+            test.getValidator().accept(data);
         }
+    }
+
+    private record LicenseInfo(String id, String family, boolean approval, boolean hasNotes) {
+        LicenseInfo(String id, boolean approval, boolean hasNotes) {
+            this(id, id, approval, hasNotes);
+        }
+
+        private LicenseInfo(String id, String family, boolean approval, boolean hasNotes) {
+            this.id = id;
+            this.family = ILicenseFamily.makeCategory(family);
+            this.approval = approval;
+            this.hasNotes = hasNotes;
+        }
+    }
 }

@@ -125,16 +125,17 @@ class ClaimValidatorTest {
                 statistic.incCounter(counter, expected);
                 validator.logIssues(statistic);
                 assertThat(log.getCaptured()).isNotEmpty();
-                required.entrySet().stream().filter(e -> e.getKey() != counter)
-                        .map(Map.Entry::getValue).forEach(log::assertContains);
+                List<String> expectedEntries = required.entrySet().stream().filter(e -> e.getKey() != counter)
+                        .map(Map.Entry::getValue).toList();
+                assertThat(log.getCaptured()).contains(expectedEntries);
                 if (required.entrySet().contains(counter)) {
-                    log.assertNotContains(required.get(counter));
+                    assertThat(log.getCaptured()).doesNotContain(required.get(counter));
                 }
                 statistic.incCounter(counter, 1);
                 validator.logIssues(statistic);
                 String expectedStr = format("ERROR: Unexpected count for %s, limit is [%s,5].  Count: 6", counter,
                         counter.getDefaultMinValue());
-                log.assertContains(expectedStr);
+                assertThat(log.getCaptured()).contains(expectedStr);
                 log.clear();
                 statistic.incCounter(counter, -1 - expected);
             }

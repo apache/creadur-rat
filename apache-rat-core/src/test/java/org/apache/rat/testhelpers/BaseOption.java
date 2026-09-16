@@ -26,11 +26,11 @@ import org.apache.rat.utils.CasedString;
 import java.util.function.Function;
 
 public final class BaseOption extends UIOption<BaseOption> {
-    BaseOption(BaseOptionBuilder builder) {
+    private BaseOption(BaseOptionBuilder builder) {
         super(builder);
     }
 
-    public UIOption.Builder<BaseOption, BaseOptionBuilder> builder() {
+    public BaseOptionBuilder builder() {
         return new BaseOptionBuilder();
     }
 

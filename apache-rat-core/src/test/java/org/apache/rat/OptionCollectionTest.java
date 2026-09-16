@@ -42,6 +42,7 @@ import org.apache.rat.test.utils.OptionFormatter;
 import org.apache.rat.testhelpers.TestingLog;
 import org.apache.rat.utils.CasedString;
 import org.apache.rat.utils.DefaultLog;
+import org.apache.rat.utils.FileUtils;
 import org.apache.rat.utils.Log;
 import org.apache.rat.walker.ArchiveWalker;
 import org.apache.rat.walker.DirectoryWalker;
@@ -107,12 +108,21 @@ public class OptionCollectionTest {
         }
 
         /**
+         * Get the name of the test.
+         * By default, this method returns {@code toString()}.
+         * @return the name of the test.
+         */
+        default String name() {
+            return toString();
+        }
+
+        /**
          * Creates a named OptionTest.
          * @param name the name of the test.
          * @param test the test to execute.
          * @return a named option test.
          */
-        static OptionTest namedTest(String name, OptionTest test) {
+        static OptionTest namedTest(String providerName, String name, OptionTest test) {
             return new OptionTest() {
                 @Override
                 public void exec() {
@@ -120,6 +130,10 @@ public class OptionCollectionTest {
                 }
                 @Override
                 public String toString() {
+                    return String.join(":", providerName, name);
+                }
+                @Override
+                public String name() {
                     return name;
                 }
             };
@@ -162,7 +176,7 @@ public class OptionCollectionTest {
                     name = name.substring(testLength);
                 }
                 name = new CasedString(CasedString.StringCase.CAMEL, name).toCase(CasedString.StringCase.KEBAB).toLowerCase(Locale.ROOT);
-                result.put(name, OptionTest.namedTest(name, () -> {
+                result.put(name, OptionTest.namedTest(clazz.getName(), name, () -> {
                             try {
                                 method.invoke(testProvider);
                             } catch (IllegalAccessException | InvocationTargetException e) {
@@ -179,6 +193,7 @@ public class OptionCollectionTest {
     public void testDeprecatedUseLogged() throws IOException {
         TestingLog log = new TestingLog();
         try {
+            FileUtils.mkDir(testPath.resolve("target").toFile());
             DefaultLog.setInstance(log);
             String[] args = {"--dir", "target", "-a"};
             ReportConfiguration config = OptionCollection.parseCommands(testPath.toFile(), args, o -> fail("Help printed"), true);
@@ -186,8 +201,8 @@ public class OptionCollectionTest {
         } finally {
             DefaultLog.setInstance(null);
         }
-        log.assertContainsExactly(1, "WARN: Option [-d, --dir] used. Deprecated for removal since 0.17: Use the standard '--'");
-        log.assertContainsExactly(1, "WARN: Option [-a] used. Deprecated for removal since 0.17: Use --edit-license");
+        assertThat(log.getCaptured()).containsOnlyOnce("WARN: Option [-d, --dir] used. Deprecated for removal since 0.17: Use the standard '--'")
+                        .containsOnlyOnce("WARN: Option [-a] used. Deprecated for removal since 0.17: Use --edit-license");
     }
 
     @Test
@@ -203,7 +218,7 @@ public class OptionCollectionTest {
             DefaultLog.setInstance(null);
         }
         assertThat(config).isNotNull();
-        log.assertContainsExactly(1,"WARN: Option [-d, --dir] used. Deprecated for removal since 0.17: Use the standard '--'");
+        assertThat(log.getCaptured()).containsOnlyOnce("WARN: Option [-d, --dir] used. Deprecated for removal since 0.17: Use the standard '--'");
     }
 
     @Test
@@ -264,7 +279,7 @@ public class OptionCollectionTest {
      * @param test the option test to execute.
      */
     @ParameterizedTest( name = "{index} {0}")
-    @ArgumentsSource(CliOptionsProvider.class)
+    @ArgumentsSource(ArgOptionsProvider.class)
     public void testOptionsUpdateConfig(String name, OptionTest test) {
         DefaultLog.getInstance().log(Log.Level.INFO, "Running test for: " + name);
         test.test();
@@ -273,7 +288,7 @@ public class OptionCollectionTest {
     /**
      * A class to provide the Options and tests to the testOptionsUpdateConfig.
      */
-    static class CliOptionsProvider extends AbstractConfigurationOptionsProvider implements ArgumentsProvider {
+    static class ArgOptionsProvider extends AbstractConfigurationOptionsProvider implements ArgumentsProvider {
 
         /** A flag to determine if help was called */
         final AtomicBoolean helpCalled = new AtomicBoolean(false);
@@ -294,9 +309,9 @@ public class OptionCollectionTest {
         /**
          * Constructor. Sets the baseDir and loads the testMap.
          */
-        public CliOptionsProvider() {
-            super(Collections.emptyList(), testPath.toFile());
-            addTest(OptionCollectionTest.OptionTest.namedTest("help", this::helpTest));
+        public ArgOptionsProvider() {
+            super("ArgsOptionsProvider", Collections.emptyList(), testPath.toFile());
+            addTest(OptionCollectionTest.OptionTest.namedTest(providerName, "help", this::helpTest));
         }
 
         /**
