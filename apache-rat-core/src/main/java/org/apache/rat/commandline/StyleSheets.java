@@ -27,7 +27,6 @@ import java.util.Objects;
 
 import org.apache.rat.ConfigurationException;
 import org.apache.rat.ReportConfiguration;
-import org.apache.rat.document.DocumentName;
 
 import static java.lang.String.format;
 

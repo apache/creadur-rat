@@ -44,17 +44,18 @@ public final class FileUtils {
      * Deletes a file if it exists.
      * @param file the file to delete.
      */
-    public static void delete(final File file) throws IOException {
+    public static void delete(final File file) {
         if (file.exists()) {
-            if (file.isDirectory()) {
-                try {
+            try {
+                if (file.isDirectory()) {
                     org.apache.commons.io.FileUtils.deleteDirectory(file);
-                } catch (IOException ignore) {
-                    //
+                } else {
+                    Files.delete(file.toPath());
                 }
-            } else {
-                Files.delete(file.toPath());
+            } catch (IOException ignore) {
+                //
             }
+
         }
     }
 

@@ -530,9 +530,7 @@ public class ReportTestDataProvider extends AbstractTestDataProvider {
                     DefaultLog.getInstance().warn("validating helpLicenses for " + validatorData.getBaseDir());
                     System.setOut(origin);
                     String txt = baos.toString();
-                    TextUtils.assertContains("====== Licenses ======", txt);
-                    TextUtils.assertContains("====== Defined Matchers ======", txt);
-                    TextUtils.assertContains("====== Defined Families ======", txt);
+                    assertThat(txt).contains("====== Licenses ======", "====== Defined Matchers ======", "====== Defined Families ======");
                 }));
     }
 
@@ -781,7 +779,7 @@ public class ReportTestDataProvider extends AbstractTestDataProvider {
             result.add(new TestData("noDefaults", Arrays.asList(underTest,
                     ImmutablePair.of(Arg.CONFIGURATION_NO_DEFAULTS.find("configuration-no-defaults"), null)),
                     setup,
-                    /** Make validator data a structure with counter countes  and file checks. */
+                    /* Make validator data a structure with counter counts  and file checks. */
                     validatorData -> {
                         DefaultLog.getInstance().warn("validating configTest for " + validatorData.getBaseDir());
                         assertCounter(validatorData, ClaimStatistic.Counter.STANDARDS, 2);
@@ -841,7 +839,7 @@ public class ReportTestDataProvider extends AbstractTestDataProvider {
                     DefaultLog.getInstance().warn("validating editCopyrightTest for " + validatorData.getBaseDir());
                     try {
                         String actualText = TextUtils.readFile(validatorData.getBaseDir().resolve("Missing.java").toFile());
-                        TextUtils.assertNotContains("MyCopyright", actualText);
+                        assertThat(actualText).doesNotContain("MyCopyright");
                     } catch (IOException ex) {
                         throw new RuntimeException(ex);
                     }
@@ -853,10 +851,10 @@ public class ReportTestDataProvider extends AbstractTestDataProvider {
                     DefaultLog.getInstance().warn("validating editCopyrightTest for " + validatorData.getBaseDir());
                     try {
                         String actualText = TextUtils.readFile(validatorData.getBaseDir().resolve("Missing.java").toFile());
-                        TextUtils.assertNotContains("MyCopyright", actualText);
+                        assertThat(actualText).doesNotContain("MyCopyright");
                         assertThat(validatorData.getBaseDir().resolve("Missing.java.new")).exists();
                         actualText = TextUtils.readFile(validatorData.getBaseDir().resolve("Missing.java.new").toFile());
-                        TextUtils.assertContains("MyCopyright", actualText);
+                        assertThat(actualText).contains("MyCopyright");
                     } catch (IOException ex) {
                         throw new RuntimeException(ex);
                     }
@@ -871,7 +869,7 @@ public class ReportTestDataProvider extends AbstractTestDataProvider {
                         DefaultLog.getInstance().warn("validating editCopyrightTest for " + validatorData.getBaseDir());
                         try {
                             String actualText = TextUtils.readFile(validatorData.getBaseDir().resolve("Missing.java").toFile());
-                            TextUtils.assertNotContains("MyCopyright", actualText);
+                            assertThat(actualText).doesNotContain("MyCopyright");
                         } catch (IOException ex) {
                             throw new RuntimeException(ex);
                         }
@@ -887,7 +885,7 @@ public class ReportTestDataProvider extends AbstractTestDataProvider {
                         DefaultLog.getInstance().warn("validating editCopyrightTest for " + validatorData.getBaseDir());
                         try {
                             String actualText = TextUtils.readFile(validatorData.getBaseDir().resolve("Missing.java").toFile());
-                            TextUtils.assertContains("MyCopyright", actualText);
+                            assertThat(actualText).contains("MyCopyright");
                             assertThat(validatorData.getBaseDir().resolve("Missing.java.new")).doesNotExist();
                         } catch (IOException ex) {
                             throw new RuntimeException(ex);
@@ -1194,8 +1192,8 @@ public class ReportTestDataProvider extends AbstractTestDataProvider {
                                 baos.reset();
                                 validatorData.getOutput().format(validatorData.getConfiguration().getStyleSheet(), () -> baos);
                                 String actualText = baos.toString();
-                                TextUtils.assertContainsExactly(1, "<resource encoding=\"ISO-8859-1\" mediaType=\"text/x-java-source\" name=\"/Test.java\" type=\"STANDARD\">", actualText);
-                                TextUtils.assertContainsExactly(1, "<resource encoding=\"ISO-8859-2\" mediaType=\"text/x-java-source\" name=\"/Missing.java\" type=\"STANDARD\">", actualText);
+                                assertThat(actualText).containsOnlyOnce("<resource encoding=\"ISO-8859-1\" mediaType=\"text/x-java-source\" name=\"/Test.java\" type=\"STANDARD\">")
+                                                .containsOnlyOnce("<resource encoding=\"ISO-8859-2\" mediaType=\"text/x-java-source\" name=\"/Missing.java\" type=\"STANDARD\">");
                             } catch (IOException | RatException e) {
                                 throw new RuntimeException(e);
                             }
@@ -1215,22 +1213,22 @@ public class ReportTestDataProvider extends AbstractTestDataProvider {
                                 String actualText = baos.toString();
                                 switch (sheet) {
                                     case MISSING_HEADERS:
-                                        TextUtils.assertContainsExactly(1, "Files with missing headers:" + System.lineSeparator() +
-                                                "  /Missing.java", actualText);
+                                        assertThat(actualText).containsOnlyOnce("Files with missing headers:" + System.lineSeparator() +
+                                                "  /Missing.java");
                                         break;
                                     case PLAIN:
-                                        TextUtils.assertContainsExactly(1, "Unknown license: 1 ", actualText);
-                                        TextUtils.assertContainsExactly(1, "?????: 1 ", actualText);
+                                        assertThat(actualText).containsOnlyOnce("Unknown license: 1 ")
+                                                        .containsOnlyOnce("?????: 1 ");
                                         break;
                                     case XML:
-                                        TextUtils.assertContainsExactly(1, "<resource encoding=\"ISO-8859-1\" mediaType=\"text/x-java-source\" name=\"/Test.java\" type=\"STANDARD\">", actualText);
-                                        TextUtils.assertContainsExactly(1, "<resource encoding=\"ISO-8859-2\" mediaType=\"text/x-java-source\" name=\"/Missing.java\" type=\"STANDARD\">", actualText);
+                                        assertThat(actualText).containsOnlyOnce("<resource encoding=\"ISO-8859-1\" mediaType=\"text/x-java-source\" name=\"/Test.java\" type=\"STANDARD\">")
+                                                .containsOnlyOnce("<resource encoding=\"ISO-8859-2\" mediaType=\"text/x-java-source\" name=\"/Missing.java\" type=\"STANDARD\">");
                                         break;
                                     case UNAPPROVED_LICENSES:
-                                        TextUtils.assertContainsExactly(1, "Files with unapproved licenses:" + System.lineSeparator() + "  /Missing.java", actualText);
+                                        assertThat(actualText).containsOnlyOnce("Files with unapproved licenses:" + System.lineSeparator() + "  /Missing.java");
                                         break;
                                     case XHTML5:
-                                        TextUtils.assertPatternInTarget("<td>Approved<\\/td>\\s+<td>\\d+<\\/td>\\s+<td>A count of approved licenses.<\\/td>", actualText);
+                                        assertThat(actualText).containsPattern("<td>Approved<\\/td>\\s+<td>\\d+<\\/td>\\s+<td>A count of approved licenses.<\\/td>");
                                         break;
                                     default:
                                         fail("No test for stylesheet " + sheet);
@@ -1266,13 +1264,14 @@ public class ReportTestDataProvider extends AbstractTestDataProvider {
 
                     validatorData -> {
                         DefaultLog.getInstance().warn("validating outputStyleTest for " + validatorData.getBaseDir());
-                        try (InputStream expected = StyleSheets.getStyleSheet("fileStyleSheet.xslt", validatorData.getBaseName()).ioSupplier().get();
+                        DocumentName xsltName = validatorData.getBaseName().resolve("fileStyleSheet.xslt");
+                        try (InputStream expected = StyleSheets.getStyleSheet(xsltName.getName()).ioSupplier().get();
                              InputStream actual = validatorData.getConfiguration().getStyleSheet().get()) {
                             assertThat(IOUtils.contentEquals(expected, actual)).as(() -> "'fileStyleSheet.xslt' does not match").isTrue();
                             baos.reset();
                             validatorData.getOutput().format(validatorData.getConfiguration().getStyleSheet(), () -> baos);
                             String actualText = baos.toString();
-                            TextUtils.assertContainsExactly(1, "Hello World", actualText);
+                            assertThat(actualText).containsOnlyOnce("Hello World");
                         } catch (IOException | RatException e) {
                             throw new RuntimeException(e);
                         }

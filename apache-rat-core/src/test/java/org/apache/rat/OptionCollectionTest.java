@@ -42,6 +42,7 @@ import org.apache.rat.test.utils.OptionFormatter;
 import org.apache.rat.testhelpers.TestingLog;
 import org.apache.rat.utils.CasedString;
 import org.apache.rat.utils.DefaultLog;
+import org.apache.rat.utils.FileUtils;
 import org.apache.rat.utils.Log;
 import org.apache.rat.walker.ArchiveWalker;
 import org.apache.rat.walker.DirectoryWalker;

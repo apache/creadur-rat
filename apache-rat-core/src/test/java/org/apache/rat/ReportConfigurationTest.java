@@ -772,7 +772,6 @@ public class ReportConfigurationTest {
 
         validateDefaultApprovedLicenses(config);
         validateDefaultLicenseFamilies(config);
-        validateDefaultApprovedLicenseFamilies(config);
         validateDefaultLicenses(config);
         validateDefaultApprovedLicenses(config);
     }

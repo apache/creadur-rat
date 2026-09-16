@@ -21,6 +21,9 @@ package org.apache.rat.testhelpers;
 import org.apache.rat.ui.UIOptionCollection;
 
 public final class BaseOptionCollection extends UIOptionCollection<BaseOption> {
+    public static final Builder builder() {
+        return new Builder();
+    }
     public BaseOptionCollection() {
         super(new Builder());
     }
@@ -30,8 +33,12 @@ public final class BaseOptionCollection extends UIOptionCollection<BaseOption> {
     }
 
     public static final class Builder extends UIOptionCollection.Builder<BaseOption, Builder> {
-        public Builder() {
+        Builder() {
             super(BaseOption.BaseOptionBuilder::new);
+        }
+
+        public BaseOptionCollection build() {
+            return new BaseOptionCollection(this);
         }
     }
 }
