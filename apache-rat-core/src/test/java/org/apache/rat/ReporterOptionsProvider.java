@@ -115,15 +115,6 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
     }
 
     /**
-     * Creates the srcDir.,.
-     * @param option the name for the srcDir.
-     */
-    private void configureSourceDir(Option option) {
-        sourceDir = new File(baseDir, OptionFormatter.getName(option));
-        FileUtils.mkDir(sourceDir);
-    }
-
-    /**
      * Creates the option/.rat directory
      * @param option the name for the sourceDirectory.
      */
@@ -134,8 +125,19 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
         return ratDir;
     }
 
+    /**
+     * Creates the srcDir.,.
+     * @param option the name for the srcDir.
+     */
+    private void configureSourceDir(Option option) {
+        sourceDir = new File(baseDir, OptionFormatter.getName(option));
+        FileUtils.mkDir(sourceDir);
+    }
+
+    /**
+     * verify that without args the report is ok.
+     */
     private void validateNoArgSetup() throws IOException, RatException {
-        // verify that without args the report is ok.
         TestingLog log = new TestingLog();
         DefaultLog.setInstance(log);
         try {
@@ -762,7 +764,7 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
 
             config = generateConfig(arg1);
             reporter = new Reporter(config);
-            output  = reporter.execute();
+            output = reporter.execute();
             assertThat(output.getStatistic().getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(2);
             assertThat(output.getStatistic().getCounter(ClaimStatistic.Counter.APPROVED)).isEqualTo(2);
             assertThat(output.getStatistic().getCounter(ClaimStatistic.Counter.UNAPPROVED)).isZero();
@@ -828,8 +830,8 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
             assertThat(output.getStatistic().getCounter(ClaimStatistic.Counter.UNAPPROVED)).isZero();
             output.format(config);
             String actualText = TextUtils.readFile(outFile);
-            TextUtils.assertContainsExactly(1, "Apache License 2.0: 1 ", actualText);
-            TextUtils.assertContainsExactly(1, "STANDARD: 1 ", actualText);
+            assertThat(actualText).containsOnlyOnce("Apache License 2.0: 1 ")
+                            .containsOnlyOnce("STANDARD: 1 ");
         });
     }
 
@@ -901,7 +903,7 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
             assertThat(output.getStatistic().getCounter(ClaimStatistic.Counter.UNAPPROVED)).isEqualTo(1);
             output.format(config);
             String actualText = baos.toString(StandardCharsets.UTF_8);
-            TextUtils.assertContainsExactly(1, "Hello world", actualText);
+            assertThat(actualText).containsOnlyOnce("Hello world");
         } catch (IOException | RatException e) {
             fail(e.getMessage(), e);
         } finally {
@@ -943,7 +945,8 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
             assertThat(output.getStatistic().getCounter(ClaimStatistic.Counter.UNAPPROVED)).isEqualTo(1);
             output.format(config);
             String actualText = baos.toString(StandardCharsets.UTF_8);
-            TextUtils.assertContainsExactly(1, "<resource encoding=\"ISO-8859-1\" mediaType=\"text/plain\" name=\"/stylesheet\" type=\"STANDARD\">", actualText);
+            assertThat(actualText)
+                    .containsOnlyOnce("<resource encoding=\"ISO-8859-1\" mediaType=\"text/plain\" name=\"/stylesheet\" type=\"STANDARD\">");
 
             try (InputStream expected = StyleSheets.getStyleSheet("xml").ioSupplier().get();
                  InputStream actual = config.getStyleSheet().get()) {
@@ -969,12 +972,12 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
             ReportConfiguration config = generateConfig();
             Reporter reporter = new Reporter(config);
             reporter.execute();
-            TextUtils.assertNotContains("DEBUG", baos.toString(StandardCharsets.UTF_8));
+            assertThat(baos.toString(StandardCharsets.UTF_8)).doesNotContain("DEBUG");
 
             config = generateConfig(ImmutablePair.of(option, new String[]{"debug"}));
             reporter = new Reporter(config);
             reporter.execute();
-            TextUtils.assertContains("DEBUG", baos.toString(StandardCharsets.UTF_8));
+            assertThat(baos.toString(StandardCharsets.UTF_8)).contains("DEBUG");
         } catch (IOException | RatException e) {
             fail(e.getMessage(), e);
         } finally {
@@ -1191,7 +1194,7 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
             reporter.execute();
 
             String actualText = TextUtils.readFile(javaFile);
-            TextUtils.assertNotContains(myCopyright, actualText);
+            assertThat(actualText).doesNotContain(myCopyright);
 
             Pair<Option, String[]> arg2 = ImmutablePair.of(Arg.EDIT_ADD.find("edit-license"), null);
             config = extraArg != null ? generateConfig(arg1, arg2, extraArg) : generateConfig(arg1, arg2);
@@ -1200,13 +1203,13 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
 
             actualText = TextUtils.readFile(javaFile);
             if (forced) {
-                TextUtils.assertContains(myCopyright, actualText);
+                assertThat(actualText).contains(myCopyright);
                 assertThat(newJavaFile).doesNotExist();
             } else if (dryRun) {
-                TextUtils.assertNotContains(myCopyright, actualText);
+                assertThat(actualText).doesNotContain(myCopyright);
                 assertThat(newJavaFile).doesNotExist();
             } else {
-                TextUtils.assertNotContains(myCopyright, actualText);
+                assertThat(actualText).doesNotContain(myCopyright);
                 assertThat(newJavaFile).exists();
             }
         });
@@ -1301,10 +1304,8 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
             System.setOut(origin);
         }
 
-        assertThat(actualText).isNotNull();
-        TextUtils.assertContains("====== Licenses ======", actualText);
-        TextUtils.assertContains("====== Defined Matchers ======", actualText);
-        TextUtils.assertContains("====== Defined Families ======", actualText);
+        assertThat(actualText).isNotNull()
+                        .contains("====== Licenses ======", "====== Defined Matchers ======", "====== Defined Families ======");
     }
 
     @OptionCollectionTest.TestFunction

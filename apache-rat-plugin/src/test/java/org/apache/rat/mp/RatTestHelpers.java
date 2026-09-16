@@ -45,6 +45,8 @@ import org.codehaus.plexus.util.DirectoryScanner;
 
 import com.google.common.base.Charsets;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 /**
  * Test helpers used when verifying mojo interaction in RAT integration tests.
  */
@@ -198,11 +200,10 @@ public final class RatTestHelpers {
         List<String> lines = IOUtils.readLines(Files.newInputStream(pRatTxtFile.toPath()), Charsets.UTF_8);
         String document = String.join("\n", lines);
         for (String pattern : in) {
-            TextUtils.assertPatternInTarget(pattern, document);
+            assertThat(document).containsPattern(pattern);
         }
-
         for (String pattern : notIn) {
-            TextUtils.assertPatternNotInTarget(pattern, document);
+            assertThat(document).doesNotContain(pattern);
         }
     }
 

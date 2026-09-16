@@ -24,8 +24,9 @@ import org.apache.rat.utils.Log;
  * Log that captures output for later review.
  */
 public class TestingLog implements Log {
-
+    /** The captured logging. */
     private StringBuilder captured = new StringBuilder();
+    /** The log level to capture. */
     private Log.Level level = Log.Level.INFO;
 
     /**
@@ -41,48 +42,6 @@ public class TestingLog implements Log {
      */
     public String getCaptured() {
         return captured.toString();
-    }
-
-    /**
-     * Asserts the text was found in the given log entry.
-     * @param expected the text to find.
-     */
-    public void assertContains(String expected) {
-        TextUtils.assertContains(expected, captured.toString());
-    }
-
-    /**
-     * Asserts the text was found exactly n times in the log.
-     * @param times the number of times to find the expected text.
-     * @param expected the expected test.
-     */
-    public void assertContainsExactly(int times, String expected) {
-        TextUtils.assertContainsExactly(times, expected, getCaptured());
-    }
-
-    /**
-     * Asserts that the text is not found in the log.
-     * @param notExpected the text that should not be in the log.
-     */
-    public void assertNotContains(String notExpected) {
-        TextUtils.assertNotContains(notExpected, captured.toString());
-    }
-
-
-    /**
-     * Asserts that a regular expression is found in the log.
-     * @param pattern the regular expression to search for.
-     */
-    public void assertContainsPattern(String pattern) {
-        TextUtils.assertPatternInTarget(pattern, captured.toString());
-    }
-
-    /**
-     * Asserts that a regular expression is not found in the log.
-     * @param pattern the regular expression that should not be in the log.
-     */
-    public void assertNotContainsPattern(String pattern) {
-        TextUtils.assertPatternNotInTarget(pattern, captured.toString());
     }
 
     @Override
@@ -102,7 +61,7 @@ public class TestingLog implements Log {
     }
 
     /**
-     * Returns true if the log is empty.
+     * Determines if the log is empty.
      * @return {@code true} if the log is empty.
      */
     public boolean isEmpty() {

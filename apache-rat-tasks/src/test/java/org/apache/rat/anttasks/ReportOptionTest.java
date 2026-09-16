@@ -129,9 +129,7 @@ public class ReportOptionTest  {
             } finally {
                 DefaultLog.setInstance(oldLog);
             }
-            testLog.assertContains("====== Licenses ======");
-            testLog.assertContains("====== Defined Matchers ======");
-            testLog.assertContains("====== Defined Families ======");
+            assertThat(testLog.getCaptured()).contains("====== Licenses ======", "====== Defined Matchers ======", "====== Defined Families ======");
         }
 
         private class BuildTask extends AbstractRatAntTaskTest {

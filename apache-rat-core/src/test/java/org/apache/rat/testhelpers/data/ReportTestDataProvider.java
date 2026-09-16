@@ -974,7 +974,7 @@ public class ReportTestDataProvider extends AbstractTestDataProvider {
                 validatorData -> {
                     DefaultLog.getInstance().warn("validating logLevelTest for " + validatorData.getBaseDir());
                     try {
-                        testingLog.assertNotContains("DEBUG");
+                        assertThat(testingLog.getCaptured()).doesNotContain("DEBUG");
                     } finally {
                         DefaultLog.setInstance(null);
                     }
@@ -986,7 +986,7 @@ public class ReportTestDataProvider extends AbstractTestDataProvider {
                 validatorData -> {
                     DefaultLog.getInstance().warn("validating logLevelTest for " + validatorData.getBaseDir());
                     try {
-                        testingLog.assertContains("DEBUG");
+                        assertThat(testingLog.getCaptured()).contains("DEBUG");
                     } finally {
                         DefaultLog.setInstance(null);
                     }

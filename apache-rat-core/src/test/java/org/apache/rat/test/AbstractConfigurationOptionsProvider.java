@@ -382,9 +382,7 @@ public abstract class AbstractConfigurationOptionsProvider extends AbstractOptio
             System.setOut(origin);
         }
         String txt = output.toString();
-        TextUtils.assertContains("====== Licenses ======", txt);
-        TextUtils.assertContains("====== Defined Matchers ======", txt);
-        TextUtils.assertContains("====== Defined Families ======", txt);
+        assertThat(txt).contains("====== Licenses ======", "====== Defined Matchers ======", "====== Defined Families ======");
     }
 
     protected void licensesApprovedFileTest() {
