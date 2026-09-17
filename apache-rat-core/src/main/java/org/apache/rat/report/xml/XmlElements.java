@@ -19,11 +19,12 @@
 package org.apache.rat.report.xml;
 
 import java.io.IOException;
-import java.util.Calendar;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.rat.VersionInfo;
 import org.apache.rat.api.Document;
 import org.apache.rat.api.MetaData;
@@ -38,6 +39,16 @@ import org.apache.rat.utils.CasedString;
  * Creates the elements in the XML report.
  */
 public final class XmlElements {
+
+    /**
+     * Format to be used to output the current date,
+     * adapted from commons-lang3's ISO_8601_EXTENDED_DATETIME_TIME_ZONE_FORMAT
+     * in order to be compliant with the JDK's java.time-API.
+     * Prefix adapted due to timezone-specific changes and Z in case of UTC.
+     */
+    private static final DateTimeFormatter ISO_8601_EXTENDED_DATETIME_TIME_ZONE_FORMAT =
+            DateTimeFormatter.ofPattern("uuuu-MM-dd'T'HH:mm:ssxxx").withZone(ZoneOffset.UTC);
+
     private XmlElements() {
         // do not instantiate
     }
@@ -63,7 +74,7 @@ public final class XmlElements {
         try {
             writer.startElement(Elements.RAT_REPORT.elementName)
                     .attribute(Attributes.TIMESTAMP.attributeName(),
-                            DateFormatUtils.ISO_8601_EXTENDED_DATETIME_TIME_ZONE_FORMAT.format(Calendar.getInstance()));
+                            ISO_8601_EXTENDED_DATETIME_TIME_ZONE_FORMAT.format(ZonedDateTime.now()));
             version(writer);
         } catch (IOException e) {
             throw new RatException(e);
