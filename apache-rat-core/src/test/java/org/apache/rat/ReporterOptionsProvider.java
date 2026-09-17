@@ -1236,7 +1236,7 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
             System.setOut(out);
             configureSourceDir(OptionCollection.HELP);
 
-            ReportConfiguration config = generateConfig(List.of(arg1), true);
+            generateConfig(List.of(arg1), true);
             assertThat(helpCalled.get()).as("Help was not called").isTrue();
             new Help(System.out).printUsage(options);
             actualText = baos.toString(StandardCharsets.UTF_8);
@@ -1286,7 +1286,7 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
         try (PrintStream out = new PrintStream(baos)) {
             System.setOut(out);
             configureSourceDir(option);
-            ReportConfiguration config = generateConfig(arg1);
+            generateConfig(arg1);
             actualText = baos.toString(StandardCharsets.UTF_8);
         } catch (IOException e) {
             fail(e.getMessage(), e);
