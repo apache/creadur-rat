@@ -20,7 +20,6 @@ package org.apache.rat.report.xml;
 
 import java.io.IOException;
 import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 
@@ -74,7 +73,7 @@ public final class XmlElements {
         try {
             writer.startElement(Elements.RAT_REPORT.elementName)
                     .attribute(Attributes.TIMESTAMP.attributeName(),
-                            ISO_8601_EXTENDED_DATETIME_TIME_ZONE_FORMAT.format(ZonedDateTime.now()));
+                            ISO_8601_EXTENDED_DATETIME_TIME_ZONE_FORMAT.format(Instant.now()));
             version(writer);
         } catch (IOException e) {
             throw new RatException(e);

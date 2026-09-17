@@ -71,7 +71,7 @@ public class SpdxBuilder extends AbstractBuilder {
     public AbstractBuilder setId(final String id) {
         if (StringUtils.isNotBlank(id)) {
             throw new ConfigurationException("'id' is not supported for SPDX matchers. "
-                    + "SPXD matchers always have 'SPDX:<name>' as their id");
+                    + "SPXD matchers always have 'SPDX:<name>' as their id.");
         }
         return this;
     }
