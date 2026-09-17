@@ -19,6 +19,7 @@
 package org.apache.rat.report.xml;
 
 import java.io.IOException;
+import java.time.Instant;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
