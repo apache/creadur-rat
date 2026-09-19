@@ -35,7 +35,7 @@ Document document = XmlUtils.toDom(new FileInputStream(f))
 XPath xPath = XPathFactory.newInstance().newXPath()
 
 XmlUtils.assertAttributes(document, xPath, "/rat-report/resource[@name='/src.apt']",
-        mapOf("encoding", "ISO-8859-1", "mediaType", "text/plain", "type", "STANDARD" ))
+        mapOf("encoding", "windows-1252", "mediaType", "text/plain", "type", "STANDARD" ))
 
 XmlUtils.assertAttributes(document, xPath, "/rat-report/resource[@name='/src.apt']/license[@id='MyLicense']",
         mapOf("approval", "true", "family", "YAL  ", "name", "Yet another license" ))

@@ -68,6 +68,9 @@ in order to be properly linked in site reports.
     </release>
     -->
     <release version="1.0.0-SNAPSHOT" date="xxxx-yy-zz" description="Current SNAPSHOT - release to be done">
+      <action issue="RAT-532" type="add" dev="pottlinger">
+        Update to Tika 4.0.0: new charset detection logic in Tika returns different values compared to 3.x before, such as windows-1252 instead of ISO-8859-1.
+      </action>
       <action issue="RAT-541" type="add" dev="claudenw">
         Refactor UIOption, AntOption and MavenOption to improve multi-threaded usage and provide a clearer separation of responsibilities.
       </action>

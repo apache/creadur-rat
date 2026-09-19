@@ -172,7 +172,6 @@ public class DocumentNameTest {
         String resolveName2 = fsInfo.roots()[0] + fsInfo.mkPath("dir", fsInfo.toString(), "thing");
         assertThat(base.resolve(resolveName2).getName())
                 .isEqualTo(resolveName2);
-
     }
 
     void testNoRootSpecified() {
@@ -258,7 +257,6 @@ public class DocumentNameTest {
         }
     }
 
-
     @ParameterizedTest(name = "{index} {0} {1}")
     @MethodSource("archiveEntryTestData")
     void archiveEntryNameTest(String os, String testName, DocumentName archiveName, String root, String separator, String baseName,
@@ -300,4 +298,5 @@ public class DocumentNameTest {
         }
         return lst;
     }
+
 }
