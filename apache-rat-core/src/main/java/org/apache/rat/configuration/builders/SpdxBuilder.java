@@ -42,7 +42,7 @@ public class SpdxBuilder extends AbstractBuilder {
      * its own matcher map and per-document match state ({@code lastMatch},
      * {@code checked}).
      */
-    private static final ThreadLocal<SPDXMatcherFactory> FACTORY = ThreadLocal.withInitial(SPDXMatcherFactory::newInstance);
+    private static final ThreadLocal<SPDXMatcherFactory> FACTORY = ThreadLocal.withInitial(SPDXMatcherFactory::newInstance); // NOSONAR
 
     /** The SPDX name */
     private String name;
