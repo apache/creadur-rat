@@ -622,7 +622,7 @@ agnostic home for software distribution comprehension and audit tools.
         <plugin>
           <groupId>org.codehaus.mojo</groupId>
           <artifactId>build-helper-maven-plugin</artifactId>
-          <version>3.6.1</version>
+          <version>3.6.2</version>
         </plugin>
         <plugin>
           <groupId>org.jacoco</groupId>
