@@ -26,6 +26,7 @@ import org.junit.jupiter.api.Test;
 
 import java.io.StringWriter;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import static java.lang.String.format;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -63,7 +64,9 @@ public class HelpTest {
         for (Option option : opts.getOptions()) {
             if (option.getArgName() != null) {
                 assertTrue(argTypes.contains(option.getArgName()), () -> format("Argument '%s' is missing from list", option.getArgName()));
-                assertThat(result).containsPattern(format("^<%s>", option.getArgName()));
+                Pattern pattern = Pattern.compile(format("^<%s>", option.getArgName()), Pattern.MULTILINE);
+                assertThat(result).as(format("argument name for option `%s`.", option.getKey()))
+                        .containsPattern(pattern);
             }
         }
         assertThat(result).doesNotContain("..");

@@ -818,7 +818,7 @@ public abstract class AbstractConfigurationOptionsProvider extends AbstractOptio
             for (String sheet : new String[]{"plain-rat", "missing-headers", "unapproved-licenses", xsltFile.getName()}) {
                 args[0] = sheet;
                 ReportConfiguration config = generateConfig(ImmutablePair.of(option, args));
-                try (InputStream expected = StyleSheets.getStyleSheet(sheet).ioSupplier().get();
+                try (InputStream expected = StyleSheets.getStyleSheet(sheet, xsltFile.getBaseDocumentName()).ioSupplier().get();
                      InputStream actual = config.getStyleSheet().get()) {
                     String expectedStr =  IOUtils.toString(expected, StandardCharsets.UTF_8);
                     String actualStr =  IOUtils.toString(actual, StandardCharsets.UTF_8);
@@ -849,7 +849,7 @@ public abstract class AbstractConfigurationOptionsProvider extends AbstractOptio
     protected void xmlTest() {
         assertDoesNotThrow(() -> {
             ReportConfiguration config = generateConfig(ImmutablePair.of(Arg.OUTPUT_STYLE.find("xml"), null));
-            try (InputStream expected = StyleSheets.getStyleSheet("xml").ioSupplier().get();
+            try (InputStream expected = StyleSheets.getStyleSheet("xml", null).ioSupplier().get();
                  InputStream actual = config.getStyleSheet().get()) {
                 assertThat(IOUtils.contentEquals(expected, actual)).as("'xml' does not match").isTrue();
             }

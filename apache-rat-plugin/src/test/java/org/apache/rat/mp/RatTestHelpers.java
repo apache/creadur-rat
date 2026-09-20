@@ -9,6 +9,7 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Proxy;
 import java.nio.file.Files;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import org.apache.commons.io.FileUtils;
 
@@ -45,6 +46,7 @@ import org.codehaus.plexus.util.DirectoryScanner;
 
 import com.google.common.base.Charsets;
 
+import static java.lang.String.format;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
@@ -199,12 +201,13 @@ public final class RatTestHelpers {
     public static void ensureRatReportIsCorrect(File pRatTxtFile, String[] in, String[] notIn) throws IOException {
         List<String> lines = IOUtils.readLines(Files.newInputStream(pRatTxtFile.toPath()), Charsets.UTF_8);
         String document = String.join("\n", lines);
-        for (String pattern : in) {
+        for (String patternStr : in) {
+            Pattern pattern = Pattern.compile(patternStr, Pattern.MULTILINE);
             assertThat(document).containsPattern(pattern);
         }
-        for (String pattern : notIn) {
-            assertThat(document).doesNotContain(pattern);
+        for (String patternStr : notIn) {
+            Pattern pattern = Pattern.compile(patternStr, Pattern.MULTILINE);
+            assertThat(document).doesNotContainPattern(pattern);
         }
     }
-
 }

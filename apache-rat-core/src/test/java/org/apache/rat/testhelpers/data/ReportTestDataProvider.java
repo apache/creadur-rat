@@ -1264,8 +1264,7 @@ public class ReportTestDataProvider extends AbstractTestDataProvider {
 
                     validatorData -> {
                         DefaultLog.getInstance().warn("validating outputStyleTest for " + validatorData.getBaseDir());
-                        DocumentName xsltName = validatorData.getBaseName().resolve("fileStyleSheet.xslt");
-                        try (InputStream expected = StyleSheets.getStyleSheet(xsltName.getName()).ioSupplier().get();
+                        try (InputStream expected = StyleSheets.getStyleSheet("fileStyleSheet.xslt", validatorData.getBaseName()).ioSupplier().get();
                              InputStream actual = validatorData.getConfiguration().getStyleSheet().get()) {
                             assertThat(IOUtils.contentEquals(expected, actual)).as(() -> "'fileStyleSheet.xslt' does not match").isTrue();
                             baos.reset();

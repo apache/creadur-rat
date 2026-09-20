@@ -43,6 +43,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.SortedSet;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import org.apache.commons.io.filefilter.DirectoryFileFilter;
 import org.apache.commons.io.output.CloseShieldOutputStream;
@@ -712,22 +713,25 @@ public class ReportConfigurationTest {
 
     /**
      * Validates that the configuration contains the default approved licenses.
-     * @param config the configuration to test.
+     * @param config The configuration to test.
      */
-    public static void validateDefaultApprovedLicenses(ReportConfiguration config) {
-        validateDefaultApprovedLicenses(config, 0);
-    }
+    public static void validateDefaultApprovedLicenses(ReportConfiguration config, String... additionalIds) {
+        validateLicenses(config, Arrays.asList(additionalIds), LicenseFilter.APPROVED, XMLConfigurationReaderTest.APPROVED_LICENSES);
+        }
 
     /**
-     * Validates that the configuration contains the default approved licenses.
+     * Validates that the configuration contains all the default licenses along with any addiitonal licenses
      * @param config the configuration to test.
-     * @param additionalIdCount the number of additional licence IDs that are expected.
+     * @param additionalLicenses Additional licence IDs that are expected.
      */
-    public static void validateDefaultApprovedLicenses(ReportConfiguration config, int additionalIdCount) {
-        assertThat(config.getLicenseCategories(LicenseFilter.APPROVED)).hasSize(XMLConfigurationReaderTest.APPROVED_IDS.length + additionalIdCount);
-        for (String s : XMLConfigurationReaderTest.APPROVED_IDS) {
-            assertThat(config.getLicenseCategories(LicenseFilter.APPROVED)).contains(ILicenseFamily.makeCategory(s));
-        }
+    public static void validateDefaultLicenses(ReportConfiguration config, String...additionalLicenses) {
+        validateLicenses(config, Arrays.asList(additionalLicenses), LicenseFilter.ALL, XMLConfigurationReaderTest.EXPECTED_LICENSES);
+    }
+
+    private static void validateLicenses(ReportConfiguration config, List<String> additionalIds, LicenseFilter filter, String[] approvedIds) {
+        List<String> expected = new ArrayList<>(Arrays.asList(approvedIds));
+        expected.addAll(additionalIds);
+        assertThat(config.getLicenses(filter).stream().map(ILicense::getId).collect(Collectors.toSet())).containsExactlyInAnyOrderElementsOf(expected);
     }
 
     /**
@@ -735,27 +739,22 @@ public class ReportConfigurationTest {
      * @param config the configuration to test.
      */
     public static void validateDefaultLicenseFamilies(ReportConfiguration config, String...additionalIds) {
-        assertThat(config.getLicenseFamilies(LicenseFilter.ALL)).hasSize(XMLConfigurationReaderTest.EXPECTED_IDS.length + additionalIds.length);
-        List<String> expected = new ArrayList<>();
-        expected.addAll(Arrays.asList(XMLConfigurationReaderTest.EXPECTED_IDS));
-        expected.addAll(Arrays.asList(additionalIds));
-        for (ILicenseFamily family : config.getLicenseFamilies(LicenseFilter.ALL)) {
-            assertThat(expected).contains(family.getFamilyCategory().trim());
-        }
+        validateLicenseFamilies(config, Arrays.asList(additionalIds), LicenseFilter.ALL, XMLConfigurationReaderTest.EXPECTED_IDS);
     }
 
     /**
-     * Validates that the configuration contains the default licenses.
+     * Validates that the configuration contains the default license families.
      * @param config the configuration to test.
      */
-    public static void validateDefaultLicenses(ReportConfiguration config, String...additionalLicenses) {
-        assertThat(config.getLicenses(LicenseFilter.ALL)).hasSize(XMLConfigurationReaderTest.EXPECTED_LICENSES.length + additionalLicenses.length);
-        List<String> expected = new ArrayList<>();
-        expected.addAll(Arrays.asList(XMLConfigurationReaderTest.EXPECTED_LICENSES));
-        expected.addAll(Arrays.asList(additionalLicenses));
-        for (ILicense license : config.getLicenses(LicenseFilter.ALL)) {
-            assertThat(expected).contains(license.getId());
+    static void validateDefaultApprovedLicenseFamilies(ReportConfiguration config, String...additionalIds) {
+        validateLicenseFamilies(config, Arrays.asList(additionalIds), LicenseFilter.APPROVED, XMLConfigurationReaderTest.APPROVED_IDS);
         }
+
+    private static void validateLicenseFamilies(ReportConfiguration config, List<String> additionalIds, LicenseFilter filter, String[] approvedIds) {
+        List<String> expected = new ArrayList<>(Arrays.asList(approvedIds));
+        expected.addAll(additionalIds);
+        assertThat(config.getLicenseFamilies(filter).stream().map(lf -> lf.getFamilyCategory().trim())
+                .collect(Collectors.toSet())).containsExactlyInAnyOrderElementsOf(expected);
     }
     
     /**
