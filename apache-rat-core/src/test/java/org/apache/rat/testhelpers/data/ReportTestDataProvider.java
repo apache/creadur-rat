@@ -612,7 +612,6 @@ public class ReportTestDataProvider extends AbstractTestDataProvider {
                 basePath -> writeFile(basePath.toFile(), "licensesDenied.txt", Collections.singletonList("ILLUMOS"))));
     }
 
-    @Override
     private List<TestData> execLicenseFamiliesApprovedTest(final Option option, final String[] args, Consumer<Path> extraSetup) {
         Consumer<Path> setup = extraSetup.andThen(
                 basePath -> {
@@ -1243,8 +1242,8 @@ public class ReportTestDataProvider extends AbstractTestDataProvider {
                                 baos.reset();
                                 validatorData.getOutput().format(validatorData.getConfiguration().getStyleSheet(), () -> baos);
                                 String actualText = baos.toString();
-                                assertThat(actualText).containsOnlyOnce("<resource encoding=\"ISO-8859-1\" mediaType=\"text/x-java-source\" name=\"/Test.java\" type=\"STANDARD\">")
-                                                .containsOnlyOnce("<resource encoding=\"ISO-8859-2\" mediaType=\"text/x-java-source\" name=\"/Missing.java\" type=\"STANDARD\">");
+                                assertThat(actualText).containsOnlyOnce("<resource encoding=\"windows-1252\" mediaType=\"text/x-java-source\" name=\"/Test.java\" type=\"STANDARD\">")
+                                                .containsOnlyOnce("<resource encoding=\"windows-1252\" mediaType=\"text/x-java-source\" name=\"/Missing.java\" type=\"STANDARD\">");
                             } catch (IOException | RatException e) {
                                 throw new RuntimeException(e);
                             }
@@ -1272,8 +1271,8 @@ public class ReportTestDataProvider extends AbstractTestDataProvider {
                                                         .containsOnlyOnce("?????: 1 ");
                                         break;
                                     case XML:
-                                        assertThat(actualText).containsOnlyOnce("<resource encoding=\"ISO-8859-1\" mediaType=\"text/x-java-source\" name=\"/Test.java\" type=\"STANDARD\">")
-                                                .containsOnlyOnce("<resource encoding=\"ISO-8859-2\" mediaType=\"text/x-java-source\" name=\"/Missing.java\" type=\"STANDARD\">");
+                                        assertThat(actualText).containsOnlyOnce("<resource encoding=\"windows-1252\" mediaType=\"text/x-java-source\" name=\"/Test.java\" type=\"STANDARD\">")
+                                                .containsOnlyOnce("<resource encoding=\"windows-1252\" mediaType=\"text/x-java-source\" name=\"/Missing.java\" type=\"STANDARD\">");
                                         break;
                                     case UNAPPROVED_LICENSES:
                                         assertThat(actualText).containsOnlyOnce("Files with unapproved licenses:" + System.lineSeparator() + "  /Missing.java");
