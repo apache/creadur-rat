@@ -880,7 +880,7 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
                         assertThat(actualText).containsOnlyOnce("?????: 1 ");
                         break;
                     case XML:
-                        assertThat(actualText).containsOnlyOnce("<resource encoding=\"ISO-8859-1\" mediaType=\"text/plain\" name=\"/stylesheet\" type=\"STANDARD\">");
+                        assertThat(actualText).containsOnlyOnce("<resource encoding=\"windows-1252\" mediaType=\"text/plain\" name=\"/stylesheet\" type=\"STANDARD\">");
                         break;
                     case UNAPPROVED_LICENSES:
                         assertThat(actualText).containsOnlyOnce("Files with unapproved licenses:" + System.lineSeparator() + "  /stylesheet");
@@ -946,7 +946,7 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
             output.format(config);
             String actualText = baos.toString(StandardCharsets.UTF_8);
             assertThat(actualText)
-                    .containsOnlyOnce("<resource encoding=\"ISO-8859-1\" mediaType=\"text/plain\" name=\"/stylesheet\" type=\"STANDARD\">");
+                    .containsOnlyOnce("<resource encoding=\"windows-1252\" mediaType=\"text/plain\" name=\"/stylesheet\" type=\"STANDARD\">");
 
             try (InputStream expected = StyleSheets.getStyleSheet("xml", null).ioSupplier().get();
                  InputStream actual = config.getStyleSheet().get()) {
@@ -1246,7 +1246,7 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
             System.setOut(out);
             configureSourceDir(OptionCollection.HELP);
 
-            ReportConfiguration config = generateConfig(List.of(arg1), true);
+            generateConfig(List.of(arg1), true);
             assertThat(helpCalled.get()).as("Help was not called").isTrue();
             new Help(System.out).printUsage(options);
             actualText = baos.toString(StandardCharsets.UTF_8);
@@ -1296,7 +1296,7 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
         try (PrintStream out = new PrintStream(baos)) {
             System.setOut(out);
             configureSourceDir(option);
-            ReportConfiguration config = generateConfig(arg1);
+            generateConfig(arg1);
             actualText = baos.toString(StandardCharsets.UTF_8);
         } catch (IOException e) {
             fail(e.getMessage(), e);

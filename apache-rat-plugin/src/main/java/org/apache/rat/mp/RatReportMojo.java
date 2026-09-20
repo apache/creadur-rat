@@ -115,13 +115,13 @@ public class RatReportMojo extends AbstractRatMojo implements MavenMultiPageRepo
     /**
      * SiteTool.
      */
-    @Inject
+    @Inject // NOSONAR intentionally injected here
     protected SiteTool siteTool;
 
     /**
      * Doxia Site Renderer component.
      */
-    @Inject
+    @Inject // NOSONAR intentionally injected here
     protected SiteRenderer siteRenderer;
 
     /**

@@ -51,7 +51,7 @@ agnostic home for software distribution comprehension and audit tools.
     <assertj.version>4.0.0-M1</assertj.version>
     <!-- this is the target Java version that this project supports at runtime -->
     <javaVersion>17</javaVersion>
-    <tika.version>3.3.2</tika.version>
+    <tika.version>4.0.0</tika.version>
     <mockito.version>5.23.0</mockito.version>
     <!-- This is the version of Maven required to use the RAT Maven Plugin -->
     <mavenMinVersion>3.9</mavenMinVersion>
@@ -324,7 +324,7 @@ agnostic home for software distribution comprehension and audit tools.
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>taglist-maven-plugin</artifactId>
-        <version>3.2.2</version>
+        <version>3.2.3</version>
         <configuration>
           <tagListOptions>
             <tagClasses>
@@ -617,12 +617,12 @@ agnostic home for software distribution comprehension and audit tools.
         <plugin>
           <groupId>org.codehaus.mojo</groupId>
           <artifactId>exec-maven-plugin</artifactId>
-          <version>3.6.3</version>
+          <version>3.6.4</version>
         </plugin>
         <plugin>
           <groupId>org.codehaus.mojo</groupId>
           <artifactId>build-helper-maven-plugin</artifactId>
-          <version>3.6.1</version>
+          <version>3.6.2</version>
         </plugin>
         <plugin>
           <groupId>org.jacoco</groupId>
@@ -732,7 +732,7 @@ agnostic home for software distribution comprehension and audit tools.
           <dependency>
             <groupId>org.codehaus.mojo</groupId>
             <artifactId>extra-enforcer-rules</artifactId>
-            <version>1.12.0</version>
+            <version>1.12.1</version>
           </dependency>
           <dependency>
             <groupId>org.apache.ws.commons.axiom</groupId>
