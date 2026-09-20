@@ -87,6 +87,6 @@ public class FileDocumentTest {
         assertThat(expectedException.getMessage()).startsWith("No charset detected for document");
 
         // just raise test coverage and test uncovered branch
-        assertThat(spyDocument.equals(document.getName())).isFalse();
+        assertThat(spyDocument).isNotEqualTo(document.getName()); // NOSONAR we want to raise code coverage only
     }
 }

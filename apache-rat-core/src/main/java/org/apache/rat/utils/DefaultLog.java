@@ -32,7 +32,7 @@ public final class DefaultLog implements Log {
     /**
      * The per-thread instance of the default log.
      */
-    private static final ThreadLocal<Log> INSTANCE = ThreadLocal.withInitial(DefaultLog::new);
+    private static final ThreadLocal<Log> INSTANCE = ThreadLocal.withInitial(DefaultLog::new); // NOSONAR
 
     /**
      * Retrieves the DefaultLog instance for the current thread.
