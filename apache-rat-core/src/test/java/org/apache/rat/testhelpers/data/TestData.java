@@ -40,7 +40,10 @@ public final class TestData implements Comparable<TestData> {
     private Exception expectedException;
     /** The sub name of the test */
     private final String name;
-    /** The command line for the test */
+    /**
+     * The command line for the test.
+     * The command line is encoded a an option followed by the an array of String arguments for that option.
+     */
     private final List<ImmutablePair<Option, String[]>> commandLine;
     /** A function to set up the test in a specific path */
     private final Consumer<Path> setupFiles;

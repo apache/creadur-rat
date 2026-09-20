@@ -82,12 +82,24 @@ import static org.junit.jupiter.api.Assertions.fail;
  */
 class ReportTest {
 
+    /**
+     * Converts an argument lists to an argument array
+     * @param argsList the list to convert
+     * @return the array of arguments.
+     */
     private String[] asArgs(final List<String> argsList) {
         return argsList.toArray(new String[0]);
     }
 
+    /**
+     * Runs the commands specified by the `commandLine.txt` file in the resources/ReportTest/* directories
+     * and validate the results using the {@code verify.groovy} dfile in the test directory.
+     * @param testName the name of the test based on the directory the test was found in.
+     * @param commandLineDoc the Doucment that is the command line.
+     * @throws Exception on execution error.
+     */
     @ParameterizedTest(name = "{index} {0}")
-    @MethodSource("args")
+    @MethodSource("integrationTestData")
     void integrationTest(String testName, Document commandLineDoc) throws Exception {
         DefaultLog.getInstance().log(Log.Level.INFO, "Running test for " + testName);
         File baseDir = new File(commandLineDoc.getName().getName()).getParentFile();
@@ -152,7 +164,13 @@ class ReportTest {
         }
     }
 
-    static Stream<Arguments> args() throws RatException {
+    /**
+     * Reads each directory under the ReportTest director in the test resources and creates a test from it
+     * The {@code commandLine.txt} file is parsed to create the command lien to execute the tests.
+     * @return a stream of arguments for each test case.
+     * @throws RatException on parsing error.
+     */
+    static Stream<Arguments> integrationTestData() throws RatException {
         List<Arguments> results = new ArrayList<>();
         URL url = ReportTest.class.getResource("/ReportTest");
 
@@ -172,11 +190,11 @@ class ReportTest {
         DirectoryWalker walker = new DirectoryWalker(document);
         RatReport report = new RatReport() {
             @Override
-            public void report(Document document)  {
-            if (!document.isIgnored()) {
-                String[] tokens = DocumentName.FSInfo.getDefault().tokenize(document.getName().localized());
-                results.add(Arguments.of(tokens[1], document));
-            }
+            public void report(Document document) {
+                if (!document.isIgnored()) {
+                    String[] tokens = DocumentName.FSInfo.getDefault().tokenize(document.getName().localized());
+                    results.add(Arguments.of(tokens[1], document));
+                }
             }
         };
         walker.run(report);
@@ -187,7 +205,7 @@ class ReportTest {
      * Log that captures output for later review.
      */
     public static class FileLog implements Log {
-
+        /** the output from the log */
         private final PrintStream logFile;
 
         /**
@@ -195,17 +213,16 @@ class ReportTest {
          */
         private Level level;
 
+        /**
+         * Constructor.
+         * @param logFile the file to write to.
+         * @throws IOException on Error.
+         */
         FileLog(File logFile) throws IOException {
             this.logFile = new PrintStream(logFile);
             level = Level.INFO;
         }
 
-        /**
-         * Sets the level.Log messages below the specified level will
-         * not be written to the log.
-         *
-         * @param level the level to use when writing messages.
-         */
         @Override
         public void setLevel(final Level level) {
             this.level = level;
@@ -223,6 +240,9 @@ class ReportTest {
             }
         }
 
+        /**
+         * Closes the log file.
+         */
         public void close() {
             logFile.close();
         }

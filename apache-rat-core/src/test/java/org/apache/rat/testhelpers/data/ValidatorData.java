@@ -62,9 +62,14 @@ public final class ValidatorData {
         return DocumentName.builder().setBaseName(baseDir.toFile()).setName(fileName).build();
     }
 
+    /**
+     * Gets the reporter output object.
+     * @return the reporter output object.
+     */
     public Reporter.Output getOutput() {
         return output;
     }
+
     /**
      * Gets the document that was generated during execution.
      * @return the document that was generated during execution.
@@ -89,6 +94,10 @@ public final class ValidatorData {
         return output.getConfiguration();
     }
 
+    /**
+     * Gets the path to the base directory.
+     * @return the path to the base directory.
+     */
     public Path getBaseDir() {
         return baseDir;
     }

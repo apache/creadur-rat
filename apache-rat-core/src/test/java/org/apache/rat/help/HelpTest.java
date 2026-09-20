@@ -32,6 +32,9 @@ import static java.lang.String.format;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+/**
+ * Tests to validate CLI help option.
+ */
 public class HelpTest {
     @Test
     public void verifyAllOptionsListed() {

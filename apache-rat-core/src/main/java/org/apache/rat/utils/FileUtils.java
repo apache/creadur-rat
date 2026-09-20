@@ -26,7 +26,9 @@ import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.Collections;
 
-
+/**
+ * A set of utilities to help process files.
+ */
 public final class FileUtils {
     private FileUtils() {
         // do not instantiate

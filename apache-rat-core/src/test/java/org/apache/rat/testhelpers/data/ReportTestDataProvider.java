@@ -70,8 +70,12 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 /**
  * Generates a list of TestData for executing the Report.
- * Use of this interface ensures consistent testing across the UIs. Each method
- * tests an Option from {@link OptionCollectionParser} that must be implemented in the UI.
+ * The tests work by creating a Path Consumer to construct a directory under the test base directory and creating files and/or
+ * directories within that directory.  A test validator is created to validate the expected results of the operation and a {@link TestData}
+ * object is created for each test.
+ *
+ * Each {@code TestData} represents a single test of a command line option or set of options.
+ *
  * These tests generally validate the results in the generated XML are as expected.
  */
 public class ReportTestDataProvider extends AbstractTestDataProvider {
@@ -80,6 +84,9 @@ public class ReportTestDataProvider extends AbstractTestDataProvider {
 
     private final XPath xpath = XPathFactory.newInstance().newXPath();
 
+    /**
+     * A Path Consumer that creates a {@code .rat} directory in the basepath.
+     */
     private final Consumer<Path> mkRat = basePath -> {
         DefaultLog.getInstance().warn("mkRat setup for " + basePath);
         File baseDir = basePath.toFile();
@@ -87,6 +94,11 @@ public class ReportTestDataProvider extends AbstractTestDataProvider {
         FileUtils.mkDir(ratDir);
     };
 
+    /**
+     * Asserts that the report Document contains the file name as a standard file.
+     * @param document The report document
+     * @param fname the file name to locate.
+     */
     private void assertStandardFile(Document document, String fname) {
         try {
             XmlUtils.assertIsPresent(document, xpath,
@@ -96,6 +108,11 @@ public class ReportTestDataProvider extends AbstractTestDataProvider {
         }
     }
 
+    /**
+     * Asserts that the report Document contains the file name as an ignored file.
+     * @param document The report document
+     * @param fname the file name to locate.
+     */
     private void assertIgnoredFile(Document document, String fname) {
         try {
             XmlUtils.assertIsPresent(document, xpath,
@@ -104,7 +121,13 @@ public class ReportTestDataProvider extends AbstractTestDataProvider {
             throw new RuntimeException(e);
         }
     }
-    
+
+    /**
+     * Asserts that the validator data contains the specified counter with the specified count.
+     * @param data the validator data.
+     * @param counter the counter to check.
+     * @param int the expected count.
+     */
     private void assertCounter(ValidatorData data, ClaimStatistic.Counter counter, int count) {
         assertThat(data.getStatistic().getCounter(counter)).as(counter.name()).isEqualTo(count);
     }
@@ -147,6 +170,7 @@ public class ReportTestDataProvider extends AbstractTestDataProvider {
         return Arrays.asList(test1, test2);
     }
 
+    @Override
     protected void inputExcludeFileTest(final Set<TestData> result, final Option option) {
         Consumer<Path> setup = mkRat.andThen(baseDir -> {
             File dir = baseDir.resolve(".rat").toFile();
@@ -157,11 +181,13 @@ public class ReportTestDataProvider extends AbstractTestDataProvider {
     }
 
 
+    @Override
     protected void inputExcludeTest(final Set<TestData> result, final Option option) {
         result.addAll(execExcludeTest(option, () -> AbstractTestDataProvider.EXCLUDE_ARGS, x -> {
         }));
     }
 
+    @Override
     protected void inputExcludeStdTest(final Set<TestData> result, final Option option) {
         String[] args = {StandardCollection.MAVEN.name()};
         String[] defaultExcluded = {"afile~", ".#afile", "%afile%", "._afile"};
@@ -209,6 +235,7 @@ public class ReportTestDataProvider extends AbstractTestDataProvider {
                 }));
     }
 
+    @Override
     protected void inputExcludeParsedScmTest(final Set<TestData> result, final Option option) {
         Consumer<Path> setup = basePath -> {
             DefaultLog.getInstance().warn("inputExcludeParsedScmTest setup for " + basePath);
@@ -266,6 +293,7 @@ public class ReportTestDataProvider extends AbstractTestDataProvider {
                 }));
     }
 
+    @Override
     protected void inputExcludeSizeTest(final Set<TestData> result, final Option option) {
         String[] notExcluded = {"Hello.txt", "HelloWorld.txt"};
         String[] excluded = {"Hi.txt"};
@@ -349,6 +377,7 @@ public class ReportTestDataProvider extends AbstractTestDataProvider {
         return Arrays.asList(test1, test2, test3);
     }
 
+    @Override
     protected void inputIncludeFileTest(final Set<TestData> result, final Option option) {
         Consumer<Path> setup = mkRat.andThen(basePath -> {
             DefaultLog.getInstance().warn("inputIncludeFileTest setup for " + basePath);
@@ -359,10 +388,12 @@ public class ReportTestDataProvider extends AbstractTestDataProvider {
     }
 
 
+    @Override
     protected void inputIncludeTest(final Set<TestData> result, final Option option) {
         result.addAll(execIncludeTest(option, AbstractTestDataProvider.INCLUDE_ARGS, mkRat));
     }
 
+    @Override
     protected void inputIncludeStdTest(final Set<TestData> result, final Option option) {
         Consumer<Path> setup = basePath -> {
             DefaultLog.getInstance().warn("inputIncludeStdTest setup for " + basePath);
@@ -443,6 +474,7 @@ public class ReportTestDataProvider extends AbstractTestDataProvider {
         }
     }
 
+    @Override
     protected void inputSourceTest(final Set<TestData> result, final Option option) {
         Consumer<Path> setup = basePath -> {
             DefaultLog.getInstance().warn("inputSourceTest setup for " + basePath);
@@ -515,6 +547,7 @@ public class ReportTestDataProvider extends AbstractTestDataProvider {
         return Arrays.asList(test1, test2, test3);
     }
 
+    @Override
     protected void helpLicenses(final Set<TestData> result, final Option option) {
         PrintStream origin = System.out;
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -534,6 +567,7 @@ public class ReportTestDataProvider extends AbstractTestDataProvider {
                 }));
     }
 
+    @Override
     protected void licensesApprovedFileTest(final Set<TestData> result, final Option option) {
         result.addAll(execLicensesApprovedTest(option, new String[]{".rat/licensesApproved.txt"},
                 mkRat.andThen(
@@ -543,6 +577,7 @@ public class ReportTestDataProvider extends AbstractTestDataProvider {
                         })));
     }
 
+    @Override
     protected void licensesApprovedTest(final Set<TestData> result, final Option option) {
         result.addAll(execLicensesApprovedTest(option, new String[]{"catz"}, NO_SETUP));
     }
@@ -566,15 +601,18 @@ public class ReportTestDataProvider extends AbstractTestDataProvider {
         return Collections.singletonList(test1);
     }
 
+    @Override
     protected void licensesDeniedTest(final Set<TestData> result, final Option option) {
         result.addAll(execLicensesDeniedTest(option, new String[]{"ILLUMOS"}, NO_SETUP));
     }
 
+    @Override
     protected void licensesDeniedFileTest(final Set<TestData> result, final Option option) {
         result.addAll(execLicensesDeniedTest(option, new String[]{"licensesDenied.txt"},
                 basePath -> writeFile(basePath.toFile(), "licensesDenied.txt", Collections.singletonList("ILLUMOS"))));
     }
 
+    @Override
     private List<TestData> execLicenseFamiliesApprovedTest(final Option option, final String[] args, Consumer<Path> extraSetup) {
         Consumer<Path> setup = extraSetup.andThen(
                 basePath -> {
@@ -619,6 +657,7 @@ public class ReportTestDataProvider extends AbstractTestDataProvider {
         return Arrays.asList(test1, test2, test3);
     }
 
+    @Override
     protected void licenseFamiliesApprovedFileTest(final Set<TestData> result, final Option option) {
         result.addAll(execLicenseFamiliesApprovedTest(option, new String[]{".rat/familiesApproved.txt"},
                 mkRat.andThen(basePath -> {
@@ -627,6 +666,7 @@ public class ReportTestDataProvider extends AbstractTestDataProvider {
                 })));
     }
 
+    @Override
     protected void licenseFamiliesApprovedTest(final Set<TestData> result, final Option option) {
         result.addAll(execLicenseFamiliesApprovedTest(option, new String[]{"catz"}, NO_SETUP));
     }
@@ -660,6 +700,7 @@ public class ReportTestDataProvider extends AbstractTestDataProvider {
         return Arrays.asList(test1, test2);
     }
 
+    @Override
     protected void licenseFamiliesDeniedFileTest(final Set<TestData> result, final Option option) {
         result.addAll(execLicenseFamiliesDeniedTest(option, new String[]{".rat/familiesDenied.txt"},
                 mkRat.andThen(
@@ -669,10 +710,12 @@ public class ReportTestDataProvider extends AbstractTestDataProvider {
                         })));
     }
 
+    @Override
     protected void licenseFamiliesDeniedTest(final Set<TestData> result, final Option option) {
         result.addAll(execLicenseFamiliesDeniedTest(option, new String[]{"BSD-3"}, NO_SETUP));
     }
 
+    @Override
     protected void counterMaxTest(final Set<TestData> result, final Option option) {
         result.add(new TestData(DataUtils.asDirName(option), Collections.singletonList(ImmutablePair.of(null, null)),
                 basePath -> {
@@ -703,6 +746,7 @@ public class ReportTestDataProvider extends AbstractTestDataProvider {
                 }));
     }
 
+    @Override
     protected void counterMinTest(final Set<TestData> result, final Option option) {
         result.add(new TestData(DataUtils.asDirName(option), NO_OPTIONS,
                 basePath -> {
@@ -733,12 +777,7 @@ public class ReportTestDataProvider extends AbstractTestDataProvider {
                 }));
     }
 
-    /**
-     * Add results to the result list.
-     *
-     * @param result the result list.
-     * @param option configuration option we are testing.
-     */
+    @Override
     protected void configTest(final Set<TestData> result, final Option option) {
         Consumer<Path> setup = mkRat.andThen(basePath -> {
             DefaultLog.getInstance().warn("configTest setup for " + basePath);
@@ -789,6 +828,7 @@ public class ReportTestDataProvider extends AbstractTestDataProvider {
         }
     }
 
+    @Override
     protected void configurationNoDefaultsTest(final Set<TestData> result, final Option option) {
         TestData test1 = new TestData("", Collections.singletonList(ImmutablePair.of(option, null)),
                 basePath -> {
@@ -805,6 +845,7 @@ public class ReportTestDataProvider extends AbstractTestDataProvider {
         result.add(test1);
     }
 
+    @Override
     protected void dryRunTest(final Set<TestData> result, final Option option) {
         result.add(new TestData("stdRun", Collections.singletonList(ImmutablePair.of(option, null)),
                 NO_SETUP,
@@ -821,6 +862,7 @@ public class ReportTestDataProvider extends AbstractTestDataProvider {
                 }));
     }
 
+    @Override
     protected void editCopyrightTest(final Set<TestData> result, final Option option) {
         Consumer<Path> setup = basePath -> {
             DefaultLog.getInstance().warn("editCopyrightTest setup for " + basePath);
@@ -894,6 +936,7 @@ public class ReportTestDataProvider extends AbstractTestDataProvider {
         }
     }
 
+    @Override
     protected void editLicenseTest(final Set<TestData> result, final Option option) {
         result.add(new TestData("", Collections.singletonList(ImmutablePair.of(option, null)),
                 basePath -> {
@@ -938,6 +981,7 @@ public class ReportTestDataProvider extends AbstractTestDataProvider {
                 }));
     }
 
+    @Override
     protected void editOverwriteTest(final Set<TestData> result, final Option option) {
         result.add(new TestData("noEditLicense", Collections.singletonList(ImmutablePair.of(option, null)),
                 NO_SETUP,
@@ -959,6 +1003,7 @@ public class ReportTestDataProvider extends AbstractTestDataProvider {
         }
     }
 
+    @Override
     protected void logLevelTest(final Set<TestData> result, final Option option) {
         final TestingLog testingLog = new TestingLog();
 
@@ -993,6 +1038,7 @@ public class ReportTestDataProvider extends AbstractTestDataProvider {
                 }));
     }
 
+    @Override
     protected void outputArchiveTest(final Set<TestData> result, final Option option) {
         for (ReportConfiguration.Processing processing : ReportConfiguration.Processing.values()) {
             result.add(new TestData(processing.name().toLowerCase(Locale.ROOT),
@@ -1037,6 +1083,7 @@ public class ReportTestDataProvider extends AbstractTestDataProvider {
         }
     }
 
+    @Override
     protected void outputFamiliesTest(final Set<TestData> result, final Option option) {
         for (LicenseSetFactory.LicenseFilter filter : LicenseSetFactory.LicenseFilter.values()) {
             result.add(new TestData(filter.name().toLowerCase(Locale.ROOT),
@@ -1070,6 +1117,7 @@ public class ReportTestDataProvider extends AbstractTestDataProvider {
         }
     }
 
+    @Override
     protected void outputFileTest(final Set<TestData> result, final Option option) {
         result.add(new TestData("", Collections.singletonList(ImmutablePair.of(option, new String[]{"outexample"})),
                 basePath -> {
@@ -1095,6 +1143,7 @@ public class ReportTestDataProvider extends AbstractTestDataProvider {
         );
     }
 
+    @Override
     protected void outputLicensesTest(final Set<TestData> result, final Option option) {
         for (LicenseSetFactory.LicenseFilter filter : LicenseSetFactory.LicenseFilter.values()) {
             result.add(new TestData(filter.name(), Collections.singletonList(ImmutablePair.of(option, new String[]{filter.name()})),
@@ -1127,6 +1176,7 @@ public class ReportTestDataProvider extends AbstractTestDataProvider {
     }
 
 
+    @Override
     protected void outputStandardTest(final Set<TestData> result, final Option option) {
         for (ReportConfiguration.Processing proc : ReportConfiguration.Processing.values()) {
             result.add(new TestData(proc.name().toLowerCase(Locale.ROOT), Collections.singletonList(ImmutablePair.of(option, new String[]{proc.name()})),
@@ -1170,6 +1220,7 @@ public class ReportTestDataProvider extends AbstractTestDataProvider {
     }
 
 
+    @Override
     protected void outputStyleTest(final Set<TestData> result, final Option option) {
         Consumer<Path> createFile = basePath -> {
             DefaultLog.getInstance().warn("outputStyleTest setup for " + basePath);

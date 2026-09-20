@@ -59,7 +59,7 @@ public class ArchiveWalker extends Walker {
     }
 
     /**
-     * Run a report over all files and directories in this GZIPWalker,
+     * Run a report over all files and directories in the archive
      * ignoring any files/directories set to be ignored.
      *
      * @param report the defined RatReport to run on this GZIP walker.
@@ -79,6 +79,7 @@ public class ArchiveWalker extends Walker {
     private InputStream createInputStream() throws IOException {
         return new BufferedInputStream(getDocument().inputStream());
     }
+
     /**
      * Retrieves the documents from the archive.
      * @return A collection of documents that pass the file filter.

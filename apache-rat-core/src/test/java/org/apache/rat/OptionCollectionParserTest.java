@@ -24,8 +24,6 @@ import org.apache.commons.cli.ParseException;
 import org.apache.rat.api.RatException;
 import org.apache.rat.commandline.ArgumentContext;
 import org.apache.rat.testhelpers.TestingLog;
-import org.apache.rat.ui.ArgumentTracker;
-import org.apache.rat.ui.UIOption;
 import org.apache.rat.ui.UIOptionCollection;
 import org.apache.rat.utils.DefaultLog;
 import org.junit.jupiter.api.Test;
@@ -34,11 +32,13 @@ import org.junit.jupiter.api.io.TempDir;
 
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.function.Function;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+/**
+ * Test for option collection parsers.
+ */
 class OptionCollectionParserTest {
 
     @TempDir(cleanup = CleanupMode.NEVER)
@@ -81,7 +81,7 @@ class OptionCollectionParserTest {
         Options options = new Options();
         ReportConfiguration cfg = new ReportConfiguration();
         ArgumentContext ctxt = new ArgumentContext(testPath.toFile(), cfg, options, new String[0]);
-        cfg.setOut(new ReportConfiguration.IODescriptor("Bad Supplier", () -> { throw new IOException("Bad Supplier");}));
+        cfg.setOutput(new ReportConfiguration.IODescriptor("Bad Supplier", () -> { throw new IOException("Bad Supplier");}));
         assertThatThrownBy(() -> underTest.printHelp(ctxt))
                 .isInstanceOf(RatException.class)
                 .hasMessageContaining("Unable to print help: Bad Supplier");

@@ -163,7 +163,7 @@ class OutputTest {
         underTest.setArchiveProcessing(ReportConfiguration.Processing.NOTIFICATION);
         underTest.setStandardProcessing(ReportConfiguration.Processing.ABSENCE);
         underTest.setStyleSheet(StyleSheets.MISSING_HEADERS.getStyleSheet());
-        underTest.setOut(new File("/some/file/somewhere"));
+        underTest.setOutput(new File("/some/file/somewhere"));
         underTest.setCopyrightMessage("the copyright message");
         underTest.addSource(new File("/my/file"));
         underTest.addSource(new ReportConfigurationTest.TestingReportable());
@@ -211,7 +211,7 @@ class OutputTest {
     void listLicensesReportTest() throws Exception {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         ReportConfiguration configuration = initializeConfiguration();
-        configuration.setOut(new ReportConfiguration.IODescriptor<>("listLicensesReportTest", () -> out));
+        configuration.setOutput(new ReportConfiguration.IODescriptor<>("listLicensesReportTest", () -> out));
         configuration.setStyleSheet(StyleSheets.UNAPPROVED_LICENSES.getStyleSheet());
         Reporter.Output output = Reporter.Output.builder()
                 .statistic(new ClaimStatistic())

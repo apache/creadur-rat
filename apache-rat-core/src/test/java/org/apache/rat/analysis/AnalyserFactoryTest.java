@@ -49,12 +49,24 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
+/**
+ * A collection of tests for the AnalyserFactory.
+ */
 public class AnalyserFactoryTest {
 
+    /**
+     * The document name for the base directory.
+     */
     private final DocumentName basedir;
 
+    /**
+     * The analyzer created by the factory.
+     */
     private DocumentAnalyser analyser;
 
+    /**
+     * Constructor.
+     */
     AnalyserFactoryTest() {
         basedir = DocumentName.builder(new File(Files.currentFolder(), Resources.SRC_TEST_RESOURCES)).build();
     }

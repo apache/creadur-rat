@@ -75,6 +75,7 @@ public enum StyleSheets {
     /**
      * Gets the IODescriptor for a style sheet.
      * @return an IODescriptor for the sheet.
+     * @throws NullPointerException if the name can not be resolved.
      */
     public ReportConfiguration.IODescriptor<InputStream> getStyleSheet() {
         URL url = StyleSheets.class.getClassLoader().getResource(format("org/apache/rat/%s.xsl", name));
@@ -87,6 +88,7 @@ public enum StyleSheets {
      * @param name the short name for or the path to a style sheet.
      * @param workingDirectory the working directory to resolve the name against.
      * @return the IODescriptor for the style sheet.
+     * @throws ConfigurationException if the filesheet can nto be found.
      */
     public static ReportConfiguration.IODescriptor<InputStream> getStyleSheet(final String name, final DocumentName workingDirectory) {
         URL url = StyleSheets.class.getClassLoader().getResource(format("org/apache/rat/%s.xsl", name));

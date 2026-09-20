@@ -473,7 +473,7 @@ public class ReportConfigurationTest {
         assertThat(underTest.getWriter()).isNotNull();
 
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        underTest.setOut(new ReportConfiguration.IODescriptor<>("outputTest", () -> stream));
+        underTest.setOutput(new ReportConfiguration.IODescriptor<>("outputTest", () -> stream));
         assertThat(underTest.getOutput().get()).isEqualTo(stream);
         PrintWriter writer = underTest.getWriter().get();
         assertThat(writer).isNotNull();
@@ -561,7 +561,7 @@ public class ReportConfigurationTest {
     void testSetOut() throws IOException {
         ReportConfiguration config = new ReportConfiguration();
         try (OutputStreamInterceptor osi = new OutputStreamInterceptor()) {
-            config.setOut(new ReportConfiguration.IODescriptor<>("testSetOut", () -> osi));
+            config.setOutput(new ReportConfiguration.IODescriptor<>("testSetOut", () -> osi));
             assertThat(osi.closeCount).isEqualTo(0);
             try (OutputStream os = config.getOutput().get()) {
                 assertThat(os).isNotNull();
@@ -800,7 +800,7 @@ public class ReportConfigurationTest {
         underTest.setArchiveProcessing(ReportConfiguration.Processing.NOTIFICATION);
         underTest.setStandardProcessing(ReportConfiguration.Processing.ABSENCE);
         underTest.setStyleSheet(StyleSheets.MISSING_HEADERS.getStyleSheet());
-        underTest.setOut(new File("/some/file/somewhere"));
+        underTest.setOutput(new File("/some/file/somewhere"));
         underTest.setCopyrightMessage("the copyright message");
         underTest.addSource(new File("/my/file"));
         underTest.addSource(new TestingReportable());

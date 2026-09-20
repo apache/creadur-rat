@@ -24,8 +24,14 @@ import java.util.List;
 import org.apache.rat.api.Document;
 import org.apache.rat.document.DocumentAnalyser;
 
+/**
+ * A document analyzer to used int est where an actual analysis is not desired.
+ */
 public class TestingDocumentAnalyser implements DocumentAnalyser {
 
+    /**
+     * A list of document that this analyser "analysed".
+     */
     public final List<Document> matches = new ArrayList<>();
 
     @Override

@@ -30,6 +30,9 @@ import org.apache.rat.report.xml.writer.XmlWriter;
 import org.apache.rat.utils.CasedString;
 import org.apache.rat.utils.DefaultLog;
 
+/**
+ * A collection of static methods to create data.
+ */
 public class DataUtils {
     /**
      * The text for the current ASF license.
@@ -63,6 +66,9 @@ public class DataUtils {
         DefaultLog.getInstance().warn("no setup for " + basePath);
     };
 
+    /**
+     * A ValidatorData consumer that does nothing.
+     */
     public static final Consumer<ValidatorData> NO_VALIDATOR = validatorData -> {};
 
     private DataUtils() {

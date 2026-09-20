@@ -37,9 +37,14 @@ import org.apache.rat.ui.ArgumentTracker;
 import org.apache.rat.utils.DefaultLog;
 
 /**
- * Generates a list of TestData for executing the Report.
- * Use of this interface ensures consistent testing across the UIs. Each method
- * tests an Option from {@link OptionCollectionParser} that must be implemented in the UI.
+ * Generates a list of TestData to test an implementatin.
+ * The tests work by creating a Path Consumer to construct a directory under the test base directory and creating files and/or
+ * directories within that directory.  A test validator is created to validate the expected results of the operation and a {@link TestData}
+ * object is created for each test.
+ *
+ * Each {@code TestData} represents a single test of a command line option or set of options. *
+ *
+ * Use of this class ensures consistent testing across the UIs.
  */
 public abstract class AbstractTestDataProvider {
 
@@ -47,7 +52,7 @@ public abstract class AbstractTestDataProvider {
     static final String[] EXCLUDE_ARGS = {"*.foo", "%regex[[A-Z]\\.bar]", "justbaz"};
     /** the list of include args */
     static final String[] INCLUDE_ARGS = {"B.bar", "justbaz"};
-    // Sonar suggests List of but we need an Immutable list.
+    // Sonar suggests List.of(), but we need an Immutable list.
     public static final ImmutableList<ImmutablePair<Option, String[]>> NO_OPTIONS = ImmutableList.of(ImmutablePair.nullPair()); // NOSONAR
 
     /**
@@ -128,74 +133,234 @@ public abstract class AbstractTestDataProvider {
         //assertThat(options).describedAs("All options are not accounted for.").isEmpty(); // NOSONAR
     }
 
+    /**
+     * Execute an {@link Arg#EXCLUDE_FILE} tests.
+     * @param result the set of configured tests.
+     * @param option the specific option being tested.
+     */
     protected abstract void inputExcludeFileTest(final Set<TestData> result, final Option option);
 
+    /**
+     * Execute an {@link Arg#EXCLUDE} tests.
+     * @param result the set of configured tests.
+     * @param option the specific option being tested.
+     */
     protected abstract void inputExcludeTest(final Set<TestData> result, final Option option);
 
+    /**
+     * Execute an {@link Arg#EXCLUDE_STD} tests.
+     * @param result the set of configured tests.
+     * @param option the specific option being tested.
+     */
     protected abstract void inputExcludeStdTest(final Set<TestData> result, final Option option);
 
+    /**
+     * Execute an {@link Arg#EXCLUDE_PARSE_SCM} tests.
+     * @param result the set of configured tests.
+     * @param option the specific option being tested.
+     */
     protected abstract void inputExcludeParsedScmTest(final Set<TestData> result, final Option option);
 
+    /**
+     * Execute an {@link Arg#EXCLUDE_SIZE} tests.
+     * @param result the set of configured tests.
+     * @param option the specific option being tested.
+     */
     protected abstract void inputExcludeSizeTest(final Set<TestData> result, final Option option);
 
+    /**
+     * Execute an {@link Arg#INCLUDE_FILE} tests.
+     * @param result the set of configured tests.
+     * @param option the specific option being tested.
+     */
     protected abstract void inputIncludeFileTest(final Set<TestData> result, final Option option);
 
+    /**
+     * Execute an {@link Arg#INCLUDE} tests.
+     * @param result the set of configured tests.
+     * @param option the specific option being tested.
+     */
     protected abstract void inputIncludeTest(final Set<TestData> result, final Option option);
 
+    /**
+     * Execute an {@link Arg#INCLUDE_STD} tests.
+     * @param result the set of configured tests.
+     * @param option the specific option being tested.
+     */
     protected abstract void inputIncludeStdTest(final Set<TestData> result, final Option option);
 
+    /**
+     * Execute an {@link Arg#SOURCE} tests.
+     * @param result the set of configured tests.
+     * @param option the specific option being tested.
+     */
     protected abstract void inputSourceTest(final Set<TestData> result, final Option option);
 
+    /**
+     * Execute an {@link Arg#HELP_LICENSES} tests.
+     * @param result the set of configured tests.
+     * @param option the specific option being tested.
+     */
     protected abstract void helpLicenses(final Set<TestData> result, final Option option);
 
+    /**
+     * Execute an {@link Arg#LICENSES_APPROVED_FILE} tests.
+     * @param result the set of configured tests.
+     * @param option the specific option being tested.
+     */
     protected abstract void licensesApprovedFileTest(final Set<TestData> result, final Option option);
 
+    /**
+     * Execute an {@link Arg#LICENSES_APPROVED} tests.
+     * @param result the set of configured tests.
+     * @param option the specific option being tested.
+     */
     protected abstract void licensesApprovedTest(final Set<TestData> result, final Option option);
 
+    /**
+     * Execute an {@link Arg#LICENSES_DENIED} tests.
+     * @param result the set of configured tests.
+     * @param option the specific option being tested.
+     */
     protected abstract void licensesDeniedTest(final Set<TestData> result, final Option option);
 
+    /**
+     * Execute an {@link Arg#LICENSES_DENIED_FILE} tests.
+     * @param result the set of configured tests.
+     * @param option the specific option being tested.
+     */
     protected abstract void licensesDeniedFileTest(final Set<TestData> result, final Option option);
 
+    /**
+     * Execute an {@link Arg#FAMILIES_APPROVED_FILE} tests.
+     * @param result the set of configured tests.
+     * @param option the specific option being tested.
+     */
     protected abstract void licenseFamiliesApprovedFileTest(final Set<TestData> result, final Option option);
 
+    /**
+     * Execute an {@link Arg#FAMILIES_APPROVED} tests.
+     * @param result the set of configured tests.
+     * @param option the specific option being tested.
+     */
     protected abstract void licenseFamiliesApprovedTest(final Set<TestData> result, final Option option);
 
+    /**
+     * Execute an {@link Arg#FAMILIES_DENIED_FILE} tests.
+     * @param result the set of configured tests.
+     * @param option the specific option being tested.
+     */
     protected abstract void licenseFamiliesDeniedFileTest(final Set<TestData> result, final Option option);
 
+    /**
+     * Execute an {@link Arg#FAMILIES_DENIED} tests.
+     * @param result the set of configured tests.
+     * @param option the specific option being tested.
+     */
     protected abstract void licenseFamiliesDeniedTest(final Set<TestData> result, final Option option);
 
+    /**
+     * Execute an {@link Arg#COUNTER_MAX} tests.
+     * @param result the set of configured tests.
+     * @param option the specific option being tested.
+     */
     protected abstract void counterMaxTest(final Set<TestData> result, final Option option);
 
+    /**
+     * Execute an {@link Arg#COUNTER_MIN} tests.
+     * @param result the set of configured tests.
+     * @param option the specific option being tested.
+     */
     protected abstract void counterMinTest(final Set<TestData> result, final Option option);
 
     /**
-     * Add results to the result list.
-     * @param result the result list.
-     * @param option configuration option we are testing.
+     * Execute an {@link Arg#CONFIGURATION} tests.
+     * @param result the set of configured tests.
+     * @param option the specific option being tested.
      */
     protected abstract void configTest(final Set<TestData> result, final Option option);
 
+    /**
+     * Execute an {@link Arg#CONFIGURATION_NO_DEFAULTS} tests.
+     * @param result the set of configured tests.
+     * @param option the specific option being tested.
+     */
     protected abstract void configurationNoDefaultsTest(final Set<TestData> result, final Option option);
 
+    /**
+     * Execute an {@link Arg#DRY_RUN} tests.
+     * @param result the set of configured tests.
+     * @param option the specific option being tested.
+     */
     protected abstract void dryRunTest(final Set<TestData> result, final Option option);
 
+    /**
+     * Execute an {@link Arg#EDIT_COPYRIGHT} tests.
+     * @param result the set of configured tests.
+     * @param option the specific option being tested.
+     */
     protected abstract  void editCopyrightTest(final Set<TestData> result, final Option option);
 
+    /**
+     * Execute an {@link Arg#EDIT_ADD} tests.
+     * @param result the set of configured tests.
+     * @param option the specific option being tested.
+     */
     protected abstract void editLicenseTest(final Set<TestData> result, final Option option);
 
+    /**
+     * Execute an {@link Arg#EDIT_OVERWRITE} tests.
+     * @param result the set of configured tests.
+     * @param option the specific option being tested.
+     */
     protected abstract void editOverwriteTest(final Set<TestData> result, final Option option);
 
+    /**
+     * Execute an {@link Arg#LOG_LEVEL} tests.
+     * @param result the set of configured tests.
+     * @param option the specific option being tested.
+     */
     protected abstract void logLevelTest(final Set<TestData> result, final Option option);
 
+    /**
+     * Execute an {@link Arg#OUTPUT_ARCHIVE} tests.
+     * @param result the set of configured tests.
+     * @param option the specific option being tested.
+     */
     protected abstract void outputArchiveTest(final Set<TestData> result, final Option option);
 
+    /**
+     * Execute an {@link Arg#OUTPUT_FAMILIES} tests.
+     * @param result the set of configured tests.
+     * @param option the specific option being tested.
+     */
     protected abstract void outputFamiliesTest(final Set<TestData> result, final Option option);
 
+    /**
+     * Execute an {@link Arg#OUTPUT_FILE} tests.
+     * @param result the set of configured tests.
+     * @param option the specific option being tested.
+     */
     protected abstract void outputFileTest(final Set<TestData> result, final Option option);
 
+    /**
+     * Execute an {@link Arg#OUTPUT_LICENSES} tests.
+     * @param result the set of configured tests.
+     * @param option the specific option being tested.
+     */
     protected abstract void outputLicensesTest(final Set<TestData> result, final Option option);
 
+    /**
+     * Execute an {@link Arg#OUTPUT_STANDARD} tests.
+     * @param result the set of configured tests.
+     * @param option the specific option being tested.
+     */
     protected abstract void outputStandardTest(final Set<TestData> result, final Option option);
 
+    /**
+     * Execute an {@link Arg#OUTPUT_STYLE} tests.
+     * @param result the set of configured tests.
+     * @param option the specific option being tested.
+     */
     protected abstract void outputStyleTest(final Set<TestData> result, final Option option);
 }

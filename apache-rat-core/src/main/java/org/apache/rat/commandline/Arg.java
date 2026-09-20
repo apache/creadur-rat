@@ -596,7 +596,7 @@ public enum Arg {
                     .build()),
             (context, selected) -> {
                 DocumentName documentName = context.getParsedOptionValue(selected, () -> {
-                    context.getConfiguration().setOut(ReportConfiguration.SYSTEM_OUT);
+                    context.getConfiguration().setOutput(ReportConfiguration.SYSTEM_OUT);
                     return null;
                 });
                 if (documentName != null) {
@@ -605,7 +605,7 @@ public enum Arg {
                     if (!parent.mkdirs() && !parent.isDirectory()) {
                         DefaultLog.getInstance().error("Could not create report parent directory " + documentName);
                     }
-                    context.getConfiguration().setOut(document);
+                    context.getConfiguration().setOutput(document);
                 }
             }),
 

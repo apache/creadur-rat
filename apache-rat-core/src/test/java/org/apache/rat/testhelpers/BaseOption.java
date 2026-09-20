@@ -25,27 +25,40 @@ import org.apache.rat.utils.CasedString;
 
 import java.util.function.Function;
 
+/**
+ * Ai implementation of UIOption to use in general (non-UI limited or adjusted) testing.
+ */
 public final class BaseOption extends UIOption<BaseOption> {
     private BaseOption(BaseOptionBuilder builder) {
         super(builder);
     }
 
+    /**
+     * Creates a builder for the BaseOpton.
+     * @return the BaseOptionBuilder.
+     */
     public BaseOptionBuilder builder() {
         return new BaseOptionBuilder();
     }
 
+    @Override
     protected String cleanupName(Option option) {
         return ArgumentTracker.extractKey(option);
     }
 
+    @Override
     public String getExample() {
         return "";
     }
 
+    @Override
     public String getText() {
         return "";
     }
 
+    /**
+     * The BaseOptionBuilder implementation.
+     */
     public static class BaseOptionBuilder extends UIOption.Builder<BaseOption, BaseOptionBuilder> {
 
         @Override

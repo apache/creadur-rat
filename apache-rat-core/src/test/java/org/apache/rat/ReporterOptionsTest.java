@@ -21,6 +21,7 @@ package org.apache.rat;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.Map;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
@@ -83,7 +84,7 @@ public final class ReporterOptionsTest {
             XPath xpath = XPathFactory.newInstance().newXPath();
             XmlUtils.assertIsPresent(output.getDocument(), xpath, "/rat-report/resource[@name='/foo.md']");
             XmlUtils.assertAttributes(output.getDocument(), xpath, "/rat-report/resource[@name='/foo.md']",
-                    XmlUtils.mapOf("type", "IGNORED"));
+                    Map.of("type", "IGNORED"));
             assertThat(output.getStatistic().getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(0);
             assertThat(output.getStatistic().getCounter(ClaimStatistic.Counter.IGNORED)).isEqualTo(2);
         } catch (IOException | RatException | XPathExpressionException e) {

@@ -104,6 +104,12 @@ public abstract class AbstractConfigurationOptionsProvider extends AbstractOptio
         return baseDir;
     }
 
+    /**
+     * Construct the tests.
+     * @param providerName the common name of the provider under test.
+     * @param unsupportedArgs the list of unsupported arguments.
+     * @param baseDir the base directory for the tests.  Tests and test data will be copied to directories under this directory.
+     */
     protected AbstractConfigurationOptionsProvider(final String providerName, final Collection<String> unsupportedArgs, final File baseDir) {
         super(providerName, setup(baseDir));
         addTest(OptionCollectionTest.OptionTest.namedTest(providerName, "addLicense", this::addLicenseTest));

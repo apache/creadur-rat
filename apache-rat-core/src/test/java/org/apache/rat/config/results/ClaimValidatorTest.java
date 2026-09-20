@@ -34,6 +34,9 @@ import static java.lang.String.format;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+/**
+ * Tests for the Claim Validator.
+ */
 class ClaimValidatorTest {
 
     @Test

@@ -41,17 +41,32 @@ import java.util.Collection;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+/**
+ * Tests and constants for XML reader tests.
+ */
 public class XMLConfigurationReaderTest {
 
+    /**
+     * The expected IDS for the default configuration.
+     */
     public static final String[] EXPECTED_IDS = {"AL", "BSD-3", "CDDL1", "GPL", "MIT", "OASIS",
             "W3C", "W3CD"};
 
+    /**
+     * The approved IDs for the default configuraiton.
+     */
     public static final String[] APPROVED_IDS = {"AL", "BSD-3", "CDDL1", "MIT", "OASIS",
             "W3C", "W3CD"};
 
+    /**
+     * The expected licenses for the default configuration.
+     */
     public static final String[] EXPECTED_LICENSES = {"AL1.0", "AL1.1", "AL2.0", "BSD-3", "DOJO", "TMF", "CDDL1", "ILLUMOS", "GPL1", "GPL2",
             "GPL3", "MIT", "OASIS", "W3C", "W3CD"};
 
+    /**
+     * The approved licenses for the default configuration.
+     */
     public static final String[] APPROVED_LICENSES = { "AL1.0", "AL1.1", "AL2.0", "BSD-3", "DOJO", "TMF", "CDDL1", "ILLUMOS",
             "MIT", "OASIS", "W3C", "W3CD" };
 
@@ -88,6 +103,11 @@ public class XMLConfigurationReaderTest {
         assertThat(actual).containsExactlyInAnyOrder(EXPECTED_IDS);
     }
 
+    /**
+     * Checks if a matcher built from the class name is an instance of the provided class.
+     * @param name the matcher name from the tracker.
+     * @param clazz the expected class type.
+     */
     private void checkMatcher(String name, Class<? extends AbstractBuilder> clazz) {
         AbstractBuilder builder = MatcherBuilderTracker.getMatcherBuilder(name);
         assertThat(builder).isNotNull();

@@ -416,7 +416,7 @@ public class Report extends BaseAntTask {
                     o -> DefaultLog.getInstance().warn("Help option not supported"),
                     true);
             if (getValues(Arg.OUTPUT_FILE).isEmpty()) {
-                configuration.setOut(new ReportConfiguration.IODescriptor<>("RAT output", () -> new LogOutputStream(this, Project.MSG_INFO)));
+                configuration.setOutput(new ReportConfiguration.IODescriptor<>("RAT output", () -> new LogOutputStream(this, Project.MSG_INFO)));
             }
 
             configuration.addSource(new ResourceCollectionContainer(name, configuration, nestedResources));
