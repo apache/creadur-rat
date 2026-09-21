@@ -18,9 +18,7 @@
  */ 
 package org.apache.rat.report.xml.writer;
 
-import org.apache.rat.report.xml.writer.InvalidXmlException;
-import org.apache.rat.report.xml.writer.OperationNotAllowedException;
-import org.apache.rat.report.xml.writer.XmlWriter;
+
 import org.apache.rat.testhelpers.XmlUtils;
 import org.junit.jupiter.api.Test;
 import org.w3c.dom.Document;

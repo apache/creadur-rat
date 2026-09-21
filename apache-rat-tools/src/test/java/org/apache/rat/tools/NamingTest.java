@@ -20,8 +20,6 @@ package org.apache.rat.tools;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.csv.CSVFormat;
@@ -35,7 +33,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.util.List;
 
 public class NamingTest {
 
