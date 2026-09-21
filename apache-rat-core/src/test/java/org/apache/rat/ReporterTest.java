@@ -142,7 +142,6 @@ public class ReporterTest {
     @Test
     void testExecute() throws RatException {
         File output = testPath.resolve("output.xml").toFile();
-        BaseOptionCollection optionCollection = BaseOptionCollection.builder().build();
         ArgumentContext ctxt = collectionParser.parseCommands(new File("."), new String[]{"--output-style", "xml", "--output-file", output.getPath(), basedir});
         ClaimStatistic statistic = new Reporter(ctxt.getConfiguration()).execute().getStatistic();
 

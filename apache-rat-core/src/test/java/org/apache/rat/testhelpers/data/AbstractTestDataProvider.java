@@ -18,7 +18,6 @@
  */
 package org.apache.rat.testhelpers.data;
 
-
 import com.google.common.collect.ImmutableList;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -30,14 +29,13 @@ import java.util.TreeSet;
 import java.util.stream.Stream;
 import org.apache.commons.cli.Option;
 import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.apache.rat.OptionCollectionParser;
 import org.apache.rat.commandline.Arg;
 import org.apache.rat.ui.UIOptionCollection;
 import org.apache.rat.ui.ArgumentTracker;
 import org.apache.rat.utils.DefaultLog;
 
 /**
- * Generates a list of TestData to test an implementatin.
+ * Generates a list of TestData to test an implementation.
  * The tests work by creating a Path Consumer to construct a directory under the test base directory and creating files and/or
  * directories within that directory.  A test validator is created to validate the expected results of the operation and a {@link TestData}
  * object is created for each test.

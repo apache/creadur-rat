@@ -176,14 +176,6 @@ public class NamingTest {
         return CSVFormat.DEFAULT.builder().setHeader().get().parse(new InputStreamReader(Files.newInputStream(f.toPath())));
     }
 
-    private void assertContains(String expected, List<String> actual) {
-        assertTrue(actual.contains(expected), () -> "Missing " + expected);
-    }
-
-    private void assertNotContains(String expected, List<String> actual) {
-        assertFalse(actual.contains(expected), () -> "Contains " + expected);
-    }
-
     @Test
     public void testNamingGenerationWithoutParameters() {
         assertDoesNotThrow(() -> Naming.main(null));

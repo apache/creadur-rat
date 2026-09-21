@@ -18,7 +18,6 @@
  */
 package org.apache.rat.testhelpers;
 
-import org.apache.commons.cli.Option;
 import org.apache.rat.ui.UIOptionCollection;
 
 /**
@@ -29,7 +28,7 @@ public final class BaseOptionCollection extends UIOptionCollection<BaseOption> {
      * Constructs a BaseOptionCollection builder.
      * @return the BaseOptionCollection.Builder.
      */
-    public static final Builder builder() {
+    public static Builder builder() {
         return new Builder();
     }
 
@@ -42,7 +41,7 @@ public final class BaseOptionCollection extends UIOptionCollection<BaseOption> {
 
     /**
      * Constructs a BaseOptionCollecton from the provided builder.
-     * @param builder
+     * @param builder The builder for this collection.
      */
     public BaseOptionCollection(Builder builder) {
         super(builder);
