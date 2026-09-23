@@ -20,9 +20,10 @@ package org.apache.rat.documentation.options;
 
 import org.apache.commons.cli.Option;
 import org.apache.rat.commandline.Arg;
-import org.apache.rat.testhelpers.TextUtils;
 
 import org.junit.jupiter.api.Test;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class MavenOptionTest {
     @Test
@@ -31,7 +32,7 @@ public class MavenOptionTest {
         for (Option option : Arg.getOptions().getOptions()) {
             if (option.isDeprecated()) {
                 mavenOptionCollection.getMappedOption(option).ifPresent( mavenOption -> //
-                        TextUtils.assertPatternNotInTarget("\\-\\- ", mavenOption.getDeprecated()));
+                        assertThat(mavenOption.getDeprecated()).doesNotContainPattern("\\-\\- "));
             }
         }
     }

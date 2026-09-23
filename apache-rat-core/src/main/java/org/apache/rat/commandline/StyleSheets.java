@@ -21,12 +21,11 @@ package org.apache.rat.commandline;
 import java.io.InputStream;
 import java.net.URL;
 import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Objects;
 
 import org.apache.rat.ConfigurationException;
 import org.apache.rat.ReportConfiguration;
+import org.apache.rat.document.DocumentName;
 
 import static java.lang.String.format;
 
@@ -49,8 +48,11 @@ public enum StyleSheets {
     /**
      * The pretty-printed XML style sheet.
      */
-    XML("xml", "Produces output in pretty-printed XML.");
-
+    XML("xml", "Produces output in pretty-printed XML."),
+    /**
+     * Official HTML5 stylesheet.
+     */
+    XHTML5("xhtml5", "Produces a HTML5 report");
     /**
      * The name of the style sheet. Must map to bundled resource XSLT file
      */
@@ -73,6 +75,7 @@ public enum StyleSheets {
     /**
      * Gets the IODescriptor for a style sheet.
      * @return an IODescriptor for the sheet.
+     * @throws NullPointerException if the name can not be resolved.
      */
     public ReportConfiguration.IODescriptor<InputStream> getStyleSheet() {
         URL url = StyleSheets.class.getClassLoader().getResource(format("org/apache/rat/%s.xsl", name));
@@ -83,18 +86,20 @@ public enum StyleSheets {
     /**
      * Gets the IODescriptor for a style sheet.
      * @param name the short name for or the path to a style sheet.
+     * @param workingDirectory the working directory to resolve the name against.
      * @return the IODescriptor for the style sheet.
+     * @throws ConfigurationException if the filesheet can nto be found.
      */
-    public static ReportConfiguration.IODescriptor<InputStream> getStyleSheet(final String name) {
+    public static ReportConfiguration.IODescriptor<InputStream> getStyleSheet(final String name, final DocumentName workingDirectory) {
         URL url = StyleSheets.class.getClassLoader().getResource(format("org/apache/rat/%s.xsl", name));
         if (url != null) {
             return new ReportConfiguration.IODescriptor<>(name, url::openStream);
         }
-        Path p = Paths.get(name);
-        if (p.toFile().exists()) {
-            return new ReportConfiguration.IODescriptor<>(name, () -> Files.newInputStream(p));
+        DocumentName xslt = workingDirectory.resolve(name);
+        if (xslt.asFile().exists()) {
+            return new ReportConfiguration.IODescriptor<>(xslt.toString(), () -> Files.newInputStream(xslt.asFile().toPath()));
         }
-        throw new ConfigurationException(format("Stylesheet file '%s' not found", name));
+        throw new ConfigurationException(format("Stylesheet file '%s' not found: %s", name, xslt.getName()));
     }
 
     /**

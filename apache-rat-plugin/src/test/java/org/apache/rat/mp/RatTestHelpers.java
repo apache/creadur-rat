@@ -1,17 +1,3 @@
-package org.apache.rat.mp;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.IOException;
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.Proxy;
-import java.nio.file.Files;
-import java.util.List;
-
-import org.apache.commons.io.FileUtils;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
@@ -28,7 +14,20 @@ import org.apache.commons.io.FileUtils;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.apache.rat.mp;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.IOException;
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Proxy;
+import java.nio.file.Files;
+import java.util.List;
+import java.util.regex.Pattern;
+
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.factory.DefaultArtifactFactory;
@@ -39,11 +38,12 @@ import org.apache.maven.artifact.repository.layout.ArtifactRepositoryLayout;
 import org.apache.maven.doxia.siterenderer.Renderer;
 import org.apache.maven.settings.Settings;
 import org.apache.maven.settings.io.xpp3.SettingsXpp3Reader;
-import org.apache.rat.testhelpers.TextUtils;
 import org.codehaus.plexus.PlexusContainer;
 import org.codehaus.plexus.util.DirectoryScanner;
 
 import com.google.common.base.Charsets;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Test helpers used when verifying mojo interaction in RAT integration tests.
@@ -197,13 +197,13 @@ public final class RatTestHelpers {
     public static void ensureRatReportIsCorrect(File pRatTxtFile, String[] in, String[] notIn) throws IOException {
         List<String> lines = IOUtils.readLines(Files.newInputStream(pRatTxtFile.toPath()), Charsets.UTF_8);
         String document = String.join("\n", lines);
-        for (String pattern : in) {
-            TextUtils.assertPatternInTarget(pattern, document);
+        for (String patternStr : in) {
+            Pattern pattern = Pattern.compile(patternStr, Pattern.MULTILINE);
+            assertThat(document).containsPattern(pattern);
         }
-
-        for (String pattern : notIn) {
-            TextUtils.assertPatternNotInTarget(pattern, document);
+        for (String patternStr : notIn) {
+            Pattern pattern = Pattern.compile(patternStr, Pattern.MULTILINE);
+            assertThat(document).doesNotContainPattern(pattern);
         }
     }
-
 }

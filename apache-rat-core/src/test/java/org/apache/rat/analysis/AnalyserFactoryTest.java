@@ -41,7 +41,6 @@ import org.apache.rat.report.xml.writer.XmlWriter;
 import org.apache.rat.test.utils.Resources;
 import org.apache.rat.testhelpers.TestingDocument;
 import org.apache.rat.testhelpers.TestingDocumentAnalyser;
-import org.apache.rat.testhelpers.TextUtils;
 import org.assertj.core.util.Files;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -49,12 +48,24 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
+/**
+ * A collection of tests for the AnalyserFactory.
+ */
 public class AnalyserFactoryTest {
 
+    /**
+     * The document name for the base directory.
+     */
     private final DocumentName basedir;
 
+    /**
+     * The analyzer created by the factory.
+     */
     private DocumentAnalyser analyser;
 
+    /**
+     * Constructor.
+     */
     AnalyserFactoryTest() {
         basedir = DocumentName.builder(new File(Files.currentFolder(), Resources.SRC_TEST_RESOURCES)).build();
     }
@@ -185,9 +196,7 @@ public class AnalyserFactoryTest {
                 Resources.getResourceFile("/jira/RAT147/unix-newlines.txt.bin"), DocumentNameMatcher.MATCHES_ALL);
         analyser.analyse(document);
         String result = buildReport(document);
-        TextUtils.assertPatternInTarget(
-                "<resource name='/jira/RAT147/unix-newlines.txt.bin' type='STANDARD'",
-                result);
+        assertThat(result).containsPattern("<resource name='/jira/RAT147/unix-newlines.txt.bin' type='STANDARD'");
     }
 
     @Test
@@ -196,9 +205,7 @@ public class AnalyserFactoryTest {
                 Resources.getResourceFile("/jira/RAT147/windows-newlines.txt.bin"), DocumentNameMatcher.MATCHES_ALL);
         analyser.analyse(document);
         String result = buildReport(document);
-        TextUtils.assertPatternInTarget(
-                "<resource name='/jira/RAT147/windows-newlines.txt.bin' type='STANDARD'",
-                result);
+        assertThat(result).containsPattern("<resource name='/jira/RAT147/windows-newlines.txt.bin' type='STANDARD'");
     }
 
     @Test

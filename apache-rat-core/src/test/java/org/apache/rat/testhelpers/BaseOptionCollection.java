@@ -20,14 +20,50 @@ package org.apache.rat.testhelpers;
 
 import org.apache.rat.ui.UIOptionCollection;
 
+/**
+ * A UIOptionCollection for testing purposes.  The contained UIOptions are not UI limited or adjusted.
+ */
 public final class BaseOptionCollection extends UIOptionCollection<BaseOption> {
+    /**
+     * Constructs a BaseOptionCollection builder.
+     * @return the BaseOptionCollection.Builder.
+     */
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    /**
+     * Constructs a default BaseOptionCllection
+     */
     public BaseOptionCollection() {
         super(new Builder());
     }
 
+    /**
+     * Constructs a BaseOptionCollecton from the provided builder.
+     * @param builder The builder for this collection.
+     */
+    public BaseOptionCollection(Builder builder) {
+        super(builder);
+    }
+
+    /**
+     * The BaseOptionCollection Builder implementation.
+     */
     public static final class Builder extends UIOptionCollection.Builder<BaseOption, Builder> {
-        public Builder() {
+        /**
+         * Constructor.
+         */
+        Builder() {
             super(BaseOption.BaseOptionBuilder::new);
+        }
+
+        /**
+         * Builds a BaserOptionCollection.
+         * @return a new BaseOptionCollection implementation.
+         */
+        public BaseOptionCollection build() {
+            return new BaseOptionCollection(this);
         }
     }
 }

@@ -21,16 +21,19 @@ package org.apache.rat.help;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.rat.OptionCollection;
-import org.apache.rat.testhelpers.TextUtils;
 import org.junit.jupiter.api.Test;
 
 import java.io.StringWriter;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import static java.lang.String.format;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+/**
+ * Tests to validate CLI help option.
+ */
 public class HelpTest {
     @Test
     public void verifyAllOptionsListed() {
@@ -42,10 +45,10 @@ public class HelpTest {
 
         for (Option option : opts.getOptions()) {
             if (option.getOpt() != null) {
-                TextUtils.assertContains("-" + option.getOpt() + (option.getLongOpt() == null ? " " : ","), result);
+                assertThat(result).contains("-" + option.getOpt() + (option.getLongOpt() == null ? " " : ","));
             }
             if (option.getLongOpt() != null) {
-                TextUtils.assertContains("--" + option.getLongOpt() + " ", result);
+                assertThat(result).contains("--" + option.getLongOpt() + " ");
             }
         }
 
@@ -63,7 +66,9 @@ public class HelpTest {
         for (Option option : opts.getOptions()) {
             if (option.getArgName() != null) {
                 assertTrue(argTypes.contains(option.getArgName()), () -> format("Argument '%s' is missing from list", option.getArgName()));
-                TextUtils.assertPatternInTarget(format("^<%s>", option.getArgName()), result);
+                Pattern pattern = Pattern.compile(format("^<%s>", option.getArgName()), Pattern.MULTILINE);
+                assertThat(result).as(format("argument name for option `%s`.", option.getKey()))
+                        .containsPattern(pattern);
             }
         }
         assertThat(result).doesNotContain("..");

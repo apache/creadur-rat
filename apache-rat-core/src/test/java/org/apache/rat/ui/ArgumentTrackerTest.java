@@ -31,6 +31,9 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.apache.rat.ui.UIOptionCollectionTest.TestingUIOptionCollection;
 import static org.apache.rat.ui.UIOptionCollectionTest.TestingUIOption;
 
+/**
+ * Tests for the Argument tracker.
+ */
 class ArgumentTrackerTest {
     private ArgumentTracker underTest;
     private TestingUIOptionCollection testingUIOptionCollection;
@@ -113,7 +116,8 @@ class ArgumentTrackerTest {
     @Test
     void invalidAbstractOption() {
         Option option = Option.builder().longOpt("notAValidOption").build();
-        TestingUIOption invalidOption = new TestingUIOption.TestingUIOptionBuilder().option(option).optionCollection(testingUIOptionCollection).build();
+        TestingUIOption invalidOption = new TestingUIOption.TestingUIOptionBuilder()
+                .optionCollection(testingUIOptionCollection).option(option).build();
         underTest.addArg(invalidOption, "foo");
         assertThat(underTest.getArg(invalidOption.keyValue())).isEmpty();
     }

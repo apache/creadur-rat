@@ -165,7 +165,6 @@ public enum Arg {
             .build()),
             (context, selected) ->
                   context.getConfiguration().addApprovedLicenseIds(context.getParsedOptionValue(selected))
-
     ),
 
     /**
@@ -515,14 +514,14 @@ public enum Arg {
                 if ("x".equals(key)) {
                     // display deprecated message.
                     context.hasOption("x");
-                    context.getConfiguration().setStyleSheet(StyleSheets.getStyleSheet("xml"));
+                    context.getConfiguration().setStyleSheet(StyleSheets.getStyleSheet("xml", context.getWorkingDirectory()));
                 } else {
                     List<String> style = context.getOptionValues(selected);
                     if (style.size() != 1) {
                         DefaultLog.getInstance().error("Please specify a single stylesheet");
                         throw new ConfigurationException("Please specify a single stylesheet");
                     }
-                    context.getConfiguration().setStyleSheet(StyleSheets.getStyleSheet(style.get(0)));
+                    context.getConfiguration().setStyleSheet(StyleSheets.getStyleSheet(style.get(0), context.getWorkingDirectory()));
                 }
             }),
 
@@ -597,7 +596,7 @@ public enum Arg {
                     .build()),
             (context, selected) -> {
                 DocumentName documentName = context.getParsedOptionValue(selected, () -> {
-                    context.getConfiguration().setOut(ReportConfiguration.SYSTEM_OUT);
+                    context.getConfiguration().setOutput(ReportConfiguration.SYSTEM_OUT);
                     return null;
                 });
                 if (documentName != null) {
@@ -606,7 +605,7 @@ public enum Arg {
                     if (!parent.mkdirs() && !parent.isDirectory()) {
                         DefaultLog.getInstance().error("Could not create report parent directory " + documentName);
                     }
-                    context.getConfiguration().setOut(document);
+                    context.getConfiguration().setOutput(document);
                 }
             }),
 

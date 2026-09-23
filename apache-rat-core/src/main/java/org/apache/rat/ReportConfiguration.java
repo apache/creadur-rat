@@ -104,6 +104,10 @@ public class ReportConfiguration {
          */
         private final String description;
 
+        /**
+         * Constructor.
+         * @param description the description for this processing strategy
+         */
         Processing(final String description) {
             this.description = description;
         }
@@ -139,7 +143,7 @@ public class ReportConfiguration {
     /**
      * The IODescriptor that provides the output stream to write the report to.
      */
-    private IODescriptor<OutputStream> out;
+    private IODescriptor<OutputStream> outputDescriptor;
 
     /**
      * The IODescriptor that provides the stylesheet to style the XML output.
@@ -205,6 +209,10 @@ public class ReportConfiguration {
         reportables = new ArrayList<>();
     }
 
+    /**
+     * A serializer/deserializer for a ReportConfiguration.
+     * @return the serializer/deserializer for a ReportConfiguration.
+     */
     public SerDes serDes() {
         return new SerDes();
     }
@@ -227,14 +235,21 @@ public class ReportConfiguration {
      * File within the file must be in linux format with a
      * {@code "/"} file separator.
      * @param file the file to process.
+     * @throws ConfigurationException if the file is null.
      */
     public void addSource(final File file) {
         notNull(file, "File may not be null.");
         sources.add(file);
     }
 
-    private void notNull(final Object o, final String msg) {
-        if (o == null) {
+    /**
+     * Throws ConfigurationException if the object is null.
+     * @param object the object to test.
+     * @param msg the message to create the exception with.
+     * @throws ConfigurationException if the object is null.
+     */
+    private void notNull(final Object object, final String msg) {
+        if (object == null) {
             throw new ConfigurationException(msg);
         }
     }
@@ -242,6 +257,7 @@ public class ReportConfiguration {
     /**
      * Adds a Reportable as a source of files to scan.
      * @param reportable the reportable to process.
+     * @throws ConfigurationException if the reportable is null.
      */
     public void addSource(final Reportable reportable) {
         notNull(reportable, "Reportable may not be null.");
@@ -257,8 +273,8 @@ public class ReportConfiguration {
     }
 
     /**
-     * Gets a builder initialized with any files specified as sources.
-     * @return a configured builder.
+     * Gets a ReportListWalker.Builder initialized with any files specified as sources.
+     * @return a configured ReportListWalker.Builder.
      */
     public ReportableListWalker.Builder getSources() {
         DocumentName name = DocumentName.builder(new File(".")).build();
@@ -527,7 +543,7 @@ public class ReportConfiguration {
      */
     public void setFrom(final Defaults defaults) {
         licenseSetFactory.add(defaults.getLicenseSetFactory());
-        if (getStyleSheet() == null) {
+        if (getStyleSheetDescriptor() == null) {
             setStyleSheet(StyleSheets.PLAIN.getStyleSheet());
         }
         defaults.getStandardExclusion().forEach(this::addExcludedCollection);
@@ -571,22 +587,22 @@ public class ReportConfiguration {
      * times to provide the stream. Suppliers should prepare streams that are
      * appended to and that can be closed. If an {@code OutputStream} should not be
      * closed consider wrapping it in a {@code CloseShieldOutputStream}
-     * @param out the OutputStream supplier that provides the output stream to write
+     * @param outputDescriptor the OutputStream supplier that provides the output stream to write
      * the report to. A {@code null} value will use {@code System.out}.
      * @see CloseShieldOutputStream
      */
-    public void setOut(final IODescriptor<OutputStream> out) {
-        this.out = out;
+    public void setOutput(final IODescriptor<OutputStream> outputDescriptor) {
+        this.outputDescriptor = outputDescriptor;
     }
 
     /**
      * Sets the OutputStream supplier to use the specified file. The file may be
      * opened and closed several times. File is deleted first and then may be
      * repeatedly opened in append mode.
-     * @see #setOut(IODescriptor)
+     * @see #setOutput(IODescriptor)
      * @param file The file to create the supplier with.
      */
-    public void setOut(final File file) {
+    public void setOutput(final File file) {
         Objects.requireNonNull(file, "output file should not be null");
         if (file.exists()) {
             try {
@@ -600,7 +616,7 @@ public class ReportConfiguration {
         if (!parent.mkdirs() && !parent.isDirectory()) {
             DefaultLog.getInstance().warn("Unable to create directory: " + file.getParentFile());
         }
-        setOut(IODescriptor.output(file));
+        setOutput(IODescriptor.output(file));
     }
 
     /**
@@ -618,7 +634,7 @@ public class ReportConfiguration {
      * @return the IODescriptor of the output stream to write the report to.
      */
     public IODescriptor<OutputStream> getOutputDescriptor() {
-        return out == null ? SYSTEM_OUT : out;
+        return outputDescriptor == null ? SYSTEM_OUT : outputDescriptor;
     }
 
     /**
@@ -982,7 +998,7 @@ public class ReportConfiguration {
                         .attribute("archiveProcessing", getArchiveProcessing().name())
                         .attribute("standardProcessing", getStandardProcessing().name())
                         .attribute("stylesheet", styleSheet.name())
-                        .attribute("output", out.name());
+                        .attribute("output", outputDescriptor.name());
                 if (StringUtils.isNotEmpty(copyrightMessage)) {
                     writer.startElement("copyrightMessage").content(copyrightMessage).closeElement();
                 }
@@ -1015,6 +1031,13 @@ public class ReportConfiguration {
             }
         }
 
+        /**
+         * Reads an input stream as an XML document and parses the report configuration from that.
+         * <em>Note:</em> The reportable objects (Files) in a deserialized ReportConfigurations are not executable.
+         * @param inputStreamSupplier The XML document written by {@link #serialize(Appendable)}
+         * @param workingDirectory the directory to resolve short XSLT and output names from.
+         * @throws IOException on parse error.
+         */
         public void deserialize(final IOSupplier<InputStream> inputStreamSupplier, final DocumentName workingDirectory) throws IOException {
             org.w3c.dom.Document document;
             try (InputStream stream = inputStreamSupplier.get()) {
@@ -1036,14 +1059,14 @@ public class ReportConfiguration {
             standardProcessing = Processing.valueOf(attributes.get("standardProcessing"));
             String styleName = attributes.get("stylesheet");
             if (styleName != null) {
-                styleSheet = StyleSheets.getStyleSheet(styleName);
+                styleSheet = StyleSheets.getStyleSheet(styleName, workingDirectory);
             }
             String outputName = attributes.get("output");
             if (outputName != null) {
                 if (outputName.equals(ReportConfiguration.SYSTEM_OUT.name())) {
-                    out = ReportConfiguration.SYSTEM_OUT;
+                    outputDescriptor = ReportConfiguration.SYSTEM_OUT;
                 } else {
-                    out = IODescriptor.output(outputName, workingDirectory);
+                    outputDescriptor = IODescriptor.output(outputName, workingDirectory);
                 }
             }
 

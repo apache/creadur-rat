@@ -36,6 +36,9 @@ import java.nio.file.Path;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+/**
+ * Test for option collection parsers.
+ */
 class OptionCollectionParserTest {
 
     @TempDir(cleanup = CleanupMode.NEVER)
@@ -65,7 +68,7 @@ class OptionCollectionParserTest {
         TestingLog testingLog = new TestingLog();
         try {
             DefaultLog.setInstance(testingLog);
-            assertThatThrownBy(() -> OptionCollectionParser.parseCommandLine(options, new String[0]))
+            assertThatThrownBy(() -> underTest.parseCommandLine(options, new String[0]))
                     .isInstanceOf(ParseException.class);
         } finally {
             DefaultLog.setInstance(null);
@@ -78,7 +81,7 @@ class OptionCollectionParserTest {
         Options options = new Options();
         ReportConfiguration cfg = new ReportConfiguration();
         ArgumentContext ctxt = new ArgumentContext(testPath.toFile(), cfg, options, new String[0]);
-        cfg.setOut(new ReportConfiguration.IODescriptor("Bad Supplier", () -> { throw new IOException("Bad Supplier");}));
+        cfg.setOutput(new ReportConfiguration.IODescriptor("Bad Supplier", () -> { throw new IOException("Bad Supplier");}));
         assertThatThrownBy(() -> underTest.printHelp(ctxt))
                 .isInstanceOf(RatException.class)
                 .hasMessageContaining("Unable to print help: Bad Supplier");
