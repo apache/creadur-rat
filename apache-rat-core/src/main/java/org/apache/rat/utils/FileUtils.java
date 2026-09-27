@@ -57,7 +57,6 @@ public final class FileUtils {
             } catch (IOException ignore) {
                 // ignore
             }
-
         }
     }
 
