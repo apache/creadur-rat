@@ -53,7 +53,7 @@ import org.w3c.dom.Document;
  * Test the Ant report test
  */
 public class ReportTest extends AbstractRatAntTaskTest {
-    private final String baseNameStr = String.join(File.separator, new String[]{"src","test","resources","antunit"});
+    private final String baseNameStr = String.join(File.separator, "src","test","resources","antunit");
     private final File antFile = new File(new File(baseNameStr), "report-junit.xml").getAbsoluteFile();
     private DocumentName documentName;
 
