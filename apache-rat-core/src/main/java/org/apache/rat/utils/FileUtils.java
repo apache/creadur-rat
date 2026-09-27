@@ -68,7 +68,7 @@ public final class FileUtils {
      * @param lines the lines to write into the file.
      * @return the new File.
      */
-    public static  File writeFile(final File dir, final String name, final Iterable<String> lines) {
+    public static File writeFile(final File dir, final String name, final Iterable<String> lines) {
         if (dir == null) {
             throw new IllegalArgumentException("base directory not specified");
         }
