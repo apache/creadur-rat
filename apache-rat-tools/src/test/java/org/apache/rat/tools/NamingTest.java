@@ -40,7 +40,7 @@ public class NamingTest {
 
     @BeforeEach
     void cleanUpTestData() {
-        file.delete();
+        boolean ignored = file.delete();
     }
 
     @Test
