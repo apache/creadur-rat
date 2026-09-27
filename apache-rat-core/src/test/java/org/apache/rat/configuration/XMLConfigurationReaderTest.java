@@ -47,13 +47,13 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 public class XMLConfigurationReaderTest {
 
     /**
-     * The expected IDS for the default configuration.
+     * The expected IDs for the default configuration.
      */
     public static final String[] EXPECTED_IDS = {"AL", "BSD-3", "CDDL1", "GPL", "MIT", "OASIS",
             "W3C", "W3CD"};
 
     /**
-     * The approved IDs for the default configuraiton.
+     * The approved IDs for the default configuration.
      */
     public static final String[] APPROVED_IDS = {"AL", "BSD-3", "CDDL1", "MIT", "OASIS",
             "W3C", "W3CD"};
@@ -86,6 +86,7 @@ public class XMLConfigurationReaderTest {
     void LicensesTest() throws URISyntaxException {
         XMLConfigurationReader reader = new XMLConfigurationReader();
         URL url = XMLConfigurationReaderTest.class.getResource("/org/apache/rat/default.xml");
+        assertThat(url).isNotNull();
         reader.read(url.toURI());
         assertThat(reader.readLicenses().stream().map(IHeaderMatcher::getId).toArray(String[]::new))
                 .containsExactly(EXPECTED_LICENSES);
@@ -118,7 +119,9 @@ public class XMLConfigurationReaderTest {
     @Test
     void checkSystemMatcherTest() throws URISyntaxException {
         XMLConfigurationReader reader = new XMLConfigurationReader();
-        URI uri = XMLConfigurationReaderTest.class.getResource("/org/apache/rat/default.xml").toURI();
+        URL url = XMLConfigurationReaderTest.class.getResource("/org/apache/rat/default.xml");
+        assertThat(url).isNotNull();
+        URI uri = url.toURI();
         assertThat(uri).isNotNull();
         reader.read(uri);
         reader.readMatcherBuilders();
@@ -135,7 +138,9 @@ public class XMLConfigurationReaderTest {
     @Test
     void descriptionTest() throws SecurityException, URISyntaxException {
         XMLConfigurationReader reader = new XMLConfigurationReader();
-        URI uri = XMLConfigurationReaderTest.class.getResource("/org/apache/rat/default.xml").toURI();
+        URL url = XMLConfigurationReaderTest.class.getResource("/org/apache/rat/default.xml");
+        assertThat(url).isNotNull();
+        URI uri = url.toURI();
         assertThat(uri).isNotNull();
         reader.read(uri);
         reader.readMatcherBuilders();
@@ -161,6 +166,7 @@ public class XMLConfigurationReaderTest {
 
     @Test
     void checkWithXXETest() throws SecurityException {
+        // as DOCTYPE is configured to be disallowed, we expect an error here
         final String contents = """
                 <?xml version="1.0" encoding="UTF-8"?>
                 <!DOCTYPE user [
