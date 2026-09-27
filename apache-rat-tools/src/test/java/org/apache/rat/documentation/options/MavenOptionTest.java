@@ -32,7 +32,7 @@ public class MavenOptionTest {
         for (Option option : Arg.getOptions().getOptions()) {
             if (option.isDeprecated()) {
                 mavenOptionCollection.getMappedOption(option).ifPresent( mavenOption -> //
-                        assertThat(mavenOption.getDeprecated()).doesNotContainPattern("\\-\\- "));
+                        assertThat(mavenOption.getDeprecated()).doesNotContainPattern("-\\- "));
             }
         }
     }
