@@ -19,19 +19,43 @@
 package org.apache.rat.utils;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.MockedStatic;
+import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Arrays;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mockStatic;
+import static org.mockito.Mockito.when;
 
+@ExtendWith(MockitoExtension.class)
 class FileUtilsTest {
+    @Mock
+    private File mockedFile;
 
     @Test
-    void delete() {
+    void deleteSwallowsExceptions() {
+        when(mockedFile.exists()).thenReturn(true);
+        when(mockedFile.isDirectory()).thenReturn(false);
+
+        try (MockedStatic<Files> files = mockStatic(Files.class)) {
+            files.when(() -> Files.delete(any(Path.class)))
+                    .thenThrow(new IOException("Mocked exception"));
+
+            assertDoesNotThrow(()->FileUtils.delete(mockedFile));
+        }
     }
 
     @Test
-    void writeFile() {
+    void writeFileHandlesNullFile() {
         assertThrows(IllegalArgumentException.class, () ->
                 FileUtils.writeFile(null, "just a Test", Arrays.asList("a", "b", "c")));
     }
