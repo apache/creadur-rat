@@ -149,6 +149,10 @@ public final class MavenGenerator {
             arg = "The state";
         }
         if (option.hasArg() && option.getArgName() != null) {
+            // TODO java.lang.IllegalArgumentException: No enum constant org.apache.rat.OptionCollection.ArgumentType.inputIncludeFile
+            // if replaced by
+            // Supplier<String> sup = OptionCollection.ArgumentType.valueOf(option.getName()).description();
+            // as there seems to be a semantic difference between the deprecated way and the enumeration
             Supplier<String> sup = OptionCollection.getArgumentTypes().get(option.getArgName());
             if (sup == null) {
                 throw new IllegalStateException(format("Argument type %s must be in OptionCollection.ARGUMENT_TYPES", option.getArgName()));
