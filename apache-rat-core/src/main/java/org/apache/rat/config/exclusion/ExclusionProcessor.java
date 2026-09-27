@@ -86,7 +86,8 @@ public class ExclusionProcessor {
         return new SerDes();
     }
 
-    // the following set of methods are here and visible for testing purposes
+    // START OF TESTING PURPOSES methods
+    // visible for testing
     Set<String> getExcludedPatterns() {
         return new HashSet<>(excludedPatterns);
     }
@@ -122,7 +123,7 @@ public class ExclusionProcessor {
     DocumentName getLastMatcherBaseDir() {
         return lastMatcherBaseDir;
     }
-    // END OF TESTING PURPOSES Methods
+    // END OF TESTING PURPOSES methods
 
     /**
      * Reset the {@link #lastMatcher} and {@link #lastMatcherBaseDir} to start again.
@@ -133,7 +134,7 @@ public class ExclusionProcessor {
     }
 
     /**
-     * Add the iterable of strings to the collection of file/directory patters to ignore.
+     * Add the iterable of strings to the collection of file/directory patterns to ignore.
      * @param patterns the patterns to add.
      * @return this
      */

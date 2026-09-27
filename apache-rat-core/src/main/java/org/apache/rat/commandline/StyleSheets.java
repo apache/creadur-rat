@@ -52,7 +52,7 @@ public enum StyleSheets {
     /**
      * Official HTML5 stylesheet.
      */
-    XHTML5("xhtml5", "Produces a HTML5 report");
+    XHTML5("xhtml5", "Produces a HTML5 report.");
     /**
      * The name of the style sheet. Must map to bundled resource XSLT file
      */
@@ -88,7 +88,7 @@ public enum StyleSheets {
      * @param name the short name for or the path to a style sheet.
      * @param workingDirectory the working directory to resolve the name against.
      * @return the IODescriptor for the style sheet.
-     * @throws ConfigurationException if the filesheet can nto be found.
+     * @throws ConfigurationException if the style sheet can not be found.
      */
     public static ReportConfiguration.IODescriptor<InputStream> getStyleSheet(final String name, final DocumentName workingDirectory) {
         URL url = StyleSheets.class.getClassLoader().getResource(format("org/apache/rat/%s.xsl", name));

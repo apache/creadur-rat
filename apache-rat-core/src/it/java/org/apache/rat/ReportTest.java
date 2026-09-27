@@ -83,8 +83,8 @@ import static org.junit.jupiter.api.Assertions.fail;
 class ReportTest {
 
     /**
-     * Converts an argument lists to an argument array
-     * @param argsList the list to convert
+     * Converts an argument lists to an argument array.
+     * @param argsList the list to convert.
      * @return the array of arguments.
      */
     private String[] asArgs(final List<String> argsList) {
@@ -92,10 +92,10 @@ class ReportTest {
     }
 
     /**
-     * Runs the commands specified by the `commandLine.txt` file in the resources/ReportTest/* directories
-     * and validate the results using the {@code verify.groovy} dfile in the test directory.
+     * Runs the commands specified by the `commandLine.txt` file in the `resources/ReportTest/*` directories
+     * and validates the results using the {@code verify.groovy} file in the test directory.
      * @param testName the name of the test based on the directory the test was found in.
-     * @param commandLineDoc the Doucment that is the command line.
+     * @param commandLineDoc the document that is the command line.
      * @throws Exception on execution error.
      */
     @ParameterizedTest(name = "{index} {0}")
@@ -165,8 +165,8 @@ class ReportTest {
     }
 
     /**
-     * Reads each directory under the ReportTest director in the test resources and creates a test from it
-     * The {@code commandLine.txt} file is parsed to create the command lien to execute the tests.
+     * Reads each directory under the ReportTest directory in the test resources and creates a test from it.
+     * The {@code commandLine.txt} file is parsed to create the command line to execute the tests.
      * @return a stream of arguments for each test case.
      * @throws RatException on parsing error.
      */
@@ -205,18 +205,20 @@ class ReportTest {
      * Log that captures output for later review.
      */
     public static class FileLog implements Log {
-        /** the output from the log */
+        /**
+         * The output from the log.
+         */
         private final PrintStream logFile;
 
         /**
-         * The level at which we will write messages
+         * The level at which we will write messages.
          */
         private Level level;
 
         /**
-         * Constructor.
+         * Constructor to write at level {@code INFO}.
          * @param logFile the file to write to.
-         * @throws IOException on Error.
+         * @throws IOException on error.
          */
         FileLog(File logFile) throws IOException {
             this.logFile = new PrintStream(logFile);

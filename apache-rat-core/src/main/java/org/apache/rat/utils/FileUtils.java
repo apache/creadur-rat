@@ -43,7 +43,7 @@ public final class FileUtils {
     }
 
     /**
-     * Deletes a file if it exists.
+     * Deletes a file if it exists (ignoring all IO-related exceptions).
      * @param file the file to delete.
      */
     public static void delete(final File file) {
@@ -55,7 +55,7 @@ public final class FileUtils {
                     Files.delete(file.toPath());
                 }
             } catch (IOException ignore) {
-                //
+                // ignore
             }
 
         }

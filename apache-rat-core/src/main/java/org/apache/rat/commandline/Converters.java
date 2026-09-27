@@ -41,12 +41,12 @@ public final class Converters {
     }
 
     /**
-     * Creates a File with fully qualified name.
+     * Creates a file with fully qualified name.
      */
     public static final FileConverter FILE_CONVERTER = new FileConverter();
 
     /**
-     * Converts the Converter pattern into a Converter, count pair.
+     * Converts the converter pattern into a pair of Converter and count.
      */
     public static final Converter<Pair<ClaimStatistic.Counter, Integer>, ConfigurationException> COUNTER_CONVERTER = arg -> {
         String[] parts = arg.split(":");
@@ -98,7 +98,7 @@ public final class Converters {
          * Applies the conversion function to the specified file name.
          * @param fileName the file name to create a file from.
          * @return the DocumentName
-         * @throws NullPointerException if {@code fileName} is null.
+         * @throws NullPointerException if given {@code fileName} is null.
          */
         public DocumentName apply(final String fileName) throws NullPointerException {
             DocumentName.FSInfo fsInfo = workingDirectory.fsInfo();
