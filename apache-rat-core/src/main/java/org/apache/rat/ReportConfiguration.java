@@ -235,7 +235,7 @@ public class ReportConfiguration {
      * File within the file must be in linux format with a
      * {@code "/"} file separator.
      * @param file the file to process.
-     * @throws ConfigurationException if the file is null.
+     * @throws ConfigurationException if the file is {@code null}.
      */
     public void addSource(final File file) {
         notNull(file, "File may not be null.");
@@ -243,10 +243,10 @@ public class ReportConfiguration {
     }
 
     /**
-     * Throws ConfigurationException if the object is null.
+     * Throws ConfigurationException if the object is {@code null}.
      * @param object the object to test.
      * @param msg the message to create the exception with.
-     * @throws ConfigurationException if the object is null.
+     * @throws ConfigurationException if the object is {@code null}.
      */
     private void notNull(final Object object, final String msg) {
         if (object == null) {
@@ -257,7 +257,7 @@ public class ReportConfiguration {
     /**
      * Adds a Reportable as a source of files to scan.
      * @param reportable the reportable to process.
-     * @throws ConfigurationException if the reportable is null.
+     * @throws ConfigurationException if the reportable is {@code null}.
      */
     public void addSource(final Reportable reportable) {
         notNull(reportable, "Reportable may not be null.");
@@ -587,7 +587,7 @@ public class ReportConfiguration {
      * times to provide the stream. Suppliers should prepare streams that are
      * appended to and that can be closed. If an {@code OutputStream} should not be
      * closed consider wrapping it in a {@code CloseShieldOutputStream}
-     * @param outputDescriptor the OutputStream supplier that provides the output stream to write
+     * @param outputDescriptor the OutputStream supplier that provides the output stream to write.
      * the report to. A {@code null} value will use {@code System.out}.
      * @see CloseShieldOutputStream
      */

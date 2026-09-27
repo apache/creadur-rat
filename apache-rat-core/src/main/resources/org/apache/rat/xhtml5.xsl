@@ -49,7 +49,7 @@
                         div.section {padding-left:5em;}
                         div.subsection {padding-left:5em;}
 
-                        /* Table Design */
+                        /* table design */
                         table,tr,td {font-weight:bold;border:1px solid #000;}
                         table {min-width: 50%;}
                         caption {color:blue;text-align:left;}
@@ -71,7 +71,7 @@
 
     <xsl:template match="rat-report">
 
-        <h1>Rat Report</h1>
+        <h1>RAT Report</h1>
 
         <xsl:call-template name="summary" />
 
@@ -84,7 +84,7 @@
             <xsl:call-template name="archives" />
         </xsl:if>
 
-        <h2>Detail</h2>
+        <h2>Details</h2>
 
         <p>
             Documents with unapproved licenses will start with a <xsl:value-of select="$notapproved"/>
@@ -193,7 +193,7 @@
             </p>
 
             <table id="rat-reports summary statistics" cellspacing="0"
-                   summary="A  summary of statistics from this RAT report">
+                   summary="A summary of statistics from this RAT report">
                 <caption>
                     Table 1: A summary of statistics from this RAT report.
                 </caption>
