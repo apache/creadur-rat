@@ -107,7 +107,7 @@ public abstract class AbstractConfigurationOptionsProvider extends AbstractOptio
      * Construct the tests.
      * @param providerName the common name of the provider under test.
      * @param unsupportedArgs the list of unsupported arguments.
-     * @param baseDir the base directory for the tests.  Tests and test data will be copied to directories under this directory.
+     * @param baseDir the base directory for the tests. Tests and test data will be copied to directories under this directory.
      */
     protected AbstractConfigurationOptionsProvider(final String providerName, final Collection<String> unsupportedArgs, final File baseDir) {
         super(providerName, setup(baseDir));
@@ -518,7 +518,7 @@ public abstract class AbstractConfigurationOptionsProvider extends AbstractOptio
                        (the "License"); you may not use this file except in compliance with
                        the License.  You may obtain a copy of the License at
                 
-                       http://www.apache.org/licenses/LICENSE-2.0
+                       https://www.apache.org/licenses/LICENSE-2.0
                 
                        Unless required by applicable law or agreed to in writing, software
                        distributed under the License is distributed on an "AS IS" BASIS,
