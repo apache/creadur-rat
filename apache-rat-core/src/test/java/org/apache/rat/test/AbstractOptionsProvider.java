@@ -42,30 +42,31 @@ import org.apache.rat.document.DocumentNameMatcherTest;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.ArgumentsProvider;
+import org.junit.jupiter.params.support.ParameterDeclarations;
 
 import static org.assertj.core.api.Fail.fail;
 
 /**
  * A list of methods that an OptionsProvider in a test case must support.
  * Use of this interface ensures consistent testing across the UIs. Each method
- * tests an Option from OptionCollection that must be implemented in the UI.
+ * tests an option from OptionCollection that must be implemented in the UI.
  * Each method in this interface tests an Option in {@link org.apache.rat.OptionCollection}.
  */
 public abstract class AbstractOptionsProvider implements ArgumentsProvider {
     /**
-     * A map of test Options to tests.
+     * A map of test options to tests.
      */
     protected final Map<String, OptionCollectionTest.OptionTest> testMap = new TreeMap<>();
-    /** The list of exclude args */
+    /** The list of exclude args. */
     protected static final String[] EXCLUDE_ARGS = {"*.foo", "%regex[[A-Z]\\.bar]", "justbaz"};
-    /** the list of include args */
+    /** The list of include args. */
     protected static final String[] INCLUDE_ARGS = {"B.bar", "justbaz"};
     /**
      * The directory to place test data in.
      */
     protected final File baseDir;
     /**
-     * THe name of the provider of the options
+     * The name of the provider of the options.
      */
     protected final String providerName;
 
@@ -203,7 +204,7 @@ public abstract class AbstractOptionsProvider implements ArgumentsProvider {
     }
 
     @Override
-    public Stream<? extends Arguments> provideArguments(final ExtensionContext context) {
+    public Stream<? extends Arguments> provideArguments(final ParameterDeclarations parameters, final ExtensionContext context) {
         List<Arguments> lst = new ArrayList<>();
         List<String> missingTests = new ArrayList<>();
 

@@ -827,9 +827,11 @@ public abstract class AbstractConfigurationOptionsProvider extends AbstractOptio
                      InputStream actual = config.getStyleSheet().get()) {
                     String expectedStr =  IOUtils.toString(expected, StandardCharsets.UTF_8);
                     String actualStr =  IOUtils.toString(actual, StandardCharsets.UTF_8);
-                    assertThat(actualStr).as(() -> String.format("'%s' is not correct: %s != %s",
-                            config.getStyleSheetDescriptor().name(),
-                            actualStr, expectedStr)).isEqualTo(expectedStr);
+                    assertThat(actualStr).as(
+                                () -> String.format("'%s' is not correct: %s != %s",
+                                config.getStyleSheetDescriptor().name(),
+                                actualStr, expectedStr))
+                            .isEqualTo(expectedStr);
                 }
             }
         });
