@@ -52,7 +52,7 @@ agnostic home for software distribution comprehension and audit tools.
     <!-- this is the target Java version that this project supports at runtime -->
     <javaVersion>17</javaVersion>
     <tika.version>4.0.0</tika.version>
-    <mockito.version>5.23.0</mockito.version>
+    <mockito.version>5.24.0</mockito.version>
     <!-- This is the version of Maven required to use the RAT Maven Plugin -->
     <mavenMinVersion>3.9</mavenMinVersion>
     <!-- minimal versions to build this projects, enforced in parent POM by enforcer plugin -->
