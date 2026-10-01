@@ -23,16 +23,19 @@ import org.apache.rat.commandline.Arg;
 
 import org.junit.jupiter.api.Test;
 
+import java.util.regex.Pattern;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class MavenOptionTest {
+    private final static String ESCAPED_DOUBLE_DASH = Pattern.quote("--");
     @Test
     void getDeprecatedTest() {
         MavenOptionCollection mavenOptionCollection = new MavenOptionCollection();
         for (Option option : Arg.getOptions().getOptions()) {
             if (option.isDeprecated()) {
                 mavenOptionCollection.getMappedOption(option).ifPresent( mavenOption -> //
-                        assertThat(mavenOption.getDeprecated()).doesNotContainPattern("-\\- "));
+                        assertThat(mavenOption.getDeprecated()).doesNotContainPattern(ESCAPED_DOUBLE_DASH));
             }
         }
     }
