@@ -32,7 +32,7 @@ import org.apache.rat.document.DocumentName;
 import org.apache.rat.document.FSInfoTest;
 
 /**
- * A Document for testing.  The document is guaranteed to have a name and may have content is specified in the constructor.
+ * A Document for testing. The document is guaranteed to have a name and may have content (specified in the constructor).
  */
 public class TestingDocument extends Document {
 
@@ -40,24 +40,26 @@ public class TestingDocument extends Document {
     private final IOSupplier<InputStream> input;
 
     /**
-     * Constructs a TestingDocument with the name "name" and no content.
+     * Constructs a TestingDocument with the name {@code "name"} and no content.
      */
     public TestingDocument() {
         this("name");
     }
 
     /**
-     * Constructs a TestingDocument with the specified "name", no content and will not have an associated document name matcher.
-     * @param name The name of the document.
+     * Constructs a TestingDocument with the specified {@code "name"},
+     * no content and will not have an associated document name matcher.
+     * @param name the name of the document.
      */
     public TestingDocument(String name) {
         this(name, null);
     }
 
     /**
-     * Constructs a TestingDocument with the specified DocumentName,no content and the {@link DocumentNameMatcher#MATCHES_ALL}
+     * Constructs a TestingDocument with the specified DocumentName,
+     * no content and the {@link DocumentNameMatcher#MATCHES_ALL}
      * name matcher associated with it.
-     * @documentName the document name.
+     * @param documentName the document name.
      */
     public TestingDocument(DocumentName documentName) {
         super(documentName, DocumentNameMatcher.MATCHES_ALL);
@@ -66,7 +68,8 @@ public class TestingDocument extends Document {
     }
 
     /**
-     * Constructs a TestingDocument with the specified "name", no contentand the specified DocumentNameMatcher
+     * Constructs a TestingDocument with the specified {@code "name"},
+     * no content and the specified DocumentNameMatcher
      * associated with it.
      * @param name the document name.
      * @param matcher the associated document name matcher.
@@ -78,9 +81,9 @@ public class TestingDocument extends Document {
     }
 
     /**
-     * Constructs a TestingDocument with the name "name" and the content provided by the reader.
-     * @param reader the Reader that provides content for the document.
-     * @param name the name of the document
+     * Constructs a TestingDocument with the name {@code "name"} and the content provided by the reader.
+     * @param reader the reader that provides content for the document.
+     * @param name the name of the document.
      */
     public TestingDocument(Reader reader, String name) {
         super(DocumentName.builder().setName(name).setBaseName("").build(), DocumentNameMatcher.MATCHES_ALL);
@@ -89,9 +92,9 @@ public class TestingDocument extends Document {
     }
 
     /**
-     * Constructs a TestingDocument with the name "name" and the content provided by the input stream.
+     * Constructs a TestingDocument with the name {@code "name"} and the content provided by the input stream.
      * @param inputSupplier the input supplier that provides content for the document as an input stream.
-     * @param name the name of the document
+     * @param name the name of the document.
      */
     public TestingDocument(IOSupplier<InputStream> inputSupplier, String name) {
         super(DocumentName.builder(FSInfoTest.UNIX).setName(name).setBaseName("").build(), DocumentNameMatcher.MATCHES_ALL);
@@ -101,7 +104,7 @@ public class TestingDocument extends Document {
 
     /**
      * Gets the reader for the document content.
-     * @return the Reader for the contents.
+     * @return the reader for the contents.
      * @throws IOException on IO error when reading from input stream.
      * @throws NullPointerException if neither the reader nor the input stream were provided.
      */
@@ -111,7 +114,8 @@ public class TestingDocument extends Document {
     }
 
     /**
-     * @return always returns false.
+     * Returns {@code false} as a document is no directory.
+     * @return always returns {@code false}.
      */
     @Override
     public boolean isDirectory() {
@@ -119,7 +123,8 @@ public class TestingDocument extends Document {
     }
 
     /**
-     * @return Always returns an empty set.
+     * A document does not have any children.
+     * @return always returns an empty set.
      */
     @Override
     public SortedSet<Document> listChildren() {

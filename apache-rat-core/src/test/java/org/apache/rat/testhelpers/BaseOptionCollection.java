@@ -21,7 +21,7 @@ package org.apache.rat.testhelpers;
 import org.apache.rat.ui.UIOptionCollection;
 
 /**
- * A UIOptionCollection for testing purposes.  The contained UIOptions are not UI limited or adjusted.
+ * A UIOptionCollection for testing purposes. The contained UIOptions are not UI limited or adjusted.
  */
 public final class BaseOptionCollection extends UIOptionCollection<BaseOption> {
     /**
@@ -33,15 +33,15 @@ public final class BaseOptionCollection extends UIOptionCollection<BaseOption> {
     }
 
     /**
-     * Constructs a default BaseOptionCllection
+     * Constructs a default BaseOptionCollection.
      */
     public BaseOptionCollection() {
         super(new Builder());
     }
 
     /**
-     * Constructs a BaseOptionCollecton from the provided builder.
-     * @param builder The builder for this collection.
+     * Constructs a BaseOptionCollection from the provided builder.
+     * @param builder the builder for this collection.
      */
     public BaseOptionCollection(Builder builder) {
         super(builder);

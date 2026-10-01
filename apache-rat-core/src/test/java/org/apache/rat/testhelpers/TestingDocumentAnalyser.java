@@ -25,7 +25,7 @@ import org.apache.rat.api.Document;
 import org.apache.rat.document.DocumentAnalyser;
 
 /**
- * A document analyzer to used int est where an actual analysis is not desired.
+ * A document analyzer to be used in test where an actual analysis is not desired.
  */
 public class TestingDocumentAnalyser implements DocumentAnalyser {
 

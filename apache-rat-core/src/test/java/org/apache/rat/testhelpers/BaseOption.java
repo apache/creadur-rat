@@ -26,7 +26,7 @@ import org.apache.rat.utils.CasedString;
 import java.util.function.Function;
 
 /**
- * Ai implementation of UIOption to use in general (non-UI limited or adjusted) testing.
+ * An implementation of UIOption to use in general (non-UI limited or adjusted) testing.
  */
 public final class BaseOption extends UIOption<BaseOption> {
     private BaseOption(BaseOptionBuilder builder) {
@@ -34,7 +34,7 @@ public final class BaseOption extends UIOption<BaseOption> {
     }
 
     /**
-     * Creates a builder for the BaseOpton.
+     * Creates a builder for the BaseOption.
      * @return the BaseOptionBuilder.
      */
     public BaseOptionBuilder builder() {

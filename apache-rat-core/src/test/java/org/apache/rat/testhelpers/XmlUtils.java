@@ -61,7 +61,7 @@ import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 
 /**
- * Utilities to help test XML doucments/
+ * Utilities to help test XML documents.
  */
 public final class XmlUtils {
     /**
@@ -74,8 +74,8 @@ public final class XmlUtils {
     /**
      * Construct a safe XML reader.
      * @return an XML reader.
-     * @throws SAXException on sax exception
-     * @throws ParserConfigurationException on parser configuration exception
+     * @throws SAXException on SAX exception.
+     * @throws ParserConfigurationException on parser configuration exception.
      */
     public static XMLReader newXMLReader() throws SAXException, ParserConfigurationException {
         final SAXParserFactory spf = SAXParserFactory.newInstance();
@@ -85,27 +85,27 @@ public final class XmlUtils {
     }
 
     /**
-     * Determines if the document string is wellformed.
+     * Determines whether the document string is well-formed.
      * @param string the document string to check.
-     * @return {@code true} if the document is wellformed, {@code false} otherwise.
+     * @return {@code true} if the document is well-formed, {@code false} otherwise.
      */
     public static boolean isWellFormedXml(final String string) {
         return isWellFormedXml(new InputSource(new StringReader(string)));
     }
 
     /**
-     * Determines if the document in the input stream is wellformed.
+     * Determines whether the document in the input stream is well-formed.
      * @param in the input stream containing the document.
-     * @return {@code true} if the document is wellformed, {@code false} otherwise.
+     * @return {@code true} if the document is well-formed, {@code false} otherwise.
      */
     public static boolean isWellFormedXml(final InputStream in) {
         return isWellFormedXml(new InputSource(in));
     }
 
     /**
-     * Determines if the document in the input source is wellformed.
+     * Determines whether the document in the input source is well-formed.
      * @param isource the input source containing the document.
-     * @return {@code true} if the document is wellformed, {@code false} otherwise.
+     * @return {@code true} if the document is well-formed, {@code false} otherwise.
      */
     public static boolean isWellFormedXml(final InputSource isource) {
         try {
@@ -120,11 +120,11 @@ public final class XmlUtils {
     }
 
     /**
-     * Gets a Nodelist from an xpath string.
-     * @param source the context for the xpath statement to be evaluated in.  See {@link XPathExpression#evaluate(Object, QName)}.
-     * @param xPath The XPath object to compile the statement with.
-     * @param xpath the Xpath statement to compile.
-     * @return the NodeList of nodes that match the xpath.
+     * Gets a Nodelist from an XPath string.
+     * @param source the context for the XPath statement to be evaluated in. See {@link XPathExpression#evaluate(Object, QName)}.
+     * @param xPath the XPath object to compile the statement with.
+     * @param xpath the XPath statement to compile.
+     * @return the NodeList of nodes that matches the XPath.
      * @throws XPathExpressionException on error.
      */
     public static NodeList getNodeList(Object source, XPath xPath, String xpath) throws XPathExpressionException {
@@ -132,11 +132,11 @@ public final class XmlUtils {
     }
 
     /**
-     * Determines if an xpath identified an node in the source
-     * @param source the context for the xpath statement to be evaluated in.  See {@link XPathExpression#evaluate(Object, QName)}.
-     * @param xPath The XPath object to compile the statement with.
-     * @param xpath the Xpath statement to compile.
-     * @return {@code true} if the document is contains the node identified by the xpath statement, {@code false} otherwise.
+     * Determines whether an XPath identified a node in the source.
+     * @param source the context for the XPath statement to be evaluated in. See {@link XPathExpression#evaluate(Object, QName)}.
+     * @param xPath the XPath object to compile the statement with.
+     * @param xpath the XPath statement to compile.
+     * @return {@code true} if the document contains the node identified by the XPath statement, {@code false} otherwise.
      * @throws XPathExpressionException on error.
      */
     public static boolean isPresent(Object source, XPath xPath, String xpath) throws XPathExpressionException {
@@ -145,11 +145,11 @@ public final class XmlUtils {
     }
 
     /**
-     * Gets a List of Nodes from an xpath string.
-     * @param source the context for the xpath statement to be evaluated in.  See {@link XPathExpression#evaluate(Object, QName)}.
-     * @param xPath The XPath object to compile the statement with.
-     * @param xpath the Xpath statement to compile.
-     * @return the list of nodes that match the xpath.
+     * Gets a List of Nodes from an XPath string.
+     * @param source the context for the XPath statement to be evaluated in. See {@link XPathExpression#evaluate(Object, QName)}.
+     * @param xPath the XPath object to compile the statement with.
+     * @param xpath the XPath statement to compile.
+     * @return the list of nodes that match the XPath.
      * @throws XPathExpressionException on error.
      */
     public static List<Node> getNodes(Object source, XPath xPath, String xpath) throws XPathExpressionException {
@@ -162,24 +162,24 @@ public final class XmlUtils {
     }
 
     /**
-     * Gets a node identified by an xpath.
-     * @param source the context for the xpath statement to be evaluated in.  See {@link XPathExpression#evaluate(Object, QName)}.
-     * @param xPath The XPath object to compile the statement with.
-     * @param xpath the Xpath statement to compile.
+     * Gets a node identified by an XPath.
+     * @param source the context for the XPath statement to be evaluated in. See {@link XPathExpression#evaluate(Object, QName)}.
+     * @param xPath the XPath object to compile the statement with.
+     * @param xpath the XPath statement to compile.
      * @return the identified Node.
      * @throws XPathExpressionException on error.
      * @throws AssertionFailedError if more than one node is found.
      */
     public static Node getNode(Object source, XPath xPath, String xpath) throws XPathExpressionException {
         NodeList nodeList = getNodeList(source, xPath, xpath);
-        assertEquals(1, nodeList.getLength(), "Could not find exactly one" + xpath);
+        assertEquals(1, nodeList.getLength(), "Could not find exactly one " + xpath);
         return nodeList.item(0);
     }
 
     /**
-     * Prints the specifide NodeList as a string representation of its contents.
-     * @param nodeList the Nodelist to pring.
-     * @return the String that contains the textual representation of the NodeList nodes.
+     * Prints the specified NodeList as a string representation of its contents.
+     * @param nodeList the Nodelist to print.
+     * @return the string that contains the textual representation of the NodeList nodes.
      */
     public static String printNodeList(NodeList nodeList) {
         StringBuilder sb = new StringBuilder();
@@ -199,7 +199,7 @@ public final class XmlUtils {
     /**
      * Reads an input stream into a document.
      * @param inputStream the input stream to read.
-     * @return the Document
+     * @return the Document.
      * @throws SAXException on sax Error
      * @throws IOException on IO Error
      */
@@ -209,9 +209,9 @@ public final class XmlUtils {
     }
 
     /**
-     * Write a boolean attribute ot an XML writer.
+     * Writes a boolean attribute to an XML writer.
      * @param writer the writer to write to.
-     * @param name the name of the attribute
+     * @param name the name of the attribute.
      * @param booleanValue the boolean value.
      * @throws IOException on write error.
      */
@@ -222,10 +222,10 @@ public final class XmlUtils {
     }
 
     /**
-     * Print the XML document to the output stream
+     * Print the XML document to the output stream.
      *
      * @param out the OutputStream to print the document to.
-     * @param document The XML DOM document to print
+     * @param document The XML DOM document to print.
      */
     public static void printDocument(OutputStream out, Document document) {
         TransformerFactory tf = TransformerFactory.newInstance();
@@ -246,11 +246,11 @@ public final class XmlUtils {
     }
 
     /**
-     * Get an attribute from an Xpath statement
-     * @param source the context for the xpath statement to be evaluated in.  See {@link XPathExpression#evaluate(Object, QName)}.
-     * @param xPath The XPath object to compile the statement with.
-     * @param xpath the Xpath statement to compile.
-     * @param attribute attribute to retrieve from the node specified by the xpath statement.
+     * Get an attribute from an XPath statement
+     * @param source the context for the XPath statement to be evaluated in. See {@link XPathExpression#evaluate(Object, QName)}.
+     * @param xPath the XPath object to compile the statement with.
+     * @param xpath the XPath statement to compile.
+     * @param attribute attribute to retrieve from the node specified by the XPath statement.
      * @return the string value of the attribute.
      * @throws XPathExpressionException on error
      */
@@ -272,11 +272,11 @@ public final class XmlUtils {
 
     /**
      * Use {@link #assertAttributes(Object, XPath, String, Map)}.
-     * @param source the context for the xpath statement to be evaluated in.  See {@link XPathExpression#evaluate(Object, QName)}.
-     * @param xPath The XPath object to compile the statement with.
-     * @param xpath the Xpath statement to compile.
+     * @param source the context for the XPath statement to be evaluated in. See {@link XPathExpression#evaluate(Object, QName)}.
+     * @param xPath the XPath object to compile the statement with.
+     * @param xpath the XPath statement to compile.
      * @param values a decomposed map of values.
-     * @throws XPathExpressionException
+     * @throws XPathExpressionException on error.
      */
     @Deprecated
     public static void assertAttributes(Object source, XPath xPath, String xpath, String... values) throws XPathExpressionException {
@@ -285,9 +285,9 @@ public final class XmlUtils {
 
     /**
      * Assert that attributes are set on a node.
-     * @param source the context for the xpath statement to be evaluated in.  See {@link XPathExpression#evaluate(Object, QName)}.
-     * @param xPath The XPath object to compile the statement with.
-     * @param xpath the Xpath statement to compile.
+     * @param source the context for the XPath statement to be evaluated in. See {@link XPathExpression#evaluate(Object, QName)}.
+     * @param xPath the XPath object to compile the statement with.
+     * @param xpath the XPath statement to compile.
      * @param attributes a map of attribute names to values.
      * @throws XPathExpressionException on error.
      */
@@ -302,42 +302,42 @@ public final class XmlUtils {
     }
 
     /**
-     * Assert that an xpath is present in the document.
-     * @param source the context for the xpath statement to be evaluated in.  See {@link XPathExpression#evaluate(Object, QName)}.
-     * @param xPath The XPath object to compile the statement with.
-     * @param xpath the Xpath statement to compile.
+     * Assert that an XPath is present in the document.
+     * @param source the context for the XPath statement to be evaluated in. See {@link XPathExpression#evaluate(Object, QName)}.
+     * @param xPath the XPath object to compile the statement with.
+     * @param xpath the XPath statement to compile.
     */
     public static void assertIsPresent(Object source, XPath xPath, String xpath) throws XPathExpressionException {
         assertThat(isPresent(source, xPath, xpath)).as("Presence of " + xpath).isTrue();
     }
 
     /**
-     * Assert that an xpath is not present in the document.
-     * @param source the context for the xpath statement to be evaluated in.  See {@link XPathExpression#evaluate(Object, QName)}.
-     * @param xPath The XPath object to compile the statement with.
-     * @param xpath the Xpath statement to compile.
+     * Assert that an XPath is not present in the document.
+     * @param source the context for the XPath statement to be evaluated in. See {@link XPathExpression#evaluate(Object, QName)}.
+     * @param xPath the XPath object to compile the statement with.
+     * @param xpath the XPath statement to compile.
      */
     public static void assertIsNotPresent(Object source, XPath xPath, String xpath) throws XPathExpressionException {
         assertThat(isPresent(source, xPath, xpath)).as("Non-presence of " + xpath).isFalse();
     }
 
     /**
-     * Assert that a named xpath is present in the document.
+     * Assert that a named XPath is present in the document.
      * @param identifier the name of the object.
-     * @param source the context for the xpath statement to be evaluated in.  See {@link XPathExpression#evaluate(Object, QName)}.
+     * @param source the context for the XPath statement to be evaluated in. See {@link XPathExpression#evaluate(Object, QName)}.
      * @param xPath The XPath object to compile the statement with.
-     * @param xpath the Xpath statement to compile.
+     * @param xpath the XPath statement to compile.
      */
     public static void assertIsPresent(String identifier, Object source, XPath xPath, String xpath) throws XPathExpressionException {
         assertThat(isPresent(source, xPath, xpath)).as(identifier + ": Presence of " + xpath).isTrue();
     }
 
     /**
-     * Assert that a named xpath is not present in the document.
+     * Assert that a named XPath is not present in the document.
      * @param identifier the name of the object.
-     * @param source the context for the xpath statement to be evaluated in.  See {@link XPathExpression#evaluate(Object, QName)}.
+     * @param source the context for the XPath statement to be evaluated in. See {@link XPathExpression#evaluate(Object, QName)}.
      * @param xPath The XPath object to compile the statement with.
-     * @param xpath the Xpath statement to compile.
+     * @param xpath the XPath statement to compile.
      */
     public static void assertIsNotPresent(String identifier, Object source, XPath xPath, String xpath) throws XPathExpressionException {
         assertThat(isPresent(source, xPath, xpath)).as(identifier + ": Non-presence of " + xpath).isFalse();

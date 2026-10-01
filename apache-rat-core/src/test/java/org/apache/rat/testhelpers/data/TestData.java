@@ -36,40 +36,40 @@ import org.apache.rat.utils.FileUtils;
  * The definition of a test.
  */
 public final class TestData implements Comparable<TestData> {
-    /** if set, the expected exception from the test. */
+    /** If set, the expected exception from the test. */
     private Exception expectedException;
-    /** The sub name of the test */
+    /** The sub name of the test. */
     private final String name;
     /**
      * The command line for the test.
-     * The command line is encoded a an option followed by the an array of String arguments for that option.
+     * It is encoded as an option followed by an array of String arguments of that option.
      */
     private final List<ImmutablePair<Option, String[]>> commandLine;
-    /** A function to set up the test in a specific path */
+    /** A function to set up the test in a specific path. */
     private final Consumer<Path> setupFiles;
     /** A function to test the results of the test. */
     private final Consumer<ValidatorData> validator;
 
     /**
      * Constructs the Test data
-     * @param name the sub name of the test.  May not be {@code null} but may be an empty string.  Should
+     * @param name the sub name of the test. Must not be {@code null} but may be an empty string. Should
      * be specified in Camel case for multiple words.
-     * @param commandLine The command line for the test.  May not be {@code null} but may consist of a single {@link ImmutablePair#nullPair()}.
-     * @param setupFiles the method to set up the files for the test. May not be {@code null}.
-     * @param validator the validator for the results of the test. May not be {@code null}.
+     * @param commandLine the command line for the test. May not be {@code null} but may consist of a single {@link ImmutablePair#nullPair()}.
+     * @param setupFiles the method to set up the files for the test. Must not be {@code null}.
+     * @param validator the validator for the results of the test. Must not be {@code null}.
      */
     public TestData(String name, List<ImmutablePair<Option, String[]>> commandLine,
              Consumer<Path> setupFiles,
              Consumer<ValidatorData> validator) {
-        Objects.requireNonNull(name, " name cannot be null");
-        Objects.requireNonNull(commandLine, "commandLine cannot be null");
-        Objects.requireNonNull(setupFiles, "setupFiles cannot be null");
-        Objects.requireNonNull(validator, "validator cannot be null");
+        Objects.requireNonNull(name, " name must not be null");
+        Objects.requireNonNull(commandLine, "commandLine must not be null");
+        Objects.requireNonNull(setupFiles, "setupFiles must not be null");
+        Objects.requireNonNull(validator, "validator must not be null");
         if (name.contains("/")) {
-            throw new IllegalArgumentException("name may not contain '/', use camel case instead");
+            throw new IllegalArgumentException("name must not contain '/', use camel case instead");
         }
         if (commandLine.isEmpty()) {
-            throw new IllegalArgumentException("commandLine may not be empty but contain an ImmutablePair.nullPair()");
+            throw new IllegalArgumentException("commandLine may not be empty but must contain an ImmutablePair.nullPair()");
         }
         this.name = name;
         this.commandLine = commandLine;
@@ -92,7 +92,7 @@ public final class TestData implements Comparable<TestData> {
     }
 
     /**
-     * The option for the test.  This is the first option specified in the command line.
+     * The option for the test. This is the first option specified in the command line.
      * If the command line is empty this returns {@code null}.
      * @return the first option in the command line or {@code null} if there is no option.
      */
@@ -109,8 +109,8 @@ public final class TestData implements Comparable<TestData> {
     }
 
     /**
-     * Gets the expected exception or {@code null} if not exception is expected.
-     * @return the expected exception or {@code null} if not exception is expected.
+     * Gets the expected exception or {@code null} if no exception is expected.
+     * @return the expected exception or {@code null} if no exception is expected.
      */
     public Exception getExpectedException() {
         return expectedException;
@@ -135,9 +135,9 @@ public final class TestData implements Comparable<TestData> {
 
     /**
      * Gets the command line as the string objects that are normally parsed by the
-     * command line parser. The result will include "--" to terminate a trailing multi
+     * command line parser. The result will include {@code "--"} to terminate a trailing multi
      * argument option.
-     * @param workingDir the directory to add to the command line.  May be {@code null}.
+     * @param workingDir the directory to add to the command line. May be {@code null}.
      * @return the command line strings.
      */
     public String[] getCommandLine(String workingDir) {
@@ -185,7 +185,7 @@ public final class TestData implements Comparable<TestData> {
 
     /**
      * Sets up the files for the test.
-     * @param path the path to use as the base directory.  Subdirectories and files may be added
+     * @param path the path to use as the base directory. Subdirectories and files may be added
      * to this path.
      */
     public void setupFiles(Path path) {
@@ -194,7 +194,7 @@ public final class TestData implements Comparable<TestData> {
     }
 
     /**
-     * Gets the test name.  This is the option concatenated with the name.
+     * Gets the test name. This is the option concatenated with the name.
      * @return the unique test name
      */
     public String getTestName() {
@@ -212,7 +212,7 @@ public final class TestData implements Comparable<TestData> {
     }
 
     /**
-     * Gets the test name as a class name.  This is based on the option concatenated with the name.
+     * Gets the test name as a class name. This is based on the option concatenated with the name.
      * @return the unique Java class name
      */
     public String getClassName() {
@@ -231,5 +231,4 @@ public final class TestData implements Comparable<TestData> {
     public int compareTo(TestData other) {
         return getTestName().compareTo(other.getTestName());
     }
-
 }

@@ -30,7 +30,7 @@ public class TestingLog implements Log {
     private Log.Level level = Log.Level.INFO;
 
     /**
-     * Clears the captured buffer
+     * Clears the captured buffer.
      */
     public void clear() {
         captured = new StringBuilder();
@@ -38,7 +38,7 @@ public class TestingLog implements Log {
 
     /**
      * Gets the captured log entries.
-     * @return the log entries
+     * @return the log entries.
      */
     public String getCaptured() {
         return captured.toString();

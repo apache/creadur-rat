@@ -32,15 +32,15 @@ import org.apache.commons.io.IOUtils;
  * Utilities to assert text appears or does not appear in text.
  */
 public class TextUtils {
-    /** An empty list of strings */
+    /** An empty list of strings. */
     public static final String[] EMPTY = {};
 
     /**
-     * Asserts a regular expression pattern is in a string.
+     * Asserts a regular expression pattern is in a given string.
      *
      * @param pattern the pattern to match.
      * @param target  the string to match.
-     * @deprecated use  assertThat(target).containsPattern(pattern)
+     * @deprecated use assertThat(target).containsPattern(pattern)
      */
     @Deprecated
     public static void assertPatternInTarget(String pattern, String target) {
@@ -53,7 +53,7 @@ public class TextUtils {
      *
      * @param pattern the pattern to match.
      * @param target  the string to match.
-     * @deprecated use assertThat(target).dosNotContainPattern(pattern)
+     * @deprecated use assertThat(target).doesNotContainPattern(pattern)
      */
     @Deprecated
     public static void assertPatternNotInTarget(String pattern, String target) {
@@ -66,7 +66,7 @@ public class TextUtils {
      *
      * @param pattern the pattern to match.
      * @param target  the string to match.
-     * @return {@code true} if a regular expression pattern is in a string
+     * @return {@code true} if a regular expression pattern is in a string.
      * @deprecated use assertThat(target).matches(pattern)
      */
     @Deprecated
