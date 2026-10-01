@@ -28,7 +28,7 @@ import java.util.regex.Pattern;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class MavenOptionTest {
-    private final static String ESCAPED_DOUBLE_DASH = Pattern.quote("--");
+    private static final String ESCAPED_DOUBLE_DASH = Pattern.quote("--");
     @Test
     void getDeprecatedTest() {
         MavenOptionCollection mavenOptionCollection = new MavenOptionCollection();
