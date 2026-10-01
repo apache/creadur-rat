@@ -156,10 +156,10 @@ class ReportTest {
             try {
                 Object value = shell.run(groovyScript, new String[]{outputFile.getAbsolutePath(), logFile.getAbsolutePath()});
                 if (value != null) {
-                    fail(String.format("%s: %s", testName, value));
+                    fail(testName + ": " + value);
                 }
             } catch (AssertionError e) {
-                throw new AssertionError(String.format("%s: %s", testName, e.getMessage()), e);
+                throw new AssertionError(testName + ": " + e.getMessage(), e);
             }
         }
     }
