@@ -1272,7 +1272,7 @@ public class ReportTestDataProvider extends AbstractTestDataProvider {
                                         assertThat(actualText).containsOnlyOnce("Files with unapproved licenses:" + System.lineSeparator() + "  /Missing.java");
                                         break;
                                     case XHTML5:
-                                        assertThat(actualText).containsPattern("<td>Approved<\\/td>\\s+<td>\\d+<\\/td>\\s+<td>A count of approved licenses.<\\/td>");
+                                        assertThat(actualText).containsPattern("<td>Approved</td>\\s+<td>\\d+</td>\\s+<td>A count of approved licenses.</td>");
                                         break;
                                     default:
                                         fail("No test for stylesheet " + sheet);
