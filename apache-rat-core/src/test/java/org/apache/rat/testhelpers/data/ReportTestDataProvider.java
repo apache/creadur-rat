@@ -70,11 +70,11 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 /**
  * Generates a list of TestData for executing the Report.
  * The tests work by creating a Path Consumer to construct a directory under the test base directory and creating files and/or
- * directories within that directory.  A test validator is created to validate the expected results of the operation and a {@link TestData}
+ * directories within that directory. A test validator is created to validate the expected results of the operation and a {@link TestData}
  * object is created for each test.
- *
+ * <br />
  * Each {@code TestData} represents a single test of a command line option or set of options.
- *
+ * <br />
  * These tests generally validate the results in the generated XML are as expected.
  */
 public class ReportTestDataProvider extends AbstractTestDataProvider {
@@ -94,8 +94,8 @@ public class ReportTestDataProvider extends AbstractTestDataProvider {
     };
 
     /**
-     * Asserts that the report Document contains the file name as a standard file.
-     * @param document The report document
+     * Asserts that the report document contains the file name as a standard file.
+     * @param document the report document.
      * @param fname the file name to locate.
      */
     private void assertStandardFile(Document document, String fname) {
@@ -109,7 +109,7 @@ public class ReportTestDataProvider extends AbstractTestDataProvider {
 
     /**
      * Asserts that the report Document contains the file name as an ignored file.
-     * @param document The report document
+     * @param document the report document.
      * @param fname the file name to locate.
      */
     private void assertIgnoredFile(Document document, String fname) {
@@ -125,7 +125,7 @@ public class ReportTestDataProvider extends AbstractTestDataProvider {
      * Asserts that the validator data contains the specified counter with the specified count.
      * @param data the validator data.
      * @param counter the counter to check.
-     * @param int the expected count.
+     * @param count the expected count.
      */
     private void assertCounter(ValidatorData data, ClaimStatistic.Counter counter, int count) {
         assertThat(data.getStatistic().getCounter(counter)).as(counter.name()).isEqualTo(count);
@@ -179,7 +179,6 @@ public class ReportTestDataProvider extends AbstractTestDataProvider {
         result.addAll(execExcludeTest(option, args, setup));
     }
 
-
     @Override
     protected void inputExcludeTest(final Set<TestData> result, final Option option) {
         result.addAll(execExcludeTest(option, () -> AbstractTestDataProvider.EXCLUDE_ARGS, x -> {
@@ -216,7 +215,6 @@ public class ReportTestDataProvider extends AbstractTestDataProvider {
                         assertIgnoredFile(validatorData.getDocument(), fileName);
                     }
                 }));
-
 
         result.add(new TestData("", Collections.singletonList(ImmutablePair.of(option, args)),
                 setup,
@@ -385,7 +383,6 @@ public class ReportTestDataProvider extends AbstractTestDataProvider {
         });
         result.addAll(execIncludeTest(option, new String[]{".rat/include.txt"}, setup));
     }
-
 
     @Override
     protected void inputIncludeTest(final Set<TestData> result, final Option option) {
@@ -816,7 +813,7 @@ public class ReportTestDataProvider extends AbstractTestDataProvider {
             result.add(new TestData("noDefaults", Arrays.asList(underTest,
                     ImmutablePair.of(Arg.CONFIGURATION_NO_DEFAULTS.find("configuration-no-defaults"), null)),
                     setup,
-                    /* Make validator data a structure with counter counts  and file checks. */
+                    /* Make validator data a structure with counter counts and file checks. */
                     validatorData -> {
                         DefaultLog.getInstance().warn("validating configTest for " + validatorData.getBaseDir());
                         assertCounter(validatorData, ClaimStatistic.Counter.STANDARDS, 2);
@@ -869,7 +866,7 @@ public class ReportTestDataProvider extends AbstractTestDataProvider {
         };
         ImmutablePair<Option, String[]> copyright = ImmutablePair.of(option, new String[]{"MyCopyright"});
         if (Arg.EDIT_ADD.isEmpty()) {
-            throw new RuntimeException("Can not execute copyright tests without an EDIT_ADD option avialable");
+            throw new RuntimeException("Can not execute copyright tests without an EDIT_ADD option available");
         }
         ImmutablePair<Option, String[]> editLicense = ImmutablePair.of(Arg.EDIT_ADD.option(), null);
 
@@ -1173,7 +1170,6 @@ public class ReportTestDataProvider extends AbstractTestDataProvider {
         }
     }
 
-
     @Override
     protected void outputStandardTest(final Set<TestData> result, final Option option) {
         for (ReportConfiguration.Processing proc : ReportConfiguration.Processing.values()) {
@@ -1216,7 +1212,6 @@ public class ReportTestDataProvider extends AbstractTestDataProvider {
                     }));
         }
     }
-
 
     @Override
     protected void outputStyleTest(final Set<TestData> result, final Option option) {

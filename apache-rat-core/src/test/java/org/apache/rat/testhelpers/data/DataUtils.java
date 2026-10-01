@@ -62,9 +62,8 @@ public class DataUtils {
     /**
      * A setup that does nothing.
      */
-    public static final Consumer<Path> NO_SETUP = basePath -> {
-        DefaultLog.getInstance().warn("no setup for " + basePath);
-    };
+    public static final Consumer<Path> NO_SETUP = basePath ->
+            DefaultLog.getInstance().warn("no setup for " + basePath);
 
     /**
      * A ValidatorData consumer that does nothing.
@@ -76,7 +75,7 @@ public class DataUtils {
     }
 
     /**
-     * Create a directory name from the option.  Directory names are camel.
+     * Create a directory name from the option. Directory names are camel.
      * @param option the option to create a directory name from.
      * @return the directory name for the option.
      */
@@ -89,9 +88,9 @@ public class DataUtils {
 
     /**
      * Generate a simple configuration file that defines one license based on the name of the file and
-     * containing as single text matcher that mateches the {@code text} parameter.
-     * @param fileName The name of the file to create.
-     * @param id the ID for the family.
+     * containing as single text matcher that matches the {@code text} parameter.
+     * @param fileName the name of the file to create.
+     * @param id the id for the family.
      * @param text the text for the matcher.
      */
     static void generateTextConfig(Path fileName, String id, String text) {
@@ -118,9 +117,9 @@ public class DataUtils {
     }
     /**
      * Generate a simple configuration file that defines one license based on the name of the file and
-     * containing as single text matcher that mateches the {@code text} parameter.
-     * @param fileName The name of the file to create.
-     * @param id the ID for the family.
+     * containing a single text matcher that matches the {@code text} parameter.
+     * @param fileName the name of the file to create.
+     * @param id the id for the family.
      * @param spdxId the SPDX id for the matcher.
      */
     static void generateSpdxConfig(Path fileName, String id, String spdxId) {

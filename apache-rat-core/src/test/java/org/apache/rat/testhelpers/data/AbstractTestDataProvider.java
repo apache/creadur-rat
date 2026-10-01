@@ -37,24 +37,23 @@ import org.apache.rat.utils.DefaultLog;
 /**
  * Generates a list of TestData to test an implementation.
  * The tests work by creating a Path Consumer to construct a directory under the test base directory and creating files and/or
- * directories within that directory.  A test validator is created to validate the expected results of the operation and a {@link TestData}
+ * directories within that directory. A test validator is created to validate the expected results of the operation and a {@link TestData}
  * object is created for each test.
- *
- * Each {@code TestData} represents a single test of a command line option or set of options. *
- *
- * Use of this class ensures consistent testing across the UIs.
+ * <br />
+ * Each {@code TestData} represents a single test of a command line option or set of options.
+ * <br />
+ * Use of this class ensures consistent testing across all available UIs.
  */
 public abstract class AbstractTestDataProvider {
-
-    /** The list of exclude args */
+    /** The list of exclude arguments. */
     static final String[] EXCLUDE_ARGS = {"*.foo", "%regex[[A-Z]\\.bar]", "justbaz"};
-    /** the list of include args */
+    /** The list of include arguments. */
     static final String[] INCLUDE_ARGS = {"B.bar", "justbaz"};
     // Sonar suggests List.of(), but we need an Immutable list.
     public static final ImmutableList<ImmutablePair<Option, String[]>> NO_OPTIONS = ImmutableList.of(ImmutablePair.nullPair()); // NOSONAR
 
     /**
-     * Generates a map of TestData indexed by the testName
+     * Generates a map of TestData indexed by the testName.
      * @param optionCollection the collection of options for the UI under test.
      * @return the map of testName to Test Data.
      */
