@@ -41,6 +41,8 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class FileUtilsTest {
+    public static final List<String> JUST_A_TEST = List.of("just a test");
+
     @Mock
     private File mockedFile;
 
@@ -53,14 +55,14 @@ class FileUtilsTest {
             files.when(() -> Files.delete(any(Path.class)))
                     .thenThrow(new IOException("Mocked exception"));
 
-            assertDoesNotThrow(()->FileUtils.delete(mockedFile));
+            assertDoesNotThrow(() -> FileUtils.delete(mockedFile));
         }
     }
 
     @Test
     void writeFileHandlesNullFile() {
         assertThrows(IllegalArgumentException.class, () ->
-                writeFile(null, "just a Test", Arrays.asList("a", "b", "c")));
+                writeFile(null, "just a Test", JUST_A_TEST));
     }
 
     @Test
@@ -70,10 +72,9 @@ class FileUtilsTest {
 
         RuntimeException exception = assertThrows(
                 RuntimeException.class,
-                () -> writeFile(file.toFile(), "test.txt", List.of("just a test"))
+                () -> writeFile(file.toFile(), "test.txt", JUST_A_TEST)
         );
 
         assertInstanceOf(IOException.class, exception.getCause());
     }
-
 }
