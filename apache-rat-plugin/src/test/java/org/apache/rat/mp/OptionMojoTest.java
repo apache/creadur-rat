@@ -79,7 +79,6 @@ public class OptionMojoTest {
 
     static class MojoOptionsProvider extends AbstractConfigurationOptionsProvider implements ArgumentsProvider  {
 
-        private RatCheckMojo mojo = null;
 
         public MojoOptionsProvider() {
             super("MavenMojo", BaseRatMojo.unsupportedArgs(), testPath.toFile());
@@ -126,8 +125,8 @@ public class OptionMojoTest {
         @Override
         protected final ReportConfiguration generateConfig(List<Pair<Option, String[]>> args) throws IOException {
             try {
-                this.mojo = generateMojo(args);
-                AbstractConfigurationOptionsProvider.setup(this.mojo.getProject().getBasedir());
+                RatCheckMojo mojo = generateMojo(args);
+                AbstractConfigurationOptionsProvider.setup(mojo.getProject().getBasedir());
                 return mojo.getConfiguration();
             } catch (MojoExecutionException e) {
                 throw new IOException(e.getMessage(), e);
@@ -142,10 +141,10 @@ public class OptionMojoTest {
             ProjectBuilder projectBuilder = lookup(ProjectBuilder.class);
             MavenProject project = projectBuilder.build(pomFile, buildingRequest).getProject();
             try {
-                return (RatCheckMojo) lookupConfiguredMojo(project, "check");
+                return lookupConfiguredMojo(project, "check");
             } catch (ComponentConfigurationException e) {
                 for (Method m : RatCheckMojo.class.getMethods()) {
-                    System.out.println( m );
+                    System.out.println(m);
                 }
                 throw e;
             }

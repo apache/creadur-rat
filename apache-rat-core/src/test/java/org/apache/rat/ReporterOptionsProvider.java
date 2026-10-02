@@ -126,7 +126,7 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
     }
 
     /**
-     * Creates the srcDir.,.
+     * Creates the srcDir.
      * @param option the name for the srcDir.
      */
     private void configureSourceDir(Option option) {
@@ -135,7 +135,7 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
     }
 
     /**
-     * verify that without args the report is ok.
+     * Verify that without args the report is ok.
      */
     private void validateNoArgSetup() throws IOException, RatException {
         TestingLog log = new TestingLog();
@@ -318,7 +318,7 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
 
     /**
      * Runs the exclude tests.
-     * @param option The exclude option to run.
+     * @param option the exclude option to run.
      * @param args the arguments for the command line.
      * @param includesRatDir @{code true} if the .rat directory was created.
      */
@@ -492,7 +492,7 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
 
     /**
      * Runs the include tests.
-     * @param option The include option to run.
+     * @param option the include option to run.
      * @param args the arguments for the command line.
      * @param includesRatDir @{code true} if the .rat directory was created.
      */
@@ -514,7 +514,7 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
             assertThat(output.getStatistic().getCounter(ClaimStatistic.Counter.STANDARDS)).isEqualTo(4);
             assertThat(output.getStatistic().getCounter(ClaimStatistic.Counter.IGNORED)).isEqualTo(includesRatDir ? 1 : 0);
 
-            // verify exclude removes most files.
+            // verify exclude removes most files
             config = generateConfig(ImmutablePair.of(excludeOption, EXCLUDE_ARGS));
             reporter = new Reporter(config);
             output = reporter.execute();
@@ -851,7 +851,7 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
         try (PrintStream out = new PrintStream(baos)) {
             System.setOut(out);
             configureSourceDir(option);
-            // create a dummy stylesheet so that we have a local file for users of the testing jar.
+            // create a dummy stylesheet so that we have a local file for users of the testing jar
             File file = writeFile("stylesheet", """
                     <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
                         <xsl:template match="@*|node()">
@@ -886,7 +886,7 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
                         assertThat(actualText).containsOnlyOnce("Files with unapproved licenses:" + System.lineSeparator() + "  /stylesheet");
                         break;
                     case XHTML5:
-                        assertThat(actualText).containsPattern("<td>Approved<\\/td>\\s+<td>\\d+<\\/td>\\s+<td>A count of approved licenses.<\\/td>");
+                        assertThat(actualText).containsPattern("<td>Approved</td>\\s+<td>\\d+</td>\\s+<td>A count of approved licenses.</td>");
                         break;
                     default:
                         fail("No test for stylesheet " + sheet);

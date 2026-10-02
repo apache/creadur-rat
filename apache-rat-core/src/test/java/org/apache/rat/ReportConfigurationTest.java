@@ -255,8 +255,8 @@ public class ReportConfigurationTest {
 
     /**
      * Sets up underTest to have a set of licenses named after
-     * <a href="https://en.wikipedia.org/wiki/List_of_fictional_cats_in_comics"></a>cartoon cats</a>
-     * all in the license family 'catz'
+     * <a href="https://en.wikipedia.org/wiki/List_of_fictional_cats_in_comics">cartoon cats</a>
+     * all in the license family 'catz'.
      */
     private void addCatz() {
         underTest.addLicense(new TestingLicense("catz", "Garfield"));
@@ -270,8 +270,8 @@ public class ReportConfigurationTest {
 
     /**
      * Sets up underTest to have a set of licenses named after
-     * <a href="https://en.wikipedia.org/wiki/List_of_fictional_dogs_in_comics"></a>cartoon cats</a>cartoon dogs</a>
-     * all in the license family 'dogz'
+     * <a href="https://en.wikipedia.org/wiki/List_of_fictional_dogs_in_comics">cartoon dogs</a>
+     * all in the license family 'dogz'.
      */
     private void addDogz() {
         underTest.addLicense(new TestingLicense("dogz", "Odie"));
@@ -713,16 +713,16 @@ public class ReportConfigurationTest {
 
     /**
      * Validates that the configuration contains the default approved licenses.
-     * @param config The configuration to test.
+     * @param config the configuration to test.
      */
     public static void validateDefaultApprovedLicenses(ReportConfiguration config, String... additionalIds) {
         validateLicenses(config, Arrays.asList(additionalIds), LicenseFilter.APPROVED, XMLConfigurationReaderTest.APPROVED_LICENSES);
         }
 
     /**
-     * Validates that the configuration contains all the default licenses along with any addiitonal licenses
+     * Validates that the configuration contains all the default licenses along with any additional licenses.
      * @param config the configuration to test.
-     * @param additionalLicenses Additional licence IDs that are expected.
+     * @param additionalLicenses Additional license ids that are expected.
      */
     public static void validateDefaultLicenses(ReportConfiguration config, String...additionalLicenses) {
         validateLicenses(config, Arrays.asList(additionalLicenses), LicenseFilter.ALL, XMLConfigurationReaderTest.EXPECTED_LICENSES);

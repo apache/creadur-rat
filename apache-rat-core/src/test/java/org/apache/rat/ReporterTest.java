@@ -90,8 +90,7 @@ import org.xml.sax.SAXException;
  */
 public class ReporterTest {
     /**
-     * temporary file.  Not using tempDir because it does not
-     * always work.
+     * Temporary file. Not using tempDir because it does not always work properly.
      */
     private static Path tempPath;
 
@@ -375,8 +374,8 @@ public class ReporterTest {
      *
      * @param doc the document to check
      * @param xpath the XPath instance to use.
-     * @param resource the xpath statement to locate the node.
-     * @param licenseInfo the license info for the node. (can be null)
+     * @param resource the XPath statement to locate the node.
+     * @param licenseInfo the license info for the node (can be {@code null}).
      * @param type the type of resource located.
      * @throws Exception on XPath error.
      */

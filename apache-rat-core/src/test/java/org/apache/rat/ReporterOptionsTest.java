@@ -60,7 +60,7 @@ public final class ReporterOptionsTest {
 
     /**
      * A parameterized test for the options.
-     * @param name The name of the test.
+     * @param name the name of the test.
      */
     @ParameterizedTest( name = "{index} {0}")
     @ArgumentsSource(ReporterOptionsProvider.class)

@@ -271,19 +271,6 @@ public final class XmlUtils {
     }
 
     /**
-     * Use {@link #assertAttributes(Object, XPath, String, Map)}.
-     * @param source the context for the XPath statement to be evaluated in. See {@link XPathExpression#evaluate(Object, QName)}.
-     * @param xPath the XPath object to compile the statement with.
-     * @param xpath the XPath statement to compile.
-     * @param values a decomposed map of values.
-     * @throws XPathExpressionException on error.
-     */
-    @Deprecated
-    public static void assertAttributes(Object source, XPath xPath, String xpath, String... values) throws XPathExpressionException {
-        assertAttributes(source, xPath, xpath, mapOf(values));
-    }
-
-    /**
      * Assert that attributes are set on a node.
      * @param source the context for the XPath statement to be evaluated in. See {@link XPathExpression#evaluate(Object, QName)}.
      * @param xPath the XPath object to compile the statement with.

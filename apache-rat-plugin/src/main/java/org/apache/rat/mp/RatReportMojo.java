@@ -207,7 +207,7 @@ public class RatReportMojo extends AbstractRatMojo implements MavenMultiPageRepo
 
         if (siteSkin == null || siteSkin.getGroupId() == null
                 || siteSkin.getArtifactId() == null || siteSkin.getVersion() == null) {
-            getLog().debug("No skin configuration found in site.xml. Using default Maven skin configuration.");
+            getLog().debug("No skin configuration found in your site.xml. Using default Maven skin configuration.");
 
             // Create a minimal default skin configuration
             siteSkin = new org.apache.maven.doxia.site.Skin();
@@ -246,7 +246,7 @@ public class RatReportMojo extends AbstractRatMojo implements MavenMultiPageRepo
      * @param sink the sink to use for the generation.
      * @param sinkFactory the sink factory to use for the generation.
      * @param locale the wanted locale to generate the report, could be {@code null}.
-     * @throws MavenReportException if any
+     * @throws MavenReportException if any.
      */
     @Override
     public void generate(final Sink sink, final SinkFactory sinkFactory, final Locale locale) throws MavenReportException {
@@ -347,7 +347,7 @@ public class RatReportMojo extends AbstractRatMojo implements MavenMultiPageRepo
     /**
      * Gets the input files encoding.
      *
-     * @return The input files encoding, never <code>null</code>.
+     * @return The input files encoding, never {@code null}.
      */
     protected String getInputEncoding() {
         return (inputEncoding == null) ? ReaderFactory.FILE_ENCODING : inputEncoding;
@@ -356,8 +356,7 @@ public class RatReportMojo extends AbstractRatMojo implements MavenMultiPageRepo
     /**
      * Gets the effective reporting output files encoding.
      *
-     * @return The effective reporting output file encoding, never
-     * <code>null</code>.
+     * @return The effective reporting output file encoding, never {@code null}.
      */
     protected String getOutputEncoding() {
         return (outputEncoding == null) ? StandardCharsets.UTF_8.toString() : outputEncoding;
@@ -394,8 +393,8 @@ public class RatReportMojo extends AbstractRatMojo implements MavenMultiPageRepo
     /**
      * Writes the report to the Doxia sink.
      *
-     * @param locale The locale to use for writing the report.
-     * @throws MavenReportException Writing the report failed.
+     * @param locale the locale to use for writing the report.
+     * @throws MavenReportException if writing the report failed.
      */
     protected void executeReport(final Locale locale) throws MavenReportException {
         ResourceBundle bundle = getBundle(locale);
@@ -456,7 +455,7 @@ public class RatReportMojo extends AbstractRatMojo implements MavenMultiPageRepo
     /**
      * Returns the reports bundle.
      *
-     * @param locale Requested locale of the bundle.
+     * @param locale requested locale of the bundle.
      * @return The bundle, which is used to read localized strings.
      */
     private ResourceBundle getBundle(final Locale locale) {
@@ -466,9 +465,8 @@ public class RatReportMojo extends AbstractRatMojo implements MavenMultiPageRepo
     /**
      * Returns the reports description.
      *
-     * @param locale Requested locale of the bundle
-     * @return Report description, as given by the key "report.rat.description" in
-     * the bundle.
+     * @param locale requested locale of the bundle
+     * @return Report description, as given by the key {@code "report.rat.description"} in the bundle.
      */
     @Override
     public String getDescription(final Locale locale) {
@@ -478,8 +476,8 @@ public class RatReportMojo extends AbstractRatMojo implements MavenMultiPageRepo
     /**
      * Returns the reports name.
      *
-     * @param locale Requested locale of the bundle.
-     * @return Report name, as given by the key "report.rat.name" in the bundle.
+     * @param locale requested locale of the bundle.
+     * @return Report name, as given by the key {@code "report.rat.name"} in the bundle.
      */
     @Override
     public String getName(final Locale locale) {

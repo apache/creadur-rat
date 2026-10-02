@@ -68,7 +68,7 @@ class OptionCollectionParserTest {
         TestingLog testingLog = new TestingLog();
         try {
             DefaultLog.setInstance(testingLog);
-            assertThatThrownBy(() -> underTest.parseCommandLine(options, new String[0]))
+            assertThatThrownBy(() -> OptionCollectionParser.parseCommandLine(options, new String[0]))
                     .isInstanceOf(ParseException.class);
         } finally {
             DefaultLog.setInstance(null);

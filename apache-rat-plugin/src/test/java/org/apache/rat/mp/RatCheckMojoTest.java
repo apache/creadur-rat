@@ -213,22 +213,22 @@ public class RatCheckMojoTest {
         mojo.execute();
         org.w3c.dom.Document document = XmlUtils.toDom(Files.newInputStream(ratTxtFile.toPath()));
 
-        XmlUtils.assertAttributes(document, xPath, "/rat-report/resource[@name='/pom.xml']", "type",
-                "STANDARD");
-        XmlUtils.assertAttributes(document, xPath, "/rat-report/resource[@name='/src.apt']", "type",
-                "STANDARD");
+        XmlUtils.assertAttributes(document, xPath, "/rat-report/resource[@name='/pom.xml']",
+                XmlUtils.mapOf("type", "STANDARD"));
+        XmlUtils.assertAttributes(document, xPath, "/rat-report/resource[@name='/src.apt']",
+                XmlUtils.mapOf("type", "STANDARD"));
         XmlUtils.assertIsPresent(document, xPath, "/rat-report/resource[@name='/src.apt']/license[@approval='false']");
 
-        XmlUtils.assertAttributes(document, xPath, "/rat-report/resource[@name='/src.apt']", "type",
-                "STANDARD");
+        XmlUtils.assertAttributes(document, xPath, "/rat-report/resource[@name='/src.apt']",
+                XmlUtils.mapOf("type", "STANDARD"));
 
         for (Document.Type type : Document.Type.values()) {
             if (type == Document.Type.STANDARD) {
-                XmlUtils.assertAttributes(document, xPath, "/rat-report/statistics/documentType[@name='STANDARD']", "count",
-                        "2");
+                XmlUtils.assertAttributes(document, xPath, "/rat-report/statistics/documentType[@name='STANDARD']",
+                        XmlUtils.mapOf("count", "2"));
             } else if (type == Document.Type.IGNORED) {
-                XmlUtils.assertAttributes(document, xPath, "/rat-report/statistics/documentType[@name='IGNORED']", "count",
-                        "1");
+                XmlUtils.assertAttributes(document, xPath, "/rat-report/statistics/documentType[@name='IGNORED']",
+                        XmlUtils.mapOf("count", "1"));
             } else {
                 XmlUtils.assertIsNotPresent(document, xPath, format("/rat-report/statistics/documentType[@name='%s']", type));
             }
@@ -287,20 +287,20 @@ public class RatCheckMojoTest {
         }
 
         XmlUtils.assertAttributes(document, xPath, "/rat-report/resource[@name='/.rat']",
-                "mediaType", "application/octet-stream", "type", "IGNORED", "isDirectory", "true");
+                XmlUtils.mapOf("mediaType", "application/octet-stream", "type", "IGNORED", "isDirectory", "true"));
         XmlUtils.assertAttributes(document, xPath, "/rat-report/resource[@name='/pom.xml']",
-                "mediaType", "application/xml", "type", "IGNORED", "isDirectory", "false");
+                XmlUtils.mapOf("mediaType", "application/xml", "type", "IGNORED", "isDirectory", "false"));
         XmlUtils.assertAttributes(document, xPath, "/rat-report/resource[@name='/src/main/java/nl/basjes/something/Something.java']",
-                "mediaType", "text/x-java-source", "type", "STANDARD", "encoding", "windows-1252");
+                XmlUtils.mapOf("mediaType", "text/x-java-source", "type", "STANDARD", "encoding", "windows-1252"));
         XmlUtils.assertAttributes(document, xPath, "/rat-report/resource[@name='/src/main/java/nl/basjes/something/Something.java']/license",
-                "approval", "true", "family", ILicenseFamily.makeCategory("CC"), "id", "CC-BY-NC-ND", "name",
-                "Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International");
+                XmlUtils.mapOf("approval", "true", "family", ILicenseFamily.makeCategory("CC"), "id", "CC-BY-NC-ND", "name",
+                "Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International"));
     }
 
     /**
      * Runs a check, which should expose no problems.
      *
-     * @throws Exception The test failed.
+     * @throws Exception if the test failed.
      */
     @Test
     void rat343() throws Exception {
@@ -444,12 +444,12 @@ public class RatCheckMojoTest {
             org.w3c.dom.Document document = XmlUtils.toDom(Files.newInputStream(ratTxtFile.toPath()));
             // Document types
             XmlUtils.assertAttributes(document, xPath, "/rat-report/statistics/documentType[@name='IGNORED']",
-                    "count", "3");
+                    XmlUtils.mapOf("count", "3"));
 
             XmlUtils.assertAttributes(document, xPath, "/rat-report/resource[@name='/bar.md']",
-                    "type", "STANDARD");
+                    XmlUtils.mapOf("type", "STANDARD"));
             XmlUtils.assertAttributes(document, xPath, "/rat-report/resource[@name='/foo.md']",
-                    "type", "IGNORED");
+                    XmlUtils.mapOf("type", "IGNORED"));
         }
     }
 

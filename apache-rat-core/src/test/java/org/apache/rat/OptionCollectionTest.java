@@ -159,7 +159,7 @@ public class OptionCollectionTest {
     /**
      * Process methods in a test provider.
      * Tests are detected by looking for the {@link TestFunction} annotation.
-     * @param testProvider the test provider
+     * @param testProvider the test provider.
      * @return a map of named tests to a named OptionTest.
      */
     public static Map<String, OptionTest> processTestFunctionAnnotations(Object testProvider) {
@@ -275,7 +275,7 @@ public class OptionCollectionTest {
 
     /**
      * A parameterized test for the options.
-     * @param name The name of the test.
+     * @param name the name of the test.
      * @param test the option test to execute.
      */
     @ParameterizedTest( name = "{index} {0}")
@@ -290,7 +290,7 @@ public class OptionCollectionTest {
      */
     static class ArgOptionsProvider extends AbstractConfigurationOptionsProvider implements ArgumentsProvider {
 
-        /** A flag to determine if help was called */
+        /** A flag to determine if help was called. */
         final AtomicBoolean helpCalled = new AtomicBoolean(false);
 
         /**
