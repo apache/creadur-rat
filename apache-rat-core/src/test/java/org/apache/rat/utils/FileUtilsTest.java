@@ -68,11 +68,10 @@ class FileUtilsTest {
     @Test
     void shouldWrapIOException() throws IOException {
         Path tempDir = Files.createTempDirectory("shouldWrapIOExceptionTest");
-        Path file = Files.createFile(tempDir.resolve("existing"));
+        File file = Files.createFile(tempDir.resolve("existing")).toFile();
 
         RuntimeException exception = assertThrows(
-                RuntimeException.class,
-                () -> writeFile(file.toFile(), "test.txt", JUST_A_TEST)
+                RuntimeException.class, () -> writeFile(file, "test.txt", JUST_A_TEST)
         );
 
         assertInstanceOf(IOException.class, exception.getCause());

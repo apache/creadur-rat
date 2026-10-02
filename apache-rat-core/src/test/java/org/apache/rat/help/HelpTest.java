@@ -70,7 +70,7 @@ public class HelpTest {
         for (Option option : opts.getOptions()) {
             if (option.getArgName() != null) {
                 assertTrue(argTypes.contains(option.getArgName()), () -> format("Argument '%s' is missing from list", option.getArgName()));
-                Pattern pattern = Pattern.compile(format("^<%s>", option.getArgName()), Pattern.MULTILINE);
+                Pattern pattern = Pattern.compile(format("^<%s>", option.getArgName()), Pattern.MULTILINE); // NOSONAR
                 assertThat(result).as(format("argument name for option `%s`.", option.getKey()))
                         .containsPattern(pattern);
             }
