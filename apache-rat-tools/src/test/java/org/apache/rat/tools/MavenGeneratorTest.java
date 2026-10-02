@@ -54,7 +54,19 @@ public class MavenGeneratorTest {
         when(option.getName()).thenReturn("testGetArgumentDescriptionWithoutDescription");
 
         var exception = assertThrows(IllegalStateException.class, () -> MavenGenerator.getComment(option));
-        assertThat(exception.getMessage()).isEqualTo("Description for testGetArgumentDescriptionWithoutDescription must not be null");
+        assertThat(exception.getMessage())
+                .isEqualTo("Description for testGetArgumentDescriptionWithoutDescription must not be null");
+    }
+
+    @Test
+    void testGetArgumentDescriptionWithDescription() {
+        MavenOption option = mock(MavenOption.class);
+        when(option.getDescription()).thenReturn("test Get Argument DescriptionWithDescription");
+        when(option.getName()).thenReturn("testGetArgumentDescriptionWithDescription");
+
+        var exception = assertThrows(IllegalStateException.class, () -> MavenGenerator.getComment(option));
+        assertThat(exception.getMessage())
+                .isEqualTo("First sentence of description for testGetArgumentDescriptionWithDescription must end with a '.'");
     }
 
     @Test
