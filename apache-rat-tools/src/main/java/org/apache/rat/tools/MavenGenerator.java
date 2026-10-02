@@ -25,7 +25,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
-import java.util.function.Supplier;
+import java.util.Optional;
 
 import org.apache.commons.cli.Option;
 import org.apache.commons.io.IOUtils;
@@ -149,16 +149,13 @@ public final class MavenGenerator {
             arg = "The state";
         }
         if (option.hasArg() && option.getArgName() != null) {
-            // TODO java.lang.IllegalArgumentException: No enum constant org.apache.rat.OptionCollection.ArgumentType.inputIncludeFile
-            // if replaced by
-            // Supplier<String> sup = OptionCollection.ArgumentType.valueOf(option.getName()).description();
-            // as there seems to be a semantic difference between the deprecated way and the enumeration
-            Supplier<String> sup = OptionCollection.getArgumentTypes().get(option.getArgName());
-            if (sup == null) {
-                throw new IllegalStateException(format("Argument type %s must be in OptionCollection.ARGUMENT_TYPES", option.getArgName()));
+            Optional<OptionCollection.ArgumentType> type = OptionCollection.ArgumentType.forDisplayName(option.getArgName());
+            if (type.isPresent()) {
+                desc = format("%s Argument%s should be %s%s. (See Argument Types for clarification)", desc, option.hasArgs() ? "s" : "",
+                        option.hasArgs() ? "" : "a ", option.getArgName());
+            } else {
+                throw new IllegalStateException(format("Argument type %s must be in OptionCollection.ArgumentType", option.getArgName()));
             }
-            desc = format("%s Argument%s should be %s%s. (See Argument Types for clarification)", desc, option.hasArgs() ? "s" : "",
-                    option.hasArgs() ? "" : "a ", option.getArgName());
         }
         StringBuilder sb = new StringBuilder()
             .append(format("    /**%n     * %s%n     * @param %s %s%n", StringEscapeUtils.escapeHtml4(desc),
