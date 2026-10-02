@@ -29,8 +29,11 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
+import java.util.List;
 
+import static org.apache.rat.utils.FileUtils.writeFile;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mockStatic;
@@ -57,6 +60,20 @@ class FileUtilsTest {
     @Test
     void writeFileHandlesNullFile() {
         assertThrows(IllegalArgumentException.class, () ->
-                FileUtils.writeFile(null, "just a Test", Arrays.asList("a", "b", "c")));
+                writeFile(null, "just a Test", Arrays.asList("a", "b", "c")));
     }
+
+    @Test
+    void shouldWrapIOException() throws IOException {
+        Path tempDir = Files.createTempDirectory("shouldWrapIOExceptionTest");
+        Path file = Files.createFile(tempDir.resolve("existing"));
+
+        RuntimeException exception = assertThrows(
+                RuntimeException.class,
+                () -> writeFile(file.toFile(), "test.txt", List.of("just a test"))
+        );
+
+        assertInstanceOf(IOException.class, exception.getCause());
+    }
+
 }
