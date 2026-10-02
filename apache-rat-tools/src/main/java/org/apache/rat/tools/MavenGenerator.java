@@ -133,7 +133,8 @@ public final class MavenGenerator {
         }
     }
 
-    private static String getComment(final MavenOption option) {
+    // VisibleForTesting
+    static String getComment(final MavenOption option) {
         String desc = option.getDescription();
         if (desc == null) {
             throw new IllegalStateException(format("Description for %s must not be null", option.getName()));
@@ -155,7 +156,8 @@ public final class MavenGenerator {
         return sb.append(format("     */%n")).toString();
     }
 
-    private static String getArgumentDescription(final MavenOption option, final String desc) {
+    // VisibleForTesting
+    static String getArgumentDescription(final MavenOption option, final String desc) {
         if (!option.hasArg()) {
             return "The state";
         }
@@ -164,14 +166,13 @@ public final class MavenGenerator {
         return WordUtils.capitalize(arg.substring(0, 1)) + arg.substring(1);
     }
 
-    private static String appendArgumentTypeDescription(final MavenOption option, final String desc) {
+    // VisibleForTesting
+    static String appendArgumentTypeDescription(final MavenOption option, final String desc) {
         if (!option.hasArg() || option.getArgName() == null) {
             return desc;
         }
 
-        Optional<OptionCollection.ArgumentType> type =
-                OptionCollection.ArgumentType.forDisplayName(option.getArgName());
-
+        Optional<OptionCollection.ArgumentType> type = OptionCollection.ArgumentType.forDisplayName(option.getArgName());
         if (type.isPresent()) {
             return format("%s Argument%s should be %s%s. (See Argument Types for clarification)",
                     desc,

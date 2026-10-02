@@ -18,6 +18,7 @@
  */
 package org.apache.rat.tools;
 
+import org.apache.rat.documentation.options.MavenOption;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -25,12 +26,15 @@ import java.io.IOException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class MavenGeneratorTest {
 
     @Test
     void testGenerateMavenProject() throws IOException {
-        MavenGenerator.main( new String[]{"com.example", "MavenExample", "target"});
+        MavenGenerator.main(new String[]{"com.example", "MavenExample", "target"});
         File f = new File("target/com/example/MavenExample.java");
         assertThat(f).exists();
     }
@@ -42,4 +46,31 @@ public class MavenGeneratorTest {
         assertDoesNotThrow(() -> MavenGenerator.main(new String[]{"one"}));
         assertDoesNotThrow(() -> MavenGenerator.main(new String[]{"one", "two"}));
     }
+
+    @Test
+    void testGetArgumentDescriptionWithoutDescription() {
+        MavenOption option = mock(MavenOption.class);
+        when(option.getDescription()).thenReturn(null);
+        when(option.getName()).thenReturn("testGetArgumentDescriptionWithoutDescription");
+
+        var exception = assertThrows(IllegalStateException.class, () -> MavenGenerator.getComment(option));
+        assertThat(exception.getMessage()).isEqualTo("Description for testGetArgumentDescriptionWithoutDescription must not be null");
+    }
+
+    @Test
+    void shouldReturnTheStateWhenOptionHasNoArgument() {
+        MavenOption option = mock(MavenOption.class);
+        when(option.hasArg()).thenReturn(false);
+
+        assertThat(MavenGenerator.getArgumentDescription(option, "some description.")).isEqualTo("The state");
+    }
+
+    @Test
+    void shouldReturnCapitalizedArgumentDescription() {
+        MavenOption option = mock(MavenOption.class);
+        when(option.hasArg()).thenReturn(true);
+
+        assertThat(MavenGenerator.getArgumentDescription(option, "set value.")).isEqualTo("Value.");
+    }
+
 }
