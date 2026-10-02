@@ -23,20 +23,20 @@ import org.junit.jupiter.api.Test;
 import java.io.File;
 import java.io.IOException;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class MavenGeneratorTest {
 
     @Test
-    public void testGenerateMavenProject() throws IOException {
+    void testGenerateMavenProject() throws IOException {
         MavenGenerator.main( new String[]{"com.example", "MavenExample", "target"});
         File f = new File("target/com/example/MavenExample.java");
-        assertTrue(f.exists());
+        assertThat(f).exists();
     }
 
     @Test
-    public void testGenerationWithoutParameters() {
+    void testGenerationWithoutParameters() {
         assertDoesNotThrow(() -> MavenGenerator.main(null));
         assertDoesNotThrow(() -> MavenGenerator.main(new String[]{}));
         assertDoesNotThrow(() -> MavenGenerator.main(new String[]{"one"}));
