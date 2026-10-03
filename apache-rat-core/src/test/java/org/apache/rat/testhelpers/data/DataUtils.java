@@ -65,11 +65,6 @@ public class DataUtils {
     public static final Consumer<Path> NO_SETUP = basePath ->
             DefaultLog.getInstance().warn("no setup for " + basePath);
 
-    /**
-     * A ValidatorData consumer that does nothing.
-     */
-    public static final Consumer<ValidatorData> NO_VALIDATOR = validatorData -> {};
-
     private DataUtils() {
         // do not instantiate
     }

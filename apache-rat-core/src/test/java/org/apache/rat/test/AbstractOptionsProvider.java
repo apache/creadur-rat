@@ -70,21 +70,6 @@ public abstract class AbstractOptionsProvider implements ArgumentsProvider {
      */
     protected final String providerName;
 
-    /**
-     * Copy the runtime data to the "target" directory.
-     * @param baseDir the base directory to copy to.
-     * @param targetDir the directory relative to the base directory to copy to.
-     */
-    public static void preserveData(File baseDir, String targetDir) {
-        final Path recordPath = FileSystems.getDefault().getPath("target", targetDir);
-        org.apache.rat.utils.FileUtils.mkDir(recordPath.toFile());
-        try {
-            FileUtils.copyDirectory(baseDir, recordPath.toFile());
-        } catch (IOException e) {
-            System.err.format("Unable to copy data from %s to %s%n", baseDir, recordPath);
-        }
-    }
-
     protected void processTestFunctionAnnotations() {
         testMap.putAll(OptionCollectionTest.processTestFunctionAnnotations(this));
     }

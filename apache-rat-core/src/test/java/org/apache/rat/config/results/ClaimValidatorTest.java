@@ -131,7 +131,7 @@ class ClaimValidatorTest {
                 List<String> expectedEntries = required.entrySet().stream().filter(e -> e.getKey() != counter)
                         .map(Map.Entry::getValue).toList();
                 assertThat(log.getCaptured()).contains(expectedEntries);
-                if (required.entrySet().contains(counter)) {
+                if (required.containsKey(counter)) {
                     assertThat(log.getCaptured()).doesNotContain(required.get(counter));
                 }
                 statistic.incCounter(counter, 1);
