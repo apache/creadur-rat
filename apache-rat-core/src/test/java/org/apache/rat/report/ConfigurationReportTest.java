@@ -28,8 +28,8 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathFactory;
 
+import org.apache.commons.xml.secure.SecureXPathFactory;
 import org.apache.rat.Defaults;
 import org.apache.rat.ReportConfiguration;
 import org.apache.rat.configuration.MatcherBuilderTracker;
@@ -72,7 +72,7 @@ public class ConfigurationReportTest {
         String result = executeReport();
         assertTrue(XmlUtils.isWellFormedXml(result), "Is well formed");
 
-        XPath xPath = XPathFactory.newInstance().newXPath();
+        XPath xPath = SecureXPathFactory.newInstance().newXPath();
         Document doc = XmlUtils.toDom(new ByteArrayInputStream(result.getBytes(StandardCharsets.UTF_8)));
 
         // verify that all the families are there

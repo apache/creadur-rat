@@ -1,12 +1,12 @@
 package ReportTest.RAT_335
 
+import org.apache.commons.xml.secure.SecureXPathFactory
 import org.apache.rat.testhelpers.XmlUtils
 import org.w3c.dom.Document
 import org.w3c.dom.NamedNodeMap
 import org.w3c.dom.NodeList
 
 import javax.xml.xpath.XPath
-import javax.xml.xpath.XPathFactory
 
 import static org.assertj.core.api.Assertions.assertThat
 
@@ -37,7 +37,7 @@ output = new File(args[0])
 content = output.text
 
 Document document = XmlUtils.toDom(new FileInputStream(args[0]))
-XPath xPath = XPathFactory.newInstance().newXPath()
+XPath xPath = SecureXPathFactory.newInstance().newXPath()
 
 List<String> ignoredFiles = new ArrayList<>(Arrays.asList(
         "/.gitignore",

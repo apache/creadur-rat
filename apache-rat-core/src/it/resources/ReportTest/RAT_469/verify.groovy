@@ -15,10 +15,10 @@ package ReportTest.RAT_469
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import org.apache.commons.xml.secure.SecureXPathFactory
 import org.apache.rat.testhelpers.XmlUtils
 import org.w3c.dom.Document
 import javax.xml.xpath.XPath
-import javax.xml.xpath.XPathFactory
 
 private static Map<String, String> mapOf(String... parts) {
     Map<String, String> map = new HashMap<>()
@@ -34,7 +34,7 @@ content = output.text
 System.out.println( content )
 
 Document document = XmlUtils.toDom(new FileInputStream(args[0]))
-XPath xPath = XPathFactory.newInstance().newXPath()
+XPath xPath = SecureXPathFactory.newInstance().newXPath()
 
 // Document types
 XmlUtils.assertAttributes(document, xPath, "/rat-report/resource[@name='/GPLTestClass.java']/license",

@@ -78,7 +78,8 @@ public class StandardXmlFactoryTest {
             System.setProperty("javax.xml.parsers.DocumentBuilderFactory", DummyDocumentBuilderFactory.class.getName());
             assertThatThrownBy(StandardXmlFactory::documentBuilder)
                     .isInstanceOf(IllegalStateException.class)
-                    .hasMessageContaining("No XML parser defined");
+                    .hasMessageContaining("Failed to set feature")
+                    .hasCauseInstanceOf(ParserConfigurationException.class);
         } finally {
             System.clearProperty("javax.xml.parsers.DocumentBuilderFactory");
         }

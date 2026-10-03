@@ -14,11 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import org.apache.commons.xml.secure.SecureXPathFactory
 import org.apache.rat.testhelpers.XmlUtils
 import org.w3c.dom.Document
 
 import javax.xml.xpath.XPath
-import javax.xml.xpath.XPathFactory
 
 private static Map<String, String> mapOf(String... parts) {
     Map<String, String> map = new HashMap<>()
@@ -32,7 +32,7 @@ f = new File(basedir, 'out.xml')
 assert f.exists()
 
 Document document = XmlUtils.toDom(new FileInputStream(f))
-XPath xPath = XPathFactory.newInstance().newXPath()
+XPath xPath = SecureXPathFactory.newInstance().newXPath()
 
 XmlUtils.assertAttributes(document, xPath, "/rat-report/resource[@name='/src.apt']",
         mapOf("encoding", "windows-1252", "mediaType", "text/plain", "type", "STANDARD" ))

@@ -33,8 +33,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathFactory;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.xml.secure.SecureXPathFactory;
 import org.apache.rat.ReportConfiguration;
 import org.apache.rat.ReportConfigurationTest;
 import org.apache.rat.ReporterTestUtils;
@@ -64,7 +64,7 @@ public class RatCheckMojoTest {
     @TempDir(cleanup = CleanupMode.NEVER)
     static Path tempDir;
 
-    private final static XPath xPath = XPathFactory.newInstance().newXPath();
+    private final static XPath xPath = SecureXPathFactory.newInstance().newXPath();
 
     @AfterAll
     static void preserveData() {
@@ -140,7 +140,7 @@ public class RatCheckMojoTest {
         data.put(ClaimStatistic.Counter.UNKNOWN, "0");
 
         org.w3c.dom.Document document = XmlUtils.toDom(Files.newInputStream(ratTxtFile.toPath()));
-        XPath xPath = XPathFactory.newInstance().newXPath();
+        XPath xPath = SecureXPathFactory.newInstance().newXPath();
 
         for (ClaimStatistic.Counter counter : ClaimStatistic.Counter.values()) {
             String xpath = String.format("/rat-report/statistics/statistic[@name='%s']", counter.displayName());
@@ -275,7 +275,7 @@ public class RatCheckMojoTest {
         data.put(ClaimStatistic.Counter.UNKNOWN, "0");
 
         org.w3c.dom.Document document = XmlUtils.toDom(Files.newInputStream(ratTxtFile.toPath()));
-        XPath xPath = XPathFactory.newInstance().newXPath();
+        XPath xPath = SecureXPathFactory.newInstance().newXPath();
 
         for (ClaimStatistic.Counter counter : ClaimStatistic.Counter.values()) {
             String xpath = String.format("/rat-report/statistics/statistic[@name='%s']", counter.displayName());

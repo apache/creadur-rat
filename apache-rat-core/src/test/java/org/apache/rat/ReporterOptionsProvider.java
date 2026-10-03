@@ -34,12 +34,12 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Pattern;
 import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathFactory;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.commons.xml.secure.SecureXPathFactory;
 import org.apache.rat.api.RatException;
 import org.apache.rat.commandline.Arg;
 import org.apache.rat.commandline.StyleSheets;
@@ -969,7 +969,7 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
     }
 
     private void listLicenses(final Option option) {
-        XPath xPath = XPathFactory.newInstance().newXPath();
+        XPath xPath = SecureXPathFactory.newInstance().newXPath();
         String[] args = {null};
 
         assertDoesNotThrow(() -> {
@@ -1015,7 +1015,7 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
     }
 
     private void listFamilies(final Option option) {
-        XPath xPath = XPathFactory.newInstance().newXPath();
+        XPath xPath = SecureXPathFactory.newInstance().newXPath();
         String[] args = {null};
 
         assertDoesNotThrow(() -> {
@@ -1061,7 +1061,7 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
     }
 
     private void archiveTest(final Option option) {
-        XPath xPath = XPathFactory.newInstance().newXPath();
+        XPath xPath = SecureXPathFactory.newInstance().newXPath();
         String[] args = {null};
 
         assertDoesNotThrow(() -> {
@@ -1111,7 +1111,7 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
     }
 
     private void standardTest(final Option option) {
-        XPath xPath = XPathFactory.newInstance().newXPath();
+        XPath xPath = SecureXPathFactory.newInstance().newXPath();
         String[] args = {null};
 
         assertDoesNotThrow(() -> {
