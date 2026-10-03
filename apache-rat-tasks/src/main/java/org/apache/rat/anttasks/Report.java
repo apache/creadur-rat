@@ -80,28 +80,28 @@ public class Report extends BaseAntTask {
     @Deprecated
     private final List<Family> families = new ArrayList<>();
     /**
-     * the options that are deprecated.  TODO remove this.
+     * The options that are deprecated. TODO remove this.
      */
     private final DeprecatedConfig deprecatedConfig = new DeprecatedConfig();
     /**
-     * will hold any nested resource collection
+     * will hold any nested resource collection.
      */
     private Union nestedResources;
 
     /**
-     * Collection of objects that support Ant specific deprecated options
+     * Collection of objects that support Ant specific deprecated options.
      */
     private static final class DeprecatedConfig {
         /**
-         * The input file filter
+         * The input file filter.
          */
         private IOFileFilter inputFileFilter;
         /**
-         * the set of approved license categories
+         * The set of approved license categories.
          */
         private final Set<String> approvedLicenseCategories = new HashSet<>();
         /**
-         * the set of removed (unapproved) license categories
+         * The set of removed (unapproved) license categories.
          */
         private final Set<String> removedLicenseCategories = new HashSet<>();
     }
@@ -146,7 +146,7 @@ public class Report extends BaseAntTask {
      * Sets the report file.
      *
      * @param reportFile the report file.
-     * @deprecated use outputFile element
+     * @deprecated use outputFile element.
      */
     @Deprecated
     public void setReportFile(final File reportFile) {
@@ -155,7 +155,7 @@ public class Report extends BaseAntTask {
     }
 
     /**
-     * Adds an inline License definition to the system.
+     * Adds an inline license definition to the system.
      *
      * @param license the license to add.
      * @deprecated Create a custom configuration file and use the config option.
@@ -201,7 +201,7 @@ public class Report extends BaseAntTask {
     }
 
     /**
-     * Styles the report or deliver xml document.
+     * Styles the report or deliver XML document.
      *
      * @param styleReport true to use the plain-rat style
      * @deprecated use {@link #setOutputStyle(String)} and pass "xml" or "plain-rat".
@@ -214,7 +214,7 @@ public class Report extends BaseAntTask {
     /**
      * Determines if the output should be styled.
      *
-     * @param style the name of the style sheet ot use, or "styled" for plain-rat style
+     * @param style the name of the style sheet ot use, or "styled" for plain-rat style.
      * @deprecated use {@link #setStylesheet(String)}
      */
     @Deprecated
@@ -243,7 +243,7 @@ public class Report extends BaseAntTask {
      * Specifies whether to add the default list of license matchers.
      *
      * @param useDefaultLicenses if {@code true} use the default licenses.
-     * @deprecated use noDefaultLicenses attribute
+     * @deprecated use noDefaultLicenses attribute.
      */
     @Deprecated
     public void setUseDefaultLicenses(final boolean useDefaultLicenses) {
@@ -266,8 +266,8 @@ public class Report extends BaseAntTask {
     /**
      * Adds a family category to the list of approved licenses.
      *
-     * @param familyCategory the category to add
-     * @deprecated use licensesFamiliesApproved child element
+     * @param familyCategory the category to add.
+     * @deprecated use licensesFamiliesApproved child element.
      */
     @Deprecated
     public void addAddApprovedLicense(final String familyCategory) {
@@ -279,7 +279,7 @@ public class Report extends BaseAntTask {
      * Removes a family category to the list of approved licenses.
      *
      * @param familyCategory the category to add.
-     * @deprecated use licensesFamiliesDenied child element
+     * @deprecated use licensesFamiliesDenied child element.
      */
     @Deprecated
     public void setRemoveApprovedLicense(final String familyCategory) {
@@ -291,7 +291,7 @@ public class Report extends BaseAntTask {
      * Removes a family category to the list of approved licenses.
      *
      * @param familyCategory the category to add.
-     * @deprecated use licensesFamiliesDenied child element
+     * @deprecated use licensesFamiliesDenied child element.
      */
     @Deprecated
     public void addRemoveApprovedLicense(final String familyCategory) {
@@ -302,8 +302,8 @@ public class Report extends BaseAntTask {
     /**
      * Removes a family category to the list of approved licenses.
      *
-     * @param familyCategory the category to remove
-     * @deprecated use licenseFamiliesDenied element
+     * @param familyCategory the category to remove.
+     * @deprecated use licenseFamiliesDenied element.
      */
     @Deprecated
     public void setRemoveApprovedLicense(final String[] familyCategory) {
@@ -315,7 +315,7 @@ public class Report extends BaseAntTask {
      * Removes a family category to the list of approved licenses.
      *
      * @param familyCategory the category to remove.
-     * @deprecated use licenseFamilyDenied element
+     * @deprecated use licenseFamilyDenied element.
      */
     @Deprecated
     public void addRemoveApprovedLicense(final String[] familyCategory) {
@@ -326,8 +326,8 @@ public class Report extends BaseAntTask {
     /**
      * Sets the copyright message.
      *
-     * @param copyrightMessage the copyright message
-     * @deprecated use copyright attribute
+     * @param copyrightMessage the copyright message.
+     * @deprecated use copyright attribute.
      */
     @Deprecated
     public void setCopyrightMessage(final String copyrightMessage) {
@@ -338,7 +338,7 @@ public class Report extends BaseAntTask {
      * Determines if license headers should be added.
      *
      * @param setting the setting.
-     * @deprecated use editLicense and editOverwrite attributes
+     * @deprecated use editLicense and editOverwrite attributes.
      */
     @Deprecated
     public void setAddLicenseHeaders(final AddLicenseHeaders setting) {
@@ -360,8 +360,8 @@ public class Report extends BaseAntTask {
     /**
      * Adds definition information.
      *
-     * @param fileName the file to add
-     * @deprecated Use Config child element
+     * @param fileName the file to add.
+     * @deprecated Use Config child element.
      */
     @Deprecated
     public void setAddDefaultDefinitions(final File fileName) {
@@ -410,14 +410,15 @@ public class Report extends BaseAntTask {
         try {
             boolean helpLicenses = !getValues(Arg.HELP_LICENSES).isEmpty();
             removeKey(Arg.HELP_LICENSES);
-
-            final ReportConfiguration configuration = OptionCollection.parseCommands(new File("."), args().toArray(new String[0]),
+            File antFileDir = new File(getProject().getProperty("ant.file")).getParentFile();
+            DocumentName name = DocumentName.builder(antFileDir).build();
+            final ReportConfiguration configuration = OptionCollection.parseCommands(antFileDir, args().toArray(new String[0]),
                     o -> DefaultLog.getInstance().warn("Help option not supported"),
                     true);
             if (getValues(Arg.OUTPUT_FILE).isEmpty()) {
-                configuration.setOut(new ReportConfiguration.IODescriptor<>("RAT output", () -> new LogOutputStream(this, Project.MSG_INFO)));
+                configuration.setOutput(new ReportConfiguration.IODescriptor<>("RAT output", () -> new LogOutputStream(this, Project.MSG_INFO)));
             }
-            DocumentName name = DocumentName.builder(getProject().getBaseDir()).build();
+
             configuration.addSource(new ResourceCollectionContainer(name, configuration, nestedResources));
             configuration.addApprovedLicenseCategories(deprecatedConfig.approvedLicenseCategories);
             configuration.removeApprovedLicenseCategories(deprecatedConfig.removedLicenseCategories);
@@ -475,17 +476,17 @@ public class Report extends BaseAntTask {
      * @deprecated use &lt;editCopyright&gt; amd &lt;editOverwrite&gt; instead.
      */
     @Deprecated
-    public static class AddLicenseHeaders extends EnumeratedAttribute {
+    public static final class AddLicenseHeaders extends EnumeratedAttribute {
         /**
-         * add license headers and create *.new file
+         * Add license headers and create *.new files.
          */
         static final String TRUE = "true";
         /**
-         * do not add license headers
+         * Do not add license headers.
          */
         static final String FALSE = "false";
         /**
-         * add license headers and overwrite existing files
+         * Add license headers and overwrite existing files.
          */
         static final String FORCED = "forced";
 

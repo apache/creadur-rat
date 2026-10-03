@@ -20,18 +20,22 @@ package org.apache.rat.documentation.options;
 
 import org.apache.commons.cli.Option;
 import org.apache.rat.commandline.Arg;
-import org.apache.rat.testhelpers.TextUtils;
 
 import org.junit.jupiter.api.Test;
 
+import java.util.regex.Pattern;
+
+import static org.assertj.core.api.Assertions.assertThat;
+
 public class MavenOptionTest {
+    private static final String ESCAPED_DOUBLE_DASH = Pattern.quote("--");
     @Test
     void getDeprecatedTest() {
         MavenOptionCollection mavenOptionCollection = new MavenOptionCollection();
         for (Option option : Arg.getOptions().getOptions()) {
             if (option.isDeprecated()) {
                 mavenOptionCollection.getMappedOption(option).ifPresent( mavenOption -> //
-                        TextUtils.assertPatternNotInTarget("\\-\\- ", mavenOption.getDeprecated()));
+                        assertThat(mavenOption.getDeprecated()).doesNotContainPattern(ESCAPED_DOUBLE_DASH));
             }
         }
     }

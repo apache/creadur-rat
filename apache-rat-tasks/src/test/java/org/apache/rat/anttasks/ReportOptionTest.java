@@ -99,7 +99,7 @@ public class ReportOptionTest  {
         private final AntOptionCollection antOptionCollection = new AntOptionCollection();
 
         public AntOptionsProvider() {
-            super(BaseAntTask.unsupportedArgs(), testPath.toFile());
+            super("AntTask", BaseAntTask.unsupportedArgs(), testPath.toFile());
         }
 
         protected ReportConfiguration generateConfig(final List<Pair<Option, String[]>> args) {
@@ -129,9 +129,7 @@ public class ReportOptionTest  {
             } finally {
                 DefaultLog.setInstance(oldLog);
             }
-            testLog.assertContains("====== Licenses ======");
-            testLog.assertContains("====== Defined Matchers ======");
-            testLog.assertContains("====== Defined Families ======");
+            assertThat(testLog.getCaptured()).contains("====== Licenses ======", "====== Defined Matchers ======", "====== Defined Families ======");
         }
 
         private class BuildTask extends AbstractRatAntTaskTest {

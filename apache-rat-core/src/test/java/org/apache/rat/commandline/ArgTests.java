@@ -40,7 +40,7 @@ class ArgTests {
             private File actual = null;
 
             @Override
-            public void setOut(File file) {
+            public void setOutput(File file) {
                 actual = file;
             }
         }

@@ -18,15 +18,13 @@
  */
 package org.apache.rat.tools;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.io.IOUtils;
-import org.apache.rat.testhelpers.TextUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -35,7 +33,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.util.List;
 
 public class NamingTest {
 
@@ -50,62 +47,62 @@ public class NamingTest {
     public void testAnt() throws IOException, ParseException {
         Naming.main(new String[]{"--ant", file.getAbsolutePath()});
         String result = readFile(file);
-        TextUtils.assertContains("Ant", result);
-        TextUtils.assertContains("Description", result);
-        TextUtils.assertNotContains("Maven", result);
-        TextUtils.assertNotContains("CLI", result);
-        TextUtils.assertNotContains("[Deprecated ", result);
+        assertThat(result).contains("Ant")
+                .contains("Description")
+                .doesNotContain("CLI")
+                .doesNotContain("Maven")
+                .doesNotContain("[Deprecated ");
     }
 
     @Test
     public void testMaven() throws IOException, ParseException {
         Naming.main(new String[]{"--maven", file.getAbsolutePath()});
         String result = readFile(file);
-        TextUtils.assertContains("Maven", result);
-        TextUtils.assertContains("Description", result);
-        TextUtils.assertNotContains("Ant", result);
-        TextUtils.assertNotContains("CLI", result);
-        TextUtils.assertNotContains("[Deprecated ", result);
+        assertThat(result).contains("Maven")
+                .contains("Description")
+                .doesNotContain("Ant")
+                .doesNotContain("CLI")
+                .doesNotContain("[Deprecated ");
     }
 
     @Test
     public void testCli() throws IOException, ParseException {
         Naming.main(new String[]{"--cli", file.getAbsolutePath()});
         String result = readFile(file);
-        TextUtils.assertContains("CLI", result);
-        TextUtils.assertContains("Description", result);
-        TextUtils.assertNotContains("Ant", result);
-        TextUtils.assertNotContains("Maven", result);
-        TextUtils.assertNotContains("[Deprecated ", result);
+        assertThat(result).contains("CLI")
+                .contains("Description")
+                .doesNotContain("Ant")
+                .doesNotContain("Maven")
+                .doesNotContain("[Deprecated ");
     }
 
     @Test
     public void testCliDeprecated() throws IOException, ParseException {
         Naming.main(new String[]{"--cli", "--include-deprecated", file.getAbsolutePath()});
         String result = readFile(file);
-        TextUtils.assertContains("CLI", result);
-        TextUtils.assertContains("Description", result);
-        TextUtils.assertNotContains("Maven", result);
-        TextUtils.assertNotContains("Ant", result);
-        TextUtils.assertContains("[Deprecated ", result);
+        assertThat(result).contains("CLI")
+                .contains("Description")
+                .doesNotContain("Ant")
+                .doesNotContain("Maven")
+                .contains("[Deprecated ");
     }
 
     @Test
     public void testAntCsv() throws IOException, ParseException {
         Naming.main(new String[]{"--ant", "--csv", file.getAbsolutePath()});
         String result = readFile(file);
-        TextUtils.assertContains("Ant", result);
-        TextUtils.assertContains("Description", result);
-        TextUtils.assertNotContains("Maven", result);
-        TextUtils.assertNotContains("CLI", result);
-        TextUtils.assertNotContains("[Deprecated ", result);
+        assertThat(result).contains("Ant")
+                .contains("Description")
+                .doesNotContain("CLI")
+                .doesNotContain("Maven")
+                .doesNotContain("[Deprecated ");
 
         try (CSVParser parser = readCSV(file)) {
-            assertContains("Ant", parser.getHeaderNames());
-            assertContains("Description", parser.getHeaderNames());
-            assertNotContains("Maven", parser.getHeaderNames());
-            assertNotContains("CLI", parser.getHeaderNames());
-            assertNotContains("[Deprecated ", parser.getHeaderNames());
+            assertThat(parser.getHeaderNames()).contains("Ant")
+                    .contains("Description")
+                    .doesNotContain("CLI")
+                    .doesNotContain("Maven")
+                    .doesNotContain("[Deprecated ");
         }
     }
 
@@ -113,18 +110,18 @@ public class NamingTest {
     public void testMavenCsv() throws IOException, ParseException {
         Naming.main(new String[]{"--maven", "--csv", file.getAbsolutePath()});
         String result = readFile(file);
-        TextUtils.assertContains("Maven", result);
-        TextUtils.assertContains("Description", result);
-        TextUtils.assertNotContains("Ant", result);
-        TextUtils.assertNotContains("CLI", result);
-        TextUtils.assertNotContains("[Deprecated ", result);
+        assertThat(result).contains("Maven")
+                .contains("Description")
+                .doesNotContain("CLI")
+                .doesNotContain("Ant")
+                .doesNotContain("[Deprecated ");
 
         try (CSVParser parser = readCSV(file)) {
-            assertContains("Maven", parser.getHeaderNames());
-            assertContains("Description", parser.getHeaderNames());
-            assertNotContains("Ant", parser.getHeaderNames());
-            assertNotContains("CLI", parser.getHeaderNames());
-            assertNotContains("[Deprecated ", parser.getHeaderNames());
+            assertThat(parser.getHeaderNames()).contains("Maven")
+                    .contains("Description")
+                    .doesNotContain("CLI")
+                    .doesNotContain("Ant")
+                    .doesNotContain("[Deprecated ");
         }
     }
 
@@ -132,18 +129,18 @@ public class NamingTest {
     public void testCliCsv() throws IOException, ParseException {
         Naming.main(new String[]{"--cli", "--csv", file.getAbsolutePath()});
         String result = readFile(file);
-        TextUtils.assertContains("CLI", result);
-        TextUtils.assertContains("Description", result);
-        TextUtils.assertNotContains("Ant", result);
-        TextUtils.assertNotContains("Maven", result);
-        TextUtils.assertNotContains("[Deprecated ", result);
+        assertThat(result).contains("CLI")
+                .contains("Description")
+                .doesNotContain("Maven")
+                .doesNotContain("Ant")
+                .doesNotContain("[Deprecated ");
 
         try (CSVParser parser = readCSV(file)) {
-            assertContains("CLI", parser.getHeaderNames());
-            assertContains("Description", parser.getHeaderNames());
-            assertNotContains("Maven", parser.getHeaderNames());
-            assertNotContains("Ant", parser.getHeaderNames());
-            assertNotContains("[Deprecated ", parser.getHeaderNames());
+            assertThat(parser.getHeaderNames()).contains("CLI")
+                    .contains("Description")
+                    .doesNotContain("Maven")
+                    .doesNotContain("Ant")
+                    .doesNotContain("[Deprecated ");
         }
     }
 
@@ -151,19 +148,20 @@ public class NamingTest {
     public void testCliCsvDeprecated() throws IOException, ParseException {
         Naming.main(new String[]{"--cli", "--csv", "--include-deprecated", file.getAbsolutePath()});
         String result = readFile(file);
-        TextUtils.assertContains("CLI", result);
-        TextUtils.assertContains("Description", result);
-        TextUtils.assertNotContains("Maven", result);
-        TextUtils.assertNotContains("Ant", result);
-        TextUtils.assertContains("[Deprecated ", result);
+        assertThat(result).contains("CLI")
+                .contains("Description")
+                .doesNotContain("Maven")
+                .doesNotContain("Ant")
+                .contains("[Deprecated ");
 
         try (CSVParser parser = readCSV(file)) {
-            assertContains("CLI", parser.getHeaderNames());
-            assertContains("Description", parser.getHeaderNames());
-            assertNotContains("Maven", parser.getHeaderNames());
-            assertNotContains("Ant", parser.getHeaderNames());
-            assertNotContains("[Deprecated ", parser.getHeaderNames());
-            assertTrue( parser.stream().anyMatch( rec -> rec.stream().anyMatch(s -> s.startsWith("[Deprecated"))), "Missing Deprecated data");
+            assertThat(parser.getHeaderNames()).contains("CLI")
+                    .contains("Description")
+                    .doesNotContain("Maven")
+                    .doesNotContain("Ant")
+                    .doesNotContain("[Deprecated ");
+            assertThat(parser.stream().anyMatch( rec -> rec.stream().anyMatch(s -> s.startsWith("[Deprecated"))))
+                    .as("Missing Deprecated data").isTrue();
         }
     }
 
@@ -173,14 +171,6 @@ public class NamingTest {
 
     private CSVParser readCSV(File f) throws IOException {
         return CSVFormat.DEFAULT.builder().setHeader().get().parse(new InputStreamReader(Files.newInputStream(f.toPath())));
-    }
-
-    private void assertContains(String expected, List<String> actual) {
-        assertTrue(actual.contains(expected), () -> "Missing " + expected);
-    }
-
-    private void assertNotContains(String expected, List<String> actual) {
-        assertFalse(actual.contains(expected), () -> "Contains " + expected);
     }
 
     @Test

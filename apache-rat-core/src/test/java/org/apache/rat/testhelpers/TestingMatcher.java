@@ -27,7 +27,7 @@ import org.apache.rat.config.parameters.ComponentType;
 import org.apache.rat.config.parameters.ConfigComponent;
 
 /**
- * A Matcher for testing.
+ * A matcher for testing.
  */
 @ConfigComponent(type = ComponentType.MATCHER, name = "TestingMatcher", desc = "Matcher used in testing")
 public class TestingMatcher extends AbstractHeaderMatcher {
@@ -35,7 +35,7 @@ public class TestingMatcher extends AbstractHeaderMatcher {
     private final Queue<Boolean> results;
 
     /**
-     * Constructs a matcher with an ID of "dfltMtch" that does not match anything.
+     * Constructs a matcher with an id of {@code "dfltMtch"} that does not match anything.
      */
     public TestingMatcher() {
         this("dfltMtch", false);
@@ -51,7 +51,7 @@ public class TestingMatcher extends AbstractHeaderMatcher {
 
     /**
      * Constructs a matcher with the specified id and matching result.
-     * @param id the ID for this matcher
+     * @param id the id for this matcher.
      * @param result if {@code true} will match everything, otherwise it matches nothing.
      */
     public TestingMatcher(String id, boolean result) {
@@ -59,8 +59,8 @@ public class TestingMatcher extends AbstractHeaderMatcher {
     }
 
     /**
-     * Constructs a matcher with the specified ID that returns the matching values in order.
-     * Will throw NPE if more {@code matches()} are called than there are results.
+     * Constructs a matcher with the specified id that returns the matching values in order.
+     * Will throw NullPointerException if more {@code matches()} are called than there are results.
      * @param id the id of the matcher.
      * @param results the result for each call to match.
      */

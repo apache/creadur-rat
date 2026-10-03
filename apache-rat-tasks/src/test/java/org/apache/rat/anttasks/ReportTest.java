@@ -49,8 +49,11 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.w3c.dom.Document;
 
+/**
+ * Test the Ant report test
+ */
 public class ReportTest extends AbstractRatAntTaskTest {
-    private final String baseNameStr = String.join(File.separator, new String[]{"src","test","resources","antunit"});
+    private final String baseNameStr = String.join(File.separator, "src","test","resources","antunit");
     private final File antFile = new File(new File(baseNameStr), "report-junit.xml").getAbsoluteFile();
     private DocumentName documentName;
 
@@ -68,12 +71,10 @@ public class ReportTest extends AbstractRatAntTaskTest {
                     sb.append("antfile: ").append(antFile).append("\n")
                             .append("baseFile: ").append(baseFile).append("\n");
         if (!f.exists()) {
-            sb.append(" does not exist (RAT CHECK)\n");
             System.err.println(sb);
             Assertions.fail(sb.toString());
         }
 
-        sb.append(" DOES exist (RAT CHECK)\n");
         System.err.println(sb);
         System.setProperty(MagicNames.PROJECT_BASEDIR, documentName.getBaseName());
         super.setUp();
