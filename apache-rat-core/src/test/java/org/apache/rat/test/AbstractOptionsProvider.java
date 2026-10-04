@@ -42,50 +42,40 @@ import org.apache.rat.document.DocumentNameMatcherTest;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.ArgumentsProvider;
+import org.junit.jupiter.params.support.ParameterDeclarations;
 
 import static org.assertj.core.api.Fail.fail;
 
 /**
  * A list of methods that an OptionsProvider in a test case must support.
  * Use of this interface ensures consistent testing across the UIs. Each method
- * tests an Option from OptionCollection that must be implemented in the UI.
+ * tests an option from OptionCollection that must be implemented in the UI.
  * Each method in this interface tests an Option in {@link org.apache.rat.OptionCollection}.
  */
 public abstract class AbstractOptionsProvider implements ArgumentsProvider {
     /**
-     * A map of test Options to tests.
+     * A map of test options to tests.
      */
     protected final Map<String, OptionCollectionTest.OptionTest> testMap = new TreeMap<>();
-    /** The list of exclude args */
+    /** The list of exclude args. */
     protected static final String[] EXCLUDE_ARGS = {"*.foo", "%regex[[A-Z]\\.bar]", "justbaz"};
-    /** the list of include args */
+    /** The list of include args. */
     protected static final String[] INCLUDE_ARGS = {"B.bar", "justbaz"};
     /**
      * The directory to place test data in.
      */
     protected final File baseDir;
-
     /**
-     * Copy the runtime data to the "target" directory.
-     * @param baseDir the base directory to copy to.
-     * @param targetDir the directory relative to the base directory to copy to.
+     * The name of the provider of the options.
      */
-    public static void preserveData(File baseDir, String targetDir) {
-        final Path recordPath = FileSystems.getDefault().getPath("target", targetDir);
-        recordPath.toFile().mkdirs();
-        try {
-            FileUtils.copyDirectory(baseDir, recordPath.toFile());
-        } catch (IOException e) {
-            System.err.format("Unable to copy data from %s to %s%n", baseDir, recordPath);
-        }
-    }
+    protected final String providerName;
 
     protected void processTestFunctionAnnotations() {
         testMap.putAll(OptionCollectionTest.processTestFunctionAnnotations(this));
     }
 
     protected void addTest(OptionCollectionTest.OptionTest test) {
-        testMap.put(test.toString(), test);
+        testMap.put(test.name(), test);
     }
 
     /**
@@ -96,12 +86,17 @@ public abstract class AbstractOptionsProvider implements ArgumentsProvider {
         return DocumentName.builder(baseDir).build();
     }
 
-    protected AbstractOptionsProvider(final File baseDir) {
+    protected AbstractOptionsProvider(final String providerName, final File baseDir) {
+        this.providerName = providerName;
         this.baseDir = baseDir;
     }
 
-    protected void validate(final Collection<String> unsupportedArgs) {
+    private void removeUnsupportedArgs(final Collection<String> unsupportedArgs) {
         unsupportedArgs.forEach(testMap::remove);
+    }
+
+    protected void validate(final Collection<String> unsupportedArgs) {
+        removeUnsupportedArgs(unsupportedArgs);
         verifyAllMethodsDefinedAndNeeded(unsupportedArgs);
     }
 
@@ -131,7 +126,7 @@ public abstract class AbstractOptionsProvider implements ArgumentsProvider {
         if (!argNames.isEmpty()) {
             fail("Extra methods defined: " + String.join(", ", argNames));
         }
-        unsupportedArgs.forEach(testMap::remove);
+        removeUnsupportedArgs(unsupportedArgs);
     }
 
     @SafeVarargs
@@ -170,7 +165,7 @@ public abstract class AbstractOptionsProvider implements ArgumentsProvider {
     }
 
     protected File writeFile(final String name, final Iterable<String> lines) {
-        return org.apache.rat.testhelpers.FileUtils.writeFile(baseDir, name, lines);
+        return org.apache.rat.utils.FileUtils.writeFile(baseDir, name, lines);
     }
 
     final protected DocumentName mkDocName(final String name) {
@@ -194,7 +189,7 @@ public abstract class AbstractOptionsProvider implements ArgumentsProvider {
     }
 
     @Override
-    public Stream<? extends Arguments> provideArguments(final ExtensionContext context) {
+    public Stream<? extends Arguments> provideArguments(final ParameterDeclarations parameters, final ExtensionContext context) {
         List<Arguments> lst = new ArrayList<>();
         List<String> missingTests = new ArrayList<>();
 

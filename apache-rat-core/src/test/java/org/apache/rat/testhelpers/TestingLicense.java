@@ -37,7 +37,7 @@ public class TestingLicense implements ILicense {
 
     /**
      * Creates a testing license with the specified id and a default TestingMatcher
-     * @param id The ID to use.
+     * @param id the id to use.
      * @see TestingMatcher
      */
     public TestingLicense(String id) {
@@ -46,8 +46,8 @@ public class TestingLicense implements ILicense {
 
     /**
      * Creates a testing license with the specified id and a default TestingMatcher
-     * @param family the Family id
-     * @param id The ID to use.
+     * @param family the Family id.
+     * @param id the id to use.
      * @see TestingMatcher
      */
     public TestingLicense(String family, String id) {
@@ -55,8 +55,8 @@ public class TestingLicense implements ILicense {
     }
 
     /**
-     * Creates a testing license wit the specified id and matcher.
-     * @param id the ID to use
+     * Creates a testing license with the specified id and matcher.
+     * @param id the id to use.
      * @param matcher the matcher to execute.
      */
     public TestingLicense(String family, String id, IHeaderMatcher matcher) {
@@ -66,7 +66,7 @@ public class TestingLicense implements ILicense {
 
     /**
      * Creates a testing license with the specified matcher and family.
-     * @param id the license id
+     * @param id the license id to use.
      * @param matcher the matcher to use.
      * @param family the family for this license.
      */
@@ -79,7 +79,7 @@ public class TestingLicense implements ILicense {
     }
 
     /**
-     * Gets the family from the license
+     * Gets the family from the license.
      * @return the license family.
      */
     public ILicenseFamily getFamily() {
@@ -87,7 +87,7 @@ public class TestingLicense implements ILicense {
     }
 
     /**
-     * Gets the matcher from the license
+     * Gets the matcher from the license.
      * @return the matcher.
      */
     @Override

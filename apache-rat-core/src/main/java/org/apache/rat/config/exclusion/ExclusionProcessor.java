@@ -66,7 +66,7 @@ public class ExclusionProcessor {
     private final Set<StandardCollection> excludedCollections;
     /** The last generated PathMatcher */
     private DocumentNameMatcher lastMatcher;
-    /** The base dir for the last PathMatcher */
+    /** The base document name for the last PathMatcher */
     private DocumentName lastMatcherBaseDir;
 
     /**
@@ -86,7 +86,8 @@ public class ExclusionProcessor {
         return new SerDes();
     }
 
-    /* the following set of methods are here for testing purposes */
+    // START OF TESTING PURPOSES methods
+    // visible for testing
     Set<String> getExcludedPatterns() {
         return new HashSet<>(excludedPatterns);
     }
@@ -122,6 +123,7 @@ public class ExclusionProcessor {
     DocumentName getLastMatcherBaseDir() {
         return lastMatcherBaseDir;
     }
+    // END OF TESTING PURPOSES methods
 
     /**
      * Reset the {@link #lastMatcher} and {@link #lastMatcherBaseDir} to start again.
@@ -132,15 +134,15 @@ public class ExclusionProcessor {
     }
 
     /**
-     * Add the iterable of strings to the collection of file/directory patters to ignore.
+     * Add the iterable of strings to the collection of file/directory patterns to ignore.
      * @param patterns the patterns to add.
      * @return this
      */
     public ExclusionProcessor addIncludedPatterns(final Iterable<String> patterns) {
         if (patterns != null) {
-        DefaultLog.getInstance().debug(format("Including patterns: %s", String.join(", ", patterns)));
-        patterns.forEach(includedPatterns::add);
-        resetLastMatcher();
+            DefaultLog.getInstance().debug(format("Including patterns: %s", String.join(", ", patterns)));
+            patterns.forEach(includedPatterns::add);
+            resetLastMatcher();
         }
         return this;
     }
@@ -193,9 +195,9 @@ public class ExclusionProcessor {
      */
     public ExclusionProcessor addExcludedPatterns(final Iterable<String> patterns) {
         if (patterns != null) {
-        DefaultLog.getInstance().debug(format("Excluding patterns: %s", String.join(", ", patterns)));
-        patterns.forEach(excludedPatterns::add);
-        resetLastMatcher();
+            DefaultLog.getInstance().debug(format("Excluding patterns: %s", String.join(", ", patterns)));
+            patterns.forEach(excludedPatterns::add);
+            resetLastMatcher();
         }
         return this;
     }

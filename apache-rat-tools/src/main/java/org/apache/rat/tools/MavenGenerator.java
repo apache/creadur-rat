@@ -25,7 +25,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
-import java.util.function.Supplier;
+import java.util.Optional;
 
 import org.apache.commons.cli.Option;
 import org.apache.commons.io.IOUtils;
@@ -133,29 +133,20 @@ public final class MavenGenerator {
         }
     }
 
-    private static String getComment(final MavenOption option) {
+    // VisibleForTesting
+    static String getComment(final MavenOption option) {
         String desc = option.getDescription();
         if (desc == null) {
-            throw new IllegalStateException(format("Description for %s may not be null", option.getName()));
+            throw new IllegalStateException(format("Description for %s must not be null", option.getName()));
         }
         if (!desc.contains(".")) {
             throw new IllegalStateException(format("First sentence of description for %s must end with a '.'", option.getName()));
         }
-        String arg;
-        if (option.hasArg()) {
-            arg = desc.substring(desc.indexOf(" ") + 1, desc.indexOf(".") + 1);
-            arg = WordUtils.capitalize(arg.substring(0, 1)) + arg.substring(1);
-        } else {
-            arg = "The state";
-        }
-        if (option.hasArg() && option.getArgName() != null) {
-            Supplier<String> sup = OptionCollection.getArgumentTypes().get(option.getArgName());
-            if (sup == null) {
-                throw new IllegalStateException(format("Argument type %s must be in OptionCollection.ARGUMENT_TYPES", option.getArgName()));
-            }
-            desc = format("%s Argument%s should be %s%s. (See Argument Types for clarification)", desc, option.hasArgs() ? "s" : "",
-                    option.hasArgs() ? "" : "a ", option.getArgName());
-        }
+
+        String arg = getArgumentDescription(option, desc);
+
+        desc = appendArgumentTypeDescription(option, desc);
+
         StringBuilder sb = new StringBuilder()
             .append(format("    /**%n     * %s%n     * @param %s %s%n", StringEscapeUtils.escapeHtml4(desc),
                     option.getName(),  StringEscapeUtils.escapeHtml4(arg)));
@@ -163,6 +154,36 @@ public final class MavenGenerator {
             sb.append(format("     * @deprecated %s%n", StringEscapeUtils.escapeHtml4(option.getDeprecated())));
         }
         return sb.append(format("     */%n")).toString();
+    }
+
+    // VisibleForTesting
+    static String getArgumentDescription(final MavenOption option, final String desc) {
+        if (!option.hasArg()) {
+            return "The state";
+        }
+
+        String arg = desc.substring(desc.indexOf(" ") + 1, desc.indexOf(".") + 1);
+        return WordUtils.capitalize(arg.substring(0, 1)) + arg.substring(1);
+    }
+
+    // VisibleForTesting
+    static String appendArgumentTypeDescription(final MavenOption option, final String desc) {
+        if (!option.hasArg() || option.getArgName() == null) {
+            return desc;
+        }
+
+        Optional<OptionCollection.ArgumentType> type = OptionCollection.ArgumentType.forDisplayName(option.getArgName());
+        if (type.isPresent()) {
+            return format("%s Argument%s should be %s%s. (See Argument Types for clarification)",
+                    desc,
+                    option.hasArgs() ? "s" : "",
+                    option.hasArgs() ? "" : "a ",
+                    option.getArgName());
+        }
+
+        throw new IllegalStateException(
+                format("Argument type %s must be in OptionCollection.ArgumentType",
+                        option.getArgName()));
     }
 
     private static void writeMethods(final MavenOptionCollection mavenOptions, final FileWriter writer) throws IOException {
