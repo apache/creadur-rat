@@ -20,8 +20,6 @@ package org.apache.rat.test;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.FileSystems;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -31,7 +29,6 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.stream.Stream;
 import org.apache.commons.cli.Option;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.rat.OptionCollectionTest;
 import org.apache.rat.ReportConfiguration;
