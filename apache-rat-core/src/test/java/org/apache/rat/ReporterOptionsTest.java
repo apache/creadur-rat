@@ -24,7 +24,8 @@ import java.nio.file.Path;
 import java.util.Map;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathExpressionException;
-import javax.xml.xpath.XPathFactory;
+
+import org.apache.commons.xml.secure.SecureXPathFactory;
 import org.apache.rat.api.RatException;
 import org.apache.rat.report.claim.ClaimStatistic;
 import org.apache.rat.test.AbstractConfigurationOptionsProvider;
@@ -81,7 +82,7 @@ public final class ReporterOptionsTest {
             Reporter reporter = new Reporter(config);
             Reporter.Output output = reporter.execute();
             XmlUtils.printDocument(System.out, output.getDocument());
-            XPath xpath = XPathFactory.newInstance().newXPath();
+            XPath xpath = SecureXPathFactory.newInstance().newXPath();
             XmlUtils.assertIsPresent(output.getDocument(), xpath, "/rat-report/resource[@name='/foo.md']");
             XmlUtils.assertAttributes(output.getDocument(), xpath, "/rat-report/resource[@name='/foo.md']",
                     Map.of("type", "IGNORED"));

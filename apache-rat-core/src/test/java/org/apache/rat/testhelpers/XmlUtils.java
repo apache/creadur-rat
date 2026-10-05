@@ -36,7 +36,6 @@ import java.util.List;
 import java.util.Map;
 import javax.xml.namespace.QName;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.SAXParserFactory;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
@@ -48,6 +47,8 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 
+import org.apache.commons.xml.secure.SecureSAXParserFactory;
+import org.apache.commons.xml.secure.SecureTransformerFactory;
 import org.apache.rat.report.xml.writer.XmlWriter;
 import org.apache.rat.utils.DefaultLog;
 import org.apache.rat.utils.StandardXmlFactory;
@@ -78,10 +79,7 @@ public final class XmlUtils {
      * @throws ParserConfigurationException on parser configuration exception.
      */
     public static XMLReader newXMLReader() throws SAXException, ParserConfigurationException {
-        final SAXParserFactory spf = SAXParserFactory.newInstance();
-        spf.setValidating(false);
-        spf.setNamespaceAware(true);
-        return spf.newSAXParser().getXMLReader();
+        return SecureSAXParserFactory.newNSInstance().newSAXParser().getXMLReader();
     }
 
     /**
@@ -228,7 +226,7 @@ public final class XmlUtils {
      * @param document The XML DOM document to print.
      */
     public static void printDocument(OutputStream out, Document document) {
-        TransformerFactory tf = TransformerFactory.newInstance();
+        TransformerFactory tf = SecureTransformerFactory.newInstance();
         Transformer transformer;
         try {
             transformer = tf.newTransformer();

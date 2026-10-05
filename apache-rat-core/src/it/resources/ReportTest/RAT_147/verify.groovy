@@ -16,17 +16,17 @@ package ReportTest.RAT_147
  * limitations under the License.
  */
 
+import org.apache.commons.xml.secure.SecureXPathFactory
 import org.apache.rat.testhelpers.TextUtils
 import org.apache.rat.testhelpers.XmlUtils
 import org.w3c.dom.NodeList
 
 import javax.xml.xpath.XPath
-import javax.xml.xpath.XPathFactory
 
 import static org.junit.jupiter.api.Assertions.assertEquals
 
 doc = XmlUtils.toDom(new FileInputStream(args[0]))
-XPath xPath = XPathFactory.newInstance().newXPath()
+XPath xPath = SecureXPathFactory.newInstance().newXPath()
 
 NodeList nodeList = XmlUtils.getNodeList(doc, xPath, "/rat-report/resource[@name='/unix-newlines.txt.bin']")
 assertEquals(1, nodeList.getLength())

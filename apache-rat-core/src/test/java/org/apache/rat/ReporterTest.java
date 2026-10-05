@@ -52,9 +52,10 @@ import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathFactory;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.xml.secure.SecureSchemaFactory;
+import org.apache.commons.xml.secure.SecureXPathFactory;
 import org.apache.rat.api.Document.Type;
 import org.apache.rat.api.RatException;
 import org.apache.rat.commandline.Arg;
@@ -284,7 +285,7 @@ public class ReporterTest {
 
         assertThat(output).exists();
         Document doc = XmlUtils.toDom(java.nio.file.Files.newInputStream(output.toPath()));
-        XPath xPath = XPathFactory.newInstance().newXPath();
+        XPath xPath = SecureXPathFactory.newInstance().newXPath();
 
         for (Map.Entry<String, Map<String, String>> entry : expected.entrySet()) {
             XmlUtils.assertAttributes(doc, xPath, String.format("/rat-report/resource[@name='%s']", entry.getKey()), entry.getValue());
@@ -455,7 +456,7 @@ public class ReporterTest {
     }
 
     private Validator initValidator() throws SAXException {
-        SchemaFactory factory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+        SchemaFactory factory = SecureSchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
         Source schemaFile = new StreamSource(Reporter.class.getResourceAsStream("/org/apache/rat/rat-report.xsd"));
         Schema schema = factory.newSchema(schemaFile);
         return schema.newValidator();
@@ -466,7 +467,7 @@ public class ReporterTest {
         ReportConfiguration configuration = initializeConfiguration();
         Document doc = new Reporter(configuration).execute().getDocument();
 
-        XPath xPath = XPathFactory.newInstance().newXPath();
+        XPath xPath = SecureXPathFactory.newInstance().newXPath();
 
         XmlUtils.getNode(doc, xPath, "/rat-report[@timestamp]");
 
