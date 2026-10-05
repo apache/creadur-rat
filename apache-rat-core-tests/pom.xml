@@ -64,6 +64,14 @@
             <skip>true</skip>
           </configuration>
         </plugin>
+        <!-- As we copy over stuff from the test source tree we run into formatting errors as files are treated as sources in this module -->
+        <plugin>
+          <groupId>com.github.spotbugs</groupId>
+          <artifactId>spotbugs-maven-plugin</artifactId>
+          <configuration>
+            <skip>true</skip>
+          </configuration>
+        </plugin>
       </plugins>
     </pluginManagement>
     <plugins>
