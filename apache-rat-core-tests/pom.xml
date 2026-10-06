@@ -28,7 +28,7 @@
   <description>The test code for the core functionality of RAT that is used by all clients.</description>
   <build>
     <!--
-    The source directory is pointing at apache-rat-core test directory so that we pickup the source
+    The source directory is pointing at apache-rat-core test directory so that we pick up the source
     from there.  This ensures that the test code actually functions since the core used it during core build.
 
     This also means that we can disable many of the code testing/reporting plugins since they were already
