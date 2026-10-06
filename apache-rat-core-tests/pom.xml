@@ -27,6 +27,16 @@
   <name>Apache Creadur RAT::Core tests</name>
   <description>The test code for the core functionality of RAT that is used by all clients.</description>
   <build>
+    <!--
+    The source directory is pointing at apache-rat-core test directory so that we pickup the source
+    from there.  This ensures that the test code actually functions since the core used it during core build.
+
+    This also means that we can disable many of the code testing/reporting plugins since they were already
+    executed in the core build and test phases.
+
+    Finally, the classes that were in "test" scope in the core module should be in "compile" scope here so
+    tha the dependencies are recorded in the jar for when it is used in other test modules.
+    -->
     <sourceDirectory>../apache-rat-core/src/test/java</sourceDirectory>
     <resources>
       <resource>
@@ -64,7 +74,6 @@
             <skip>true</skip>
           </configuration>
         </plugin>
-        <!-- As we copy over stuff from the test source tree we run into formatting errors as files are treated as sources in this module -->
         <plugin>
           <groupId>com.github.spotbugs</groupId>
           <artifactId>spotbugs-maven-plugin</artifactId>
@@ -168,10 +177,7 @@
   </dependencies>
   <!-- We need to disable plugin run as the files are copies from RAT's core test directory tree. -->
   <reporting>
-    <!-- N.B. plugins defined here in the <reporting> section ignore what's defined in <pluginManagement>
-         in the <build> section above, so we have to define the versions here. -->
     <plugins>
-      <!-- org.apache.maven.plugins, alpha order by artifact id -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-checkstyle-plugin</artifactId>
@@ -179,13 +185,6 @@
           <skip>true</skip>
         </configuration>
       </plugin>
-<!--      <plugin>-->
-<!--        <groupId>org.apache.maven.plugins</groupId>-->
-<!--        <artifactId>maven-site-plugin</artifactId>-->
-<!--        <configuration>-->
-<!--          <skip>true</skip>-->
-<!--        </configuration>-->
-<!--      </plugin>-->
     </plugins>
     <excludeDefaults>true</excludeDefaults>
   </reporting>
