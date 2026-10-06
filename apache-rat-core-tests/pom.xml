@@ -166,7 +166,7 @@
       <scope>compile</scope>
     </dependency>
   </dependencies>
-  <!-- We need to disable plugin run as the files are copies from RAT's core test directory tree. ->
+  <!-- We need to disable plugin run as the files are copies from RAT's core test directory tree. -->
   <reporting>
     <!-- N.B. plugins defined here in the <reporting> section ignore what's defined in <pluginManagement>
          in the <build> section above, so we have to define the versions here. -->
