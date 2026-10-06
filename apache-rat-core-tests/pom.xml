@@ -29,13 +29,13 @@
   <build>
     <!--
     The source directory is pointing at apache-rat-core test directory so that we pick up the source
-    from there.  This ensures that the test code actually functions since the core used it during core build.
+    from there. This ensures that the test code actually functions since the core used it during core build.
 
     This also means that we can disable many of the code testing/reporting plugins since they were already
     executed in the core build and test phases.
 
     Finally, the classes that were in "test" scope in the core module should be in "compile" scope here so
-    tha the dependencies are recorded in the jar for when it is used in other test modules.
+    that the dependencies are recorded in the JAR for when it is used in other test modules.
     -->
     <sourceDirectory>../apache-rat-core/src/test/java</sourceDirectory>
     <resources>
@@ -164,7 +164,7 @@
       <scope>compile</scope>
     </dependency>
     <dependency>
-      <!-- this dependency is actually used by integration testing code -->
+      <!-- This dependency is actually used by integration testing code. -->
       <groupId>org.apache.groovy</groupId>
       <artifactId>groovy</artifactId>
       <scope>compile</scope>
