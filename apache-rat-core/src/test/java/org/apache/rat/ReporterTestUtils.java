@@ -72,7 +72,7 @@ public final class ReporterTestUtils {
      * @param error {@code True} if the counter does exceed a minimum or maximum value.
      * @return the report contents of the given counter.
      */
-    public static String counterText(ClaimStatistic.Counter counter, int count, boolean error) {
+    public static String counterText(final ClaimStatistic.Counter counter, final int count, final boolean error) {
         return String.format("^%s %s:\\s*%s ", error ? "!" : " ", counter.displayName(), count);
     }
 
@@ -81,7 +81,7 @@ public final class ReporterTestUtils {
      * @param count The expected number of occurrences of the license.
      * @return Report contents for Apache 2.0 licenses in the report.
      */
-    public static String apacheLicenseVersion2(int count) {
+    public static String apacheLicenseVersion2(final int count) {
         return String.format("^Apache License 2.0: %s ", count);
     }
 
@@ -90,7 +90,7 @@ public final class ReporterTestUtils {
      * @param count The expected number of occurrences of the license.
      * @return Report contents for unknown licenses in the report.
      */
-    public static String unknownLicense(int count) {
+    public static String unknownLicense(final int count) {
         return String.format("^Unknown license: %s ", count);
     }
 }
