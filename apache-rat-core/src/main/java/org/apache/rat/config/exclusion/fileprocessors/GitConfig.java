@@ -177,8 +177,8 @@ public class GitConfig {
                 if (current.startsWith("[")) {
                     Section parsedSection = parseSection(current);
                     if (parsedSection != null) {
-                        section = parsedSection.getName();
-                        subsection = parsedSection.getSubsection();
+                        section = parsedSection.name();
+                        subsection = parsedSection.subsection();
                     }
                     continue;
                 }
@@ -335,7 +335,8 @@ public class GitConfig {
                         result.append('\\');
                         break;
                     default:
-                        result.append(escaped);
+                        // git keeps the backslash for unknown escape sequences
+                        result.append('\\').append(escaped);
                         break;
                 }
             } else if (c == '"') {
@@ -385,37 +386,9 @@ public class GitConfig {
 
     /**
      * A parsed section header.
+     * @param name the lower cased section name.
+     * @param subsection the subsection name or {@code null}.
      */
-    private static final class Section {
-        /** The section name, lower cased. */
-        private final String name;
-        /** The optional subsection name. May be {@code null}. */
-        private final String subsection;
-
-        /**
-         * Creates a section.
-         * @param name the lower cased section name.
-         * @param subsection the subsection name or {@code null}.
-         */
-        private Section(final String name, final String subsection) {
-            this.name = name;
-            this.subsection = subsection;
-        }
-
-        /**
-         * Gets the section name.
-         * @return the section name.
-         */
-        private String getName() {
-            return name;
-        }
-
-        /**
-         * Gets the subsection name.
-         * @return the subsection name or {@code null}.
-         */
-        private String getSubsection() {
-            return subsection;
-        }
+    private record Section(String name, String subsection) {
     }
 }

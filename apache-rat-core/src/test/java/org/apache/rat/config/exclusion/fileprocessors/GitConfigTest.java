@@ -19,11 +19,8 @@
 package org.apache.rat.config.exclusion.fileprocessors;
 
 import java.io.File;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.util.Arrays;
 
+import org.apache.rat.utils.FileUtils;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -37,14 +34,9 @@ public class GitConfigTest {
     @TempDir
     private File tempDir;
 
-    private File write(final String name, final String... lines) throws IOException {
+    private File write(final String name, final String... lines) {
         File file = new File(tempDir, name);
-        File parent = file.getParentFile();
-        if (parent != null) {
-            Files.createDirectories(parent.toPath());
-        }
-        Files.write(file.toPath(), Arrays.asList(lines), StandardCharsets.UTF_8);
-        return file;
+        return FileUtils.writeFile(file.getParentFile(), file.getName(), lines);
     }
 
     private GitConfig newConfig(final File xdg, final File user, final String home) {
@@ -56,7 +48,7 @@ public class GitConfigTest {
     }
 
     @Test
-    public void testCoreExcludesFileFromUserConfig() throws IOException {
+    public void testCoreExcludesFileFromUserConfig() {
         File ignore = write("ignore.txt", "*.log");
         File userConfig = write("user.gitconfig",
                 "[core]",
@@ -66,7 +58,7 @@ public class GitConfigTest {
     }
 
     @Test
-    public void testCoreExcludesFileKeyIsCaseInsensitive() throws IOException {
+    public void testCoreExcludesFileKeyIsCaseInsensitive() {
         File ignore = write("ignore.txt", "*.log");
         File userConfig = write("user.gitconfig",
                 "[core]",
@@ -76,7 +68,7 @@ public class GitConfigTest {
     }
 
     @Test
-    public void testCoreExcludesFileQuotedValue() throws IOException {
+    public void testCoreExcludesFileQuotedValue() {
         File ignore = write("ignore file.txt", "*.log");
         File userConfig = write("user.gitconfig",
                 "[core]",
@@ -86,7 +78,18 @@ public class GitConfigTest {
     }
 
     @Test
-    public void testCoreExcludesFileComments() throws IOException {
+    public void testWindowsStylePathKeepsBackslashes() {
+        File userConfig = write("user.gitconfig",
+                "[core]",
+                "excludesFile = \"some\\dir\\ignore.txt\"");
+        GitConfig config = newConfig(null, userConfig, tempDir.toString(), tempDir);
+        // unknown escape sequences keep the backslash, matching git behavior
+        assertThat(config.coreExcludesFile())
+                .hasValue(new File(tempDir, "some\\dir\\ignore.txt"));
+    }
+
+    @Test
+    public void testCoreExcludesFileComments() {
         File ignore = write("ignore.txt", "*.log");
         File userConfig = write("user.gitconfig",
                 "# a comment",
@@ -98,7 +101,7 @@ public class GitConfigTest {
     }
 
     @Test
-    public void testLastValueWins() throws IOException {
+    public void testLastValueWins() {
         File ignore = write("ignore.txt", "*.log");
         File ignored2 = write("ignore2.txt", "*.tmp");
         File userConfig = write("user.gitconfig",
@@ -110,7 +113,7 @@ public class GitConfigTest {
     }
 
     @Test
-    public void testUserConfigOverridesXdgConfig() throws IOException {
+    public void testUserConfigOverridesXdgConfig() {
         File xdgIgnore = write("xdg/ignore.txt", "*.log");
         File userIgnore = write("user/ignore.txt", "*.tmp");
         File xdgConfig = write("xdg/config",
@@ -125,7 +128,7 @@ public class GitConfigTest {
     }
 
     @Test
-    public void testTildeExpansion() throws IOException {
+    public void testTildeExpansion() {
         File ignore = write("home/ignore.txt", "*.log");
         File userConfig = write("user.gitconfig",
                 "[core]",
@@ -136,7 +139,7 @@ public class GitConfigTest {
     }
 
     @Test
-    public void testRelativePathResolvedAgainstCwd() throws IOException {
+    public void testRelativePathResolvedAgainstCwd() {
         File ignore = write("ignore.txt", "*.log");
         File userConfig = write("user.gitconfig",
                 "[core]",
@@ -147,7 +150,7 @@ public class GitConfigTest {
     }
 
     @Test
-    public void testIncludePath() throws IOException {
+    public void testIncludePath() {
         File ignore = write("include/ignore.txt", "*.log");
         File included = write("include/included.conf",
                 "[core]",
@@ -160,7 +163,7 @@ public class GitConfigTest {
     }
 
     @Test
-    public void testIncludePathRelativeToIncludingFile() throws IOException {
+    public void testIncludePathRelativeToIncludingFile() {
         File ignore = write("dir/ignore.txt", "*.log");
         File included = write("sub/included.conf",
                 "[core]",
@@ -175,7 +178,7 @@ public class GitConfigTest {
     }
 
     @Test
-    public void testIncludePathTilde() throws IOException {
+    public void testIncludePathTilde() {
         File ignore = write("home/ignore.txt", "*.log");
         File included = write("home/included.conf",
                 "[core]",
@@ -189,7 +192,7 @@ public class GitConfigTest {
     }
 
     @Test
-    public void testIncludePathRecursive() throws IOException {
+    public void testIncludePathRecursive() {
         File ignore = write("include/ignore.txt", "*.log");
         File inner = write("include/inner.conf",
                 "[core]",
@@ -205,7 +208,7 @@ public class GitConfigTest {
     }
 
     @Test
-    public void testIncludePathCycle() throws IOException {
+    public void testIncludePathCycle() {
         File ignore = write("ignore.txt", "*.log");
         File userConfig = write("user.gitconfig",
                 "[include]",
@@ -218,7 +221,7 @@ public class GitConfigTest {
     }
 
     @Test
-    public void testSubsectionsIgnored() throws IOException {
+    public void testSubsectionsIgnored() {
         File ignore = write("ignore.txt", "*.log");
         File userConfig = write("user.gitconfig",
                 "[core \"sub\"]",
@@ -228,17 +231,17 @@ public class GitConfigTest {
     }
 
     @Test
-    public void testMissingFileReturnsConfiguredFile() throws IOException {
+    public void testMissingFileReturnsConfiguredFile() {
         File userConfig = write("user.gitconfig",
                 "[core]",
-                "excludesFile = /nonexistent/ignore.txt");
-        GitConfig config = newConfig(null, userConfig, tempDir.toString());
+                "excludesFile = nonexistent/ignore.txt");
+        GitConfig config = newConfig(null, userConfig, tempDir.toString(), tempDir);
         // git does not fall back to the default when core.excludesFile is configured
-        assertThat(config.coreExcludesFile()).hasValue(new File("/nonexistent/ignore.txt"));
+        assertThat(config.coreExcludesFile()).hasValue(new File(tempDir, "nonexistent/ignore.txt"));
     }
 
     @Test
-    public void testNoExcludesFileFallsBackToDefault() throws IOException {
+    public void testNoExcludesFileFallsBackToDefault() {
         File defaultIgnore = write("config/git/ignore", "*.log");
         File xdgConfig = write("config/git/config",
                 "[core]",
