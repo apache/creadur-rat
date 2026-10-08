@@ -19,21 +19,23 @@
 package org.apache.rat.config.exclusion.fileprocessors;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URISyntaxException;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
+
 import org.apache.rat.config.exclusion.MatcherSet;
 import org.apache.rat.document.DocumentName;
 import org.apache.rat.document.DocumentNameMatcher;
 import org.apache.rat.document.FSInfoTest;
 import org.junit.jupiter.api.Test;
-
-import java.io.IOException;
-import java.net.URL;
-import java.util.Arrays;
-import java.util.List;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -177,6 +179,50 @@ public class GitIgnoreBuilderTest extends AbstractIgnoreBuilderTest {
         // files that should be checked:
         // "local-should-precede-global.md" should be 'matching'
         // here, but that is a future improvement (RAT-476)
+        List<String> notMatching = Arrays.asList("dir1/dir1.md", "dir2/dir2.txt", "dir3/file3.log", "dir1/file1.log", "local-should-precede-global.md", "local-should-precede-global.xml");
+
+        // files that should be ignored:
+        List<String> matching = Arrays.asList(".gitignore", "README.txt", "root.md", "dir1/.gitignore", "dir1/dir1.txt", "dir2/dir2.md", "dir3/dir3.log");
+
+        assertCorrect(matcherSets, documentName.getBaseDocumentName(), matching, notMatching);
+    }
+
+    /**
+     * Test that exclusions from a global gitignore configured via
+     * {@code core.excludesFile} in a git configuration file are also applied,
+     * see <a href="https://issues.apache.org/jira/browse/RAT-578">RAT-578</a> for details.
+     */
+    @Test
+    public void test_global_gitignore_from_config() throws URISyntaxException, IOException {
+        URL globalGitIgnoreUrl = GitIgnoreBuilderTest.class.getClassLoader().getResource("GitIgnoreBuilderTest/global-gitignore");
+        File globalGitIgnore = Paths.get(globalGitIgnoreUrl.toURI()).toFile();
+        String gitConfig = String.join(System.lineSeparator(),
+                "[core]",
+                "excludesFile = " + globalGitIgnore.getAbsolutePath());
+
+        File configDir = tmpPath.toFile();
+        File userConfig = new File(configDir, ".gitconfig");
+        Files.createDirectories(configDir.toPath());
+        Files.write(userConfig.toPath(), Arrays.asList(gitConfig), StandardCharsets.UTF_8);
+
+        GitIgnoreBuilder underTest = new GitIgnoreBuilder() {
+            @Override
+            protected Optional<File> globalGitIgnore() {
+                // force reading the config file from the test directory
+                GitConfig gitConfig = new GitConfig(null, userConfig, tmpPath.toString(), tmpPath.toFile());
+                return gitConfig.coreExcludesFile();
+            }
+        };
+        URL url = GitIgnoreBuilderTest.class.getClassLoader().getResource("GitIgnoreBuilderTest/src/");
+        File file = Paths.get(url.toURI()).toFile();
+
+        DocumentName documentName = DocumentName.builder(file).build();
+        List<MatcherSet> matcherSets = underTest.build(documentName);
+        DocumentNameMatcher matcher = MatcherSet.merge(matcherSets).createMatcher();
+
+        assertThat(matcher.toString()).isEqualTo("matcherSet(or('included dir1/.gitignore', 'included .gitignore', 'included global gitignore'), or('excluded dir1/.gitignore', **/.gitignore, 'excluded .gitignore', 'excluded global gitignore'))");
+
+        // files that should be checked:
         List<String> notMatching = Arrays.asList("dir1/dir1.md", "dir2/dir2.txt", "dir3/file3.log", "dir1/file1.log", "local-should-precede-global.md", "local-should-precede-global.xml");
 
         // files that should be ignored:
