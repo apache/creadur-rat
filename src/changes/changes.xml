@@ -68,6 +68,9 @@ in order to be properly linked in site reports.
     </release>
     -->
     <release version="1.0.0-SNAPSHOT" date="xxxx-yy-zz" description="Current SNAPSHOT - release to be done">
+      <action issue="RAT-578" type="add" dev="claudenw" due-to="Romain Manni-Bucau">
+        Support the git configuration file option core.excludesFile (including include.path directives) when processing global gitignore files.
+      </action>
       <action issue="RAT-547" type="add" dev="claudenw">
         Create internal RAT core tests submodule that packages RAT core tests into a separate JAR in order to allow verification of functionality of RAT client UIs.
       </action>

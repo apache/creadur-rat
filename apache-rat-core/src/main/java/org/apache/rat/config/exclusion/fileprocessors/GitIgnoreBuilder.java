@@ -147,14 +147,21 @@ public class GitIgnoreBuilder extends AbstractFileProcessorBuilder {
 
     /**
      * The global gitignore file to process, based on the
-     * {@link EnvVar#RAT_NO_GIT_GLOBAL_IGNORE},
-     * {@link EnvVar#XDG_CONFIG_HOME} and
-     * {@link EnvVar#HOME} environment
+     * {@link EnvVar#RAT_NO_GIT_GLOBAL_IGNORE}, the git configuration
+     * ({@code core.excludesFile} including {@code [include] path} directives)
+     * and the {@link EnvVar#XDG_CONFIG_HOME} and {@link EnvVar#HOME} environment
      * variables.
      */
     protected Optional<File> globalGitIgnore() {
         if (EnvVar.RAT_NO_GIT_GLOBAL_IGNORE.isSet()) {
             return Optional.empty();
+        }
+
+        Optional<File> fromConfig = new GitConfig().coreExcludesFile();
+        if (fromConfig.isPresent()) {
+            File configured = fromConfig.get();
+            // git treats a missing configured file as empty, do not fall back to the default
+            return configured.isFile() ? Optional.of(configured) : Optional.empty();
         }
 
         String xdgConfigHome = EnvVar.XDG_CONFIG_HOME.getValue();
