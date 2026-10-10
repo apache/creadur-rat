@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.rat.documentation.options;
+package org.apache.rat.maven;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -24,9 +24,10 @@ import java.util.Objects;
 import java.util.TreeMap;
 
 import org.apache.commons.cli.Option;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.rat.commandline.Arg;
+import org.apache.rat.ui.ArgumentTracker;
 import org.apache.rat.ui.UIOptionCollection;
+import org.apache.rat.utils.CasedString;
 
 /**
  * The collection of MavenOptions equivalent to the CLI options
@@ -56,25 +57,47 @@ public final class MavenOptionCollection extends UIOptionCollection<MavenOption>
      * Create an instance.
      */
     public MavenOptionCollection() {
-        super(new Builder());
+        this(new Builder());
+    }
+
+    /**
+     * Create the MavenOptionsCollection from a builder.
+     * @param builder the builder to use.
+     */
+    protected MavenOptionCollection(final MavenOptionCollection.Builder builder) {
+        super(builder);
     }
 
     @Override
     public String rename(final Option option) {
-        String key = super.rename(option);
-        return StringUtils.defaultIfEmpty(RENAME_MAP.get(key), key);
+        String baseKey = ArgumentTracker.extractKey(option);
+        String key = RENAME_MAP.getOrDefault(baseKey, baseKey);
+        CasedString name = new CasedString(CasedString.StringCase.KEBAB, key).as(CasedString.StringCase.PASCAL);
+        if (option.hasArgs()) {
+            String[] segments = name.getSegments();
+            int pos = segments.length - 1;
+            String seg =  segments[pos];
+            if (!(seg.endsWith("s") || seg.equals("approved") || seg.equals("denied"))) {
+                segments[pos] = seg + "s";
+            }
+        }
+        return name.toString();
     }
 
     /**
      * The Builder for the MavenOptionCollection.
      */
     public static final class Builder extends UIOptionCollection.Builder<MavenOption, Builder> {
-        private Builder() {
+        public Builder() {
             super(MavenOption.MavenOptionBuilder::new);
             Arg.getOptions().getOptions()
                     .stream().filter(o -> Objects.isNull(o.getLongOpt()))
                     .forEach(this::unsupported);
             unsupported(Arg.DIR).unsupported(Arg.LOG_LEVEL);
+        }
+
+        MavenOptionCollection build() {
+            return new MavenOptionCollection(this);
         }
     }
 }

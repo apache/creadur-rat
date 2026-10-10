@@ -43,8 +43,6 @@ import org.apache.rat.config.parameters.DescriptionBuilder;
 import org.apache.rat.configuration.MatcherBuilderTracker;
 import org.apache.rat.documentation.options.AntOption;
 import org.apache.rat.documentation.options.AntOptionCollection;
-import org.apache.rat.documentation.options.MavenOption;
-import org.apache.rat.documentation.options.MavenOptionCollection;
 import org.apache.rat.help.AbstractHelp;
 import org.apache.rat.license.ILicense;
 import org.apache.rat.license.LicenseSetFactory;
@@ -100,10 +98,6 @@ public class RatTool {
      */
     private final AntOptionCollection antOptions = new AntOptionCollection();
 
-    /**
-     * The Maven option instance.
-     */
-    private final MavenOptionCollection mavenOptions = new MavenOptionCollection();
 
     /**
      * Constructor.
@@ -136,14 +130,6 @@ public class RatTool {
      */
     public Map<String, CLIOption> cliOptions() {
         return cliOptions.getOptionMap();
-    }
-
-    /**
-     * Gets a map client option name to Maven Option.
-     * @return a map client option name to Maven Option.
-     */
-    public Map<String, MavenOption> mvnOptions() {
-        return mavenOptions.getOptionMap();
     }
 
     /**

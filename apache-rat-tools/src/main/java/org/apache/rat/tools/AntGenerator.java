@@ -182,7 +182,7 @@ public final class AntGenerator {
                         writer.write(bos.toString(StandardCharsets.UTF_8));
                         break;
                     case "${commonArgs}":
-                        try (InputStream argsTpl = MavenGenerator.class.getResourceAsStream("/Args.tpl")) {
+                        try (InputStream argsTpl = AntGenerator.class.getResourceAsStream("/Args.tpl")) {
                             if (argsTpl == null) {
                                 throw new RuntimeException("Args.tpl not found");
                             }
