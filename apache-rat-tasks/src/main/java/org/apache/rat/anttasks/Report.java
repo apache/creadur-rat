@@ -38,6 +38,7 @@ import org.apache.rat.Reporter;
 import org.apache.rat.commandline.Arg;
 import org.apache.rat.commandline.StyleSheets;
 import org.apache.rat.document.DocumentName;
+import org.apache.rat.documentation.options.AntOptionCollection;
 import org.apache.rat.license.LicenseSetFactory;
 import org.apache.rat.utils.DefaultLog;
 import org.apache.rat.utils.Log;
@@ -429,7 +430,8 @@ public class Report extends BaseAntTask {
             licenses.stream().map(License::asBuilder)
                     .forEach(l -> configuration.addApprovedLicenseCategory(configuration.addLicense(l).getLicenseFamily()));
             if (helpLicenses) {
-                new org.apache.rat.help.Licenses(configuration, new PrintWriter(DefaultLog.getInstance().asWriter())).printHelp();
+                new org.apache.rat.help.Licenses(new AntOptionCollection(),
+                        configuration, new PrintWriter(DefaultLog.getInstance().asWriter())).printHelp();
             }
             return configuration;
         } catch (IOException | ImplementationException e) {
