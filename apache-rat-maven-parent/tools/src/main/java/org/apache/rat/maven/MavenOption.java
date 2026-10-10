@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.rat.documentation.options;
+package org.apache.rat.maven;
 
 import java.util.function.Function;
 
@@ -58,7 +58,7 @@ public final class MavenOption extends UIOption<MavenOption> {
      * @return the method name for this option.
      */
     public String getMethodName() {
-        return "set" + name.toCase(CasedString.StringCase.PASCAL);
+        return "set" + name.toCase(CasedString.StringCase.CAMEL);
     }
 
     @Override
@@ -125,9 +125,9 @@ public final class MavenOption extends UIOption<MavenOption> {
         }
         String args = option.hasArg() ? "String" : "boolean";
         if (multiple) {
-            if (!(camelName.endsWith("s") || camelName.endsWith("Approved") || camelName.endsWith("Denied"))) {
-                camelName = camelName + "s";
-            }
+//            if (!(camelName.endsWith("s") || camelName.endsWith("Approved") || camelName.endsWith("Denied"))) {
+//                camelName = camelName + "s";
+//            }
             args = args + "[]";
         }
 
@@ -161,7 +161,7 @@ public final class MavenOption extends UIOption<MavenOption> {
     /**
      * The builder for the MavenOptions.
      */
-    public static class MavenOptionBuilder extends UIOption.Builder<MavenOption, MavenOptionBuilder> {
+    public static class MavenOptionBuilder extends Builder<MavenOption, MavenOptionBuilder> {
 
         @Override
         protected Function<Option, CasedString> getNameFactory() {
@@ -180,7 +180,10 @@ public final class MavenOption extends UIOption<MavenOption> {
          * @see MavenOptionCollection#rename(Option)
          */
         static CasedString createName(final String key) {
-            return new CasedString(CasedString.StringCase.KEBAB, key).as(CasedString.StringCase.PASCAL);
+            if (key.contains("-")) {
+                return new CasedString(CasedString.StringCase.KEBAB, key).as(CasedString.StringCase.PASCAL);
+            }
+            return new CasedString(CasedString.StringCase.PASCAL, key);
         }
     }
 }

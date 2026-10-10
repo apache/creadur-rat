@@ -1,0 +1,12 @@
+~~   Yet Another License, just for test purposes
+
+    --------------
+    Some text file
+    --------------
+
+Some text file
+
+  This is a text file, which intentionally has no Apache License Header.
+  Instead, it contains a dummy license header. The Rat plugin should
+  accept it with a proper custom license matcher.
+

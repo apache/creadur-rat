@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rat-config>
+    <families>
+        <family id="CC" name="Creative Commons"/>"
+    </families>
+    <licenses>
+        <license family="CC" id="CC-BY-NC-ND"
+                 name="Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International">
+            <any>
+                <text>Attribution-NonCommercial-NoDerivatives</text>
+            </any>
+        </license>
+    </licenses>
+    <approved>
+        <family license_ref='CC'/>
+    </approved>
+</rat-config>
