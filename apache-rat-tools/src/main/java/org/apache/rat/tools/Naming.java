@@ -45,7 +45,6 @@ import org.apache.commons.csv.QuoteMode;
 import org.apache.rat.CLIOptionCollection;
 import org.apache.rat.OptionCollection;
 import org.apache.rat.documentation.options.AntOptionCollection;
-import org.apache.rat.documentation.options.MavenOptionCollection;
 import org.apache.rat.help.AbstractHelp;
 
 /**
@@ -64,8 +63,8 @@ public final class Naming {
     /** The maximum width of the output. */
     private static final Option WIDTH = Option.builder().longOpt("width").type(Integer.class)
             .desc("Set the display width of the output").hasArg().build();
-    /** Option to output Maven names. */
-    private static final Option MAVEN = Option.builder().longOpt("maven").desc("Produce Maven name mapping").build();
+//    /** Option to output Maven names. */
+//    private static final Option MAVEN = Option.builder().longOpt("maven").desc("Produce Maven name mapping").build();
     /** Option to output Ant names. */
     private static final Option ANT = Option.builder().longOpt("ant").desc("Produce Ant name mapping").build();
     /** Option to output CSV format. */
@@ -76,7 +75,7 @@ public final class Naming {
     private static final Option INCLUDE_DEPRECATED = Option.builder().longOpt("include-deprecated")
             .desc("Include deprecated options.").build();
     /** The all option. */
-    private static final Options OPTIONS = new Options().addOption(MAVEN).addOption(ANT).addOption(CLI)
+    private static final Options OPTIONS = new Options()/*.addOption(MAVEN)*/.addOption(ANT).addOption(CLI)
             .addOption(CSV)
             .addOption(INCLUDE_DEPRECATED)
             .addOption(WIDTH);
@@ -85,8 +84,8 @@ public final class Naming {
     private final CommandLine cl;
     /** The width of the output */
     private final int outputWidth;
-    /** The Maven options */
-    private final MavenOptionCollection mavenCollection = new MavenOptionCollection();
+//    /** The Maven options */
+//    private final MavenOptionCollection mavenCollection = new MavenOptionCollection();
     /** The Ant options */
     private final AntOptionCollection antCollection = new AntOptionCollection();
     /** The CLI options */
@@ -95,8 +94,8 @@ public final class Naming {
     private final Predicate<Option> filter;
     /** The columns to display */
     private final List<String> columns;
-    /** If {@code true} then show Maven options */
-    private final boolean showMaven;
+//    /** If {@code true} then show Maven options */
+//    private final boolean showMaven;
     /** If {@code true} then show Ant options */
     private final boolean showAnt;
     /** If {@code true} then show CLI options */
@@ -129,7 +128,7 @@ public final class Naming {
         cl = DefaultParser.builder().build().parse(OPTIONS, args);
 
         outputWidth = Math.max(cl.getParsedOptionValue(WIDTH, AbstractHelp.HELP_WIDTH), AbstractHelp.HELP_WIDTH);
-        showMaven = cl.hasOption(MAVEN);
+//        showMaven = cl.hasOption(MAVEN);
         showAnt = cl.hasOption(ANT);
         addCLI = cl.hasOption(CLI);
         includeDeprecated = cl.hasOption(INCLUDE_DEPRECATED);
@@ -142,18 +141,18 @@ public final class Naming {
         if (showAnt) {
             columnsBuilder.add("Ant");
         }
-        if (showMaven) {
-            columnsBuilder.add("Maven");
-        }
+//        if (showMaven) {
+//            columnsBuilder.add("Maven");
+//        }
         columnsBuilder.add("Description");
         columnsBuilder.add("Argument Type");
         columns = columnsBuilder;
-        if (addCLI || !showAnt && !showMaven) {
+        if (addCLI || !showAnt/* && !showMaven*/) {
             descriptionFunction = cliCollection::getDescription;
-        } else if (showAnt) {
+        } else /*if (showAnt)*/ {
             descriptionFunction = antCollection::getDescription;
-        } else {
-            descriptionFunction = mavenCollection::getDescription;
+//        } else {
+//            descriptionFunction = mavenCollection::getDescription;
         }
     }
 
@@ -181,10 +180,10 @@ public final class Naming {
             antCollection.getMappedOption(option).ifPresentOrElse(antOption -> columnsBuilder.add(antOption.getExample()),
                     () -> columnsBuilder.add(" "));
         }
-        if (showMaven) {
-            mavenCollection.getMappedOption(option).ifPresentOrElse(mavenOption -> columnsBuilder.add(mavenOption.getExample()),
-                    () -> columnsBuilder.add(" "));
-        }
+//        if (showMaven) {
+//            mavenCollection.getMappedOption(option).ifPresentOrElse(mavenOption -> columnsBuilder.add(mavenOption.getExample()),
+//                    () -> columnsBuilder.add(" "));
+//        }
 
         columnsBuilder.add(descriptionFunction.apply(option));
         columnsBuilder.add(getOptionArgumentName(option));

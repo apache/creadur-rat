@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rat-config>
+    <families>
+        <family id="CC" name="Creative Commons"/>"
+    </families>
+    <licenses>
+        <license family="CC" id="CC-BY-NC-ND"
+                 name="Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International">
+            <any>
+                <text>Attribution-NonCommercial-NoDerivatives</text>
+            </any>
+        </license>
+    </licenses>
+    <approved>
+        <family license_ref='CC'/>
+    </approved>
+
+    <families>
+        <family id="YAL" name="Yet another license" />
+    </families>
+    <approved>
+        <family id="YAL" />
+    </approved>
+    <licenses>
+        <license id="MyLicense" family="YAL">
+            <text>Yet Another License</text>
+        </license>
+        <license family="YAL" id="CpyrT" name=">Copyright with tags">
+            <copyright>
+                <start>1990</start>
+                <end>1991</end>
+                <owner>foo</owner>
+            </copyright>
+        </license>
+        <license family="YAL" id="RegxT" name="Regex with tag">
+            <regex expression="regex tag" />
+        </license>
+        <license family="YAL" id="SpdxT" name="Spdx with tag">
+            <spdx name="spxd-tag"/>
+        </license>
+        <license family="YAL" id="TextT" name="Text with tag">
+            <text>text-tag</text>
+        </license>
+        <license family="YAL" id="Not" name="Not testing">
+            <not>
+                <text>not test text</text>
+            </not>
+        </license>
+        <license family="YAL" id="All" name="All testing">
+            <all>
+                <text>all test text</text>
+                <spdx name="all spdx text"/>
+            </all>
+        </license>
+        <license family="YAL" id="Any" name="Any testing">
+            <any>
+                <text>any test text</text>
+                <spdx name ="any spdx text"/>
+            </any>
+        </license>
+    </licenses>
+
+</rat-config>
