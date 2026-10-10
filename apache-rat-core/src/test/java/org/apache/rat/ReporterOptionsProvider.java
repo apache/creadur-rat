@@ -1248,7 +1248,7 @@ class ReporterOptionsProvider extends AbstractOptionsProvider implements Argumen
 
             generateConfig(List.of(arg1), true);
             assertThat(helpCalled.get()).as("Help was not called").isTrue();
-            new Help(System.out).printUsage(options);
+            new Help(OptionCollection.BASE_OPTION_COLLECTION, System.out).printUsage(options);
             actualText = baos.toString(StandardCharsets.UTF_8);
         } catch (IOException e) {
             fail(e.getMessage(), e);
