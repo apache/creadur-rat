@@ -81,6 +81,11 @@ public final class Report {
         }
     }
 
+    /**
+     * Prints the usage message on the output stream from {@code out}.
+     * @param opts the defined options.
+     * @param out the A supplier of an OutputStream.
+     */
     private static void printUsage(final Options opts, final IOSupplier<OutputStream> out) {
         try (Writer writer = new OutputStreamWriter(out.get())) {
             new Help(OPTION_COLLECTION, writer).printUsage(opts);
