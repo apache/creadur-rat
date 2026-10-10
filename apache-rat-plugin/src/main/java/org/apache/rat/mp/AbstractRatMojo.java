@@ -49,6 +49,7 @@ import org.apache.rat.configuration.LicenseReader;
 import org.apache.rat.configuration.MatcherReader;
 import org.apache.rat.document.DocumentName;
 import org.apache.rat.document.FileDocument;
+import org.apache.rat.documentation.options.MavenOptionCollection;
 import org.apache.rat.license.ILicense;
 import org.apache.rat.license.ILicenseFamily;
 import org.apache.rat.license.LicenseSetFactory.LicenseFilter;
@@ -546,7 +547,9 @@ public abstract class AbstractRatMojo extends BaseRatMojo {
                 config.addSource(new DirectoryWalker(new FileDocument(dirName, basedir, config.getDocumentExcluder(dirName))));
 
                 if (helpLicenses) {
-                    new org.apache.rat.help.Licenses(config, new PrintWriter(log.asWriter())).printHelp();
+                    new org.apache.rat.help.Licenses(
+                            new MavenOptionCollection(),
+                            config, new PrintWriter(log.asWriter())).printHelp();
                 }
                 reportConfiguration = config;
             } catch (IOException e) {
