@@ -195,7 +195,7 @@ public class GitConfig {
             String line;
             while ((line = reader.readLine()) != null) {
                 String current = pending == null ? line : pending + line;
-                if (trailingBackslashes(current) % 2 == 1) {
+                if ((trailingBackslashes(current) & 1) == 1) {
                     pending = current.substring(0, current.length() - 1);
                     continue;
                 }

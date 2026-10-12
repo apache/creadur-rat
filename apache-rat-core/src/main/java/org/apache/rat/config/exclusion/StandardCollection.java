@@ -92,11 +92,14 @@ public enum StandardCollection {
     /**
      * The files and directories created by GIT source code control to support GIT, also processes files listed in '.gitignore'
      * and (unless RAT_NO_GIT_GLOBAL_IGNORE is specified) the global gitignore (as configured by the
-     * {@code core.excludesFile} git configuration option or the default location).
+     * {@code core.excludesFile} git configuration option or the default location). When {@code RAT_GIT_GLOBAL_IGNORE} is
+     * set to {@code off} or to an explicit file path, the global gitignore is disabled or pinned to that file respectively,
+     * which makes scans reproducible across machines.
      */
     GIT("The files and directories created by GIT source code control to support GIT, also processes files listed in '.gitignore' " +
         "and (unless RAT_NO_GIT_GLOBAL_IGNORE is specified) the global gitignore (as configured by the core.excludesFile git " +
-        "configuration option or the default location).",
+        "configuration option or the default location). When RAT_GIT_GLOBAL_IGNORE is set to 'off' or to an explicit file path, " +
+        "the global gitignore is disabled or pinned to that file respectively, which makes scans reproducible across machines.",
             Arrays.asList("**/.git/**", "**/.gitignore"),
             null,
             GitIgnoreBuilder::new

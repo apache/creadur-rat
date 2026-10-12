@@ -31,7 +31,26 @@ public enum EnvVar {
     /**
      * Ignore Git Global ignore file.
      */
-    RAT_NO_GIT_GLOBAL_IGNORE("Ignore global ignore file when processing GIT ignore files."),
+    RAT_NO_GIT_GLOBAL_IGNORE("Ignore the global ignore file when processing GIT ignore files."),
+    /**
+     * Controls how the global GIT ignore file is resolved for reproducible builds and audits.
+     * <p>
+     * The value may be one of:
+     * <ul>
+     *   <li>{@code off} - never read the machine global git ignore (equivalent to setting
+     *       {@link #RAT_NO_GIT_GLOBAL_IGNORE});</li>
+     *   <li>{@code on} (default) - resolve the global git ignore from the git configuration
+     *       ({@code core.excludesFile} / {@code GIT_CONFIG_GLOBAL} / XDG / HOME);</li>
+     *   <li>a file path - always use that explicit global ignore file, so the scan result does not
+     *       depend on the machine the audit runs on.</li>
+     * </ul>
+     * Setting it to {@code off} or to an explicit path makes RAT scans reproducible across machines
+     * (recommended for CI/release builds). The legacy {@link #RAT_NO_GIT_GLOBAL_IGNORE} takes
+     * precedence over this variable.
+     * </p>
+     */
+    RAT_GIT_GLOBAL_IGNORE("Controls how the global GIT ignore file is resolved: 'off' to disable it, 'on' to "
+            + "resolve it from the git configuration, or a file path to always use an explicit global git ignore file."),
     /**
      * Log matcher decomposition when used.
      */

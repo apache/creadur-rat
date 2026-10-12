@@ -146,10 +146,10 @@ public class GitIgnoreBuilder extends AbstractFileProcessorBuilder {
 
     /**
      * The global gitignore file to process, based on the
-     * {@link EnvVar#RAT_NO_GIT_GLOBAL_IGNORE}, the git configuration
-     * ({@code core.excludesFile} including {@code [include] path} directives and
-     * {@code GIT_CONFIG_GLOBAL}) and the {@link EnvVar#XDG_CONFIG_HOME} and
-     * {@link EnvVar#HOME} environment variables.
+     * {@link EnvVar#RAT_NO_GIT_GLOBAL_IGNORE} and {@link EnvVar#RAT_GIT_GLOBAL_IGNORE}
+     * environment variables, the git configuration ({@code core.excludesFile} including
+     * {@code [include] path} directives and {@code GIT_CONFIG_GLOBAL}) and the
+     * {@link EnvVar#XDG_CONFIG_HOME} and {@link EnvVar#HOME} environment variables.
      * <p>
      * The global ignore file is read exactly once, anchored at the scan {@code root}, and its
      * relative {@code core.excludesFile} path is resolved against the process working directory.
@@ -157,10 +157,42 @@ public class GitIgnoreBuilder extends AbstractFileProcessorBuilder {
      * patterns from {@code core.excludesFile} are treated as if specified at the root of the
      * working tree.
      * </p>
+     * <p>
+     * {@link EnvVar#RAT_NO_GIT_GLOBAL_IGNORE} takes precedence over {@link EnvVar#RAT_GIT_GLOBAL_IGNORE}.
+     * When {@link EnvVar#RAT_GIT_GLOBAL_IGNORE} is {@code off} or an explicit path, the scan result does
+     * not depend on the machine the audit runs on, which is recommended for reproducible CI/release builds.
+     * </p>
      */
     protected Optional<File> globalGitIgnore() {
         if (EnvVar.RAT_NO_GIT_GLOBAL_IGNORE.isSet()) {
             return Optional.empty();
+        }
+        return resolveGlobalGitIgnore(EnvVar.RAT_GIT_GLOBAL_IGNORE.getValue());
+    }
+
+    /**
+     * Resolves the global ignore file honoring the {@code RAT_GIT_GLOBAL_IGNORE} override value.
+     * <p>
+     * A {@code null} or {@code on} value falls back to the git configuration resolution. An
+     * {@code off} value disables the global ignore. Any other value is treated as an explicit
+     * global ignore path and, when it exists, is used as is so the scan result does not depend on
+     * the machine the audit runs on.
+     * </p>
+     * @param override the raw value of the {@code RAT_GIT_GLOBAL_IGNORE} environment variable or
+     *        {@code null} if it is not set.
+     * @return the resolved global ignore file or an empty Optional if none must be used.
+     */
+    static Optional<File> resolveGlobalGitIgnore(final String override) {
+        if (override != null) {
+            String value = override.strip();
+            if ("off".equalsIgnoreCase(value)) {
+                return Optional.empty();
+            }
+            if (!"on".equalsIgnoreCase(value)) {
+                // an explicit path always uses that file if it exists; no fall back to the git config
+                File file = new File(value);
+                return file.isFile() ? Optional.of(file) : Optional.empty();
+            }
         }
         // a configured but missing file yields an empty ignore (no fall back to the default),
         // matching git behavior

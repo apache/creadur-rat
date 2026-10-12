@@ -73,6 +73,11 @@ in order to be properly linked in site reports.
         environment variable when processing global gitignore files, and resolve the home directory with a HOME, USERPROFILE,
         user.home fallback for portability.
       </action>
+      <action issue="RAT-578" type="update" dev="claudenw">
+        Add the RAT_GIT_GLOBAL_IGNORE environment variable to make global gitignore processing reproducible: set it to
+        "off" to disable reading the machine global git ignore, or to a file path to always use an explicit global gitignore
+        file. This avoids audit results changing based on the machine that runs the scan (recommended for CI/release builds).
+      </action>
       <action issue="RAT-579" type="add" dev="pottlinger">
         Generate cycloneDX BOMs upon each build.
       </action>

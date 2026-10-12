@@ -27,6 +27,11 @@ on:
 
 env:
   DEVELOCITY_ACCESS_KEY: ${{ secrets.DEVELOCITY_ACCESS_KEY }}
+  # Keep RAT's own build reproducible on CI: never let the runner's global git ignore
+  # (core.excludesFile / ~/.gitconfig) alter what RAT excludes while auditing itself.
+  # CI machines can carry a global gitignore that differs from local machines and would
+  # otherwise make reports and self-checks non-reproducible.
+  RAT_NO_GIT_GLOBAL_IGNORE: "true"
 
 jobs:
   build:

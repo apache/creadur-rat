@@ -264,4 +264,43 @@ public class GitIgnoreBuilderTest extends AbstractIgnoreBuilderTest {
 
         assertCorrect(matcherSets, documentName.getBaseDocumentName(), matching, notMatching);
     }
+
+    /**
+     * An {@code off} value for {@code RAT_GIT_GLOBAL_IGNORE} disables the global git ignore so that
+     * a scan result does not depend on the machine's git configuration (reproducible CI/audits).
+     */
+    @Test
+    public void test_global_git_ignore_off() {
+        assertThat(GitIgnoreBuilder.resolveGlobalGitIgnore("off"))
+                .as("'off' must not read a global git ignore").isEmpty();
+        assertThat(GitIgnoreBuilder.resolveGlobalGitIgnore(" OFF ")).isEmpty();
+    }
+
+    /**
+     * An explicit path for {@code RAT_GIT_GLOBAL_IGNORE} uses that file deterministically instead of
+     * the machine's git configuration.
+     */
+    @Test
+    public void test_global_git_ignore_explicit_path() throws IOException {
+        File ignore = tmpPath.resolve("global-ignore").toFile();
+        Files.write(ignore.toPath(), Arrays.asList("*.log"), StandardCharsets.UTF_8);
+
+        assertThat(GitIgnoreBuilder.resolveGlobalGitIgnore(ignore.getAbsolutePath()))
+                .hasValue(ignore);
+        // a path that does not exist yields no global ignore (no fall back to the git config)
+        assertThat(GitIgnoreBuilder.resolveGlobalGitIgnore(ignore.getAbsolutePath() + ".missing"))
+                .isEmpty();
+    }
+
+    /**
+     * A {@code null} or {@code on} value keeps the git-configuration resolution (RAT-578 default).
+     */
+    @Test
+    public void test_global_git_ignore_on_or_unset() {
+        // 'on' must keep the git-config resolution path (should never be empty just because of the override)
+        assertThat(GitIgnoreBuilder.resolveGlobalGitIgnore("on"))
+                .as("'on' keeps git-config resolution, which is Optional on a clean machine")
+                .isNotNull();
+        assertThat(GitIgnoreBuilder.resolveGlobalGitIgnore(null)).isNotNull();
+    }
 }
