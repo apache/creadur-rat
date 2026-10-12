@@ -19,6 +19,9 @@
 package org.apache.rat.config.exclusion.fileprocessors;
 
 import java.io.File;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.io.IOException;
 
 import org.apache.rat.utils.FileUtils;
 import org.junit.jupiter.api.Test;
@@ -239,6 +242,48 @@ public class GitConfigTest {
         // git does not fall back to the default when core.excludesFile is configured
         assertThat(config.coreExcludesFile()).hasValue(new File(tempDir, "nonexistent/ignore.txt"));
     }
+
+    @Test
+    public void testGitConfigGlobalOverridesXdgAndUser() {
+        File globalIgnore = write("global/ignore.txt", "*.log");
+        File xdgIgnore = write("xdg/ignore.txt", "*.tmp");
+        File userIgnore = write("user/ignore.txt", "*.bak");
+        File globalConfig = write("global/.gitconfig",
+                "[core]",
+                "excludesFile = " + globalIgnore.getAbsolutePath());
+        File xdgConfig = write("xdg/config",
+                "[core]",
+                "excludesFile = " + xdgIgnore.getAbsolutePath());
+        File userConfig = write("user/.gitconfig",
+                "[core]",
+                "excludesFile = " + userIgnore.getAbsolutePath());
+        GitConfig config = new GitConfig(globalConfig, xdgConfig, userConfig, tempDir.toString(), tempDir);
+        // when GIT_CONFIG_GLOBAL is set, neither the XDG nor the user config are read
+        assertThat(config.coreExcludesFile()).hasValue(globalIgnore);
+    }
+
+    @Test
+    public void testTildeBackslashExpansion() {
+        File ignore = write("home/ignore.txt", "*.log");
+        File userConfig = write("user.gitconfig",
+                "[core]",
+                "excludesFile = ~\\ignore.txt");
+        File homeDir = new File(tempDir, "home");
+        GitConfig config = new GitConfig(null, userConfig, homeDir.toString(), tempDir);
+        assertThat(config.coreExcludesFile()).hasValue(ignore);
+    }
+
+    @Test
+    public void testCrLfFileParsesCorrectly() throws IOException {
+        File ignore = write("ignore.txt", "*.log");
+        File userConfig = new File(tempDir, "user.gitconfig");
+        Files.write(userConfig.toPath(),
+                ("# a comment\r\n[core]\r\nexcludesFile = \"" + ignore.getAbsolutePath() + "\"\r\n").getBytes(StandardCharsets.UTF_8));
+        GitConfig config = new GitConfig(null, userConfig, tempDir.toString(), tempDir);
+        // CRLF line endings must not leave a \r in the parsed values
+        assertThat(config.coreExcludesFile()).hasValue(ignore);
+    }
+
 
     @Test
     public void testNoExcludesFileFallsBackToDefault() {

@@ -230,4 +230,38 @@ public class GitIgnoreBuilderTest extends AbstractIgnoreBuilderTest {
 
         assertCorrect(matcherSets, documentName.getBaseDocumentName(), matching, notMatching);
     }
+
+    /**
+     * Test that a relative {@code core.excludesFile} is resolved once against the scan root and
+     * NOT re-resolved against a subdirectory when the scan descends (see
+     * <a href="https://github.com/apache/creadur-rat/pull/746">PR #746</a> review).
+     * <p>Mirrors git semantics where patterns from {@code core.excludesFile} are treated as if
+     * specified at the root of the working tree: a same-named file deeper in the tree must not be
+     * picked up.</p>
+     */
+    @Test
+    public void test_relative_excludesFile_resolved_once_at_root() throws URISyntaxException {
+        URL srcUrl = GitIgnoreBuilderTest.class.getClassLoader().getResource("GitIgnoreBuilderTest/RAT-578-root/");
+        File src = Paths.get(srcUrl.toURI()).toFile();
+
+        // simulate a core.excludesFile relative to the scan root (CWD), matching git's resolution
+        File resolved = new File(src, "excludes.txt");
+        GitIgnoreBuilder underTest = new GitIgnoreBuilder() {
+            @Override
+            protected Optional<File> globalGitIgnore() {
+                return Optional.of(resolved);
+            }
+        };
+
+        DocumentName documentName = DocumentName.builder(src).build();
+        List<MatcherSet> matcherSets = underTest.build(documentName);
+
+        // excluded by the root excludes.txt (*.md)
+        List<String> matching = Arrays.asList("root.md", "dir/ignored.md");
+        // dir/excludes.txt (*.log) is a decoy and must NOT be used:
+        // dir/kept.log stays checked instead of being ignored
+        List<String> notMatching = Arrays.asList("dir/kept.log", "dir/kept.txt");
+
+        assertCorrect(matcherSets, documentName.getBaseDocumentName(), matching, notMatching);
+    }
 }

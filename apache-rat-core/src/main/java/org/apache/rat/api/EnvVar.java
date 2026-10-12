@@ -46,6 +46,15 @@ public enum EnvVar {
      */
     HOME("The current user's home directory."),
     /**
+     * The Windows user profile directory.
+     */
+    USERPROFILE("The user profile directory on Windows, used as a fallback home directory when HOME is not set."),
+    /**
+     * The location of the git global configuration file.
+     */
+    GIT_CONFIG_GLOBAL("Where the git global (user-level) configuration file is located. When set, only this file " +
+            "is read for git's global configuration, ignoring $HOME/.gitconfig and $XDG_CONFIG_HOME/git/config."),
+    /**
      * Sets the log level for the DefaultLog when it is constructed.
      */
     RAT_DEFAULT_LOG_LEVEL("The default log level for the command line logger. Should be one of: " +

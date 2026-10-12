@@ -47,8 +47,14 @@ import org.apache.rat.api.EnvVar;
  * depth limit of {@value #MAX_INCLUDE_DEPTH} is enforced like git does.
  * </p>
  * <p>
- * {@code includeIf} directives, the system configuration ({@code /etc/gitconfig}) and the
- * repository configuration ({@code .git/config}) are not supported.
+ * {@code includeIf} directives, the system configuration ({@code /etc/gitconfig}), the
+ * {@code GIT_CONFIG_SYSTEM} variable and the repository configuration ({@code .git/config}) are
+ * not supported. The {@code GIT_CONFIG_GLOBAL} variable, when set, replaces the
+ * {@code $HOME/.gitconfig} and {@code $XDG_CONFIG_HOME/git/config} files.
+ * </p>
+ * <p>
+ * The home directory used for {@code ~} expansion is resolved from {@code HOME}, falling back to
+ * {@code USERPROFILE} (Windows) and then the {@code user.home} system property.
  * </p>
  * <p>
  * When {@code core.excludesFile} is not configured the default location next to the XDG
@@ -69,6 +75,8 @@ public class GitConfig {
     private static final int MAX_INCLUDE_DEPTH = 10;
     /** The home directory prefix of a path. */
     private static final String HOME_PREFIX = "~/";
+    /** The Windows style home directory prefix of a path. */
+    private static final String HOME_BACKSLASH_PREFIX = "~\\";
     /** The comment marker for a full line comment. */
     private static final String COMMENT_PREFIX = "#";
     /** The alternate comment marker for a full line comment. */
@@ -88,12 +96,15 @@ public class GitConfig {
     private final File cwd;
     /** The default global ignore file, next to the XDG configuration or {@code null}. */
     private final File defaultIgnore;
+    /** The file configured by the {@code GIT_CONFIG_GLOBAL} environment variable or {@code null}. */
+    private final File globalConfig;
 
     /**
      * Creates a GitConfig reading the configuration files from the environment.
      */
     public GitConfig() {
-        this(xdgConfigFile(), userConfigFile(), EnvVar.HOME.getValue());
+        this(gitConfigGlobalFile(), xdgConfigFile(), userConfigFile(), homeDir(),
+                new File(System.getProperty("user.dir")));
     }
 
     /**
@@ -103,7 +114,7 @@ public class GitConfig {
      * @param home the home directory used for {@code ~/} expansion.
      */
     GitConfig(final File xdgConfig, final File userConfig, final String home) {
-        this(xdgConfig, userConfig, home, new File(System.getProperty("user.dir")));
+        this(null, xdgConfig, userConfig, home, new File(System.getProperty("user.dir")));
     }
 
     /**
@@ -114,6 +125,20 @@ public class GitConfig {
      * @param cwd the directory against which relative paths are resolved.
      */
     GitConfig(final File xdgConfig, final File userConfig, final String home, final File cwd) {
+        this(null, xdgConfig, userConfig, home, cwd);
+    }
+
+    /**
+     * Creates a GitConfig reading the given configuration files.
+     * @param globalConfig the effective global config file (from {@code GIT_CONFIG_GLOBAL})
+     *        or {@code null} to use the XDG and user configuration files.
+     * @param xdgConfig the XDG configuration file or {@code null} if there is none.
+     * @param userConfig the user configuration file or {@code null} if there is none.
+     * @param home the home directory used for {@code ~} expansion.
+     * @param cwd the directory against which relative paths are resolved.
+     */
+    GitConfig(final File globalConfig, final File xdgConfig, final File userConfig, final String home, final File cwd) {
+        this.globalConfig = globalConfig;
         this.xdgConfig = xdgConfig;
         this.userConfig = userConfig;
         this.home = home;
@@ -134,8 +159,13 @@ public class GitConfig {
     public Optional<File> coreExcludesFile() {
         List<String> configured = new ArrayList<>();
         Set<File> includeChain = new HashSet<>();
-        parseFile(xdgConfig, configured, includeChain, 0);
-        parseFile(userConfig, configured, includeChain, 0);
+        if (globalConfig != null) {
+            // when GIT_CONFIG_GLOBAL is set, neither ~/.gitconfig nor $XDG_CONFIG_HOME/git/config are read
+            parseFile(globalConfig, configured, includeChain, 0);
+        } else {
+            parseFile(xdgConfig, configured, includeChain, 0);
+            parseFile(userConfig, configured, includeChain, 0);
+        }
         if (!configured.isEmpty()) {
             String value = configured.get(configured.size() - 1);
             return resolveExcludesFile(value);
@@ -244,7 +274,7 @@ public class GitConfig {
      * @return the file to include or an empty Optional if it can not be resolved.
      */
     private Optional<File> resolveInclude(final String value, final File includingFile) {
-        if (value.startsWith(HOME_PREFIX)) {
+        if (isHomePrefixed(value)) {
             return expandHome(value);
         }
         if (value.startsWith("~")) {
@@ -263,7 +293,7 @@ public class GitConfig {
      * @return the configured file or an empty Optional if it can not be resolved.
      */
     private Optional<File> resolveExcludesFile(final String value) {
-        if (value.startsWith(HOME_PREFIX)) {
+        if (isHomePrefixed(value)) {
             return expandHome(value);
         }
         if (value.startsWith("~")) {
@@ -282,11 +312,17 @@ public class GitConfig {
      * @param value the value to expand.
      * @return the expanded file or an empty Optional if no home directory is defined.
      */
+    private boolean isHomePrefixed(final String value) {
+        return value.startsWith(HOME_PREFIX) || value.startsWith(HOME_BACKSLASH_PREFIX);
+    }
+
     private Optional<File> expandHome(final String value) {
         if (home == null || home.isEmpty()) {
             return Optional.empty();
         }
-        return Optional.of(new File(home, value.substring(HOME_PREFIX.length())));
+        String rest = value.startsWith(HOME_PREFIX) ? value.substring(HOME_PREFIX.length())
+                : value.substring(HOME_BACKSLASH_PREFIX.length());
+        return Optional.of(new File(home, rest));
     }
 
     /**
@@ -368,7 +404,7 @@ public class GitConfig {
      */
     private static File xdgConfigFile() {
         String xdgConfigHome = EnvVar.XDG_CONFIG_HOME.getValue();
-        String home = EnvVar.HOME.getValue();
+        String home = homeDir();
         File base = xdgConfigHome != null && !xdgConfigHome.isEmpty()
                 ? new File(xdgConfigHome)
                 : new File(home == null ? "" : home, ".config");
@@ -380,8 +416,39 @@ public class GitConfig {
      * @return the user configuration file.
      */
     private static File userConfigFile() {
-        String home = EnvVar.HOME.getValue();
+        String home = homeDir();
         return new File(home == null ? "" : home, ".gitconfig");
+    }
+
+    /**
+     * Gets the file configured by the {@code GIT_CONFIG_GLOBAL} environment variable.
+     * <p>When set, neither {@code $HOME/.gitconfig} nor {@code $XDG_CONFIG_HOME/git/config} are
+     * read (matching git).</p>
+     * @return the global config file or {@code null} if the variable is not set.
+     */
+    private static File gitConfigGlobalFile() {
+        String value = EnvVar.GIT_CONFIG_GLOBAL.getValue();
+        return value == null || value.isEmpty() ? null : new File(value);
+    }
+
+    /**
+     * Resolves the user home directory, falling back from {@code HOME} to {@code USERPROFILE}
+     * (Windows) and finally the {@code user.home} system property, matching git's lookup order.
+     * @return the home directory or {@code null} if none can be resolved.
+     */
+    private static String homeDir() {
+        return resolveHome(EnvVar.HOME.getValue(), EnvVar.USERPROFILE.getValue(),
+                System.getProperty("user.home"));
+    }
+
+    private static String resolveHome(final String home, final String userProfile, final String userHome) {
+        if (home != null && !home.isEmpty()) {
+            return home;
+        }
+        if (userProfile != null && !userProfile.isEmpty()) {
+            return userProfile;
+        }
+        return userHome;
     }
 
     /**

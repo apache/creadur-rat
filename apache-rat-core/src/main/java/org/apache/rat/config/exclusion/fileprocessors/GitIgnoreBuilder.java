@@ -27,7 +27,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.function.Consumer;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.rat.api.EnvVar;
 import org.apache.rat.config.exclusion.ExclusionUtils;
 import org.apache.rat.config.exclusion.MatcherSet;
@@ -148,35 +147,23 @@ public class GitIgnoreBuilder extends AbstractFileProcessorBuilder {
     /**
      * The global gitignore file to process, based on the
      * {@link EnvVar#RAT_NO_GIT_GLOBAL_IGNORE}, the git configuration
-     * ({@code core.excludesFile} including {@code [include] path} directives)
-     * and the {@link EnvVar#XDG_CONFIG_HOME} and {@link EnvVar#HOME} environment
-     * variables.
+     * ({@code core.excludesFile} including {@code [include] path} directives and
+     * {@code GIT_CONFIG_GLOBAL}) and the {@link EnvVar#XDG_CONFIG_HOME} and
+     * {@link EnvVar#HOME} environment variables.
+     * <p>
+     * The global ignore file is read exactly once, anchored at the scan {@code root}, and its
+     * relative {@code core.excludesFile} path is resolved against the process working directory.
+     * It is not re-resolved when the scan descends into subdirectories, matching git where
+     * patterns from {@code core.excludesFile} are treated as if specified at the root of the
+     * working tree.
+     * </p>
      */
     protected Optional<File> globalGitIgnore() {
         if (EnvVar.RAT_NO_GIT_GLOBAL_IGNORE.isSet()) {
             return Optional.empty();
         }
-
-        Optional<File> fromConfig = new GitConfig().coreExcludesFile();
-        if (fromConfig.isPresent()) {
-            File configured = fromConfig.get();
-            // git treats a missing configured file as empty, do not fall back to the default
-            return configured.isFile() ? Optional.of(configured) : Optional.empty();
-        }
-
-        String xdgConfigHome = EnvVar.XDG_CONFIG_HOME.getValue();
-        String filename;
-        if (xdgConfigHome != null && !xdgConfigHome.isEmpty()) {
-            filename = xdgConfigHome + File.separator + "git" + File.separator + "ignore";
-        } else {
-            String home = StringUtils.defaultIfEmpty(EnvVar.HOME.getValue(), "");
-            filename = home + File.separator + ".config" + File.separator + "git" + File.separator + "ignore";
-        }
-        File file = new File(filename);
-        if (file.exists()) {
-            return Optional.of(file);
-        } else {
-            return Optional.empty();
-        }
+        // a configured but missing file yields an empty ignore (no fall back to the default),
+        // matching git behavior
+        return new GitConfig().coreExcludesFile().filter(File::isFile);
     }
 }

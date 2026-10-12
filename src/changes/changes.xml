@@ -69,7 +69,9 @@ in order to be properly linked in site reports.
     -->
     <release version="1.0.0-SNAPSHOT" date="xxxx-yy-zz" description="Current SNAPSHOT - release to be done">
       <action issue="RAT-578" type="add" dev="claudenw" due-to="Romain Manni-Bucau">
-        Support the git configuration file option core.excludesFile (including include.path directives) when processing global gitignore files.
+        Support the git configuration file option core.excludesFile (including include.path directives) and the GIT_CONFIG_GLOBAL
+        environment variable when processing global gitignore files, and resolve the home directory with a HOME, USERPROFILE,
+        user.home fallback for portability.
       </action>
       <action issue="RAT-579" type="add" dev="pottlinger">
         Generate cycloneDX BOMs upon each build.
