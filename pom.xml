@@ -512,6 +512,18 @@ agnostic home for software distribution comprehension and audit tools.
       -->
       <plugins>
         <plugin>
+          <groupId>org.cyclonedx</groupId>
+          <artifactId>cyclonedx-maven-plugin</artifactId>
+          <executions>
+            <execution>
+              <phase>package</phase>
+              <goals>
+                <goal>makeAggregateBom</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin>
+        <plugin>
           <groupId>com.github.spotbugs</groupId>
           <artifactId>spotbugs-maven-plugin</artifactId>
           <version>4.10.4.1</version>
@@ -671,6 +683,10 @@ agnostic home for software distribution comprehension and audit tools.
           <configLocation>src/conf/checkstyle.xml</configLocation>
           <suppressionsLocation>src/conf/checkstyle-suppressions.xml</suppressionsLocation>
         </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.cyclonedx</groupId>
+        <artifactId>cyclonedx-maven-plugin</artifactId>
       </plugin>
       <plugin>
         <groupId>com.github.spotbugs</groupId>
