@@ -64,7 +64,9 @@
           <artifactId>maven-checkstyle-plugin</artifactId>
           <executions>
             <execution>
-              <goals><goal>checkstyle-aggregate</goal></goals>
+              <goals>
+                <goal>checkstyle-aggregate</goal>
+              </goals>
               <configuration>
                 <skip>true</skip>
               </configuration>
