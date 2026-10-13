@@ -47,7 +47,6 @@ public enum EnvVar {
      * Setting it to {@code off} or to an explicit path makes RAT scans reproducible across machines
      * (recommended for CI/release builds). The legacy {@link #RAT_NO_GIT_GLOBAL_IGNORE} takes
      * precedence over this variable.
-     * </p>
      */
     RAT_GIT_GLOBAL_IGNORE("Controls how the global GIT ignore file is resolved: 'off' to disable it, 'on' to "
             + "resolve it from the git configuration, or a file path to always use an explicit global git ignore file."),
