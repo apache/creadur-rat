@@ -54,7 +54,8 @@ import org.apache.rat.api.EnvVar;
  * </p>
  * <p>
  * The home directory used for {@code ~} expansion is resolved from {@code HOME}, falling back to
- * {@code USERPROFILE} (Windows) and then the {@code user.home} system property.
+ * {@link org.apache.rat.api.EnvVar#USER_PROFILE} (Windows, backed by the {@code USERPROFILE}
+ * environment variable) and then the {@code user.home} system property.
  * </p>
  * <p>
  * When {@code core.excludesFile} is not configured the default location next to the XDG
@@ -432,12 +433,12 @@ public class GitConfig {
     }
 
     /**
-     * Resolves the user home directory, falling back from {@code HOME} to {@code USERPROFILE}
+     * Resolves the user home directory, falling back from {@code HOME} to {@code USER_PROFILE}
      * (Windows) and finally the {@code user.home} system property, matching git's lookup order.
      * @return the home directory or {@code null} if none can be resolved.
      */
     private static String homeDir() {
-        return resolveHome(EnvVar.HOME.getValue(), EnvVar.USERPROFILE.getValue(),
+        return resolveHome(EnvVar.HOME.getValue(), EnvVar.USER_PROFILE.getValue(),
                 System.getProperty("user.home"));
     }
 

@@ -35,20 +35,21 @@ public enum EnvVar {
     /**
      * Controls how the global GIT ignore file is resolved for reproducible builds and audits.
      * <p>
-     * The value may be one of:
+     * This is a tri-state variable, not a plain boolean. The value may be one of the following.
+     * </p>
      * <ul>
-     *   <li>{@code off} - never read the machine global git ignore (equivalent to setting
-     *       {@link #RAT_NO_GIT_GLOBAL_IGNORE});</li>
-     *   <li>{@code on} (default) - resolve the global git ignore from the git configuration
-     *       ({@code core.excludesFile} / {@code GIT_CONFIG_GLOBAL} / XDG / HOME);</li>
+     *   <li>{@code false} - never read the machine global git ignore (equivalent to setting
+     *       {@link #RAT_NO_GIT_GLOBAL_IGNORE}).</li>
+     *   <li>{@code true} (default) - resolve the global git ignore from the git configuration
+     *       ({@code core.excludesFile} / {@code GIT_CONFIG_GLOBAL} / XDG / HOME).</li>
      *   <li>a file path - always use that explicit global ignore file, so the scan result does not
      *       depend on the machine the audit runs on.</li>
      * </ul>
-     * Setting it to {@code off} or to an explicit path makes RAT scans reproducible across machines
-     * (recommended for CI/release builds). The legacy {@link #RAT_NO_GIT_GLOBAL_IGNORE} takes
-     * precedence over this variable.
+     * Setting it to {@code false} or to an explicit path makes RAT scans reproducible across
+     * machines (recommended for CI/release builds). The legacy {@link #RAT_NO_GIT_GLOBAL_IGNORE}
+     * takes precedence over this variable.
      */
-    RAT_GIT_GLOBAL_IGNORE("Controls how the global GIT ignore file is resolved: 'off' to disable it, 'on' to "
+    RAT_GIT_GLOBAL_IGNORE("Controls how the global GIT ignore file is resolved: 'false' to disable it, 'true' to "
             + "resolve it from the git configuration, or a file path to always use an explicit global git ignore file."),
     /**
      * Log matcher decomposition when used.
@@ -65,8 +66,17 @@ public enum EnvVar {
     HOME("The current user's home directory."),
     /**
      * The Windows user profile directory.
+     * <p>
+     * The environment variable that is read is {@code USERPROFILE} (no underscore), which is the
+     * canonical name used on Windows. The enum constant is spelled {@code USER_PROFILE} to stay
+     * consistent with the naming of the other constants.</p>
      */
-    USERPROFILE("The user profile directory on Windows, used as a fallback home directory when HOME is not set."),
+    USER_PROFILE("The user profile directory on Windows, used as a fallback home directory when HOME is not set.") {
+        @Override
+        public String getValue() {
+            return System.getenv("USERPROFILE");
+        }
+    },
     /**
      * The location of the git global configuration file.
      */

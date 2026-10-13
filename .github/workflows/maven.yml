@@ -31,7 +31,7 @@ env:
   # (core.excludesFile / ~/.gitconfig) alter what RAT excludes while auditing itself.
   # CI machines can carry a global gitignore that differs from local machines and would
   # otherwise make reports and self-checks non-reproducible.
-  RAT_NO_GIT_GLOBAL_IGNORE: "true"
+  RAT_GIT_GLOBAL_IGNORE: "false"
 
 jobs:
   build:

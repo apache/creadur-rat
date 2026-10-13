@@ -159,7 +159,7 @@ public class GitIgnoreBuilder extends AbstractFileProcessorBuilder {
      * </p>
      * <p>
      * {@link EnvVar#RAT_NO_GIT_GLOBAL_IGNORE} takes precedence over {@link EnvVar#RAT_GIT_GLOBAL_IGNORE}.
-     * When {@link EnvVar#RAT_GIT_GLOBAL_IGNORE} is {@code off} or an explicit path, the scan result does
+     * When {@link EnvVar#RAT_GIT_GLOBAL_IGNORE} is {@code false} or an explicit path, the scan result does
      * not depend on the machine the audit runs on, which is recommended for reproducible CI/release builds.
      * </p>
      */
@@ -173,10 +173,15 @@ public class GitIgnoreBuilder extends AbstractFileProcessorBuilder {
     /**
      * Resolves the global ignore file honoring the {@code RAT_GIT_GLOBAL_IGNORE} override value.
      * <p>
-     * A {@code null} or {@code on} value falls back to the git configuration resolution. An
-     * {@code off} value disables the global ignore. Any other value is treated as an explicit
-     * global ignore path and, when it exists, is used as is so the scan result does not depend on
-     * the machine the audit runs on.
+     * The override is a three-state value: a {@code "false"} disables the global ignore, a
+     * {@code "true"} (or an unset variable) falls back to the git configuration resolution, and
+     * any other value is treated as an explicit global ignore path that, when it exists, is used
+     * as is so the scan result does not depend on the machine the audit runs on.
+     * </p>
+     * <p>
+     * Because the three states share the same string value, the value may not be both a boolean
+     * keyword and a file name: a file that literally is named {@code true} or {@code false}
+     * cannot be pinned with this variable.
      * </p>
      * @param override the raw value of the {@code RAT_GIT_GLOBAL_IGNORE} environment variable or
      *        {@code null} if it is not set.
@@ -185,10 +190,10 @@ public class GitIgnoreBuilder extends AbstractFileProcessorBuilder {
     static Optional<File> resolveGlobalGitIgnore(final String override) {
         if (override != null) {
             String value = override.strip();
-            if ("off".equalsIgnoreCase(value)) {
+            if ("false".equalsIgnoreCase(value)) {
                 return Optional.empty();
             }
-            if (!"on".equalsIgnoreCase(value)) {
+            if (!"true".equalsIgnoreCase(value)) {
                 // an explicit path always uses that file if it exists; no fall back to the git config
                 File file = new File(value);
                 return file.isFile() ? Optional.of(file) : Optional.empty();

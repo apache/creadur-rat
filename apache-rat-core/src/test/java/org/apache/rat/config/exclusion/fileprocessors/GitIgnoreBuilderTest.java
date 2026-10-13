@@ -266,14 +266,14 @@ public class GitIgnoreBuilderTest extends AbstractIgnoreBuilderTest {
     }
 
     /**
-     * An {@code off} value for {@code RAT_GIT_GLOBAL_IGNORE} disables the global git ignore so that
+     * A {@code false} value for {@code RAT_GIT_GLOBAL_IGNORE} disables the global git ignore so that
      * a scan result does not depend on the machine's git configuration (reproducible CI/audits).
      */
     @Test
     public void test_global_git_ignore_off() {
-        assertThat(GitIgnoreBuilder.resolveGlobalGitIgnore("off"))
-                .as("'off' must not read a global git ignore").isEmpty();
-        assertThat(GitIgnoreBuilder.resolveGlobalGitIgnore(" OFF ")).isEmpty();
+        assertThat(GitIgnoreBuilder.resolveGlobalGitIgnore("false"))
+                .as("'false' must not read a global git ignore").isEmpty();
+        assertThat(GitIgnoreBuilder.resolveGlobalGitIgnore(" FALSE ")).isEmpty();
     }
 
     /**
@@ -293,14 +293,15 @@ public class GitIgnoreBuilderTest extends AbstractIgnoreBuilderTest {
     }
 
     /**
-     * A {@code null} or {@code on} value keeps the git-configuration resolution (RAT-578 default).
+     * A {@code null} or {@code true} value keeps the git-configuration resolution (RAT-578 default).
      */
     @Test
     public void test_global_git_ignore_on_or_unset() {
-        // 'on' must keep the git-config resolution path (should never be empty just because of the override)
-        assertThat(GitIgnoreBuilder.resolveGlobalGitIgnore("on"))
-                .as("'on' keeps git-config resolution, which is Optional on a clean machine")
+        // 'true' must keep the git-config resolution path (should never be empty just because of the override)
+        assertThat(GitIgnoreBuilder.resolveGlobalGitIgnore("true"))
+                .as("'true' keeps git-config resolution, which is Optional on a clean machine")
                 .isNotNull();
+        assertThat(GitIgnoreBuilder.resolveGlobalGitIgnore(" TRUE ")).isNotNull();
         assertThat(GitIgnoreBuilder.resolveGlobalGitIgnore(null)).isNotNull();
     }
 }
