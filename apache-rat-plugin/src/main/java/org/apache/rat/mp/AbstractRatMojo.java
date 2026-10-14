@@ -436,9 +436,10 @@ public abstract class AbstractRatMojo extends BaseRatMojo {
     }
 
     /**
-     * Determine if the rat-plugin has been configured to disallow inheritance,
-     * which may make errors
-     * @return if the current Mojo is runs with {@code inheritance=false} set in the pom.xml.
+     * Determine if the RAT-plugin has been configured to disallow inheritance,
+     * which may create errors if RAT runs in subfolders/submodules.
+     * Checks configuration in {@code <pluginManagement>}- and {@code <plugin>}-section.
+     * @return {@code true} if the current Mojo is configured with {@code inheritance=false} set in the pom.xml.
      */
     // VISIBLE FOR TESTING
     boolean isInheritanceDisabled() {
@@ -456,7 +457,7 @@ public abstract class AbstractRatMojo extends BaseRatMojo {
                         build.getPluginManagement() == null
                                 ? Stream.empty()
                                 : build.getPluginManagement()
-                                .getPlugins().stream())
+                                .getPlugins().stream()) // combine pluginManagement and plugin configuration
                 .filter(plugin ->
                         "org.apache.rat".equals(plugin.getGroupId())
                                 && "apache-rat-plugin".equals(plugin.getArtifactId()))
@@ -465,7 +466,6 @@ public abstract class AbstractRatMojo extends BaseRatMojo {
     }
 
     private void setIncludeExclude() {
-
         if (excludeSubProjects && project != null && project.getModules() != null) {
             List<String> subModules = new ArrayList<>();
             project.getModules().forEach(s -> subModules.add(format("%s/**", s)));
@@ -482,21 +482,25 @@ public abstract class AbstractRatMojo extends BaseRatMojo {
         }
 
         if (useMavenDefaultExcludes) {
+            DefaultLog.getInstance().debug("Adding MAVEN default exclusions...");
             setInputExcludeStd(StandardCollection.MAVEN.name());
         }
         if (useEclipseDefaultExcludes) {
+            DefaultLog.getInstance().debug("Adding ECLIPSE default exclusions...");
             setInputExcludeStd(StandardCollection.ECLIPSE.name());
         }
         if (useIdeaDefaultExcludes) {
+            DefaultLog.getInstance().debug("Adding IDEA default exclusions...");
             setInputExcludeStd(StandardCollection.IDEA.name());
         }
 
         if (parseSCMIgnoresAsExcludes) {
+            DefaultLog.getInstance().debug("Adding Standard SCM default exclusions...");
             setInputExcludeParsedScm(StandardCollection.STANDARD_SCMS.name());
         }
 
         if (isInheritanceDisabled()) {
-            DefaultLog.getInstance().info("INFO: You disabled plugin configuration inheritance in your pom.xml." +
+            DefaultLog.getInstance().info("You disabled plugin configuration inheritance in your pom.xml." +
                     "This may have unintended consequences in a submodule as RAT's configuration is not applied.");
         }
     }

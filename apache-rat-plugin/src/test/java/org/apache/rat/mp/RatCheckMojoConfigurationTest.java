@@ -16,12 +16,17 @@
  */
 package org.apache.rat.mp;
 
+import org.apache.maven.model.Build;
 import org.apache.maven.model.Model;
+import org.apache.maven.model.Plugin;
+import org.apache.maven.model.PluginManagement;
 import org.apache.maven.project.MavenProject;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.util.Arrays;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
@@ -32,6 +37,12 @@ class RatCheckMojoConfigurationTest {
     private MavenProject mavenProject;
     @Mock
     private Model model;
+    @Mock
+    private Build build;
+    @Mock
+    private Plugin plugin;
+    @Mock
+    private PluginManagement pluginManagement;
 
     @Test
     void testRatCheckMojoConfigurationWithoutBuild() {
@@ -39,5 +50,46 @@ class RatCheckMojoConfigurationTest {
         when(mavenProject.getOriginalModel()).thenReturn(model);
 
         assertThat(mojo.isInheritanceDisabled()).isFalse();
+    }
+
+    @Test
+    void testRatCheckMojoConfigurationWithoutPluginManagementConfigured() {
+        RatCheckMojo mojo = new RatCheckMojo(mavenProject);
+        when(mavenProject.getOriginalModel()).thenReturn(model);
+        when(model.getBuild()).thenReturn(build);
+        when(build.getPlugins()).thenReturn(Arrays.asList(plugin));
+        when(build.getPluginManagement()).thenReturn(null); // ensure no pluginManagement
+
+        assertThat(mojo.isInheritanceDisabled()).isFalse();
+    }
+
+    @Test
+    void testRatCheckMojoConfigurationWithInheritanceDisabledInPluginManagement() {
+        RatCheckMojo mojo = new RatCheckMojo(mavenProject);
+        when(mavenProject.getOriginalModel()).thenReturn(model);
+        when(model.getBuild()).thenReturn(build);
+        when(build.getPlugins()).thenReturn(Arrays.asList(plugin));
+
+        when(build.getPluginManagement()).thenReturn(pluginManagement);
+        when(pluginManagement.getPlugins()).thenReturn(Arrays.asList(plugin));
+        when(plugin.getGroupId()).thenReturn("org.apache.rat");
+        when(plugin.getArtifactId()).thenReturn("apache-rat-plugin");
+        when(plugin.getInherited()).thenReturn("false");
+
+        assertThat(mojo.isInheritanceDisabled()).isTrue();
+    }
+
+    @Test
+    void testRatCheckMojoConfigurationWithInheritanceDisabledInPluginConfiguration() {
+        RatCheckMojo mojo = new RatCheckMojo(mavenProject);
+        when(mavenProject.getOriginalModel()).thenReturn(model);
+        when(model.getBuild()).thenReturn(build);
+        when(build.getPlugins()).thenReturn(Arrays.asList(plugin));
+        when(build.getPluginManagement()).thenReturn(null); // explicitly no pluginManagement
+        when(plugin.getGroupId()).thenReturn("org.apache.rat");
+        when(plugin.getArtifactId()).thenReturn("apache-rat-plugin");
+        when(plugin.getInherited()).thenReturn("false");
+
+        assertThat(mojo.isInheritanceDisabled()).isTrue();
     }
 }
