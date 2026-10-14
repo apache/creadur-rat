@@ -440,7 +440,8 @@ public abstract class AbstractRatMojo extends BaseRatMojo {
      * which may make errors
      * @return if the current Mojo is runs with {@code inheritance=false} set in the pom.xml.
      */
-    private boolean isInheritanceDisabled() {
+    // VISIBLE FOR TESTING
+    boolean isInheritanceDisabled() {
         Model model = project.getOriginalModel();
         Build build = model.getBuild();
 
