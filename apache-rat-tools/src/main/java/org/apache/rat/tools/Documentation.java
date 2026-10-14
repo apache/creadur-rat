@@ -28,7 +28,6 @@ import org.apache.rat.OptionCollection;
 import org.apache.rat.ReportConfiguration;
 import org.apache.rat.help.AbstractHelp;
 import org.apache.rat.help.Licenses;
-import org.apache.rat.ui.UIOptionCollection;
 
 import static java.lang.String.format;
 
