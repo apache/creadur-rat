@@ -19,8 +19,14 @@
 package org.apache.rat;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
 
 import org.apache.commons.cli.Options;
+import org.apache.commons.io.function.IOSupplier;
+import org.apache.rat.commandline.ArgumentContext;
 import org.apache.rat.document.RatDocumentAnalysisException;
 import org.apache.rat.help.Help;
 import org.apache.rat.utils.DefaultLog;
@@ -31,7 +37,10 @@ import static java.lang.String.format;
  * The CLI based configuration object for report generation.
  */
 public final class Report {
-
+    /**
+     * The option collection that this report is using.
+     */
+    private static final CLIOptionCollection OPTION_COLLECTION = new CLIOptionCollection();
     /**
      * Processes the command line and builds a configuration and executes the
      * report.
@@ -47,12 +56,20 @@ public final class Report {
                     "list of valid commands and options, as you did not provide any arguments.");
             System.exit(0);
         }
+        OptionCollectionParser<CLIOption> cliOptionParser = new OptionCollectionParser<CLIOption>(OPTION_COLLECTION);
+        ArgumentContext argumentContext = cliOptionParser.parseCommands(new File("."), args);
+        ReportConfiguration configuration = argumentContext.getConfiguration();
 
-        ReportConfiguration configuration = OptionCollection.parseCommands(new File("."), args, Report::printUsage);
-        if (configuration != null) {
+        if (argumentContext.hasOption(CLIOptionCollection.HELP)) {
+            printUsage(OPTION_COLLECTION.getOptions(), configuration.getOutput());
+        } else if (!configuration.hasSource()) {
+            String msg = "No directories or files specified for scanning. Did you forget to close a multi-argument option?";
+            DefaultLog.getInstance().error(msg);
+            printUsage(OPTION_COLLECTION.getOptions(), configuration.getOutput());
+        } else {
             configuration.validate(DefaultLog.getInstance()::error);
             Reporter.Output output = new Reporter(configuration).execute();
-            output.format(configuration);
+            output.format(argumentContext.getConfiguration());
             output.writeSummary(DefaultLog.getInstance().asWriter());
 
             if (configuration.getClaimValidator().hasErrors()) {
@@ -65,11 +82,16 @@ public final class Report {
     }
 
     /**
-     * Prints the usage message on {@code System.out}.
+     * Prints the usage message on the output stream from {@code out}.
      * @param opts the defined options.
+     * @param out the A supplier of an OutputStream.
      */
-    private static void printUsage(final Options opts) {
-        new Help(System.out).printUsage(opts);
+    private static void printUsage(final Options opts, final IOSupplier<OutputStream> out) {
+        try (Writer writer = new OutputStreamWriter(out.get())) {
+            new Help(OPTION_COLLECTION, writer).printUsage(opts);
+        } catch (IOException e) {
+            DefaultLog.getInstance().error("Unable to open output stream", e);
+        }
     }
 
     private Report() {

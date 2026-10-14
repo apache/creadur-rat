@@ -76,7 +76,7 @@ public class Help extends BaseAntTask {
      */
     @Override
     public void execute() {
-        org.apache.rat.help.Help helpObj = new org.apache.rat.help.Help(System.out) {
+        org.apache.rat.help.Help helpObj = new org.apache.rat.help.Help(new AntOptionCollection(), System.out) {
             /**
              * Print the usage to the specific PrintWriter.
              * @param opts The defined options.

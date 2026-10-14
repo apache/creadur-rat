@@ -41,7 +41,7 @@ public class HelpTest {
     public void verifyAllOptionsListed() {
         Options opts = OptionCollection.buildOptions();
         StringWriter out = new StringWriter();
-        new Help(out).printUsage(opts);
+        new Help(OptionCollection.BASE_OPTION_COLLECTION, out).printUsage(opts);
 
         String result = out.toString();
 
@@ -64,7 +64,7 @@ public class HelpTest {
                 .map(OptionCollection.ArgumentType::getDisplayName)
                 .collect(Collectors.toSet());
         StringWriter out = new StringWriter();
-        new Help(out).printUsage(opts);
+        new Help(OptionCollection.BASE_OPTION_COLLECTION, out).printUsage(opts);
         String result = out.toString();
 
         for (Option option : opts.getOptions()) {
