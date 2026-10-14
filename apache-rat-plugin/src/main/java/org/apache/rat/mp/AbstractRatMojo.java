@@ -35,6 +35,8 @@ import java.util.stream.Stream;
 
 import org.apache.commons.cli.Option;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.maven.model.Build;
+import org.apache.maven.model.Model;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
@@ -433,6 +435,34 @@ public abstract class AbstractRatMojo extends BaseRatMojo {
         };
     }
 
+    /**
+     * Determine if the rat-plugin has been configured to disallow inheritance,
+     * which may make errors
+     * @return if the current Mojo is runs with {@code inheritance=false} set in the pom.xml.
+     */
+    private boolean isInheritanceDisabled() {
+        Model model = project.getOriginalModel();
+        Build build = model.getBuild();
+
+        if (build == null) {
+            return false;
+        }
+
+        // DEVHINT: we do not work on the effective model here and may miss parent-pom defined inheritance.
+        // That is accepted here as we only issue an informational message for RAT users.
+        return Stream.concat(
+                        build.getPlugins().stream(),
+                        build.getPluginManagement() == null
+                                ? Stream.empty()
+                                : build.getPluginManagement()
+                                .getPlugins().stream())
+                .filter(plugin ->
+                        "org.apache.rat".equals(plugin.getGroupId())
+                                && "apache-rat-plugin".equals(plugin.getArtifactId()))
+                .anyMatch(plugin ->
+                        "false".equalsIgnoreCase(plugin.getInherited()));
+    }
+
     private void setIncludeExclude() {
 
         if (excludeSubProjects && project != null && project.getModules() != null) {
@@ -462,6 +492,11 @@ public abstract class AbstractRatMojo extends BaseRatMojo {
 
         if (parseSCMIgnoresAsExcludes) {
             setInputExcludeParsedScm(StandardCollection.STANDARD_SCMS.name());
+        }
+
+        if (isInheritanceDisabled()) {
+            DefaultLog.getInstance().info("INFO: You disabled plugin configuration inheritance in your pom.xml." +
+                    "This may have unintended consequences in a submodule as RAT's configuration is not applied.");
         }
     }
 
