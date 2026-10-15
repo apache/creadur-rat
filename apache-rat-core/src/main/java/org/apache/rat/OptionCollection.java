@@ -166,7 +166,9 @@ public final class OptionCollection {
         }
 
         if (argumentContext.hasOption(Arg.HELP_LICENSES.option())) {
-            new Licenses(BASE_OPTION_COLLECTION, createConfiguration(argumentContext), new PrintWriter(System.out, false, StandardCharsets.UTF_8)).printHelp();
+            new Licenses(BASE_OPTION_COLLECTION, createConfiguration(argumentContext),
+                    new PrintWriter(ReportConfiguration.SYSTEM_OUT.ioSupplier().get(), false,
+                            StandardCharsets.UTF_8)).printHelp();
             return null;
         }
 
