@@ -19,7 +19,6 @@
 package org.apache.rat;
 
 import java.io.File;
-import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Map;
 import java.util.stream.Stream;
@@ -30,23 +29,17 @@ import org.apache.commons.xml.secure.SecureXPathFactory;
 import org.apache.rat.api.RatException;
 import org.apache.rat.commandline.ArgumentContext;
 import org.apache.rat.report.claim.ClaimStatistic;
-import org.apache.rat.test.AbstractConfigurationOptionsProvider;
 import org.apache.rat.testhelpers.BaseOptionCollection;
 import org.apache.rat.testhelpers.data.OptionTestDataProvider;
 import org.apache.rat.testhelpers.data.TestData;
 import org.apache.rat.testhelpers.data.ValidatorData;
 import org.apache.rat.utils.FileUtils;
 import org.apache.rat.testhelpers.XmlUtils;
-import org.apache.rat.utils.DefaultLog;
-import org.apache.rat.utils.Log;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.CleanupMode;
 import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.ArgumentsSource;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -71,7 +64,8 @@ public final class ReporterOptionsTest {
      */
     @ParameterizedTest( name = "{index} {0}")
     @MethodSource("getTestData")
-    void testOptionsUpdateConfig(String name, TestData test) throws Exception {
+    void testOptionsUpdateConfig(String name, TestData test) throws Exception { // NOSONAR
+        // this method either succeeds or thows an exception during the validation.
         Path basePath = testPath.resolve(test.getTestName());
         test.setupFiles(basePath);
         ArgumentContext ctxt = collectionParser.parseCommands(basePath.toFile(), test.getCommandLine());

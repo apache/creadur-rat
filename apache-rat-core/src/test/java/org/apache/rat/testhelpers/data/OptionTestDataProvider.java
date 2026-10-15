@@ -59,6 +59,7 @@ import java.util.function.Supplier;
 import static org.apache.rat.utils.FileUtils.writeFile;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Fail.fail;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 /**
  * Generates a list of TestData for options.
@@ -162,7 +163,7 @@ public class OptionTestDataProvider extends AbstractTestDataProvider {
         validatorData -> {
             assertThat(validatorData.getConfiguration().getLicenseIds(LicenseSetFactory.LicenseFilter.ALL)).contains("ILLUMOS");
             SortedSet<String> result = validatorData.getConfiguration().getLicenseIds(LicenseSetFactory.LicenseFilter.APPROVED);
-            assertThat(result).doesNotContain("ILLUMOS");
+            assertThat(result).isNotEmpty().doesNotContain("ILLUMOS");
         });
     }
 
@@ -191,7 +192,7 @@ setup,
         validatorData -> {
             assertThat(validatorData.getConfiguration().getLicenseCategories(LicenseSetFactory.LicenseFilter.ALL)).contains(gpl);
             SortedSet<String> result = validatorData.getConfiguration().getLicenseCategories(LicenseSetFactory.LicenseFilter.APPROVED);
-            assertThat(result).doesNotContain(gpl);
+            assertThat(result).isNotEmpty().doesNotContain(gpl);
         });
     }
 
@@ -375,7 +376,7 @@ setup,
     @Override
     protected void licensesDeniedFileTest(final Set<TestData> result, final Option option) {
         result.add(execLicensesDeniedTest(option, new String[]{"licensesDenied.txt"},
-                (basePath) -> writeFile(basePath.toFile(), "licensesDenied.txt", Collections.singletonList("ILLUMOS"))));
+                basePath -> writeFile(basePath.toFile(), "licensesDenied.txt", Collections.singletonList("ILLUMOS"))));
     }
 
     @Override
@@ -404,7 +405,7 @@ setup,
     protected void counterMaxTest(final Set<TestData> result, final Option option) {
         result.add(new TestData(DataUtils.asDirName(option), Collections.singletonList(ImmutablePair.nullPair()),
                 DataUtils.NO_SETUP,
-                validatorData -> assertThat(validatorData.getConfiguration().getClaimValidator().getMin(ClaimStatistic.Counter.UNAPPROVED)).isEqualTo(0)));
+                validatorData -> assertThat(validatorData.getConfiguration().getClaimValidator().getMin(ClaimStatistic.Counter.UNAPPROVED)).isZero()));
 
 
         result.add(new TestData("negativeValue", Collections.singletonList(ImmutablePair.of(option,
@@ -420,7 +421,7 @@ setup,
                 DataUtils.NO_SETUP,
                 validatorData -> {
                     assertThat(validatorData.getConfiguration().getClaimValidator().getMax(ClaimStatistic.Counter.UNAPPROVED)).isEqualTo(5);
-                    assertThat(validatorData.getConfiguration().getClaimValidator().getMax(ClaimStatistic.Counter.IGNORED)).isEqualTo(0);
+                    assertThat(validatorData.getConfiguration().getClaimValidator().getMax(ClaimStatistic.Counter.IGNORED)).isZero();
                 }));
     }
 
@@ -428,7 +429,7 @@ setup,
     protected void counterMinTest(final Set<TestData> result, final Option option) {
         result.add(new TestData(DataUtils.asDirName(option), Collections.singletonList(ImmutablePair.nullPair()),
                 DataUtils.NO_SETUP,
-                validatorData -> assertThat(validatorData.getConfiguration().getClaimValidator().getMin(ClaimStatistic.Counter.UNAPPROVED)).isEqualTo(0)));
+                validatorData -> assertThat(validatorData.getConfiguration().getClaimValidator().getMin(ClaimStatistic.Counter.UNAPPROVED)).isZero()));
 
         String[] args = {"Unapproved:1", "ignored:1"};
         result.add(new TestData("capitalized", Collections.singletonList(ImmutablePair.of(option, args)),
@@ -443,7 +444,7 @@ setup,
                 DataUtils.NO_SETUP,
                 validatorData -> {
                     assertThat(validatorData.getConfiguration().getClaimValidator().getMin(ClaimStatistic.Counter.UNAPPROVED)).isEqualTo(5);
-                    assertThat(validatorData.getConfiguration().getClaimValidator().getMin(ClaimStatistic.Counter.IGNORED)).isEqualTo(0);
+                    assertThat(validatorData.getConfiguration().getClaimValidator().getMin(ClaimStatistic.Counter.IGNORED)).isZero();
                 }));
 
         args = new String[]{"unapproved:-5", "ignored:0"};
@@ -451,7 +452,7 @@ setup,
                 DataUtils.NO_SETUP,
                 validatorData -> {
                     assertThat(validatorData.getConfiguration().getClaimValidator().getMin(ClaimStatistic.Counter.UNAPPROVED)).isEqualTo(-5);
-                    assertThat(validatorData.getConfiguration().getClaimValidator().getMin(ClaimStatistic.Counter.IGNORED)).isEqualTo(0);
+                    assertThat(validatorData.getConfiguration().getClaimValidator().getMin(ClaimStatistic.Counter.IGNORED)).isZero();
                 }));
     }
 
@@ -609,11 +610,7 @@ setup,
                     }
                     DocumentName outputDocument = validatorData.mkDocName("outexample");
 
-                    try {
-                        assertThat(TextUtils.readFile(outputDocument.asFile())).contains("Hello world");
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
+                    assertDoesNotThrow(() -> TextUtils.readFile(outputDocument.asFile())).contains("Hello world");
                 }));
     }
 
