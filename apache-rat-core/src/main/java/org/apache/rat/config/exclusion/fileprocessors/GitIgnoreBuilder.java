@@ -27,7 +27,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.function.Consumer;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.rat.api.EnvVar;
 import org.apache.rat.config.exclusion.ExclusionUtils;
 import org.apache.rat.config.exclusion.MatcherSet;
@@ -147,29 +146,61 @@ public class GitIgnoreBuilder extends AbstractFileProcessorBuilder {
 
     /**
      * The global gitignore file to process, based on the
-     * {@link EnvVar#RAT_NO_GIT_GLOBAL_IGNORE},
-     * {@link EnvVar#XDG_CONFIG_HOME} and
-     * {@link EnvVar#HOME} environment
-     * variables.
+     * {@link EnvVar#RAT_NO_GIT_GLOBAL_IGNORE} and {@link EnvVar#RAT_GIT_GLOBAL_IGNORE}
+     * environment variables, the git configuration ({@code core.excludesFile} including
+     * {@code [include] path} directives and {@code GIT_CONFIG_GLOBAL}) and the
+     * {@link EnvVar#XDG_CONFIG_HOME} and {@link EnvVar#HOME} environment variables.
+     * <p>
+     * The global ignore file is read exactly once, anchored at the scan {@code root}, and its
+     * relative {@code core.excludesFile} path is resolved against the process working directory.
+     * It is not re-resolved when the scan descends into subdirectories, matching git where
+     * patterns from {@code core.excludesFile} are treated as if specified at the root of the
+     * working tree.
+     * </p>
+     * <p>
+     * {@link EnvVar#RAT_NO_GIT_GLOBAL_IGNORE} takes precedence over {@link EnvVar#RAT_GIT_GLOBAL_IGNORE}.
+     * When {@link EnvVar#RAT_GIT_GLOBAL_IGNORE} is {@code false} or an explicit path, the scan result does
+     * not depend on the machine the audit runs on, which is recommended for reproducible CI/release builds.
+     * </p>
      */
     protected Optional<File> globalGitIgnore() {
         if (EnvVar.RAT_NO_GIT_GLOBAL_IGNORE.isSet()) {
             return Optional.empty();
         }
+        return resolveGlobalGitIgnore(EnvVar.RAT_GIT_GLOBAL_IGNORE.getValue());
+    }
 
-        String xdgConfigHome = EnvVar.XDG_CONFIG_HOME.getValue();
-        String filename;
-        if (xdgConfigHome != null && !xdgConfigHome.isEmpty()) {
-            filename = xdgConfigHome + File.separator + "git" + File.separator + "ignore";
-        } else {
-            String home = StringUtils.defaultIfEmpty(EnvVar.HOME.getValue(), "");
-            filename = home + File.separator + ".config" + File.separator + "git" + File.separator + "ignore";
+    /**
+     * Resolves the global ignore file honoring the {@code RAT_GIT_GLOBAL_IGNORE} override value.
+     * <p>
+     * The override is a three-state value: a {@code "false"} disables the global ignore, a
+     * {@code "true"} (or an unset variable) falls back to the git configuration resolution, and
+     * any other value is treated as an explicit global ignore path that, when it exists, is used
+     * as is so the scan result does not depend on the machine the audit runs on.
+     * </p>
+     * <p>
+     * Because the three states share the same string value, the value may not be both a boolean
+     * keyword and a file name: a file that literally is named {@code true} or {@code false}
+     * cannot be pinned with this variable.
+     * </p>
+     * @param override the raw value of the {@code RAT_GIT_GLOBAL_IGNORE} environment variable or
+     *        {@code null} if it is not set.
+     * @return the resolved global ignore file or an empty Optional if none must be used.
+     */
+    static Optional<File> resolveGlobalGitIgnore(final String override) {
+        if (override != null) {
+            String value = override.strip();
+            if ("false".equalsIgnoreCase(value)) {
+                return Optional.empty();
+            }
+            if (!"true".equalsIgnoreCase(value)) {
+                // an explicit path always uses that file if it exists; no fall back to the git config
+                File file = new File(value);
+                return file.isFile() ? Optional.of(file) : Optional.empty();
+            }
         }
-        File file = new File(filename);
-        if (file.exists()) {
-            return Optional.of(file);
-        } else {
-            return Optional.empty();
-        }
+        // a configured but missing file yields an empty ignore (no fall back to the default),
+        // matching git behavior
+        return new GitConfig().coreExcludesFile().filter(File::isFile);
     }
 }
