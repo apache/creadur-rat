@@ -31,6 +31,7 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.project.MavenProject;
 import org.apache.rat.ReportConfiguration;
 import org.apache.rat.Reporter;
 import org.apache.rat.commandline.Arg;
@@ -159,6 +160,15 @@ public class RatCheckMojo extends AbstractRatMojo {
      */
     @Parameter(property = "rat.consoleOutput", defaultValue = "true")
     private boolean consoleOutput;
+
+    RatCheckMojo() {
+        // empty to allow object instantiation in tests
+    }
+
+    // VISIBLE FOR TESTING
+    RatCheckMojo(final MavenProject project) {
+        this.project = project;
+    }
 
     @Override
     protected ReportConfiguration getConfiguration() throws MojoExecutionException {
