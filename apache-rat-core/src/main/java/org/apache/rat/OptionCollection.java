@@ -63,7 +63,9 @@ import static java.lang.String.format;
 /**
  * The collection of standard options for the CLI as well as utility methods to manage them and methods to create the
  * ReportConfiguration from the options and an array of arguments.
+ * @deprecated this class will be removed and all functionality distributed across other classes.
  */
+@Deprecated
 public final class OptionCollection {
 
     private OptionCollection() {
@@ -73,7 +75,7 @@ public final class OptionCollection {
     /**
      * The collection of UI Options.
      */
-    private static final UIOptionCollection<? extends UIOption<?>> BASE_OPTION_COLLECTION = new CLIOptionCollection();
+    public static final UIOptionCollection<? extends UIOption<?>> BASE_OPTION_COLLECTION = new CLIOptionCollection();
 
     /**
      * The Option comparator to sort the help.
@@ -164,7 +166,9 @@ public final class OptionCollection {
         }
 
         if (argumentContext.hasOption(Arg.HELP_LICENSES.option())) {
-            new Licenses(createConfiguration(argumentContext), new PrintWriter(System.out, false, StandardCharsets.UTF_8)).printHelp();
+            new Licenses(BASE_OPTION_COLLECTION, createConfiguration(argumentContext),
+                    new PrintWriter(ReportConfiguration.SYSTEM_OUT.ioSupplier().get(), false,
+                            StandardCharsets.UTF_8)).printHelp();
             return null;
         }
 
@@ -194,6 +198,7 @@ public final class OptionCollection {
             final ReportConfiguration configuration = argumentContext.getConfiguration();
             Optional<Option> dirOpt = BASE_OPTION_COLLECTION.getSelected(Arg.DIR);
             dirOpt.ifPresent(opt -> {
+                argumentContext.logParseException(new ParseException("windows debug statement"), opt);
                     File directoryName = argumentContext.getParsedOptionValue(opt);
                     configuration.addSource(getReportable(directoryName, configuration));
             });

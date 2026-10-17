@@ -49,6 +49,7 @@ import org.apache.rat.utils.DefaultLog;
 import org.apache.rat.utils.Log;
 import org.apache.rat.walker.DirectoryWalker;
 import org.codehaus.groovy.control.CompilerConfiguration;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -248,5 +249,15 @@ class ReportTest {
         public void close() {
             logFile.close();
         }
+    }
+
+    @Test
+    void noArgsTest() throws Exception {
+        Report.main(null);
+    }
+
+    @Test
+    void helpTest() throws Exception {
+        Report.main(new String[]{"--help"});
     }
 }
