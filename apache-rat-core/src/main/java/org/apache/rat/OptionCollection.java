@@ -198,6 +198,7 @@ public final class OptionCollection {
             final ReportConfiguration configuration = argumentContext.getConfiguration();
             Optional<Option> dirOpt = BASE_OPTION_COLLECTION.getSelected(Arg.DIR);
             dirOpt.ifPresent(opt -> {
+                argumentContext.logParseException(new ParseException("windows debug statement"), opt);
                     File directoryName = argumentContext.getParsedOptionValue(opt);
                     configuration.addSource(getReportable(directoryName, configuration));
             });
