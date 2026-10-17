@@ -54,7 +54,7 @@ public final class Report {
         if (args == null || args.length == 0) {
             DefaultLog.getInstance().info("Please use the \"--help\" option to see a " +
                     "list of valid commands and options, as you did not provide any arguments.");
-            System.exit(0);
+            return;
         }
         OptionCollectionParser<CLIOption> cliOptionParser = new OptionCollectionParser<CLIOption>(OPTION_COLLECTION);
         ArgumentContext argumentContext = cliOptionParser.parseCommands(new File("."), args);

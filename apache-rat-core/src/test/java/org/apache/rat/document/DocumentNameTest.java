@@ -279,7 +279,7 @@ public class DocumentNameTest {
         for (FSInfo fsInfo :  FSInfoTest.TEST_SUITE) {
             String os = fsInfo.toString();
             String root = fsInfo.roots()[0];
-            String baseName = String.format(String.format("%sarchives", root));
+            String baseName = root + "archives";
             String simpleName = String.format("%sanArchive.zip", fsInfo.dirSeparator());
             String entryName = "./anArchiveEntry.txt";
             DocumentName archiveName = DocumentName.builder(fsInfo).setName(baseName + simpleName).setBaseName(baseName).build();

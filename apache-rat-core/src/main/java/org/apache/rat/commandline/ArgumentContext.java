@@ -280,11 +280,10 @@ public final class ArgumentContext {
      * @return a String representation of the command line suitable for debugging.
      */
     public static String commandLineDescription(final CommandLine commandLine) {
-        List<String> options = new ArrayList<>();
-        for (Option opt : commandLine.getOptions()) {
-            options.add(String.format("Option[%s v:[%s]]", StringUtils.defaultIfEmpty(opt.getLongOpt(), opt.getKey()),
-                    String.join(",", opt.getValues() == null ? new String [0] : opt.getValues())));
-        }
+        List<String> options = Arrays.stream(commandLine.getOptions())
+                .map(opt -> String.format("Option[%s v:[%s]]", StringUtils.defaultIfEmpty(opt.getLongOpt(), opt.getKey()),
+                String.join(",", opt.getValues() == null ? new String [0] : opt.getValues())))
+                .toList();
         return new StringBuilder()
                 .append("[ CommandLine: [ options: ")
                 .append(options)
