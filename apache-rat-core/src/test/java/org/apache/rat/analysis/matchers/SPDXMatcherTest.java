@@ -30,7 +30,7 @@ public class SPDXMatcherTest {
     final SPDXMatcherFactory factory = SPDXMatcherFactory.newInstance();
     final IHeaderMatcher target1 = factory.create("hello");
     final IHeaderMatcher target2 = factory.create("world");
-    final IHeaderMatcher target3 = factroy.create("goodbye");
+    final IHeaderMatcher target3 = factory.create("goodbye");
 
     @BeforeEach
     public void setup() {
