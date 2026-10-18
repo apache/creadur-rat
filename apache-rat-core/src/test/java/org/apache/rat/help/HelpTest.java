@@ -21,7 +21,6 @@ package org.apache.rat.help;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.rat.OptionCollection;
-import org.apache.rat.ui.UIOptionCollection;
 import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayOutputStream;
@@ -35,6 +34,7 @@ import java.util.stream.Collectors;
 
 import static java.lang.String.format;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -84,19 +84,19 @@ class HelpTest {
 
     @Test
     void testWriterConstructor() {
-        Help help = new Help(OptionCollection.BASE_OPTION_COLLECTION, new StringWriter());
+        assertDoesNotThrow(() -> new Help(OptionCollection.BASE_OPTION_COLLECTION, new StringWriter()));
     }
 
     @Test
     void testPrintWriterConstructor() {
         PrintWriter printWriter = new PrintWriter(new StringWriter());
-        Help help = new Help(OptionCollection.BASE_OPTION_COLLECTION, printWriter);
+        assertDoesNotThrow(() -> new Help(OptionCollection.BASE_OPTION_COLLECTION, printWriter));
     }
 
     @Test
     void testPrintStreamConstructor() {
         PrintStream printStream = new PrintStream(new ByteArrayOutputStream());
-        Help help = new Help(OptionCollection.BASE_OPTION_COLLECTION, printStream);
+        assertDoesNotThrow(() -> new Help(OptionCollection.BASE_OPTION_COLLECTION, printStream));
     }
 
 }
