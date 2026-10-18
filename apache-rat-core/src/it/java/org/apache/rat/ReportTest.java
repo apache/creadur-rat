@@ -54,6 +54,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.fail;
 
@@ -253,11 +254,11 @@ class ReportTest {
 
     @Test
     void noArgsTest() throws Exception {
-        Report.main(null);
+        assertDoesNotThrow(() -> Report.main(null));
     }
 
     @Test
     void helpTest() throws Exception {
-        Report.main(new String[]{"--help"});
+        assertDoesNotThrow(() -> Report.main(new String[]{"--help"}));
     }
 }
