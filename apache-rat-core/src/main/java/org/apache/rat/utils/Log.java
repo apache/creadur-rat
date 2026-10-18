@@ -92,7 +92,11 @@ public interface Log {
      * @param message the message to write.
      */
     default void log(Level level, Object message) {
-        log(level, message == null ? "NULL" : message.toString());
+//        if (message instanceof Throwable throwable) {
+//            log(level, throwable.getMessage(), throwable);
+//        } else {
+            log(level, message == null ? "NULL" : message.toString());
+//        }
     }
 
     /**

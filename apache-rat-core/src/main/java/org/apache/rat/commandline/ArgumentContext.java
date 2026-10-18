@@ -87,10 +87,21 @@ public final class ArgumentContext {
      * @return the logging/debug string describing the Option.
      */
     public static String toString(final Option option) {
-        return String.format("Option[%s v:[%s]",
+
+        Supplier<String> values = () -> {
+            if (!option.hasArg()) {
+                return "";
+            }
+            String[] optValues = option.getValues();
+            if (optValues == null || optValues.length == 0) {
+                return " v:[]";
+            }
+            return " v:['" + String.join("' '", optValues) + "']";
+        };
+
+        return String.format("Option[%s%s]",
                 StringUtils.defaultIfEmpty(option.getLongOpt(), option.getOpt()),
-                option.getValues() == null ? "[]" : Arrays.toString(option.getValues())
-                );
+                values.get());
     }
     /**
      * Clears the group selections in the options.
@@ -266,7 +277,8 @@ public final class ArgumentContext {
      * @param opt the option being processed.
      */
     public void logParseException(final ParseException exception, final Option opt) {
-        DefaultLog.getInstance().warn(format("Invalid %s specified: %s ", toString(opt), commandLine.getOptionValue(opt)));
+        DefaultLog.getInstance().warn(format("Invalid %s specifically: %s ", toString(opt),
+                exception.getMessage()));
         if (DefaultLog.getInstance().isEnabled(Log.Level.DEBUG)) {
             DefaultLog.getInstance().debug(exception);
         }
@@ -276,20 +288,18 @@ public final class ArgumentContext {
      * Creates a visual description of the CommandLine.
      * This used to be provided by the {@code CommandLine.toString()}
      * method, but that has been removed.
-     * @param commandLine the command line to format.
      * @return a String representation of the command line suitable for debugging.
      */
-    public static String commandLineDescription(final CommandLine commandLine) {
+    public String commandLineDescription() {
         List<String> options = Arrays.stream(commandLine.getOptions())
-                .map(opt -> String.format("Option[%s v:[%s]]", StringUtils.defaultIfEmpty(opt.getLongOpt(), opt.getKey()),
-                String.join(",", opt.getValues() == null ? new String [0] : opt.getValues())))
+                .map(ArgumentContext::toString)
                 .toList();
         return new StringBuilder()
-                .append("[ CommandLine: [ options: ")
+                .append("CommandLine[ options: ")
                 .append(options)
-                .append(" ] [ args: ")
+                .append(" args: ")
                 .append(commandLine.getArgList().toString())
-                .append(" ] ]")
+                .append(" ]")
                 .toString();
     }
 }
