@@ -21,9 +21,13 @@ package org.apache.rat.help;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.rat.OptionCollection;
+import org.apache.rat.ui.UIOptionCollection;
 import org.junit.jupiter.api.Test;
 
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
 import java.io.StringWriter;
+import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.Set;
 import java.util.regex.Pattern;
@@ -36,14 +40,14 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * Tests to validate CLI help option.
  */
-public class HelpTest {
+class HelpTest {
     @Test
-    public void verifyAllOptionsListed() {
+    void verifyAllOptionsListed() {
         Options opts = OptionCollection.buildOptions();
-        StringWriter out = new StringWriter();
-        new Help(OptionCollection.BASE_OPTION_COLLECTION, out).printUsage(opts);
+        StringWriter stringWriter = new StringWriter();
+        new Help(OptionCollection.BASE_OPTION_COLLECTION, stringWriter).printUsage(opts);
 
-        String result = out.toString();
+        String result = stringWriter.toString();
 
         for (Option option : opts.getOptions()) {
             if (option.getOpt() != null) {
@@ -58,14 +62,14 @@ public class HelpTest {
     }
 
     @Test
-    public void verifyArgumentsListed() {
+    void verifyArgumentsListed() {
         Options opts = OptionCollection.buildOptions();
         Set<String> argTypes = Arrays.stream(OptionCollection.ArgumentType.values())
                 .map(OptionCollection.ArgumentType::getDisplayName)
                 .collect(Collectors.toSet());
-        StringWriter out = new StringWriter();
-        new Help(OptionCollection.BASE_OPTION_COLLECTION, out).printUsage(opts);
-        String result = out.toString();
+        StringWriter stringWriter = new StringWriter();
+        new Help(OptionCollection.BASE_OPTION_COLLECTION, stringWriter).printUsage(opts);
+        String result = stringWriter.toString();
 
         for (Option option : opts.getOptions()) {
             if (option.getArgName() != null) {
@@ -77,4 +81,22 @@ public class HelpTest {
         }
         assertThat(result).doesNotContain("..");
     }
+
+    @Test
+    void testWriterConstructor() {
+        Help help = new Help(OptionCollection.BASE_OPTION_COLLECTION, new StringWriter());
+    }
+
+    @Test
+    void testPrintWriterConstructor() {
+        PrintWriter printWriter = new PrintWriter(new StringWriter());
+        Help help = new Help(OptionCollection.BASE_OPTION_COLLECTION, printWriter);
+    }
+
+    @Test
+    void testPrintStreamConstructor() {
+        PrintStream printStream = new PrintStream(new ByteArrayOutputStream());
+        Help help = new Help(OptionCollection.BASE_OPTION_COLLECTION, printStream);
+    }
+
 }
