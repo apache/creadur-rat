@@ -57,5 +57,14 @@ public class CodeGeneratorTest {
         methodText = methods.get(mavenOption.get());
         assertThat(methodText).contains("public void setLicenseFamiliesApproved(final String licenseFamiliesApproved) {")
                         .containsOnlyOnce("public void set");
+        chckDeprecated(methods);
+    }
+
+    private void chckDeprecated(Map<MavenOption, String> methods) {
+        for (Map.Entry<MavenOption, String> entry : methods.entrySet()) {
+            if (entry.getKey().isDeprecated()) {
+                assertThat(entry.getValue()).as(entry.getKey().toString()).doesNotContain("<", ">");
+            }
+        }
     }
 }

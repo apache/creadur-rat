@@ -35,6 +35,7 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.text.StringEscapeUtils;
 import org.apache.rat.DeprecationReporter;
 import org.apache.rat.OptionCollection;
 import org.apache.rat.maven.MavenOption;
@@ -210,6 +211,7 @@ public final class CodeGenerator {
         final VelocityContext context = new VelocityContext();
         mavenOptionCollection.getMappedOptions().forEach(mavenOption -> {
             final StringWriter methodWriter = new StringWriter();
+            context.put("esc", StringEscapeUtils.class);
             context.put("option", mavenOption);
             String desc = createDesc(mavenOption);
             context.put("desc", desc);
