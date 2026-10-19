@@ -18,11 +18,11 @@
  *#
     /**
 #if (${desc} != "")
-     * ${desc}
+     * ${esc.escapeHtml4(${desc})}
 #end
-     * @param ${option.getName} ${argDesc}
+     * @param ${option.getName} ${esc.escapeHtml4(${argDesc})}
 #if (${option.isDeprecated})
-     * @deprecated ${option.getDeprecated}
+     * @deprecated ${esc.escapeHtml4(${option.getDeprecated})}
 #end
      */
 #if (${option.isDeprecated})
