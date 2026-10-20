@@ -493,7 +493,7 @@ public abstract class AbstractRatMojo extends BaseRatMojo {
         }
 
         if (isInheritanceDisabled()) {
-            DefaultLog.getInstance().info("You disabled plugin configuration inheritance in your pom.xml." +
+            DefaultLog.getInstance().info("You disabled plugin configuration inheritance in your pom.xml. " +
                     "This may have unintended consequences in a submodule as RAT's configuration is not applied.");
         }
     }
