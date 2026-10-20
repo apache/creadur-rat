@@ -43,7 +43,7 @@
             Option main = arg.option();
             if (opt.hasArgs()) {
                 // a multi-valued option accumulates values from every alias of its group, deprecated or not,
-                // into the key returned by storageKey(), so there is nothing to conflict with here.
+                // via resolveStorageKey(), so there is nothing to conflict with here.
                 return true;
             }
             if (opt.isDeprecated()) {
@@ -65,22 +65,36 @@
     }
 
     /**
-     * Returns the key under which the value(s) for {@code key} are actually stored. An option that accepts
-     * multiple arguments is stored under the key of the non-deprecated option of its group, regardless of which
-     * alias {@code key} names, so that the deprecated and non-deprecated spellings of the same multi-valued
-     * option (for instance {@code --exclude} and {@code --input-exclude}) accumulate their values together
-     * instead of one silently discarding the other's (RAT-552); the final argument list built by {@link #args()}
-     * then names each such option only once, as commons-cli requires for options of the same group. Any other
-     * option is stored under its own key, as passed in.
+     * Returns the key under which the value(s) for {@code key} are to be stored, migrating any values already
+     * held under another alias of the same group into that key first.
+     * As long as only one alias of a multi-valued option's group has ever been used, values stay under that
+     * alias's own key, so the final argument list built by {@link #args()} still names the deprecated option
+     * when that is the one the caller actually used, preserving the commons-cli deprecation notice for it.
+     * Only once a second alias of the group is written to does this method consolidate: it moves the values
+     * already stored under the other alias into the key of the group's non-deprecated option and returns that
+     * key, so the deprecated and non-deprecated spellings of the same multi-valued option (for instance
+     * {@code --exclude} and {@code --input-exclude}) accumulate their values together instead of one silently
+     * discarding the other's (RAT-552), while {@link #args()} still names each option of a group only once, as
+     * commons-cli requires. Any single-valued option is stored under its own key, as passed in.
      * @param key the key as passed to {@link #setArg(String, String)} or {@link #addArg(String, String[])}.
-     * @return the key under which the value(s) are stored in {@link #args}.
+     * @return the key under which the value(s) are to be stored in {@link #args}.
      */
-    private String storageKey(String key) {
+    private String resolveStorageKey(String key) {
         Arg arg = Arg.findArg(key);
         if (arg != null) {
             Option opt = arg.find(key);
             if (opt.hasArgs()) {
-                return argsKey(arg.option());
+                String canonicalKey = argsKey(arg.option());
+                for (Option o : arg.group().getOptions()) {
+                    String otherKey = argsKey(o);
+                    if (!otherKey.equals(key)) {
+                        List<String> otherValues = args.remove(otherKey);
+                        if (otherValues != null) {
+                            args.computeIfAbsent(canonicalKey, k -> new ArrayList<>()).addAll(otherValues);
+                            return canonicalKey;
+                        }
+                    }
+                }
             }
         }
         return key;
@@ -100,7 +114,7 @@
                     DefaultLog.getInstance().debug(String.format("Setting %s to '%s'", key, value));
                 }
                 values.add(value);
-                args.put(storageKey(key), values);
+                args.put(resolveStorageKey(key), values);
             }
         }
     }
@@ -128,7 +142,7 @@
                 if (DefaultLog.getInstance().isEnabled(Log.Level.DEBUG)) {
                     DefaultLog.getInstance().debug(String.format("Adding [%s] to %s", String.join(", ", Arrays.asList(value)), key));
                 }
-                List<String> values = args.computeIfAbsent(storageKey(key), k -> new ArrayList<>());
+                List<String> values = args.computeIfAbsent(resolveStorageKey(key), k -> new ArrayList<>());
                 values.addAll(newValues);
             }
         }
@@ -143,7 +157,7 @@
     protected void addArg(String key, String value) {
         if (StringUtils.isNotBlank(value)) {
             if (validateSet(key)) {
-                String storageKey = storageKey(key);
+                String storageKey = resolveStorageKey(key);
                 List<String> values = args.get(storageKey);
                 if (DefaultLog.getInstance().isEnabled(Log.Level.DEBUG)) {
                     DefaultLog.getInstance().debug(String.format("Adding [%s] to %s", String.join(", ", Arrays.asList(value)), key));

@@ -128,6 +128,18 @@ class ArgumentTrackerTest {
     }
 
     @Test
+    void addArgOnOnlyDeprecatedAliasKeepsItsOwnKey() {
+        // RAT-552: using only the deprecated alias, with no competing non-deprecated value, must keep the value
+        // under the deprecated key itself, not move it to the non-deprecated one. The deprecated flag name has
+        // to be the one that reaches commons-cli, or its own deprecation notice for that option never fires.
+        underTest.addArg("exclude", "hello.txt");
+
+        assertThat(underTest.getArg("exclude")).contains(List.of("hello.txt"));
+        assertThat(underTest.getArg("input-exclude")).isEmpty();
+        assertThat(underTest.args()).containsExactly("--exclude", "hello.txt");
+    }
+
+    @Test
     void invalidAbstractOption() {
         Option option = Option.builder().longOpt("notAValidOption").build();
         TestingUIOption invalidOption = new TestingUIOption.TestingUIOptionBuilder()

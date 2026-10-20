@@ -105,8 +105,8 @@ public final class ArgumentTracker {
     /**
      * Validate that the option is defined in Args and has not already been set.
      * This check will verify that only one of the keys in the group can be set, unless the option accepts
-     * multiple arguments, in which case every alias of the group accumulates into the same key (see
-     * {@link #storageKey(String)}) and there is nothing to conflict with.
+     * multiple arguments, in which case every alias of the group accumulates (see
+     * {@link #resolveStorageKey(String)}) and there is nothing to conflict with.
      * @param key the key to check
      * @return {@code true} if the key may be set.
      */
@@ -135,22 +135,36 @@ public final class ArgumentTracker {
     }
 
     /**
-     * Returns the key under which the value(s) for {@code trackerKey} are actually stored. An option that accepts
-     * multiple arguments is stored under the key of the non-deprecated option of its group, regardless of which
-     * alias of the group {@code trackerKey} names, so that the deprecated and non-deprecated spellings of the same
-     * multi-valued option (for instance {@code --exclude} and {@code --input-exclude}) accumulate their values
-     * together instead of one silently discarding the other's (RAT-552); the final argument list built by
-     * {@link #args()} then names each such option only once, as commons-cli requires for options of the same group.
-     * Any other option is stored under its own key, as passed in.
+     * Returns the key under which the value(s) for {@code trackerKey} are to be stored, migrating any values
+     * already held under another alias of the same group into that key first.
+     * As long as only one alias of a multi-valued option's group has ever been used, values stay under that
+     * alias's own key, so the final argument list built by {@link #args()} still names the deprecated option
+     * when that is the one the caller actually used, preserving the commons-cli deprecation notice for it.
+     * Only once a second alias of the group is written to does this method consolidate: it moves the values
+     * already stored under the other alias into the key of the group's non-deprecated option and returns that
+     * key, so the deprecated and non-deprecated spellings of the same multi-valued option (for instance
+     * {@code --exclude} and {@code --input-exclude}) accumulate their values together instead of one silently
+     * discarding the other's (RAT-552), while {@link #args()} still names each option of a group only once, as
+     * commons-cli requires. Any single-valued option is stored under its own key, as passed in.
      * @param trackerKey the key as passed to {@link #setArg(String, String)} or {@link #addArg(String, String...)}.
-     * @return the key under which the value(s) are stored in {@link #args}.
+     * @return the key under which the value(s) are to be stored in {@link #args}.
      */
-    private String storageKey(final String trackerKey) {
+    private String resolveStorageKey(final String trackerKey) {
         final Arg arg = Arg.findArg(trackerKey);
         if (arg != null) {
             final Option opt = arg.find(trackerKey);
             if (opt.hasArgs()) {
-                return extractKey(arg.option());
+                final String canonicalKey = extractKey(arg.option());
+                for (final Option o : arg.group().getOptions()) {
+                    final String otherKey = extractKey(o);
+                    if (!otherKey.equals(trackerKey)) {
+                        final List<String> otherValues = args.remove(otherKey);
+                        if (otherValues != null) {
+                            args.computeIfAbsent(canonicalKey, k -> new ArrayList<>()).addAll(otherValues);
+                            return canonicalKey;
+                        }
+                    }
+                }
             }
         }
         return trackerKey;
@@ -182,7 +196,7 @@ public final class ArgumentTracker {
                         DefaultLog.getInstance().debug(String.format("Setting %s to '%s'", trackerKey, value));
                     }
                     values.add(value);
-                    args.put(storageKey(trackerKey), values);
+                    args.put(resolveStorageKey(trackerKey), values);
                 } else {
                     DefaultLog.getInstance().warn(String.format("Key '%s' does not accept arguments.", trackerKey));
                 }
@@ -236,7 +250,7 @@ public final class ArgumentTracker {
         if (DefaultLog.getInstance().isEnabled(Log.Level.DEBUG)) {
             DefaultLog.getInstance().debug(String.format("Adding [%s] to %s", String.join(", ", Arrays.asList(value)), trackerKey));
         }
-        List<String> values = args.computeIfAbsent(storageKey(trackerKey), k -> new ArrayList<>());
+        List<String> values = args.computeIfAbsent(resolveStorageKey(trackerKey), k -> new ArrayList<>());
         values.addAll(newValues);
     }
 
