@@ -474,28 +474,21 @@ public abstract class AbstractRatMojo extends BaseRatMojo {
 
         List<String> values = getValues(Arg.EXCLUDE);
         if (values.isEmpty() && useDefaultExcludes) {
-            DefaultLog.getInstance().debug("Adding plexus default exclusions...");
             setInputExcludes(StandardCollection.STANDARD_PATTERNS.patterns().toArray(new String[0]));
-
-            DefaultLog.getInstance().debug("Adding SCM default exclusions...");
             setInputExcludes(StandardCollection.STANDARD_SCMS.patterns().toArray(new String[0]));
         }
 
         if (useMavenDefaultExcludes) {
-            DefaultLog.getInstance().debug("Adding MAVEN default exclusions...");
             setInputExcludeStd(StandardCollection.MAVEN.name());
         }
         if (useEclipseDefaultExcludes) {
-            DefaultLog.getInstance().debug("Adding ECLIPSE default exclusions...");
             setInputExcludeStd(StandardCollection.ECLIPSE.name());
         }
         if (useIdeaDefaultExcludes) {
-            DefaultLog.getInstance().debug("Adding IDEA default exclusions...");
             setInputExcludeStd(StandardCollection.IDEA.name());
         }
 
         if (parseSCMIgnoresAsExcludes) {
-            DefaultLog.getInstance().debug("Adding Standard SCM default exclusions...");
             setInputExcludeParsedScm(StandardCollection.STANDARD_SCMS.name());
         }
 
