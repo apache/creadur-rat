@@ -26,7 +26,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.Arrays;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
@@ -57,7 +57,7 @@ class RatCheckMojoConfigurationTest {
         RatCheckMojo mojo = new RatCheckMojo(mavenProject);
         when(mavenProject.getOriginalModel()).thenReturn(model);
         when(model.getBuild()).thenReturn(build);
-        when(build.getPlugins()).thenReturn(Arrays.asList(plugin));
+        when(build.getPlugins()).thenReturn(List.of(plugin));
         when(build.getPluginManagement()).thenReturn(null); // ensure no pluginManagement
 
         assertThat(mojo.isInheritanceDisabled()).isFalse();
@@ -68,10 +68,10 @@ class RatCheckMojoConfigurationTest {
         RatCheckMojo mojo = new RatCheckMojo(mavenProject);
         when(mavenProject.getOriginalModel()).thenReturn(model);
         when(model.getBuild()).thenReturn(build);
-        when(build.getPlugins()).thenReturn(Arrays.asList(plugin));
+        when(build.getPlugins()).thenReturn(List.of(plugin));
 
         when(build.getPluginManagement()).thenReturn(pluginManagement);
-        when(pluginManagement.getPlugins()).thenReturn(Arrays.asList(plugin));
+        when(pluginManagement.getPlugins()).thenReturn(List.of(plugin));
         when(plugin.getGroupId()).thenReturn("org.apache.rat");
         when(plugin.getArtifactId()).thenReturn("apache-rat-plugin");
         when(plugin.getInherited()).thenReturn("false");
@@ -84,7 +84,7 @@ class RatCheckMojoConfigurationTest {
         RatCheckMojo mojo = new RatCheckMojo(mavenProject);
         when(mavenProject.getOriginalModel()).thenReturn(model);
         when(model.getBuild()).thenReturn(build);
-        when(build.getPlugins()).thenReturn(Arrays.asList(plugin));
+        when(build.getPlugins()).thenReturn(List.of(plugin));
         when(build.getPluginManagement()).thenReturn(null); // explicitly no pluginManagement
         when(plugin.getGroupId()).thenReturn("org.apache.rat");
         when(plugin.getArtifactId()).thenReturn("apache-rat-plugin");
