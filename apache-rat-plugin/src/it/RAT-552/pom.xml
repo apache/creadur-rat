@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
     RAT-552 integration test
-    Copyright (C) 2025, ASF Apache Creadur
+    Copyright (C) 2026, ASF Apache Creadur
 
   Licensed to the Apache Software Foundation (ASF) under one or more
   contributor license agreements.  See the NOTICE file distributed with
@@ -51,7 +51,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-clean-plugin</artifactId>
-          <version>3.5.0</version>
+          <version>4.0.0-beta-3</version>
         </plugin>
       </plugins>
     </pluginManagement>
