@@ -166,6 +166,18 @@ public class ReportTest extends AbstractRatAntTaskTest {
     }
 
     @Test
+    public void testInputExcludeSizeExcludesSmallFile() {
+        buildRule.executeTarget("testInputExcludeSizeExcludesSmallFile");
+        assertLogDoesNotMatch(logLine(false, "/src/test/resources/antunit/tiny-unlicensed.txt", "?????"));
+    }
+
+    @Test
+    public void testTinyUnlicensedFileControl() {
+        buildRule.executeTarget("testTinyUnlicensedFileControl");
+        assertLogMatches(logLine(false, "/src/test/resources/antunit/tiny-unlicensed.txt", "?????"));
+    }
+
+    @Test
     public void testCopyrightBuild() {
         try {
             buildRule.executeTarget("testCopyrightBuild");
