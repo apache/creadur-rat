@@ -30,9 +30,9 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.WordUtils;
-import org.apache.rat.CLIOptionCollection;
-import org.apache.rat.OptionCollection;
+import org.apache.rat.OptionCollectionParser;
 import org.apache.rat.VersionInfo;
+import org.apache.rat.ui.UIOptionCollection;
 
 import static java.lang.String.format;
 
@@ -53,17 +53,11 @@ public abstract class AbstractHelp {
     protected final RatHelpFormatter helpFormatter;
     /** The version info for this instance */
     protected final VersionInfo versionInfo;
-
-    /**
-     * The collection of client options.
-     */
-    protected final CLIOptionCollection cliOptionCollection = new CLIOptionCollection();
-
     /**
      * Base class to perform help output.
      */
-    protected AbstractHelp() {
-        helpFormatter = new RatHelpFormatter();
+    protected AbstractHelp(final UIOptionCollection<?>  uiOptionCollection) {
+        helpFormatter = new RatHelpFormatter(uiOptionCollection);
         versionInfo = new VersionInfo();
     }
 
@@ -100,13 +94,16 @@ public abstract class AbstractHelp {
      * Provides help for formatting text.
      */
     public class RatHelpFormatter extends HelpFormatter {
+        /** The UIOptionCollection to report Help for */
+        private final UIOptionCollection<?> uiOptionCollection;
 
         /**
          * Constructor
          */
-        RatHelpFormatter() {
+        RatHelpFormatter(final UIOptionCollection<?> uiOptionCollection) {
             super();
-            this.optionComparator = OptionCollection.OPTION_COMPARATOR;
+            this.uiOptionCollection = uiOptionCollection;
+            this.optionComparator = OptionCollectionParser.OPTION_COMPARATOR;
             this.setWidth(HELP_WIDTH);
         }
 
@@ -190,7 +187,7 @@ public abstract class AbstractHelp {
                     optBuf.append(END_OF_OPTION_MSG);
                 }
                 // check for default value
-                String defaultValue = cliOptionCollection.defaultValue(option);
+                String defaultValue = uiOptionCollection.defaultValue(option);
                 if (defaultValue != null) {
                     optBuf.append(format(" (Default value = %s)", defaultValue));
                 }

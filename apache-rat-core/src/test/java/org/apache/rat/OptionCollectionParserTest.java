@@ -39,7 +39,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 /**
  * Test for option collection parsers.
  */
-class OptionCollectionParserTest {
+public class OptionCollectionParserTest {
 
     @TempDir(cleanup = CleanupMode.NEVER)
     static Path testPath;
@@ -90,15 +90,15 @@ class OptionCollectionParserTest {
     /**
      * A UIOptionCollection implementation for testing. Contains TestOptions.
      */
-    static class TestOptionCollection extends UIOptionCollection<TestOption> {
+    public static class TestOptionCollection extends UIOptionCollection<TestOption> {
         /**
          * Construct the UIOptionCollection from the builder.
          */
-        protected TestOptionCollection() {
+        public TestOptionCollection() {
             super(new TestCollectionBuilder());
         }
 
-        static class TestCollectionBuilder extends UIOptionCollection.Builder<TestOption, TestCollectionBuilder> {
+        public static class TestCollectionBuilder extends UIOptionCollection.Builder<TestOption, TestCollectionBuilder> {
             TestCollectionBuilder() {
                 super(TestOption.TestOptionBuilder::new);
             }

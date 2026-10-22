@@ -32,8 +32,7 @@ import org.apache.rat.config.exclusion.StandardCollection;
 import org.apache.rat.config.parameters.Description;
 import org.apache.rat.documentation.options.AntOption;
 import org.apache.rat.documentation.options.AntOptionCollection;
-import org.apache.rat.documentation.options.MavenOption;
-import org.apache.rat.documentation.options.MavenOptionCollection;
+
 import org.apache.rat.license.ILicense;
 import org.apache.rat.license.LicenseSetFactory;
 import org.junit.jupiter.api.Test;
@@ -44,7 +43,6 @@ public class RatToolTest {
     final RatTool underTest = new RatTool();
     final CLIOptionCollection cliOptionCollection = new CLIOptionCollection();
     final AntOptionCollection antOptionCollection = new AntOptionCollection();
-    final MavenOptionCollection mavenOptionCollection = new MavenOptionCollection();
 
     @Test
     void environmentVariables() {
@@ -75,13 +73,6 @@ public class RatToolTest {
         Map<String, CLIOption> options = underTest.cliOptions();
         assertThat(options).isNotEmpty();
         assertThat(options.values()).containsExactlyInAnyOrderElementsOf(cliOptionCollection.getMappedOptions().toList());
-    }
-
-    @Test
-    void mvnOptions() {
-        Map<String, MavenOption> options = underTest.mvnOptions();
-        assertThat(options).isNotEmpty();
-        assertThat(options.values()).containsExactlyInAnyOrderElementsOf(mavenOptionCollection.getMappedOptions().toList());
     }
 
     @Test
