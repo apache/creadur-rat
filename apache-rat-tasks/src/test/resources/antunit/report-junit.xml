@@ -157,6 +157,18 @@
 		</rat:report>
 	</target>
 
+	<target name="testInputExcludeSizeExcludesSmallFile">
+		<rat:report inputExcludeSize="1000">
+			<file file="${resource.dir}/tiny-unlicensed.txt" />
+		</rat:report>
+	</target>
+
+	<target name="testTinyUnlicensedFileControl">
+		<rat:report>
+			<file file="${resource.dir}/tiny-unlicensed.txt" />
+		</rat:report>
+	</target>
+
 	<target name="testCopyrightBuild">
 		<rat:report>
 			<file file="${resource.dir}/index.apt" />

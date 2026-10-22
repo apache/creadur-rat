@@ -19,9 +19,12 @@
 package org.apache.rat.anttasks;
 
 import org.apache.rat.ReportConfiguration;
+import org.apache.rat.api.Document;
 import org.apache.rat.api.RatException;
 import org.apache.rat.document.DocumentName;
+import org.apache.rat.document.DocumentNameMatcher;
 import org.apache.rat.document.FileDocument;
+import org.apache.rat.document.IgnoredDocument;
 import org.apache.rat.report.RatReport;
 import org.apache.rat.report.Reportable;
 import org.apache.tools.ant.types.Resource;
@@ -52,7 +55,13 @@ class ResourceCollectionContainer implements Reportable {
             if (r.isFilesystemOnly()) {
                 FileResource fr = (FileResource) r;
                 DocumentName dirName = DocumentName.builder(fr.getFile()).setBaseName(fr.getProject().getBaseDir()).build();
-                FileDocument document = new FileDocument(dirName, fr.getFile(), configuration.getDocumentExcluder(dirName));
+                DocumentNameMatcher excluder = configuration.getDocumentExcluder(dirName);
+                // unlike a directory walk, where DirectoryWalker#listChildren() applies the excluder to every
+                // child it finds, a resource collection hands RAT files it already resolved itself, so nothing
+                // else ever checks them against the excluder (RAT-569); do it here, before reporting.
+                Document document = excluder.matches(dirName)
+                        ? new FileDocument(dirName, fr.getFile(), excluder)
+                        : new IgnoredDocument(dirName, fr.getFile(), excluder);
                 report.report(document);
             }
         }
