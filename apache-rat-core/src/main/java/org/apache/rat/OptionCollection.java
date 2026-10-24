@@ -66,7 +66,7 @@ import static java.lang.String.format;
  * @deprecated this class will be removed and all functionality distributed across other classes.
  */
 @Deprecated
-public final class OptionCollection {
+public final class OptionCollection { // NOSONAR
 
     private OptionCollection() {
         // do not instantiate

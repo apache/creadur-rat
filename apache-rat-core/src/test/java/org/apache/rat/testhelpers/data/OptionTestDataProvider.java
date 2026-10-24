@@ -58,13 +58,12 @@ import java.util.function.Supplier;
 
 import static org.apache.rat.utils.FileUtils.writeFile;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Fail.fail;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 /**
  * Generates a list of TestData for options.
  * Use of this interface ensures consistent testing across the UIs. Each method
- * tests an Option from {@link OptionCollectionParser} that must be implemented in the UI.
+ * tests an option from {@link OptionCollectionParser} that must be implemented in the UI.
  */
 public class OptionTestDataProvider extends AbstractTestDataProvider {
 
@@ -598,7 +597,7 @@ setup,
 
     @Override
     protected void outputFileTest(final Set<TestData> result, final Option option) {
-        String[] args = new String[]{"outexample"};
+        String[] args = {"outexample"};
         result.add(new TestData("", Collections.singletonList(ImmutablePair.of(option, args)),
                 DataUtils.NO_SETUP,
                 validatorData -> {
@@ -665,20 +664,20 @@ setup,
                         FileUtils.mkDir(basePath.toFile());
                         DocumentName name = DocumentName.builder().setName("fileStyleSheet.xslt")
                                 .setBaseName(basePath.toString()).build();
-                        try (FileWriter fileWriter = new FileWriter(name.asFile());
-                             XmlWriter writer = new XmlWriter(fileWriter)) {
-                            writer.startDocument()
-                                    .comment(DataUtils.ASF_TEXT)
-                                    .startElement("xsl:stylesheet")
-                                    .attribute("version", "1.0")
-                                    .attribute("xmlns:xsl", "http://www.w3.org/1999/XSL/Transform")
-                                    .startElement("xsl:template")
-                                    .attribute("match", "@*|node()")
-                                    .startElement("xsl:copy")
-                                    .closeDocument();
-                        } catch (IOException e) {
-                            fail(e.getMessage(), e);
-                        }
+                        assertDoesNotThrow(() -> {
+                            try (FileWriter fileWriter = new FileWriter(name.asFile());
+                                 XmlWriter writer = new XmlWriter(fileWriter)) {
+                                writer.startDocument()
+                                        .comment(DataUtils.ASF_TEXT)
+                                        .startElement("xsl:stylesheet")
+                                        .attribute("version", "1.0")
+                                        .attribute("xmlns:xsl", "http://www.w3.org/1999/XSL/Transform")
+                                        .startElement("xsl:template")
+                                        .attribute("match", "@*|node()")
+                                        .startElement("xsl:copy")
+                                        .closeDocument();
+                            }
+                        });
                     },
 
                     validatorData -> {
