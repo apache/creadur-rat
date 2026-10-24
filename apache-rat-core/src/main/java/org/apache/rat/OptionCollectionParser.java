@@ -21,10 +21,14 @@ package org.apache.rat;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.Serial;
+import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
+import java.util.Comparator;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.DefaultParser;
+import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.rat.api.RatException;
@@ -40,7 +44,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
  * Uses the AbstractOptionCollection to parse the command line options.
- * Contains utility methods to ReportConfiguration from the options and an array of arguments.
+ * Contains utility methods to create ReportConfigurations from the options and an array of arguments.
  *
  * @param <T> The UIOption type that this parser is handling.
  */
@@ -58,6 +62,9 @@ public final class OptionCollectionParser<T extends UIOption<T>> {
     public OptionCollectionParser(final UIOptionCollection<T> optionCollection) {
         this.uiOptionCollection = optionCollection;
     }
+
+    /** The Option comparator to sort the help. */
+    public static final Comparator<Option> OPTION_COMPARATOR = new OptionComparator();
 
     /**
      * Parses the standard options to create a ReportConfiguration.
@@ -93,7 +100,8 @@ public final class OptionCollectionParser<T extends UIOption<T>> {
     // visible for testing
     void printHelp(final ArgumentContext argumentContext) throws RatException {
         try {
-            new Licenses(argumentContext.getConfiguration(),
+            new Licenses(uiOptionCollection,
+                    argumentContext.getConfiguration(),
                     new PrintWriter(argumentContext.getConfiguration().getOutput().get(),
                             false, StandardCharsets.UTF_8)).printHelp();
         } catch (IOException e) {
@@ -106,7 +114,7 @@ public final class OptionCollectionParser<T extends UIOption<T>> {
      *
      * @param workingDirectory The directory to resolve relative file names against.
      * @param args the arguments to parse.
-     * @param options an Options object containing Apache command line options.
+     * @param options an Options object containing RAT command line options.
      * @return the ArgumentContext for the process.
      * @throws RatException on error.
      */
@@ -129,7 +137,6 @@ public final class OptionCollectionParser<T extends UIOption<T>> {
 
     /**
      * Create the report configuration.
-     * Note: this method is package private for testing.
      * You probably want one of the {@code parseCommands(..)} methods.
      * @param argumentContext The context to execute in.
      * @return a ReportConfiguration
@@ -146,5 +153,35 @@ public final class OptionCollectionParser<T extends UIOption<T>> {
             }
         }
         return configuration;
+    }
+
+    /**
+     * This class implements the {@code Comparator} interface for comparing options.
+     */
+    private static final class OptionComparator implements Comparator<Option>, Serializable {
+        /** The serial version UID.  */
+        @Serial
+        private static final long serialVersionUID = 5305467873966684014L;
+
+        private String getKey(final Option opt) {
+            String key = opt.getOpt();
+            key = key == null ? opt.getLongOpt() : key;
+            return key;
+        }
+
+        /**
+         * Compares its two arguments for order. Returns a negative integer, zero, or a
+         * positive integer as the first argument is less than, equal to, or greater
+         * than the second.
+         *
+         * @param opt1 The first Option to be compared.
+         * @param opt2 The second Option to be compared.
+         * @return a negative integer, zero, or a positive integer as the first argument
+         * is less than, equal to, or greater than the second.
+         */
+        @Override
+        public int compare(final Option opt1, final Option opt2) {
+            return getKey(opt1).compareToIgnoreCase(getKey(opt2));
+        }
     }
 }

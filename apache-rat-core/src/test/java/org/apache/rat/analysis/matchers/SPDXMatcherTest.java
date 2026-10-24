@@ -26,19 +26,19 @@ import org.apache.rat.analysis.IHeaders;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-public class SPDXMatcherTest {
-
-    final IHeaderMatcher target1 = SPDXMatcherFactory.INSTANCE.create("hello");
-    final IHeaderMatcher target2 = SPDXMatcherFactory.INSTANCE.create("world");
-    final IHeaderMatcher target3 = SPDXMatcherFactory.INSTANCE.create("goodbye");
+class SPDXMatcherTest {
+    final SPDXMatcherFactory factory = SPDXMatcherFactory.newInstance();
+    final IHeaderMatcher target1 = factory.create("hello");
+    final IHeaderMatcher target2 = factory.create("world");
+    final IHeaderMatcher target3 = factory.create("goodbye");
 
     @BeforeEach
-    public void setup() {
+    void setup() {
         target1.reset();
     }
 
     @Test
-    public void testMatch() {
+    void testMatch() {
         String sb = SPDXMatcherFactory.LICENSE_IDENTIFIER + " world" + System.lineSeparator() +
                 SPDXMatcherFactory.LICENSE_IDENTIFIER + " hello" + System.lineSeparator();
 

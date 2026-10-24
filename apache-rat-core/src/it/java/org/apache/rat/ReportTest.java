@@ -28,6 +28,7 @@ import java.net.URL;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Stream;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.DefaultParser;
@@ -49,10 +50,12 @@ import org.apache.rat.utils.DefaultLog;
 import org.apache.rat.utils.Log;
 import org.apache.rat.walker.DirectoryWalker;
 import org.codehaus.groovy.control.CompilerConfiguration;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.fail;
 
@@ -173,11 +176,12 @@ class ReportTest {
     static Stream<Arguments> integrationTestData() throws RatException {
         List<Arguments> results = new ArrayList<>();
         URL url = ReportTest.class.getResource("/ReportTest");
+        Objects.requireNonNull(url, "URL must not be null");
 
         String urlAsFile;
         try {
             urlAsFile = Paths.get(url.toURI()).toString();
-        } catch (NullPointerException | URISyntaxException e) {
+        } catch (URISyntaxException e) {
             throw new RatException("Unable to find root directory for " + url, e);
         }
 
@@ -248,5 +252,15 @@ class ReportTest {
         public void close() {
             logFile.close();
         }
+    }
+
+    @Test
+    void noArgsTest() {
+        assertDoesNotThrow(() -> Report.main(null));
+    }
+
+    @Test
+    void helpTest() {
+        assertDoesNotThrow(() -> Report.main(new String[]{"--help"}));
     }
 }
