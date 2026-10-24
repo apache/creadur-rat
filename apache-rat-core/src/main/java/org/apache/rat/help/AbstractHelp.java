@@ -94,11 +94,12 @@ public abstract class AbstractHelp {
      * Provides help for formatting text.
      */
     public class RatHelpFormatter extends HelpFormatter {
-        /** The UIOptionCollection to report Help for */
+        /** The UIOptionCollection to report help for. */
         private final UIOptionCollection<?> uiOptionCollection;
 
         /**
-         * Constructor
+         * Create formatter with given UIOptionCollection.
+         * @param uiOptionCollection the UIOptionCollection to report help for.
          */
         RatHelpFormatter(final UIOptionCollection<?> uiOptionCollection) {
             super();
