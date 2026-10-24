@@ -86,7 +86,7 @@ agnostic home for software distribution comprehension and audit tools.
       <dependency>
         <groupId>com.github.spotbugs</groupId>
         <artifactId>spotbugs-annotations</artifactId>
-        <version>4.10.4</version>
+        <version>4.10.5</version>
       </dependency>
       <dependency>
         <groupId>org.reflections</groupId>
@@ -514,6 +514,7 @@ agnostic home for software distribution comprehension and audit tools.
         <plugin>
           <groupId>org.cyclonedx</groupId>
           <artifactId>cyclonedx-maven-plugin</artifactId>
+          <version>2.9.3</version>
           <executions>
             <execution>
               <phase>package</phase>
@@ -526,7 +527,7 @@ agnostic home for software distribution comprehension and audit tools.
         <plugin>
           <groupId>com.github.spotbugs</groupId>
           <artifactId>spotbugs-maven-plugin</artifactId>
-          <version>4.10.4.1</version>
+          <version>4.10.5.0</version>
           <configuration>
             <maxAllowedViolations>46</maxAllowedViolations>
             <failOnError>true</failOnError>

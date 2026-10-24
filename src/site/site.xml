@@ -108,6 +108,7 @@
       <item name="How we work" href="https://www.apache.org/foundation/how-it-works.html"/>
       <item name="Our history" href="https://www.apache.org/foundation/how-it-works.html#history"/>
       <item name="News" href="https://blogs.apache.org/foundation/"/>
+      <item name="Donate" href="https://donate.apache.org"/>
     </menu>
     <menu name="Contribute" inherit="bottom">
       <item name="Get Involved" href="https://www.apache.org/foundation/getinvolved.html"/>

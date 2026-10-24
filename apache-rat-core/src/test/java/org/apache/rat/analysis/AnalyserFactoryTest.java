@@ -25,6 +25,7 @@ import java.io.File;
 import java.io.StringWriter;
 
 import java.net.URISyntaxException;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
@@ -44,8 +45,10 @@ import org.apache.rat.testhelpers.TestingDocumentAnalyser;
 import org.assertj.core.util.Files;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.MethodSource;
 
 /**
@@ -104,6 +107,55 @@ public class AnalyserFactoryTest {
         analyser.analyse(document);
         assertThat(document.getMetaData().getDocumentType()).isEqualTo(Document.Type.BINARY);
         assertThat(document.getMetaData().getMediaType().toString()).isEqualTo("image/png");
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+            "Apache-2.0, AL2.0, true",
+            "GPL-3.0-only, GPL3, false",
+            "LicenseRef-Proprietary, ?????, false",
+            "'', ?????, false"
+    })
+    void rustSourceLicenses(String spdx, String licenseId, boolean approved, @TempDir Path directory) throws Exception {
+        Path source = directory.resolve("main.rs");
+        String header = spdx.isEmpty() ? "" : "// SPDX-License-Identifier: " + spdx + "\n";
+        java.nio.file.Files.writeString(source, header + "fn main() {}\n");
+        ReportConfiguration config = new ReportConfiguration();
+        config.setFrom(Defaults.builder().build());
+        Document document = new FileDocument(source.toFile(), DocumentNameMatcher.MATCHES_ALL);
+
+        AnalyserFactory.createConfiguredAnalyser(config).analyse(document);
+
+        assertThat(document.getMetaData().getDocumentType()).isEqualTo(Document.Type.STANDARD);
+        assertThat(document.getMetaData().licenses()).singleElement().satisfies(license -> {
+            assertThat(license.getId()).isEqualTo(licenseId);
+            assertThat(document.getMetaData().isApproved(license)).isEqualTo(approved);
+        });
+    }
+
+    @Test
+    void rlsServicesXmlIsScanned(@TempDir Path directory) throws Exception {
+        Path source = directory.resolve("services.rs");
+        java.nio.file.Files.writeString(source, "<?xml version=\"1.0\"?>\n"
+                + "<rls-services xmlns=\"urn:ietf:params:xml:ns:rls-services\"/>\n");
+        Document document = new FileDocument(source.toFile(), DocumentNameMatcher.MATCHES_ALL);
+
+        analyser.analyse(document);
+
+        assertThat(document.getMetaData().getDocumentType()).isEqualTo(Document.Type.STANDARD);
+        assertThat(document.getMetaData().licenses()).containsExactly(UnknownLicense.INSTANCE);
+    }
+
+    @Test
+    void binaryWithRustExtensionIsNotScanned(@TempDir Path directory) throws Exception {
+        Path source = directory.resolve("image.rs");
+        java.nio.file.Files.copy(Resources.getResourceFile("/binaries/Image-png.not").toPath(), source);
+        Document document = new FileDocument(source.toFile(), DocumentNameMatcher.MATCHES_ALL);
+
+        analyser.analyse(document);
+
+        assertThat(document.getMetaData().getDocumentType()).isEqualTo(Document.Type.BINARY);
+        assertThat(document.getMetaData().licenses()).isEmpty();
     }
 
     @Test
