@@ -1,0 +1,10 @@
+~~   No license intended!
+
+    --------------
+    Some text
+    --------------
+
+Some text file
+
+  This is a text file, which intentionally has no license Header.
+  RAT should not report this file as a violation, as submodules are excluded from the license check.

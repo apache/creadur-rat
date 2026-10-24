@@ -35,6 +35,8 @@ import java.util.stream.Stream;
 
 import org.apache.commons.cli.Option;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.maven.model.Build;
+import org.apache.maven.model.Model;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
@@ -433,8 +435,37 @@ public abstract class AbstractRatMojo extends BaseRatMojo {
         };
     }
 
-    private void setIncludeExclude() {
+    /**
+     * Determine if the RAT-plugin has been configured to disallow inheritance,
+     * which may create errors if RAT runs in subfolders/submodules.
+     * Checks configuration in {@code <pluginManagement>}- and {@code <plugin>}-section.
+     * @return {@code true} if the current Mojo is configured with {@code inheritance=false} set in the pom.xml.
+     */
+    // VISIBLE FOR TESTING
+    boolean isInheritanceDisabled() {
+        Model model = project.getOriginalModel();
+        Build build = model.getBuild();
 
+        if (build == null) {
+            return false;
+        }
+
+        // DEVHINT: we do not work on the effective model here and may miss parent-pom defined inheritance.
+        // That is accepted here as we only issue an informational message for RAT users.
+        return Stream.concat(
+                        build.getPlugins().stream(),
+                        build.getPluginManagement() == null
+                                ? Stream.empty()
+                                : build.getPluginManagement()
+                                .getPlugins().stream()) // combine pluginManagement and plugin configuration
+                .filter(plugin ->
+                        "org.apache.rat".equals(plugin.getGroupId())
+                                && "apache-rat-plugin".equals(plugin.getArtifactId()))
+                .anyMatch(plugin ->
+                        "false".equalsIgnoreCase(plugin.getInherited()));
+    }
+
+    private void setIncludeExclude() {
         if (excludeSubProjects && project != null && project.getModules() != null) {
             List<String> subModules = new ArrayList<>();
             project.getModules().forEach(s -> subModules.add(format("%s/**", s)));
@@ -443,10 +474,7 @@ public abstract class AbstractRatMojo extends BaseRatMojo {
 
         List<String> values = getValues(Arg.EXCLUDE);
         if (values.isEmpty() && useDefaultExcludes) {
-            DefaultLog.getInstance().debug("Adding plexus default exclusions...");
             setInputExcludes(StandardCollection.STANDARD_PATTERNS.patterns().toArray(new String[0]));
-
-            DefaultLog.getInstance().debug("Adding SCM default exclusions...");
             setInputExcludes(StandardCollection.STANDARD_SCMS.patterns().toArray(new String[0]));
         }
 
@@ -462,6 +490,11 @@ public abstract class AbstractRatMojo extends BaseRatMojo {
 
         if (parseSCMIgnoresAsExcludes) {
             setInputExcludeParsedScm(StandardCollection.STANDARD_SCMS.name());
+        }
+
+        if (isInheritanceDisabled()) {
+            DefaultLog.getInstance().info("You disabled plugin configuration inheritance in your pom.xml. " +
+                    "This may have unintended consequences in a submodule as RAT's configuration is not applied.");
         }
     }
 
