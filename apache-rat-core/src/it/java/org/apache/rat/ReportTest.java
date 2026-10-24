@@ -28,6 +28,7 @@ import java.net.URL;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Stream;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.DefaultParser;
@@ -175,11 +176,12 @@ class ReportTest {
     static Stream<Arguments> integrationTestData() throws RatException {
         List<Arguments> results = new ArrayList<>();
         URL url = ReportTest.class.getResource("/ReportTest");
+        Objects.requireNonNull(url, "URL must not be null");
 
         String urlAsFile;
         try {
             urlAsFile = Paths.get(url.toURI()).toString();
-        } catch (NullPointerException | URISyntaxException e) {
+        } catch (URISyntaxException e) {
             throw new RatException("Unable to find root directory for " + url, e);
         }
 
@@ -253,12 +255,12 @@ class ReportTest {
     }
 
     @Test
-    void noArgsTest() throws Exception {
+    void noArgsTest() {
         assertDoesNotThrow(() -> Report.main(null));
     }
 
     @Test
-    void helpTest() throws Exception {
+    void helpTest() {
         assertDoesNotThrow(() -> Report.main(new String[]{"--help"}));
     }
 }
