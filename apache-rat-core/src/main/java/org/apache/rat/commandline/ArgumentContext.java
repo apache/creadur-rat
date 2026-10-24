@@ -294,12 +294,9 @@ public final class ArgumentContext {
         List<String> options = Arrays.stream(commandLine.getOptions())
                 .map(ArgumentContext::toString)
                 .toList();
-        return new StringBuilder()
-                .append("CommandLine[ options: ")
-                .append(options)
-                .append(" args: ")
-                .append(commandLine.getArgList().toString())
-                .append(" ]")
-                .toString();
+
+        return "CommandLine[ options: " + options +
+                " args: " + commandLine.getArgList().toString() +
+                " ]";
     }
 }
