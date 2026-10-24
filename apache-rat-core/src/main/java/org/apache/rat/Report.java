@@ -41,6 +41,7 @@ public final class Report {
      * The option collection that this report is using.
      */
     private static final CLIOptionCollection OPTION_COLLECTION = new CLIOptionCollection();
+
     /**
      * Processes the command line and builds a configuration and executes the
      * report.
@@ -56,7 +57,7 @@ public final class Report {
                     "list of valid commands and options, as you did not provide any arguments.");
             return;
         }
-        OptionCollectionParser<CLIOption> cliOptionParser = new OptionCollectionParser<CLIOption>(OPTION_COLLECTION);
+        OptionCollectionParser<CLIOption> cliOptionParser = new OptionCollectionParser<>(OPTION_COLLECTION);
         ArgumentContext argumentContext = cliOptionParser.parseCommands(new File("."), args);
         ReportConfiguration configuration = argumentContext.getConfiguration();
 
@@ -84,7 +85,7 @@ public final class Report {
     /**
      * Prints the usage message on the output stream from {@code out}.
      * @param opts the defined options.
-     * @param out the A supplier of an OutputStream.
+     * @param out a supplier of an OutputStream.
      */
     private static void printUsage(final Options opts, final IOSupplier<OutputStream> out) {
         try (Writer writer = new OutputStreamWriter(out.get())) {

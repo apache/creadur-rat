@@ -42,7 +42,7 @@ public final class Documentation {
     }
     /**
      * Creates the documentation. Writes to the output specified by the -o or --out option. Defaults to {@code System.out}.
-     * @param args the arguments. Try --help for help.
+     * @param args the arguments. Try {@code --help} for help.
      * @throws IOException on error
      */
     public static void main(final String[] args) throws IOException {

@@ -57,7 +57,6 @@ class ArgumentContextTest {
 
     @Test
     void fileConfigOptsArgsConstructorTest() throws ParseException {
-
         Options opts = new Options();
         opts.addOption(Option.builder("one").build());
         opts.addOption(Option.builder("two").build());
@@ -113,7 +112,6 @@ class ArgumentContextTest {
         result = ArgumentContext.toString(option);
         assertThat(result).as("long name if provided").isEqualTo("Option[long v:[]]");
 
-
         when(option.getValues()).thenReturn(new String[]{"v1"});
         result = ArgumentContext.toString(option);
         assertThat(result).as("single value").isEqualTo("Option[long v:['v1']]");
@@ -125,14 +123,14 @@ class ArgumentContextTest {
 
     @Test
     void processArgsTest() throws ParseException {
-        Options opts = new Options();
+        Options options = new Options();
         Option one = Option.builder("one").numberOfArgs(3).build();
-        opts.addOption(one);
-        opts.addOption(Option.builder("two").build());
+        options.addOption(one);
+        options.addOption(Option.builder("two").build());
 
         String[] args = {"-one", "three", "four", "five", "six"};
 
-        ArgumentContext ctxt = new ArgumentContext(f, opts, args);
+        ArgumentContext ctxt = new ArgumentContext(f, options, args);
         OptionCollectionParserTest.TestOptionCollection testOptionCollection = new OptionCollectionParserTest.TestOptionCollection();
         assertThatNoException().isThrownBy(() -> ctxt.processArgs(testOptionCollection));
     }
@@ -175,7 +173,7 @@ class ArgumentContextTest {
         assertThat(ctxt.getOptions()).containsExactly(opts.getOption("one"));
         assertThat(ctxt.hasOption(one)).isTrue();
         assertThat(ctxt.hasOption("two")).isFalse();
-        Object o = ctxt.getParsedOptionValue(one);
+        var o = ctxt.getParsedOptionValue(one);
         assertThat(o).isInstanceOf(List.class);
         List<String> lst = (List<String>) o;
         assertThat(lst).containsExactly("three", "four", "five");
@@ -260,7 +258,6 @@ class ArgumentContextTest {
             ctxt.logParseException(new ParseException("Test exception2"), one);
             assertThat(testingLog.getCaptured()).containsOnlyOnce("WARN: Invalid Option[one v:[]] specifically: Test exception2")
                     .containsOnlyOnce("DEBUG: org.apache.commons.cli.ParseException: Test exception2");
-
         } finally {
             DefaultLog.setInstance(log);
         }
@@ -277,7 +274,7 @@ class ArgumentContextTest {
 
         ArgumentContext ctxt = new ArgumentContext(f, opts, args);
         String cmdLine = ctxt.commandLineDescription();
-        assertThat(ctxt.commandLineDescription())
+        assertThat(cmdLine)
                 .isEqualTo("CommandLine[ options: [Option[one v:['three' 'four' 'five']]] args: [six] ]");
     }
 }

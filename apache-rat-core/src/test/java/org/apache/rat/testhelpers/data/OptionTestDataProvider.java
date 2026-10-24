@@ -91,7 +91,6 @@ public class OptionTestDataProvider extends AbstractTestDataProvider {
         return result;
     }
 
-
     // exclude tests
     private TestData execExcludeTest(final Option option, final Supplier<String[]> args, Consumer<DocumentName> setupFiles) {
         String[] notExcluded = {"notbaz", "well._afile"};
@@ -610,7 +609,7 @@ setup,
                     }
                     DocumentName outputDocument = validatorData.mkDocName("outexample");
 
-                    assertDoesNotThrow(() -> TextUtils.readFile(outputDocument.asFile())).contains("Hello world");
+                    assertDoesNotThrow(() -> TextUtils.readFile(outputDocument.asFile()).contains("Hello world"));
                 }));
     }
 

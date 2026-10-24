@@ -98,5 +98,4 @@ class HelpTest {
         PrintStream printStream = new PrintStream(new ByteArrayOutputStream());
         assertDoesNotThrow(() -> new Help(OptionCollection.BASE_OPTION_COLLECTION, printStream));
     }
-
 }

@@ -155,10 +155,8 @@ public final class OptionCollection {
             argumentContext = new ArgumentContext(workingDirectory, opts, args);
         } catch (ParseException e) {
             throw new ConfigurationException("Unable to create ArgumentContext: " + e.getMessage(), e);
-//            System.exit(1);
-//            return null; // dummy return (won't be reached) to avoid Eclipse complaint about possible NPE
-//            // for "commandLine"
         }
+
         Arg.processLogLevel(argumentContext, BASE_OPTION_COLLECTION);
 
         if (argumentContext.hasOption(HELP)) {

@@ -65,7 +65,7 @@ public final class ReporterOptionsTest {
     @ParameterizedTest( name = "{index} {0}")
     @MethodSource("getTestData")
     void testOptionsUpdateConfig(String name, TestData test) throws Exception { // NOSONAR
-        // this method either succeeds or thows an exception during the validation.
+        // this method either succeeds or throws an exception during the validation.
         Path basePath = testPath.resolve(test.getTestName());
         test.setupFiles(basePath);
         ArgumentContext ctxt = collectionParser.parseCommands(basePath.toFile(), test.getCommandLine());

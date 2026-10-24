@@ -92,7 +92,7 @@ import org.xml.sax.SAXException;
  * Tests the output of the Reporter.
  */
 public class ReporterTest {
-    private static String textEncoding = "windows-1252";
+    private static final String WINDOWS_1252 = "windows-1252";
     /**
      * Temporary file. Not using tempDir because it does not always work properly.
      */
@@ -256,30 +256,30 @@ public class ReporterTest {
         Map<String, Map<String, String>> expected = new HashMap<>();
         expected.put("/.hiddenDirectory", mapOf("isDirectory", "true", "mediaType", "application/octet-stream",
                 "type", "IGNORED"));
-        expected.put("/ILoggerFactory.java", mapOf("encoding", textEncoding, "mediaType", "text/x-java-source",
+        expected.put("/ILoggerFactory.java", mapOf("encoding", WINDOWS_1252, "mediaType", "text/x-java-source",
                 "type", "STANDARD"));
         expected.put("/Image.png", mapOf("mediaType", "image/png", "type", "BINARY"));
-        expected.put("/LICENSE", mapOf("encoding", textEncoding, "mediaType", "text/plain", "type", "NOTICE"));
-        expected.put("/NOTICE", mapOf("encoding", textEncoding, "mediaType", "text/plain", "type", "NOTICE"));
-        expected.put("/Source.java", mapOf("encoding", textEncoding, "mediaType", "text/x-java-source",
+        expected.put("/LICENSE", mapOf("encoding", WINDOWS_1252, "mediaType", "text/plain", "type", "NOTICE"));
+        expected.put("/NOTICE", mapOf("encoding", WINDOWS_1252, "mediaType", "text/plain", "type", "NOTICE"));
+        expected.put("/Source.java", mapOf("encoding", WINDOWS_1252, "mediaType", "text/x-java-source",
                 "type", "STANDARD"));
-        expected.put("/Text.txt", mapOf("encoding", textEncoding, "mediaType", "text/plain",
+        expected.put("/Text.txt", mapOf("encoding", WINDOWS_1252, "mediaType", "text/plain",
                 "type", "STANDARD"));
-        expected.put("/TextHttps.txt", mapOf("encoding", textEncoding, "mediaType", "text/plain",
+        expected.put("/TextHttps.txt", mapOf("encoding", WINDOWS_1252, "mediaType", "text/plain",
                 "type", "STANDARD"));
-        expected.put("/Xml.xml", mapOf("encoding", textEncoding, "mediaType", "application/xml",
+        expected.put("/Xml.xml", mapOf("encoding", WINDOWS_1252, "mediaType", "application/xml",
                 "type", "STANDARD"));
-        expected.put("/buildr.rb", mapOf("encoding", textEncoding, "mediaType", "text/x-ruby",
+        expected.put("/buildr.rb", mapOf("encoding", WINDOWS_1252, "mediaType", "text/x-ruby",
                 "type", "STANDARD"));
         expected.put("/dummy.jar", mapOf("mediaType", "application/java-archive",
                 "type", "ARCHIVE"));
-        expected.put("/generated.txt", mapOf("encoding", textEncoding, "mediaType", "text/plain",
+        expected.put("/generated.txt", mapOf("encoding", WINDOWS_1252, "mediaType", "text/plain",
                 "type", "IGNORED"));
         expected.put("/plain.json", mapOf("mediaType", "application/json",
                 "type", "BINARY"));
-        expected.put("/sub/Empty.txt", mapOf("encoding", textEncoding, "mediaType", "text/plain",
+        expected.put("/sub/Empty.txt", mapOf("encoding", WINDOWS_1252, "mediaType", "text/plain",
                 "type", "STANDARD"));
-        expected.put("/tri.txt", mapOf("encoding", textEncoding, "mediaType", "text/plain",
+        expected.put("/tri.txt", mapOf("encoding", WINDOWS_1252, "mediaType", "text/plain",
                 "type", "STANDARD"));
 
         File output = testPath.resolve(".rat/testXMLOutput").toFile();

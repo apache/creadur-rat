@@ -173,7 +173,7 @@ public abstract class AbstractRatMojo extends BaseRatMojo {
      * Whether to use the default excludes when scanning for files. The default
      * excludes are:
      * <ul>
-     * <li>meta data files for source code management / revision control systems,
+     * <li>metadata files for source code management / revision control systems,
      * see {@link org.apache.rat.config.exclusion.StandardCollection}</li>
      * <li>temporary files used by Maven, see
      * <a href="#useMavenDefaultExcludes">useMavenDefaultExcludes</a></li>

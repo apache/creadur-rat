@@ -43,7 +43,9 @@ public final class ArgumentTypes {
     private ArgumentTypes() { }
 
     public static void main(final String[] args) throws IOException {
-        try (Writer writer = args.length > 0 ? new FileWriter(args[0], StandardCharsets.UTF_8) : new OutputStreamWriter(System.out, StandardCharsets.UTF_8)) {
+        try (Writer writer = args.length > 0 ?
+                new FileWriter(args[0], StandardCharsets.UTF_8) :
+                new OutputStreamWriter(System.out, StandardCharsets.UTF_8)) { // NOSONAR
             new Help(OptionCollection.BASE_OPTION_COLLECTION, writer).printArgumentTypes();
         }
     }

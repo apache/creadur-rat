@@ -79,7 +79,7 @@ public class Help extends BaseAntTask {
         org.apache.rat.help.Help helpObj = new org.apache.rat.help.Help(new AntOptionCollection(), System.out) {
             /**
              * Print the usage to the specific PrintWriter.
-             * @param opts The defined options.
+             * @param opts the defined options.
              */
             public void printUsage(final Options opts) {
                 String syntax = "ant {target executing task <rat:help/>}";

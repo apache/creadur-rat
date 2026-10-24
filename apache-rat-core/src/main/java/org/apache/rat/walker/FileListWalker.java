@@ -48,7 +48,7 @@ public class FileListWalker implements Reportable {
 
     /**
      * Constructor.
-     * @param source The file document that is the source from which this walker will read.
+     * @param source the file document that is the source from which this walker will read.
      */
     public FileListWalker(final FileDocument source) {
         this.source = source;

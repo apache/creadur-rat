@@ -44,7 +44,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
  * Uses the AbstractOptionCollection to parse the command line options.
- * Contains utility methods to ReportConfiguration from the options and an array of arguments.
+ * Contains utility methods to create ReportConfigurations from the options and an array of arguments.
  *
  * @param <T> The UIOption type that this parser is handling.
  */
@@ -63,7 +63,7 @@ public final class OptionCollectionParser<T extends UIOption<T>> {
         this.uiOptionCollection = optionCollection;
     }
 
-    /** The Option comparator to sort the help */
+    /** The Option comparator to sort the help. */
     public static final Comparator<Option> OPTION_COMPARATOR = new OptionComparator();
 
     /**
@@ -114,7 +114,7 @@ public final class OptionCollectionParser<T extends UIOption<T>> {
      *
      * @param workingDirectory The directory to resolve relative file names against.
      * @param args the arguments to parse.
-     * @param options an Options object containing Apache command line options.
+     * @param options an Options object containing RAT command line options.
      * @return the ArgumentContext for the process.
      * @throws RatException on error.
      */
@@ -137,7 +137,6 @@ public final class OptionCollectionParser<T extends UIOption<T>> {
 
     /**
      * Create the report configuration.
-     * Note: this method is package private for testing.
      * You probably want one of the {@code parseCommands(..)} methods.
      * @param argumentContext The context to execute in.
      * @return a ReportConfiguration
@@ -157,7 +156,7 @@ public final class OptionCollectionParser<T extends UIOption<T>> {
     }
 
     /**
-     * This class implements the {@code Comparator} interface for comparing Options.
+     * This class implements the {@code Comparator} interface for comparing options.
      */
     private static final class OptionComparator implements Comparator<Option>, Serializable {
         /** The serial version UID.  */
@@ -185,5 +184,4 @@ public final class OptionCollectionParser<T extends UIOption<T>> {
             return getKey(opt1).compareToIgnoreCase(getKey(opt2));
         }
     }
-
 }
