@@ -32,7 +32,7 @@ import static java.lang.String.format;
 /**
  * A representation of a Maven option based on an option.
  */
-public final class MavenOption extends UIOption<MavenOption> {
+public final class MavenOption extends UIOption<MavenOption> implements Comparable<MavenOption> {
 
     /**
      * The format to start an XML entity.
@@ -156,6 +156,11 @@ public final class MavenOption extends UIOption<MavenOption> {
             sb.append(")");
         }
         return sb.toString();
+    }
+
+    @Override
+    public int compareTo(final MavenOption other) {
+        return toString().compareTo(other.toString());
     }
 
     /**

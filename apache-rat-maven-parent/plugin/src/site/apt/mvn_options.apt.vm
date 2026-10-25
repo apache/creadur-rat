@@ -30,43 +30,28 @@ Maven Options
   If there is a need to include any of these the MAVEN standard collection can be added to
   \<inputIncludeStd\> and the project build directory can be added to \<inputInclude\> using the standard expression syntax.
 
-* The Options
+* The Maven Options
 
-#set($descEnd = ${rat.doubleLine} + " ")
-#foreach ($option in $rat.mvnOptions)
-#set($desc = $rat.aptEscape(${option.option.description}))
-#set($desc = $stringUtils.replace($desc, ${esc.N}, ${descEnd}))
-#set($desc = $stringUtils.replace($desc, ${rat.tab}, " * "))
+#foreach ($mavenOption in ${mavenOptions.mappedOptions.sorted().toList()})
 
-** ${rat.aptEscape($option.text)}
+** ${mavenOption.name}
 
-  #if(${option.deprecated}) <<$rat.aptEscape(${option.deprecated.toString})>> #end ${desc}
+  #if(${mavenOption.isDeprecated})<<${mavenOption.getDeprecated}>>
+  #end
 
-  * Required: ${option.required}
 
-#if(${option.hasArg})
-  * Argument Type: \<${option.argName}\>
+  ${mavenOption.description}
 
-  * Argument Count: #if(${option.option.args} == -2)Unlimited.#else ${option.option.args}#end
-#end
+  <<Argument type:>> #if(${mavenOption.hasArg})  ${mavenOption.argName} - ${mavenOption.argType.description.get()}
+  #else  boolean - 'true' or 'false'
+  #end
 
-  * Example: $rat.aptEscape(${option.example})
+  Example:
 
-#end
+----
 
-** Argument Types
+${mavenOption.example}
 
-#set($descEnd = ${rat.doubleLine} + " ")
-#foreach ($type in $rat.argumentTypes)
-#set($desc = $rat.aptEscape(${type.description.get}))
-#set($desc = $stringUtils.replace($desc, ${esc.N}, ${descEnd}))
-#set($desc = $stringUtils.replace($desc, ${rat.tab}, " * "))
-*** ${type.displayName}
-
- ${desc}
-#if(${type.displayName} == "StandardCollection")
-
- A complete description of each of the {{{../apache-rat/standard_collections.html}standard collection}} types is available.
-#end
+---
 
 #end

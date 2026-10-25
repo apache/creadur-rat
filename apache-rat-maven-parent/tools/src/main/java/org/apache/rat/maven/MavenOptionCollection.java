@@ -28,11 +28,15 @@ import org.apache.rat.commandline.Arg;
 import org.apache.rat.ui.ArgumentTracker;
 import org.apache.rat.ui.UIOptionCollection;
 import org.apache.rat.utils.CasedString;
+import org.apache.velocity.tools.config.DefaultKey;
+import org.apache.velocity.tools.config.ValidScope;
 
 /**
  * The collection of MavenOptions equivalent to the CLI options
  * with any unsupported options removed.
  */
+@DefaultKey("MavenOptions")
+@ValidScope({"application"})
 public final class MavenOptionCollection extends UIOptionCollection<MavenOption> {
     /**
      * Mapping of standard name to non-conflicting name.
