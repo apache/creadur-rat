@@ -61,6 +61,26 @@
       <plugins>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-site-plugin</artifactId>
+          <configuration>
+            <!-- RAT-536 keep site generation timestamp instead of release timestamp -->
+            <outputTimestamp>x</outputTimestamp>
+          </configuration>
+          <dependencies>
+            <dependency>
+              <groupId>${project.groupId}</groupId>
+              <artifactId>apache-rat-plugin-tools</artifactId>
+              <version>${project.version}</version>
+            </dependency>
+            <dependency>
+              <groupId>org.apache.velocity.tools</groupId>
+              <artifactId>velocity-tools-generic</artifactId>
+              <version>${velocityToolsVersion}</version>
+            </dependency>
+          </dependencies>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-plugin-plugin</artifactId>
           <configuration>
             <skipErrorNoDescriptorsFound>true</skipErrorNoDescriptorsFound>
@@ -152,6 +172,10 @@
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-site-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-failsafe-plugin</artifactId>
         <version>3.5.4</version>
       </plugin>
@@ -217,21 +241,21 @@
 <!--              </arguments>-->
 <!--            </configuration>-->
 <!--          </execution>-->
-          <execution>
-            <id>Initial site generation</id>
-            <phase>pre-site</phase>
-            <goals>
-              <goal>java</goal>
-            </goals>
-            <configuration>
-              <mainClass>org.apache.rat.documentation.Exporter</mainClass>
-              <classpathScope>test</classpathScope>
-              <arguments>
-                <argument>${project.basedir}/src/templates</argument>
-                <argument>${project.basedir}/src/site</argument>
-              </arguments>
-            </configuration>
-          </execution>
+<!--          <execution>-->
+<!--            <id>Initial site generation</id>-->
+<!--            <phase>pre-site</phase>-->
+<!--            <goals>-->
+<!--              <goal>java</goal>-->
+<!--            </goals>-->
+<!--            <configuration>-->
+<!--              <mainClass>org.apache.rat.documentation.Exporter</mainClass>-->
+<!--              <classpathScope>test</classpathScope>-->
+<!--              <arguments>-->
+<!--                <argument>${project.basedir}/src/templates</argument>-->
+<!--                <argument>${project.basedir}/src/site</argument>-->
+<!--              </arguments>-->
+<!--            </configuration>-->
+<!--          </execution>-->
         </executions>
         <configuration>
           <environmentVariables>
