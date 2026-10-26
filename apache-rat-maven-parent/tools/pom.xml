@@ -24,7 +24,7 @@
   </parent>
   <artifactId>apache-rat-plugin-tools</artifactId>
   <packaging>jar</packaging>
-  <name>Apache Creadur RAT::Maven plugin Tools</name>
+  <name>Apache Creadur RAT::Maven Plugin Tools</name>
   <description>Tools to manage and report on RAT for Maven</description>
   <properties>
 
