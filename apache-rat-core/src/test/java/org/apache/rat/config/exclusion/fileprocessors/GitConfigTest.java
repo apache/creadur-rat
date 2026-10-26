@@ -19,10 +19,11 @@
 package org.apache.rat.config.exclusion.fileprocessors;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.io.IOException;
 
+import org.apache.rat.config.exclusion.fileprocessors.GitIgnoreBuilder.GitConfig;
 import org.apache.rat.utils.FileUtils;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -30,7 +31,7 @@ import org.junit.jupiter.api.io.TempDir;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * Tests for {@link GitConfig}.
+ * Tests for {@link GitIgnoreBuilder.GitConfig}.
  */
 public class GitConfigTest {
 

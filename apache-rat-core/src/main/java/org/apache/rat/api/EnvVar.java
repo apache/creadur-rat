@@ -65,19 +65,6 @@ public enum EnvVar {
      */
     HOME("The current user's home directory."),
     /**
-     * The Windows user profile directory.
-     * <p>
-     * The environment variable that is read is {@code USERPROFILE} (no underscore), which is the
-     * canonical name used on Windows. The enum constant is spelled {@code USER_PROFILE} to stay
-     * consistent with the naming of the other constants.</p>
-     */
-    USER_PROFILE("The user profile directory on Windows, used as a fallback home directory when HOME is not set.") {
-        @Override
-        public String getValue() {
-            return System.getenv("USERPROFILE");
-        }
-    },
-    /**
      * The location of the git global configuration file.
      */
     GIT_CONFIG_GLOBAL("Where the git global (user-level) configuration file is located. When set, only this file " +
