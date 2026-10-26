@@ -36,7 +36,7 @@ Its reports require interpretation.
 
 In response to demands from project quality tool developers, RAT is available as a
 library suitable for inclusion in tools. This POM describes that library.
-Note that binary compatibility is not guaranteed between 0.x releases.
+Note that binary compatibility is not guaranteed between releases.
 
 Apache RAT is developed by the Apache Creadur project, a language and build
 agnostic home for software distribution comprehension and audit tools.
@@ -521,6 +521,18 @@ agnostic home for software distribution comprehension and audit tools.
               <goals>
                 <goal>makeAggregateBom</goal>
               </goals>
+            </execution>
+            <execution>
+              <id>generate-sbom-for-site</id>
+              <phase>pre-site</phase>
+              <goals>
+                <goal>makeBom</goal>
+              </goals>
+              <configuration>
+                <outputFormat>all</outputFormat>
+                <outputName>bom</outputName>
+                <outputDirectory>${project.reporting.outputDirectory}/sbom</outputDirectory>
+              </configuration>
             </execution>
           </executions>
         </plugin>

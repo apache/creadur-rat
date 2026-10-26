@@ -19,6 +19,10 @@
   <body>
     <head><![CDATA[<link href="https://creadur.apache.org/font/matesc.css" type="text/css" rel="stylesheet" />]]></head>
     <menu ref="parent"/>
+    <menu name="BOM Overview">
+      <item name="SBOM (JSON)" href="sbom/bom.json"/>
+      <item name="SBOM (XML)" href="sbom/bom.xml"/>
+    </menu>
     <menu ref="reports"/>
   </body>
 </site>
