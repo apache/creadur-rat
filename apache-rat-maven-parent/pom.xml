@@ -25,7 +25,7 @@
     </parent>
     <artifactId>apache-rat-maven-parent</artifactId>
     <packaging>pom</packaging>
-    <name>Apache Creadur RAT::Maven plugin parent</name>
+    <name>Apache Creadur RAT::Maven Plugin Parent</name>
     <description>Parent of the Apache Maven plugin that runs Apache RAT
         to audit the source to be distributed.
     </description>
