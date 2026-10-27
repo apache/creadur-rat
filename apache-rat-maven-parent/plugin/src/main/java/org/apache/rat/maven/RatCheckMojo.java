@@ -206,7 +206,7 @@ public final class RatCheckMojo extends AbstractRatMojo {
     /**
      * Reads the location of the RAT text file from the Mojo.
      *
-     * @return Value of the "reportFile" property.
+     * @return value of the "reportFile" property.
      * @throws MojoFailureException If no output file was specified.
      */
     public File getRatTxtFile() throws MojoFailureException {

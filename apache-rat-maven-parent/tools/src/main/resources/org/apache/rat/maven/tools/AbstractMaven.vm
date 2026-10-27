@@ -33,7 +33,7 @@ import org.apache.rat.ui.ArgumentTracker;
  */
 @SuppressWarnings("checkstyle:LineLength")
 public abstract class AbstractMaven extends AbstractMojo {
-    /** The arguments that have been set */
+    /** The arguments that have been set. */
     protected final ArgumentTracker argumentTracker;
     /** The MavenOptionCollection */
     protected final MavenOptionCollection mavenOptionCollection;

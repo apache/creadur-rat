@@ -24,7 +24,7 @@
   </parent>
   <artifactId>apache-rat-plugin</artifactId>
   <packaging>maven-plugin</packaging>
-  <name>Apache Creadur RAT::Maven plugin</name>
+  <name>Apache Creadur RAT::Maven Plugin</name>
   <description>A plugin for Apache Maven that runs Apache RAT
     to audit the source to be distributed.</description>
   <inceptionYear>2007</inceptionYear>
