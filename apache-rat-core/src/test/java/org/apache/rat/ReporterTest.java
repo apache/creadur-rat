@@ -21,6 +21,7 @@ package org.apache.rat;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Fail.fail;
+import static org.junit.jupiter.api.condition.OS.WINDOWS;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -79,6 +80,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInfo;
+import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -90,6 +92,7 @@ import org.xml.sax.SAXException;
  * Tests the output of the Reporter.
  */
 public class ReporterTest {
+    private static String textEncoding = "windows-1252";
     /**
      * Temporary file. Not using tempDir because it does not always work properly.
      */
@@ -192,6 +195,7 @@ public class ReporterTest {
     }
 
     @Test
+    @DisabledOnOs(WINDOWS)
     void testExecuteNoSource() throws RatException, TransformerException {
         File output = testPath.resolve("testExecuteNoSource").toFile();
         ArgumentContext context = collectionParser.parseCommands(new File("."), new String[]{"--output-style", "xml", "--output-file", output.getPath()});
@@ -252,30 +256,30 @@ public class ReporterTest {
         Map<String, Map<String, String>> expected = new HashMap<>();
         expected.put("/.hiddenDirectory", mapOf("isDirectory", "true", "mediaType", "application/octet-stream",
                 "type", "IGNORED"));
-        expected.put("/ILoggerFactory.java", mapOf("encoding", "windows-1252", "mediaType", "text/x-java-source",
+        expected.put("/ILoggerFactory.java", mapOf("encoding", textEncoding, "mediaType", "text/x-java-source",
                 "type", "STANDARD"));
         expected.put("/Image.png", mapOf("mediaType", "image/png", "type", "BINARY"));
-        expected.put("/LICENSE", mapOf("encoding", "windows-1252", "mediaType", "text/plain", "type", "NOTICE"));
-        expected.put("/NOTICE", mapOf("encoding", "windows-1252", "mediaType", "text/plain", "type", "NOTICE"));
-        expected.put("/Source.java", mapOf("encoding", "windows-1252", "mediaType", "text/x-java-source",
+        expected.put("/LICENSE", mapOf("encoding", textEncoding, "mediaType", "text/plain", "type", "NOTICE"));
+        expected.put("/NOTICE", mapOf("encoding", textEncoding, "mediaType", "text/plain", "type", "NOTICE"));
+        expected.put("/Source.java", mapOf("encoding", textEncoding, "mediaType", "text/x-java-source",
                 "type", "STANDARD"));
-        expected.put("/Text.txt", mapOf("encoding", "windows-1252", "mediaType", "text/plain",
+        expected.put("/Text.txt", mapOf("encoding", textEncoding, "mediaType", "text/plain",
                 "type", "STANDARD"));
-        expected.put("/TextHttps.txt", mapOf("encoding", "windows-1252", "mediaType", "text/plain",
+        expected.put("/TextHttps.txt", mapOf("encoding", textEncoding, "mediaType", "text/plain",
                 "type", "STANDARD"));
-        expected.put("/Xml.xml", mapOf("encoding", "windows-1252", "mediaType", "application/xml",
+        expected.put("/Xml.xml", mapOf("encoding", textEncoding, "mediaType", "application/xml",
                 "type", "STANDARD"));
-        expected.put("/buildr.rb", mapOf("encoding", "windows-1252", "mediaType", "text/x-ruby",
+        expected.put("/buildr.rb", mapOf("encoding", textEncoding, "mediaType", "text/x-ruby",
                 "type", "STANDARD"));
         expected.put("/dummy.jar", mapOf("mediaType", "application/java-archive",
                 "type", "ARCHIVE"));
-        expected.put("/generated.txt", mapOf("encoding", "windows-1252", "mediaType", "text/plain",
+        expected.put("/generated.txt", mapOf("encoding", textEncoding, "mediaType", "text/plain",
                 "type", "IGNORED"));
         expected.put("/plain.json", mapOf("mediaType", "application/json",
                 "type", "BINARY"));
-        expected.put("/sub/Empty.txt", mapOf("encoding", "windows-1252", "mediaType", "text/plain",
+        expected.put("/sub/Empty.txt", mapOf("encoding", textEncoding, "mediaType", "text/plain",
                 "type", "STANDARD"));
-        expected.put("/tri.txt", mapOf("encoding", "windows-1252", "mediaType", "text/plain",
+        expected.put("/tri.txt", mapOf("encoding", textEncoding, "mediaType", "text/plain",
                 "type", "STANDARD"));
 
         File output = testPath.resolve(".rat/testXMLOutput").toFile();
