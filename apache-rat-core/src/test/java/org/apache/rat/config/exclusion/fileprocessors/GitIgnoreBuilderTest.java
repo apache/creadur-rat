@@ -19,21 +19,23 @@
 package org.apache.rat.config.exclusion.fileprocessors;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URISyntaxException;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
+
 import org.apache.rat.config.exclusion.MatcherSet;
 import org.apache.rat.document.DocumentName;
 import org.apache.rat.document.DocumentNameMatcher;
 import org.apache.rat.document.FSInfoTest;
 import org.junit.jupiter.api.Test;
-
-import java.io.IOException;
-import java.net.URL;
-import java.util.Arrays;
-import java.util.List;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -183,5 +185,123 @@ public class GitIgnoreBuilderTest extends AbstractIgnoreBuilderTest {
         List<String> matching = Arrays.asList(".gitignore", "README.txt", "root.md", "dir1/.gitignore", "dir1/dir1.txt", "dir2/dir2.md", "dir3/dir3.log");
 
         assertCorrect(matcherSets, documentName.getBaseDocumentName(), matching, notMatching);
+    }
+
+    /**
+     * Test that exclusions from a global gitignore configured via
+     * {@code core.excludesFile} in a git configuration file are also applied,
+     * see <a href="https://issues.apache.org/jira/browse/RAT-578">RAT-578</a> for details.
+     */
+    @Test
+    public void test_global_gitignore_from_config() throws URISyntaxException, IOException {
+        URL globalGitIgnoreUrl = GitIgnoreBuilderTest.class.getClassLoader().getResource("GitIgnoreBuilderTest/global-gitignore");
+        File globalGitIgnore = Paths.get(globalGitIgnoreUrl.toURI()).toFile();
+        String gitConfig = String.join(System.lineSeparator(),
+                "[core]",
+                "excludesFile = " + globalGitIgnore.getAbsolutePath());
+
+        File configDir = tmpPath.toFile();
+        File userConfig = new File(configDir, ".gitconfig");
+        Files.createDirectories(configDir.toPath());
+        Files.write(userConfig.toPath(), Arrays.asList(gitConfig), StandardCharsets.UTF_8);
+
+        GitIgnoreBuilder underTest = new GitIgnoreBuilder() {
+            @Override
+            protected Optional<File> globalGitIgnore() {
+                // force reading the config file from the test directory
+                GitConfig gitConfig = new GitConfig(null, userConfig, tmpPath.toString(), tmpPath.toFile());
+                return gitConfig.coreExcludesFile();
+            }
+        };
+        URL url = GitIgnoreBuilderTest.class.getClassLoader().getResource("GitIgnoreBuilderTest/src/");
+        File file = Paths.get(url.toURI()).toFile();
+
+        DocumentName documentName = DocumentName.builder(file).build();
+        List<MatcherSet> matcherSets = underTest.build(documentName);
+        DocumentNameMatcher matcher = MatcherSet.merge(matcherSets).createMatcher();
+
+        assertThat(matcher.toString()).isEqualTo("matcherSet(or('included dir1/.gitignore', 'included .gitignore', 'included global gitignore'), or('excluded dir1/.gitignore', **/.gitignore, 'excluded .gitignore', 'excluded global gitignore'))");
+
+        // files that should be checked:
+        List<String> notMatching = Arrays.asList("dir1/dir1.md", "dir2/dir2.txt", "dir3/file3.log", "dir1/file1.log", "local-should-precede-global.md", "local-should-precede-global.xml");
+
+        // files that should be ignored:
+        List<String> matching = Arrays.asList(".gitignore", "README.txt", "root.md", "dir1/.gitignore", "dir1/dir1.txt", "dir2/dir2.md", "dir3/dir3.log");
+
+        assertCorrect(matcherSets, documentName.getBaseDocumentName(), matching, notMatching);
+    }
+
+    /**
+     * Test that a relative {@code core.excludesFile} is resolved once against the scan root and
+     * NOT re-resolved against a subdirectory when the scan descends (see
+     * <a href="https://github.com/apache/creadur-rat/pull/746">PR #746</a> review).
+     * <p>Mirrors git semantics where patterns from {@code core.excludesFile} are treated as if
+     * specified at the root of the working tree: a same-named file deeper in the tree must not be
+     * picked up.</p>
+     */
+    @Test
+    public void test_relative_excludesFile_resolved_once_at_root() throws URISyntaxException {
+        URL srcUrl = GitIgnoreBuilderTest.class.getClassLoader().getResource("GitIgnoreBuilderTest/RAT-578-root/");
+        File src = Paths.get(srcUrl.toURI()).toFile();
+
+        // simulate a core.excludesFile relative to the scan root (CWD), matching git's resolution
+        File resolved = new File(src, "excludes.txt");
+        GitIgnoreBuilder underTest = new GitIgnoreBuilder() {
+            @Override
+            protected Optional<File> globalGitIgnore() {
+                return Optional.of(resolved);
+            }
+        };
+
+        DocumentName documentName = DocumentName.builder(src).build();
+        List<MatcherSet> matcherSets = underTest.build(documentName);
+
+        // excluded by the root excludes.txt (*.md)
+        List<String> matching = Arrays.asList("root.md", "dir/ignored.md");
+        // dir/excludes.txt (*.log) is a decoy and must NOT be used:
+        // dir/kept.log stays checked instead of being ignored
+        List<String> notMatching = Arrays.asList("dir/kept.log", "dir/kept.txt");
+
+        assertCorrect(matcherSets, documentName.getBaseDocumentName(), matching, notMatching);
+    }
+
+    /**
+     * A {@code false} value for {@code RAT_GIT_GLOBAL_IGNORE} disables the global git ignore so that
+     * a scan result does not depend on the machine's git configuration (reproducible CI/audits).
+     */
+    @Test
+    public void test_global_git_ignore_off() {
+        assertThat(GitIgnoreBuilder.resolveGlobalGitIgnore("false"))
+                .as("'false' must not read a global git ignore").isEmpty();
+        assertThat(GitIgnoreBuilder.resolveGlobalGitIgnore(" FALSE ")).isEmpty();
+    }
+
+    /**
+     * An explicit path for {@code RAT_GIT_GLOBAL_IGNORE} uses that file deterministically instead of
+     * the machine's git configuration.
+     */
+    @Test
+    public void test_global_git_ignore_explicit_path() throws IOException {
+        File ignore = tmpPath.resolve("global-ignore").toFile();
+        Files.write(ignore.toPath(), Arrays.asList("*.log"), StandardCharsets.UTF_8);
+
+        assertThat(GitIgnoreBuilder.resolveGlobalGitIgnore(ignore.getAbsolutePath()))
+                .hasValue(ignore);
+        // a path that does not exist yields no global ignore (no fall back to the git config)
+        assertThat(GitIgnoreBuilder.resolveGlobalGitIgnore(ignore.getAbsolutePath() + ".missing"))
+                .isEmpty();
+    }
+
+    /**
+     * A {@code null} or {@code true} value keeps the git-configuration resolution (RAT-578 default).
+     */
+    @Test
+    public void test_global_git_ignore_on_or_unset() {
+        // 'true' must keep the git-config resolution path (should never be empty just because of the override)
+        assertThat(GitIgnoreBuilder.resolveGlobalGitIgnore("true"))
+                .as("'true' keeps git-config resolution, which is Optional on a clean machine")
+                .isNotNull();
+        assertThat(GitIgnoreBuilder.resolveGlobalGitIgnore(" TRUE ")).isNotNull();
+        assertThat(GitIgnoreBuilder.resolveGlobalGitIgnore(null)).isNotNull();
     }
 }
