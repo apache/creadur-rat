@@ -68,6 +68,9 @@ in order to be properly linked in site reports.
     </release>
     -->
     <release version="1.0.0-SNAPSHOT" date="xxxx-yy-zz" description="Current SNAPSHOT - release to be done">
+      <action issue="RAT-585" type="fix" dev="pottlinger" due-to="Konrad Windszus">
+        Respect filesystem case sensitivity when matching path roots, preventing lowercase Windows drive letters from being treated as relative report paths.
+      </action>
       <action issue="RAT-569" type="fix" dev="pottlinger" due-to="Arturo Bernal">
         Fix applying configured exclusion rules to resources added via Ant ResourceCollections, including nested filesets and externally resolved collections such as Gradle fileTree elements.
       </action>
