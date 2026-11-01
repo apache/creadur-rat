@@ -38,9 +38,11 @@
         <rat.plugin.version>${project.version}</rat.plugin.version>
         <doxiaVersion>2.0.0</doxiaVersion>
         <mavenVersion>${minimalMavenBuildVersion}</mavenVersion>
+        <mavenInvokerVersion>3.9.0</mavenInvokerVersion>
         <mavenPluginTestingVersion>3.5.1</mavenPluginTestingVersion>
         <mavenPluginToolsVersion>3.15.2</mavenPluginToolsVersion>
         <velocityToolsVersion>3.1</velocityToolsVersion>
+        <groovy.version>6.0.0</groovy.version>
     </properties>
     <modules>
         <module>tools</module>
@@ -48,6 +50,24 @@
     </modules>
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>org.apache.groovy</groupId>
+                <artifactId>groovy-json</artifactId>
+                <version>${groovy.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.groovy</groupId>
+                <artifactId>groovy-xml</artifactId>
+                <version>${groovy.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.groovy</groupId>
+                <artifactId>groovy</artifactId>
+                <version>${groovy.version}</version>
+                <scope>test</scope>
+            </dependency>
             <dependency>
                 <groupId>org.apache.rat</groupId>
                 <artifactId>apache-rat-core</artifactId>

@@ -140,7 +140,7 @@
                   <pluginExecutionFilter>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-plugin-plugin</artifactId>
-                    <versionRange>[3.3,)</versionRange>
+                    <versionRange>[${minimalMavenBuildVersion},)</versionRange>
                     <goals>
                       <goal>descriptor</goal>
                       <goal>helpmojo</goal>
@@ -275,11 +275,22 @@
           <cloneProjectsTo>${project.build.directory}/invoker_target</cloneProjectsTo>
           <localRepositoryPath>${project.build.directory}/local-repo</localRepositoryPath>
           <addTestClassPath>true</addTestClassPath>
-<!--          <extraArtifacts>org.apache.rat:apache-rat-core-tests:${coreVerson}:jar-->
-<!--            </extraArtifacts>-->
+          <extraArtifacts>org.apache.rat:apache-rat-core-tests:${coreVersion}:jar</extraArtifacts>
           <settingsFile>src/it/settings.xml</settingsFile>
           <postBuildHookScript>verify</postBuildHookScript>
         </configuration>
+        <dependencies>
+          <dependency>
+            <groupId>org.apache.groovy</groupId>
+            <artifactId>groovy-json</artifactId>
+            <version>${groovy.version}</version>
+          </dependency>
+          <dependency>
+            <groupId>org.apache.groovy</groupId>
+            <artifactId>groovy-xml</artifactId>
+            <version>${groovy.version}</version>
+          </dependency>
+        </dependencies>
         <executions>
           <execution>
             <id>integration-test</id>
@@ -392,9 +403,9 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.apache.maven.shared</groupId>
-      <artifactId>maven-invoker</artifactId>
-      <version>3.3.0</version>
+      <groupId>org.apache.maven.plugins</groupId>
+      <artifactId>maven-invoker-plugin</artifactId>
+      <version>${mavenInvokerVersion}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven.plugin-tools</groupId>
