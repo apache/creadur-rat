@@ -114,6 +114,32 @@ class ArgumentTrackerTest {
     }
 
     @Test
+    void addArgOnDeprecatedAliasAccumulatesWithNonDeprecatedAlias() {
+        // RAT-552: --exclude (deprecated) and --input-exclude (not deprecated) are two spellings of the same
+        // multi-valued option; adding values under one must not discard values already added under the other.
+        underTest.addArg("exclude", "hello.txt");
+        underTest.addArg("input-exclude", "module/**");
+
+        assertThat(underTest.getArg("input-exclude")).contains(List.of("hello.txt", "module/**"));
+        // the deprecated alias is not a separate entry: commons-cli would reject an argument list naming two
+        // options of the same group.
+        assertThat(underTest.getArg("exclude")).isEmpty();
+        assertThat(underTest.args()).containsExactly("--input-exclude", "hello.txt", "module/**");
+    }
+
+    @Test
+    void addArgOnOnlyDeprecatedAliasKeepsItsOwnKey() {
+        // RAT-552: using only the deprecated alias, with no competing non-deprecated value, must keep the value
+        // under the deprecated key itself, not move it to the non-deprecated one. The deprecated flag name has
+        // to be the one that reaches commons-cli, or its own deprecation notice for that option never fires.
+        underTest.addArg("exclude", "hello.txt");
+
+        assertThat(underTest.getArg("exclude")).contains(List.of("hello.txt"));
+        assertThat(underTest.getArg("input-exclude")).isEmpty();
+        assertThat(underTest.args()).containsExactly("--exclude", "hello.txt");
+    }
+
+    @Test
     void invalidAbstractOption() {
         Option option = Option.builder().longOpt("notAValidOption").build();
         TestingUIOption invalidOption = new TestingUIOption.TestingUIOptionBuilder()
