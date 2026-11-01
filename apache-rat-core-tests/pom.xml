@@ -164,12 +164,6 @@
       <scope>compile</scope>
     </dependency>
     <dependency>
-      <!-- This dependency is actually used by integration testing code. -->
-      <groupId>org.apache.groovy</groupId>
-      <artifactId>groovy</artifactId>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
       <groupId>com.google.jimfs</groupId>
       <artifactId>jimfs</artifactId>
       <scope>compile</scope>
