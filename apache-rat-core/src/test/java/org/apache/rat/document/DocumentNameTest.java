@@ -40,6 +40,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.FieldSource;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -49,6 +50,17 @@ import static org.mockito.ArgumentMatchers.any;
 
 public class DocumentNameTest {
     private static final FSInfo[] TEST_SUITE = FSInfoTest.TEST_SUITE;
+
+    @ParameterizedTest
+    @ValueSource(booleans = {true, false})
+    void splitRootRespectsCaseSensitivity(boolean caseSensitive) {
+        FSInfo info = new FSInfo("test", "\\", caseSensitive, List.of("F:\\"));
+        String path = "f:\\workspace\\target\\rat.txt";
+        var result = DocumentName.builder(info).splitRoot(path);
+
+        assertThat(result.getLeft()).isEqualTo(caseSensitive ? "" : "F:\\");
+        assertThat(result.getRight()).isEqualTo(caseSensitive ? path : "workspace\\target\\rat.txt");
+    }
 
     /**
      * Create a list of mocked files from the specified directory.
