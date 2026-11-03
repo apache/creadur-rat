@@ -22,6 +22,8 @@
     <menu name="Overview">
       <item name="Introduction" href="index.html"/>
       <item name="Report Task" href="examples/report.html"/>
+      <item name="SBOM (JSON)" href="sbom/bom.json"/>
+      <item name="SBOM (XML)" href="sbom/bom.xml"/>
     </menu>
     <menu name="Examples">
       <item name="Basic Usage" href="examples/basic.html"/>

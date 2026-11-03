@@ -26,6 +26,7 @@ import java.nio.file.FileSystems;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.TreeMap;
 
 import org.junit.jupiter.api.Test;
@@ -33,6 +34,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.FieldSource;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -58,6 +60,20 @@ public class FSInfoTest {
     }
 
     public static final DocumentName.FSInfo[] TEST_SUITE = {UNIX, WINDOWS, OSX};
+
+    @ParameterizedTest
+    @ValueSource(booleans = {true, false})
+    void rootForRespectsCaseSensitivity(boolean caseSensitive) {
+        DocumentName.FSInfo info = new DocumentName.FSInfo("test", "\\", caseSensitive, List.of("C:\\", "F:\\"));
+
+        assertThat(info.rootFor("F:\\workspace\\target\\rat.txt")).contains("F:\\");
+        assertThat(info.rootFor("f:\\workspace\\target\\rat.txt"))
+                .isEqualTo(caseSensitive ? Optional.empty() : Optional.of("F:\\"));
+        assertThat(info.rootFor("c:\\workspace\\target\\rat.txt"))
+                .isEqualTo(caseSensitive ? Optional.empty() : Optional.of("C:\\"));
+        assertThat(info.rootFor("G:\\workspace\\target\\rat.txt")).isEmpty();
+        assertThat(info.rootFor("target\\rat.txt")).isEmpty();
+    }
 
     @ParameterizedTest
     @FieldSource("TEST_SUITE")

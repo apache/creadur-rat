@@ -71,6 +71,9 @@ in order to be properly linked in site reports.
       <action issue="RAT-552" type="add" dev="pottlinger" due-to="Arturo Bernal">
         Fix using deprecated exclusion configuration and excludeSubProjects configuration with RAT Maven plugin.
       </action>
+      <action issue="RAT-585" type="fix" dev="pottlinger" due-to="Konrad Windszus">
+        Respect filesystem case sensitivity when matching path roots, preventing lowercase Windows drive letters from being treated as relative report paths.
+      </action>
       <action issue="RAT-569" type="fix" dev="pottlinger" due-to="Arturo Bernal">
         Fix applying configured exclusion rules to resources added via Ant ResourceCollections, including nested filesets and externally resolved collections such as Gradle fileTree elements.
       </action>
@@ -78,7 +81,7 @@ in order to be properly linked in site reports.
         Add ability to check license headers in Rust files properly.
       </action>
       <action issue="RAT-579" type="add" dev="pottlinger">
-        Generate cycloneDX BOMs upon each build.
+        Generate cycloneDX BOMs upon each build and reference SBOM in site build.
       </action>
       <action issue="RAT-547" type="add" dev="claudenw">
         Create internal RAT core tests submodule that packages RAT core tests into a separate JAR in order to allow verification of functionality of RAT client UIs.

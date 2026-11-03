@@ -96,6 +96,8 @@
       <item name="Apache Tentacles" href="https://creadur.apache.org/tentacles"/>
       <item name="Apache Whisker" href="https://creadur.apache.org/whisker"/>
       <item name="Security" href="https://www.apache.org/security/"/>
+      <item name="Main SBOM (JSON)" href="sbom/bom.json"/>
+      <item name="Main SBOM (XML)" href="sbom/bom.xml"/>
       <item name="License" href="https://www.apache.org/licenses/"/>
       <item name="Privacy" href="https://privacy.apache.org/policies/privacy-policy-public.html"/>
       <item name="Sponsorship" href="https://www.apache.org/foundation/sponsorship.html"/>
@@ -108,6 +110,7 @@
       <item name="How we work" href="https://www.apache.org/foundation/how-it-works.html"/>
       <item name="Our history" href="https://www.apache.org/foundation/how-it-works.html#history"/>
       <item name="News" href="https://blogs.apache.org/foundation/"/>
+      <item name="Donate" href="https://donate.apache.org"/>
     </menu>
     <menu name="Contribute" inherit="bottom">
       <item name="Get Involved" href="https://www.apache.org/foundation/getinvolved.html"/>
