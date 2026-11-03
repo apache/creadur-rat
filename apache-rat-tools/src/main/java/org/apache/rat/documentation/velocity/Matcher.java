@@ -76,7 +76,7 @@ public class Matcher {
      * @param self the IHeaderMatcher to wrap.
      */
     Matcher(final IHeaderMatcher self) {
-        this(DescriptionBuilder.buildMap(self.getClass()), self);
+        this(DescriptionBuilder.buildMap(Objects.requireNonNull(self, "self may not be null").getClass()), self);
     }
 
     /**

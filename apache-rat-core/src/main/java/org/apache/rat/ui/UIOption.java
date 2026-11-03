@@ -32,8 +32,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.rat.OptionCollection;
 import org.apache.rat.utils.CasedString;
 
-import static java.lang.String.format;
-
 /**
  * Abstract class that provides the framework for UI-specific RAT options.
  * In this context UI option means an option expressed in the specific UI.
@@ -159,7 +157,7 @@ public abstract class UIOption<T extends UIOption<T>> {
                 maybeResult.ifPresent(value -> maps.put(key, cleanupName(value)));
             }
             for (Map.Entry<String, String> entry : maps.entrySet()) {
-                workingStr = workingStr.replaceAll(Pattern.quote(format("%s", entry.getKey())), entry.getValue());
+                workingStr = workingStr.replaceAll(Pattern.quote(entry.getKey()), entry.getValue());
             }
         }
         return workingStr;

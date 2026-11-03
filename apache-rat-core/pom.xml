@@ -265,6 +265,7 @@
       <!-- this dependency is actually used by integration testing code -->
       <groupId>org.apache.groovy</groupId>
       <artifactId>groovy</artifactId>
+      <version>${groovy.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>

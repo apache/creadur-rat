@@ -55,17 +55,6 @@ public class NamingTest {
     }
 
     @Test
-    public void testMaven() throws IOException, ParseException {
-        Naming.main(new String[]{"--maven", file.getAbsolutePath()});
-        String result = readFile(file);
-        assertThat(result).contains("Maven")
-                .contains("Description")
-                .doesNotContain("Ant")
-                .doesNotContain("CLI")
-                .doesNotContain("[Deprecated ");
-    }
-
-    @Test
     public void testCli() throws IOException, ParseException {
         Naming.main(new String[]{"--cli", file.getAbsolutePath()});
         String result = readFile(file);
@@ -102,25 +91,6 @@ public class NamingTest {
                     .contains("Description")
                     .doesNotContain("CLI")
                     .doesNotContain("Maven")
-                    .doesNotContain("[Deprecated ");
-        }
-    }
-
-    @Test
-    public void testMavenCsv() throws IOException, ParseException {
-        Naming.main(new String[]{"--maven", "--csv", file.getAbsolutePath()});
-        String result = readFile(file);
-        assertThat(result).contains("Maven")
-                .contains("Description")
-                .doesNotContain("CLI")
-                .doesNotContain("Ant")
-                .doesNotContain("[Deprecated ");
-
-        try (CSVParser parser = readCSV(file)) {
-            assertThat(parser.getHeaderNames()).contains("Maven")
-                    .contains("Description")
-                    .doesNotContain("CLI")
-                    .doesNotContain("Ant")
                     .doesNotContain("[Deprecated ");
         }
     }

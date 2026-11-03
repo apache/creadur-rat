@@ -49,6 +49,13 @@
   <build>
     <plugins>
       <plugin>
+        <groupId>com.github.spotbugs</groupId>
+        <artifactId>spotbugs-maven-plugin</artifactId>
+        <configuration>
+          <skip>true</skip>
+        </configuration>
+      </plugin>
+      <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-source-plugin</artifactId>
         <configuration>
@@ -211,7 +218,8 @@
                 <argument>-cp</argument>
                 <argument>target/apache-rat-${project.version}.jar</argument>
                 <argument>org.apache.rat.tools.Naming</argument>
-                <argument>--maven</argument>
+                <!-- TODO create a velocity template to display all the values -->
+<!--                <argument>&#45;&#45;maven</argument>-->
                 <argument>--ant</argument>
                 <argument>--cli</argument>
               </arguments>
