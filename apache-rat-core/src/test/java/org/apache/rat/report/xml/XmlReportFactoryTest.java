@@ -18,7 +18,7 @@
  */
 package org.apache.rat.report.xml;
 
-import static org.assertj.core.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -104,11 +104,7 @@ public class XmlReportFactoryTest {
         final ClaimStatistic statistic = new ClaimStatistic();
         final ReportConfiguration configuration = new ReportConfiguration();
         // configuration.addLicense(mockLicense);
-        try {
-            XmlReportFactory.createStandardReport(writer, statistic, configuration);
-            fail("Should have thrown exception");
-        } catch (ConfigurationException e) {
-            // expected;
-        }
+        assertThrows(ConfigurationException.class,
+                () -> XmlReportFactory.createStandardReport(writer, statistic, configuration));
     }
 }
