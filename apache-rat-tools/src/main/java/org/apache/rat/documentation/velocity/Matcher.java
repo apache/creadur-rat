@@ -73,10 +73,10 @@ public class Matcher {
 
     /**
      * Creates from a system Matcher.
-     * @param self the IHeaderMatcher to wrap.
+     * @param matcher the IHeaderMatcher to wrap.
      */
-    Matcher(final IHeaderMatcher self) {
-        this(DescriptionBuilder.buildMap(self.getClass()), self);
+    Matcher(final IHeaderMatcher matcher) {
+        this(DescriptionBuilder.buildMap(Objects.requireNonNull(matcher, "Matcher may not be null").getClass()), matcher);
     }
 
     /**
