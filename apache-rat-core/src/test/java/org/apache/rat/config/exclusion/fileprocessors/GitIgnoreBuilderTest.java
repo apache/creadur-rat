@@ -260,7 +260,7 @@ public class GitIgnoreBuilderTest extends AbstractIgnoreBuilderTest {
         List<String> matching = Arrays.asList("root.md", "dir/ignored.md");
         // dir/excludes.txt (*.log) is a decoy and must NOT be used:
         // dir/kept.log stays checked instead of being ignored
-        List<String> notMatching = Arrays.asList("dir/kept.log", "dir/kept.txt");
+        List<String> notMatching = Arrays.asList("dir/kept.log", "dir/kept.txt", "dir/README.md");
 
         assertCorrect(matcherSets, documentName.getBaseDocumentName(), matching, notMatching);
     }
