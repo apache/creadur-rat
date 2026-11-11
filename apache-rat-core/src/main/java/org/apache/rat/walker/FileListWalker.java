@@ -21,6 +21,7 @@ package org.apache.rat.walker;
 import java.io.File;
 import java.io.IOException;
 import java.io.Reader;
+import java.util.Objects;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.rat.api.RatException;
@@ -47,7 +48,7 @@ public class FileListWalker implements Reportable {
 
     /**
      * Constructor.
-     * @param source The file document that is the source from which this walker will read.
+     * @param source the file document that is the source from which this walker will read.
      */
     public FileListWalker(final FileDocument source) {
         this.source = source;
@@ -61,6 +62,7 @@ public class FileListWalker implements Reportable {
     }
 
     private FileDocument createDocument(final String unixFileName) {
+        Objects.requireNonNull(unixFileName, "unixFileName may not be null");
         DocumentName sourceName = source.getName();
         String finalName = ExclusionUtils.convertSeparator(unixFileName, "/", sourceName.getDirectorySeparator());
         DocumentName documentBase = unixFileName.startsWith("/") ? rootDoc : baseDoc;

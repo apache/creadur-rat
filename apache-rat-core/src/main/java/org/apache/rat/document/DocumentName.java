@@ -513,12 +513,13 @@ public class DocumentName implements Comparable<DocumentName> {
 
         /**
          * Retrieves the root extracted from the name.
+         * Matching respects the case sensitivity of this file system.
          * @param name the name to extract the root from
          * @return an optional containing the root or empty.
          */
         public Optional<String> rootFor(final String name) {
             for (String sysRoot : data.roots) {
-                if (name.startsWith(sysRoot)) {
+                if (name.regionMatches(!isCaseSensitive(), 0, sysRoot, 0, sysRoot.length())) {
                     return Optional.of(sysRoot);
                 }
             }
@@ -773,7 +774,7 @@ public class DocumentName implements Comparable<DocumentName> {
         Pair<String, String> splitRoot(final String name) {
             String workingName = name;
             String workingRoot = fsInfo.rootFor(name).orElse("");
-            if (!workingRoot.isEmpty() && workingName.startsWith(workingRoot)) {
+            if (!workingRoot.isEmpty()) {
                 workingName = workingName.substring(workingRoot.length());
             }
             return ImmutablePair.of(workingRoot, workingName);

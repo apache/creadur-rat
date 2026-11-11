@@ -21,6 +21,8 @@
     <menu ref="parent"/>
     <menu name="Overview">
       <item name="Introduction" href="index.html"/>
+      <item name="SBOM (JSON)" href="sbom/bom.json"/>
+      <item name="SBOM (XML)" href="sbom/bom.xml"/>
     </menu>
     <menu ref="reports"/>
   </body>

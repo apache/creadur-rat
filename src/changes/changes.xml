@@ -72,12 +72,13 @@ in order to be properly linked in site reports.
         Support the git configuration file option core.excludesFile (including include.path directives) and the GIT_CONFIG_GLOBAL
         environment variable when processing global gitignore files, and resolve the home directory with a HOME, USERPROFILE,
         user.home fallback for portability.
-      </action>
-      <action issue="RAT-578" type="add" dev="claudenw" due-to="Romain Manni-Bucau">
         Add the RAT_GIT_GLOBAL_IGNORE tri-state environment variable to make global gitignore processing reproducible: set it to
         "false" to disable reading the machine global git ignore, "true" to resolve it from the git configuration, or to a file
         path to always use an explicit global gitignore file. This avoids audit results changing based on the machine that runs
         the scan (recommended for CI/release builds).
+      </action>
+      <action issue="RAT-585" type="fix" dev="pottlinger" due-to="Konrad Windszus">
+        Respect filesystem case sensitivity when matching path roots, preventing lowercase Windows drive letters from being treated as relative report paths.
       </action>
       <action issue="RAT-569" type="fix" dev="pottlinger" due-to="Arturo Bernal">
         Fix applying configured exclusion rules to resources added via Ant ResourceCollections, including nested filesets and externally resolved collections such as Gradle fileTree elements.
@@ -86,7 +87,7 @@ in order to be properly linked in site reports.
         Add ability to check license headers in Rust files properly.
       </action>
       <action issue="RAT-579" type="add" dev="pottlinger">
-        Generate cycloneDX BOMs upon each build.
+        Generate cycloneDX BOMs upon each build and reference SBOM in site build.
       </action>
       <action issue="RAT-547" type="add" dev="claudenw">
         Create internal RAT core tests submodule that packages RAT core tests into a separate JAR in order to allow verification of functionality of RAT client UIs.

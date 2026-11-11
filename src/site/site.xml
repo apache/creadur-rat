@@ -96,6 +96,8 @@
       <item name="Apache Tentacles" href="https://creadur.apache.org/tentacles"/>
       <item name="Apache Whisker" href="https://creadur.apache.org/whisker"/>
       <item name="Security" href="https://www.apache.org/security/"/>
+      <item name="Main SBOM (JSON)" href="sbom/bom.json"/>
+      <item name="Main SBOM (XML)" href="sbom/bom.xml"/>
       <item name="License" href="https://www.apache.org/licenses/"/>
       <item name="Privacy" href="https://privacy.apache.org/policies/privacy-policy-public.html"/>
       <item name="Sponsorship" href="https://www.apache.org/foundation/sponsorship.html"/>
