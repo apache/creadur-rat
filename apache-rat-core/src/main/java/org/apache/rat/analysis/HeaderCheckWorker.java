@@ -77,6 +77,7 @@ public final class HeaderCheckWorker {
 
         while (headerLinesRead < numberOfLines && (line = reader.readLine()) != null) {
             headers.append(line).append(System.lineSeparator());
+            headerLinesRead++;
         }
         final String raw = headers.toString();
         final String pruned = FullTextMatcher.prune(raw).toLowerCase(Locale.ENGLISH);
