@@ -31,7 +31,26 @@ public enum EnvVar {
     /**
      * Ignore Git Global ignore file.
      */
-    RAT_NO_GIT_GLOBAL_IGNORE("Ignore global ignore file when processing GIT ignore files."),
+    RAT_NO_GIT_GLOBAL_IGNORE("Ignore the global ignore file when processing GIT ignore files."),
+    /**
+     * Controls how the global GIT ignore file is resolved for reproducible builds and audits.
+     * <p>
+     * This is a tri-state variable, not a plain boolean. The value may be one of the following.
+     * </p>
+     * <ul>
+     *   <li>{@code false} - never read the machine global git ignore (equivalent to setting
+     *       {@link #RAT_NO_GIT_GLOBAL_IGNORE}).</li>
+     *   <li>{@code true} (default) - resolve the global git ignore from the git configuration
+     *       ({@code core.excludesFile} / {@code GIT_CONFIG_GLOBAL} / XDG / HOME).</li>
+     *   <li>a file path - always use that explicit global ignore file, so the scan result does not
+     *       depend on the machine the audit runs on.</li>
+     * </ul>
+     * Setting it to {@code false} or to an explicit path makes RAT scans reproducible across
+     * machines (recommended for CI/release builds). The legacy {@link #RAT_NO_GIT_GLOBAL_IGNORE}
+     * takes precedence over this variable.
+     */
+    RAT_GIT_GLOBAL_IGNORE("Controls how the global GIT ignore file is resolved: 'false' to disable it, 'true' to "
+            + "resolve it from the git configuration, or a file path to always use an explicit global git ignore file."),
     /**
      * Log matcher decomposition when used.
      */
@@ -45,6 +64,11 @@ public enum EnvVar {
      * Defines the user HOME.
      */
     HOME("The current user's home directory."),
+    /**
+     * The location of the git global configuration file.
+     */
+    GIT_CONFIG_GLOBAL("Where the git global (user-level) configuration file is located. When set, only this file " +
+            "is read for git's global configuration, ignoring $HOME/.gitconfig and $XDG_CONFIG_HOME/git/config."),
     /**
      * Sets the log level for the DefaultLog when it is constructed.
      */
