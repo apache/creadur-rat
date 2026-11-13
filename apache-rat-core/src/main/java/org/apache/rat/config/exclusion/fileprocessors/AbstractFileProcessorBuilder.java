@@ -176,9 +176,15 @@ public abstract class AbstractFileProcessorBuilder {
             LevelBuilder levelBuilder = levelBuilders.computeIfAbsent(level, k -> new LevelBuilder());
             levelBuilder.add(process(levelBuilder::add, root, DocumentName.builder(file).build()));
         }
-        // find all the directories under this directory and add them.
+        // find all the non-hidden directories under this directory and add them.
+        // Hidden directories (names starting with '.') are skipped because they are
+        // excluded by default (HIDDEN_DIR) and traversing into them can be extremely
+        // expensive when they contain large trees (e.g. git worktrees stored under
+        // .worktrees/ or .claude/).
         for (File dir : listFiles(dirFile, DirectoryFileFilter.DIRECTORY)) {
-            checkDirectory(level + 1, root, DocumentName.builder(dir).setBaseName(directory.getBaseName()).build(), fileFilter);
+            if (!ExclusionUtils.isHidden(dir.getName())) {
+                checkDirectory(level + 1, root, DocumentName.builder(dir).setBaseName(directory.getBaseName()).build(), fileFilter);
+            }
         }
     }
 
