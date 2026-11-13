@@ -43,6 +43,38 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class GitIgnoreBuilderTest extends AbstractIgnoreBuilderTest {
 
     @Test
+    public void hiddenDirectoriesAreSkippedDuringWalk() throws IOException {
+        // Create a .gitignore in the root
+        writeFile(".gitignore", Arrays.asList("*.log"));
+
+        // Create a hidden directory with its own .gitignore that would exclude .txt files
+        File hiddenDir = new File(tmpPath.toFile(), ".hidden");
+        hiddenDir.mkdir();
+        try (java.io.PrintWriter w = new java.io.PrintWriter(new java.io.FileWriter(new File(hiddenDir, ".gitignore")))) {
+            w.println("*.txt");
+        }
+
+        GitIgnoreBuilder underTest = new GitIgnoreBuilder() {
+            @Override
+            protected Optional<File> globalGitIgnore() {
+                return Optional.empty();
+            }
+        };
+
+        List<MatcherSet> matcherSets = underTest.build(baseName);
+        DocumentNameMatcher matcher = MatcherSet.merge(matcherSets).createMatcher();
+
+        // The root .gitignore should exclude .log files
+        DocumentName logFile = baseName.resolve("test.log");
+        assertThat(matcher.matches(logFile)).isFalse();
+
+        // The .hidden/.gitignore should NOT have been processed, so .txt files
+        // should not be excluded (the hidden dir walk was skipped)
+        DocumentName txtFile = baseName.resolve("test.txt");
+        assertThat(matcher.matches(txtFile)).isTrue();
+    }
+
+    @Test
     public void processExampleFileTest() throws IOException {
         try {
             String[] lines = {
