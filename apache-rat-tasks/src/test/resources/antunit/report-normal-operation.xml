@@ -142,7 +142,7 @@ SPDX-License-Identifier: Apache-2.0
 				<rat:license
 					family="YASL1"
 					notes="Interesting License">
-					 <!--  non existent copyright in this file  -->
+					 <!--  non-existent copyright in this file  -->
 					<rat:copyright owner="non existent" />
 				</rat:license>
 			</rat:report>
@@ -224,7 +224,7 @@ SPDX-License-Identifier: Apache-2.0
 					family="YASL1"
 					notes="Interesting License">
 					<rat:not>
-						 <!--  non existent copyright in this file  -->
+						 <!--  non-existent copyright in this file  -->
 						<rat:copyright owner="non existent" />
 					</rat:not>
 				</rat:license>
@@ -348,7 +348,7 @@ SPDX-License-Identifier: Apache-2.0
 				<rat:license
 					family="YASL1"
 					notes="Interesting License">
-					 <!--  non existent copyright in this file  -->
+					 <!--  non-existent copyright in this file  -->
 					<rat:copyright owner="non existent" />
 				</rat:license>
 			</rat:report>

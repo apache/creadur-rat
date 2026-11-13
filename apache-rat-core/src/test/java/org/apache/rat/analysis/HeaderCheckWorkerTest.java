@@ -64,14 +64,15 @@ class HeaderCheckWorkerTest {
     void readHeaderStopsAtRetainedLineLimitTest() throws Exception {
         StringBuilder input = new StringBuilder();
         for (int i = 1; i <= HeaderCheckWorker.DEFAULT_NUMBER_OF_RETAINED_HEADER_LINES * 2; i++) {
-            input.append("line ").append(i).append("\n");
+            input.append("line ").append(i).append(System.lineSeparator());
         }
         BufferedReader reader = new BufferedReader(new StringReader(input.toString()));
         IHeaders headers = HeaderCheckWorker.readHeader(reader, HeaderCheckWorker.DEFAULT_NUMBER_OF_RETAINED_HEADER_LINES);
-        assertThat(headers.raw()).contains("line 50" + System.lineSeparator());
-        assertThat(headers.raw()).doesNotContain("line 51");
+        assertThat(headers.raw()).contains("line " + HeaderCheckWorker.DEFAULT_NUMBER_OF_RETAINED_HEADER_LINES + System.lineSeparator());
+        var oneTooMuch = "line " + (HeaderCheckWorker.DEFAULT_NUMBER_OF_RETAINED_HEADER_LINES + 1);
+        assertThat(headers.raw()).doesNotContain(oneTooMuch);
         // the remainder of the stream must be left unread on the reader
-        assertThat(reader.readLine()).isEqualTo("line 51");
+        assertThat(reader.readLine()).isEqualTo(oneTooMuch);
     }
 
     @Test
