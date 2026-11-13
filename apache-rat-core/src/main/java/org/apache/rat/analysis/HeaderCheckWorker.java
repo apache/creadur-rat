@@ -48,7 +48,7 @@ public final class HeaderCheckWorker {
      * The default number of header lines to read while looking for the license
      * information.
      */
-    public static final int DEFAULT_NUMBER_OF_RETAINED_HEADER_LINES = 50;
+    public static final int DEFAULT_NUMBER_OF_RETAINED_HEADER_LINES = 400;
     /** The number of header lines to retain for processing */
     private final int numberOfRetainedHeaderLines;
     /** The BufferedReader used to read the lines */
