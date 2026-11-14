@@ -140,7 +140,8 @@ public class TikaProcessorTest {
                 }
             }
         }
-        System.out.println("** Untested mime types");
+        System.out.println("** Untested mime types: " + unseenMime.keySet().size() +
+                " of " + TikaProcessor.getDocumentTypeMap().size() + " **");
         unseenMime.keySet().forEach(System.out::println);
         for (Document.Type type : Document.Type.values()) {
             System.out.format("Tested %s %s files%n", statistic.getCounter(type), type);
