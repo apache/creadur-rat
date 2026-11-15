@@ -23,8 +23,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.rat.ConfigurationException;
@@ -34,8 +32,8 @@ import org.apache.rat.config.parameters.ConfigComponent;
 
 /**
  * Defines a factory to produce matchers for an SPDX tag. SPDX tag is of the
- * format {@code SPDX-License-Identifier: short-name} where {@code short-name}
- * matches the regex pattern [A-Za-z0-9\.\-]+
+ * format {@code SPDX-License-Identifier: expression}. Expressions support
+ * identifiers, AND, OR, WITH, parentheses, and flexible whitespace.
  * <p>
  * SPDX identifiers are specified by the Software Package Data Exchange(R) also
  * known as SPDX(R) project from the Linux foundation.
@@ -69,12 +67,6 @@ public final class SPDXMatcherFactory {
      * The text for the group selector.
      */
     static final String LICENSE_IDENTIFIER = "SPDX-License-Identifier:";
-
-    /**
-     * The regular expression to locate the SPDX license identifier in the text
-     * stream.
-     */
-    private static final Pattern GROUP_SELECTOR = Pattern.compile(".*" + LICENSE_IDENTIFIER + "\\s([A-Za-z0-9\\.\\-]+)");
 
     /**
      * The set of SPDX Ids that matched the last text.
@@ -124,7 +116,8 @@ public final class SPDXMatcherFactory {
         if (StringUtils.isBlank(spdxId)) {
             throw new ConfigurationException("'SPDX' type matcher requires a name");
         }
-        return matcherMap.computeIfAbsent(spdxId, Match::new);
+        String name = spdxId.replaceAll("(?U)\\s+", " ").trim();
+        return matcherMap.computeIfAbsent(name, Match::new);
     }
 
     /**
@@ -142,10 +135,8 @@ public final class SPDXMatcherFactory {
         if (!checked) {
             checked = true;
             if (documentText.contains(LICENSE_IDENTIFIER)) {
-                Matcher matcher = GROUP_SELECTOR.matcher(documentText);
-                while (matcher.find()) {
-                    lastMatch.add(matcher.group(1));
-                }
+                SPDXExpression.fromHeader(documentText).expressions()
+                        .forEach(expression -> lastMatch.addAll(expression.identifiers()));
             }
         }
         // see if the caller is in the lastMatch.
@@ -156,9 +147,9 @@ public final class SPDXMatcherFactory {
      * Matches an SPDX identifier.
      */
     @ConfigComponent(type = ComponentType.MATCHER, name = "spdx",
-            desc = "A matcher that matches SPDX tags. SPDX tags have the form: \"SPDX-License-Identifier: short-name\", " +
-                    "where short-name matches the regex pattern \"[A-Za-z0-9\\.-]+\". " +
-                    "The SPDX matcher takes the short name as an argument.")
+            desc = "A matcher that matches identifiers in SPDX license expressions. Expressions support AND, OR, " +
+                    "WITH, parentheses, and flexible whitespace. The matcher takes an identifier or an explicit " +
+                    "license WITH exception combination as its name.")
     public class Match extends AbstractHeaderMatcher {
         /**
          * The SPDX identifier.
