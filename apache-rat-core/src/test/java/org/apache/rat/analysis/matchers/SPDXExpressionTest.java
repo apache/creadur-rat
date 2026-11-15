@@ -103,6 +103,16 @@ class SPDXExpressionTest {
     }
 
     @ParameterizedTest
+    @ValueSource(strings = {
+            "MIT", "GPL-2.0+", "LicenseRef-Custom", "LicenseRef-Custom.1-2",
+            "DocumentRef-Upstream:LicenseRef-Custom.1-2", "LicenseReference", "DocumentReference",
+            "licenseref-Custom+"
+    })
+    void distinguishesStandardIdentifiersFromReservedReferencePrefixes(String identifier) {
+        assertThat(SPDXExpression.parse(identifier).identifiers()).containsExactly(identifier);
+    }
+
+    @ParameterizedTest
     @NullSource
     @ValueSource(strings = {
             "", " ", "()", "AND", "OR", "WITH", "MIT AND", "MIT OR", "MIT WITH",
@@ -111,7 +121,10 @@ class SPDXExpressionTest {
             "(MIT OR Apache-2.0) WITH Exception", "MIT WITH Exception WITH Other",
             "MIT WITH (Exception)", "MIT WITH Exception+", "MIT trailing prose",
             "MIT;", "MIT || Apache-2.0", "DocumentRef-External:MIT", "LicenseRef-",
-            "LicenseRef-Custom+", "DocumentRef-External", "MIT\u200bOR\u200bApache-2.0"
+            "LicenseRef-Custom+", "DocumentRef-External", "MIT\u200bOR\u200bApache-2.0",
+            "DocumentRef-:LicenseRef-Custom", "DocumentRef-Upstream:LicenseRef-",
+            "DocumentRef-Upstream:LicenseRef-Custom+", "LicenseRef-Custom:MIT",
+            "DocumentRef-Upstream:LicenseRef-Custom:Other"
     })
     void rejectsMalformedExpressions(String text) {
         assertThrows(IllegalArgumentException.class, () -> SPDXExpression.parse(text));

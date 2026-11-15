@@ -37,10 +37,10 @@ import org.apache.commons.lang3.StringUtils;
 public final class SPDXExpression {
     /** A tag and its expression, bounded by the end of the line. */
     private static final Pattern TAG = Pattern.compile("SPDX-License-Identifier:([^\\r\\n]*)");
-    /** Standard identifiers, legacy plus suffixes, and external license references. */
-    private static final Pattern IDENTIFIER = Pattern.compile(
-            "(?:DocumentRef-[A-Za-z0-9.-]+:)?LicenseRef-[A-Za-z0-9.-]+|"
-                    + "(?!LicenseRef-|DocumentRef-)[A-Za-z0-9][A-Za-z0-9.-]*\\+?");
+    /** Standard identifiers, including legacy plus suffixes. */
+    private static final Pattern IDENTIFIER = Pattern.compile("[A-Za-z0-9][A-Za-z0-9.-]*\\+?");
+    /** License references, optionally qualified by an external document reference. */
+    private static final Pattern LICENSE_REFERENCE = Pattern.compile("(?:DocumentRef-[A-Za-z0-9.-]+:)?LicenseRef-[A-Za-z0-9.-]+");
     /** An exception identifier, without the legacy plus suffix. */
     private static final Pattern EXCEPTION = Pattern.compile("[A-Za-z0-9][A-Za-z0-9.-]*");
     /** Tokens include parentheses and retain all non-whitespace text for validation. */
@@ -129,6 +129,11 @@ public final class SPDXExpression {
         }
         matcher.appendTail(remaining);
         return new Header(List.copyOf(expressions), invalid, remaining.toString());
+    }
+
+    private static boolean isIdentifier(final String token) {
+        Pattern pattern = StringUtils.startsWithAny(token, "LicenseRef-", "DocumentRef-") ? LICENSE_REFERENCE : IDENTIFIER;
+        return pattern.matcher(token).matches();
     }
 
     private static String expressionText(final String text) {
@@ -245,19 +250,19 @@ public final class SPDXExpression {
                 }
                 return result;
             }
-            String name = identifier(IDENTIFIER);
+            String name = identifier(SPDXExpression::isIdentifier);
             if (accept("WITH")) {
-                name += " WITH " + identifier(EXCEPTION);
+                name += " WITH " + identifier(EXCEPTION.asMatchPredicate());
             }
             return new Identifier(name);
         }
 
-        private String identifier(final Pattern pattern) {
+        private String identifier(final Predicate<String> validator) {
             if (position == tokens.size()) {
                 throw new IllegalArgumentException("Missing SPDX identifier");
             }
             String token = tokens.get(position++);
-            if (StringUtils.equalsAny(token, "AND", "OR", "WITH") || !pattern.matcher(token).matches()) {
+            if (StringUtils.equalsAny(token, "AND", "OR", "WITH") || !validator.test(token)) {
                 throw new IllegalArgumentException("Invalid SPDX identifier: " + token);
             }
             return token;
