@@ -25,7 +25,11 @@ import org.apache.rat.document.FileDocument;
 import org.apache.rat.report.claim.ClaimStatistic;
 import org.apache.rat.test.utils.Resources;
 import org.apache.rat.document.DocumentName;
+import org.apache.tika.mime.MediaType;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -40,7 +44,9 @@ import java.util.Collections;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.SortedSet;
+import java.util.TreeSet;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -123,10 +129,75 @@ public class TikaProcessorTest {
         assertEquals(Document.Type.STANDARD, doc.getMetaData().getDocumentType());
     }
 
+    @ParameterizedTest
+    @CsvSource({
+        "text/plain, STANDARD",
+        "text/x-rat-test, STANDARD",
+        "application/x-sh, STANDARD",
+        "application/x-bat, STANDARD",
+        "application/x-asp, STANDARD",
+        "application/xml, STANDARD",
+        "application/pdf, BINARY",
+        "application/pdf; version=1.7, BINARY",
+        "application/zip, ARCHIVE",
+        "application/gzip, ARCHIVE",
+        "application/x-compress, ARCHIVE",
+        "application/x-tar, ARCHIVE",
+        "application/java-archive, ARCHIVE",
+        "application/x-rat-test+xml, STANDARD",
+        "image/x-rat-test+xml, STANDARD",
+        "application/x-rat-test-zip, ARCHIVE",
+        "application/x-rat-test-bzip2, ARCHIVE",
+        "application/x-rat-test-gzip, ARCHIVE",
+        "application/x-rat-test-compressed, ARCHIVE",
+        "application/x-rat-test+zip, ARCHIVE"
+    })
+    void testFromMediaType(String mimeType, Document.Type expected) {
+        assertThat(TikaProcessor.fromMediaType(MediaType.parse(mimeType))).contains(expected);
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+        "application/epub+zip, ARCHIVE",
+        "application/x-ibooks+zip, ARCHIVE",
+        "application/x-xliff+zip, ARCHIVE",
+        "application/x-gzip, ARCHIVE",
+        "application/x-bzip2, ARCHIVE",
+        "application/x-7z-compressed, ARCHIVE",
+        "application/x-rar-compressed, ARCHIVE",
+        "application/vnd.wap.xhtml+xml, STANDARD",
+        "application/xhtml+xml, STANDARD",
+        "application/x-xliff+xml, STANDARD",
+        "application/rls-services+xml, STANDARD",
+        "application/xslt+xml, STANDARD",
+        "image/svg+xml, STANDARD",
+        "application/x-fictionbook+xml, STANDARD"
+    })
+    void testSubtypeClassificationWithoutMapEntry(String mimeType, Document.Type expected) {
+        assertThat(TikaProcessor.getDocumentTypeMap()).doesNotContainKey(mimeType);
+        assertThat(TikaProcessor.fromMediaType(MediaType.parse(mimeType))).contains(expected);
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {
+        "application/x-rat-unmapped",
+        "application/octet-stream",
+        "application/x-rat-test+xml-extra",
+        "application/x-rat-test-zip-extra",
+        "application/x-rat-test-bzip2-extra",
+        "application/x-rat-test-gzip-extra",
+        "application/x-rat-test-compressed-extra",
+        "application/x-rat-test+zip-extra"
+    })
+    void testUnmappedMediaType(String mimeType) {
+        assertThat(TikaProcessor.fromMediaType(MediaType.parse(mimeType))).isEmpty();
+    }
+
     @Test
     void testTikaFiles() throws RatDocumentAnalysisException {
         File dir = new File("src/test/resources/tikaFiles");
         Map<String, Document.Type> unseenMime = TikaProcessor.getDocumentTypeMap();
+        Set<String> fallbackMimeTypes = new TreeSet<>();
         ClaimStatistic statistic = new ClaimStatistic();
         for (Document.Type docType : Document.Type.values()) {
             File typeDir = new File(dir, docType.name().toLowerCase(Locale.ROOT));
@@ -137,11 +208,17 @@ public class TikaProcessorTest {
                     statistic.incCounter(doc.getMetaData().getDocumentType(), 1);
                     assertEquals(docType, doc.getMetaData().getDocumentType(), () -> "Wrong type for " + file.toString());
                     unseenMime.remove(mimeType);
+                    if (!TikaProcessor.fromMediaType(doc.getMetaData().getMediaType()).isPresent()) {
+                        fallbackMimeTypes.add(mimeType);
+                    }
                 }
             }
         }
-        System.out.println("** Untested mime types");
+        System.out.println("** Untested mime types: " + unseenMime.keySet().size() +
+                " of " + TikaProcessor.getDocumentTypeMap().size() + " **");
         unseenMime.keySet().forEach(System.out::println);
+        System.out.println("** MIME types using the BINARY fallback **");
+        fallbackMimeTypes.forEach(System.out::println);
         for (Document.Type type : Document.Type.values()) {
             System.out.format("Tested %s %s files%n", statistic.getCounter(type), type);
         }

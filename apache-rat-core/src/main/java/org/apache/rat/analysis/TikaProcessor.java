@@ -26,6 +26,7 @@ import java.nio.charset.UnsupportedCharsetException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.apache.rat.api.Document;
 import org.apache.rat.document.DocumentName;
@@ -56,28 +57,20 @@ public final class TikaProcessor {
     /** Due to performance reasons we do not read the whole file for charset detection (RAT-494). */
     private static final int BYTES_FOR_CHARSET_DETECTION = 256;
 
-    /** A map of mime type string to non-BINARY types.
-     * "text" types are already handled somewhere else
-     * BINARY unless listed here
+    /**
+     * Explicit MIME classifications not covered by the text or subtype rules.
+     * Entries may also override subtype rules.
+     * Unrecognized types default to BINARY in process().
      */
     private static final Map<String, Document.Type> DOCUMENT_TYPE_MAP;
 
     static {
+        // Entries are sorted by internal classification to Document.Type in order to improve readability
         DOCUMENT_TYPE_MAP = new HashMap<>();
-//        org.apache.tika.parser.epub.EpubParser
-        DOCUMENT_TYPE_MAP.put("application/x-ibooks+zip", Document.Type.ARCHIVE);
-        DOCUMENT_TYPE_MAP.put("application/epub+zip", Document.Type.ARCHIVE);
 
-        DOCUMENT_TYPE_MAP.put("application/vnd.wap.xhtml+xml", Document.Type.STANDARD);
-        DOCUMENT_TYPE_MAP.put("application/x-asp", Document.Type.STANDARD);
-        DOCUMENT_TYPE_MAP.put("application/xhtml+xml", Document.Type.STANDARD);
-
-//        org.apache.tika.parser.pdf.PDFParser", Type.BINARY);
-        DOCUMENT_TYPE_MAP.put("application/pdf", Document.Type.BINARY);
-//org.apache.tika.parser.pkg.CompressorParser
+        // ARCHIVE
+        // org.apache.tika.parser.pkg.CompressorParser
         DOCUMENT_TYPE_MAP.put("application/zlib", Document.Type.ARCHIVE);
-        DOCUMENT_TYPE_MAP.put("application/x-gzip", Document.Type.ARCHIVE);
-        DOCUMENT_TYPE_MAP.put("application/x-bzip2", Document.Type.ARCHIVE);
         DOCUMENT_TYPE_MAP.put("application/x-compress", Document.Type.ARCHIVE);
         DOCUMENT_TYPE_MAP.put("application/x-java-pack200", Document.Type.ARCHIVE);
         DOCUMENT_TYPE_MAP.put("application/x-lzma", Document.Type.ARCHIVE);
@@ -88,7 +81,7 @@ public final class TikaProcessor {
         DOCUMENT_TYPE_MAP.put("application/gzip", Document.Type.ARCHIVE);
         DOCUMENT_TYPE_MAP.put("application/x-bzip", Document.Type.ARCHIVE);
         DOCUMENT_TYPE_MAP.put("application/x-xz", Document.Type.ARCHIVE);
-//org.apache.tika.parser.pkg.PackageParser
+        // org.apache.tika.parser.pkg.PackageParser
         DOCUMENT_TYPE_MAP.put("application/x-tar", Document.Type.ARCHIVE);
         DOCUMENT_TYPE_MAP.put("application/java-archive", Document.Type.ARCHIVE);
         DOCUMENT_TYPE_MAP.put("application/x-arj", Document.Type.ARCHIVE);
@@ -96,21 +89,18 @@ public final class TikaProcessor {
         DOCUMENT_TYPE_MAP.put("application/zip", Document.Type.ARCHIVE);
         DOCUMENT_TYPE_MAP.put("application/x-cpio", Document.Type.ARCHIVE);
         DOCUMENT_TYPE_MAP.put("application/x-tika-unix-dump", Document.Type.ARCHIVE);
-        DOCUMENT_TYPE_MAP.put("application/x-7z-compressed", Document.Type.ARCHIVE);
-//org.apache.tika.parser.pkg.RarParser
-        DOCUMENT_TYPE_MAP.put("application/x-rar-compressed", Document.Type.ARCHIVE);
 
-//        org.apache.tika.parser.xliff.XLIFF12Parser
-        DOCUMENT_TYPE_MAP.put("application/x-xliff+xml", Document.Type.STANDARD);
-//        org.apache.tika.parser.xliff.XLZParser
-        DOCUMENT_TYPE_MAP.put("application/x-xliff+zip", Document.Type.ARCHIVE);
-//        org.apache.tika.parser.xml.DcXMLParser
+        // BINARY
+        // org.apache.tika.parser.pdf.PDFParser
+        DOCUMENT_TYPE_MAP.put("application/pdf", Document.Type.BINARY);
+
+        // STANDARD
+        // org.apache.tika.parser.xml.DcXMLParser
+        DOCUMENT_TYPE_MAP.put("application/x-asp", Document.Type.STANDARD);
         DOCUMENT_TYPE_MAP.put("application/xml", Document.Type.STANDARD);
-        DOCUMENT_TYPE_MAP.put("application/rls-services+xml", Document.Type.STANDARD);
-        DOCUMENT_TYPE_MAP.put("application/xslt+xml", Document.Type.STANDARD);
-        DOCUMENT_TYPE_MAP.put("image/svg+xml", Document.Type.STANDARD);
-//        org.apache.tika.parser.xml.FictionBookParser
-        DOCUMENT_TYPE_MAP.put("application/x-fictionbook+xml", Document.Type.STANDARD);
+        // org.apache.tika.parser.xml.XMLParser
+        DOCUMENT_TYPE_MAP.put("application/x-sh", Document.Type.STANDARD);
+        DOCUMENT_TYPE_MAP.put("application/x-bat", Document.Type.STANDARD);
     }
 
     private TikaProcessor() {
@@ -151,7 +141,7 @@ public final class TikaProcessor {
             document.getMetaData().setMediaType(mediaType);
             if (!document.isIgnored()) {
                 document.getMetaData()
-                        .setDocumentType(fromMediaType(mediaType));
+                        .setDocumentType(fromMediaType(mediaType).orElse(Document.Type.BINARY));
             }
             if (Document.Type.STANDARD == document.getMetaData().getDocumentType()) {
                 try {
@@ -207,14 +197,31 @@ public final class TikaProcessor {
     /**
      * Gets the Document.Type based on the MediaType.
      * @param mediaType the media type to check.
-     * @return The document type.
+     * @return the document type, or an empty Optional if no mapping or rule applies.
      */
-    public static Document.Type fromMediaType(final MediaType mediaType) {
+    public static Optional<Document.Type> fromMediaType(final MediaType mediaType) {
         if ("text".equals(mediaType.getType())) {
-            return Document.Type.STANDARD;
+            return Optional.of(Document.Type.STANDARD);
         }
 
-        Document.Type result = DOCUMENT_TYPE_MAP.get(mediaType.toString());
-        return result == null ? Document.Type.BINARY : result;
+        // Explicit mappings take precedence over subtype rules.
+        Document.Type mappedType = DOCUMENT_TYPE_MAP.get(mediaType.getBaseType().toString());
+        if (mappedType != null) {
+            return Optional.of(mappedType);
+        }
+
+        String subtype = mediaType.getSubtype();
+        if (subtype.endsWith("+xml")) {
+            return Optional.of(Document.Type.STANDARD);
+        }
+        if (subtype.endsWith("-zip")
+                || subtype.endsWith("-bzip2")
+                || subtype.endsWith("-gzip")
+                || subtype.endsWith("-compressed")
+                || subtype.endsWith("+zip")) {
+            return Optional.of(Document.Type.ARCHIVE);
+        }
+
+        return Optional.empty();
     }
 }
