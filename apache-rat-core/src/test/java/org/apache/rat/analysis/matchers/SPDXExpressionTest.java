@@ -119,17 +119,22 @@ class SPDXExpressionTest {
 
     @Test
     void boundsParserWork() {
-        assertThrows(IllegalArgumentException.class,
-                () -> SPDXExpression.parse("(".repeat(66) + "MIT" + ")".repeat(66)));
-        assertThrows(IllegalArgumentException.class,
-                () -> SPDXExpression.parse("MIT OR ".repeat(260) + "MIT"));
-        assertThrows(IllegalArgumentException.class, () -> SPDXExpression.parse("M".repeat(16385)));
+        String excessivelyNested = "(".repeat(66) + "MIT" + ")".repeat(66);
+        String tooManyTokens = "MIT OR ".repeat(260) + "MIT";
+        String tooLong = "M".repeat(16385);
+        assertThrows(IllegalArgumentException.class, () -> SPDXExpression.parse(excessivelyNested));
+        assertThrows(IllegalArgumentException.class, () -> SPDXExpression.parse(tooManyTokens));
+        assertThrows(IllegalArgumentException.class, () -> SPDXExpression.parse(tooLong));
     }
 
     @Test
     void extractsSeparateTagsAndRemovesOnlyTheirText() {
-        String raw = "// header\r\n/* SPDX-License-Identifier:  (Apache-2.0 OR MIT) */\r\n"
-                + "<!-- SPDX-License-Identifier:\tGPL-3.0-only -->\r\n// footer\r\n";
+        String raw = """
+                // header\r
+                /* SPDX-License-Identifier:  (Apache-2.0 OR MIT) */\r
+                <!-- SPDX-License-Identifier:\tGPL-3.0-only -->\r
+                // footer\r
+                """;
         SPDXExpression.Header header = SPDXExpression.fromHeader(raw);
         assertThat(header.invalid()).isFalse();
         assertThat(header.expressions()).hasSize(2);

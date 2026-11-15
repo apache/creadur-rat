@@ -39,8 +39,8 @@ public final class SPDXExpression {
     private static final Pattern TAG = Pattern.compile("SPDX-License-Identifier:([^\\r\\n]*)");
     /** Standard identifiers, legacy plus suffixes, and external license references. */
     private static final Pattern IDENTIFIER = Pattern.compile(
-            "(?:(?:DocumentRef-[A-Za-z0-9.-]+:)?LicenseRef-[A-Za-z0-9.-]+|"
-                    + "(?!LicenseRef-|DocumentRef-)[A-Za-z0-9][A-Za-z0-9.-]*\\+?)");
+            "(?:DocumentRef-[A-Za-z0-9.-]+:)?LicenseRef-[A-Za-z0-9.-]+|"
+                    + "(?!LicenseRef-|DocumentRef-)[A-Za-z0-9][A-Za-z0-9.-]*\\+?");
     /** An exception identifier, without the legacy plus suffix. */
     private static final Pattern EXCEPTION = Pattern.compile("[A-Za-z0-9][A-Za-z0-9.-]*");
     /** Tokens include parentheses and retain all non-whitespace text for validation. */

@@ -106,15 +106,19 @@ class SPDXExpressionReportTest {
 
     @Test
     void separateTagsAreAdditionalRequirements() throws Exception {
-        ReportConfiguration config = configuration("// SPDX-License-Identifier: Apache-2.0\r\n"
-                + "// SPDX-License-Identifier: GPL-3.0-only\r\n");
+        ReportConfiguration config = configuration("""
+                // SPDX-License-Identifier: Apache-2.0\r
+                // SPDX-License-Identifier: GPL-3.0-only\r
+                """);
         assertReport(new Reporter(config).execute(), false, "AL2.0", "GPL3");
     }
 
     @Test
     void malformedTagCannotBeHiddenByAnApprovedTag() throws Exception {
-        ReportConfiguration config = configuration("// SPDX-License-Identifier: Apache-2.0\n"
-                + "// SPDX-License-Identifier: MIT AND\n");
+        ReportConfiguration config = configuration("""
+                // SPDX-License-Identifier: Apache-2.0
+                // SPDX-License-Identifier: MIT AND
+                """);
         assertReport(new Reporter(config).execute(), false, "AL2.0", "?????");
     }
 
@@ -137,10 +141,12 @@ class SPDXExpressionReportTest {
 
     @Test
     void doesNotHideIndependentUnapprovedLicenseText() throws Exception {
-        ReportConfiguration config = configuration("// SPDX-License-Identifier: Apache-2.0 OR GPL-3.0-only\n"
-                + "// This program is free software: you can redistribute it and/or modify it under the terms of the\n"
-                + "// GNU General Public License as published by the Free Software Foundation, either version 3\n"
-                + "// of the License, or (at your option) any later version.\n");
+        ReportConfiguration config = configuration("""
+                // SPDX-License-Identifier: Apache-2.0 OR GPL-3.0-only
+                // This program is free software: you can redistribute it and/or modify it under the terms of the
+                // GNU General Public License as published by the Free Software Foundation, either version 3
+                // of the License, or (at your option) any later version.
+                """);
         assertReport(new Reporter(config).execute(), false, "AL2.0", "GPL3");
     }
 
