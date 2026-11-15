@@ -217,7 +217,7 @@ public class TikaProcessorTest {
     })
     void envScriptsAreScanned_RAT582(String interpreter, String fileName, String commentPrefix)
             throws RatDocumentAnalysisException {
-        byte[] content = String.format("#!/usr/bin/env %s\n%s SPDX-License-Identifier: Apache-2.0\n",
+        byte[] content = String.format("#!/usr/bin/env %s%n%s SPDX-License-Identifier: Apache-2.0%n",
                 interpreter, commentPrefix).getBytes(StandardCharsets.UTF_8);
         Document document = new TestingDocument(() -> new ByteArrayInputStream(content), fileName);
         assertStandardAndLicense(document, "application/x-sh");
@@ -228,9 +228,9 @@ public class TikaProcessorTest {
         configuration.setFrom(Defaults.builder().build());
         AnalyserFactory.createConfiguredAnalyser(configuration).analyse(document);
 
-        assertThat(document.getMetaData().getMediaType().toString()).isEqualTo(mimeType);
+        assertThat(document.getMetaData().getMediaType()).hasToString(mimeType);
         assertThat(document.getMetaData().getDocumentType()).isEqualTo(Document.Type.STANDARD);
-        assertThat(document.getMetaData().licenses().map(license -> license.getId())).containsExactly("AL2.0");
+        assertThat(document.getMetaData().licenses().map(IHeaderMatcher::getId)).containsExactly("AL2.0");
         assertThat(document.getMetaData().unapprovedLicenses()).isEmpty();
     }
 
