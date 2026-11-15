@@ -18,12 +18,15 @@
  */
 package org.apache.rat.analysis;
 
+import org.apache.rat.Defaults;
+import org.apache.rat.ReportConfiguration;
 import org.apache.rat.api.Document;
 import org.apache.rat.document.RatDocumentAnalysisException;
 import org.apache.rat.document.DocumentNameMatcher;
 import org.apache.rat.document.FileDocument;
 import org.apache.rat.report.claim.ClaimStatistic;
 import org.apache.rat.test.utils.Resources;
+import org.apache.rat.testhelpers.TestingDocument;
 import org.apache.rat.document.DocumentName;
 import org.apache.tika.mime.MediaType;
 import org.junit.jupiter.api.Test;
@@ -137,6 +140,7 @@ public class TikaProcessorTest {
         "application/x-bat, STANDARD",
         "application/x-asp, STANDARD",
         "application/xml, STANDARD",
+        "application/xml-dtd, STANDARD",
         "application/pdf, BINARY",
         "application/pdf; version=1.7, BINARY",
         "application/zip, ARCHIVE",
@@ -191,6 +195,43 @@ public class TikaProcessorTest {
     })
     void testUnmappedMediaType(String mimeType) {
         assertThat(TikaProcessor.fromMediaType(MediaType.parse(mimeType))).isEmpty();
+    }
+
+    @ParameterizedTest(name = "{0}: {1} is STANDARD and its license header is scanned (RAT-582)")
+    @CsvSource({
+        "example.sh, application/x-sh",
+        "example.bat, application/x-bat",
+        "example.dtd, application/xml-dtd",
+        "example-python.py, text/x-python",
+        "example-perl.pl, text/x-perl"
+    })
+    void scriptsAndDtdAreScanned_RAT582(String fileName, String mimeType) throws Exception {
+        assertStandardAndLicense(mkDocument("/tikaFiles/standard/" + fileName), mimeType);
+    }
+
+    @ParameterizedTest(name = "env {0} overrides the filename but its license header is scanned (RAT-582)")
+    @CsvSource({
+        "python3, example.py, #",
+        "perl, example.pl, #",
+        "node, example.js, //"
+    })
+    void envScriptsAreScanned_RAT582(String interpreter, String fileName, String commentPrefix)
+            throws RatDocumentAnalysisException {
+        byte[] content = String.format("#!/usr/bin/env %s\n%s SPDX-License-Identifier: Apache-2.0\n",
+                interpreter, commentPrefix).getBytes(StandardCharsets.UTF_8);
+        Document document = new TestingDocument(() -> new ByteArrayInputStream(content), fileName);
+        assertStandardAndLicense(document, "application/x-sh");
+    }
+
+    private void assertStandardAndLicense(Document document, String mimeType) throws RatDocumentAnalysisException {
+        ReportConfiguration configuration = new ReportConfiguration();
+        configuration.setFrom(Defaults.builder().build());
+        AnalyserFactory.createConfiguredAnalyser(configuration).analyse(document);
+
+        assertThat(document.getMetaData().getMediaType().toString()).isEqualTo(mimeType);
+        assertThat(document.getMetaData().getDocumentType()).isEqualTo(Document.Type.STANDARD);
+        assertThat(document.getMetaData().licenses().map(license -> license.getId())).containsExactly("AL2.0");
+        assertThat(document.getMetaData().unapprovedLicenses()).isEmpty();
     }
 
     @Test
