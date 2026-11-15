@@ -68,6 +68,9 @@ in order to be properly linked in site reports.
     </release>
     -->
     <release version="0.19-SNAPSHOT" date="xxxx-yy-zz" description="Current SNAPSHOT - release to be done">
+      <action issue="RAT-552" type="add" dev="pottlinger" due-to="Arturo Bernal">
+        Fix using deprecated exclusion configuration and excludeSubProjects configuration with RAT Maven plugin.
+      </action>  
       <action issue="RAT-578" type="add" dev="claudenw" due-to="Romain Manni-Bucau">
         Support the git configuration file option core.excludesFile (including include.path directives) and the GIT_CONFIG_GLOBAL
         environment variable when processing global gitignore files, and resolve the home directory with a HOME, USERPROFILE,
