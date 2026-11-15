@@ -27,6 +27,7 @@ import java.util.List;
 import org.apache.commons.cli.Options;
 import org.apache.rat.OptionCollection;
 import org.apache.rat.config.exclusion.StandardCollection;
+import org.apache.rat.ui.UIOptionCollection;
 
 import static java.lang.String.format;
 
@@ -51,8 +52,8 @@ public class Help extends AbstractHelp {
      * Creates a Help instance to write to the specified writer.
      * @param writer the writer to write to.
      */
-    public Help(final Writer writer) {
-        super();
+    public Help(final UIOptionCollection<?> optionCollection, final Writer writer) {
+        super(optionCollection);
         this.writer = writer instanceof PrintWriter ? (PrintWriter) writer : new PrintWriter(writer);
     }
 
@@ -60,8 +61,8 @@ public class Help extends AbstractHelp {
      * Creates a Help instance to print to the specified stream.
      * @param stream the PrintStream to write to.
      */
-    public Help(final PrintStream stream) {
-        this(new PrintWriter(stream, false, StandardCharsets.UTF_8));
+    public Help(final UIOptionCollection<?> optionCollection, final PrintStream stream) {
+        this(optionCollection, new PrintWriter(stream, false, StandardCharsets.UTF_8));
     }
 
     /**

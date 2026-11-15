@@ -42,14 +42,14 @@ public final class Documentation {
     }
     /**
      * Creates the documentation. Writes to the output specified by the -o or --out option. Defaults to {@code System.out}.
-     * @param args the arguments. Try --help for help.
+     * @param args the arguments. Try {@code --help} for help.
      * @throws IOException on error
      */
     public static void main(final String[] args) throws IOException {
         ReportConfiguration config = OptionCollection.parseCommands(new File("."), args, Documentation::printUsage, true);
         if (config != null) {
             try (Writer writer = config.getWriter().get()) {
-                new Licenses(config, writer).output();
+                new Licenses(OptionCollection.BASE_OPTION_COLLECTION, config, writer).output();
             }
         }
     }

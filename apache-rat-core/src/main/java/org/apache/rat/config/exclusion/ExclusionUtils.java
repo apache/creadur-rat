@@ -203,6 +203,8 @@ public final class ExclusionUtils {
      * @return the completely formatted pattern
      */
     public static String qualifyPattern(final DocumentName documentName, final String pattern) {
+        Objects.requireNonNull(pattern, "pattern may not be null");
+
         boolean prefix = pattern.startsWith(NEGATION_PREFIX);
         String workingPattern = prefix ? pattern.substring(1) : pattern;
         String normalizedPattern = SelectorUtils.extractPattern(workingPattern, documentName.getDirectorySeparator());

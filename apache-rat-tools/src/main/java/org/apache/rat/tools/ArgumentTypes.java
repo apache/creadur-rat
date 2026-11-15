@@ -24,6 +24,7 @@ import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 
+import org.apache.rat.OptionCollection;
 import org.apache.rat.help.Help;
 
 /**
@@ -42,8 +43,10 @@ public final class ArgumentTypes {
     private ArgumentTypes() { }
 
     public static void main(final String[] args) throws IOException {
-        try (Writer writer = args.length > 0 ? new FileWriter(args[0], StandardCharsets.UTF_8) : new OutputStreamWriter(System.out, StandardCharsets.UTF_8)) {
-            new Help(writer).printArgumentTypes();
+        try (Writer writer = args.length > 0 ?
+                new FileWriter(args[0], StandardCharsets.UTF_8) :
+                new OutputStreamWriter(System.out, StandardCharsets.UTF_8)) { // NOSONAR
+            new Help(OptionCollection.BASE_OPTION_COLLECTION, writer).printArgumentTypes();
         }
     }
 }

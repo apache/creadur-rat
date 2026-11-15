@@ -32,8 +32,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.rat.OptionCollection;
 import org.apache.rat.utils.CasedString;
 
-import static java.lang.String.format;
-
 /**
  * Abstract class that provides the framework for UI-specific RAT options.
  * In this context UI option means an option expressed in the specific UI.
@@ -41,23 +39,23 @@ import static java.lang.String.format;
  */
 public abstract class UIOption<T extends UIOption<T>> {
     /**
-     * The pattern to match CLI options in text
+     * The pattern to match CLI options in text.
      */
     protected static final Pattern PATTERN = Pattern.compile("-?-([A-Za-z0-9]+-?)+"); // NOSONAR
     /**
-     * The actual UI-specific name for the option
+     * The actual UI-specific name for the option.
      */
     protected final Option option;
     /**
-     * The name for the option
+     * The name for the option.
      */
     protected final CasedString name;
     /**
-     * The argument type for this option
+     * The argument type for this option.
      */
     protected final OptionCollection.ArgumentType argumentType;
     /**
-     * The AbstractOptionCollection associated with this AbstractOption
+     * The AbstractOptionCollection associated with this AbstractOption.
      */
     protected final UIOptionCollection<T> optionCollection;
 
@@ -106,7 +104,7 @@ public abstract class UIOption<T extends UIOption<T>> {
     /**
      * Gets the AbstractOptionCollection that this option is a member of.
      * @return the AbstractOptionCollection that this option is a member of.
-     * @param <X> The collection type to return.
+     * @param <X> the collection type to return.
      */
     public final <X extends UIOptionCollection<T>> X getOptionCollection() {
         return (X) optionCollection;
@@ -114,7 +112,7 @@ public abstract class UIOption<T extends UIOption<T>> {
 
     /**
      * Gets the option this abstract option is wrapping.
-     * @return the original Option.
+     * @return the original option.
      */
     public final Option getOption() {
         return option;
@@ -130,14 +128,14 @@ public abstract class UIOption<T extends UIOption<T>> {
 
     /**
      * Provide means to wrap the given option depending on the UI-specific option implementation.
-     * @param option The CLI option
+     * @param option the CLI option.
      * @return the cleaned up option name.
      */
     protected abstract String cleanupName(Option option);
 
     /**
      * Gets an example of how to use this option in the native UI.
-     * @return An example of how to use this option in the native UI.
+     * @return an example of how to use this option in the native UI.
      */
     public abstract String getExample();
 
@@ -159,7 +157,7 @@ public abstract class UIOption<T extends UIOption<T>> {
                 maybeResult.ifPresent(value -> maps.put(key, cleanupName(value)));
             }
             for (Map.Entry<String, String> entry : maps.entrySet()) {
-                workingStr = workingStr.replaceAll(Pattern.quote(format("%s", entry.getKey())), entry.getValue());
+                workingStr = workingStr.replaceAll(Pattern.quote(entry.getKey()), entry.getValue());
             }
         }
         return workingStr;
@@ -167,7 +165,7 @@ public abstract class UIOption<T extends UIOption<T>> {
 
     /**
      * Gets the implementation specific name for the native UI.
-     * @return The implementation specific name for the native UI.
+     * @return the implementation specific name for the native UI.
      */
     public final String getName() {
         return name.toString();
@@ -182,9 +180,9 @@ public abstract class UIOption<T extends UIOption<T>> {
     }
 
     /**
-     * return a string showing long and short options if they are available. Will return
+     * Return a string showing long and short options if they are available. Will return
      * a string.
-     * @return A string showing long and short options if they are available. Never {@code null}.
+     * @return a string showing long and short options if they are available. Never {@code null}.
      */
     public abstract String getText();
 
@@ -224,7 +222,7 @@ public abstract class UIOption<T extends UIOption<T>> {
 
     /**
      * Determines if the option is deprecated.
-     * @return {@code true} if the option is deprecated
+     * @return {@code true} if the option is deprecated.
      */
     public final boolean isDeprecated() {
         return option.isDeprecated();

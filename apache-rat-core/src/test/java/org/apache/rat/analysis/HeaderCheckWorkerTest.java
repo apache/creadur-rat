@@ -19,6 +19,7 @@
 
 package org.apache.rat.analysis;
 
+import java.io.BufferedReader;
 import java.io.StringReader;
 
 import java.util.List;
@@ -57,6 +58,21 @@ class HeaderCheckWorkerTest {
         worker.read();
         assertThat(subject.getMetaData().unapprovedLicenses().count()).isEqualTo(1);
         assertThat(subject.getMetaData().unapprovedLicenses().toList().get(0).getLicenseFamily()).isEqualTo(ILicenseFamily.UNKNOWN);
+    }
+
+    @Test
+    void readHeaderStopsAtRetainedLineLimitTest() throws Exception {
+        StringBuilder input = new StringBuilder();
+        for (int i = 1; i <= HeaderCheckWorker.DEFAULT_NUMBER_OF_RETAINED_HEADER_LINES * 2; i++) {
+            input.append("line ").append(i).append(System.lineSeparator());
+        }
+        BufferedReader reader = new BufferedReader(new StringReader(input.toString()));
+        IHeaders headers = HeaderCheckWorker.readHeader(reader, HeaderCheckWorker.DEFAULT_NUMBER_OF_RETAINED_HEADER_LINES);
+        assertThat(headers.raw()).contains("line " + HeaderCheckWorker.DEFAULT_NUMBER_OF_RETAINED_HEADER_LINES + System.lineSeparator());
+        var oneTooMuch = "line " + (HeaderCheckWorker.DEFAULT_NUMBER_OF_RETAINED_HEADER_LINES + 1);
+        assertThat(headers.raw()).doesNotContain(oneTooMuch);
+        // the remainder of the stream must be left unread on the reader
+        assertThat(reader.readLine()).isEqualTo(oneTooMuch);
     }
 
     @Test
