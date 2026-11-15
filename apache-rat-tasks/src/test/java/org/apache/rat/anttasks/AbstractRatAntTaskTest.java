@@ -36,11 +36,6 @@ public abstract class AbstractRatAntTaskTest {
     public final BuildFileRule buildRule = new BuildFileRule();
     private String originalBaseDir;
 
-    @BeforeEach
-    void rememberSystemBaseDir() {
-        originalBaseDir = System.getProperty(MagicNames.PROJECT_BASEDIR);
-    }
-
     @AfterEach
     void verifySystemBaseDirUnchanged() {
         assertThat(System.getProperty(MagicNames.PROJECT_BASEDIR))
@@ -59,6 +54,8 @@ public abstract class AbstractRatAntTaskTest {
         buildRule.configureProject(getAntFile().getPath());
         buildRule.getProject().setProperty("output.dir", tempDir.getAbsolutePath());
         buildRule.getProject().setProperty("resource.dir", getAntFile().getParent());
+        // RAT-594: Remember JVM-wide basedir property to verify that it is not changed by Ant tests
+        originalBaseDir = System.getProperty(MagicNames.PROJECT_BASEDIR);
     }
 
     protected void assertLogDoesNotMatch(String pPattern) {
