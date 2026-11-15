@@ -176,10 +176,10 @@ in order to be properly linked in site reports.
         Fix build warning about deprecated configuration element to configure overwrite of resources during maven-resource plugin executions.
       </action>
       <action issue="RAT-532" type="update" dev="pottlinger" due-to="dependabot">
-        TODO/TBD: collect all dependabot updates for release 1.0.0.
+        TODO/TBD: collect all dependabot updates for release 0.19.
       </action>
       <action issue="RAT-532" type="update" dev="pottlinger" due-to="dependabot">
-        TODO/TBD: collect all dependabot updates for release 1.0.0.
+        TODO/TBD: collect all dependabot updates for release 0.19.
       </action>
     </release>
     <release version="0.18" date="2026-03-11" description=
