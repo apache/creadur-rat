@@ -67,7 +67,7 @@ in order to be properly linked in site reports.
       </action>
     </release>
     -->
-    <release version="1.0.0-SNAPSHOT" date="xxxx-yy-zz" description="Current SNAPSHOT - release to be done">
+    <release version="0.19-SNAPSHOT" date="xxxx-yy-zz" description="Current SNAPSHOT - release to be done">
       <action issue="RAT-592" type="fix" dev="pottlinger">
         BAT files and shell scripts are not classified as binary anymore and need to have valid license headers. Fixes skipping application/x-sh and application/x-bat during RAT runs.
       </action>
