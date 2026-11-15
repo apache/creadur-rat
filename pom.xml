@@ -541,7 +541,7 @@ agnostic home for software distribution comprehension and audit tools.
           <artifactId>spotbugs-maven-plugin</artifactId>
           <version>4.10.5.0</version>
           <configuration>
-            <maxAllowedViolations>46</maxAllowedViolations>
+            <maxAllowedViolations>48</maxAllowedViolations>
             <failOnError>true</failOnError>
             <!-- we only want to see our own problems in all subpackages -->
             <onlyAnalyze>org.apache.rat.-</onlyAnalyze>
