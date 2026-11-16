@@ -68,7 +68,7 @@ in order to be properly linked in site reports.
     </release>
     -->
     <release version="0.19-SNAPSHOT" date="xxxx-yy-zz" description="Current SNAPSHOT - release to be done">
-      <action issue="RAT-517" type="fix">
+      <action issue="RAT-517" type="add" dev="pottlinger">
         Insert Markdown license headers after YAML front matter instead of before it, preserving front matter recognition by site generators.
         Support both --- and ... closing delimiters. Reject unterminated front matter without modifying the original file.
       </action>
