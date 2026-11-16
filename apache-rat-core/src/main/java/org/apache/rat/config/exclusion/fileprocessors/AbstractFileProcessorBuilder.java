@@ -40,6 +40,8 @@ import org.apache.rat.config.exclusion.ExclusionUtils;
 import org.apache.rat.config.exclusion.MatcherSet;
 import org.apache.rat.document.DocumentName;
 import org.apache.rat.document.DocumentNameMatcher;
+import org.codehaus.plexus.util.MatchPattern;
+import org.codehaus.plexus.util.MatchPatterns;
 
 /**
  * Creates a List of {@link MatcherSet}s that represent the inclusions and exclusions of this file processor.
@@ -120,7 +122,7 @@ public abstract class AbstractFileProcessorBuilder {
             String name = String.format("**/%s", fileName);
             String pattern = ExclusionUtils.qualifyPattern(root, name);
             MatcherSet matcherSet = new MatcherSet.Builder()
-                    .addExcluded(new DocumentNameMatcher(name, MatchPatterns.from(root.getDirectorySeparator(), Collections.singletonList(pattern)), root))
+                    .addExcluded(new DocumentNameMatcher(name, MatchPatterns.from(Collections.singletonList(pattern)), root))
             .build();
             LevelBuilder levelBuilder = levelBuilders.computeIfAbsent(0, k -> new LevelBuilder());
             levelBuilder.add(matcherSet);
