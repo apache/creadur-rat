@@ -328,16 +328,23 @@ public abstract class AbstractLicenseAppender {
         }
 
         if (isOverwrite) {
-            try {
-                Path docPath = document.toPath();
-                boolean isExecutable = Files.isExecutable(docPath);
-                Files.move(newDocument.toPath(), docPath, StandardCopyOption.REPLACE_EXISTING);
-                if (isExecutable && !document.setExecutable(true)) {
-                    DefaultLog.getInstance().warn(String.format("Could not set %s as executable.", document));
-                }
-            } catch (InvalidPathException | IOException e) {
-                DefaultLog.getInstance().error(String.format("Failed to rename new file to %s, original file is unchanged.", document), e);
+            replaceOriginalDocument(document, newDocument);
+        }
+    }
+
+    /**
+     * Replace the original document while preserving its executable flag.
+     */
+    private void replaceOriginalDocument(final File document, final File newDocument) {
+        try {
+            Path docPath = document.toPath();
+            boolean isExecutable = Files.isExecutable(docPath);
+            Files.move(newDocument.toPath(), docPath, StandardCopyOption.REPLACE_EXISTING);
+            if (isExecutable && !document.setExecutable(true)) {
+                DefaultLog.getInstance().warn(String.format("Could not set %s as executable.", document));
             }
+        } catch (InvalidPathException | IOException e) {
+            DefaultLog.getInstance().error(String.format("Failed to rename new file to %s, original file is unchanged.", document), e);
         }
     }
 
