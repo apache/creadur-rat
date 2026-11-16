@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.function.Predicate;
 
+import org.apache.commons.collections4.iterators.ExtendedIterator;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.LineIterator;
 import org.apache.commons.lang3.StringUtils;
@@ -37,7 +38,6 @@ import org.apache.rat.ConfigurationException;
 import org.apache.rat.api.EnvVar;
 import org.apache.rat.document.DocumentName;
 import org.apache.rat.document.DocumentNameMatcher;
-import org.apache.rat.utils.ExtendedIterator;
 import org.codehaus.plexus.util.MatchPattern;
 import org.codehaus.plexus.util.SelectorUtils;
 
@@ -159,9 +159,11 @@ public final class ExclusionUtils {
      * @param patternFile the file to read.
      * @param commentFilters A predicate returning {@code true} for non-comment lines.
      * @return the iterable of Strings from the file.
+     * @throws ConfigurationException if given file is {@code null} or cannot be read.
      */
     public static Iterable<String> asIterable(final File patternFile, final Predicate<String> commentFilters)  {
         verifyFile(patternFile);
+        Objects.requireNonNull(patternFile, "patternFile");
         Objects.requireNonNull(commentFilters, "commentFilters");
         // can not return LineIterator directly as the patternFile will not be closed leading
         // to a resource leak in some cases.
