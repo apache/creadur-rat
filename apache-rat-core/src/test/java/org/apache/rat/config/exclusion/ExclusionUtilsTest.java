@@ -44,8 +44,6 @@ public class ExclusionUtilsTest {
     @TempDir(cleanup = CleanupMode.NEVER)
     private File testDir;
 
-    private final int fileCount = 0;
-
     private static final String[] COMMENTS = {
             "# comment that is", "## comment that is", //
             "## comment that is ## ", //
@@ -58,7 +56,7 @@ public class ExclusionUtilsTest {
     };
 
     private File createFile(Iterable<String> contents) {
-        File f = new File(testDir, "file" + fileCount);
+        File f = new File(testDir, "file" + System.nanoTime());
         try (PrintWriter pw = new PrintWriter(new FileWriter(f))) {
             for (String content : contents) {
                 if (content != null) {
