@@ -35,11 +35,11 @@ import org.apache.commons.io.LineIterator;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.rat.ConfigurationException;
 import org.apache.rat.api.EnvVar;
-import org.apache.rat.config.exclusion.plexus.MatchPattern;
-import org.apache.rat.config.exclusion.plexus.SelectorUtils;
 import org.apache.rat.document.DocumentName;
 import org.apache.rat.document.DocumentNameMatcher;
 import org.apache.rat.utils.ExtendedIterator;
+import org.codehaus.plexus.util.MatchPattern;
+import org.codehaus.plexus.util.SelectorUtils;
 
 import static java.lang.String.format;
 

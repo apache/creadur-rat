@@ -35,7 +35,6 @@ import java.util.function.Consumer;
 import org.apache.rat.api.EnvVar;
 import org.apache.rat.config.exclusion.ExclusionUtils;
 import org.apache.rat.config.exclusion.MatcherSet;
-import org.apache.rat.config.exclusion.plexus.MatchPatterns;
 import org.apache.rat.document.DocumentName;
 import org.apache.rat.document.DocumentName.FSInfo;
 import org.apache.rat.document.DocumentNameMatcher;

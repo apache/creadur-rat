@@ -23,11 +23,11 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.function.Consumer;
 
-import org.apache.rat.config.exclusion.plexus.MatchPattern;
-import org.apache.rat.config.exclusion.plexus.MatchPatterns;
-import org.apache.rat.config.exclusion.plexus.SelectorUtils;
 import org.apache.rat.document.DocumentName;
 import org.apache.rat.document.DocumentNameMatcher;
+import org.codehaus.plexus.util.SelectorUtils;
+import org.codehaus.plexus.util.MatchPattern;
+import org.codehaus.plexus.util.MatchPatterns;
 
 import static org.apache.rat.document.DocumentNameMatcher.MATCHES_NONE;
 

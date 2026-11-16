@@ -30,10 +30,10 @@ import java.util.Set;
 import java.util.function.Predicate;
 
 import org.apache.rat.ConfigurationException;
-import org.apache.rat.config.exclusion.plexus.MatchPattern;
-import org.apache.rat.config.exclusion.plexus.MatchPatterns;
 import org.apache.rat.utils.DefaultLog;
 import org.apache.rat.utils.Log;
+import org.codehaus.plexus.util.MatchPattern;
+import org.codehaus.plexus.util.MatchPatterns;
 
 import static java.lang.String.format;
 

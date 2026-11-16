@@ -21,7 +21,6 @@ package org.apache.rat.config.exclusion.fileprocessors;
 import java.nio.file.Path;
 import java.util.List;
 import org.apache.rat.config.exclusion.MatcherSet;
-import org.apache.rat.config.exclusion.plexus.SelectorUtils;
 import org.apache.rat.document.DocumentName;
 import org.apache.rat.document.DocumentNameMatcher;
 import org.apache.rat.document.DocumentNameMatcherTest;
