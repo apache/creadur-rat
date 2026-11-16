@@ -19,7 +19,9 @@
 package org.apache.rat.config.exclusion.fileprocessors;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
@@ -303,5 +305,42 @@ public class GitIgnoreBuilderTest extends AbstractIgnoreBuilderTest {
                 .isNotNull();
         assertThat(GitIgnoreBuilder.resolveGlobalGitIgnore(" TRUE ")).isNotNull();
         assertThat(GitIgnoreBuilder.resolveGlobalGitIgnore(null)).isNotNull();
+    }
+
+    /**
+     * Test that hidden directories (names starting with '.') are skipped during the SCM ignore
+     * file discovery walk. Hidden directories are excluded by default via HIDDEN_DIR, so their
+     * SCM ignore files are irrelevant. This avoids expensive traversal of large trees (e.g.
+     * git worktrees stored under .worktrees/ or .claude/).
+     * See <a href="https://issues.apache.org/jira/browse/RAT-590">RAT-590</a>.
+     */
+    @Test
+    public void hiddenDirectoriesAreSkippedDuringWalk() throws IOException {
+        // Create a .gitignore in the root that excludes *.log files
+        writeFile(".gitignore", Arrays.asList("*.log"));
+
+        // Create a hidden directory with its own .gitignore that would exclude *.txt files
+        File hiddenDir = new File(tmpPath.toFile(), ".hidden");
+        hiddenDir.mkdir();
+        try (PrintWriter w = new PrintWriter(new FileWriter(new File(hiddenDir, ".gitignore")))) {
+            w.println("*.txt");
+        }
+
+        GitIgnoreBuilder underTest = new GitIgnoreBuilder() {
+            @Override
+            protected Optional<File> globalGitIgnore() {
+                return Optional.empty();
+            }
+        };
+
+        List<MatcherSet> matcherSets = underTest.build(baseName);
+        DocumentNameMatcher matcher = MatcherSet.merge(matcherSets).createMatcher();
+
+        // The root .gitignore should exclude *.log files (matcher returns false for excluded files)
+        assertThat(matcher.matches(baseName.resolve("test.log"))).isFalse();
+
+        // The .hidden/.gitignore should NOT have been processed, so *.txt files
+        // should not be excluded (the hidden dir walk was skipped) → matcher returns true (file is scanned)
+        assertThat(matcher.matches(baseName.resolve("test.txt"))).isTrue();
     }
 }
