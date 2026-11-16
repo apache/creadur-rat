@@ -18,8 +18,8 @@
  */
 package org.apache.rat.config.exclusion;
 
+import org.apache.commons.collections4.iterators.ExtendedIterator;
 import org.apache.rat.ConfigurationException;
-import org.apache.rat.utils.ExtendedIterator;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.CleanupMode;
 import org.junit.jupiter.api.io.TempDir;
