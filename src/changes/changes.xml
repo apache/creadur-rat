@@ -68,7 +68,7 @@ in order to be properly linked in site reports.
     </release>
     -->
     <release version="0.19-SNAPSHOT" date="xxxx-yy-zz" description="Current SNAPSHOT - release to be done">
-      <action issue="RAT-590" type="fix" dev="gnodet">
+      <action issue="RAT-590" type="add" dev="pottlinger" due-to="Guillaume Nodet">
         Skip hidden directories (names starting with '.') during SCM ignore file discovery walk in all SCM ignore processors
         (Bazaar, CSV, Git, HG). Hidden directories are excluded by default via HIDDEN_DIR, so their SCM ignore files are irrelevant.
         This fixes severe performance issues when hidden directories contain large trees (e.g. git worktrees stored under .worktrees/ or .claude/).
