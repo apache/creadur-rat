@@ -18,9 +18,11 @@
  */
 package org.apache.rat.document;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
+import java.util.regex.Pattern;
 import org.apache.commons.io.filefilter.NameFileFilter;
 import org.codehaus.plexus.util.MatchPatterns;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -90,17 +92,48 @@ public class DocumentNameMatcherTest {
 
     @ParameterizedTest
     @MethodSource("testDocuments")
+    void antPatternsUseDocumentFileSystem(DocumentName testName) {
+        String separator = testName.getDirectorySeparator();
+        DocumentName candidate = testName.resolve("nested/child.txt");
+        String pattern = testName.getName() + separator + "**" + separator + "*.txt";
+        DocumentNameMatcher matcher = new DocumentNameMatcher("Ant", List.of(pattern), testName);
+        DocumentNameMatcher explicitAnt = new DocumentNameMatcher("Explicit Ant", List.of("%ant[" + pattern + "]"), testName);
+
+        assertThat(matcher.matches(candidate)).isTrue();
+        assertThat(explicitAnt.matches(candidate)).isTrue();
+        assertThat(matcher.matches(testName.resolve("nested/child.java"))).isFalse();
+        assertThat(explicitAnt.matches(testName.resolve("nested/child.java"))).isFalse();
+    }
+
+    @ParameterizedTest
+    @MethodSource("testDocuments")
+    void regexPatternsRetainEscapes(DocumentName testName) {
+        DocumentName candidate = testName.resolve("nested/child42.txt");
+        String prefix = candidate.getName().substring(0, candidate.getName().indexOf("child42"));
+        String pattern = "%regex[" + Pattern.quote(prefix) + "child\\d+\\.txt]";
+        DocumentNameMatcher matcher = new DocumentNameMatcher("Regex", List.of(pattern), testName);
+
+        assertThat(matcher.matches(candidate)).isTrue();
+        assertThat(matcher.matches(testName.resolve("nested/child.txt"))).isFalse();
+    }
+
+    @ParameterizedTest
+    @MethodSource("testDocuments")
     void testDecompose(DocumentName testName) {
         DocumentNameMatcher matcher1 = new DocumentNameMatcher("FileFilterTest", new NameFileFilter("File.name"));
         String result = processDecompose(matcher1, testName);
         assertThat(result).contains("FileFilterTest: >>false<<").contains("  NameFileFilter(File.name)");
 
-        DocumentNameMatcher matcher2 = new DocumentNameMatcher("MatchPatternsTest", MatchPatterns.from("/", "**/test1*", "**/*Name"));
+        String nonMatchingPattern = "**" + File.separator + "test1*";
+        String matchingPattern = "**" + File.separator + "*Name";
+        DocumentNameMatcher matcher2 = new DocumentNameMatcher("MatchPatternsTest", MatchPatterns.from(nonMatchingPattern, matchingPattern));
         result = processDecompose(matcher2, testName);
-        assertThat(result).contains("MatchPatternsTest: >>true<<").contains("  **/test1*: >>false<<").contains("  **/*Name: >>true<<");
+        assertThat(result).contains("MatchPatternsTest: >>true<<")
+                .contains("  " + nonMatchingPattern + ": >>false<<").contains("  " + matchingPattern + ": >>true<<");
 
         DocumentNameMatcher matcher3 = DocumentNameMatcher.matcherSet(matcher1, matcher2);
         result = processDecompose(matcher3, testName);
-        assertThat(result).contains("MatchPatternsTest: >>true<<").contains("  **/test1*: >>false<<").contains("  **/*Name: >>true<<");
+        assertThat(result).contains("MatchPatternsTest: >>true<<")
+                .contains("  " + nonMatchingPattern + ": >>false<<").contains("  " + matchingPattern + ": >>true<<");
     }
 }
