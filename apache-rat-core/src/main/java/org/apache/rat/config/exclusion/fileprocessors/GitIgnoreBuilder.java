@@ -38,6 +38,7 @@ import org.apache.rat.config.exclusion.MatcherSet;
 import org.apache.rat.document.DocumentName;
 import org.apache.rat.document.DocumentName.FSInfo;
 import org.apache.rat.document.DocumentNameMatcher;
+import org.codehaus.plexus.util.MatchPatterns;
 
 import static org.apache.rat.config.exclusion.ExclusionUtils.NEGATION_PREFIX;
 

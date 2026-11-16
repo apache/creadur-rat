@@ -114,9 +114,9 @@ public final class DocumentNameMatcher {
             @Override
             public Iterable<DocumentNameMatcher> getMatchers() {
                 final List<DocumentNameMatcher> result = new ArrayList<>();
-                matchers.patterns().forEach(p -> result.add(new DocumentNameMatcher(p.source(),
+                matchers.getSources().forEach(p -> result.add(new DocumentNameMatcher(p,
                         new Predicate<>() {
-                            private final MatchPatterns patterns = MatchPatterns.from("/", p.source());
+                            private final MatchPatterns patterns = MatchPatterns.from("/", p);
 
                             @Override
                             public boolean test(final DocumentName documentName) {
