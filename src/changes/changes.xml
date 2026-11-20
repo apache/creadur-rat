@@ -72,6 +72,9 @@ in order to be properly linked in site reports.
         Prevent order-dependent Ant test failures caused by a JVM-wide basedir property pointing to a deleted temporary directory.
         Configure base directories on individual Ant projects and re-enable ReportOptionTest on Linux GitHub Actions runners.
       </action>
+      <action issue="RAT-595" type="fix" dev="pottlinger">
+        Fix test-order dependence in ReporterTest.testExecuteNoSource by reusing the configuration created by the UI option parser instead of a static CLI option collection.
+      </action>
       <action issue="RAT-596" type="fix" dev="pottlinger">
         Use the globally configured Groovy version for the Maven Invoker Plugin's Groovy runtime and modules to fix
         integration test failures on JDK 27 (Unsupported class file major version 71).
