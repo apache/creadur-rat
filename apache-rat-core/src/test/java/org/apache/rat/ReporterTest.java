@@ -199,7 +199,7 @@ public class ReporterTest {
     void testExecuteNoSource() throws RatException, TransformerException {
         File output = testPath.resolve("testExecuteNoSource").toFile();
         ArgumentContext context = collectionParser.parseCommands(new File("."), new String[]{"--output-style", "xml", "--output-file", output.getPath()});
-        ReportConfiguration config = OptionCollection.createConfiguration(context);
+        ReportConfiguration config = context.getConfiguration();
         Reporter.Output result = new Reporter(config).execute();
         assertThat(StandardXmlFactory.serializeDocument(result.getDocument())).isEmpty();
         ClaimStatisticTest.assertSame(result.getStatistic(), new ClaimStatistic());
