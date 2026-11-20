@@ -68,6 +68,11 @@ in order to be properly linked in site reports.
     </release>
     -->
     <release version="0.19-SNAPSHOT" date="xxxx-yy-zz" description="Current SNAPSHOT - release to be done">
+      <action issue="RAT-583" type="add" dev="pottlinger">
+        Enhance SPDX parsing for complete SPDX license expressions with AND, OR, parentheses, WITH exceptions, and flexible whitespaces.
+        Evaluate licensing alternatives against configured approvals instead of reporting only the first identifier.
+        Treat malformed expressions and unknown required identifiers as unapproved; WITH combinations require explicit configuration.
+      </action>
       <action issue="RAT-595" type="fix" dev="pottlinger">
         Fix test-order dependence in ReporterTest.testExecuteNoSource by reusing the configuration created by the UI option parser instead of a static CLI option collection.
       </action>

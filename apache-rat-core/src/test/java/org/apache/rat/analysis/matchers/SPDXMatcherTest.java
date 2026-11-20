@@ -25,6 +25,8 @@ import org.apache.rat.analysis.IHeaderMatcher;
 import org.apache.rat.analysis.IHeaders;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 class SPDXMatcherTest {
     final SPDXMatcherFactory factory = SPDXMatcherFactory.newInstance();
@@ -35,6 +37,42 @@ class SPDXMatcherTest {
     @BeforeEach
     void setup() {
         target1.reset();
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {
+            " hello OR world", " (hello AND world)", "\t hello\tOR\tworld\t",
+            "\u00a0hello\u2003OR\u00a0world", "hello OR world */"
+    })
+    void matchesAllExpressionIdentifiers(String expression) {
+        IHeaders headers = AbstractMatcherTest.makeHeaders(SPDXMatcherFactory.LICENSE_IDENTIFIER + expression, null);
+        assertTrue(target1.matches(headers));
+        assertTrue(target2.matches(headers));
+        assertFalse(target3.matches(headers));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"hello AND", "hello garbage", "(hello", "hello WITH", "hello++"})
+    void malformedExpressionDoesNotMatchItsFirstIdentifier(String expression) {
+        IHeaders headers = AbstractMatcherTest.makeHeaders(SPDXMatcherFactory.LICENSE_IDENTIFIER + " " + expression, null);
+        assertFalse(target1.matches(headers));
+    }
+
+    @Test
+    void exceptionRequiresAnExplicitCombinedMatcher() {
+        IHeaderMatcher combined = factory.create("hello\tWITH  exception");
+        IHeaders headers = AbstractMatcherTest.makeHeaders("SPDX-License-Identifier: hello WITH exception", null);
+        assertFalse(target1.matches(headers));
+        assertTrue(combined.matches(headers));
+    }
+
+    @Test
+    void resetsBetweenDocuments() {
+        assertTrue(target1.matches(AbstractMatcherTest.makeHeaders("SPDX-License-Identifier: hello", null)));
+        target1.reset();
+        IHeaders headers = AbstractMatcherTest.makeHeaders("SPDX-License-Identifier: world", null);
+        assertFalse(target1.matches(headers));
+        assertTrue(target2.matches(headers));
     }
 
     @Test
