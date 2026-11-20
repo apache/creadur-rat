@@ -49,6 +49,7 @@ agnostic home for software distribution comprehension and audit tools.
     <project.build.outputTimestamp>2026-03-11T23:25:45Z</project.build.outputTimestamp>
     <ant.version>1.10.18</ant.version>
     <assertj.version>4.0.0-M1</assertj.version>
+    <groovy.version>6.0.0</groovy.version>
     <!-- this is the target Java version that this project supports at runtime -->
     <javaVersion>17</javaVersion>
     <tika.version>4.2.0</tika.version>
@@ -264,7 +265,7 @@ agnostic home for software distribution comprehension and audit tools.
       <dependency>
         <groupId>org.apache.groovy</groupId>
         <artifactId>groovy</artifactId>
-        <version>6.0.0</version>
+        <version>${groovy.version}</version>
         <scope>test</scope>
       </dependency>
       <dependency>
@@ -578,6 +579,14 @@ agnostic home for software distribution comprehension and audit tools.
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-pmd-plugin</artifactId>
           <version>${mavenPmdPluginVersion}</version>
+          <!-- PMD's bytecode parser must also support the JDK used to run Maven. -->
+          <dependencies>
+            <dependency>
+              <groupId>org.ow2.asm</groupId>
+              <artifactId>asm</artifactId>
+              <version>9.11.1</version>
+            </dependency>
+          </dependencies>
           <configuration>
             <targetJdk>${javaVersion}</targetJdk>
           </configuration>
@@ -668,7 +677,7 @@ agnostic home for software distribution comprehension and audit tools.
         <plugin>
           <groupId>org.sonarsource.scanner.maven</groupId>
           <artifactId>sonar-maven-plugin</artifactId>
-          <version>5.8.0.7211</version>
+          <version>5.9.0.7382</version>
         </plugin>
       </plugins>
     </pluginManagement>
