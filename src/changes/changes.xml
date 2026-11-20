@@ -71,6 +71,12 @@ in order to be properly linked in site reports.
       <action issue="RAT-595" type="fix" dev="pottlinger">
         Fix test-order dependence in ReporterTest.testExecuteNoSource by reusing the configuration created by the UI option parser instead of a static CLI option collection.
       </action>
+      <action issue="RAT-596" type="fix" dev="pottlinger">
+        Use the globally configured Groovy version for the Maven Invoker Plugin's Groovy runtime and modules to fix
+        integration test failures on JDK 27 (Unsupported class file major version 71).
+        Override the Maven PMD Plugin's ASM dependency with version 9.11.1 to support JDK 27 bytecode during site generation,
+        keeping the PMD version and rules unchanged. Enable JDK 27 in the GitHub Actions build matrix.
+      </action>
       <action issue="RAT-452" type="add" dev="pottlinger">
         Use ExtendedIterator from official commons-collection (after its release with 4.5.0).
       </action>
