@@ -318,19 +318,33 @@ public abstract class AbstractLicenseAppender {
                     }
                 }
             }
+        } catch (IOException e) {
+            try {
+                Files.deleteIfExists(newDocument.toPath());
+            } catch (IOException cleanupException) {
+                e.addSuppressed(cleanupException);
+            }
+            throw e;
         }
 
         if (isOverwrite) {
-            try {
-                Path docPath = document.toPath();
-                boolean isExecutable = Files.isExecutable(docPath);
-                Files.move(newDocument.toPath(), docPath, StandardCopyOption.REPLACE_EXISTING);
-                if (isExecutable && !document.setExecutable(true)) {
-                    DefaultLog.getInstance().warn(String.format("Could not set %s as executable.", document));
-                }
-            } catch (InvalidPathException | IOException e) {
-                DefaultLog.getInstance().error(String.format("Failed to rename new file to %s, original file is unchanged.", document), e);
+            replaceOriginalDocument(document, newDocument);
+        }
+    }
+
+    /**
+     * Replace the original document while preserving its executable flag.
+     */
+    private void replaceOriginalDocument(final File document, final File newDocument) {
+        try {
+            Path docPath = document.toPath();
+            boolean isExecutable = Files.isExecutable(docPath);
+            Files.move(newDocument.toPath(), docPath, StandardCopyOption.REPLACE_EXISTING);
+            if (isExecutable && !document.setExecutable(true)) {
+                DefaultLog.getInstance().warn(String.format("Could not set %s as executable.", document));
             }
+        } catch (InvalidPathException | IOException e) {
+            DefaultLog.getInstance().error(String.format("Failed to rename new file to %s, original file is unchanged.", document), e);
         }
     }
 
@@ -356,6 +370,12 @@ public abstract class AbstractLicenseAppender {
             BOMInputStream bos = BOMInputStream.builder().setInputStream(fis).get();
             br = new BufferedReader(new InputStreamReader(bos, StandardCharsets.UTF_8));
 
+            String line = br.readLine();
+            if (getType(document) == TYPE_MD && "---".equals(line)) {
+                copyMarkdownFrontMatter(writer, br, document);
+                line = br.readLine();
+            }
+
             if (!expectsHashPling
                     && !expectsAtEcho
                     && !expectsPackage
@@ -367,9 +387,8 @@ public abstract class AbstractLicenseAppender {
                 writer.write(LINE_SEP);
             }
 
-            String line;
             boolean first = true;
-            while ((line = br.readLine()) != null) {
+            while (line != null) {
                 if (first && expectsHashPling) {
                     written = true;
                     doFirstLine(document, writer, line, "#!");
@@ -408,6 +427,7 @@ public abstract class AbstractLicenseAppender {
                     writer.write(LINE_SEP);
                 }
                 first = false;
+                line = br.readLine();
             }
         } finally {
             IOUtils.closeQuietly(br);
@@ -415,6 +435,28 @@ public abstract class AbstractLicenseAppender {
             IOUtils.closeQuietly(writer);
         }
         return written;
+    }
+
+    /**
+     * Copy YAML front matter before inserting a Markdown license header. The opening
+     * delimiter has already been read. Only a delimiter at the start of the document
+     * is treated as front matter; YAML content does not need to be parsed.
+     *
+     * @throws IOException if the front matter is not terminated or copying fails.
+     */
+    private void copyMarkdownFrontMatter(final Writer writer, final BufferedReader reader, final File document) throws IOException {
+        writer.write("---");
+        writer.write(LINE_SEP);
+        String line;
+        while ((line = reader.readLine()) != null) {
+            writer.write(line);
+            writer.write(LINE_SEP);
+            if ("---".equals(line) || "...".equals(line)) {
+                writer.write(LINE_SEP);
+                return;
+            }
+        }
+        throw new IOException("Unterminated YAML front matter in " + document);
     }
 
     /**

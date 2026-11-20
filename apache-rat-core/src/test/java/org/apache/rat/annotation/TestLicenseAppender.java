@@ -20,6 +20,7 @@ package org.apache.rat.annotation;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.BufferedReader;
@@ -30,12 +31,22 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.rat.Defaults;
+import org.apache.rat.analysis.HeaderCheckWorker;
+import org.apache.rat.license.ILicense;
+import org.apache.rat.license.LicenseSetFactory;
+import org.apache.rat.license.LicenseSetFactory.LicenseFilter;
 import org.apache.rat.test.utils.Resources;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
 public class TestLicenseAppender {
 
@@ -519,21 +530,87 @@ public class TestLicenseAppender {
         }, checkLines(firstLine, secondLine, thirdLine, forthLine));
     }
 
-    @Test
-    public void addLicenseMarkdown() throws IOException {
-        String filename = "tmp.md";
+    @ParameterizedTest
+    @ValueSource(strings = {"", "# Heading\nText\n", "# Heading\n---\nText\n", "\n---\ntitle: Not front matter\n---\n"})
+    public void addLicenseMarkdown(final String content) throws IOException {
+        File document = new File(baseTempFolder, "tmp.md");
+        Files.writeString(document.toPath(), content, StandardCharsets.UTF_8);
+        ApacheV2LicenseAppender appender = new ApacheV2LicenseAppender();
 
-        commonTestTemplate(filename, writer -> {
-            writer.write("## This is the first header\n");
-            writer.write(" * this is a list entry\n");
-            writer.write(" * this is another list entry\n");
-            writer.write(" <!-- this is a comment line -->");
-            writer.write("## This is the second header\n");
-        }, r -> {
-            String line = r.readLine();
-            assertEquals("<!--", line, "First line is incorrect");
-            line = r.readLine();
-        });
+        appender.append(document);
+
+        String expected = appender.getLicenseHeader(document) + System.lineSeparator()
+                + content.replace("\n", System.lineSeparator());
+        assertEquals(expected, Files.readString(new File(document + ".new").toPath()));
+        assertEquals(content, Files.readString(document.toPath()));
+    }
+
+    @ParameterizedTest
+    @CsvSource({"false,---", "true,---", "false,...", "true,..."})
+    public void addLicenseMarkdownWithFrontMatter(final boolean overwrite, final String closingDelimiter) throws Exception {
+        String lineSeparator = System.lineSeparator();
+        String frontMatter = "---\ntitle: Community Guidelines\n# Metadata comment\n\n"
+                + "description: |\n  A multiline value\n  ---\n" + closingDelimiter + "\n";
+        String body = "\n# Community Guidelines\n\n---\nText\n";
+        File document = new File(baseTempFolder, "tmp.md");
+        // CRLF input must be recognized as well as native line endings.
+        String content = (frontMatter + body).replace("\n", "\r\n");
+        Files.writeString(document.toPath(), content, StandardCharsets.UTF_8);
+        ApacheV2LicenseAppender appender = new ApacheV2LicenseAppender();
+        appender.setOverwrite(overwrite);
+
+        appender.append(document);
+
+        File output = overwrite ? document : new File(document + ".new");
+        String expected = frontMatter.replace("\n", lineSeparator) + lineSeparator
+                + appender.getLicenseHeader(document) + lineSeparator + body.replace("\n", lineSeparator);
+        assertEquals(expected, Files.readString(output.toPath()));
+        if (overwrite) {
+            assertFalse(new File(document + ".new").exists());
+        } else {
+            assertEquals(content, Files.readString(document.toPath()));
+        }
+        ILicense license = LicenseSetFactory.search("AL", "AL2.0",
+                Defaults.builder().build().getLicenseSetFactory().getLicenses(LicenseFilter.ALL)).orElseThrow();
+        try (BufferedReader reader = Files.newBufferedReader(output.toPath(), StandardCharsets.UTF_8)) {
+            assertTrue(license.matches(HeaderCheckWorker.readHeader(reader,
+                    HeaderCheckWorker.DEFAULT_NUMBER_OF_RETAINED_HEADER_LINES)));
+        }
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"---\n---", "---\n...", "\uFEFF---\n---\n", "---\ntitle: Example\n---"})
+    public void addLicenseMarkdownWithFrontMatterAtEndOfFile(final String content) throws IOException {
+        File document = new File(baseTempFolder, "tmp.md");
+        Files.writeString(document.toPath(), content, StandardCharsets.UTF_8);
+        ApacheV2LicenseAppender appender = new ApacheV2LicenseAppender();
+
+        appender.append(document);
+
+        String frontMatter = content.replace("\uFEFF", "");
+        if (!frontMatter.endsWith("\n")) {
+            frontMatter += "\n";
+        }
+        String expected = frontMatter.replace("\n", System.lineSeparator()) + System.lineSeparator()
+                + appender.getLicenseHeader(document) + System.lineSeparator();
+        assertEquals(expected, Files.readString(new File(document + ".new").toPath()));
+        assertEquals(content, Files.readString(document.toPath()));
+    }
+
+    @ParameterizedTest
+    @CsvSource({"false,---", "true,---", "false,...", "true,..."})
+    public void rejectMarkdownWithUnterminatedFrontMatter(final boolean overwrite, final String indentedDelimiter) throws IOException {
+        File document = new File(baseTempFolder, "tmp.md");
+        String content = "---\ntitle: Example\ndescription: |\n  " + indentedDelimiter + "\n";
+        Files.writeString(document.toPath(), content, StandardCharsets.UTF_8);
+        ApacheV2LicenseAppender appender = new ApacheV2LicenseAppender();
+        appender.setOverwrite(overwrite);
+
+        IOException exception = assertThrows(IOException.class, () -> appender.append(document));
+
+        assertTrue(exception.getMessage().contains("Unterminated YAML front matter"));
+        assertEquals(content, Files.readString(document.toPath()));
+        assertFalse(new File(document + ".new").exists());
     }
 
     @Test
