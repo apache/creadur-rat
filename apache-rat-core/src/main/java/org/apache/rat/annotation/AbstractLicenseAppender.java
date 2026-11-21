@@ -315,19 +315,15 @@ public abstract class AbstractLicenseAppender {
             try (FileWriter writer = new FileWriter(newDocument, StandardCharsets.UTF_8)) {
                 written = attachLicense(writer, document, editor, header);
             }
-            if (!written) {
-                // Java File without package, XML file without decl or PHP
-                // file without PI
-                // for Java just place the license at the front, for XML add
-                // an XML decl first - don't know how to handle PHP
-                if (expectsPackage(type) || expectsXMLDecl(type)) {
-                    try (FileWriter writer2  = new FileWriter(newDocument, StandardCharsets.UTF_8)) {
-                        if (expectsXMLDecl(type)) {
-                            writer2.write("<?xml version='1.0'?>");
-                            writer2.write(LINE_SEP);
-                        }
-                        attachLicense(writer2, document, new PlainLicenseEditor(), header);
+            if (!written && (expectsPackage(type) || expectsXMLDecl(type))) {
+                // For files without a package, place the license at the front;
+                // for XML files without a declaration, add one before the license.
+                try (FileWriter writer2 = new FileWriter(newDocument, StandardCharsets.UTF_8)) {
+                    if (expectsXMLDecl(type)) {
+                        writer2.write("<?xml version='1.0'?>");
+                        writer2.write(LINE_SEP);
                     }
+                    attachLicense(writer2, document, new PlainLicenseEditor(), header);
                 }
             }
         } catch (IOException e) {
@@ -403,14 +399,11 @@ public abstract class AbstractLicenseAppender {
             return type;
         }
         switch (metaData.getMediaType().getBaseType().toString()) {
-        case "text/asciidoc":
-        case "text/x-asciidoc":
+        case "text/asciidoc", "text/x-asciidoc":
             return TYPE_ASCIIDOC;
-        case "text/markdown":
-        case "text/x-web-markdown":
+        case "text/markdown", "text/x-web-markdown":
             return TYPE_MD;
-        case "application/xml":
-        case "text/xml":
+        case "application/xml", "text/xml":
             return TYPE_XML;
         case "text/html":
             return TYPE_HTML;
