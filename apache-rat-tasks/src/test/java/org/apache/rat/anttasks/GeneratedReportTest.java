@@ -34,7 +34,6 @@ import java.util.stream.Stream;
 
 import org.apache.rat.ReportConfiguration;
 import org.apache.rat.commandline.StyleSheets;
-import org.apache.rat.document.DocumentName;
 import org.apache.rat.documentation.options.AntOptionCollection;
 import org.apache.rat.license.LicenseSetFactory;
 import org.apache.rat.documentation.options.AntOption;
@@ -48,6 +47,7 @@ import org.apache.tools.ant.MagicTestNames;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.ProjectHelper;
 import org.apache.tools.ant.util.ProcessUtil;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.io.TempDir;
@@ -61,6 +61,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class GeneratedReportTest {
     @TempDir
     static Path tempDir;
+
+    private String originalBaseDir;
 
     private static final Map<String, String> REQUIRED_ATTRIBUTES = new HashMap<>();
     private static final Map<String, String> REQUIRED_ELEMENTS = new HashMap<>();
@@ -108,7 +110,15 @@ public class GeneratedReportTest {
 
     @BeforeEach
     public void setup() throws IOException {
+        originalBaseDir = System.getProperty(MagicNames.PROJECT_BASEDIR);
         writeFile("test.file", "// test file");
+    }
+
+    @AfterEach
+    void verifySystemBaseDirUnchanged() {
+        assertThat(System.getProperty(MagicNames.PROJECT_BASEDIR))
+                .as("Ant tests must not change the JVM-wide basedir property (RAT-594)")
+                .isEqualTo(originalBaseDir);
     }
 
     private static String configFile(String fileName) {
@@ -123,17 +133,13 @@ public class GeneratedReportTest {
         try (Writer writer = new OutputStreamWriter(Files.newOutputStream(antFile.toPath()))) {
             writer.write(buildXml);
         }
-        DocumentName documentName = DocumentName.builder(antFile).setBaseName(antFile.getParentFile()).build();
-        System.setProperty(MagicNames.PROJECT_BASEDIR, documentName.getBaseName());
         StringBuilder fullLogBuffer = new StringBuilder();
         StringBuilder outputBuffer = new StringBuilder();
         StringBuilder errorBuffer = new StringBuilder();
         DefaultLog.setInstance(null);
         Project project = new Project();
-        if (Boolean.getBoolean(MagicTestNames.TEST_BASEDIR_IGNORE)) {
-            System.clearProperty(MagicNames.PROJECT_BASEDIR);
-        }
         project.init();
+        project.setBaseDir(antFile.getParentFile());
         project.setProperty(MagicTestNames.TEST_PROCESS_ID, ProcessUtil.getProcessId("<Process>"));
         project.setProperty(MagicTestNames.TEST_THREAD_NAME, Thread.currentThread().getName());
         project.setUserProperty(MagicNames.ANT_FILE, antFile.getAbsolutePath());
