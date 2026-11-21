@@ -673,7 +673,7 @@ public class TestLicenseAppender {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"text/plain", "application/octet-stream", "text/asciidoc"})
+    @ValueSource(strings = {"text/plain", "application/octet-stream"})
     public void doNotGuessCommentSyntaxFromUnsupportedMetadata(final String mediaType) throws IOException {
         File document = new File(baseTempFolder, "README");
         Files.writeString(document.toPath(), "Unknown syntax\n");

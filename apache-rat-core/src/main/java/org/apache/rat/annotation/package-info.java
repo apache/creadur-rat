@@ -23,7 +23,11 @@
  * is reused when an extension does not identify a supported syntax. Generic
  * plain text is not sufficient to select a comment style.
  *
- * New formats (for example AsciiDoc) should provide a dedicated editor for
+ * AsciiDoc headers retain their title, author/revision lines and attributes
+ * before the license block comment. Header detection stops at the first blank
+ * line, so attributes in the body do not affect license placement.
+ *
+ * New formats should provide a dedicated editor for
  * preserving their preamble and a matching license comment style, rather
  * than adding placement logic to the appender.
  */

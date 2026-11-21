@@ -107,6 +107,8 @@ public abstract class AbstractLicenseAppender {
     private static final int TYPE_MD = 28;
     /** YAML files */
     private static final int TYPE_YAML = 29;
+    /** AsciiDoc files */
+    private static final int TYPE_ASCIIDOC = 30;
 
     /**
      * The line separator for this OS.
@@ -209,6 +211,9 @@ public abstract class AbstractLicenseAppender {
         Arrays.sort(EXPECTS_XML_DECL);
         Arrays.sort(EXPECTS_MSVSSF_HEADER);
 
+        EXT2TYPE.put("adoc", TYPE_ASCIIDOC);
+        EXT2TYPE.put("asc", TYPE_ASCIIDOC);
+        EXT2TYPE.put("asciidoc", TYPE_ASCIIDOC);
         EXT2TYPE.put("apt", TYPE_APT);
         EXT2TYPE.put("asax", TYPE_HTML);
         EXT2TYPE.put("ascx", TYPE_HTML);
@@ -367,6 +372,8 @@ public abstract class AbstractLicenseAppender {
     private LicenseEditor getEditor(final int type) {
         if (type == TYPE_MD) {
             return new MarkdownLicenseEditor();
+        } else if (type == TYPE_ASCIIDOC) {
+            return new AsciiDocLicenseEditor();
         } else if (expectsHashPling(type)) {
             return new FirstLineLicenseEditor("#!");
         } else if (expectsAtEcho(type)) {
@@ -396,6 +403,9 @@ public abstract class AbstractLicenseAppender {
             return type;
         }
         switch (metaData.getMediaType().getBaseType().toString()) {
+        case "text/asciidoc":
+        case "text/x-asciidoc":
+            return TYPE_ASCIIDOC;
         case "text/markdown":
         case "text/x-web-markdown":
             return TYPE_MD;
@@ -468,6 +478,8 @@ public abstract class AbstractLicenseAppender {
             return "/*" + LINE_SEP;
         } else if (isFamilySGML(type)) {
             return "<!--" + LINE_SEP;
+        } else if (type == TYPE_ASCIIDOC) {
+            return "////" + LINE_SEP;
         }
         return "";
     }
@@ -484,6 +496,8 @@ public abstract class AbstractLicenseAppender {
             return " */" + LINE_SEP;
         } else if (isFamilySGML(type)) {
             return "-->" + LINE_SEP;
+        } else if (type == TYPE_ASCIIDOC) {
+            return "////" + LINE_SEP;
         }
         return "";
     }
@@ -499,7 +513,7 @@ public abstract class AbstractLicenseAppender {
     protected String getLine(final int type, final String content) {
         if (isFamilyC(type)) {
             return " * " + content + LINE_SEP;
-        } else if (isFamilySGML(type)) {
+        } else if (isFamilySGML(type) || type == TYPE_ASCIIDOC) {
             return content + LINE_SEP;
         } else if (isFamilyAPT(type)) {
             return "~~ " + content + LINE_SEP;

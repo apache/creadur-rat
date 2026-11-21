@@ -69,8 +69,12 @@ in order to be properly linked in site reports.
     -->
     <release version="0.19-SNAPSHOT" date="xxxx-yy-zz" description="Current SNAPSHOT - release to be done">
       <action issue="RAT-517" type="add" dev="pottlinger">
-        Insert Markdown license headers after YAML front matter instead of before it, preserving front matter recognition by site generators.
-        Support both --- and ... closing delimiters. Reject unterminated front matter without modifying the original file.
+        Add license headers to Markdown and AsciiDoc documents without disrupting their document metadata.
+        Markdown YAML front matter stays at the beginning of the file, so site generators can still recognize it;
+        incomplete front matter is reported without changing the original file.
+        AsciiDoc files (.adoc, .asciidoc and .asc) receive a license block comment after the title and header metadata.
+        Files without a recognized extension can also receive appropriately formatted headers when RAT detects
+        a supported Markdown, AsciiDoc, XML or HTML content type.
       </action>
       <action issue="RAT-594" type="fix" dev="pottlinger">
         Prevent order-dependent Ant test failures caused by a JVM-wide basedir property pointing to a deleted temporary directory.
