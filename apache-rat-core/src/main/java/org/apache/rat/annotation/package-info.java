@@ -23,6 +23,10 @@
  * is reused when an extension does not identify a supported syntax. Generic
  * plain text is not sufficient to select a comment style.
  *
+ * Internal enums describe file types, comment styles and header placement.
+ * The protected integer-based typing and formatting hooks remain available
+ * for subclasses; their stable IDs are explicit and independent of enum order.
+ *
  * Markdown YAML, TOML and JSON front matter remains before the license comment.
  * Delimiter-based blocks and JSON object boundaries are checked without parsing
  * the metadata values.
