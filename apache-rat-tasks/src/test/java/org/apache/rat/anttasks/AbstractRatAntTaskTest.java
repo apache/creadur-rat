@@ -19,11 +19,13 @@ package org.apache.rat.anttasks;
 import java.util.regex.Matcher;
 import org.apache.commons.io.IOUtils;
 import org.apache.tools.ant.BuildFileRule;
+import org.apache.tools.ant.MagicNames;
 
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.regex.Pattern;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -32,6 +34,14 @@ public abstract class AbstractRatAntTaskTest {
     private static final File tempDir = new File("target/anttasks");
 
     public final BuildFileRule buildRule = new BuildFileRule();
+    private String originalBaseDir;
+
+    @AfterEach
+    void verifySystemBaseDirUnchanged() {
+        assertThat(System.getProperty(MagicNames.PROJECT_BASEDIR))
+                .as("Ant tests must not change the JVM-wide basedir property (RAT-594)")
+                .isEqualTo(originalBaseDir);
+    }
 
     protected abstract File getAntFile();
 
@@ -44,6 +54,8 @@ public abstract class AbstractRatAntTaskTest {
         buildRule.configureProject(getAntFile().getPath());
         buildRule.getProject().setProperty("output.dir", tempDir.getAbsolutePath());
         buildRule.getProject().setProperty("resource.dir", getAntFile().getParent());
+        // RAT-594: Remember JVM-wide basedir property to verify that it is not changed by Ant tests
+        originalBaseDir = System.getProperty(MagicNames.PROJECT_BASEDIR);
     }
 
     protected void assertLogDoesNotMatch(String pPattern) {

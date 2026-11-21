@@ -38,7 +38,6 @@ import org.apache.rat.ReportConfigurationTest;
 import org.apache.rat.document.DocumentName;
 import org.apache.rat.utils.StandardXmlFactory;
 import org.apache.tools.ant.BuildException;
-import org.apache.tools.ant.MagicNames;
 import org.apache.tools.ant.Target;
 import org.apache.tools.ant.Task;
 import org.apache.tools.ant.UnknownElement;
@@ -76,8 +75,8 @@ public class ReportTest extends AbstractRatAntTaskTest {
         }
 
         System.err.println(sb);
-        System.setProperty(MagicNames.PROJECT_BASEDIR, documentName.getBaseName());
         super.setUp();
+        buildRule.getProject().setBaseDir(baseFile);
     }
     @Override
     protected File getAntFile() {

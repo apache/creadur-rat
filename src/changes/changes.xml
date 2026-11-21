@@ -71,6 +71,10 @@ in order to be properly linked in site reports.
       <action issue="RAT-587" type="fix" dev="pottlinger">
         Remove the circular static initialization dependency between CasedString and StringCase by moving the camel-case joiner into StringCase.
       </action>
+      <action issue="RAT-594" type="fix" dev="pottlinger">
+        Prevent order-dependent Ant test failures caused by a JVM-wide basedir property pointing to a deleted temporary directory.
+        Configure base directories on individual Ant projects and re-enable ReportOptionTest on Linux GitHub Actions runners.
+      </action>
       <action issue="RAT-595" type="fix" dev="pottlinger">
         Fix test-order dependence in ReporterTest.testExecuteNoSource by reusing the configuration created by the UI option parser instead of a static CLI option collection.
       </action>
