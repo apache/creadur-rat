@@ -22,6 +22,8 @@ consult before producing output.
 - Use meaningful variable and function names
 - Add comments for complex logic
 - Add package-info.java to each new package in the source tree
+- Use assertj assertions in tests
+- Do not use star imports in classes.
 
 # BEST PRACTICES
 - **DRY (Don't Repeat Yourself)**: Avoid code duplication

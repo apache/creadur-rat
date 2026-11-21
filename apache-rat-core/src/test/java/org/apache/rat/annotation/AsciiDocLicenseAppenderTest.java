@@ -1,9 +1,7 @@
 /* SPDX-License-Identifier: Apache-2.0 */
 package org.apache.rat.annotation;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -39,11 +37,28 @@ class AsciiDocLicenseAppenderTest {
     private Path directory;
 
     private String ticketExample() throws Exception {
-        return Files.readString(Resources.getResourceFile("annotation/RAT-517.adoc").toPath(), StandardCharsets.UTF_8);
+        // Git may check out this fixture with CRLF on Windows. Keep a canonical
+        // LF copy for header splitting and for constructing explicit CRLF input.
+        return toLf(Files.readString(Resources.getResourceFile("annotation/RAT-517.adoc").toPath(), StandardCharsets.UTF_8));
+    }
+
+    private String toLf(final String content) {
+        return content.replace("\r\n", "\n").replace("\r", "\n");
     }
 
     private String normalize(final String content) {
-        return content.replace("\n", System.lineSeparator());
+        return toLf(content).replace("\n", System.lineSeparator());
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"\n", "\r\n", "\r"})
+    void normalizeFixtureLineEndings(final String lineSeparator) {
+        String canonical = "= Title\n:toc:\n\nText\n";
+        String input = canonical.replace("\n", lineSeparator);
+
+        assertThat(toLf(input)).isEqualTo(canonical);
+        assertThat(toLf(input).indexOf("\n\n")).isEqualTo(canonical.indexOf("\n\n"));
+        assertThat(normalize(input)).isEqualTo(canonical.replace("\n", System.lineSeparator()));
     }
 
     @ParameterizedTest
@@ -64,21 +79,21 @@ class AsciiDocLicenseAppenderTest {
         String header = appender.getLicenseHeader(file);
         String expected = normalize(example.substring(0, endOfHeader)) + header + System.lineSeparator()
                 + normalize(example.substring(endOfHeader));
-        assertEquals(expected, Files.readString(output, StandardCharsets.UTF_8));
-        assertTrue(header.startsWith("////" + System.lineSeparator() + "Licensed to the Apache Software Foundation"));
-        assertTrue(header.endsWith("////" + System.lineSeparator()));
-        assertFalse(header.contains("<!--"));
-        assertFalse(header.contains(" * "));
+        assertThat(Files.readString(output, StandardCharsets.UTF_8)).isEqualTo(expected);
+        assertThat(header)
+                .startsWith("////" + System.lineSeparator() + "Licensed to the Apache Software Foundation")
+                .endsWith("////" + System.lineSeparator())
+                .doesNotContain("<!--", " * ");
         if (overwrite) {
-            assertFalse(Path.of(file + ".new").toFile().exists());
+            assertThat(Path.of(file + ".new")).doesNotExist();
         } else {
-            assertEquals(input, Files.readString(file.toPath(), StandardCharsets.UTF_8));
+            assertThat(Files.readString(file.toPath(), StandardCharsets.UTF_8)).isEqualTo(input);
         }
         ILicense license = LicenseSetFactory.search("AL", "AL2.0",
                 Defaults.builder().build().getLicenseSetFactory().getLicenses(LicenseFilter.ALL)).orElseThrow();
         try (BufferedReader reader = Files.newBufferedReader(output, StandardCharsets.UTF_8)) {
-            assertTrue(license.matches(HeaderCheckWorker.readHeader(reader,
-                    HeaderCheckWorker.DEFAULT_NUMBER_OF_RETAINED_HEADER_LINES)));
+            assertThat(license.matches(HeaderCheckWorker.readHeader(reader,
+                    HeaderCheckWorker.DEFAULT_NUMBER_OF_RETAINED_HEADER_LINES))).isTrue();
         }
     }
 
@@ -114,9 +129,9 @@ class AsciiDocLicenseAppenderTest {
 
         appender.append(file);
 
-        assertEquals(normalize(preamble) + appender.getLicenseHeader(file) + System.lineSeparator() + normalize(body),
-                Files.readString(Path.of(file + ".new"), StandardCharsets.UTF_8));
-        assertEquals(input, Files.readString(file.toPath(), StandardCharsets.UTF_8));
+        assertThat(Files.readString(Path.of(file + ".new"), StandardCharsets.UTF_8))
+                .isEqualTo(normalize(preamble) + appender.getLicenseHeader(file) + System.lineSeparator() + normalize(body));
+        assertThat(Files.readString(file.toPath(), StandardCharsets.UTF_8)).isEqualTo(input);
     }
 
     @ParameterizedTest
@@ -133,8 +148,9 @@ class AsciiDocLicenseAppenderTest {
 
         int endOfHeader = example.indexOf("\n\n") + 1;
         String header = appender.getLicenseHeader(directory.resolve("reference.adoc").toFile());
-        assertEquals(normalize(example.substring(0, endOfHeader)) + header + System.lineSeparator()
-                + normalize(example.substring(endOfHeader)), Files.readString(Path.of(file + ".new")));
+        assertThat(Files.readString(Path.of(file + ".new")))
+                .isEqualTo(normalize(example.substring(0, endOfHeader)) + header + System.lineSeparator()
+                        + normalize(example.substring(endOfHeader)));
     }
 
     @Test
@@ -146,10 +162,11 @@ class AsciiDocLicenseAppenderTest {
         appender.append(file);
 
         String header = appender.getLicenseHeader(file);
-        assertTrue(header.startsWith(normalize("////\nCopyright 2026 Max Mustermann\n\n")));
-        assertTrue(header.endsWith(normalize("////\n")));
-        assertEquals(normalize("= Title\n") + header + System.lineSeparator() + normalize("\nText\n"),
-                Files.readString(Path.of(file + ".new")));
+        assertThat(header)
+                .startsWith(normalize("////\nCopyright 2026 Max Mustermann\n\n"))
+                .endsWith(normalize("////\n"));
+        assertThat(Files.readString(Path.of(file + ".new")))
+                .isEqualTo(normalize("= Title\n") + header + System.lineSeparator() + normalize("\nText\n"));
     }
 
     @ParameterizedTest
@@ -160,15 +177,15 @@ class AsciiDocLicenseAppenderTest {
         Files.writeString(file.toPath(), example, StandardCharsets.UTF_8);
         FileDocument document = new FileDocument(file, DocumentNameMatcher.MATCHES_ALL);
         TikaProcessor.process(document);
-        assertEquals(Document.Type.STANDARD, document.getMetaData().getDocumentType());
+        assertThat(document.getMetaData().getDocumentType()).isEqualTo(Document.Type.STANDARD);
         document.getMetaData().reportOnLicense(UnknownLicense.INSTANCE);
 
         new LicenseAddingReport(null, false).report(document);
 
         int endOfHeader = example.indexOf("\n\n") + 1;
         ApacheV2LicenseAppender appender = new ApacheV2LicenseAppender();
-        assertEquals(normalize(example.substring(0, endOfHeader)) + appender.getLicenseHeader(file)
-                + System.lineSeparator() + normalize(example.substring(endOfHeader)),
-                Files.readString(Path.of(file + ".new")));
+        assertThat(Files.readString(Path.of(file + ".new")))
+                .isEqualTo(normalize(example.substring(0, endOfHeader)) + appender.getLicenseHeader(file)
+                        + System.lineSeparator() + normalize(example.substring(endOfHeader)));
     }
 }
