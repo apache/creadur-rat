@@ -23,6 +23,10 @@
  * is reused when an extension does not identify a supported syntax. Generic
  * plain text is not sufficient to select a comment style.
  *
+ * Markdown YAML, TOML and JSON front matter remains before the license comment.
+ * Delimiter-based blocks and JSON object boundaries are checked without parsing
+ * the metadata values.
+ *
  * AsciiDoc headers retain their title, author/revision lines and attributes
  * before the license block comment. Header detection stops at the first blank
  * line, so attributes in the body do not affect license placement.
