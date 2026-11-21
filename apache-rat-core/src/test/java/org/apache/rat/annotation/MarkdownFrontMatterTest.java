@@ -37,13 +37,26 @@ class MarkdownFrontMatterTest {
     /** Native line endings used by the appender. */
     private static final String LINE_SEPARATOR = System.lineSeparator();
     /** TOML metadata with arrays, a table, comments and an indented delimiter. */
-    private static final String TOML = "+++\ntitle = \"Community Guidelines\"\n# Metadata comment\n"
-            + "tags = [\"community\", \"docs\"]\n[params]\ndescription = \"\"\"\n  +++\n\"\"\"\n+++\n";
+    private static final String TOML = """
+            +++
+            title = "Community Guidelines"
+            # Metadata comment
+            tags = ["community", "docs"]
+            [params]
+            description = \"""
+              +++
+            \"""
+            +++
+            """;
     /** Nested JSON metadata with delimiters, escaped quotes and backslashes inside strings. */
-    private static final String JSON = "{\n  \"title\": \"Community Guidelines\",\n"
-            + "  \"params\": {\"tags\": [\"docs\", {\"enabled\": true}], \"weight\": 500},\n"
-            + "  \"description\": \"Braces } { and brackets ] [ and quote \\\"\",\n"
-            + "  \"path\": \"C:\\\\docs\\\\\"\n}\n";
+    private static final String JSON = """
+            {
+              "title": "Community Guidelines",
+              "params": {"tags": ["docs", {"enabled": true}], "weight": 500},
+              "description": "Braces } { and brackets ] [ and quote \\\"",
+              "path": "C:\\\\docs\\\\"
+            }
+            """;
     /** Body markers must not be mistaken for another front matter block. */
     private static final String BODY = "\n# Community Guidelines\n\n+++\n{\"body\": true}\nText\n";
 
