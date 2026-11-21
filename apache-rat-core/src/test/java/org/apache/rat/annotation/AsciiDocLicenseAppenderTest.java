@@ -33,6 +33,9 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
 class AsciiDocLicenseAppenderTest {
+    /** The native line separator used by the license appender. */
+    private static final String LINE_SEPARATOR = System.lineSeparator();
+
     @TempDir
     private Path directory;
 
@@ -47,7 +50,7 @@ class AsciiDocLicenseAppenderTest {
     }
 
     private String normalize(final String content) {
-        return toLf(content).replace("\n", System.lineSeparator());
+        return toLf(content).replace("\n", LINE_SEPARATOR);
     }
 
     @ParameterizedTest
@@ -58,7 +61,7 @@ class AsciiDocLicenseAppenderTest {
 
         assertThat(toLf(input)).isEqualTo(canonical);
         assertThat(toLf(input).indexOf("\n\n")).isEqualTo(canonical.indexOf("\n\n"));
-        assertThat(normalize(input)).isEqualTo(canonical.replace("\n", System.lineSeparator()));
+        assertThat(normalize(input)).isEqualTo(canonical.replace("\n", LINE_SEPARATOR));
     }
 
     @ParameterizedTest
@@ -77,12 +80,12 @@ class AsciiDocLicenseAppenderTest {
         Path output = overwrite ? file.toPath() : Path.of(file + ".new");
         int endOfHeader = example.indexOf("\n\n") + 1;
         String header = appender.getLicenseHeader(file);
-        String expected = normalize(example.substring(0, endOfHeader)) + header + System.lineSeparator()
+        String expected = normalize(example.substring(0, endOfHeader)) + header + LINE_SEPARATOR
                 + normalize(example.substring(endOfHeader));
         assertThat(Files.readString(output, StandardCharsets.UTF_8)).isEqualTo(expected);
         assertThat(header)
-                .startsWith("////" + System.lineSeparator() + "Licensed to the Apache Software Foundation")
-                .endsWith("////" + System.lineSeparator())
+                .startsWith("////" + LINE_SEPARATOR + "Licensed to the Apache Software Foundation")
+                .endsWith("////" + LINE_SEPARATOR)
                 .doesNotContain("<!--", " * ");
         if (overwrite) {
             assertThat(Path.of(file + ".new")).doesNotExist();
@@ -130,7 +133,7 @@ class AsciiDocLicenseAppenderTest {
         appender.append(file);
 
         assertThat(Files.readString(Path.of(file + ".new"), StandardCharsets.UTF_8))
-                .isEqualTo(normalize(preamble) + appender.getLicenseHeader(file) + System.lineSeparator() + normalize(body));
+                .isEqualTo(normalize(preamble) + appender.getLicenseHeader(file) + LINE_SEPARATOR + normalize(body));
         assertThat(Files.readString(file.toPath(), StandardCharsets.UTF_8)).isEqualTo(input);
     }
 
@@ -149,7 +152,7 @@ class AsciiDocLicenseAppenderTest {
         int endOfHeader = example.indexOf("\n\n") + 1;
         String header = appender.getLicenseHeader(directory.resolve("reference.adoc").toFile());
         assertThat(Files.readString(Path.of(file + ".new")))
-                .isEqualTo(normalize(example.substring(0, endOfHeader)) + header + System.lineSeparator()
+                .isEqualTo(normalize(example.substring(0, endOfHeader)) + header + LINE_SEPARATOR
                         + normalize(example.substring(endOfHeader)));
     }
 
@@ -166,7 +169,7 @@ class AsciiDocLicenseAppenderTest {
                 .startsWith(normalize("////\nCopyright 2026 Max Mustermann\n\n"))
                 .endsWith(normalize("////\n"));
         assertThat(Files.readString(Path.of(file + ".new")))
-                .isEqualTo(normalize("= Title\n") + header + System.lineSeparator() + normalize("\nText\n"));
+                .isEqualTo(normalize("= Title\n") + header + LINE_SEPARATOR + normalize("\nText\n"));
     }
 
     @ParameterizedTest
@@ -186,6 +189,6 @@ class AsciiDocLicenseAppenderTest {
         ApacheV2LicenseAppender appender = new ApacheV2LicenseAppender();
         assertThat(Files.readString(Path.of(file + ".new")))
                 .isEqualTo(normalize(example.substring(0, endOfHeader)) + appender.getLicenseHeader(file)
-                        + System.lineSeparator() + normalize(example.substring(endOfHeader)));
+                        + LINE_SEPARATOR + normalize(example.substring(endOfHeader)));
     }
 }
