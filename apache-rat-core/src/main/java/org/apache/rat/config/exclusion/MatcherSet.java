@@ -23,11 +23,10 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.function.Consumer;
 
-import org.apache.rat.config.exclusion.plexus.MatchPattern;
-import org.apache.rat.config.exclusion.plexus.MatchPatterns;
-import org.apache.rat.config.exclusion.plexus.SelectorUtils;
 import org.apache.rat.document.DocumentName;
 import org.apache.rat.document.DocumentNameMatcher;
+import org.codehaus.plexus.util.MatchPattern;
+import org.codehaus.plexus.util.SelectorUtils;
 
 import static org.apache.rat.document.DocumentNameMatcher.MATCHES_NONE;
 
@@ -103,7 +102,7 @@ public interface MatcherSet {
         private void processNames(final Consumer<DocumentNameMatcher> dest, final String nameFormat, final DocumentName fromDocument, final Set<String> names) {
             if (!names.isEmpty()) {
                 String name = String.format(nameFormat, fromDocument.localized("/").substring(1));
-                dest.accept(new DocumentNameMatcher(name, MatchPatterns.from(fromDocument.getDirectorySeparator(), names), fromDocument.getBaseDocumentName()));
+                dest.accept(new DocumentNameMatcher(name, names, fromDocument.getBaseDocumentName()));
             }
         }
 

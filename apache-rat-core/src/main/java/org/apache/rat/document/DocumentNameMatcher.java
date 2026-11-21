@@ -30,10 +30,11 @@ import java.util.Set;
 import java.util.function.Predicate;
 
 import org.apache.rat.ConfigurationException;
-import org.apache.rat.config.exclusion.plexus.MatchPattern;
-import org.apache.rat.config.exclusion.plexus.MatchPatterns;
 import org.apache.rat.utils.DefaultLog;
 import org.apache.rat.utils.Log;
+import org.codehaus.plexus.util.MatchPattern;
+import org.codehaus.plexus.util.MatchPatterns;
+import org.codehaus.plexus.util.SelectorUtils;
 
 import static java.lang.String.format;
 
@@ -90,6 +91,22 @@ public final class DocumentNameMatcher {
     }
 
     /**
+     * Constructs a matcher from patterns using the base directory's file system.
+     * Ant patterns are normalized to the host separator used by Plexus when
+     * tokenizing patterns. Regex patterns retain their escapes and match the
+     * original document name.
+     * @param name the name of this matcher.
+     * @param patterns the patterns in the base directory's file system syntax.
+     * @param basedir the base directory for the scanning.
+     */
+    public DocumentNameMatcher(final String name, final Collection<String> patterns, final DocumentName basedir) {
+        this(name, MatchPatterns.from(patterns.stream()
+                .map(pattern -> SelectorUtils.isRegexPrefixedPattern(pattern) ? pattern
+                        : pattern.replace(basedir.getDirectorySeparator(), File.separator))
+                .toList()), basedir);
+    }
+
+    /**
      * Tokenizes name for faster Matcher processing.
      * @param name the name to tokenize.
      * @param dirSeparator the directory separator.
@@ -114,9 +131,9 @@ public final class DocumentNameMatcher {
             @Override
             public Iterable<DocumentNameMatcher> getMatchers() {
                 final List<DocumentNameMatcher> result = new ArrayList<>();
-                matchers.patterns().forEach(p -> result.add(new DocumentNameMatcher(p.source(),
+                matchers.getSources().forEach(p -> result.add(new DocumentNameMatcher(p,
                         new Predicate<>() {
-                            private final MatchPatterns patterns = MatchPatterns.from("/", p.source());
+                            private final MatchPatterns patterns = MatchPatterns.from(p);
 
                             @Override
                             public boolean test(final DocumentName documentName) {
