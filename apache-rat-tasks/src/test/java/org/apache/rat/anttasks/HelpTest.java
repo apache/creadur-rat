@@ -17,8 +17,6 @@
 package org.apache.rat.anttasks;
 
 import java.io.File;
-import org.apache.rat.document.DocumentName;
-import org.apache.tools.ant.MagicNames;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -34,9 +32,8 @@ public class HelpTest extends AbstractRatAntTaskTest {
         for (int i = 0; i < 4; i++) {
             baseFile = baseFile.getParentFile();
         }
-        DocumentName documentName = DocumentName.builder(antFile).setBaseName(baseFile).build();
-        System.setProperty(MagicNames.PROJECT_BASEDIR, documentName.getBaseName());
         super.setUp();
+        buildRule.getProject().setBaseDir(baseFile);
     }
 
     @Override
