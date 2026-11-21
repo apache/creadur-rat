@@ -57,7 +57,7 @@ public abstract class AbstractLicenseAppender {
     private static final int TYPE_HTML = 3;
     /** CSS files */
     private static final int TYPE_CSS = 4;
-    /** javascript files */
+    /** JavaScript files */
     private static final int TYPE_JAVASCRIPT = 5;
     /** Almost plain text files */
     private static final int TYPE_APT = 6;
@@ -316,9 +316,9 @@ public abstract class AbstractLicenseAppender {
                 written = attachLicense(writer, document, editor, header);
             }
             if (!written && (expectsPackage(type) || expectsXMLDecl(type))) {
-                // For files without a package, place the license at the front;
-                // for XML files without a declaration, add one before the license.
+                // For files without a package, place the license at the front.
                 try (FileWriter writer2 = new FileWriter(newDocument, StandardCharsets.UTF_8)) {
+                    // For XML files without a declaration, add one before the license.
                     if (expectsXMLDecl(type)) {
                         writer2.write("<?xml version='1.0'?>");
                         writer2.write(LINE_SEP);

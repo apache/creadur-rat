@@ -706,7 +706,7 @@ public class TestLicenseAppender {
         Files.writeString(file.toPath(), "---\ntitle: Example\n---\n# Heading\n");
         FileDocument document = new FileDocument(file, DocumentNameMatcher.MATCHES_ALL);
         String detected = TikaProcessor.process(document);
-        assertThat(document.getMetaData().getMediaType().toString()).isEqualTo(detected);
+        assertThat(document.getMetaData().getMediaType()).hasToString(detected);
         ApacheV2LicenseAppender appender = new ApacheV2LicenseAppender();
 
         appender.append(file, document.getMetaData());
