@@ -17,6 +17,14 @@
  * under the License.                                           *
  */
 /**
- * Classes that update the files
+ * Classes that update files with license headers.
+ * The appender owns file I/O, cleanup, replacement and header formatting;
+ * format-specific editors own header placement. Detected document metadata
+ * is reused when an extension does not identify a supported syntax. Generic
+ * plain text is not sufficient to select a comment style.
+ *
+ * New formats (for example AsciiDoc) should provide a dedicated editor for
+ * preserving their preamble and a matching license comment style, rather
+ * than adding placement logic to the appender.
  */
 package org.apache.rat.annotation;

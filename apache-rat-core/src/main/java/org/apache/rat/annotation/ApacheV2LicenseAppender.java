@@ -20,6 +20,8 @@ package org.apache.rat.annotation;
 
 import java.io.File;
 
+import org.apache.rat.api.MetaData;
+
 /**
  * Add an Apache License V2 license header to a
  * document. This appender does not check for the
@@ -50,7 +52,19 @@ public class ApacheV2LicenseAppender extends AbstractLicenseAppender {
 
     @Override
     public String getLicenseHeader(final File document) {
-        int type = getType(document);
+        return formatLicenseHeader(getType(document));
+    }
+
+    @Override
+    protected String getLicenseHeader(final File document, final MetaData metaData) {
+        // Preserve overrides of the public formatting hook for known extensions.
+        if (getType(document) == getType(document, metaData)) {
+            return getLicenseHeader(document);
+        }
+        return formatLicenseHeader(getType(document, metaData));
+    }
+
+    private String formatLicenseHeader(final int type) {
         StringBuilder sb = new StringBuilder();
 
         if (copyright == null) {

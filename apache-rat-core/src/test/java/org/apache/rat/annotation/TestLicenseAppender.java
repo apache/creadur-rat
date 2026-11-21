@@ -38,10 +38,17 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.rat.Defaults;
 import org.apache.rat.analysis.HeaderCheckWorker;
+import org.apache.rat.analysis.TikaProcessor;
+import org.apache.rat.analysis.UnknownLicense;
+import org.apache.rat.api.MetaData;
+import org.apache.rat.document.DocumentNameMatcher;
+import org.apache.rat.document.FileDocument;
 import org.apache.rat.license.ILicense;
 import org.apache.rat.license.LicenseSetFactory;
 import org.apache.rat.license.LicenseSetFactory.LicenseFilter;
+import org.apache.rat.report.claim.LicenseAddingReport;
 import org.apache.rat.test.utils.Resources;
+import org.apache.tika.mime.MediaType;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -611,6 +618,104 @@ public class TestLicenseAppender {
         assertTrue(exception.getMessage().contains("Unterminated YAML front matter"));
         assertEquals(content, Files.readString(document.toPath()));
         assertFalse(new File(document + ".new").exists());
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"text/markdown", "text/x-web-markdown", "text/markdown; charset=UTF-8"})
+    public void addLicenseUsingMarkdownMetadata(final String mediaType) throws IOException {
+        File document = new File(baseTempFolder, "README");
+        String frontMatter = "---\ntitle: Example\n---\n";
+        Files.writeString(document.toPath(), frontMatter + "# Heading\n");
+        MetaData metadata = new MetaData();
+        metadata.setMediaType(MediaType.parse(mediaType));
+        ApacheV2LicenseAppender appender = new ApacheV2LicenseAppender();
+
+        appender.append(document, metadata);
+
+        File markdown = new File(baseTempFolder, "reference.md");
+        String expected = frontMatter.replace("\n", System.lineSeparator()) + System.lineSeparator()
+                + appender.getLicenseHeader(markdown) + System.lineSeparator() + "# Heading" + System.lineSeparator();
+        assertEquals(expected, Files.readString(new File(document + ".new").toPath()));
+        assertEquals(frontMatter + "# Heading\n", Files.readString(document.toPath()));
+    }
+
+    @ParameterizedTest
+    @CsvSource({"application/xml,xml", "text/xml,xml", "text/html,html"})
+    public void addLicenseUsingMarkupMetadata(final String mediaType, final String extension) throws IOException {
+        File document = new File(baseTempFolder, "document");
+        String content = "<root/>\n";
+        Files.writeString(document.toPath(), content);
+        MetaData metadata = new MetaData();
+        metadata.setMediaType(MediaType.parse(mediaType));
+        ApacheV2LicenseAppender appender = new ApacheV2LicenseAppender();
+
+        appender.append(document, metadata);
+
+        String expected = ("xml".equals(extension) ? "<?xml version='1.0'?>" + System.lineSeparator() : "")
+                + appender.getLicenseHeader(new File(baseTempFolder, "reference." + extension))
+                + System.lineSeparator() + content.replace("\n", System.lineSeparator());
+        assertEquals(expected, Files.readString(new File(document + ".new").toPath()));
+    }
+
+    @Test
+    public void licenseAddingReportPassesDetectedMetadata() throws Exception {
+        File file = new File(baseTempFolder, "README");
+        Files.writeString(file.toPath(), "---\ntitle: Example\n---\n# Heading\n");
+        FileDocument document = new FileDocument(file, DocumentNameMatcher.MATCHES_ALL);
+        document.getMetaData().setMediaType(MediaType.parse("text/markdown"));
+        document.getMetaData().reportOnLicense(UnknownLicense.INSTANCE);
+
+        new LicenseAddingReport(null, false).report(document);
+
+        assertTrue(Files.readString(new File(file + ".new").toPath())
+                .startsWith("---" + System.lineSeparator() + "title: Example" + System.lineSeparator()
+                        + "---" + System.lineSeparator() + System.lineSeparator() + "<!--"));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"text/plain", "application/octet-stream", "text/asciidoc"})
+    public void doNotGuessCommentSyntaxFromUnsupportedMetadata(final String mediaType) throws IOException {
+        File document = new File(baseTempFolder, "README");
+        Files.writeString(document.toPath(), "Unknown syntax\n");
+        MetaData metadata = new MetaData();
+        metadata.setMediaType(MediaType.parse(mediaType));
+
+        new ApacheV2LicenseAppender().append(document, metadata);
+
+        assertFalse(new File(document + ".new").exists());
+    }
+
+    @ParameterizedTest
+    @CsvSource({"text/plain", "text/html"})
+    public void retainMarkdownExtensionWhenMetadataIsGenericOrConflicting(final String mediaType) throws IOException {
+        File document = new File(baseTempFolder, "tmp.md");
+        String content = "---\ntitle: Example\n---\n";
+        Files.writeString(document.toPath(), content);
+        MetaData metadata = new MetaData();
+        metadata.setMediaType(MediaType.parse(mediaType));
+        ApacheV2LicenseAppender appender = new ApacheV2LicenseAppender();
+
+        appender.append(document, metadata);
+
+        assertEquals(content.replace("\n", System.lineSeparator()) + System.lineSeparator()
+                + appender.getLicenseHeader(document) + System.lineSeparator(),
+                Files.readString(new File(document + ".new").toPath()));
+    }
+
+    @Test
+    public void useTikaDocumentMetadataDuringInsertion() throws Exception {
+        File file = new File(baseTempFolder, "tmp.md");
+        Files.writeString(file.toPath(), "---\ntitle: Example\n---\n# Heading\n");
+        FileDocument document = new FileDocument(file, DocumentNameMatcher.MATCHES_ALL);
+        String detected = TikaProcessor.process(document);
+        assertEquals(detected, document.getMetaData().getMediaType().toString());
+        ApacheV2LicenseAppender appender = new ApacheV2LicenseAppender();
+
+        appender.append(file, document.getMetaData());
+
+        assertTrue(Files.readString(new File(file + ".new").toPath())
+                .startsWith("---" + System.lineSeparator() + "title: Example" + System.lineSeparator()
+                        + "---" + System.lineSeparator() + System.lineSeparator() + "<!--"));
     }
 
     @Test

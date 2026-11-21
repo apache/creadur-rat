@@ -52,7 +52,7 @@ public class LicenseAddingReport implements RatReport {
             final File file = new File(document.getName().getName());
             if (file.isFile()) {
                 try {
-                    appender.append(file);
+                    appender.append(file, document.getMetaData());
                 } catch (IOException e) {
                     throw new RatException(e.getMessage(), e);
                 }

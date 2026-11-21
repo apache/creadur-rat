@@ -34,8 +34,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.input.BOMInputStream;
+import org.apache.rat.api.MetaData;
 import org.apache.rat.utils.DefaultLog;
 
 /**
@@ -286,35 +286,42 @@ public abstract class AbstractLicenseAppender {
      * @throws IOException if there is a problem while reading or writing the file.
      */
     public void append(final File document) throws IOException {
-        int type = getType(document);
+        append(document, null);
+    }
+
+    /**
+     * Appends a header using already detected content metadata when available.
+     * @param document the file to edit.
+     * @param metaData metadata from document analysis, or {@code null}.
+     * @throws IOException if reading or writing fails.
+     */
+    public void append(final File document, final MetaData metaData) throws IOException {
+        int type = getType(document, metaData);
         if (type == TYPE_UNKNOWN) {
             return;
         }
 
-        boolean expectsHashPling = expectsHashPling(type);
-        boolean expectsAtEcho = expectsAtEcho(type);
-        boolean expectsPackage = expectsPackage(type);
-        boolean expectsXMLDecl = expectsXMLDecl(type);
-        boolean expectsPhpPI = expectsPhpPI(type);
-        boolean expectsMSVSSF = expectsMSVisualStudioSolutionFileHeader(type);
+        LicenseEditor editor = getEditor(type);
+        String header = getLicenseHeader(document, metaData);
 
         File newDocument = new File(document.getAbsolutePath() + ".new");
-        try (FileWriter writer = new FileWriter(newDocument, StandardCharsets.UTF_8)) {
-            if (!attachLicense(writer, document,
-                    expectsHashPling, expectsAtEcho, expectsPackage,
-                    expectsXMLDecl, expectsPhpPI, expectsMSVSSF)) {
+        try {
+            boolean written;
+            try (FileWriter writer = new FileWriter(newDocument, StandardCharsets.UTF_8)) {
+                written = attachLicense(writer, document, editor, header);
+            }
+            if (!written) {
                 // Java File without package, XML file without decl or PHP
                 // file without PI
                 // for Java just place the license at the front, for XML add
                 // an XML decl first - don't know how to handle PHP
-                if (expectsPackage || expectsXMLDecl) {
+                if (expectsPackage(type) || expectsXMLDecl(type)) {
                     try (FileWriter writer2  = new FileWriter(newDocument, StandardCharsets.UTF_8)) {
-                        if (expectsXMLDecl) {
+                        if (expectsXMLDecl(type)) {
                             writer2.write("<?xml version='1.0'?>");
                             writer2.write(LINE_SEP);
                         }
-                        attachLicense(writer2, document,
-                                false, false, false, false, false, false);
+                        attachLicense(writer2, document, new PlainLicenseEditor(), header);
                     }
                 }
             }
@@ -348,129 +355,57 @@ public abstract class AbstractLicenseAppender {
         }
     }
 
-    /**
-     * Write document's content to writer attaching the license using
-     * the given flags as hints for where to put it.
-     *
-     * @return whether the license has actually been written
-     */
-    private boolean attachLicense(final Writer writer, final File document,
-                                  final boolean expectsHashPling,
-                                  final boolean expectsAtEcho,
-                                  final boolean expectsPackage,
-                                  final boolean expectsXMLDecl,
-                                  final boolean expectsPhpPI,
-                                  final boolean expectsMSVSSF)
-            throws IOException {
-        boolean written = false;
-        FileInputStream fis = null;
-        BufferedReader br = null;
-        try {
-            fis = new FileInputStream(document);
-            BOMInputStream bos = BOMInputStream.builder().setInputStream(fis).get();
-            br = new BufferedReader(new InputStreamReader(bos, StandardCharsets.UTF_8));
-
-            String line = br.readLine();
-            if (getType(document) == TYPE_MD && "---".equals(line)) {
-                copyMarkdownFrontMatter(writer, br, document);
-                line = br.readLine();
-            }
-
-            if (!expectsHashPling
-                    && !expectsAtEcho
-                    && !expectsPackage
-                    && !expectsXMLDecl
-                    && !expectsPhpPI
-                    && !expectsMSVSSF) {
-                written = true;
-                writer.write(getLicenseHeader(document));
-                writer.write(LINE_SEP);
-            }
-
-            boolean first = true;
-            while (line != null) {
-                if (first && expectsHashPling) {
-                    written = true;
-                    doFirstLine(document, writer, line, "#!");
-                } else if (first && expectsAtEcho) {
-                    written = true;
-                    doFirstLine(document, writer, line, "@echo");
-                } else if (first && expectsMSVSSF) {
-                    written = true;
-                    if (line.isEmpty()) {
-                        line = passThroughReadNext(writer, line, br);
-                    }
-                    if (line.startsWith("Microsoft Visual Studio Solution"
-                            + " File")) {
-                        line = passThroughReadNext(writer, line, br);
-                    }
-                    doFirstLine(document, writer, line, "# Visual ");
-                } else {
-                    writer.write(line);
-                    writer.write(LINE_SEP);
-                }
-
-                if (expectsPackage && line.startsWith("package ")) {
-                    written = true;
-                    writer.write(LINE_SEP);
-                    writer.write(getLicenseHeader(document));
-                    writer.write(LINE_SEP);
-                } else if (expectsXMLDecl && line.startsWith("<?xml ")) {
-                    written = true;
-                    writer.write(LINE_SEP);
-                    writer.write(getLicenseHeader(document));
-                    writer.write(LINE_SEP);
-                } else if (expectsPhpPI && line.startsWith("<?php")) {
-                    written = true;
-                    writer.write(LINE_SEP);
-                    writer.write(getLicenseHeader(document));
-                    writer.write(LINE_SEP);
-                }
-                first = false;
-                line = br.readLine();
-            }
-        } finally {
-            IOUtils.closeQuietly(br);
-            IOUtils.closeQuietly(fis);
-            IOUtils.closeQuietly(writer);
+    private boolean attachLicense(final Writer writer, final File document, final LicenseEditor editor,
+                                  final String header) throws IOException {
+        try (FileInputStream stream = new FileInputStream(document);
+             BOMInputStream bom = BOMInputStream.builder().setInputStream(stream).get();
+             BufferedReader reader = new BufferedReader(new InputStreamReader(bom, StandardCharsets.UTF_8))) {
+            return editor.edit(document, reader, writer, header);
         }
-        return written;
+    }
+
+    private LicenseEditor getEditor(final int type) {
+        if (type == TYPE_MD) {
+            return new MarkdownLicenseEditor();
+        } else if (expectsHashPling(type)) {
+            return new FirstLineLicenseEditor("#!");
+        } else if (expectsAtEcho(type)) {
+            return new FirstLineLicenseEditor("@echo");
+        } else if (expectsMSVisualStudioSolutionFileHeader(type)) {
+            return new VisualStudioLicenseEditor();
+        } else if (expectsPackage(type)) {
+            return new DeclarationLicenseEditor("package ");
+        } else if (expectsXMLDecl(type)) {
+            return new DeclarationLicenseEditor("<?xml ");
+        } else if (expectsPhpPI(type)) {
+            return new DeclarationLicenseEditor("<?php");
+        }
+        return new PlainLicenseEditor();
     }
 
     /**
-     * Copy YAML front matter before inserting a Markdown license header. The opening
-     * delimiter has already been read. Only a delimiter at the start of the document
-     * is treated as front matter; YAML content does not need to be parsed.
-     *
-     * @throws IOException if the front matter is not terminated or copying fails.
+     * Resolves supported types using extensions first, then specific detected MIME types.
+     * Generic text/plain cannot determine the required comment syntax.
+     * @param document the source file.
+     * @param metaData detected metadata, or {@code null}.
+     * @return the supported type, or the unknown type.
      */
-    private void copyMarkdownFrontMatter(final Writer writer, final BufferedReader reader, final File document) throws IOException {
-        writer.write("---");
-        writer.write(LINE_SEP);
-        String line;
-        while ((line = reader.readLine()) != null) {
-            writer.write(line);
-            writer.write(LINE_SEP);
-            if ("---".equals(line) || "...".equals(line)) {
-                writer.write(LINE_SEP);
-                return;
-            }
+    protected int getType(final File document, final MetaData metaData) {
+        int type = getType(document);
+        if (type != TYPE_UNKNOWN || metaData == null || metaData.getMediaType() == null) {
+            return type;
         }
-        throw new IOException("Unterminated YAML front matter in " + document);
-    }
-
-    /**
-     * Check first line for specified text and process.
-     */
-    private void doFirstLine(final File document, final Writer writer, final String line, final String lookFor) throws IOException {
-        if (line.startsWith(lookFor)) {
-            writer.write(line);
-            writer.write(LINE_SEP);
-            writer.write(getLicenseHeader(document));
-        } else {
-            writer.write(getLicenseHeader(document));
-            writer.write(line);
-            writer.write(LINE_SEP);
+        switch (metaData.getMediaType().getBaseType().toString()) {
+        case "text/markdown":
+        case "text/x-web-markdown":
+            return TYPE_MD;
+        case "application/xml":
+        case "text/xml":
+            return TYPE_XML;
+        case "text/html":
+            return TYPE_HTML;
+        default:
+            return TYPE_UNKNOWN;
         }
     }
 
@@ -479,7 +414,6 @@ public abstract class AbstractLicenseAppender {
      *
      * @param document to retrieve type from.
      * @return not null
-     * TODO use existing mechanism to detect the type of a file and record it in the report output, thus we will not need this duplication here.
      */
     protected int getType(final File document) {
         String path = document.getPath();
@@ -511,6 +445,16 @@ public abstract class AbstractLicenseAppender {
      * @return Get the license header of a document.
      */
     public abstract String getLicenseHeader(File document);
+
+    /**
+     * Gets a header using detected metadata. Defaults to the legacy formatting hook.
+     * @param document the source file.
+     * @param metaData detected metadata, or {@code null}.
+     * @return the formatted header.
+     */
+    protected String getLicenseHeader(final File document, final MetaData metaData) {
+        return getLicenseHeader(document);
+    }
 
     /**
      * Get the first line of the license header formatted
@@ -621,11 +565,4 @@ public abstract class AbstractLicenseAppender {
         return Arrays.binarySearch(arr, key) >= 0;
     }
 
-    private String passThroughReadNext(final Writer writer, final String line,
-                                       final BufferedReader br) throws IOException {
-        writer.write(line);
-        writer.write(LINE_SEP);
-        String l = br.readLine();
-        return l == null ? "" : l;
-    }
 }
