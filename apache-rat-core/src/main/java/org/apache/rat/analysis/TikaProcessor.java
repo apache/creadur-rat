@@ -98,6 +98,7 @@ public final class TikaProcessor {
         // org.apache.tika.parser.xml.DcXMLParser
         DOCUMENT_TYPE_MAP.put("application/x-asp", Document.Type.STANDARD);
         DOCUMENT_TYPE_MAP.put("application/xml", Document.Type.STANDARD);
+        DOCUMENT_TYPE_MAP.put("application/xml-dtd", Document.Type.STANDARD);
         // org.apache.tika.parser.xml.XMLParser
         DOCUMENT_TYPE_MAP.put("application/x-sh", Document.Type.STANDARD);
         DOCUMENT_TYPE_MAP.put("application/x-bat", Document.Type.STANDARD);
