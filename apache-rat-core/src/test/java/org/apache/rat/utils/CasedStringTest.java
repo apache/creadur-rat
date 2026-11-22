@@ -18,11 +18,16 @@
  */
 package org.apache.rat.utils;
 
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.text.WordUtils;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
@@ -30,6 +35,34 @@ import java.util.stream.Stream;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class CasedStringTest {
+
+    @ParameterizedTest
+    @ValueSource(strings = {"", "$StringCase"})
+    void testInitializationOrder(String firstClassSuffix) throws Exception {
+        // Use a fresh class loader so other tests cannot mask the initialization cycle (RAT-587).
+        URL[] classPath = {
+                CasedString.class.getProtectionDomain().getCodeSource().getLocation(),
+                StringUtils.class.getProtectionDomain().getCodeSource().getLocation(),
+                WordUtils.class.getProtectionDomain().getCodeSource().getLocation()
+        };
+        try (URLClassLoader loader = new URLClassLoader(classPath, ClassLoader.getPlatformClassLoader())) {
+            String className = CasedString.class.getName();
+            Class.forName(className + firstClassSuffix, true, loader);
+            Class<?> casedStringClass = Class.forName(className, true, loader);
+            Class<?> stringCaseClass = Class.forName(className + "$StringCase", true, loader);
+            Object nullValue = casedStringClass.getField("NULL").get(null);
+            assertThat(casedStringClass.getMethod("isNull").invoke(nullValue)).isEqualTo(true);
+            assertThat(nullValue.toString()).isNull();
+
+            Object camel = stringCaseClass.getField("CAMEL").get(null);
+            Object pascal = stringCaseClass.getField("PASCAL").get(null);
+            String[] segments = {"hello", "world"};
+            assertThat(stringCaseClass.getMethod("assemble", String[].class).invoke(camel, (Object) segments))
+                    .isEqualTo("HelloWorld");
+            assertThat(stringCaseClass.getMethod("assemble", String[].class).invoke(pascal, (Object) segments))
+                    .isEqualTo("helloWorld");
+        }
+    }
 
     @MethodSource("testSegmentationData")
     @ParameterizedTest

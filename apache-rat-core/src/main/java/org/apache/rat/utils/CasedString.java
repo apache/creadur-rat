@@ -39,12 +39,6 @@ public final class CasedString {
     private final String[] segments;
     /** The case of the string as parsed. */
     private final StringCase stringCase;
-    /** A joiner used for the pascal and camel cases. */
-    private static final Function<String[], String> CAMEL_JOINER = strings -> {
-        StringBuilder sb = new StringBuilder();
-        Arrays.stream(strings).map(s -> s == null ? "" : s).forEach(token -> sb.append(WordUtils.capitalize(token.toLowerCase(Locale.ROOT))));
-        return sb.toString();
-    };
     /** A null cased string. */
     public static final CasedString NULL = new CasedString(StringCase.KEBAB, CasedString.StringCase.NULL_SEGMENT);
 
@@ -125,6 +119,12 @@ public final class CasedString {
      * The definition of a String case.
      */
     public static final class StringCase {
+        /** A joiner used for the pascal and camel cases. */
+        private static final Function<String[], String> CAMEL_JOINER = strings -> {
+            StringBuilder sb = new StringBuilder();
+            Arrays.stream(strings).map(s -> s == null ? "" : s).forEach(token -> sb.append(WordUtils.capitalize(token.toLowerCase(Locale.ROOT))));
+            return sb.toString();
+        };
         /** The camel case. Example: "HelloWorld"*/
         public static final StringCase CAMEL;
         /** The pascal case. Example: "helloWorld" */
@@ -255,9 +255,9 @@ public final class CasedString {
             }
         }
         static {
-            CAMEL = new StringCase("CAMEL", Character::isUpperCase, true, CasedString.CAMEL_JOINER,
+            CAMEL = new StringCase("CAMEL", Character::isUpperCase, true, CAMEL_JOINER,
                     x -> (String) StringUtils.defaultIfEmpty(x, (CharSequence) null));
-            PASCAL = new StringCase("PASCAL", Character::isUpperCase, true, CasedString.CAMEL_JOINER.andThen(WordUtils::uncapitalize),
+            PASCAL = new StringCase("PASCAL", Character::isUpperCase, true, CAMEL_JOINER.andThen(WordUtils::uncapitalize),
                     x -> (String) StringUtils.defaultIfEmpty(x, (CharSequence) null));
             SNAKE = new StringCase("SNAKE", '_');
             KEBAB = new StringCase("KEBAB", '-');
