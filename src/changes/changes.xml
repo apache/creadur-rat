@@ -73,6 +73,14 @@ in order to be properly linked in site reports.
         Evaluate licensing alternatives against configured approvals instead of reporting only the first identifier.
         Treat malformed expressions and unknown required identifiers as unapproved; WITH combinations require explicit configuration.
       </action>
+      <action issue="RAT-582" type="fix" dev="pottlinger">
+        Classify application/xml-dtd as STANDARD so that DTD license headers are checked as well.
+        Add DTD, Python, and Perl fixtures for distinct MIME type detection and license scanningi in RAT.
+        Cover Python, Perl, and Node.js env shebangs as well.
+      </action>
+      <action issue="RAT-587" type="fix" dev="pottlinger">
+        Remove the circular static initialization dependency between CasedString and StringCase by moving the camel-case joiner into StringCase.
+      </action>
       <action issue="RAT-594" type="fix" dev="pottlinger">
         Prevent order-dependent Ant test failures caused by a JVM-wide basedir property pointing to a deleted temporary directory.
         Configure base directories on individual Ant projects and re-enable ReportOptionTest on Linux GitHub Actions runners.
