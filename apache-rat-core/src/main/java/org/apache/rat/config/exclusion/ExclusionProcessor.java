@@ -30,13 +30,13 @@ import java.util.TreeSet;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import org.apache.commons.collections4.iterators.ExtendedIterator;
 import org.apache.commons.lang3.NotImplementedException;
 import org.apache.rat.configuration.XMLConfigurationReader;
 import org.apache.rat.document.DocumentName;
 import org.apache.rat.document.DocumentNameMatcher;
 import org.apache.rat.report.xml.writer.XmlWriter;
 import org.apache.rat.utils.DefaultLog;
-import org.apache.rat.utils.ExtendedIterator;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 

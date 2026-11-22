@@ -29,6 +29,7 @@ import java.util.Set;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
+import org.apache.commons.collections4.iterators.ExtendedIterator;
 import org.apache.rat.config.exclusion.fileprocessors.AbstractFileProcessorBuilder;
 import org.apache.rat.config.exclusion.fileprocessors.BazaarIgnoreBuilder;
 import org.apache.rat.config.exclusion.fileprocessors.CVSIgnoreBuilder;
@@ -36,7 +37,6 @@ import org.apache.rat.config.exclusion.fileprocessors.GitIgnoreBuilder;
 import org.apache.rat.config.exclusion.fileprocessors.HgIgnoreBuilder;
 import org.apache.rat.document.DocumentName;
 import org.apache.rat.document.DocumentNameMatcher;
-import org.apache.rat.utils.ExtendedIterator;
 
 /**
  * Collection of standard excludes.

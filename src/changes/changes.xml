@@ -73,6 +73,27 @@ in order to be properly linked in site reports.
         Add DTD, Python, and Perl fixtures for distinct MIME type detection and license scanningi in RAT.
         Cover Python, Perl, and Node.js env shebangs as well.
       </action>
+      <action issue="RAT-594" type="fix" dev="pottlinger">
+        Prevent order-dependent Ant test failures caused by a JVM-wide basedir property pointing to a deleted temporary directory.
+        Configure base directories on individual Ant projects and re-enable ReportOptionTest on Linux GitHub Actions runners.
+      </action>
+      <action issue="RAT-595" type="fix" dev="pottlinger">
+        Fix test-order dependence in ReporterTest.testExecuteNoSource by reusing the configuration created by the UI option parser instead of a static CLI option collection.
+      </action>
+      <action issue="RAT-596" type="fix" dev="pottlinger">
+        Use the globally configured Groovy version for the Maven Invoker Plugin's Groovy runtime and modules to fix
+        integration test failures on JDK 27 (Unsupported class file major version 71).
+        Override the Maven PMD Plugin's ASM dependency with version 9.11.1 to support JDK 27 bytecode during site generation,
+        keeping the PMD version and rules unchanged. Enable JDK 27 in the GitHub Actions build matrix.
+      </action>
+      <action issue="RAT-452" type="add" dev="pottlinger">
+        Use ExtendedIterator from official commons-collection (after its release with 4.5.0).
+      </action>
+      <action issue="RAT-590" type="add" dev="pottlinger" due-to="Guillaume Nodet">
+        Skip hidden directories (names starting with '.') during SCM ignore file discovery walk in all SCM ignore processors
+        (Bazaar, CSV, Git, HG). Hidden directories are excluded by default via HIDDEN_DIR, so their SCM ignore files are irrelevant.
+        This fixes severe performance issues when hidden directories contain large trees (e.g. git worktrees stored under .worktrees/ or .claude/).
+      </action>
       <action issue="RAT-592" type="fix" dev="pottlinger">
         BAT files and shell scripts are not classified as binary anymore and need to have valid license headers. Fixes skipping application/x-sh and application/x-bat during RAT runs.
         Refactor MIME subtype handling and mapping to binary/standard in RAT. Unknown still defaults to binary.
