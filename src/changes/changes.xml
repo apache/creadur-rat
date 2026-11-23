@@ -70,7 +70,7 @@ in order to be properly linked in site reports.
     <release version="0.19-SNAPSHOT" date="xxxx-yy-zz" description="Current SNAPSHOT - release to be done">
       <action issue="RAT-517" type="add" dev="pottlinger">
         Add license headers to Markdown and AsciiDoc documents without disrupting their document metadata.
-        Markdown YAML, TOML and JSON front matter stays at the beginning of the file, so site generators can still recognize it;
+        YAML, TOML and JSON front matter stays at the beginning of both Markdown and AsciiDoc files, so site generators can still recognize it;
         incomplete front matter is reported without changing the original file.
         AsciiDoc files (.adoc, .asciidoc and .asc) receive a license block comment after the title and header metadata.
         Files without a recognized extension can also receive appropriately formatted headers when RAT detects

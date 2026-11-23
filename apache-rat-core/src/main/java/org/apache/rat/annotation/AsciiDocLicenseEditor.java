@@ -7,14 +7,14 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.regex.Pattern;
 
-/** Preserves the AsciiDoc document title and header before inserting a block comment. */
+/** Preserves Hugo front matter and the native AsciiDoc header before inserting a block comment. */
 final class AsciiDocLicenseEditor implements LicenseEditor {
     /** Attribute entries, including empty values and attribute unsetting. */
     private static final Pattern ATTRIBUTE = Pattern.compile(":!?[\\w-]+!?:.*");
 
     @Override
     public boolean edit(final File document, final BufferedReader reader, final Writer writer, final String header) throws IOException {
-        String line = reader.readLine();
+        String line = FrontMatterReader.copy(document, reader, writer);
         boolean hasTitle = line != null && line.startsWith("= ");
         if (hasTitle) {
             PlainLicenseEditor.writeLine(writer, line);

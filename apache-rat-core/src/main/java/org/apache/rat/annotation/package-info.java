@@ -27,9 +27,9 @@
  * The protected integer-based typing and formatting hooks remain available
  * for subclasses; their stable IDs are explicit and independent of enum order.
  *
- * Markdown YAML, TOML and JSON front matter remains before the license comment.
- * Delimiter-based blocks and JSON object boundaries are checked without parsing
- * the metadata values.
+ * Markdown and AsciiDoc share YAML, TOML and JSON front matter handling. This
+ * metadata remains before the format-specific license comment. Delimiter-based
+ * blocks and JSON object boundaries are checked without parsing the metadata values.
  *
  * AsciiDoc headers retain their title, author/revision lines and attributes
  * before the license block comment. Header detection stops at the first blank
