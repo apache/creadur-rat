@@ -1,0 +1,16 @@
+= Mein Dokumenttitel
+:author: Max Mustermann
+:email: max@example.com
+:revdate: 2026-11-16
+:revnumber: 1.0
+:description: Eine Beschreibung des Dokuments
+:doctype: article
+:lang: de
+:toc: left
+:toclevels: 3
+:sectnums:
+:icons: font
+
+== Einleitung
+
+Hier beginnt der eigentliche Inhalt des Dokuments.

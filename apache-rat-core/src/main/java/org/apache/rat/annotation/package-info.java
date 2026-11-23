@@ -17,6 +17,26 @@
  * under the License.                                           *
  */
 /**
- * Classes that update the files
+ * Classes that update files with license headers.
+ * The appender owns file I/O, cleanup, replacement and header formatting;
+ * format-specific editors own header placement. Detected document metadata
+ * is reused when an extension does not identify a supported syntax. Generic
+ * plain text is not sufficient to select a comment style.
+ *
+ * Internal enums describe file types, comment styles and header placement.
+ * The protected integer-based typing and formatting hooks remain available
+ * for subclasses; their stable IDs are explicit and independent of enum order.
+ *
+ * Markdown and AsciiDoc share YAML, TOML and JSON front matter handling. This
+ * metadata remains before the format-specific license comment. Delimiter-based
+ * blocks and JSON object boundaries are checked without parsing the metadata values.
+ *
+ * AsciiDoc headers retain their title, author/revision lines and attributes
+ * before the license block comment. Header detection stops at the first blank
+ * line, so attributes in the body do not affect license placement.
+ *
+ * New formats should provide a dedicated editor for
+ * preserving their preamble and a matching license comment style, rather
+ * than adding placement logic to the appender.
  */
 package org.apache.rat.annotation;

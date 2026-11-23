@@ -18,9 +18,8 @@
  */
 package org.apache.rat.annotation;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -30,12 +29,29 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.rat.Defaults;
+import org.apache.rat.analysis.HeaderCheckWorker;
+import org.apache.rat.analysis.TikaProcessor;
+import org.apache.rat.analysis.UnknownLicense;
+import org.apache.rat.api.MetaData;
+import org.apache.rat.document.DocumentNameMatcher;
+import org.apache.rat.document.FileDocument;
+import org.apache.rat.license.ILicense;
+import org.apache.rat.license.LicenseSetFactory;
+import org.apache.rat.license.LicenseSetFactory.LicenseFilter;
+import org.apache.rat.report.claim.LicenseAddingReport;
 import org.apache.rat.test.utils.Resources;
+import org.apache.tika.mime.MediaType;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
 public class TestLicenseAppender {
 
@@ -85,7 +101,7 @@ public class TestLicenseAppender {
         return r -> {
             for (int i = 0; i < lines.length; i++) {
                 String line = r.readLine();
-                assertEquals(lines[i], line, String.format("Line %s is incorrect", i));
+                assertThat(line).as("Line %s is incorrect", i).isEqualTo(lines[i]);
             }
         };
     }
@@ -102,7 +118,7 @@ public class TestLicenseAppender {
 
         File newFile = new File(filename + ".new");
         newFile.deleteOnExit();
-        assertFalse(newFile.exists(), "No new file should have been written");
+        assertThat(newFile).as("No new file should have been written").doesNotExist();
     }
 
     @Test
@@ -229,14 +245,14 @@ public class TestLicenseAppender {
             writer.write("}\n");
         }, reader -> {
             String line = reader.readLine();
-            assertEquals(newFirstLine, line, "First line is incorrect");
+            assertThat(line).as("First line is incorrect").isEqualTo(newFirstLine);
             while ((line = reader.readLine()) != null) {
                 if (line.isEmpty()) {
                     line = reader.readLine();
                     break;
                 }
             }
-            assertEquals(firstLine, line, "Package line is incorrect");
+            assertThat(line).as("Package line is incorrect").isEqualTo(firstLine);
         });
     }
 
@@ -392,14 +408,14 @@ public class TestLicenseAppender {
         appender.append(f);
 
         try (BufferedReader r = new BufferedReader(new FileReader(f.getAbsolutePath() + ".new"))) {
-            assertEquals("/*", r.readLine());
+            assertThat(r.readLine()).isEqualTo("/*");
             String line = null;
             while ((line = r.readLine()) != null) {
                 if (line.trim().isEmpty()) {
                     break;
                 }
             }
-            assertEquals("#if NET_2_0", r.readLine());
+            assertThat(r.readLine()).isEqualTo("#if NET_2_0");
         }
     }
 
@@ -519,21 +535,185 @@ public class TestLicenseAppender {
         }, checkLines(firstLine, secondLine, thirdLine, forthLine));
     }
 
-    @Test
-    public void addLicenseMarkdown() throws IOException {
-        String filename = "tmp.md";
+    @ParameterizedTest
+    @ValueSource(strings = {"", "# Heading\nText\n", "# Heading\n---\nText\n", "\n---\ntitle: Not front matter\n---\n"})
+    public void addLicenseMarkdown(final String content) throws IOException {
+        File document = new File(baseTempFolder, "tmp.md");
+        Files.writeString(document.toPath(), content, StandardCharsets.UTF_8);
+        ApacheV2LicenseAppender appender = new ApacheV2LicenseAppender();
 
-        commonTestTemplate(filename, writer -> {
-            writer.write("## This is the first header\n");
-            writer.write(" * this is a list entry\n");
-            writer.write(" * this is another list entry\n");
-            writer.write(" <!-- this is a comment line -->");
-            writer.write("## This is the second header\n");
-        }, r -> {
-            String line = r.readLine();
-            assertEquals("<!--", line, "First line is incorrect");
-            line = r.readLine();
-        });
+        appender.append(document);
+
+        String expected = appender.getLicenseHeader(document) + System.lineSeparator()
+                + content.replace("\n", System.lineSeparator());
+        assertThat(Files.readString(new File(document + ".new").toPath())).isEqualTo(expected);
+        assertThat(Files.readString(document.toPath())).isEqualTo(content);
+    }
+
+    @ParameterizedTest
+    @CsvSource({"false,---", "true,---", "false,...", "true,..."})
+    public void addLicenseMarkdownWithFrontMatter(final boolean overwrite, final String closingDelimiter) throws Exception {
+        String lineSeparator = System.lineSeparator();
+        String frontMatter = "---\ntitle: Community Guidelines\n# Metadata comment\n\n"
+                + "description: |\n  A multiline value\n  ---\n" + closingDelimiter + "\n";
+        String body = "\n# Community Guidelines\n\n---\nText\n";
+        File document = new File(baseTempFolder, "tmp.md");
+        // CRLF input must be recognized as well as native line endings.
+        String content = (frontMatter + body).replace("\n", "\r\n");
+        Files.writeString(document.toPath(), content, StandardCharsets.UTF_8);
+        ApacheV2LicenseAppender appender = new ApacheV2LicenseAppender();
+        appender.setOverwrite(overwrite);
+
+        appender.append(document);
+
+        File output = overwrite ? document : new File(document + ".new");
+        String expected = frontMatter.replace("\n", lineSeparator) + lineSeparator
+                + appender.getLicenseHeader(document) + lineSeparator + body.replace("\n", lineSeparator);
+        assertThat(Files.readString(output.toPath())).isEqualTo(expected);
+        if (overwrite) {
+            assertThat(new File(document + ".new")).doesNotExist();
+        } else {
+            assertThat(Files.readString(document.toPath())).isEqualTo(content);
+        }
+        ILicense license = LicenseSetFactory.search("AL", "AL2.0",
+                Defaults.builder().build().getLicenseSetFactory().getLicenses(LicenseFilter.ALL)).orElseThrow();
+        try (BufferedReader reader = Files.newBufferedReader(output.toPath(), StandardCharsets.UTF_8)) {
+            assertThat(license.matches(HeaderCheckWorker.readHeader(reader,
+                    HeaderCheckWorker.DEFAULT_NUMBER_OF_RETAINED_HEADER_LINES))).isTrue();
+        }
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"---\n---", "---\n...", "\uFEFF---\n---\n", "---\ntitle: Example\n---"})
+    public void addLicenseMarkdownWithFrontMatterAtEndOfFile(final String content) throws IOException {
+        File document = new File(baseTempFolder, "tmp.md");
+        Files.writeString(document.toPath(), content, StandardCharsets.UTF_8);
+        ApacheV2LicenseAppender appender = new ApacheV2LicenseAppender();
+
+        appender.append(document);
+
+        String frontMatter = content.replace("\uFEFF", "");
+        if (!frontMatter.endsWith("\n")) {
+            frontMatter += "\n";
+        }
+        String expected = frontMatter.replace("\n", System.lineSeparator()) + System.lineSeparator()
+                + appender.getLicenseHeader(document) + System.lineSeparator();
+        assertThat(Files.readString(new File(document + ".new").toPath())).isEqualTo(expected);
+        assertThat(Files.readString(document.toPath())).isEqualTo(content);
+    }
+
+    @ParameterizedTest
+    @CsvSource({"false,---", "true,---", "false,...", "true,..."})
+    public void rejectMarkdownWithUnterminatedFrontMatter(final boolean overwrite, final String indentedDelimiter) throws IOException {
+        File document = new File(baseTempFolder, "tmp.md");
+        String content = "---\ntitle: Example\ndescription: |\n  " + indentedDelimiter + "\n";
+        Files.writeString(document.toPath(), content, StandardCharsets.UTF_8);
+        ApacheV2LicenseAppender appender = new ApacheV2LicenseAppender();
+        appender.setOverwrite(overwrite);
+
+        assertThatThrownBy(() -> appender.append(document))
+                .isInstanceOf(IOException.class)
+                .hasMessageContaining("Unterminated YAML front matter");
+        assertThat(Files.readString(document.toPath())).isEqualTo(content);
+        assertThat(new File(document + ".new")).doesNotExist();
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"text/markdown", "text/x-web-markdown", "text/markdown; charset=UTF-8"})
+    public void addLicenseUsingMarkdownMetadata(final String mediaType) throws IOException {
+        File document = new File(baseTempFolder, "README");
+        String frontMatter = "---\ntitle: Example\n---\n";
+        Files.writeString(document.toPath(), frontMatter + "# Heading\n");
+        MetaData metadata = new MetaData();
+        metadata.setMediaType(MediaType.parse(mediaType));
+        ApacheV2LicenseAppender appender = new ApacheV2LicenseAppender();
+
+        appender.append(document, metadata);
+
+        File markdown = new File(baseTempFolder, "reference.md");
+        String expected = frontMatter.replace("\n", System.lineSeparator()) + System.lineSeparator()
+                + appender.getLicenseHeader(markdown) + System.lineSeparator() + "# Heading" + System.lineSeparator();
+        assertThat(Files.readString(new File(document + ".new").toPath())).isEqualTo(expected);
+        assertThat(Files.readString(document.toPath())).isEqualTo(frontMatter + "# Heading\n");
+    }
+
+    @ParameterizedTest
+    @CsvSource({"application/xml,xml", "text/xml,xml", "text/html,html"})
+    public void addLicenseUsingMarkupMetadata(final String mediaType, final String extension) throws IOException {
+        File document = new File(baseTempFolder, "document");
+        String content = "<root/>\n";
+        Files.writeString(document.toPath(), content);
+        MetaData metadata = new MetaData();
+        metadata.setMediaType(MediaType.parse(mediaType));
+        ApacheV2LicenseAppender appender = new ApacheV2LicenseAppender();
+
+        appender.append(document, metadata);
+
+        String expected = ("xml".equals(extension) ? "<?xml version='1.0'?>" + System.lineSeparator() : "")
+                + appender.getLicenseHeader(new File(baseTempFolder, "reference." + extension))
+                + System.lineSeparator() + content.replace("\n", System.lineSeparator());
+        assertThat(Files.readString(new File(document + ".new").toPath())).isEqualTo(expected);
+    }
+
+    @Test
+    public void licenseAddingReportPassesDetectedMetadata() throws Exception {
+        File file = new File(baseTempFolder, "README");
+        Files.writeString(file.toPath(), "---\ntitle: Example\n---\n# Heading\n");
+        FileDocument document = new FileDocument(file, DocumentNameMatcher.MATCHES_ALL);
+        document.getMetaData().setMediaType(MediaType.parse("text/markdown"));
+        document.getMetaData().reportOnLicense(UnknownLicense.INSTANCE);
+
+        new LicenseAddingReport(null, false).report(document);
+
+        assertThat(Files.readString(new File(file + ".new").toPath()))
+                .startsWith("---" + System.lineSeparator() + "title: Example" + System.lineSeparator()
+                        + "---" + System.lineSeparator() + System.lineSeparator() + "<!--");
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"text/plain", "application/octet-stream"})
+    public void doNotGuessCommentSyntaxFromUnsupportedMetadata(final String mediaType) throws IOException {
+        File document = new File(baseTempFolder, "README");
+        Files.writeString(document.toPath(), "Unknown syntax\n");
+        MetaData metadata = new MetaData();
+        metadata.setMediaType(MediaType.parse(mediaType));
+
+        new ApacheV2LicenseAppender().append(document, metadata);
+
+        assertThat(new File(document + ".new")).doesNotExist();
+    }
+
+    @ParameterizedTest
+    @CsvSource({"text/plain", "text/html"})
+    public void retainMarkdownExtensionWhenMetadataIsGenericOrConflicting(final String mediaType) throws IOException {
+        File document = new File(baseTempFolder, "tmp.md");
+        String content = "---\ntitle: Example\n---\n";
+        Files.writeString(document.toPath(), content);
+        MetaData metadata = new MetaData();
+        metadata.setMediaType(MediaType.parse(mediaType));
+        ApacheV2LicenseAppender appender = new ApacheV2LicenseAppender();
+
+        appender.append(document, metadata);
+
+        assertThat(Files.readString(new File(document + ".new").toPath()))
+                .isEqualTo(content.replace("\n", System.lineSeparator()) + System.lineSeparator()
+                        + appender.getLicenseHeader(document) + System.lineSeparator());
+    }
+
+    @Test
+    public void useTikaDocumentMetadataDuringInsertion() throws Exception {
+        File file = new File(baseTempFolder, "tmp.md");
+        Files.writeString(file.toPath(), "---\ntitle: Example\n---\n# Heading\n");
+        FileDocument document = new FileDocument(file, DocumentNameMatcher.MATCHES_ALL);
+        String detected = TikaProcessor.process(document);
+        assertThat(document.getMetaData().getMediaType()).hasToString(detected);
+        ApacheV2LicenseAppender appender = new ApacheV2LicenseAppender();
+
+        appender.append(file, document.getMetaData());
+
+        assertThat(Files.readString(new File(file + ".new").toPath()))
+                .startsWith("---" + System.lineSeparator() + "title: Example" + System.lineSeparator()
+                        + "---" + System.lineSeparator() + System.lineSeparator() + "<!--");
     }
 
     @Test
@@ -555,12 +735,12 @@ public class TestLicenseAppender {
             appender.setOverwrite(true);
             appender.append(new File(name));
 
-            assertFalse(new File(name + ".new").exists());
-            assertTrue(new File(name).exists());
+            assertThat(new File(name + ".new")).doesNotExist();
+            assertThat(new File(name)).exists();
 
             try (FileInputStream inputStream = new FileInputStream(name)) {
                 String everything = IOUtils.toString(inputStream, Charset.defaultCharset());
-                assertTrue(everything.contains("Licensed to the Apache Software Foundation "));
+                assertThat(everything).contains("Licensed to the Apache Software Foundation ");
             }
         } finally {
             new File(name + ".new").delete();
@@ -582,20 +762,20 @@ public class TestLicenseAppender {
         String name = getTemporaryFileWithName(filename);
         try {
             createTestFile(name, phpCreator);
-            assertTrue(new File(name).setExecutable(true), "Unable to set executable flag");
+            assertThat(new File(name).setExecutable(true)).as("Unable to set executable flag").isTrue();
 
             ApacheV2LicenseAppender appender = new ApacheV2LicenseAppender();
             appender.setOverwrite(true);
             appender.append(new File(name));
 
-            assertFalse(new File(name + ".new").exists());
-            assertTrue(new File(name).exists());
+            assertThat(new File(name + ".new")).doesNotExist();
+            assertThat(new File(name)).exists();
 
             try (FileInputStream inputStream = new FileInputStream(name)) {
                 String everything = IOUtils.toString(inputStream, Charset.defaultCharset());
-                assertTrue(everything.contains("Licensed to the Apache Software Foundation "));
+                assertThat(everything).contains("Licensed to the Apache Software Foundation ");
             }
-            assertTrue(new File(name).canExecute());
+            assertThat(new File(name).canExecute()).isTrue();
         } finally {
             new File(name + ".new").delete();
             FileUtils.delete(new File(name));

@@ -22,6 +22,9 @@ consult before producing output.
 - Use meaningful variable and function names
 - Add comments for complex logic
 - Add package-info.java to each new package in the source tree
+- Use assertj assertions in tests
+- Do not use star imports in classes.
+- String multiline concatenation should be replaced with Text Blocks java:S6126
 
 # BEST PRACTICES
 - **DRY (Don't Repeat Yourself)**: Avoid code duplication
