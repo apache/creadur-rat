@@ -71,6 +71,25 @@ class FrontMatterLicenseAppenderTest {
         }
     }
 
+    static Stream<Arguments> documentsWithoutFrontMatter() {
+        return EXTENSIONS.stream().flatMap(extension -> Stream.of("", "\n", "\n---\n", BODY)
+                .map(input -> Arguments.of(extension, input)));
+    }
+
+    @ParameterizedTest
+    @MethodSource("documentsWithoutFrontMatter")
+    void insertBeforeContentWithoutInitialFrontMatter(final String extension, final String input) throws IOException {
+        File file = directory.resolve("example." + extension).toFile();
+        Files.writeString(file.toPath(), input);
+        ApacheV2LicenseAppender appender = new ApacheV2LicenseAppender();
+
+        appender.append(file);
+
+        assertThat(Files.readString(Path.of(file + ".new")))
+                .isEqualTo(appender.getLicenseHeader(file) + LINE_SEPARATOR + normalize(input));
+        assertThat(Files.readString(file.toPath())).isEqualTo(input);
+    }
+
     static Stream<Arguments> endOfFileDocuments() {
         return EXTENSIONS.stream().flatMap(extension -> FRONT_MATTER.stream()
                 .map(frontMatter -> Arguments.of(extension, frontMatter.stripTrailing())));

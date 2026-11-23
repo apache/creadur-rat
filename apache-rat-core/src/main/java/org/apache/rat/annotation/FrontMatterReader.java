@@ -32,7 +32,7 @@ final class FrontMatterReader {
         while ((line = reader.readLine()) != null) {
             PlainLicenseEditor.writeLine(writer, line);
             // Only unindented delimiters close the block. YAML also allows "...".
-            if (openingDelimiter.equals(line) || "---".equals(openingDelimiter) && "...".equals(line)) {
+            if (line.equals(openingDelimiter) || "---".equals(openingDelimiter) && "...".equals(line)) {
                 writer.write(System.lineSeparator());
                 return;
             }
