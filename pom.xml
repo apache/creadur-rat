@@ -54,6 +54,7 @@ agnostic home for software distribution comprehension and audit tools.
     <javaVersion>17</javaVersion>
     <tika.version>4.2.0</tika.version>
     <mockito.version>5.24.0</mockito.version>
+    <plexus-utils.version>4.1.0</plexus-utils.version>
     <!-- This is the version of Maven required to use the RAT Maven Plugin -->
     <mavenMinVersion>3.9</mavenMinVersion>
     <!-- minimal versions to build this projects, enforced in parent POM by enforcer plugin -->
@@ -178,6 +179,11 @@ agnostic home for software distribution comprehension and audit tools.
         <version>${assertj.version}</version>
         <type>pom</type>
         <scope>import</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.codehaus.plexus</groupId>
+        <artifactId>plexus-utils</artifactId>
+        <version>${plexus-utils.version}</version>
       </dependency>
       <dependency>
         <groupId>org.junit</groupId>
@@ -572,6 +578,12 @@ agnostic home for software distribution comprehension and audit tools.
               <groupId>org.apache.ant</groupId>
               <artifactId>ant</artifactId>
               <version>${ant.version}</version>
+            </dependency>
+            <!-- AntRun's Plexus classes must not shadow the version required by RAT's Ant tasks. -->
+            <dependency>
+              <groupId>org.codehaus.plexus</groupId>
+              <artifactId>plexus-utils</artifactId>
+              <version>${plexus-utils.version}</version>
             </dependency>
           </dependencies>
         </plugin>

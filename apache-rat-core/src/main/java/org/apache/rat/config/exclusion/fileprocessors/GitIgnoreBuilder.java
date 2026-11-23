@@ -35,7 +35,6 @@ import java.util.function.Consumer;
 import org.apache.rat.api.EnvVar;
 import org.apache.rat.config.exclusion.ExclusionUtils;
 import org.apache.rat.config.exclusion.MatcherSet;
-import org.apache.rat.config.exclusion.plexus.MatchPatterns;
 import org.apache.rat.document.DocumentName;
 import org.apache.rat.document.DocumentName.FSInfo;
 import org.apache.rat.document.DocumentNameMatcher;
@@ -136,7 +135,7 @@ public class GitIgnoreBuilder extends AbstractFileProcessorBuilder {
             DocumentName matcherPattern = DocumentName.builder(documentName).setName(name.replace(SLASH, documentName.getDirectorySeparator()))
                     .build();
             DocumentNameMatcher matcher = DocumentNameMatcher.and(new DocumentNameMatcher("isDirectory", File::isDirectory),
-                    new DocumentNameMatcher(name, MatchPatterns.from(matcherPattern.localized(documentName.getDirectorySeparator()))));
+                    new DocumentNameMatcher(name, List.of(matcherPattern.localized(documentName.getDirectorySeparator())), documentName));
 
             MatcherSet.Builder builder = new MatcherSet.Builder();
             if (prefix) {
