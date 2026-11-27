@@ -343,4 +343,21 @@ public class GitIgnoreBuilderTest extends AbstractIgnoreBuilderTest {
         // should not be excluded (the hidden dir walk was skipped) → matcher returns true (file is scanned)
         assertThat(matcher.matches(baseName.resolve("test.txt"))).isTrue();
     }
+
+    @Test
+    public void test_RAT_597() throws IOException {
+        File dir = new File(tmpPath.toFile(), "build");
+        assertThat(dir.mkdir()).isTrue();
+        File nested = new File(tmpPath.toFile(), "sub/build");
+        assertThat(nested.mkdirs()).isTrue();
+        File file = new File(tmpPath.toFile(), "notADirectory");
+        assertThat(file.createNewFile()).isTrue();
+        List<MatcherSet> matcherSets = new ArrayList<>();
+        new GitIgnoreBuilder().modifyEntry(matcherSets::add, baseName, "build/");
+        new GitIgnoreBuilder().modifyEntry(matcherSets::add, baseName, "notADirectory/");
+        assertThat(matcherSets).hasSize(2);
+        assertThat(matcherSets.get(0).createMatcher().matches(baseName.resolve(dir.getName()))).as("excluded directory").isFalse();
+        assertThat(matcherSets.get(0).createMatcher().matches(baseName.resolve("sub/build"))).as("excluded nested directory").isFalse();
+        assertThat(matcherSets.get(1).createMatcher().matches(baseName.resolve(file.getName()))).as("not a directory").isTrue();
+    }
 }
