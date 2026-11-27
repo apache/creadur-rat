@@ -148,7 +148,7 @@ public final class HeaderCheckWorker {
             if (generatedMatcher.matches(headers)) {
                 document.getMetaData().setDocumentType(Document.Type.IGNORED);
             } else {
-                licenses.stream().filter(lic -> lic.matches(headers)).forEach(document.getMetaData()::reportOnLicense);
+                SPDXExpressionAnalyser.analyse(headers, licenses, document.getMetaData());
                 if (!document.getMetaData().detectedLicense()) {
                     document.getMetaData().reportOnLicense(UnknownLicense.INSTANCE);
                 }

@@ -123,6 +123,16 @@ public class MetaData {
     }
 
     /**
+     * Returns whether an approval policy has been installed. Low-level header
+     * matching can run without a policy, in which case no SPDX alternative is
+     * preferred over another.
+     * @return whether the approval predicate has been set.
+     */
+    public boolean hasApprovalPredicate() {
+        return approvalPredicate != null;
+    }
+
+    /**
      * Gets the stream of licenses that have been matched.
      * @return the stream of licenses that have been matched.
      */

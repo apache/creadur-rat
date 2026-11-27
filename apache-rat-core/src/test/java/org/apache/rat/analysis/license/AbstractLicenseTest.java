@@ -101,11 +101,16 @@ abstract public class AbstractLicenseTest {
             throws IOException {
         String[] formats = { "%s", "now is not the time %s for copyright", "#%s", "##%s", "## %s", "##%s##", "## %s ##",
                 "/*%s*/", "/* %s */" };
+        // SPDX expressions consume the complete tag line. Prose must be on a
+        // separate line; only actual closing comment delimiters may follow it.
+        String[] spdxFormats = { "%s", "now is not the time %s\nfor copyright", "#%s", "##%s", "## %s",
+                "/*%s*/", "/* %s */", "<!-- %s -->" };
 
         ILicense license = extractCategory(family, id);
         try {
             for (String[] target : targets) {
-                for (String fmt : formats) {
+                String[] targetFormats = target[TEXT].contains("SPDX-License-Identifier:") ? spdxFormats : formats;
+                for (String fmt : targetFormats) {
                     boolean found = processText(license, String.format(fmt, target[TEXT]));
                     license.reset();
                     assertTrue(found, () -> String.format("%s %s did not match pattern '%s' for target string %s", id,

@@ -33,6 +33,7 @@ import org.apache.rat.configuration.builders.AnyBuilder;
 import org.apache.rat.license.ILicenseFamily;
 import org.apache.rat.testhelpers.TestingDocument;
 import org.apache.rat.license.ILicense;
+import org.apache.rat.license.LicenseSetFactory.LicenseFilter;
 import org.apache.rat.testhelpers.TestingLicense;
 import org.apache.rat.testhelpers.TestingMatcher;
 import org.junit.jupiter.api.Test;
@@ -58,6 +59,18 @@ class HeaderCheckWorkerTest {
         worker.read();
         assertThat(subject.getMetaData().unapprovedLicenses().count()).isEqualTo(1);
         assertThat(subject.getMetaData().unapprovedLicenses().toList().get(0).getLicenseFamily()).isEqualTo(ILicenseFamily.UNKNOWN);
+    }
+
+    @Test
+    void spdxMatchingWithoutApprovalPolicyRetainsBothAlternatives() throws Exception {
+        Document subject = new TestingDocument(
+                new StringReader("// SPDX-License-Identifier: Apache-2.0 OR GPL-3.0-only"), "subject");
+        HeaderCheckWorker worker = new HeaderCheckWorker(new TestingMatcher(), subject.reader(),
+                Defaults.builder().build().getLicenseSetFactory().getLicenses(LicenseFilter.ALL), subject);
+        worker.read();
+        assertThat(subject.getMetaData().hasApprovalPredicate()).isFalse();
+        assertThat(subject.getMetaData().licenses().map(ILicense::getId).toList())
+                .isEqualTo(List.of("AL2.0", "GPL3"));
     }
 
     @Test
